@@ -41,6 +41,8 @@ importers:
 
   packages/exporter-pdf: {}
 
+  packages/exporter-pptx: {}
+
   packages/facts: {}
 
   packages/fault-injection: {}

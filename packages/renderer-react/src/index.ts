@@ -1,4 +1,5 @@
 import { canonicalHash, canonicalJsonString } from '../../canonical-json/src/index.js'
+import { renderChartSvg } from '../../charts/src/index.js'
 import type {
   Element,
   ImageElement,
@@ -56,6 +57,22 @@ export function renderDocumentHtml(document: PpteDocument, options: RenderOption
   return document.slideOrder.map((slideId) => renderSlideHtml(document, slideId, options)).join('\n')
 }
 
+/** A self-contained image surface for exporters. It remains derived from the semantic snapshot. */
+export function renderSlideSvg(document: PpteDocument, slideId: string, options: RenderOptions = {}): string {
+  const slide = document.slides[slideId]
+  if (!slide) throw new Error(`SLIDE_MISSING: ${slideId}`)
+  const width = document.canvas.width
+  const height = document.canvas.height
+  const defs: string[] = []
+  const background = paintSvg(slide.background ?? document.canvas.defaultBackground, document, 'ppte-background', defs)
+  const children = slide.rootOrder
+    .map((elementId) => slide.elements[elementId])
+    .filter((element): element is Element => Boolean(element) && element.visible !== false)
+    .map((element) => renderElementSvg(document, element, options, defs))
+    .join('')
+  return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${number(width)}" height="${number(height)}" viewBox="0 0 ${number(width)} ${number(height)}"><defs>${defs.join('')}</defs><rect x="0" y="0" width="${number(width)}" height="${number(height)}" fill="${escapeAttr(background)}"/>${children}</svg>`
+}
+
 /** Compare the deterministic reference-render surface while reporting target leakage by semantic object. */
 export function renderTargetedVisualDiff(before: PpteDocument, after: PpteDocument, slideId: string, scope: VisualDiffScope = {}): TargetedVisualDiff {
   const beforeHtml = renderSlideHtml(before, slideId)
@@ -97,6 +114,7 @@ function renderElement(document: PpteDocument, element: Element, options: Render
   if (element.type === 'text') rendered = renderText(document, element, frame)
   else if (element.type === 'image') rendered = renderImage(document, element, frame, options)
   else if (element.type === 'shape') rendered = renderShape(document, element, frame)
+  else if (element.type === 'chart') rendered = renderChart(document, element, frame)
   else throw new Error(`UNSUPPORTED_ELEMENT_TYPE: ${element.type}`)
   return element.appearStep === undefined ? rendered : rendered.replace(/^<(\w+)/, `<$1 data-ppte-appear-step="${number(element.appearStep)}"`)
 }
@@ -214,6 +232,100 @@ function renderShape(document: PpteDocument, element: ShapeElement, frame: strin
   return `<svg data-ppte-element-id="${escapeAttr(element.id)}" data-ppte-type="shape" data-ppte-semantic-key="${escapeAttr(element.semanticKey ?? '')}" viewBox="0 0 ${number(element.frame.width)} ${number(element.frame.height)}" style="${svgStyle}" aria-hidden="${element.role === 'decorative' ? 'true' : 'false'}">${defs.length ? `<defs>${defs.join('')}</defs>` : ''}${body}</svg>`
 }
 
+function renderChart(document: PpteDocument, element: Extract<Element, { type: 'chart' }>, frame: string): string {
+  const preset = document.theme.presets.chart[element.style.styleRef] ?? {}
+  const style = resolveStyle({ ...preset, ...(element.style.overrides ?? {}) }, document) as Record<string, unknown>
+  const colors = Array.isArray(style.palette) ? style.palette.filter((value): value is string => typeof value === 'string') : undefined
+  const svg = renderChartSvg(element, {
+    width: element.frame.width,
+    height: element.frame.height,
+    palette: colors,
+    axisColor: typeof style.axisColor === 'string' ? style.axisColor : undefined,
+    labelColor: typeof style.labelColor === 'string' ? style.labelColor : undefined,
+    gridColor: typeof style.gridColor === 'string' ? style.gridColor : undefined,
+    lineWidth: asNumber(style.lineWidth),
+    cornerRadius: asNumber(style.cornerRadius),
+  })
+  return `<div data-ppte-element-id="${escapeAttr(element.id)}" data-ppte-type="chart" data-ppte-chart-type="${escapeAttr(element.chartType)}" data-ppte-semantic-key="${escapeAttr(element.semanticKey ?? '')}" style="position:absolute;${frame};overflow:hidden;">${svg}</div>`
+}
+
+function renderElementSvg(document: PpteDocument, element: Element, options: RenderOptions, defs: string[]): string {
+  const transform = `translate(${number(element.frame.x + (element.flipX ? element.frame.width : 0))} ${number(element.frame.y + (element.flipY ? element.frame.height : 0))}) scale(${element.flipX ? -1 : 1} ${element.flipY ? -1 : 1}) rotate(${number(element.rotationDeg ?? 0)} ${number(element.frame.width / 2)} ${number(element.frame.height / 2)})`
+  const opacity = element.opacity === undefined ? '' : ` opacity="${number(element.opacity)}"`
+  let body: string
+  if (element.type === 'text') body = renderTextSvg(document, element, defs)
+  else if (element.type === 'image') body = renderImageSvg(document, element, options, defs)
+  else if (element.type === 'shape') body = renderShapeSvg(document, element, defs)
+  else if (element.type === 'chart') body = renderChartSvgElement(document, element)
+  else throw new Error(`UNSUPPORTED_ELEMENT_TYPE: ${element.type}`)
+  return `<g data-ppte-element-id="${escapeAttr(element.id)}" data-ppte-type="${escapeAttr(element.type)}"${element.semanticKey ? ` data-ppte-semantic-key="${escapeAttr(element.semanticKey)}"` : ''} transform="${transform}"${opacity}>${body}</g>`
+}
+
+function renderTextSvg(document: PpteDocument, element: TextElement, defs: string[]): string {
+  const preset = document.theme.presets.text[element.style.styleRef] ?? defaultTextStyle(document)
+  const style = resolveStyle({ ...preset, ...element.style.overrides }, document) as TextStyle
+  const padding = element.boxStyle?.padding ?? { top: 0, right: 0, bottom: 0, left: 0 }
+  const fill = element.boxStyle?.fill ? paintSvg(element.boxStyle.fill, document, `ppte-fill-${safeId(element.id)}`, defs) : undefined
+  const stroke = element.boxStyle?.stroke
+  const clipId = `ppte-clip-${safeId(element.id)}`
+  const overflow = element.overflowPolicy === 'clip' || element.overflowPolicy === 'ellipsis'
+  if (overflow) defs.push(`<clipPath id="${escapeAttr(clipId)}"><rect x="0" y="0" width="${number(element.frame.width)}" height="${number(element.frame.height)}" rx="${number(element.boxStyle?.radius ?? 0)}"/></clipPath>`)
+  const lines = element.content.paragraphs.map((paragraph, paragraphIndex) => {
+    const y = padding.top + style.fontSize * (paragraphIndex + 1) * (style.lineHeight ?? 1.2)
+    const x = paragraph.align === 'center' ? element.frame.width / 2 : paragraph.align === 'right' ? element.frame.width - padding.right : padding.left
+    const anchor = paragraph.align === 'center' ? 'middle' : paragraph.align === 'right' ? 'end' : 'start'
+    const prefix = paragraph.list?.type === 'bullet' ? '• ' : paragraph.list?.type === 'number' ? '1. ' : ''
+    const runs = paragraph.runs.map((run) => {
+      const marks = run.marks
+      const color = marks?.color ? resolveColor(marks.color, document, resolveColor(style.color, document, '#111827')) : resolveColor(style.color, document, '#111827')
+      return `<tspan fill="${escapeAttr(color)}"${marks?.bold ? ' font-weight="700"' : ''}${marks?.italic ? ' font-style="italic"' : ''}${marks?.underline ? ' text-decoration="underline"' : ''}${marks?.strike ? ' text-decoration="line-through"' : ''}>${escapeXml(run.text)}</tspan>`
+    }).join('')
+    return `<text x="${number(x)}" y="${number(y)}" text-anchor="${anchor}" font-family="${escapeAttr(resolve(style.fontFamily, document, 'font.body') as string)}" font-size="${number(style.fontSize)}" font-weight="${number(style.fontWeight ?? 400)}" line-height="${number(style.lineHeight ?? 1.2)}"${style.direction && style.direction !== 'auto' ? ` direction="${style.direction}"` : ''}>${escapeXml(prefix)}${runs}</text>`
+  }).join('')
+  const box = fill || stroke ? `<rect x="0" y="0" width="${number(element.frame.width)}" height="${number(element.frame.height)}"${fill ? ` fill="${escapeAttr(fill)}"` : ' fill="none"'}${stroke ? ` ${svgStroke(stroke, document)}` : ''}${element.boxStyle?.radius !== undefined ? ` rx="${number(element.boxStyle.radius)}"` : ''}/>` : ''
+  return `${box}${overflow ? `<g clip-path="url(#${escapeAttr(clipId)})">${lines}</g>` : lines}`
+}
+
+function renderImageSvg(document: PpteDocument, element: ImageElement, options: RenderOptions, defs: string[]): string {
+  const asset = document.assets[element.assetId]
+  if (!asset) throw new Error(`ASSET_MISSING: ${element.assetId}`)
+  const source = options.assetSources?.[element.assetId] ?? asset.path
+  const imageId = `ppte-image-${safeId(element.id)}`
+  const image = `<image x="0" y="0" width="${number(element.frame.width)}" height="${number(element.frame.height)}" href="${escapeAttr(source)}" xlink:href="${escapeAttr(source)}" preserveAspectRatio="${element.fit === 'contain' ? 'xMidYMid meet' : element.fit === 'cover' ? 'xMidYMid slice' : 'none'}"/>`
+  if (!element.crop) return image
+  defs.push(`<clipPath id="${escapeAttr(imageId)}"><rect x="0" y="0" width="${number(element.frame.width)}" height="${number(element.frame.height)}"/></clipPath>`)
+  const crop = element.crop
+  const cropped = `<g clip-path="url(#${escapeAttr(imageId)})" transform="translate(${number(-crop.x * element.frame.width / crop.width)} ${number(-crop.y * element.frame.height / crop.height)}) scale(${number(1 / crop.width)} ${number(1 / crop.height)})">${image}</g>`
+  return cropped
+}
+
+function renderShapeSvg(document: PpteDocument, element: ShapeElement, defs: string[]): string {
+  const preset = document.theme.presets.shape[element.style.styleRef] ?? {}
+  const style = resolveStyle({ ...preset, ...element.style.overrides }, document) as Record<string, unknown>
+  const fill = style.fill ? paintSvg(style.fill as Paint, document, `ppte-fill-${safeId(element.id)}`, defs) : 'none'
+  const stroke = style.stroke as Stroke | undefined
+  const common = `fill="${escapeAttr(fill)}"${stroke ? ` ${svgStroke(stroke, document)}` : ' stroke="none"'}`
+  if (element.shape === 'ellipse') return `<ellipse cx="${number(element.frame.width / 2)}" cy="${number(element.frame.height / 2)}" rx="${number(element.frame.width / 2)}" ry="${number(element.frame.height / 2)}" ${common}/>`
+  if (element.shape === 'rectangle' || element.shape === 'rounded-rectangle') {
+    const radius = element.shape === 'rounded-rectangle' ? Math.min(element.frame.width, element.frame.height) / 2 : 0
+    return `<rect x="0" y="0" width="${number(element.frame.width)}" height="${number(element.frame.height)}" rx="${number(Math.min(asNumber(style.radius) ?? radius, Math.min(element.frame.width, element.frame.height) / 2))}" ${common}/>`
+  }
+  if (element.shape === 'line' || element.shape === 'arrow') return `<line x1="0" y1="0" x2="${number(element.frame.width)}" y2="${number(element.frame.height)}" ${common}/>`
+  const points = element.points?.length ? element.points.map((point) => `${number(point.x)},${number(point.y)}`).join(' ') : defaultPoints(element.shape, element.frame.width, element.frame.height)
+  return `<polygon points="${escapeAttr(points)}" ${common}/>`
+}
+
+function renderChartSvgElement(document: PpteDocument, element: Extract<Element, { type: 'chart' }>): string {
+  const preset = document.theme.presets.chart[element.style.styleRef] ?? {}
+  const style = resolveStyle({ ...preset, ...(element.style.overrides ?? {}) }, document) as Record<string, unknown>
+  const palette = Array.isArray(style.palette) ? style.palette.filter((value): value is string => typeof value === 'string') : undefined
+  return renderChartSvg(element, { width: element.frame.width, height: element.frame.height, palette, axisColor: typeof style.axisColor === 'string' ? style.axisColor : undefined, labelColor: typeof style.labelColor === 'string' ? style.labelColor : undefined, gridColor: typeof style.gridColor === 'string' ? style.gridColor : undefined, lineWidth: asNumber(style.lineWidth), cornerRadius: asNumber(style.cornerRadius) })
+}
+
+function svgStroke(stroke: Stroke, document: PpteDocument): string {
+  return `stroke="${escapeAttr(resolveColor(stroke.color, document, 'none'))}" stroke-width="${number(stroke.width)}"${stroke.opacity === undefined ? '' : ` stroke-opacity="${number(stroke.opacity)}"`}${stroke.dash?.length ? ` stroke-dasharray="${escapeAttr(stroke.dash.map(number).join(' '))}"` : ''}${stroke.lineCap ? ` stroke-linecap="${stroke.lineCap}"` : ''}${stroke.lineJoin ? ` stroke-linejoin="${stroke.lineJoin}"` : ''}`
+}
+
 function defaultPoints(shape: ShapeElement['shape'], width: number, height: number): string {
   if (shape === 'triangle') return `${number(width / 2)},0 ${number(width)},${number(height)} 0,${number(height)}`
   if (shape === 'diamond') return `${number(width / 2)},0 ${number(width)},${number(height / 2)} ${number(width / 2)},${number(height)} 0,${number(height / 2)}`
@@ -294,4 +406,5 @@ function number(value: number): string {
 }
 function quoteCss(value: string): string { return `'${value.replace(/[^A-Za-z0-9 ,._-]/g, '')}'` }
 function escapeHtml(value: string): string { return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;') }
+function escapeXml(value: string): string { return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&apos;') }
 function escapeAttr(value: string): string { return escapeHtml(value) }

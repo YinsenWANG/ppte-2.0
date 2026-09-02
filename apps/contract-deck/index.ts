@@ -16,10 +16,12 @@ import { auditPortableBundle, createPortableQuickFix, createPortableViewer, Port
 import { PpteReviewer } from '../../packages/reviewer/src/index.js'
 import { applyPatchToDocument, decodePatch, encodePatch } from '../../packages/patch-format/src/index.js'
 import { exportPdf, exportPng } from '../../packages/exporter-pdf/src/index.js'
-import { checkGlyphCoverage } from '../../packages/validation/src/index.js'
+import { exportImagePptx, inspectPptx } from '../../packages/exporter-pptx/src/index.js'
+import { buildFactUpdateTransaction, checkFactSourceConsistency } from '../../packages/facts/src/index.js'
+import { checkGlyphCoverage, validateRuntimeDocument } from '../../packages/validation/src/index.js'
 import { GA_A_CAPACITY_BUDGET, GA_A_PERFORMANCE_BUDGET, assertPerformanceBudget, benchmark, evaluateBundleBudget, measureCapacity, validateCapacityBudget } from '../../packages/performance-budget/src/index.js'
 import type { CheckpointAdapter } from '../../packages/core/src/index.js'
-import type { Asset, Element, Operation, PpteDocument, RichTextDocument, ShapeElement, TextElement, Transaction } from '../../packages/schema/src/index.js'
+import type { Asset, ChartElement, Element, Operation, PpteDocument, RichTextDocument, ShapeElement, TextElement, Transaction } from '../../packages/schema/src/index.js'
 
 const SLIDE_ID = 'slide_main'
 const TITLE_ID = 'text_title'
@@ -120,6 +122,38 @@ export function makeContractDocument(imageBytes = pixelPng()): { document: PpteD
       font_system_inter: { id: 'font_system_inter', family: 'Inter', style: 'normal', weight: 400, source: 'system', editableSafe: true },
     },
   }
+  return { document, imageBytes }
+}
+
+/** The smallest GA-B scene: one chart and the same Fact displayed on two pages. */
+export function makeGABContractDocument(imageBytes = pixelPng()): { document: PpteDocument; imageBytes: Uint8Array } {
+  const { document } = makeContractDocument(imageBytes)
+  document.metadata.title = 'PPTe GA-B Chart and Fact Contract'
+  document.theme.presets.chart['chart.default'] = {
+    palette: [{ kind: 'value', value: '#2563EB' }, { kind: 'value', value: '#14B8A6' }],
+    axisColor: { kind: 'value', value: '#64748B' },
+    labelColor: { kind: 'value', value: '#334155' },
+    gridColor: { kind: 'value', value: '#CBD5E1' },
+    lineWidth: 2,
+    cornerRadius: 3,
+  }
+  document.sources = { source_report: { id: 'source_report', title: 'Public report', citation: 'Public report, 2026' } }
+  const chart: ChartElement = {
+    id: 'chart_revenue', type: 'chart', semanticKey: 'chart.revenue', role: 'chart', frame: { x: 1040, y: 160, width: 760, height: 560 }, chartType: 'bar',
+    data: { columns: [{ id: 'period', label: 'Period', type: 'string' }, { id: 'revenue', label: 'Revenue', type: 'number' }], rows: [{ id: 'revenue', values: { period: 'Q1', revenue: 42 } }, { id: 'other', values: { period: 'Q2', revenue: 38 } }] },
+    encoding: { categoryField: 'period', valueFields: ['revenue'] }, options: { showLegend: false, showLabels: true }, style: { styleRef: 'chart.default' }, semanticRefs: { factIds: ['revenue'], sourceIds: ['source_report'] }, altText: 'Revenue by period',
+  }
+  document.slides.slide_main.elements[chart.id] = chart
+  document.slides.slide_main.rootOrder.push(chart.id)
+  const metric = cloneJson(document.slides.slide_main.elements.text_body) as TextElement
+  metric.id = 'metric_page_one'; metric.semanticKey = 'metric.revenue.page-one'; metric.role = 'metric'; metric.frame = { x: 160, y: 650, width: 700, height: 100 }; metric.content = text('Revenue 42%', 'metric-page-one'); metric.semanticRefs = { factIds: ['revenue'], sourceIds: ['source_report'] }
+  document.slides.slide_main.elements[metric.id] = metric
+  document.slides.slide_main.rootOrder.push(metric.id)
+  document.slides.slide_main.readingOrder?.push(metric.id)
+  const metricTwo = cloneJson(metric)
+  metricTwo.id = 'metric_page_two'; metricTwo.semanticKey = 'metric.revenue.page-two'; metricTwo.content = text('Revenue 42%', 'metric-page-two')
+  document.slides.slide_metrics = { id: 'slide_metrics', name: 'Metrics', rootOrder: [metricTwo.id], readingOrder: [metricTwo.id], elements: { [metricTwo.id]: metricTwo }, groups: {}, visualStrategy: 'structured' }
+  document.slideOrder.push('slide_metrics')
   return { document, imageBytes }
 }
 
@@ -369,7 +403,7 @@ export function runVerticalSlice(): Record<string, unknown> {
   assert(session.undo().ok, 'Shape style inverse')
 
   const factTransaction = stableTransaction(session, 'stable:fact-sync', [{ opId: 'stable:fact-sync:op', kind: 'fact.syncReferences', factId: 'revenue', targetElementIds: [BODY_ID], strategy: 'replace-display-value' }], {
-    kind: 'selection', slideIds: [SLIDE_ID], elementIds: [BODY_ID], permissions: ['facts'], allowInsert: false, allowDelete: false,
+    kind: 'selection', slideIds: [SLIDE_ID], elementIds: [BODY_ID], permissions: ['facts', 'content'], allowInsert: false, allowDelete: false,
   }, [BODY_ID], { style: 'preserve', geometry: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' })
   assert(session.commit(factTransaction).ok, 'Explicit Fact display synchronization')
   assert((session.getDocument().slides[SLIDE_ID].elements[BODY_ID] as TextElement).content.paragraphs[0].runs[0].text === '42%', 'Fact display value synchronized')
@@ -556,6 +590,56 @@ export function runWeek11To16(): Record<string, unknown> {
   }
 }
 
+export function runGABStabilization(): Record<string, unknown> {
+  const { document, imageBytes } = makeGABContractDocument()
+  const initialRevision = canonicalRevision(document)
+  assert(checkFactSourceConsistency(document).ok, 'GA-B cross-page Fact/Source consistency')
+  assert(validateRuntimeDocument(document).filter((issue) => issue.severity === 'error').length === 0, 'GA-B runtime validation')
+
+  const session = new PpteSession(document)
+  const factTransaction = buildFactUpdateTransaction(document, 'revenue', 55, { requireConfirmation: false, actor: { type: 'human', id: 'ga-b-e2e' } })
+  assert(factTransaction.operations.filter((operation) => operation.kind === 'fact.syncReferences').length === 2, 'GA-B Fact sync covers text and chart')
+  assert(session.commit(factTransaction).ok, 'GA-B Fact update transaction')
+  assert((session.getDocument().slides.slide_main.elements.chart_revenue as ChartElement).data.rows[0]?.values.revenue === 55, 'GA-B chart Fact value')
+  assert((session.getDocument().slides.slide_metrics.elements.metric_page_two as TextElement).content.paragraphs[0]?.runs[0]?.text === 'Revenue 55%', 'GA-B cross-page display value')
+  assert(session.undo().ok && session.getRevision() === initialRevision, 'GA-B Fact transaction inverse')
+
+  const revised = cloneJson(document)
+  ;(revised.slides.slide_main.elements.chart_revenue as ChartElement).data.rows[1]!.values.revenue = 41
+  const reviewer = new PpteReviewer()
+  const comparison = reviewer.compare(document, document, revised)
+  const chartDataUnit = comparison.units.find((unit) => unit.elementId === 'chart_revenue' && unit.field === 'data')
+  assert(Boolean(chartDataUnit && chartDataUnit.status === 'revised-only'), 'GA-B chart review unit')
+  const reviewTransaction = reviewer.buildAcceptTransaction(comparison, { unitIds: chartDataUnit ? [chartDataUnit.unitId] : [] })
+  reviewTransaction.changeContract.requireConfirmation = false
+  assert(session.commit(reviewTransaction).ok, 'GA-B Review acceptance through Session')
+  assert(session.undo().ok && session.getRevision() === initialRevision, 'GA-B Review inverse')
+
+  const patch = reviewer.createPatch(document, revised)
+  assert(patch.manifest.compatibilityProfile === 'ppte-2.0-ga-b.1', 'GA-B patch profile')
+  const patchSession = new PpteSession(document)
+  assert(patchSession.applyPatch(patch).ok, 'GA-B patch apply')
+  assert(patchSession.undo().ok && patchSession.getRevision() === initialRevision, 'GA-B patch inverse')
+
+  const pptx = exportImagePptx(document, { assetBytes: { [IMAGE_ASSET_ID]: imageBytes } })
+  assert(pptx.ok && pptx.capabilityReport.ok, `GA-B Image PPTX: ${pptx.issues.map((issue) => issue.code).join(',')}`)
+  const inspection = inspectPptx(pptx.bytes)
+  assert(inspection.valid && inspection.slideCount === 2 && inspection.hasCapabilityReport, 'GA-B Image PPTX package and Capability Report')
+  const missingAsset = exportImagePptx(document)
+  assert(!missingAsset.ok && missingAsset.issues.some((issue) => issue.code === 'ASSET_PAYLOAD_MISSING'), 'GA-B Image PPTX missing asset is explicit')
+
+  return {
+    status: 'ok',
+    initialRevision,
+    finalRevision: session.getRevision(),
+    chart: { types: ['bar', 'line', 'pie'], rendered: true, factSync: true },
+    factSource: { crossPageConsistency: true, explicitTransaction: true, undo: true },
+    review: { chartField: true, acceptedThroughSession: true, patch: true },
+    imagePptx: { slides: inspection.slideCount, capabilityReport: inspection.hasCapabilityReport, missingAssetBlocked: true },
+    excluded: ['Poster', 'Widget', 'Light Edit', 'Semantic PPTX'],
+  }
+}
+
 function stableTransaction(
   session: PpteSession,
   transactionId: string,
@@ -600,6 +684,13 @@ function assert(condition: unknown, label: string): asserts condition {
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url) && process.argv.includes('--ga-a')) {
   try {
     process.stdout.write(`${JSON.stringify(runGAAStabilization())}\n`)
+  } catch (cause) {
+    process.stderr.write(`${cause instanceof Error ? cause.stack ?? cause.message : String(cause)}\n`)
+    process.exitCode = 1
+  }
+} else if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url) && process.argv.includes('--ga-b')) {
+  try {
+    process.stdout.write(`${JSON.stringify(runGABStabilization())}\n`)
   } catch (cause) {
     process.stderr.write(`${cause instanceof Error ? cause.stack ?? cause.message : String(cause)}\n`)
     process.exitCode = 1

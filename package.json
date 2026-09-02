@@ -1,6 +1,6 @@
 {
   "name": "ppte",
-  "version": "0.2.0-rc.1",
+  "version": "0.3.0-rc.1",
   "private": true,
   "description": "PPTe semantic presentation format and Stable Core reference runtime",
   "license": "Apache-2.0",
@@ -15,6 +15,7 @@
     "e2e:milestone": "pnpm build && node dist/apps/contract-deck/index.js --milestone",
     "e2e:beta": "pnpm build && node dist/apps/contract-deck/index.js --beta",
     "e2e:ga-a": "pnpm build && node dist/apps/contract-deck/index.js --ga-a",
+    "e2e:ga-b": "pnpm build && node dist/apps/contract-deck/index.js --ga-b",
     "perf:ga-a": "pnpm build && node dist/apps/contract-deck/index.js --ga-a",
     "contract-deck": "pnpm build && node dist/apps/contract-deck/index.js"
   },
