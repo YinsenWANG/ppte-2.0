@@ -3,8 +3,10 @@ import { dirname, basename, join } from 'node:path'
 import { canonicalHash, canonicalJsonString, canonicalRevision, sha256HexBytes } from '../../canonical-json/src/index.js'
 import { validateRuntimeDocument, validateTransactionShape } from '../../validation/src/index.js'
 import { PPTE_COMPATIBILITY_PROFILE, PPTE_FORMAT, PPTE_FORMAT_VERSION, PPTE_OPERATION_PROTOCOL_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
-import type { PpteDocument, PpteManifest, Revision, Transaction, ValidationIssue } from '../../schema/src/index.js'
+import type { PpteDocument, PpteManifest, PortableProfile, Revision, Transaction, ValidationIssue } from '../../schema/src/index.js'
 import { ContentAddressedStore } from './cas.js'
+import { buildPortable as buildPortableRuntime } from '../../portable-runtime/src/index.js'
+import type { PortableBuildOptions, PortableBuildResult } from '../../portable-runtime/src/index.js'
 
 export { ContentAddressedStore } from './cas.js'
 
@@ -41,8 +43,22 @@ export class PpteFileService {
     return writeCheckpoint(document, target, { ...options, recentTransactions: recentTransactions?.length ? [...recentTransactions] : options.recentTransactions })
   }
 
-  open(target: string): OpenCheckpointResult {
-    return openCheckpoint(target)
+  checkpoint(document: PpteDocument, target: string, options: CheckpointWriteOptions = {}, recentTransactions?: ReadonlyArray<Transaction>): CheckpointResult {
+    return this.write(document, target, options, recentTransactions)
+  }
+
+  open(target: string | Uint8Array): OpenCheckpointResult {
+    return typeof target === 'string' ? openCheckpoint(target) : openCheckpointBytes(target)
+  }
+
+  /** Build a history-free checkpoint for sharing without mutating the source document. */
+  exportClean(document: PpteDocument, options: Omit<CheckpointWriteOptions, 'clean' | 'recentTransactions'> = {}): Uint8Array {
+    return buildCheckpointBytes(cleanDocumentSnapshot(document), { ...options, clean: true, recentTransactions: [] })
+  }
+
+  buildPortable(document: PpteDocument, options: PortableBuildOptions | PortableProfile): PortableBuildResult {
+    if (typeof options === 'string') return buildPortableRuntime(document, { profile: options as Exclude<PortableProfile, 'light-edit'> })
+    return buildPortableRuntime(document, options)
   }
 
   clearRecovery(): void {
@@ -143,6 +159,10 @@ export function writeCheckpoint(document: PpteDocument, target: string, options:
 
 export function openCheckpoint(target: string): OpenCheckpointResult {
   const bytesOnDisk = new Uint8Array(readFileSync(target))
+  return openCheckpointBytes(bytesOnDisk)
+}
+
+export function openCheckpointBytes(bytesOnDisk: Uint8Array): OpenCheckpointResult {
   const archive = readZip(bytesOnDisk)
   if (new TextDecoder().decode(archive.get('mimetype') ?? new Uint8Array()) !== 'application/vnd.ppte+zip') throw new Error('CHECKPOINT_FAILED: invalid mimetype')
   const manifest = parseJson<PpteManifest>(archive, 'manifest.json')
@@ -183,6 +203,86 @@ export function openCheckpoint(target: string): OpenCheckpointResult {
   if (!history || descriptor.mode !== history.mode || descriptor.snapshotRevision !== history.snapshotRevision || descriptor.recentTransactionCount !== history.recentTransactionCount || descriptor.deepHistoryExternal !== history.deepHistoryExternal) throw new Error('CHECKPOINT_FAILED: history descriptor does not match manifest')
   const recentTransactions = readRecentTransactions(archive, manifest)
   return { document, manifest, recentTransactions }
+}
+
+/** Serialize the exact stored ZIP used by writeCheckpoint without touching disk. */
+export function buildCheckpointBytes(document: PpteDocument, options: CheckpointWriteOptions = {}): Uint8Array {
+  const issues = validateRuntimeDocument(document).filter((issue) => issue.severity === 'error')
+  if (issues.length) throw new Error(issues.map((issue) => `${issue.code}: ${issue.message}`).join('\n'))
+  const revision = canonicalRevision(document)
+  const timestamp = options.timestamp ?? '1970-01-01T00:00:00.000Z'
+  const entries: ZipEntry[] = []
+  addEntry(entries, 'mimetype', bytes('application/vnd.ppte+zip'))
+  addEntry(entries, 'document.json', bytes(canonicalJsonString(document)))
+  addEntry(entries, 'assets/index.json', bytes(canonicalJsonString(document.assets)))
+  addEntry(entries, 'fonts/index.json', bytes(canonicalJsonString(document.fonts)))
+  const recent = options.recentTransactions ?? []
+  if (options.clean && recent.length) throw new Error('CHECKPOINT_FAILED: clean checkpoint cannot contain recent history')
+  for (const [index, transaction] of recent.entries()) {
+    const transactionIssues = validateTransactionShape(transaction).filter((issue) => issue.severity === 'error')
+    if (transactionIssues.length) throw new Error(`CHECKPOINT_FAILED: invalid recent transaction ${index + 1}: ${transactionIssues.map((issue) => issue.message).join('; ')}`)
+  }
+  addEntry(entries, 'history/descriptor.json', bytes(canonicalJsonString({ mode: options.clean ? 'clean' : 'standard', snapshotRevision: revision, recentTransactionCount: options.clean ? 0 : recent.length, deepHistoryExternal: !options.clean })))
+  if (!options.clean && recent.length) addEntry(entries, 'history/recent.jsonl', bytes(recent.map((transaction) => canonicalJsonString(transaction)).join('\n') + '\n'))
+  for (const [assetId, data] of Object.entries(options.assetBytes ?? {})) {
+    const asset = document.assets[assetId]
+    if (!asset) throw new Error(`ASSET_MISSING: ${assetId}`)
+    if (data.length !== asset.byteLength || normalizeHash(asset.hash) !== sha256HexBytes(data)) throw new Error(`ASSET_HASH_MISMATCH: ${assetId}`)
+    addEntry(entries, safePackagePath(asset.path, `assets/${assetId}`, 'assets/'), data)
+  }
+  for (const asset of Object.values(document.assets)) {
+    const data = options.assetBytes?.[asset.id] ?? options.cas?.get(asset.hash)
+    if (!data) throw new Error(`ASSET_MISSING: checkpoint requires bytes for ${asset.id}`)
+    if (!options.assetBytes?.[asset.id]) {
+      if (data.length !== asset.byteLength || normalizeHash(asset.hash) !== sha256HexBytes(data)) throw new Error(`ASSET_HASH_MISMATCH: ${asset.id}`)
+      addEntry(entries, safePackagePath(asset.path, `assets/${asset.id}`, 'assets/'), data)
+    }
+  }
+  for (const [fontId, data] of Object.entries(options.fontBytes ?? {})) {
+    const font = document.fonts[fontId]
+    if (!font) throw new Error(`FONT_MISSING: ${fontId}`)
+    if (font.hash && normalizeHash(font.hash) !== sha256HexBytes(data)) throw new Error(`FONT_HASH_MISMATCH: ${fontId}`)
+    addEntry(entries, safePackagePath(font.path ?? `fonts/${fontId}.woff2`, `fonts/${fontId}.woff2`, 'fonts/'), data)
+  }
+  for (const font of Object.values(document.fonts)) {
+    if (font.source !== 'embedded') continue
+    const data = options.fontBytes?.[font.id] ?? (font.hash ? options.cas?.get(font.hash) : undefined)
+    if (!data) throw new Error(`FONT_MISSING: checkpoint requires bytes for ${font.id}`)
+    if (font.hash && normalizeHash(font.hash) !== sha256HexBytes(data)) throw new Error(`FONT_HASH_MISMATCH: ${font.id}`)
+    if (!options.fontBytes?.[font.id]) addEntry(entries, safePackagePath(font.path ?? `fonts/${font.id}.woff2`, `fonts/${font.id}.woff2`, 'fonts/'), data)
+  }
+  const files = entries.filter((entry) => entry.name !== 'mimetype').map((entry) => ({ path: entry.name, mediaType: mediaTypeFor(entry.name), byteLength: entry.data.length, sha256: sha256HexBytes(entry.data), required: entry.name === 'document.json' }))
+  const manifest: PpteManifest = {
+    format: 'ppte',
+    formatVersion: '2',
+    schemaVersion: '2.0.0',
+    operationProtocolVersion: '1.0',
+    compatibilityProfile: PPTE_COMPATIBILITY_PROFILE,
+    documentId: document.documentId,
+    contentRevision: revision,
+    title: document.metadata.title,
+    createdAt: document.metadata.createdAt ?? timestamp,
+    updatedAt: timestamp,
+    requiredWidgets: document.widgetRequirements ?? [],
+    clean: options.clean ?? false,
+    files,
+    history: { mode: options.clean ? 'clean' : 'standard', snapshotRevision: revision, recentTransactionCount: options.clean ? 0 : recent.length, deepHistoryExternal: !options.clean },
+  }
+  validateManifest(manifest)
+  addEntry(entries, 'manifest.json', bytes(canonicalJsonString(manifest)))
+  const archive = writeZip(entries)
+  readZip(archive)
+  return archive
+}
+
+export function cleanDocumentSnapshot(document: PpteDocument): PpteDocument {
+  const cleaned = JSON.parse(canonicalJsonString(document)) as PpteDocument
+  for (const slide of Object.values(cleaned.slides)) if (slide.notes?.private !== undefined) {
+    const notes = { ...slide.notes }
+    delete notes.private
+    slide.notes = Object.keys(notes).length ? notes : undefined
+  }
+  return cleaned
 }
 
 export function validateManifest(manifest: PpteManifest): void {
@@ -236,6 +336,11 @@ export function checkpointAdapter(): { write(document: PpteDocument, target: str
 }
 
 interface ZipEntry {
+  name: string
+  data: Uint8Array
+}
+
+export interface StoredZipEntry {
   name: string
   data: Uint8Array
 }
@@ -304,6 +409,10 @@ function writeZip(entries: ZipEntry[]): Uint8Array {
   return concat([...localParts, ...centralParts, end])
 }
 
+export function writeStoredZip(entries: StoredZipEntry[]): Uint8Array {
+  return writeZip(entries)
+}
+
 function readZip(data: Uint8Array): Map<string, Uint8Array> {
   if (data.length > MAX_ARCHIVE_BYTES) throw new Error('CHECKPOINT_FAILED: ZIP archive exceeds size limit')
   const result = new Map<string, Uint8Array>()
@@ -364,6 +473,10 @@ function readZip(data: Uint8Array): Map<string, Uint8Array> {
   }
   if (cursor !== centralEnd) throw new Error('CHECKPOINT_FAILED: ZIP central directory size mismatch')
   return result
+}
+
+export function readStoredZip(data: Uint8Array): Map<string, Uint8Array> {
+  return readZip(data)
 }
 
 function parseJson<T>(archive: Map<string, Uint8Array>, name: string): T {

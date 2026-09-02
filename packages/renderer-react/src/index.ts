@@ -93,10 +93,12 @@ export function renderTextPlain(element: TextElement): string {
 
 function renderElement(document: PpteDocument, element: Element, options: RenderOptions): string {
   const frame = `left:${number(element.frame.x)}du;top:${number(element.frame.y)}du;width:${number(element.frame.width)}du;height:${number(element.frame.height)}du;opacity:${number(element.opacity ?? 1)};transform:rotate(${number(element.rotationDeg ?? 0)}deg);transform-origin:center center;`
-  if (element.type === 'text') return renderText(document, element, frame)
-  if (element.type === 'image') return renderImage(document, element, frame, options)
-  if (element.type === 'shape') return renderShape(document, element, frame)
-  throw new Error(`UNSUPPORTED_ELEMENT_TYPE: ${element.type}`)
+  let rendered: string
+  if (element.type === 'text') rendered = renderText(document, element, frame)
+  else if (element.type === 'image') rendered = renderImage(document, element, frame, options)
+  else if (element.type === 'shape') rendered = renderShape(document, element, frame)
+  else throw new Error(`UNSUPPORTED_ELEMENT_TYPE: ${element.type}`)
+  return element.appearStep === undefined ? rendered : rendered.replace(/^<(\w+)/, `<$1 data-ppte-appear-step="${number(element.appearStep)}"`)
 }
 
 function visualUnits(document: PpteDocument, slideId: string): Map<string, { elementId: string; semanticKey?: string; html: string }> {

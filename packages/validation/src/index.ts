@@ -25,7 +25,7 @@ const OPERATION_KINDS = new Set<OperationKind>([
   'slide.insert', 'slide.delete', 'slide.move', 'slide.update', 'slide.setReadingOrder', 'slide.setProtectedAnchors',
   'element.insert', 'element.delete', 'element.duplicate', 'element.move', 'element.resize', 'element.rotate', 'element.reorder', 'element.setVisibility', 'element.setLocked', 'element.setEditPolicy', 'element.setSemanticKey', 'element.setStyleRef', 'element.updateStyleOverrides', 'element.clearStyleOverrides',
   'text.replaceContent', 'text.setOverflowPolicy', 'text.fitByReducingFont', 'text.resizeBox',
-  'image.replaceAsset', 'image.setCrop', 'image.setFocalPoint', 'shape.updateStyle',
+  'image.replaceAsset', 'image.setCrop', 'image.setFocalPoint', 'asset.upsert', 'font.upsert', 'shape.updateStyle',
   'chart.replaceData', 'chart.updateEncoding', 'chart.updateOptions', 'chart.updateStyle', 'component.updateProps',
   'group.create', 'group.delete', 'group.addMembers', 'group.removeMembers', 'group.move', 'group.resize',
   'fact.upsert', 'fact.delete', 'fact.syncReferences', 'source.upsert', 'source.delete', 'layout.align', 'layout.distribute',
@@ -50,6 +50,15 @@ export interface OverrideDebtReport {
   controllableFields: number
   keyElementCount: number
   entries: OverrideDebtEntry[]
+}
+
+export interface GlyphCoverageReport {
+  elementId: string
+  fontFamily: string
+  fontId?: string
+  covered: boolean
+  missingCodePoints: number[]
+  source: 'declared' | 'system-safe' | 'unresolved' | 'unsafe'
 }
 
 export function validateRuntimeDocument(document: PpteDocument): ValidationIssue[] {
@@ -228,6 +237,29 @@ function validateOperationShape(operation: Record<string, unknown>, index: numbe
     case 'image.replaceAsset': requireString('assetId'); if (operation.preserveCrop !== undefined && typeof operation.preserveCrop !== 'boolean') issues.push(error('SCHEMA_INVALID', 'image.replaceAsset.preserveCrop must be boolean.', `${path}/preserveCrop`)); break
     case 'image.setCrop': { const crop = requireRecord('crop'); if (crop) for (const coordinate of ['x', 'y', 'width', 'height']) requireFiniteNumberAt(crop, coordinate, `${path}/crop`, issues); break }
     case 'image.setFocalPoint': if (operation.focalPoint !== undefined) requirePoint('focalPoint'); break
+    case 'asset.upsert': {
+      const asset = requireRecord('asset')
+      if (asset) {
+        requireStringAt(asset, 'id', `${path}/asset`, issues)
+        requireStringAt(asset, 'hash', `${path}/asset`, issues)
+        requireStringAt(asset, 'mimeType', `${path}/asset`, issues)
+        requireStringAt(asset, 'path', `${path}/asset`, issues)
+        if (!Number.isInteger(asset.byteLength) || Number(asset.byteLength) < 0) issues.push(error('SCHEMA_INVALID', 'asset.upsert.asset.byteLength must be a non-negative integer.', `${path}/asset/byteLength`))
+      }
+      if (operation.remove !== undefined && typeof operation.remove !== 'boolean') issues.push(error('SCHEMA_INVALID', 'asset.upsert.remove must be boolean.', `${path}/remove`))
+      break
+    }
+    case 'font.upsert': {
+      const font = requireRecord('font')
+      if (font) {
+        requireStringAt(font, 'id', `${path}/font`, issues)
+        requireStringAt(font, 'family', `${path}/font`, issues)
+        requireStringAt(font, 'source', `${path}/font`, issues)
+        if (!Number.isFinite(font.weight)) issues.push(error('SCHEMA_INVALID', 'font.upsert.font.weight must be finite.', `${path}/font/weight`))
+      }
+      if (operation.remove !== undefined && typeof operation.remove !== 'boolean') issues.push(error('SCHEMA_INVALID', 'font.upsert.remove must be boolean.', `${path}/remove`))
+      break
+    }
     case 'shape.updateStyle': requireRecord('patch'); if (operation.replace !== undefined && typeof operation.replace !== 'boolean') issues.push(error('SCHEMA_INVALID', 'shape.updateStyle.replace must be boolean.', `${path}/replace`)); break
     case 'chart.replaceData': requireRecord('data'); break
     case 'chart.updateEncoding': requireRecord('encoding'); break
@@ -315,19 +347,33 @@ export function validateTextOverflow(document: PpteDocument, slideId: string, el
   }]
 }
 
-/** Check the complete text content, including supplementary-plane characters. */
-export function checkGlyphCoverage(document: PpteDocument, element: TextElement, addedText?: string): ValidationIssue[] {
+/**
+ * Inspect the complete text content, including supplementary-plane characters.
+ * Portable editing passes `strict: true`: an undeclared font is an error, not a
+ * reason to let the browser silently select a fallback font.
+ */
+export function inspectGlyphCoverage(document: PpteDocument, element: TextElement, addedText?: string, options: { strict?: boolean } = {}): GlyphCoverageReport {
   const text = addedText ?? textContent(element)
   const fonts = Object.values(document.fonts ?? {}).filter((font): font is FontAsset => Boolean(font) && typeof font === 'object')
   const style = effectiveTextStyle(document, element)
   const candidate = fonts.find((font) => font.family === style.fontFamily)
-  // A missing declaration can still be a host system font. There is no false
-  // claim of coverage to make until the host declares the font as embedded.
-  if (!candidate) return []
-  if (!candidate.editableSafe && candidate.source !== 'system') return [{ code: 'FONT_GLYPH_MISSING', severity: 'error', message: `Font ${candidate.family} is not marked editableSafe.`, elementId: element.id, recovery: 'Choose a font with declared editable coverage.' }]
-  if (!Array.isArray(candidate.glyphCoverage) || candidate.glyphCoverage.length === 0) return candidate.source === 'system' ? [] : [{ code: 'FONT_GLYPH_MISSING', severity: 'error', message: `Font ${candidate.family} has no declared glyph coverage.`, elementId: element.id, recovery: 'Embed coverage or choose a declared system-safe font.' }]
-  const missing = [...new Set([...text].map((character) => character.codePointAt(0) ?? 0).filter((codePoint) => !candidate.glyphCoverage?.some((range) => codePoint >= range.start && codePoint <= range.end)))]
-  return missing.length === 0 ? [] : [{ code: 'FONT_GLYPH_MISSING', severity: 'error', message: `Font ${candidate.family} does not cover ${missing.map((codePoint) => `U+${codePoint.toString(16).toUpperCase()}`).join(', ')}.`, elementId: element.id, recovery: 'Choose a compatible font, add coverage, or cancel the edit.' }]
+  if (!candidate) return { elementId: element.id, fontFamily: style.fontFamily, covered: !options.strict, missingCodePoints: [], source: 'unresolved' }
+  const codePoints = [...new Set([...text].map((character) => character.codePointAt(0) ?? 0))]
+  if (!Array.isArray(candidate.glyphCoverage) || candidate.glyphCoverage.length === 0) {
+    const systemSafe = candidate.source === 'system' && candidate.editableSafe === true
+    return { elementId: element.id, fontFamily: candidate.family, fontId: candidate.id, covered: systemSafe || !options.strict, missingCodePoints: systemSafe || !options.strict ? [] : codePoints, source: systemSafe ? 'system-safe' : 'unsafe' }
+  }
+  const missing = codePoints.filter((codePoint) => !candidate.glyphCoverage?.some((range) => codePoint >= range.start && codePoint <= range.end))
+  const unsafe = options.strict && (candidate.editableSafe !== true || candidate.source === 'fallback')
+  return { elementId: element.id, fontFamily: candidate.family, fontId: candidate.id, covered: missing.length === 0 && !unsafe, missingCodePoints: missing, source: unsafe ? 'unsafe' : 'declared' }
+}
+
+export function checkGlyphCoverage(document: PpteDocument, element: TextElement, addedText?: string, options: { strict?: boolean } = {}): ValidationIssue[] {
+  const report = inspectGlyphCoverage(document, element, addedText, options)
+  if (report.covered) return []
+  if (report.source === 'unresolved') return [{ code: 'FONT_GLYPH_MISSING', severity: 'error', message: `Font ${report.fontFamily} has no explicit coverage declaration for portable editing.`, elementId: element.id, recovery: 'Choose a declared system-safe font or embed a font with glyph coverage.' }]
+  if (report.source === 'unsafe') return [{ code: 'FONT_GLYPH_MISSING', severity: 'error', message: `Font ${report.fontFamily} is not marked editableSafe for portable editing.`, elementId: element.id, recovery: 'Choose a font with declared editable coverage.' }]
+  return [{ code: 'FONT_GLYPH_MISSING', severity: 'error', message: `Font ${report.fontFamily} does not cover ${report.missingCodePoints.map((codePoint) => `U+${codePoint.toString(16).toUpperCase()}`).join(', ')}.`, elementId: element.id, recovery: 'Choose a compatible font, add coverage, or cancel the edit.' }]
 }
 
 export function effectiveTextStyle(document: PpteDocument, element: TextElement): ResolvedTextStyle {

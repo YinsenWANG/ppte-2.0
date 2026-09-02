@@ -1,4 +1,5 @@
 import type {
+  Asset,
   AssetId,
   ChartData,
   ChartEncoding,
@@ -10,6 +11,7 @@ import type {
   ElementId,
   Fact,
   FactId,
+  FontAsset,
   Frame,
   GroupId,
   ImageStyle,
@@ -142,6 +144,8 @@ export type Operation =
   | ImageReplaceAssetOperation
   | ImageSetCropOperation
   | ImageSetFocalPointOperation
+  | AssetUpsertOperation
+  | FontUpsertOperation
   | ShapeUpdateStyleOperation
   | ChartReplaceDataOperation
   | ChartUpdateEncodingOperation
@@ -321,6 +325,16 @@ export interface ImageSetFocalPointOperation extends OperationBase<'image.setFoc
   slideId: SlideId
   elementId: ElementId
   focalPoint?: Point
+}
+export interface AssetUpsertOperation extends OperationBase<'asset.upsert'> {
+  asset: Asset
+  /** Used only by generated inverse operations; normal patches must omit it. */
+  remove?: boolean
+}
+export interface FontUpsertOperation extends OperationBase<'font.upsert'> {
+  font: FontAsset
+  /** Used only by generated inverse operations; normal patches must omit it. */
+  remove?: boolean
 }
 export interface ShapeUpdateStyleOperation extends OperationBase<'shape.updateStyle'> {
   slideId: SlideId

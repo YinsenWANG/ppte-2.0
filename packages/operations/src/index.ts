@@ -349,6 +349,36 @@ export function applyOperation(document: PpteDocument, operation: Operation): Ap
       } else delete element.focalPoint
       return { document: next, inverse: [op(operation, 'image.setFocalPoint', { slideId: operation.slideId, elementId: operation.elementId, focalPoint: before })] }
     }
+    case 'asset.upsert': {
+      const before = cloneJson(next.assets[operation.asset.id])
+      if (operation.remove) {
+        if (!before) throw error('ASSET_MISSING', `Asset does not exist: ${operation.asset.id}.`)
+        delete next.assets[operation.asset.id]
+        return { document: next, inverse: [op(operation, 'asset.upsert', { asset: before })] }
+      }
+      next.assets[operation.asset.id] = cloneJson(operation.asset)
+      return {
+        document: next,
+        inverse: before
+          ? [op(operation, 'asset.upsert', { asset: before })]
+          : [op(operation, 'asset.upsert', { asset: cloneJson(operation.asset), remove: true })],
+      }
+    }
+    case 'font.upsert': {
+      const before = cloneJson(next.fonts[operation.font.id])
+      if (operation.remove) {
+        if (!before) throw error('FONT_MISSING', `Font does not exist: ${operation.font.id}.`)
+        delete next.fonts[operation.font.id]
+        return { document: next, inverse: [op(operation, 'font.upsert', { font: before })] }
+      }
+      next.fonts[operation.font.id] = cloneJson(operation.font)
+      return {
+        document: next,
+        inverse: before
+          ? [op(operation, 'font.upsert', { font: before })]
+          : [op(operation, 'font.upsert', { font: cloneJson(operation.font), remove: true })],
+      }
+    }
     case 'shape.updateStyle': {
       const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)
       if (element.type !== 'shape') throw error('OPERATION_TYPE_MISMATCH', 'shape.updateStyle requires a Shape element.')

@@ -226,6 +226,14 @@ export function analyzeOperation(document: PpteDocument, operation: Operation): 
       permissions.add('assets')
       addElement(operation.slideId, operation.elementId, `/slides/${pointer(operation.slideId)}/elements/${pointer(operation.elementId)}/focalPoint`)
       break
+    case 'asset.upsert':
+      permissions.add('assets')
+      paths.add(`/assets/${pointer(operation.asset.id)}`)
+      break
+    case 'font.upsert':
+      permissions.add('assets')
+      paths.add(`/fonts/${pointer(operation.font.id)}`)
+      break
     case 'shape.updateStyle':
       permissions.add('style')
       addElement(operation.slideId, operation.elementId, `/slides/${pointer(operation.slideId)}/elements/${pointer(operation.elementId)}/style`)

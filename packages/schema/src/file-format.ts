@@ -57,6 +57,7 @@ export interface PortableOrigin {
 }
 export interface PatchManifest {
   patchVersion: '1'
+  patchId?: string
   documentId: DocumentId
   baseRevision: Revision
   headRevision?: Revision
@@ -65,11 +66,16 @@ export interface PatchManifest {
   operationProtocolVersion: string
   compatibilityProfile: string
   files: FileEntry[]
+  assetFiles?: Record<AssetId, string>
+  fontFiles?: Record<FontId, string>
 }
 export interface PptePatch {
   manifest: PatchManifest
   operations: Operation[]
   assets?: Record<AssetId, Uint8Array>
   fonts?: Record<FontId, Uint8Array>
+  /** Metadata travels with new binary payloads so a patch can be applied atomically. */
+  assetMetadata?: Record<AssetId, import('./document.js').Asset>
+  fontMetadata?: Record<FontId, import('./document.js').FontAsset>
   metadata?: Record<string, JsonValue>
 }
