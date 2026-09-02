@@ -204,7 +204,7 @@ export class PpteSession {
       baseRevision: afterRevision,
       actor: { type: 'system', id: 'undo' },
       scope: { kind: 'document', permissions: allPermissions(), allowInsert: true, allowDelete: true },
-      changeContract: { allowedOperationKinds: [...new Set(applied.inverseOperations.map((operation) => operation.kind))], maxChangedSlides: Number.MAX_SAFE_INTEGER, maxChangedElements: Number.MAX_SAFE_INTEGER, maxInsertedElements: Number.MAX_SAFE_INTEGER, maxDeletedElements: Number.MAX_SAFE_INTEGER, maxReplacedAssets: Number.MAX_SAFE_INTEGER },
+      changeContract: { allowedOperationKinds: [...new Set(applied.inverseOperations.map((operation) => operation.kind))], maxChangedSlides: Number.MAX_SAFE_INTEGER, maxChangedElements: Number.MAX_SAFE_INTEGER, maxInsertedElements: Number.MAX_SAFE_INTEGER, maxDeletedElements: Number.MAX_SAFE_INTEGER, maxReplacedAssets: Number.MAX_SAFE_INTEGER, maxChangedFacts: Number.MAX_SAFE_INTEGER, maxChangedSources: Number.MAX_SAFE_INTEGER, maxChangedThemeTokens: Number.MAX_SAFE_INTEGER, maxChangedStylePresets: Number.MAX_SAFE_INTEGER },
       reason: `Inverse of ${transaction.transactionId}`,
       createdAt: new Date().toISOString(),
       operations: applied.inverseOperations,

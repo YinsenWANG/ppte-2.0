@@ -85,6 +85,10 @@ export interface ChangeContract {
   maxInsertedElements?: number
   maxDeletedElements?: number
   maxReplacedAssets?: number
+  maxChangedFacts?: number
+  maxChangedSources?: number
+  maxChangedThemeTokens?: number
+  maxChangedStylePresets?: number
   preserve?: ChangeInvariants
   requireConfirmation?: boolean
   userIntentSummary?: string

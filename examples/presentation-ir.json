@@ -1,0 +1,35 @@
+{
+  "irVersion": "1.0",
+  "title": "Annual operating review",
+  "audience": "Leadership team",
+  "objective": "Explain the growth signal and the remaining risk.",
+  "narrative": [
+    {
+      "key": "opening",
+      "title": "Opening",
+      "slideKeys": ["opening"]
+    }
+  ],
+  "slides": [
+    {
+      "irVersion": "1.0",
+      "slideKey": "opening",
+      "purpose": "statement",
+      "message": "Growth is visible; operating quality needs follow-through.",
+      "visualStrategy": "structured",
+      "density": "low",
+      "blocks": [
+        {
+          "key": "title",
+          "kind": "heading",
+          "content": "Annual operating review",
+          "importance": "primary"
+        }
+      ]
+    }
+  ],
+  "themeIntent": {
+    "tone": "formal",
+    "density": "low"
+  }
+}

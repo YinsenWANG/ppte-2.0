@@ -96,7 +96,7 @@ function changedMapKeys(before: Record<string, unknown>, after: Record<string, u
   return [...new Set([...Object.keys(before), ...Object.keys(after)])].filter((key) => hashPresent(before[key]) !== hashPresent(after[key])).length
 }
 function changedThemeTokens(before: PpteDocument, after: PpteDocument): number {
-  return changedMapKeys(before.theme.tokens.colors, after.theme.tokens.colors) + changedMapKeys(before.theme.tokens.fontFamilies, after.theme.tokens.fontFamilies) + changedMapKeys(before.theme.tokens.fontSizes, after.theme.tokens.fontSizes) + changedMapKeys(before.theme.tokens.spacing, after.theme.tokens.spacing) + changedMapKeys(before.theme.tokens.radii, after.theme.tokens.radii)
+  return changedMapKeys(before.theme.tokens.colors, after.theme.tokens.colors) + changedMapKeys(before.theme.tokens.fontFamilies, after.theme.tokens.fontFamilies) + changedMapKeys(before.theme.tokens.fontSizes, after.theme.tokens.fontSizes) + changedMapKeys(before.theme.tokens.spacing, after.theme.tokens.spacing) + changedMapKeys(before.theme.tokens.radii, after.theme.tokens.radii) + changedMapKeys(before.theme.tokens.shadows, after.theme.tokens.shadows)
 }
 function changedStylePresets(before: PpteDocument, after: PpteDocument): number {
   return (['text', 'shape', 'image', 'chart'] as const).reduce((sum, category) => sum + changedMapKeys(before.theme.presets[category], after.theme.presets[category]), 0)

@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 from jsonschema import Draft202012Validator
+from referencing import Registry, Resource
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMAS = ROOT / 'schemas'
@@ -15,20 +16,27 @@ pairs = [
     ('document.schema.json', 'minimal-document.json'),
     ('transaction.schema.json', 'text-change-transaction.json'),
     ('slide-ir.schema.json', 'slide-ir.json'),
+    ('presentation-ir.schema.json', 'presentation-ir.json'),
+    ('recipe.schema.json', 'recipe.json'),
     ('manifest.schema.json', 'manifest.json'),
     ('patch-manifest.schema.json', 'patch-manifest.json'),
 ]
 
 errors: list[str] = []
+schema_documents = {name: json.loads((SCHEMAS / name).read_text()) for name in {schema_name for schema_name, _ in pairs}}
+schema_registry = Registry()
+for schema in schema_documents.values():
+    if schema.get('$id'):
+        schema_registry = schema_registry.with_resource(schema['$id'], Resource.from_contents(schema))
 for schema_name, example_name in pairs:
-    schema = json.loads((SCHEMAS / schema_name).read_text())
+    schema = schema_documents[schema_name]
     instance = json.loads((EXAMPLES / example_name).read_text())
     try:
         Draft202012Validator.check_schema(schema)
     except Exception as exc:
         errors.append(f'{schema_name}: invalid schema: {exc}')
         continue
-    validator = Draft202012Validator(schema)
+    validator = Draft202012Validator(schema, registry=schema_registry)
     for err in sorted(validator.iter_errors(instance), key=lambda e: list(e.path)):
         errors.append(f'{example_name}{list(err.path)}: {err.message}')
 

@@ -8,6 +8,7 @@ import type {
   SourceId,
   VisualStrategy,
 } from './document.js'
+import type { ValidationIssue } from './operations.js'
 
 export interface PresentationIR {
   irVersion: '1.0'
@@ -114,11 +115,15 @@ export type LayoutConstraint =
   | { kind: 'align'; slotIds: string[]; axis: 'x' | 'y'; mode: 'start' | 'center' | 'end' }
   | { kind: 'stack'; slotIds: string[]; axis: 'horizontal' | 'vertical'; gap: number }
   | { kind: 'grid'; slotIds: string[]; columns: number; gapX: number; gapY: number }
+  | { kind: 'gap'; slotIds: string[]; axis: 'horizontal' | 'vertical'; value: number }
+  | { kind: 'padding'; zoneId: string; top: number; right: number; bottom: number; left: number }
   | { kind: 'min-size'; slotId: string; width?: number; height?: number }
   | { kind: 'max-size'; slotId: string; width?: number; height?: number }
   | { kind: 'aspect-ratio'; slotId: string; ratio: number }
+  | { kind: 'keep-together'; slotIds: string[] }
   | { kind: 'avoid-region'; slotId: string; region: Rect }
-  | { kind: 'safe-area'; slotId: string }
+  | { kind: 'safe-area'; slotId: string | '*'}
+  | { kind: 'baseline'; slotIds: string[] }
 export interface RecipeVariant {
   id: string
   when?: Record<string, JsonValue>
@@ -139,6 +144,15 @@ export interface RecipeSpec {
   artworkSafeRegions?: Rect[]
   qualityRules?: QualityRule[]
 }
+
+/** A slide-level draft is compile output, never a persisted document source. */
+export interface SlideDraft {
+  slideKey: string
+  purpose: SlidePurpose
+  message: string
+  visualStrategy: VisualStrategy
+  sourceIds?: SourceId[]
+}
 export interface CompileProvenance {
   compilerVersion: string
   recipeId?: string
@@ -154,6 +168,7 @@ export interface ElementDraft {
   role?: SemanticRole
   frame: Rect
   data: JsonValue
+  sourceBlockKey?: string
 }
 export interface LogicalGroupDraft {
   draftId: string
@@ -161,10 +176,22 @@ export interface LogicalGroupDraft {
 }
 export interface CompiledSlideDraft {
   slideKey: string
+  slide: SlideDraft
   elementDrafts: ElementDraft[]
   groups: LogicalGroupDraft[]
   readingOrder: string[]
   semanticKeyMap: Record<string, string>
   assetIds?: AssetId[]
+  validationIssues: ValidationIssue[]
   provenance: CompileProvenance
+}
+
+export interface PresentationDraft {
+  title: string
+  slideDrafts: CompiledSlideDraft[]
+  validationIssues: ValidationIssue[]
+  provenance: {
+    compilerVersion: string
+    seed?: string
+  }
 }

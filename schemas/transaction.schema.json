@@ -226,6 +226,22 @@
           "type": "integer",
           "minimum": 0
         },
+        "maxChangedFacts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maxChangedSources": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maxChangedThemeTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maxChangedStylePresets": {
+          "type": "integer",
+          "minimum": 0
+        },
         "preserve": {
           "type": "object",
           "properties": {

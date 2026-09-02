@@ -128,7 +128,7 @@ function validateChangeContractShape(contract: Record<string, unknown>, issues: 
     if (field === 'allowedOperationKinds') for (const kind of contract[field]) if (OPERATION_KINDS.has(kind as OperationKind) === false) issues.push(error('SCHEMA_INVALID', `Unknown allowed operation kind ${String(kind)}.`, `/changeContract/${field}`))
     if (field === 'allowedPaths') for (const path of contract[field]) if (typeof path === 'string' && !path.startsWith('/')) issues.push(error('SCHEMA_INVALID', 'Allowed paths must be JSON pointers.', `/changeContract/${field}`))
   }
-  for (const field of ['maxChangedSlides', 'maxChangedElements', 'maxInsertedElements', 'maxDeletedElements', 'maxReplacedAssets'] as const) {
+  for (const field of ['maxChangedSlides', 'maxChangedElements', 'maxInsertedElements', 'maxDeletedElements', 'maxReplacedAssets', 'maxChangedFacts', 'maxChangedSources', 'maxChangedThemeTokens', 'maxChangedStylePresets'] as const) {
     if (contract[field] !== undefined && (!Number.isInteger(contract[field]) || (contract[field] as number) < 0)) issues.push(error('SCHEMA_INVALID', `changeContract.${field} must be a non-negative integer.`, `/changeContract/${field}`))
   }
   const preserve = contract.preserve

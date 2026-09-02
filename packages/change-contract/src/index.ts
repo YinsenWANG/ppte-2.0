@@ -25,6 +25,47 @@ export interface OperationImpact {
   replacedAssets: number
 }
 
+/** The measured mutation surface used by contracts and Agent tool responses. */
+export interface MutationBudget {
+  changedSlides: number
+  changedElements: number
+  insertedElements: number
+  deletedElements: number
+  replacedAssets: number
+  changedFacts: number
+  changedSources: number
+  changedThemeTokens: number
+  changedStylePresets: number
+}
+
+export function measureMutationBudget(diff: StructuralDiff): MutationBudget {
+  return { ...diff.mutationSummary }
+}
+
+export function contentOnlyContract(elementId: string): ChangeContract {
+  return { allowedOperationKinds: ['text.replaceContent'], allowedElementIds: [elementId], ...zeroBudget(1), preserve: { geometry: 'preserve', style: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' }, requireConfirmation: false, userIntentSummary: 'Only replace selected text content.' }
+}
+
+export function geometryOnlyContract(elementIds: string[], requireConfirmation = true): ChangeContract {
+  return { allowedOperationKinds: ['element.move', 'element.resize', 'layout.align', 'layout.distribute'], allowedElementIds: elementIds, ...zeroBudget(elementIds.length), preserve: { content: 'preserve', data: 'preserve', style: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' }, requireConfirmation, userIntentSummary: 'Change geometry while preserving semantic content and style.' }
+}
+
+export function styleOnlyContract(elementIds: string[], requireConfirmation = true): ChangeContract {
+  return { allowedOperationKinds: ['element.setStyleRef', 'element.updateStyleOverrides', 'element.clearStyleOverrides', 'theme.updatePreset'], allowedElementIds: elementIds, ...zeroBudget(elementIds.length), maxChangedStylePresets: 1, preserve: { content: 'preserve', data: 'preserve', geometry: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' }, requireConfirmation, userIntentSummary: 'Change style within the selected scope.' }
+}
+
+export function replaceAssetContract(elementId: string, requireConfirmation = true): ChangeContract {
+  return { allowedOperationKinds: ['image.replaceAsset', 'image.setCrop', 'image.setFocalPoint'], allowedElementIds: [elementId], ...zeroBudget(1), maxReplacedAssets: 1, preserve: { content: 'preserve', data: 'preserve', style: 'preserve', geometry: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' }, requireConfirmation, userIntentSummary: 'Replace one Image Asset without changing its semantic placement.' }
+}
+
+export function fullWithinScopeContract(allowedOperationKinds: OperationKind[], maxChangedElements = Number.MAX_SAFE_INTEGER): ChangeContract {
+  return { allowedOperationKinds, maxChangedSlides: Number.MAX_SAFE_INTEGER, maxChangedElements, maxInsertedElements: Number.MAX_SAFE_INTEGER, maxDeletedElements: Number.MAX_SAFE_INTEGER, maxReplacedAssets: Number.MAX_SAFE_INTEGER, maxChangedFacts: Number.MAX_SAFE_INTEGER, maxChangedSources: Number.MAX_SAFE_INTEGER, maxChangedThemeTokens: Number.MAX_SAFE_INTEGER, maxChangedStylePresets: Number.MAX_SAFE_INTEGER, requireConfirmation: true, userIntentSummary: 'Allow the declared operations within the granted Scope.' }
+}
+
+function zeroBudget(maxChangedElements: number): Pick<ChangeContract, 'maxChangedSlides' | 'maxChangedElements' | 'maxInsertedElements' | 'maxDeletedElements' | 'maxReplacedAssets' | 'maxChangedFacts' | 'maxChangedSources' | 'maxChangedThemeTokens' | 'maxChangedStylePresets'> {
+  return { maxChangedSlides: 1, maxChangedElements: Math.max(0, maxChangedElements), maxInsertedElements: 0, maxDeletedElements: 0, maxReplacedAssets: 0, maxChangedFacts: 0, maxChangedSources: 0, maxChangedThemeTokens: 0, maxChangedStylePresets: 0 }
+}
+
 export function analyzeOperation(document: PpteDocument, operation: Operation): OperationImpact {
   const slideIds = new Set<string>()
   const elementIds = new Set<string>()
@@ -302,13 +343,17 @@ export function enforceChangeContract(
     }
   }
   if (contract.allowedPaths) {
-    for (const path of paths) if (!contract.allowedPaths.some((allowed) => pathMatches(path, allowed))) issues.push(issue('CHANGE_PATH_NOT_ALLOWED', `Path ${path} is outside the Change Contract.`))
+    for (const path of [...paths, ...diff.changedPaths]) if (!contract.allowedPaths.some((allowed) => pathMatches(path, allowed))) issues.push(issue('CHANGE_PATH_NOT_ALLOWED', `Path ${path} is outside the Change Contract.`))
   }
   if (contract.maxChangedSlides !== undefined && diff.mutationSummary.changedSlides > contract.maxChangedSlides) issues.push(issue('MUTATION_BUDGET_EXCEEDED', `Changed ${diff.mutationSummary.changedSlides} slides; budget is ${contract.maxChangedSlides}.`))
   if (contract.maxChangedElements !== undefined && diff.mutationSummary.changedElements > contract.maxChangedElements) issues.push(issue('MUTATION_BUDGET_EXCEEDED', `Changed ${diff.mutationSummary.changedElements} elements; budget is ${contract.maxChangedElements}.`))
   if (contract.maxInsertedElements !== undefined && diff.mutationSummary.insertedElements > contract.maxInsertedElements) issues.push(issue('MUTATION_BUDGET_EXCEEDED', `Inserted ${diff.mutationSummary.insertedElements} elements; budget is ${contract.maxInsertedElements}.`))
   if (contract.maxDeletedElements !== undefined && diff.mutationSummary.deletedElements > contract.maxDeletedElements) issues.push(issue('MUTATION_BUDGET_EXCEEDED', `Deleted ${diff.mutationSummary.deletedElements} elements; budget is ${contract.maxDeletedElements}.`))
   if (contract.maxReplacedAssets !== undefined && diff.mutationSummary.replacedAssets > contract.maxReplacedAssets) issues.push(issue('MUTATION_BUDGET_EXCEEDED', `Replaced ${diff.mutationSummary.replacedAssets} assets; budget is ${contract.maxReplacedAssets}.`))
+  if (contract.maxChangedFacts !== undefined && diff.mutationSummary.changedFacts > contract.maxChangedFacts) issues.push(issue('MUTATION_BUDGET_EXCEEDED', `Changed ${diff.mutationSummary.changedFacts} facts; budget is ${contract.maxChangedFacts}.`, { path: '/facts' }))
+  if (contract.maxChangedSources !== undefined && diff.mutationSummary.changedSources > contract.maxChangedSources) issues.push(issue('MUTATION_BUDGET_EXCEEDED', `Changed ${diff.mutationSummary.changedSources} sources; budget is ${contract.maxChangedSources}.`, { path: '/sources' }))
+  if (contract.maxChangedThemeTokens !== undefined && diff.mutationSummary.changedThemeTokens > contract.maxChangedThemeTokens) issues.push(issue('MUTATION_BUDGET_EXCEEDED', `Changed ${diff.mutationSummary.changedThemeTokens} theme tokens; budget is ${contract.maxChangedThemeTokens}.`, { path: '/theme/tokens' }))
+  if (contract.maxChangedStylePresets !== undefined && diff.mutationSummary.changedStylePresets > contract.maxChangedStylePresets) issues.push(issue('MUTATION_BUDGET_EXCEEDED', `Changed ${diff.mutationSummary.changedStylePresets} style presets; budget is ${contract.maxChangedStylePresets}.`, { path: '/theme/presets' }))
 
   for (const operation of transaction.operations) {
     const policyIssues = checkEditPolicy(before, operation, transaction.actor.type)

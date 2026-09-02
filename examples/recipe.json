@@ -1,0 +1,21 @@
+{
+  "id": "statement.focus",
+  "version": "1.0.0",
+  "supports": ["statement", "summary"],
+  "slots": [
+    { "key": "title", "accepts": ["heading"], "required": true },
+    { "key": "body", "accepts": ["paragraph", "quote"] }
+  ],
+  "zones": [
+    { "id": "title", "x": 0.08, "y": 0.12, "width": 0.84, "height": 0.18 },
+    { "id": "body", "x": 0.12, "y": 0.38, "width": 0.76, "height": 0.28 }
+  ],
+  "constraints": [
+    { "kind": "safe-area", "slotId": "*" },
+    { "kind": "gap", "slotIds": ["title", "body"], "axis": "vertical", "value": 0.03 }
+  ],
+  "qualityRules": [
+    { "kind": "max-elements", "value": 35 },
+    { "kind": "max-overflow", "value": 0 }
+  ]
+}

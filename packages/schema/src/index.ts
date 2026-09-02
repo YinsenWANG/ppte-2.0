@@ -1,5 +1,6 @@
 export * from './document.js'
 export * from './operations.js'
 export * from './slide-ir.js'
+export * from './slide-ir-validation.js'
 export * from './file-format.js'
 export * from './validation.js'

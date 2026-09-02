@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ppte.dev/schemas/1.0/recipe.schema.json",
+  "title": "PPTe Declarative Layout Recipe 1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "version", "supports", "slots", "zones", "constraints"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1, "maxLength": 4096 },
+    "version": { "type": "string", "minLength": 1, "maxLength": 256 },
+    "supports": { "type": "array", "minItems": 1, "maxItems": 128, "uniqueItems": true, "items": { "enum": ["cover", "section", "statement", "explanation", "comparison", "metrics", "chart", "timeline", "process", "quote", "summary", "closing", "custom"] } },
+    "slots": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 128,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["key", "accepts"],
+        "properties": {
+          "key": { "type": "string", "minLength": 1, "maxLength": 4096 },
+          "accepts": { "type": "array", "minItems": 1, "maxItems": 32, "uniqueItems": true, "items": { "enum": ["heading", "paragraph", "metric", "image", "chart", "comparison", "quote", "process", "timeline", "source", "cta"] } },
+          "required": { "type": "boolean" },
+          "minCount": { "type": "integer", "minimum": 0 },
+          "maxCount": { "type": "integer", "minimum": 0 },
+          "maxChars": { "type": "integer", "minimum": 1 },
+          "preferredAspectRatio": { "type": "number", "exclusiveMinimum": 0 },
+          "styleRef": { "type": "string", "minLength": 1, "maxLength": 4096 },
+          "semanticRole": { "enum": ["title", "subtitle", "body", "caption", "metric", "source", "logo", "image", "chart", "artwork", "background", "decorative", "navigation", "cta", "custom"] }
+        }
+      }
+    },
+    "zones": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 128,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "x", "y", "width", "height"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1, "maxLength": 4096 },
+          "x": { "type": "number", "minimum": 0, "maximum": 1 },
+          "y": { "type": "number", "minimum": 0, "maximum": 1 },
+          "width": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+          "height": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 }
+        }
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "maxItems": 128,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind"],
+        "properties": {
+          "kind": { "enum": ["align", "stack", "grid", "gap", "padding", "min-size", "max-size", "aspect-ratio", "keep-together", "avoid-region", "safe-area", "baseline"] },
+          "slotIds": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+          "slotId": { "type": "string", "minLength": 1 },
+          "zoneId": { "type": "string", "minLength": 1 },
+          "axis": { "enum": ["x", "y", "horizontal", "vertical"] },
+          "mode": { "enum": ["start", "center", "end"] },
+          "gap": { "type": "number", "minimum": 0 },
+          "value": { "type": "number", "minimum": 0 },
+          "columns": { "type": "integer", "minimum": 1 },
+          "gapX": { "type": "number", "minimum": 0 },
+          "gapY": { "type": "number", "minimum": 0 },
+          "top": { "type": "number", "minimum": 0 },
+          "right": { "type": "number", "minimum": 0 },
+          "bottom": { "type": "number", "minimum": 0 },
+          "left": { "type": "number", "minimum": 0 },
+          "width": { "type": "number", "minimum": 0 },
+          "height": { "type": "number", "minimum": 0 },
+          "ratio": { "type": "number", "exclusiveMinimum": 0 },
+          "region": { "$ref": "#/$defs/rect" }
+        }
+      }
+    },
+    "variants": { "type": "array", "maxItems": 128, "items": { "type": "object", "additionalProperties": false, "required": ["id"], "properties": { "id": { "type": "string", "minLength": 1 }, "when": { "type": "object" }, "zoneOverrides": { "type": "object" } } } },
+    "artworkSafeRegions": { "type": "array", "maxItems": 128, "items": { "$ref": "#/$defs/rect" } },
+    "qualityRules": { "type": "array", "maxItems": 128, "items": { "type": "object", "additionalProperties": false, "required": ["kind", "value"], "properties": { "kind": { "enum": ["max-elements", "min-font-size", "max-overflow", "required-reading-order"] }, "value": { "type": ["number", "boolean"] } } } }
+  },
+  "$defs": {
+    "rect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "width", "height"],
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "width": { "type": "number", "exclusiveMinimum": 0 },
+        "height": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    }
+  }
+}
