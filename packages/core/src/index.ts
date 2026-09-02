@@ -79,9 +79,11 @@ export class PpteSession {
   private readonly historyLimit: number
   private readonly historyBytesLimit: number
   private readonly runtimeProfile: RuntimeProfile
+  private readonly runtimeProfileExplicit: boolean
 
   constructor(document: PpteDocument, options: SessionOptions = {}) {
     this.runtimeProfile = options.runtimeProfile ?? inferRuntimeProfile(document)
+    this.runtimeProfileExplicit = options.runtimeProfile !== undefined
     const initialIssues = validateRuntimeDocument(document, { runtimeProfile: this.runtimeProfile })
     if (initialIssues.some((issue) => issue.severity === 'error')) throw new Error(initialIssues.map((issue) => `${issue.code}: ${issue.message}`).join('\n'))
     this.document = cloneJson(document)
@@ -127,9 +129,10 @@ export class PpteSession {
     issues.push(...checkPreconditions(this.document, this.revision, transaction.operations))
     if (issues.some((issue) => issue.severity === 'error')) return { ok: false, baseRevision: this.revision, issues: dedupe(issues) }
 
+    const runtimeProfile = this.runtimeProfileForTransaction(transaction)
     let applied: ReturnType<typeof applyTransaction>
     try {
-      applied = applyTransaction(this.document, transaction, { runtimeProfile: this.runtimeProfile })
+      applied = applyTransaction(this.document, transaction, { runtimeProfile })
     } catch (cause) {
       const operationError = cause instanceof OperationApplyError ? cause : undefined
       issues.push(error(operationError?.code ?? 'OPERATION_APPLY_FAILED', operationError?.message ?? String(cause)))
@@ -137,7 +140,7 @@ export class PpteSession {
     }
     const diff = computeStructuralDiff(this.document, applied.document)
     issues.push(...enforceChangeContract(this.document, applied.document, transaction, diff))
-    issues.push(...validateRuntimeDocument(applied.document, { runtimeProfile: this.runtimeProfile }))
+    issues.push(...validateRuntimeDocument(applied.document, { runtimeProfile }))
     const ok = !issues.some((issue) => issue.severity === 'error')
     const proposedRevision = ok ? canonicalRevision(applied.document) : undefined
     const result: PreviewResult = {
@@ -223,7 +226,7 @@ export class PpteSession {
     if (!preview.ok || !preview.document || !preview.diff) return { ok: false, beforeRevision, transactionId: transaction.transactionId, diff: preview.diff, issues: preview.issues }
     let applied: ReturnType<typeof applyTransaction>
     try {
-      applied = applyTransaction(this.document, transaction, { runtimeProfile: this.runtimeProfile })
+      applied = applyTransaction(this.document, transaction, { runtimeProfile: this.runtimeProfileForTransaction(transaction) })
     } catch (cause) {
       return { ok: false, beforeRevision, transactionId: transaction.transactionId, issues: [error('OPERATION_APPLY_FAILED', cause instanceof Error ? cause.message : String(cause))] }
     }
@@ -278,6 +281,12 @@ export class PpteSession {
 
   private notify(event: SessionEvent) {
     for (const listener of this.listeners) listener(event)
+  }
+
+  private runtimeProfileForTransaction(transaction: Transaction): RuntimeProfile {
+    if (this.runtimeProfileExplicit) return this.runtimeProfile
+    if (this.runtimeProfile === 'ga-c' || inferRuntimeProfile(this.document) === 'ga-c' || transactionIntroducesGaC(transaction)) return 'ga-c'
+    return this.runtimeProfile
   }
 }
 
@@ -368,6 +377,15 @@ function inferRuntimeProfile(document: PpteDocument): RuntimeProfile {
     }
   }
   return 'ga-b'
+}
+
+function transactionIntroducesGaC(transaction: Transaction): boolean {
+  return transaction.operations.some((operation) => {
+    if (operation.kind === 'slide.update') return operation.patch.visualStrategy === 'poster'
+    if (operation.kind === 'slide.insert') return operation.slide.visualStrategy === 'poster' || Object.values(operation.slide.elements).some((element) => element.type === 'component' || element.type === 'chart' && (element.chartType === 'area' || element.chartType === 'donut'))
+    if (operation.kind === 'element.insert') return operation.element.type === 'component' || operation.element.type === 'chart' && (operation.element.chartType === 'area' || operation.element.chartType === 'donut')
+    return false
+  })
 }
 function error(code: string, message: string, path?: string, recovery?: string): ValidationIssue {
   return withErrorSemantics({ code, severity: 'error', message, path, recovery })

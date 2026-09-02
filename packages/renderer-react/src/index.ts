@@ -256,10 +256,10 @@ function renderComponent(document: PpteDocument, element: Extract<Element, { typ
   const fallbackAsset = element.fallback.kind === 'asset' && element.fallback.assetId ? document.assets[element.fallback.assetId] : undefined
   if (fallbackAsset) {
     const source = options.assetSources?.[fallbackAsset.id] ?? fallbackAsset.path
-    return `<div data-ppte-element-id="${escapeAttr(element.id)}" data-ppte-type="component" data-ppte-component-type="${escapeAttr(element.componentType)}" data-ppte-widget-fallback="asset" style="${frame}overflow:hidden;"><img src="${escapeAttr(source)}" alt="${escapeAttr(fallbackAsset.altText ?? element.fallback.label ?? element.componentType)}" style="width:100%;height:100%;object-fit:contain;"></div>`
+    return `<div data-ppte-element-id="${escapeAttr(element.id)}" data-ppte-type="component" data-ppte-component-type="${escapeAttr(element.componentType)}" data-ppte-component-version="${escapeAttr(element.componentVersion)}" data-ppte-semantic-key="${escapeAttr(element.semanticKey ?? '')}" data-ppte-widget-fallback="asset" style="${frame}overflow:hidden;"><img src="${escapeAttr(source)}" alt="${escapeAttr(fallbackAsset.altText ?? element.fallback.label ?? element.componentType)}" style="width:100%;height:100%;object-fit:contain;"></div>`
   }
   const widget = renderWidgetHtml(element, options.widgetRegistry ?? getBuiltinWidgetRegistry())
-  return `<div data-ppte-element-id="${escapeAttr(element.id)}" data-ppte-type="component" data-ppte-component-type="${escapeAttr(element.componentType)}" data-ppte-semantic-key="${escapeAttr(element.semanticKey ?? '')}" style="${frame}overflow:hidden;">${widget}</div>`
+  return `<div data-ppte-element-id="${escapeAttr(element.id)}" data-ppte-type="component" data-ppte-component-type="${escapeAttr(element.componentType)}" data-ppte-component-version="${escapeAttr(element.componentVersion)}" data-ppte-semantic-key="${escapeAttr(element.semanticKey ?? '')}" style="${frame}overflow:hidden;">${widget}</div>`
 }
 
 function renderElementSvg(document: PpteDocument, element: Element, options: RenderOptions, defs: string[]): string {

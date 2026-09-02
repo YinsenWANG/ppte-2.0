@@ -1,5 +1,5 @@
 import { canonicalJsonString, sha256HexBytes } from '../../canonical-json/src/index.js'
-import { GA_B_CHART_TYPES } from '../../charts/src/index.js'
+import { GA_B_CHART_TYPES, GA_C_CHART_TYPES } from '../../charts/src/index.js'
 import { getCompatibilityProfile, type CompatibilityProfile, type CompatibilityDisposition } from '../../compatibility/src/index.js'
 import { withErrorSemantics } from '../../schema/src/errors.js'
 import { validateRuntimeDocument } from '../../validation/src/index.js'
@@ -11,6 +11,7 @@ import type {
   ChartEncoding,
   ChartOptions,
   ChartStyle,
+  ComponentElement,
   ContentSafety,
   Element,
   ErrorImpact,
@@ -18,6 +19,7 @@ import type {
   FontAsset,
   Frame,
   ImageElement,
+  JsonValue,
   LogicalGroup,
   PpteDocument,
   Point,
@@ -112,9 +114,9 @@ interface MappedElement {
 }
 
 /**
- * Convert a JSON-compatible older semantic snapshot into a new GA-A
- * snapshot. The input is never mutated and no source markup or executable
- * payload is interpreted.
+ * Convert a JSON-compatible older semantic snapshot into a release-tested
+ * target snapshot. The input is never mutated and no source markup or
+ * executable payload is interpreted.
  */
 export function migrateLegacyDocument(input: unknown, options: LegacyMigrationOptions = {}): MigrationResult {
   const requestedProfile = options.targetProfile ?? 'ppte-2.0-ga-a.1'
@@ -173,9 +175,10 @@ export function migrateLegacyDocument(input: unknown, options: LegacyMigrationOp
     sources: normalizeSources(source.sources),
     assets,
     fonts,
+    widgetRequirements: widgetRequirements(slides),
     policies: { allowNetworkAssets: false },
   }
-  const runtimeIssues = validateRuntimeDocument(document)
+  const runtimeIssues = validateRuntimeDocument(document, { runtimeProfile: profile.id === 'ppte-2.0-ga-c.1' ? 'ga-c' : 'ga-b' })
   for (const issue of runtimeIssues) if (issue.severity === 'error') addIssue(report, { code: `MIGRATION_${issue.code}`, severity: 'error', message: issue.message, path: issue.path, slideId: issue.slideId, elementId: issue.elementId, recovery: 'Review the migration report and fix the source before creating a new checkpoint.' })
   report.convertedSlides = slides.length
   report.disposition = report.issues.some((issue) => issue.severity === 'error') ? 'reject' : 'migrate'
@@ -224,7 +227,12 @@ function migrateSlide(raw: RecordLike, index: number, context: MigrationContext,
   }
   const rawReadingOrder = Array.isArray(raw.readingOrder) ? raw.readingOrder.map((value) => elementSourceIds.get(String(value)) ?? String(value)).filter((value) => Boolean(elements[value])) : undefined
   const readingOrder = rawReadingOrder?.length ? [...new Set(rawReadingOrder)] : rootOrder.filter((elementId) => !['background', 'decorative', 'artwork'].includes(elements[elementId]?.role ?? ''))
-  const visualStrategy = stringValue(raw.visualStrategy)
+  const requestedVisualStrategy = stringValue(raw.visualStrategy)
+  const visualStrategy: VisualStrategy = requestedVisualStrategy === 'structured' || requestedVisualStrategy === 'hybrid' || requestedVisualStrategy === 'poster' ? requestedVisualStrategy : 'structured'
+  if (visualStrategy === 'poster' && context.profile.id !== 'ppte-2.0-ga-c.1') {
+    context.report.degradedElements += 1
+    addIssue(context.report, { code: 'MIGRATION_UNSUPPORTED_VISUAL_STRATEGY', severity: 'warning', message: 'Poster visual strategy requires the GA-C target profile; the slide was migrated as structured while retaining safe semantic elements.', path: `/slides/${index}/visualStrategy`, slideId: id, recovery: 'Migrate again with targetProfile ppte-2.0-ga-c.1 to retain Poster strategy, or review the structured fallback.' })
+  }
   return {
     id,
     name: stringValue(raw.name),
@@ -234,7 +242,7 @@ function migrateSlide(raw: RecordLike, index: number, context: MigrationContext,
     groups,
     readingOrder,
     notes: normalizeNotes(raw.notes),
-    visualStrategy: visualStrategy === 'structured' || visualStrategy === 'hybrid' || visualStrategy === 'poster' ? visualStrategy : 'structured',
+    visualStrategy: visualStrategy === 'poster' && context.profile.id !== 'ppte-2.0-ga-c.1' ? 'structured' : visualStrategy,
   }
 }
 
@@ -302,14 +310,24 @@ function mapElement(raw: RecordLike, hint: string, parent: Transform, context: M
     return { element, elements: [element], leafIds: [element.id], nestedGroup: false }
   }
   if (rawType === 'chart') {
-    if (context.profile.id !== 'ppte-2.0-ga-b.1') {
+    if (context.profile.id !== 'ppte-2.0-ga-b.1' && context.profile.id !== 'ppte-2.0-ga-c.1') {
       context.report.degradedElements += 1
-      addIssue(context.report, { code: 'MIGRATION_UNSUPPORTED_ELEMENT', severity: 'warning', message: 'Chart elements require the GA-B target profile and were not imported into the GA-A runtime.', path: hint, slideId, recovery: 'Migrate again with targetProfile ppte-2.0-ga-b.1 or export the chart as a safe image.' })
+      addIssue(context.report, { code: 'MIGRATION_UNSUPPORTED_ELEMENT', severity: 'warning', message: 'Chart elements require a GA-B or GA-C target profile and were not imported into the GA-A runtime.', path: hint, slideId, recovery: 'Migrate again with targetProfile ppte-2.0-ga-b.1 or ppte-2.0-ga-c.1, or export the chart as a safe image.' })
       return undefined
     }
     const chart = normalizeChartElement(raw, hint, frame, context, slideId)
     if (!chart) return undefined
     return { element: chart, elements: [chart], leafIds: [chart.id], nestedGroup: false }
+  }
+  if (rawType === 'component' || rawType === 'widget') {
+    if (context.profile.id !== 'ppte-2.0-ga-c.1') {
+      context.report.degradedElements += 1
+      addIssue(context.report, { code: 'MIGRATION_UNSUPPORTED_ELEMENT', severity: 'warning', message: 'Controlled Widget elements require the GA-C target profile and were not imported into the earlier runtime.', path: hint, slideId, recovery: 'Migrate again with targetProfile ppte-2.0-ga-c.1 or preserve the source as a safe image.' })
+      return undefined
+    }
+    const component = normalizeComponentElement(raw, hint, frame, context, assets, slideId)
+    if (!component) return undefined
+    return { element: component, elements: [component], leafIds: [component.id], nestedGroup: false }
   }
   if (rawType) {
     context.report.degradedElements += 1
@@ -341,11 +359,12 @@ function mapText(raw: RecordLike, hint: string, frame: Frame, context: Migration
 
 function normalizeChartElement(raw: RecordLike, hint: string, frame: Frame, context: MigrationContext, slideId: string): ChartElement | undefined {
   const requestedType = String(raw.chartType ?? raw.type)
-  const chartType = GA_B_CHART_TYPES.includes(requestedType as typeof GA_B_CHART_TYPES[number]) ? requestedType as ChartElement['chartType'] : undefined
+  const supportedTypes = context.profile.id === 'ppte-2.0-ga-c.1' ? GA_C_CHART_TYPES : GA_B_CHART_TYPES
+  const chartType = supportedTypes.includes(requestedType as never) ? requestedType as ChartElement['chartType'] : undefined
   const data = normalizeChartData(raw.data ?? raw.chartData)
   if (!chartType || !data) {
     context.report.degradedElements += 1
-    addIssue(context.report, { code: 'MIGRATION_UNSUPPORTED_ELEMENT', severity: 'warning', message: `Chart ${hint} has no valid GA-B chart type or data and was not imported.`, path: hint, slideId, recovery: 'Provide columns, rows, and a Bar, Line, or Pie chart type.' })
+    addIssue(context.report, { code: 'MIGRATION_UNSUPPORTED_ELEMENT', severity: 'warning', message: `Chart ${hint} has no valid ${context.profile.id === 'ppte-2.0-ga-c.1' ? 'GA-C' : 'GA-B'} chart type or data and was not imported.`, path: hint, slideId, recovery: context.profile.id === 'ppte-2.0-ga-c.1' ? 'Provide columns, rows, and a Bar, Line, Area, Pie, or Donut chart type.' : 'Provide columns, rows, and a Bar, Line, or Pie chart type.' })
     return undefined
   }
   const encoding = normalizeChartEncoding(raw.encoding, data)
@@ -379,6 +398,38 @@ function normalizeChartElement(raw: RecordLike, hint: string, frame: Frame, cont
     semanticRefs: normalizeSemanticRefs(raw),
     style: normalizeStyleBinding(raw.style, 'chart', context.theme, context.report) as ChartElement['style'],
     altText: stringValue(raw.altText) ?? stringValue(raw.description),
+  }
+}
+
+function normalizeComponentElement(raw: RecordLike, hint: string, frame: Frame, context: MigrationContext, assets: Record<string, Asset>, slideId: string): ComponentElement | undefined {
+  const componentType = stringValue(raw.componentType ?? raw.widgetType)
+  const componentVersion = stringValue(raw.componentVersion ?? raw.widgetVersion) ?? '1.0.0'
+  const props = asRecord(raw.props)
+  if (!componentType || !props || !isJsonValue(props)) {
+    context.report.degradedElements += 1
+    addIssue(context.report, { code: 'MIGRATION_UNSUPPORTED_ELEMENT', severity: 'warning', message: `Widget ${hint} has no safe type, version, or JSON props and was not imported.`, path: hint, slideId, recovery: 'Provide a controlled componentType, componentVersion, and JSON-only props.' })
+    return undefined
+  }
+  const rawFallback = asRecord(raw.fallback)
+  const rawFallbackAsset = stringValue(rawFallback?.assetId ?? raw.fallbackAssetId)
+  const fallbackAssetId = rawFallbackAsset ? findAssetId(rawFallbackAsset, assets) : undefined
+  const fallback = rawFallbackAsset && fallbackAssetId
+    ? { kind: 'asset' as const, assetId: fallbackAssetId, label: stringValue(rawFallback?.label) ?? stringValue(raw.fallbackLabel) }
+    : { kind: 'placeholder' as const, label: stringValue(rawFallback?.label) ?? stringValue(raw.fallbackLabel) ?? `${componentType} fallback` }
+  if (rawFallbackAsset && !fallbackAssetId) addIssue(context.report, { code: 'MIGRATION_FALLBACK_DEGRADED', severity: 'warning', message: `Widget ${hint} fallback asset was not resolvable; a placeholder fallback was retained.`, path: `${hint}/fallback/assetId`, slideId, recovery: 'Provide the fallback asset metadata and bytes before exporting.' })
+  return {
+    id: uniqueId(stringValue(raw.id) ?? hint, 'el', context.usedElementIds, context.report, `${hint}/id`),
+    type: 'component',
+    componentType,
+    componentVersion,
+    props: cloneJsonRecord(props) as Record<string, JsonValue>,
+    fallback,
+    semanticKey: safeSemanticKey(raw.semanticKey ?? raw.key, context, slideId),
+    role: validRole(raw.role) ?? 'body',
+    name: stringValue(raw.name),
+    frame,
+    semanticRefs: normalizeSemanticRefs(raw),
+    editPolicy: { mode: 'property' },
   }
 }
 
@@ -579,9 +630,33 @@ function normalizeAssets(raw: unknown, context: MigrationContext): Record<string
     result[id] = {
       id, hash, mimeType: stringValue(record?.mimeType) ?? 'application/octet-stream', byteLength: Number.isInteger(record?.byteLength) ? Number(record?.byteLength) : data?.length ?? 0, path,
       width: integerPositive(record?.width), height: integerPositive(record?.height), durationMs: integerNonNegative(record?.durationMs), altText: stringValue(record?.altText),
+      artwork: normalizeArtwork(record?.artwork),
     }
   }
   return result
+}
+
+function normalizeArtwork(raw: unknown): Asset['artwork'] | undefined {
+  const record = asRecord(raw)
+  if (!record) return undefined
+  const rects = (value: unknown): Array<{ x: number; y: number; width: number; height: number }> | undefined => {
+    if (!Array.isArray(value)) return undefined
+    const normalized = value.map(validRect).filter((item): item is { x: number; y: number; width: number; height: number } => Boolean(item))
+    return normalized.length ? normalized : undefined
+  }
+  const palette = Array.isArray(record.dominantPalette) ? record.dominantPalette.filter((item): item is string => typeof item === 'string' && /^#[0-9a-f]{6,8}$/i.test(item)) : undefined
+  const focalPoint = validPoint(record.focalPoint)
+  return {
+    subjectBounds: rects(record.subjectBounds),
+    safeTextRegions: rects(record.safeTextRegions),
+    avoidTextRegions: rects(record.avoidTextRegions),
+    dominantPalette: palette?.length ? palette : undefined,
+    contrastMapAssetId: stringValue(record.contrastMapAssetId),
+    focalPoint,
+    generationPromptSummary: stringValue(record.generationPromptSummary),
+    generatorId: stringValue(record.generatorId),
+    generatorVersion: stringValue(record.generatorVersion),
+  }
 }
 
 function normalizeFonts(raw: unknown, context: MigrationContext): Record<string, FontAsset> {
@@ -616,6 +691,15 @@ function normalizeSources(raw: unknown): PpteDocument['sources'] {
     result[id] = { id: stringValue(record.id ?? id) ?? id, title: stringValue(record.title), author: stringValue(record.author), publisher: stringValue(record.publisher), url: stringValue(record.url), citation: stringValue(record.citation), accessedAt: stringValue(record.accessedAt), license: stringValue(record.license), note: stringValue(record.note) }
   }
   return Object.keys(result).length ? result : undefined
+}
+
+function widgetRequirements(slides: Array<PpteDocument['slides'][string]>): PpteDocument['widgetRequirements'] {
+  const requirements = new Map<string, { type: string; versionRange: string; fallbackRequired: true }>()
+  for (const slide of Object.values(slides)) for (const element of Object.values(slide.elements)) if (element.type === 'component') {
+    const key = `${element.componentType}@${element.componentVersion}`
+    requirements.set(key, { type: element.componentType, versionRange: `^${element.componentVersion.split('.')[0] || '1'}.0.0`, fallbackRequired: true })
+  }
+  return [...requirements.values()].sort((left, right) => `${left.type}@${left.versionRange}`.localeCompare(`${right.type}@${right.versionRange}`))
 }
 
 function normalizeCanvas(raw: unknown): PpteDocument['canvas'] {
@@ -723,9 +807,18 @@ function cloneJsonRecord(value: RecordLike): RecordLike { return JSON.parse(cano
 function validRole(value: unknown): TextElement['role'] | undefined { const roles = new Set<TextElement['role']>(['title', 'subtitle', 'body', 'caption', 'metric', 'source', 'logo', 'image', 'chart', 'artwork', 'background', 'decorative', 'navigation', 'cta', 'custom']); return roles.has(value as TextElement['role']) ? value as TextElement['role'] : undefined }
 function validShape(value: unknown): ShapeElement['shape'] | undefined { const shapes = new Set<ShapeElement['shape']>(['rectangle', 'rounded-rectangle', 'ellipse', 'line', 'arrow', 'triangle', 'diamond', 'chevron', 'polygon']); return shapes.has(value as ShapeElement['shape']) ? value as ShapeElement['shape'] : undefined }
 function validPoint(value: unknown): Point | undefined { const record = asRecord(value); return finiteNumber(record?.x) && finiteNumber(record?.y) ? { x: Number(record?.x), y: Number(record?.y) } : undefined }
+function validRect(value: unknown): { x: number; y: number; width: number; height: number } | undefined { const record = asRecord(value); return finiteNumber(record?.x) && finiteNumber(record?.y) && finiteNumber(record?.width) && finiteNumber(record?.height) && Number(record?.width) > 0 && Number(record?.height) > 0 ? { x: Number(record?.x), y: Number(record?.y), width: Number(record?.width), height: Number(record?.height) } : undefined }
 function validNormalizedRect(value: unknown): ImageElement['crop'] | undefined { const record = asRecord(value); return finiteNumber(record?.x) && finiteNumber(record?.y) && finiteNumber(record?.width) && finiteNumber(record?.height) && Number(record?.x) >= 0 && Number(record?.y) >= 0 && Number(record?.width) > 0 && Number(record?.height) > 0 && Number(record?.x) + Number(record?.width) <= 1 && Number(record?.y) + Number(record?.height) <= 1 ? { x: Number(record?.x), y: Number(record?.y), width: Number(record?.width), height: Number(record?.height) } : undefined }
 function validPaint(value: unknown): boolean { const record = asRecord(value); return record?.kind === 'none' || (record?.kind === 'solid' && isRecord(record.color)) }
 function normalizeMarks(value: unknown): TextMarks | undefined { const record = asRecord(value); if (!record) return undefined; const marks: TextMarks = {}; for (const key of ['bold', 'italic', 'underline', 'strike'] as const) if (typeof record[key] === 'boolean') marks[key] = record[key] as boolean; if (typeof record.color === 'string' && /^#[0-9a-f]{6}([0-9a-f]{2})?$/i.test(record.color)) marks.color = { kind: 'value', value: record.color } as ValueOrToken<`#${string}`>; return Object.keys(marks).length ? marks : undefined }
 function normalizeNotes(value: unknown): PpteDocument['slides'][string]['notes'] { const record = asRecord(value); if (!record) return undefined; return { speaker: stringValue(record.speaker), handout: stringValue(record.handout) } }
+
+function isJsonValue(value: unknown): boolean {
+  if (value === null || typeof value === 'string' || typeof value === 'boolean') return true
+  if (typeof value === 'number') return Number.isFinite(value)
+  if (Array.isArray(value)) return value.every(isJsonValue)
+  if (isRecord(value)) return Object.values(value).every(isJsonValue)
+  return false
+}
 
 function emptyDocument(documentId: string, locale: string, sourceFormat = 'unknown'): PpteDocument { const theme = defaultTheme(); return { schemaVersion: '2.0.0', documentId, locale, metadata: { title: 'Migration failed', source: 'migrated', sourceFormat }, canvas: normalizeCanvas(undefined), theme, slideOrder: [], slides: {}, assets: {}, fonts: { font_system_inter: { id: 'font_system_inter', family: 'Inter', style: 'normal', weight: 400, source: 'system', editableSafe: true } } } }

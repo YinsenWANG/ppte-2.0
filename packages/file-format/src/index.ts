@@ -4,8 +4,8 @@ import { dirname, basename, join } from 'node:path'
 import { canonicalHash, canonicalJsonString, canonicalRevision } from '../../canonical-json/src/index.js'
 import { checkCompatibility } from '../../compatibility/src/index.js'
 import { validateRuntimeDocument, validateTransactionShape } from '../../validation/src/index.js'
-import { PPTE_COMPATIBILITY_PROFILE, PPTE_FORMAT, PPTE_FORMAT_VERSION, PPTE_GA_B_COMPATIBILITY_PROFILE, PPTE_OPERATION_PROTOCOL_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
-import type { PpteDocument, PpteManifest, PortableProfile, Revision, Transaction, ValidationIssue } from '../../schema/src/index.js'
+import { PPTE_COMPATIBILITY_PROFILE, PPTE_FORMAT, PPTE_FORMAT_VERSION, PPTE_GA_B_COMPATIBILITY_PROFILE, PPTE_GA_C_COMPATIBILITY_PROFILE, PPTE_OPERATION_PROTOCOL_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
+import type { PpteDocument, PpteManifest, PortableProfile, Revision, RuntimeProfile, Transaction, ValidationIssue } from '../../schema/src/index.js'
 import { ContentAddressedStore } from './cas.js'
 import { buildPortable as buildPortableRuntime } from '../../portable-runtime/src/index.js'
 import type { PortableBuildOptions, PortableBuildResult } from '../../portable-runtime/src/index.js'
@@ -64,7 +64,7 @@ export class PpteFileService {
   }
 
   buildPortable(document: PpteDocument, options: PortableBuildOptions | PortableProfile): PortableBuildResult {
-    if (typeof options === 'string') return buildPortableRuntime(document, { profile: options as Exclude<PortableProfile, 'light-edit'> })
+    if (typeof options === 'string') return buildPortableRuntime(document, { profile: options })
     return buildPortableRuntime(document, options)
   }
 
@@ -75,11 +75,11 @@ export class PpteFileService {
 }
 
 export function writeCheckpoint(document: PpteDocument, target: string, options: CheckpointWriteOptions = {}): CheckpointResult {
-  const issues = validateRuntimeDocument(document).filter((issue) => issue.severity === 'error')
+  const compatibilityProfile = options.compatibilityProfile ?? PPTE_COMPATIBILITY_PROFILE
+  const issues = validateRuntimeDocument(document, { runtimeProfile: runtimeProfileForCompatibility(compatibilityProfile) }).filter((issue) => issue.severity === 'error')
   if (issues.length) throw new Error(issues.map((issue) => `${issue.code}: ${issue.message}`).join('\n'))
   const revision = canonicalRevision(document)
   const timestamp = options.timestamp ?? new Date().toISOString()
-  const compatibilityProfile = options.compatibilityProfile ?? PPTE_COMPATIBILITY_PROFILE
   assertDocumentCompatibility(document, compatibilityProfile)
   const entries: ZipEntry[] = []
   addEntry(entries, 'mimetype', bytes('application/vnd.ppte+zip'))
@@ -185,7 +185,7 @@ export function openCheckpointBytes(bytesOnDisk: Uint8Array): OpenCheckpointResu
     if (!manifest.files.some((entry) => entry.path === required)) throw new Error(`CHECKPOINT_FAILED: manifest omits required package entry: ${required}`)
   }
   const document = parseJson<PpteDocument>(archive, 'document.json')
-  const issues = validateRuntimeDocument(document).filter((issue) => issue.severity === 'error')
+  const issues = validateRuntimeDocument(document, { runtimeProfile: runtimeProfileForCompatibility(manifest.compatibilityProfile) }).filter((issue) => issue.severity === 'error')
   if (issues.length) throw new Error(issues.map((issue) => `${issue.code}: ${issue.message}`).join('\n'))
   assertDocumentCompatibility(document, manifest.compatibilityProfile)
   if (manifest.documentId !== document.documentId) throw new Error('CHECKPOINT_FAILED: manifest/document documentId mismatch')
@@ -220,11 +220,11 @@ export function openCheckpointBytes(bytesOnDisk: Uint8Array): OpenCheckpointResu
 
 /** Serialize the exact stored ZIP used by writeCheckpoint without touching disk. */
 export function buildCheckpointBytes(document: PpteDocument, options: CheckpointWriteOptions = {}): Uint8Array {
-  const issues = validateRuntimeDocument(document).filter((issue) => issue.severity === 'error')
+  const compatibilityProfile = options.compatibilityProfile ?? PPTE_COMPATIBILITY_PROFILE
+  const issues = validateRuntimeDocument(document, { runtimeProfile: runtimeProfileForCompatibility(compatibilityProfile) }).filter((issue) => issue.severity === 'error')
   if (issues.length) throw new Error(issues.map((issue) => `${issue.code}: ${issue.message}`).join('\n'))
   const revision = canonicalRevision(document)
   const timestamp = options.timestamp ?? '1970-01-01T00:00:00.000Z'
-  const compatibilityProfile = options.compatibilityProfile ?? PPTE_COMPATIBILITY_PROFILE
   assertDocumentCompatibility(document, compatibilityProfile)
   const entries: ZipEntry[] = []
   addEntry(entries, 'mimetype', bytes('application/vnd.ppte+zip'))
@@ -325,7 +325,13 @@ export function validateManifest(manifest: PpteManifest): void {
 
 function assertDocumentCompatibility(document: PpteDocument, compatibilityProfile: string): void {
   const hasChart = Object.values(document.slides).some((slide) => Object.values(slide.elements).some((element) => element.type === 'chart'))
-  if (hasChart && compatibilityProfile !== PPTE_GA_B_COMPATIBILITY_PROFILE) throw new Error(`CHECKPOINT_FAILED: Chart documents require compatibility profile ${PPTE_GA_B_COMPATIBILITY_PROFILE}.`)
+  const requiresGaC = Object.values(document.slides).some((slide) => slide.visualStrategy === 'poster' || Object.values(slide.elements).some((element) => element.type === 'component' || element.type === 'chart' && (element.chartType === 'area' || element.chartType === 'donut')))
+  if (requiresGaC && compatibilityProfile !== PPTE_GA_C_COMPATIBILITY_PROFILE) throw new Error(`CHECKPOINT_FAILED: Poster, Widget, Area, and Donut documents require compatibility profile ${PPTE_GA_C_COMPATIBILITY_PROFILE}.`)
+  if (hasChart && compatibilityProfile !== PPTE_GA_B_COMPATIBILITY_PROFILE && compatibilityProfile !== PPTE_GA_C_COMPATIBILITY_PROFILE) throw new Error(`CHECKPOINT_FAILED: Chart documents require compatibility profile ${PPTE_GA_B_COMPATIBILITY_PROFILE} or ${PPTE_GA_C_COMPATIBILITY_PROFILE}.`)
+}
+
+function runtimeProfileForCompatibility(compatibilityProfile: string): RuntimeProfile {
+  return compatibilityProfile === PPTE_GA_C_COMPATIBILITY_PROFILE ? 'ga-c' : 'ga-b'
 }
 
 function readRecentTransactions(archive: Map<string, Uint8Array>, manifest: PpteManifest): Transaction[] {

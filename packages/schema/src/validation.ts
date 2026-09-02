@@ -56,6 +56,7 @@ export function validateDocument(document: PpteDocument, options: { runtimeSubse
       continue
     }
     if (slide.id !== slideId) add('SCHEMA_INVALID', 'Slide map key must equal slide.id.', { path: `/slides/${escapePointer(slideId)}/id` })
+    if (options.runtimeSubset && slide.visualStrategy === 'poster' && (options.runtimeProfile ?? 'ga-b') !== 'ga-c') add('UNSUPPORTED_VISUAL_STRATEGY', `Runtime profile ${options.runtimeProfile ?? 'ga-b'} does not implement Poster slides.`, { slideId })
     if (!Array.isArray(slide.rootOrder)) add('SCHEMA_INVALID', 'rootOrder must be an array.', { slideId })
     if (!slide.elements || typeof slide.elements !== 'object' || Array.isArray(slide.elements)) add('SCHEMA_INVALID', 'elements must be an object map.', { slideId })
     if (slide.groups !== undefined && (!slide.groups || typeof slide.groups !== 'object' || Array.isArray(slide.groups))) add('SCHEMA_INVALID', 'groups must be an object map.', { slideId })
@@ -390,6 +391,6 @@ function escapePointer(value: string): string { return value.replaceAll('~', '~0
 function safeRelativeAssetPath(value: string): boolean { return typeof value === 'string' && value.startsWith('assets/') && !value.startsWith('/') && !value.includes('..') && !value.includes('\\') && !value.includes('\u0000') }
 function safeRelativeFontPath(value: string): boolean { return typeof value === 'string' && value.startsWith('fonts/') && !value.startsWith('/') && !value.includes('..') && !value.includes('\\') && !value.includes('\u0000') }
 
-export type RuntimeElement = TextElement | ImageElement | ShapeElement | ChartElement
+export type RuntimeElement = TextElement | ImageElement | ShapeElement | ChartElement | import('./document.js').ComponentElement
 export type RuntimeShape = ShapeElement
 export type RuntimeImage = ImageElement

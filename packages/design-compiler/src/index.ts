@@ -74,6 +74,14 @@ export interface ReflowTransactionOptions extends DraftTransactionOptions {
   requireConfirmation?: boolean
 }
 
+export interface PosterTransactionOptions extends DraftTransactionOptions {
+  slideId: string
+  artworkAssetId: string
+  frame?: Frame
+  altText?: string
+  requireConfirmation?: boolean
+}
+
 export interface ArtworkSafetyResult {
   ok: boolean
   issues: ValidationIssue[]
@@ -323,6 +331,64 @@ export function validateArtworkPlacement(document: PpteDocument, slideId: string
   }
   return { ok: !issues.some((issue) => issue.severity === 'error'), issues }
 }
+
+export const validatePosterSlide = validateArtworkPlacement
+
+/** Insert a Poster artwork layer through the same reversible transaction path as every other edit. */
+export function buildPosterTransaction(document: PpteDocument, options: PosterTransactionOptions): Transaction {
+  const slide = document.slides[options.slideId]
+  if (!slide) throw new Error(`SLIDE_MISSING: ${options.slideId}`)
+  const asset = document.assets[options.artworkAssetId]
+  if (!asset) throw new Error(`ASSET_MISSING: ${options.artworkAssetId}`)
+  if (!asset.artwork) throw new Error(`ARTWORK_METADATA_MISSING: ${options.artworkAssetId}`)
+  const artwork: Element = {
+    id: `${options.slideId}:poster-artwork`,
+    type: 'image',
+    role: 'artwork',
+    frame: cloneJson(options.frame ?? { x: 0, y: 0, width: document.canvas.width, height: document.canvas.height }),
+    assetId: options.artworkAssetId,
+    fit: 'cover',
+    altText: options.altText ?? asset.altText ?? 'Poster artwork',
+    style: { styleRef: Object.keys(document.theme.presets.image).sort()[0] ?? 'image.hero' },
+    provenance: { kind: 'generated-artwork' },
+  }
+  const candidate = cloneJson(document)
+  candidate.slides[options.slideId]!.visualStrategy = 'poster'
+  candidate.slides[options.slideId]!.elements[artwork.id] = cloneJson(artwork)
+  candidate.slides[options.slideId]!.rootOrder.splice(Math.max(0, Math.min(slide.rootOrder.length, options.index ?? 0)), 0, artwork.id)
+  const safety = validateArtworkPlacement(candidate, options.slideId)
+  if (!safety.ok) throw new Error(safety.issues.map((issue) => `${issue.code}: ${issue.message}`).join('\n'))
+  const insertIndex = Math.max(0, Math.min(slide.rootOrder.length, options.index ?? 0))
+  return {
+    transactionId: options.transactionId,
+    baseRevision: options.baseRevision,
+    actor: options.actor ?? { type: 'human', id: 'poster-editor' },
+    scope: { kind: 'slide', slideIds: [options.slideId], permissions: ['structure'], allowInsert: true, allowDelete: false },
+    changeContract: {
+      allowedOperationKinds: ['slide.update', 'element.insert'],
+      maxChangedSlides: 1,
+      maxChangedElements: 1,
+      maxInsertedElements: 1,
+      maxDeletedElements: 0,
+      maxReplacedAssets: 0,
+      maxChangedFacts: 0,
+      maxChangedSources: 0,
+      maxChangedThemeTokens: 0,
+      maxChangedStylePresets: 0,
+      requireConfirmation: options.requireConfirmation ?? true,
+      userIntentSummary: 'Set Poster visual strategy and insert a reversible artwork layer.',
+    },
+    reason: options.reason ?? 'Create Poster artwork layer',
+    createdAt: options.createdAt ?? '2026-09-03T00:00:00.000Z',
+    validationLevel: 'L3',
+    operations: [
+      { opId: `${options.transactionId}:strategy`, kind: 'slide.update', slideId: options.slideId, patch: { visualStrategy: 'poster' } },
+      { opId: `${options.transactionId}:artwork`, kind: 'element.insert', slideId: options.slideId, element: artwork, index: insertIndex },
+    ],
+  }
+}
+
+export const buildPoster = buildPosterTransaction
 
 function blockToDraft(ir: SlideIR, block: SlideIR['blocks'][number], frame: Frame, slotStyleRef: string | undefined, context: CompileContext): ElementDraft | undefined {
   const id = draftId(ir.slideKey, block.key)

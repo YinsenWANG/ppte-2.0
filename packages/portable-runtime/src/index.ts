@@ -2,19 +2,19 @@ import { canonicalJsonString, canonicalRevision, sha256HexBytes } from '../../ca
 import { createHash } from 'node:crypto'
 import { gzipSync } from 'node:zlib'
 import { PpteSession } from '../../core/src/index.js'
-import { contentOnlyContract, replaceAssetContract } from '../../change-contract/src/index.js'
+import { contentOnlyContract, cropOnlyContract, chartDataOnlyContract, geometryOnlyContract, replaceAssetContract } from '../../change-contract/src/index.js'
 import { readStoredZip, writeStoredZip } from '../../archive/src/index.js'
 import { renderDocumentHtml } from '../../renderer-react/src/index.js'
 import { checkGlyphCoverage, validateRuntimeDocument, validateTransactionShape } from '../../validation/src/index.js'
 import { plainTextToRichText } from '../../richtext-adapter/src/index.js'
 import { buildCapabilityReport, type CapabilityReport } from '../../capability/src/index.js'
 import { buildFactUpdateTransaction } from '../../facts/src/index.js'
-import { PPTE_COMPATIBILITY_PROFILE, PPTE_FORMAT, PPTE_FORMAT_VERSION, PPTE_GA_B_COMPATIBILITY_PROFILE, PPTE_OPERATION_PROTOCOL_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
+import { PPTE_COMPATIBILITY_PROFILE, PPTE_FORMAT, PPTE_FORMAT_VERSION, PPTE_GA_B_COMPATIBILITY_PROFILE, PPTE_GA_C_COMPATIBILITY_PROFILE, PPTE_OPERATION_PROTOCOL_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
 import { withErrorSemantics } from '../../schema/src/errors.js'
-import type { AssetId, Element, FontId, PpteDocument, PpteManifest, PortableOrigin, PortableProfile, Revision, Transaction, ValidationIssue } from '../../schema/src/index.js'
+import type { AssetId, ChartData, Element, FontId, Frame, NormalizedRect, PpteDocument, PpteManifest, PortableOrigin, PortableProfile, Revision, RuntimeProfile, Transaction, ValidationIssue } from '../../schema/src/index.js'
 
 export interface PortableBuildOptions {
-  profile: Exclude<PortableProfile, 'light-edit'>
+  profile: PortableProfile
   assetBytes?: Record<AssetId, Uint8Array>
   fontBytes?: Record<FontId, Uint8Array>
   runtimeVersion?: string
@@ -63,8 +63,8 @@ export interface PresenterState {
 }
 
 export function buildPortable(document: PpteDocument, options: PortableBuildOptions): PortableBuildResult {
-  if (options.profile !== 'viewer' && options.profile !== 'quick-fix') return { ok: false, html: '', issues: [issue('PORTABLE_PROFILE_UNSUPPORTED', 'Only Viewer and Quick Fix are included in the first GA portable profile.')], bytes: 0 }
-  const issues = validateRuntimeDocument(document).filter((issue) => issue.severity === 'error' && !(options.profile === 'viewer' && issue.code === 'FONT_GLYPH_MISSING'))
+  const runtimeProfile: RuntimeProfile = options.profile === 'light-edit' ? 'ga-c' : 'ga-b'
+  const issues = validateRuntimeDocument(document, { runtimeProfile }).filter((issue) => issue.severity === 'error' && !(options.profile === 'viewer' && issue.code === 'FONT_GLYPH_MISSING'))
   if (issues.length) return { ok: false, html: '', issues, bytes: 0 }
   const sourceRevision = options.sourceRevision ?? canonicalRevision(document)
   if (sourceRevision !== canonicalRevision(document)) issues.push(issue('PORTABLE_ORIGIN_MISMATCH', 'sourceRevision must match the embedded document revision.', undefined, 'Rebuild from the exact source snapshot.'))
@@ -76,7 +76,8 @@ export function buildPortable(document: PpteDocument, options: PortableBuildOpti
     runtimeVersion: options.runtimeVersion ?? 'portable-runtime-1',
     ...(options.branchId ? { branchId: options.branchId } : {}),
   }
-  const capabilityReport = buildCapabilityReport(document, options.profile === 'quick-fix' ? 'portable-quick-fix' : 'portable-viewer', { sourceRevision })
+  const capabilityTarget = options.profile === 'quick-fix' ? 'portable-quick-fix' : options.profile === 'light-edit' ? 'portable-light-edit' : 'portable-viewer'
+  const capabilityReport = buildCapabilityReport(document, capabilityTarget, { sourceRevision })
   const assets: Record<string, string> = {}
   const assetSources: Record<string, string> = {}
   for (const asset of Object.values(document.assets)) {
@@ -95,7 +96,7 @@ export function buildPortable(document: PpteDocument, options: PortableBuildOpti
     else if (font.hash && normalizeHash(font.hash) !== sha256Binary(data)) issues.push(issue('FONT_HASH_MISMATCH', `Portable font ${font.id} failed hash verification.`, font.id, 'Use the bytes that belong to the declared font hash.'))
     else fonts[font.id] = base64(data)
   }
-  if (options.profile === 'quick-fix') for (const slide of Object.values(document.slides)) for (const element of Object.values(slide.elements)) if (element.type === 'text') issues.push(...checkGlyphCoverage(document, element, undefined, { strict: true }))
+  if (options.profile === 'quick-fix' || options.profile === 'light-edit') for (const slide of Object.values(document.slides)) for (const element of Object.values(slide.elements)) if (element.type === 'text') issues.push(...checkGlyphCoverage(document, element, undefined, { strict: true }))
   if (issues.some((item) => item.severity === 'error')) return { ok: false, html: '', origin, capabilityReport, issues: dedupe(issues), bytes: 0 }
   const payload: PortablePayload = { document, origin, assets, fonts, capabilityReport }
   const html = assembleHtml(document, payload, assetSources)
@@ -111,6 +112,10 @@ export function createPortableViewer(document: PpteDocument, options: Omit<Porta
 
 export function createPortableQuickFix(document: PpteDocument, options: Omit<PortableBuildOptions, 'profile'> = {}): PortableBuildResult {
   return buildPortable(document, { ...options, profile: 'quick-fix' })
+}
+
+export function createPortableLightEdit(document: PpteDocument, options: Omit<PortableBuildOptions, 'profile'> = {}): PortableBuildResult {
+  return buildPortable(document, { ...options, profile: 'light-edit' })
 }
 
 export function decodePortable(html: string): PortablePayload {
@@ -132,12 +137,11 @@ export function auditPortableBundle(html: string): PortableAuditResult {
   if (origin?.sourceDocumentId !== payload.document.documentId) issues.push(issue('PORTABLE_ORIGIN_MISMATCH', 'Portable origin does not identify the embedded document.'))
   if (origin?.sourceRevision && canonicalRevision(payload.document) !== origin.sourceRevision) issues.push(issue('PORTABLE_ORIGIN_MISMATCH', 'Portable origin revision does not match the embedded document.'))
   if (payload.capabilityReport?.sourceDocumentId !== payload.document.documentId || payload.capabilityReport?.sourceRevision !== origin?.sourceRevision) issues.push(issue('PORTABLE_CAPABILITY_MISMATCH', 'Capability report does not describe the embedded source revision.'))
-  if (origin?.profile !== 'viewer' && origin?.profile !== 'quick-fix') issues.push(issue('PORTABLE_PROFILE_UNSUPPORTED', 'Only Viewer and Quick Fix are included in the first GA portable profile.'))
+  if (origin?.profile !== 'viewer' && origin?.profile !== 'quick-fix' && origin?.profile !== 'light-edit') issues.push(issue('PORTABLE_PROFILE_UNSUPPORTED', 'Portable profile is not recognized by this runtime.'))
   if (/<(?:script|link)[^>]+(?:src|href)\s*=\s*["'](?:https?:|\/\/|data:)/i.test(html) || /<img[^>]+src\s*=\s*["'](?!data:|blob:)/i.test(html)) issues.push(issue('PORTABLE_NETWORK_DISABLED', 'Portable output may not load external runtime or asset resources.'))
   if (/\b(?:fetch|XMLHttpRequest|WebSocket|EventSource)\s*\(/.test(html)) issues.push(issue('PORTABLE_NETWORK_DISABLED', 'Portable runtime contains a network-capable API call.'))
   if (/\beval\s*\(|new\s+Function\s*\(/.test(html)) issues.push(issue('PORTABLE_PAYLOAD_UNSAFE', 'Portable runtime may not evaluate generated code.'))
   if (/<script[^>]+src\s*=/i.test(html) || /<link[^>]+href\s*=/i.test(html)) issues.push(issue('PORTABLE_EXTERNAL_RUNTIME', 'Portable runtime must be self-contained.'))
-  if (origin.profile === 'light-edit') issues.push(issue('PORTABLE_PROFILE_UNSUPPORTED', 'Light Edit is outside the first GA portable profile.'))
   return { ok: !issues.some((item) => item.severity === 'error'), issues, origin }
 }
 
@@ -149,19 +153,18 @@ export class PortableRuntime {
   private step = 0
   private lastTransaction?: Transaction
 
-  constructor(document: PpteDocument, options: { profile?: Exclude<PortableProfile, 'light-edit'>; assetBytes?: Record<AssetId, Uint8Array>; fontBytes?: Record<FontId, Uint8Array> } = {}) {
-    if ((options.profile as string | undefined) === 'light-edit') throw new Error('PORTABLE_PROFILE_UNSUPPORTED: Light Edit is outside the first GA portable profile.')
-    this.session = new PpteSession(document)
+  constructor(document: PpteDocument, options: { profile?: PortableProfile; assetBytes?: Record<AssetId, Uint8Array>; fontBytes?: Record<FontId, Uint8Array> } = {}) {
+    this.profile = options.profile ?? 'viewer'
+    this.session = new PpteSession(document, { runtimeProfile: this.profile === 'light-edit' ? 'ga-c' : 'ga-b' })
     this.assetBytes = cloneBytes(options.assetBytes)
     this.fontBytes = cloneBytes(options.fontBytes)
-    this.profile = options.profile ?? 'viewer'
   }
 
-  readonly profile: Exclude<PortableProfile, 'light-edit'>
+  readonly profile: PortableProfile
 
   getDocument(): Readonly<PpteDocument> { return this.session.getDocument() }
   getRevision(): Revision { return this.session.getRevision() }
-  getCapabilityReport(): CapabilityReport { return buildCapabilityReport(this.session.getDocument(), this.profile === 'quick-fix' ? 'portable-quick-fix' : 'portable-viewer', { sourceRevision: this.session.getRevision() }) }
+  getCapabilityReport(): CapabilityReport { return buildCapabilityReport(this.session.getDocument(), this.profile === 'quick-fix' ? 'portable-quick-fix' : this.profile === 'light-edit' ? 'portable-light-edit' : 'portable-viewer', { sourceRevision: this.session.getRevision() }) }
   getAssetBytes(): Record<string, Uint8Array> { return cloneBytes(this.assetBytes) }
   getFontBytes(): Record<string, Uint8Array> { return cloneBytes(this.fontBytes) }
   getLastTransaction(): Readonly<Transaction> | undefined { return this.lastTransaction ? structuredClone(this.lastTransaction) : undefined }
@@ -217,15 +220,65 @@ export class PortableRuntime {
   updateFact(factId: string, value: number): QuickFixResult { return this.editFact(factId, value) }
   editFactValue(factId: string, value: number): QuickFixResult { return this.editFact(factId, value) }
 
+  cropImage(target: { slideId?: string; elementId?: string; semanticKey?: string }, crop: NormalizedRect): QuickFixResult {
+    if (this.profile !== 'light-edit') return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Image crop is available in Light Edit profile only.')] }
+    const found = findElement(this.session.getDocument(), target)
+    if (!found || found.element.type !== 'image') return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Light Edit crop requires a resolvable Image element.')] }
+    const transaction: Transaction = {
+      transactionId: `portable:crop:${found.element.id}:${this.session.getRevision().slice(-12)}`,
+      baseRevision: this.session.getRevision(),
+      actor: { type: 'human', id: 'portable-light-edit' },
+      scope: { kind: 'selection', slideIds: [found.slideId], elementIds: [found.element.id], permissions: ['assets'], allowInsert: false, allowDelete: false },
+      changeContract: cropOnlyContract(found.element.id),
+      reason: 'Portable Light Edit image crop',
+      createdAt: '1970-01-01T00:00:00.000Z',
+      validationLevel: 'L2',
+      operations: [{ opId: `portable:crop:${found.element.id}`, kind: 'image.setCrop', slideId: found.slideId, elementId: found.element.id, crop }],
+    }
+    return this.commitPortableTransaction(transaction)
+  }
+
+  setImageCrop(target: { slideId?: string; elementId?: string; semanticKey?: string }, crop: NormalizedRect): QuickFixResult { return this.cropImage(target, crop) }
+  editImageCrop(target: { slideId?: string; elementId?: string; semanticKey?: string }, crop: NormalizedRect): QuickFixResult { return this.cropImage(target, crop) }
+
+  updateChartData(target: { slideId?: string; elementId?: string; semanticKey?: string }, data: ChartData): QuickFixResult {
+    if (this.profile !== 'light-edit') return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Chart data editing is available in Light Edit profile only.')] }
+    const found = findElement(this.session.getDocument(), target)
+    if (!found || found.element.type !== 'chart') return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Light Edit chart editing requires a resolvable Chart element.')] }
+    const transaction: Transaction = {
+      transactionId: `portable:chart-data:${found.element.id}:${this.session.getRevision().slice(-12)}`,
+      baseRevision: this.session.getRevision(),
+      actor: { type: 'human', id: 'portable-light-edit' },
+      scope: { kind: 'selection', slideIds: [found.slideId], elementIds: [found.element.id], permissions: ['content'], allowInsert: false, allowDelete: false },
+      changeContract: chartDataOnlyContract(found.element.id),
+      reason: 'Portable Light Edit chart data',
+      createdAt: '1970-01-01T00:00:00.000Z',
+      validationLevel: 'L2',
+      operations: [{ opId: `portable:chart-data:${found.element.id}`, kind: 'chart.replaceData', slideId: found.slideId, elementId: found.element.id, data }],
+    }
+    return this.commitPortableTransaction(transaction)
+  }
+
+  editChartData(target: { slideId?: string; elementId?: string; semanticKey?: string }, data: ChartData): QuickFixResult { return this.updateChartData(target, data) }
+  replaceChartData(target: { slideId?: string; elementId?: string; semanticKey?: string }, data: ChartData): QuickFixResult { return this.updateChartData(target, data) }
+
+  moveElement(target: { slideId?: string; elementId?: string; semanticKey?: string }, point: { x: number; y: number }): QuickFixResult {
+    return this.geometryEdit(target, { kind: 'element.move', point })
+  }
+
+  resizeElement(target: { slideId?: string; elementId?: string; semanticKey?: string }, frame: Frame): QuickFixResult {
+    return this.geometryEdit(target, { kind: 'element.resize', frame })
+  }
+
   undo(): QuickFixResult {
-    if (this.profile !== 'quick-fix') return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Viewer profile does not allow undo.')] }
+    if (this.profile !== 'quick-fix' && this.profile !== 'light-edit') return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Viewer profile does not allow undo.')] }
     const result = this.session.undo()
     return { ok: result.ok, revision: result.afterRevision, issues: result.issues }
   }
 
   saveAsProject(options: { timestamp?: string; clean?: boolean; compatibilityProfile?: string } = {}): QuickFixResult {
     try {
-      const bytes = buildPortableCheckpointBytes(this.session.getDocument(), { timestamp: options.timestamp ?? '1970-01-01T00:00:00.000Z', clean: options.clean, compatibilityProfile: options.compatibilityProfile, recentTransactions: options.clean ? [] : this.session.getHistory().map((entry) => entry.transaction), assetBytes: this.assetBytes, fontBytes: this.fontBytes })
+      const bytes = buildPortableCheckpointBytes(this.session.getDocument(), { timestamp: options.timestamp ?? '1970-01-01T00:00:00.000Z', clean: options.clean, compatibilityProfile: options.compatibilityProfile ?? defaultCompatibilityProfile(this.session.getDocument(), this.profile), runtimeProfile: this.profile === 'light-edit' ? 'ga-c' : 'ga-b', recentTransactions: options.clean ? [] : this.session.getHistory().map((entry) => entry.transaction), assetBytes: this.assetBytes, fontBytes: this.fontBytes })
       return { ok: true, revision: this.session.getRevision(), bytes, issues: [] }
     } catch (cause) { return { ok: false, issues: [issue('CHECKPOINT_FAILED', cause instanceof Error ? cause.message : String(cause))] } }
   }
@@ -264,6 +317,33 @@ export class PortableRuntime {
   }
 
   clickStep(): PresenterState { return this.next() }
+
+  private commitPortableTransaction(transaction: Transaction): QuickFixResult {
+    const result = this.session.commit(transaction)
+    if (result.ok) this.lastTransaction = transaction
+    return { ok: result.ok, revision: result.afterRevision, issues: result.issues }
+  }
+
+  private geometryEdit(target: { slideId?: string; elementId?: string; semanticKey?: string }, change: { kind: 'element.move'; point: { x: number; y: number } } | { kind: 'element.resize'; frame: Frame }): QuickFixResult {
+    if (this.profile !== 'light-edit') return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Move and resize are available in Light Edit profile only.')] }
+    const found = findElement(this.session.getDocument(), target)
+    if (!found) return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Light Edit geometry requires a resolvable element.')] }
+    const operation = change.kind === 'element.move'
+      ? { opId: `portable:move:${found.element.id}`, kind: 'element.move' as const, slideId: found.slideId, elementId: found.element.id, x: change.point.x, y: change.point.y }
+      : { opId: `portable:resize:${found.element.id}`, kind: 'element.resize' as const, slideId: found.slideId, elementId: found.element.id, frame: change.frame }
+    const transaction: Transaction = {
+      transactionId: `portable:${change.kind.slice('element.'.length)}:${found.element.id}:${this.session.getRevision().slice(-12)}`,
+      baseRevision: this.session.getRevision(),
+      actor: { type: 'human', id: 'portable-light-edit' },
+      scope: { kind: 'selection', slideIds: [found.slideId], elementIds: [found.element.id], permissions: ['geometry'], allowInsert: false, allowDelete: false },
+      changeContract: geometryOnlyContract([found.element.id], false),
+      reason: `Portable Light Edit ${change.kind}`,
+      createdAt: '1970-01-01T00:00:00.000Z',
+      validationLevel: 'L2',
+      operations: [operation],
+    }
+    return this.commitPortableTransaction(transaction)
+  }
 }
 
 function assembleHtml(document: PpteDocument, payload: PortablePayload, assetSources: Record<string, string>): string {
@@ -278,8 +358,8 @@ function assembleHtml(document: PpteDocument, payload: PortablePayload, assetSou
  * adapter. Portable Runtime may depend on Core, but Core/File Format must not
  * become a dependency cycle through the Portable package.
  */
-function buildPortableCheckpointBytes(document: PpteDocument, options: { timestamp?: string; clean?: boolean; compatibilityProfile?: string; recentTransactions?: Transaction[]; assetBytes?: Record<string, Uint8Array>; fontBytes?: Record<string, Uint8Array> }): Uint8Array {
-  const issues = validateRuntimeDocument(document).filter((item) => item.severity === 'error')
+function buildPortableCheckpointBytes(document: PpteDocument, options: { timestamp?: string; clean?: boolean; compatibilityProfile?: string; runtimeProfile?: RuntimeProfile; recentTransactions?: Transaction[]; assetBytes?: Record<string, Uint8Array>; fontBytes?: Record<string, Uint8Array> }): Uint8Array {
+  const issues = validateRuntimeDocument(document, { runtimeProfile: options.runtimeProfile ?? 'ga-b' }).filter((item) => item.severity === 'error')
   if (issues.length) throw new Error(issues.map((item) => `${item.code}: ${item.message}`).join('\n'))
   const snapshot = options.clean ? cleanPortableSnapshot(document) : document
   const compatibilityProfile = options.compatibilityProfile ?? PPTE_COMPATIBILITY_PROFILE
@@ -348,7 +428,17 @@ function buildPortableCheckpointBytes(document: PpteDocument, options: { timesta
 
 function assertPortableDocumentCompatibility(document: PpteDocument, compatibilityProfile: string): void {
   const hasChart = Object.values(document.slides).some((slide) => Object.values(slide.elements).some((element) => element.type === 'chart'))
-  if (hasChart && compatibilityProfile !== PPTE_GA_B_COMPATIBILITY_PROFILE) throw new Error(`CHECKPOINT_FAILED: Chart documents require compatibility profile ${PPTE_GA_B_COMPATIBILITY_PROFILE}.`)
+  const requiresGaC = Object.values(document.slides).some((slide) => slide.visualStrategy === 'poster' || Object.values(slide.elements).some((element) => element.type === 'component' || element.type === 'chart' && (element.chartType === 'area' || element.chartType === 'donut')))
+  if (requiresGaC && compatibilityProfile !== PPTE_GA_C_COMPATIBILITY_PROFILE) throw new Error(`CHECKPOINT_FAILED: Poster, Widget, Area, and Donut documents require compatibility profile ${PPTE_GA_C_COMPATIBILITY_PROFILE}.`)
+  if (hasChart && compatibilityProfile !== PPTE_GA_B_COMPATIBILITY_PROFILE && compatibilityProfile !== PPTE_GA_C_COMPATIBILITY_PROFILE) throw new Error(`CHECKPOINT_FAILED: Chart documents require compatibility profile ${PPTE_GA_B_COMPATIBILITY_PROFILE} or ${PPTE_GA_C_COMPATIBILITY_PROFILE}.`)
+}
+
+function defaultCompatibilityProfile(document: PpteDocument, profile: PortableProfile): string {
+  // Preserve the historical portable default: Quick Fix checkpoints are GA-A
+  // unless the caller explicitly selects a newer compatibility profile. Light
+  // Edit is the GA-C portable surface and therefore opts into GA-C by default.
+  if (profile === 'light-edit') return PPTE_GA_C_COMPATIBILITY_PROFILE
+  return PPTE_COMPATIBILITY_PROFILE
 }
 
 function cleanPortableSnapshot(document: PpteDocument): PpteDocument {
