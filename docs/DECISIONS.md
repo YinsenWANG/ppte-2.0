@@ -36,3 +36,11 @@ Journal records are newline-delimited and checksummed. Recovery accepts the
 last complete valid record and reports a partial or corrupt tail instead of
 silently applying it. Checkpoint replacement is temp-file + fsync + rename;
 an interrupted build therefore leaves the prior checkpoint readable.
+
+## 2026-09-02 — workspace typecheck entrypoints
+
+The recursive typecheck gate is exposed by every workspace package and app.
+Each entrypoint invokes the repository TypeScript configuration because this
+prototype intentionally has one compilation graph covering source and tests.
+This keeps the gate complete without inventing package-local compiler
+boundaries or changing runtime behavior.
