@@ -60,6 +60,7 @@ function operationCases(): Operation[] {
     { opId: 'matrix-group-resize', kind: 'group.resize', slideId: 'slide_main', groupId: 'group_base', targetFrame: { x: 100, y: 100, width: 900, height: 500 } },
     { opId: 'matrix-fact-upsert', kind: 'fact.upsert', fact: { id: 'fact_one', key: 'one', value: 2 } },
     { opId: 'matrix-fact-delete', kind: 'fact.delete', factId: 'fact_one' },
+    { opId: 'matrix-fact-sync', kind: 'fact.syncReferences', factId: 'fact_one', targetElementIds: ['text_body'], strategy: 'replace-display-value' },
     { opId: 'matrix-source-upsert', kind: 'source.upsert', source: { id: 'source_one', title: 'Updated' } },
     { opId: 'matrix-source-delete', kind: 'source.delete', sourceId: 'source_one' },
     { opId: 'matrix-align', kind: 'layout.align', slideId: 'slide_main', elementIds: ['text_title', 'text_body'], alignment: 'left', reference: 'selection' },
@@ -80,11 +81,13 @@ function makeMatrixDocument(): PpteDocument {
   if (title.type === 'text') title.style.overrides = { letterSpacing: 1 }
   document.assets.asset_two = { ...cloneJson(document.assets.asset_pixel), id: 'asset_two', path: 'assets/two.png' }
   document.facts = { fact_one: { id: 'fact_one', key: 'one', value: 1 } }
+  const body = document.slides.slide_main.elements.text_body
+  if (body.type === 'text') body.semanticRefs = { factIds: ['fact_one'] }
   document.sources = { source_one: { id: 'source_one', title: 'Original' } }
   return document
 }
 
-test('every Week 1–2 operation has positive, inverse, and stale-base conflict evidence', () => {
+test('every Stable Core operation has positive, inverse, and stale-base conflict evidence', () => {
   const cases = operationCases()
   assert.deepEqual(new Set(cases.map((operation) => operation.kind)), new Set(WEEK1_2_OPERATION_KINDS))
   for (const operation of cases) {

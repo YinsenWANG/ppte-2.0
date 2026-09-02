@@ -20,7 +20,7 @@ export const STABLE_CORE_OPERATION_KINDS = [
   'text.replaceContent', 'text.setOverflowPolicy', 'text.fitByReducingFont', 'text.resizeBox',
   'image.replaceAsset', 'image.setCrop', 'image.setFocalPoint', 'shape.updateStyle',
   'group.create', 'group.delete', 'group.addMembers', 'group.removeMembers', 'group.move', 'group.resize',
-  'fact.upsert', 'fact.delete', 'source.upsert', 'source.delete', 'layout.align', 'layout.distribute',
+  'fact.upsert', 'fact.delete', 'fact.syncReferences', 'source.upsert', 'source.delete', 'layout.align', 'layout.distribute',
 ] as const
 
 /** Backward-compatible name retained for the Week 1–2 operation matrix. */
@@ -64,12 +64,14 @@ export function applyOperation(document: PpteDocument, operation: Operation): Ap
       return { document: next, inverse: [op(operation, 'theme.replace', { theme: before })] }
     }
     case 'theme.setToken': {
+      assertThemeToken(operation.category, operation.value)
       const bucket = next.theme.tokens[operation.category] as Record<string, unknown>
       const beforeTheme = cloneJson(next.theme)
       bucket[operation.token] = cloneJson(operation.value)
       return { document: next, inverse: [op(operation, 'theme.replace', { theme: beforeTheme })] }
     }
     case 'theme.updatePreset': {
+      if (!operation.remove) assertThemePreset(operation.category, operation.value)
       const bucket = next.theme.presets[operation.category] as Record<string, unknown>
       const had = Object.prototype.hasOwnProperty.call(bucket, operation.presetId)
       const before = bucket[operation.presetId]
@@ -114,15 +116,21 @@ export function applyOperation(document: PpteDocument, operation: Operation): Ap
     }
     case 'slide.setReadingOrder': {
       const slide = requireSlide(next, operation.slideId)
+      const hadReadingOrder = slide.readingOrder !== undefined
       const before = cloneJson(slide.readingOrder ?? [])
-      slide.readingOrder = cloneJson(operation.readingOrder)
-      return { document: next, inverse: [op(operation, 'slide.setReadingOrder', { slideId: operation.slideId, readingOrder: before })] }
+      if (operation.unset) delete slide.readingOrder
+      else if (operation.readingOrder) slide.readingOrder = cloneJson(operation.readingOrder)
+      else throw error('SCHEMA_INVALID', 'slide.setReadingOrder requires readingOrder unless unset is true.')
+      return { document: next, inverse: [hadReadingOrder ? op(operation, 'slide.setReadingOrder', { slideId: operation.slideId, readingOrder: before }) : op(operation, 'slide.setReadingOrder', { slideId: operation.slideId, unset: true })] }
     }
     case 'slide.setProtectedAnchors': {
       const slide = requireSlide(next, operation.slideId)
+      const hadProtectedAnchors = slide.protectedAnchors !== undefined
       const before = cloneJson(slide.protectedAnchors ?? [])
-      slide.protectedAnchors = cloneJson(operation.protectedAnchors)
-      return { document: next, inverse: [op(operation, 'slide.setProtectedAnchors', { slideId: operation.slideId, protectedAnchors: before })] }
+      if (operation.unset) delete slide.protectedAnchors
+      else if (operation.protectedAnchors) slide.protectedAnchors = cloneJson(operation.protectedAnchors)
+      else throw error('SCHEMA_INVALID', 'slide.setProtectedAnchors requires protectedAnchors unless unset is true.')
+      return { document: next, inverse: [hadProtectedAnchors ? op(operation, 'slide.setProtectedAnchors', { slideId: operation.slideId, protectedAnchors: before }) : op(operation, 'slide.setProtectedAnchors', { slideId: operation.slideId, unset: true })] }
     }
     case 'element.insert': {
       const slide = requireSlide(next, operation.slideId)
@@ -199,9 +207,13 @@ export function applyOperation(document: PpteDocument, operation: Operation): Ap
     case 'element.rotate': {
       const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)
       const before = element.rotationDeg ?? 0
-      assertFinite(operation.rotationDeg)
-      element.rotationDeg = operation.rotationDeg
-      return { document: next, inverse: [op(operation, 'element.rotate', { slideId: operation.slideId, elementId: operation.elementId, rotationDeg: before })] }
+      const hadRotation = element.rotationDeg !== undefined
+      if (operation.unset) delete element.rotationDeg
+      else if (operation.rotationDeg !== undefined) {
+        assertFinite(operation.rotationDeg)
+        element.rotationDeg = operation.rotationDeg
+      } else throw error('SCHEMA_INVALID', 'element.rotate requires rotationDeg unless unset is true.')
+      return { document: next, inverse: [hadRotation ? op(operation, 'element.rotate', { slideId: operation.slideId, elementId: operation.elementId, rotationDeg: before }) : op(operation, 'element.rotate', { slideId: operation.slideId, elementId: operation.elementId, unset: true })] }
     }
     case 'element.reorder': {
       const slide = requireSlide(next, operation.slideId)
@@ -215,20 +227,26 @@ export function applyOperation(document: PpteDocument, operation: Operation): Ap
     case 'element.setVisibility': {
       const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)
       const before = element.visible
-      element.visible = operation.visible
-      return { document: next, inverse: [op(operation, 'element.setVisibility', { slideId: operation.slideId, elementId: operation.elementId, visible: before ?? true })] }
+      if (operation.unset) delete element.visible
+      else if (operation.visible !== undefined) element.visible = operation.visible
+      else throw error('SCHEMA_INVALID', 'element.setVisibility requires visible unless unset is true.')
+      return { document: next, inverse: [before === undefined ? op(operation, 'element.setVisibility', { slideId: operation.slideId, elementId: operation.elementId, unset: true }) : op(operation, 'element.setVisibility', { slideId: operation.slideId, elementId: operation.elementId, visible: before })] }
     }
     case 'element.setLocked': {
       const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)
       const before = element.locked
-      element.locked = operation.locked
-      return { document: next, inverse: [op(operation, 'element.setLocked', { slideId: operation.slideId, elementId: operation.elementId, locked: before ?? false })] }
+      if (operation.unset) delete element.locked
+      else if (operation.locked !== undefined) element.locked = operation.locked
+      else throw error('SCHEMA_INVALID', 'element.setLocked requires locked unless unset is true.')
+      return { document: next, inverse: [before === undefined ? op(operation, 'element.setLocked', { slideId: operation.slideId, elementId: operation.elementId, unset: true }) : op(operation, 'element.setLocked', { slideId: operation.slideId, elementId: operation.elementId, locked: before })] }
     }
     case 'element.setEditPolicy': {
       const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)
       const before = cloneJson(element.editPolicy)
-      element.editPolicy = cloneJson(operation.editPolicy)
-      return { document: next, inverse: [op(operation, 'element.setEditPolicy', { slideId: operation.slideId, elementId: operation.elementId, editPolicy: before ?? {} })] }
+      if (operation.unset) delete element.editPolicy
+      else if (operation.editPolicy) element.editPolicy = cloneJson(operation.editPolicy)
+      else throw error('SCHEMA_INVALID', 'element.setEditPolicy requires editPolicy unless unset is true.')
+      return { document: next, inverse: [before === undefined ? op(operation, 'element.setEditPolicy', { slideId: operation.slideId, elementId: operation.elementId, unset: true }) : op(operation, 'element.setEditPolicy', { slideId: operation.slideId, elementId: element.id, editPolicy: before })] }
     }
     case 'element.setSemanticKey': {
       const slide = requireSlide(next, operation.slideId)
@@ -274,8 +292,10 @@ export function applyOperation(document: PpteDocument, operation: Operation): Ap
       const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)
       if (element.type !== 'text') throw error('OPERATION_TYPE_MISMATCH', 'text.setOverflowPolicy requires a Text element.')
       const before = element.overflowPolicy
-      element.overflowPolicy = operation.overflowPolicy
-      return { document: next, inverse: [op(operation, 'text.setOverflowPolicy', { slideId: operation.slideId, elementId: operation.elementId, overflowPolicy: before ?? 'warn' })] }
+      if (operation.unset) delete element.overflowPolicy
+      else if (operation.overflowPolicy) element.overflowPolicy = operation.overflowPolicy
+      else throw error('SCHEMA_INVALID', 'text.setOverflowPolicy requires overflowPolicy unless unset is true.')
+      return { document: next, inverse: [before === undefined ? op(operation, 'text.setOverflowPolicy', { slideId: operation.slideId, elementId: operation.elementId, unset: true }) : op(operation, 'text.setOverflowPolicy', { slideId: operation.slideId, elementId: operation.elementId, overflowPolicy: before })] }
     }
     case 'text.fitByReducingFont': {
       const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)
@@ -585,9 +605,10 @@ function assertTypedStyleOverrides(type: 'text' | 'image' | 'shape', patch: Reco
 }
 
 function validTextStyleField(field: string, value: unknown): boolean {
-  if (field === 'fontFamily' || field === 'color') return validValueOrToken(value)
+  if (field === 'fontFamily') return validValueOrToken(value, 'string')
+  if (field === 'color') return validValueOrToken(value, 'color')
   if (field === 'fontSize' || field === 'lineHeight') return finitePositiveValue(value)
-  if (field === 'fontWeight') return typeof value === 'number' && Number.isFinite(value) && value >= 100 && value <= 1000
+  if (field === 'fontWeight') return typeof value === 'number' && Number.isInteger(value) && value >= 100 && value <= 1000
   if (field === 'letterSpacing') return typeof value === 'number' && Number.isFinite(value)
   if (field === 'verticalAlign') return value === 'top' || value === 'middle' || value === 'bottom'
   if (field === 'direction') return value === 'ltr' || value === 'rtl' || value === 'auto'
@@ -609,37 +630,62 @@ function validImageStyleField(field: string, value: unknown): boolean {
   return false
 }
 
-function validValueOrToken(value: unknown): boolean {
+function assertThemeToken(category: 'colors' | 'fontFamilies' | 'fontSizes' | 'spacing' | 'radii' | 'shadows', value: unknown) {
+  const valid = category === 'colors' ? typeof value === 'string' && /^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$/.test(value)
+    : category === 'fontFamilies' ? typeof value === 'string' && value.length > 0
+      : category === 'shadows' ? validShadow(value)
+        : finiteNonNegativeValue(value) && (category !== 'fontSizes' || finitePositiveValue(value))
+  if (!valid) throw error('STYLE_TOKEN_INVALID', `Theme token in ${category} has an invalid typed value.`)
+}
+
+function assertThemePreset(category: 'text' | 'shape' | 'image' | 'chart', value: unknown) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw error('STYLE_PRESET_INVALID', `Theme ${category} preset must be an object.`)
+  const record = value as Record<string, unknown>
+  if (category === 'text') {
+    const fields = new Set(['fontFamily', 'fontSize', 'fontWeight', 'color', 'lineHeight', 'letterSpacing', 'verticalAlign', 'direction'])
+    if (!validValueOrToken(record.fontFamily, 'string') || !finitePositiveValue(record.fontSize) || !validValueOrToken(record.color, 'color')) throw error('STYLE_PRESET_INVALID', 'Text preset requires typed fontFamily, positive fontSize, and color.')
+    for (const [field, fieldValue] of Object.entries(record)) if (!fields.has(field) || !validTextStyleField(field, fieldValue)) throw error('STYLE_PRESET_INVALID', `Invalid text preset field ${field}.`)
+  }
+  const fields = category === 'shape' ? new Set(['fill', 'stroke', 'radius', 'shadow']) : category === 'image' ? new Set(['border', 'radius', 'shadow']) : undefined
+  if (fields) for (const [field, fieldValue] of Object.entries(record)) if (!fields.has(field) || (category === 'shape' && !validShapeStyleField(field, fieldValue)) || (category === 'image' && !validImageStyleField(field, fieldValue))) throw error('STYLE_PRESET_INVALID', `Invalid ${category} preset field ${field}.`)
+}
+
+function validValueOrToken(value: unknown, valueType: 'string' | 'color' = 'color'): boolean {
   if (!value || typeof value !== 'object') return false
   const candidate = value as Record<string, unknown>
-  if (candidate.kind === 'token') return typeof candidate.token === 'string' && candidate.token.length > 0
-  return candidate.kind === 'value' && typeof candidate.value === 'string' && candidate.value.length > 0
+  if (candidate.kind === 'token') return hasOnlyKeys(candidate, ['kind', 'token']) && typeof candidate.token === 'string' && candidate.token.length > 0
+  return candidate.kind === 'value' && hasOnlyKeys(candidate, ['kind', 'value']) && typeof candidate.value === 'string' && candidate.value.length > 0 && (valueType === 'string' || /^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$/.test(candidate.value))
 }
 
 function validPaint(value: unknown): boolean {
   if (!value || typeof value !== 'object') return false
   const candidate = value as Record<string, unknown>
-  if (candidate.kind === 'none') return true
-  if (candidate.kind === 'solid') return validValueOrToken(candidate.color)
+  if (candidate.kind === 'none') return hasOnlyKeys(candidate, ['kind'])
+  if (candidate.kind === 'solid') return hasOnlyKeys(candidate, ['kind', 'color', 'opacity']) && validValueOrToken(candidate.color, 'color') && validOpacity(candidate.opacity)
   if (candidate.kind === 'linear-gradient') return Array.isArray(candidate.stops) && candidate.stops.length >= 2 && candidate.stops.every((stop) => {
     if (!stop || typeof stop !== 'object') return false
     const item = stop as Record<string, unknown>
-    return typeof item.offset === 'number' && Number.isFinite(item.offset) && item.offset >= 0 && item.offset <= 1 && validValueOrToken(item.color)
-  })
+    return hasOnlyKeys(item, ['offset', 'color']) && typeof item.offset === 'number' && Number.isFinite(item.offset) && item.offset >= 0 && item.offset <= 1 && validValueOrToken(item.color, 'color')
+  }) && hasOnlyKeys(candidate, ['kind', 'angleDeg', 'stops', 'opacity']) && typeof candidate.angleDeg === 'number' && Number.isFinite(candidate.angleDeg) && validOpacity(candidate.opacity)
   return false
 }
 
 function validStroke(value: unknown): boolean {
   if (!value || typeof value !== 'object') return false
   const candidate = value as Record<string, unknown>
-  return validValueOrToken(candidate.color) && finiteNonNegativeValue(candidate.width)
+  return hasOnlyKeys(candidate, ['color', 'width', 'opacity', 'dash', 'lineCap', 'lineJoin']) && validValueOrToken(candidate.color, 'color') && finiteNonNegativeValue(candidate.width) && validOpacity(candidate.opacity)
+    && (candidate.dash === undefined || Array.isArray(candidate.dash) && candidate.dash.every((segment) => finiteNonNegativeValue(segment)))
+    && (candidate.lineCap === undefined || ['butt', 'round', 'square'].includes(String(candidate.lineCap)))
+    && (candidate.lineJoin === undefined || ['miter', 'round', 'bevel'].includes(String(candidate.lineJoin)))
 }
 
 function validShadow(value: unknown): boolean {
   if (!value || typeof value !== 'object') return false
   const candidate = value as Record<string, unknown>
-  return validValueOrToken(candidate.color) && typeof candidate.offsetX === 'number' && Number.isFinite(candidate.offsetX) && typeof candidate.offsetY === 'number' && Number.isFinite(candidate.offsetY) && finiteNonNegativeValue(candidate.blur)
+  return hasOnlyKeys(candidate, ['color', 'offsetX', 'offsetY', 'blur', 'spread', 'opacity']) && validValueOrToken(candidate.color, 'color') && typeof candidate.offsetX === 'number' && Number.isFinite(candidate.offsetX) && typeof candidate.offsetY === 'number' && Number.isFinite(candidate.offsetY) && finiteNonNegativeValue(candidate.blur) && (candidate.spread === undefined || typeof candidate.spread === 'number' && Number.isFinite(candidate.spread)) && validOpacity(candidate.opacity)
 }
+
+function validOpacity(value: unknown): boolean { return value === undefined || (typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= 1) }
 
 function finitePositiveValue(value: unknown): value is number {
   return typeof value === 'number' && Number.isFinite(value) && value > 0
@@ -648,6 +694,7 @@ function finitePositiveValue(value: unknown): value is number {
 function finiteNonNegativeValue(value: unknown): value is number {
   return typeof value === 'number' && Number.isFinite(value) && value >= 0
 }
+function hasOnlyKeys(value: Record<string, unknown>, allowed: string[]): boolean { return Object.keys(value).every((key) => allowed.includes(key)) }
 
 function assertRichText(content: unknown): asserts content is TextElement['content'] {
   if (!content || typeof content !== 'object' || !Array.isArray((content as { paragraphs?: unknown }).paragraphs)) throw error('SCHEMA_INVALID', 'Rich text content must contain paragraphs.')
@@ -784,5 +831,10 @@ function error(code: string, message: string): OperationApplyError {
 
 type OperationPayload<K extends Operation['kind']> = Omit<Extract<Operation, { kind: K }>, 'opId' | 'kind' | 'preconditions' | 'reason'>
 function op<K extends Operation['kind']>(source: Operation, kind: K, payload: OperationPayload<K>): Extract<Operation, { kind: K }> {
-  return { opId: `${source.opId}:inverse:${kind}`, kind, ...payload } as Extract<Operation, { kind: K }>
+  const record = payload as Record<string, unknown>
+  const identity = ['slideId', 'elementId', 'groupId', 'factId', 'sourceId']
+    .map((key) => typeof record[key] === 'string' ? `${key}=${record[key]}` : undefined)
+    .filter(Boolean)
+    .join('|')
+  return { opId: `${source.opId}:inverse:${kind}${identity ? `:${identity}` : ''}`, kind, ...payload } as Extract<Operation, { kind: K }>
 }

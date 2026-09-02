@@ -9,7 +9,7 @@ export interface SemanticKeyMatch {
 
 /** Return every match so callers cannot silently pick an ambiguous business identity. */
 export function resolveSemanticKeyMatches(document: PpteDocument, slideId: SlideId, semanticKey: string): SemanticKeyMatch[] {
-  return Object.values(document.slides[slideId]?.elements ?? {})
+  return Object.values(document.slides?.[slideId]?.elements ?? {})
     .filter((element) => element.semanticKey === semanticKey)
     .map((element) => ({ slideId, elementId: element.id, element }))
 }
@@ -24,7 +24,8 @@ export function resolveSemanticKey(document: PpteDocument, slideId: SlideId, sem
 export function inheritSemanticIdentity(replacement: Element, previous: Element): Element {
   const next = cloneJson(replacement)
   if (next.id === previous.id) throw new Error('SEMANTIC_LINEAGE_CYCLE: replacement must have a new element id.')
-  if (previous.semanticKey) next.semanticKey ??= previous.semanticKey
+  if (previous.semanticKey && next.semanticKey && next.semanticKey !== previous.semanticKey) throw new Error(`SEMANTIC_KEY_CONFLICT: replacement must inherit ${previous.semanticKey}.`)
+  if (previous.semanticKey) next.semanticKey = previous.semanticKey
   next.provenance = {
     ...next.provenance,
     replacesElementId: previous.id,
@@ -48,9 +49,11 @@ export function validateSemanticIdentity(document: PpteDocument): ValidationIssu
   const issues: ValidationIssue[] = []
   const replacementGraph = new Map<string, string>()
   const currentElementIds = new Set<string>()
-  for (const slide of Object.values(document.slides)) {
+  for (const slide of Object.values(document.slides ?? {})) {
+    if (!slide || typeof slide !== 'object') continue
     const keys = new Set<string>()
-    for (const element of Object.values(slide.elements)) {
+    for (const element of Object.values(slide.elements ?? {})) {
+      if (!element || typeof element !== 'object') continue
       if (currentElementIds.has(element.id)) issues.push({ code: 'ELEMENT_ID_DUPLICATE', severity: 'error', message: `Element id ${element.id} is used more than once.`, slideId: slide.id, elementId: element.id })
       currentElementIds.add(element.id)
       if (element.semanticKey && keys.has(element.semanticKey)) issues.push({ code: 'SEMANTIC_KEY_DUPLICATE', severity: 'error', message: `Duplicate semanticKey ${element.semanticKey}.`, slideId: slide.id, semanticKey: element.semanticKey })

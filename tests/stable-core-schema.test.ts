@@ -30,6 +30,9 @@ test('typed style and Text v1 boundaries are diagnosed', () => {
   const run = (malformed.slides.slide_main.elements.text_body as TextElement).content.paragraphs[0].runs[0] as unknown as Record<string, unknown>
   run.fontSize = 12
   assert.ok(validateDocument(malformed).some((issue) => issue.code === 'SCHEMA_INVALID' && issue.message.includes('font-size')))
+  const malformedPreset = cloneJson(document)
+  ;(malformedPreset.theme.presets.text['text.title.primary'] as unknown as Record<string, unknown>).unexpected = true
+  assert.ok(validateDocument(malformedPreset).some((issue) => issue.code === 'SCHEMA_INVALID' && issue.message.includes('Text preset')))
 })
 
 test('semantic resolution refuses ambiguity and replacement carries the prior business key', () => {
@@ -47,6 +50,7 @@ test('semantic resolution refuses ambiguity and replacement carries the prior bu
   const replacement = buildReplacementElement(clean, 'slide_main', previous.id, { ...cloneJson(previous), id: 'text_title_v2' })
   assert.equal(replacement.semanticKey, previous.semanticKey)
   assert.equal(replacement.provenance?.replacesElementId, previous.id)
+  assert.throws(() => buildReplacementElement(clean, 'slide_main', previous.id, { ...cloneJson(previous), id: 'text_title_other', semanticKey: 'other.key' }), /SEMANTIC_KEY_CONFLICT/)
 })
 
 test('embedded subset coverage rejects new CJK text without silent fallback', () => {

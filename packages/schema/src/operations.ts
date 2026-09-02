@@ -195,11 +195,13 @@ export interface SlideUpdateOperation extends OperationBase<'slide.update'> {
 }
 export interface SlideSetReadingOrderOperation extends OperationBase<'slide.setReadingOrder'> {
   slideId: SlideId
-  readingOrder: ElementId[]
+  readingOrder?: ElementId[]
+  unset?: boolean
 }
 export interface SlideSetProtectedAnchorsOperation extends OperationBase<'slide.setProtectedAnchors'> {
   slideId: SlideId
-  protectedAnchors: ProtectedAnchor[]
+  protectedAnchors?: ProtectedAnchor[]
+  unset?: boolean
 }
 export interface ElementInsertOperation extends OperationBase<'element.insert'> {
   slideId: SlideId
@@ -232,7 +234,8 @@ export interface ElementResizeOperation extends OperationBase<'element.resize'> 
 export interface ElementRotateOperation extends OperationBase<'element.rotate'> {
   slideId: SlideId
   elementId: ElementId
-  rotationDeg: number
+  rotationDeg?: number
+  unset?: boolean
 }
 export interface ElementReorderOperation extends OperationBase<'element.reorder'> {
   slideId: SlideId
@@ -242,17 +245,20 @@ export interface ElementReorderOperation extends OperationBase<'element.reorder'
 export interface ElementSetVisibilityOperation extends OperationBase<'element.setVisibility'> {
   slideId: SlideId
   elementId: ElementId
-  visible: boolean
+  visible?: boolean
+  unset?: boolean
 }
 export interface ElementSetLockedOperation extends OperationBase<'element.setLocked'> {
   slideId: SlideId
   elementId: ElementId
-  locked: boolean
+  locked?: boolean
+  unset?: boolean
 }
 export interface ElementSetEditPolicyOperation extends OperationBase<'element.setEditPolicy'> {
   slideId: SlideId
   elementId: ElementId
-  editPolicy: EditPolicy
+  editPolicy?: EditPolicy
+  unset?: boolean
 }
 export interface ElementSetSemanticKeyOperation extends OperationBase<'element.setSemanticKey'> {
   slideId: SlideId
@@ -282,7 +288,8 @@ export interface TextReplaceContentOperation extends OperationBase<'text.replace
 export interface TextSetOverflowPolicyOperation extends OperationBase<'text.setOverflowPolicy'> {
   slideId: SlideId
   elementId: ElementId
-  overflowPolicy: 'warn' | 'clip' | 'ellipsis'
+  overflowPolicy?: 'warn' | 'clip' | 'ellipsis'
+  unset?: boolean
 }
 export interface TextFitByReducingFontOperation extends OperationBase<'text.fitByReducingFont'> {
   slideId: SlideId

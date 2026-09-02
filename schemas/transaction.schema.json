@@ -5510,8 +5510,7 @@
             "required": [
               "opId",
               "kind",
-              "slideId",
-              "readingOrder"
+              "slideId"
             ],
             "properties": {
               "opId": {
@@ -5694,8 +5693,33 @@
                   "maxLength": 256
                 },
                 "uniqueItems": true
+              },
+              "unset": {
+                "const": true
               }
             },
+            "oneOf": [
+              {
+                "required": [
+                  "readingOrder"
+                ],
+                "not": {
+                  "required": [
+                    "unset"
+                  ]
+                }
+              },
+              {
+                "required": [
+                  "unset"
+                ],
+                "not": {
+                  "required": [
+                    "readingOrder"
+                  ]
+                }
+              }
+            ],
             "additionalProperties": false
           },
           {
@@ -5703,8 +5727,7 @@
             "required": [
               "opId",
               "kind",
-              "slideId",
-              "protectedAnchors"
+              "slideId"
             ],
             "properties": {
               "opId": {
@@ -5966,8 +5989,33 @@
                   },
                   "additionalProperties": false
                 }
+              },
+              "unset": {
+                "const": true
               }
             },
+            "oneOf": [
+              {
+                "required": [
+                  "protectedAnchors"
+                ],
+                "not": {
+                  "required": [
+                    "unset"
+                  ]
+                }
+              },
+              {
+                "required": [
+                  "unset"
+                ],
+                "not": {
+                  "required": [
+                    "protectedAnchors"
+                  ]
+                }
+              }
+            ],
             "additionalProperties": false
           },
           {
@@ -9387,8 +9435,7 @@
               "opId",
               "kind",
               "slideId",
-              "elementId",
-              "rotationDeg"
+              "elementId"
             ],
             "properties": {
               "opId": {
@@ -9570,8 +9617,33 @@
               },
               "rotationDeg": {
                 "type": "number"
+              },
+              "unset": {
+                "const": true
               }
             },
+            "oneOf": [
+              {
+                "required": [
+                  "rotationDeg"
+                ],
+                "not": {
+                  "required": [
+                    "unset"
+                  ]
+                }
+              },
+              {
+                "required": [
+                  "unset"
+                ],
+                "not": {
+                  "required": [
+                    "rotationDeg"
+                  ]
+                }
+              }
+            ],
             "additionalProperties": false
           },
           {
@@ -9774,8 +9846,7 @@
               "opId",
               "kind",
               "slideId",
-              "elementId",
-              "visible"
+              "elementId"
             ],
             "properties": {
               "opId": {
@@ -9957,8 +10028,33 @@
               },
               "visible": {
                 "type": "boolean"
+              },
+              "unset": {
+                "const": true
               }
             },
+            "oneOf": [
+              {
+                "required": [
+                  "visible"
+                ],
+                "not": {
+                  "required": [
+                    "unset"
+                  ]
+                }
+              },
+              {
+                "required": [
+                  "unset"
+                ],
+                "not": {
+                  "required": [
+                    "visible"
+                  ]
+                }
+              }
+            ],
             "additionalProperties": false
           },
           {
@@ -9967,8 +10063,7 @@
               "opId",
               "kind",
               "slideId",
-              "elementId",
-              "locked"
+              "elementId"
             ],
             "properties": {
               "opId": {
@@ -10150,8 +10245,33 @@
               },
               "locked": {
                 "type": "boolean"
+              },
+              "unset": {
+                "const": true
               }
             },
+            "oneOf": [
+              {
+                "required": [
+                  "locked"
+                ],
+                "not": {
+                  "required": [
+                    "unset"
+                  ]
+                }
+              },
+              {
+                "required": [
+                  "unset"
+                ],
+                "not": {
+                  "required": [
+                    "locked"
+                  ]
+                }
+              }
+            ],
             "additionalProperties": false
           },
           {
@@ -10160,8 +10280,7 @@
               "opId",
               "kind",
               "slideId",
-              "elementId",
-              "editPolicy"
+              "elementId"
             ],
             "properties": {
               "opId": {
@@ -10371,8 +10490,33 @@
                   }
                 },
                 "additionalProperties": false
+              },
+              "unset": {
+                "const": true
               }
             },
+            "oneOf": [
+              {
+                "required": [
+                  "editPolicy"
+                ],
+                "not": {
+                  "required": [
+                    "unset"
+                  ]
+                }
+              },
+              {
+                "required": [
+                  "unset"
+                ],
+                "not": {
+                  "required": [
+                    "editPolicy"
+                  ]
+                }
+              }
+            ],
             "additionalProperties": false
           },
           {
@@ -11485,8 +11629,7 @@
               "opId",
               "kind",
               "slideId",
-              "elementId",
-              "overflowPolicy"
+              "elementId"
             ],
             "properties": {
               "opId": {
@@ -11672,8 +11815,33 @@
                   "clip",
                   "ellipsis"
                 ]
+              },
+              "unset": {
+                "const": true
               }
             },
+            "oneOf": [
+              {
+                "required": [
+                  "overflowPolicy"
+                ],
+                "not": {
+                  "required": [
+                    "unset"
+                  ]
+                }
+              },
+              {
+                "required": [
+                  "unset"
+                ],
+                "not": {
+                  "required": [
+                    "overflowPolicy"
+                  ]
+                }
+              }
+            ],
             "additionalProperties": false
           },
           {

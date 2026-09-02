@@ -488,7 +488,7 @@
                     "exclusiveMinimum": 0
                   },
                   "fontWeight": {
-                    "type": "number",
+                    "type": "integer",
                     "minimum": 100,
                     "maximum": 1000
                   },
@@ -1732,7 +1732,7 @@
                               "exclusiveMinimum": 0
                             },
                             "fontWeight": {
-                              "type": "number",
+                              "type": "integer",
                               "minimum": 100,
                               "maximum": 1000
                             },
@@ -4202,7 +4202,7 @@
           },
           "path": {
             "type": "string",
-            "pattern": "^(assets|fonts)/"
+            "pattern": "^assets/"
           },
           "width": {
             "type": "integer",
@@ -4266,10 +4266,12 @@
             "maximum": 1000
           },
           "hash": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^sha256-[0-9a-fA-F]{64}$"
           },
           "path": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^fonts/"
           },
           "source": {
             "enum": [
@@ -4349,7 +4351,33 @@
     },
     "policies": {
       "type": "object",
-      "additionalProperties": true
+      "properties": {
+        "allowExternalLinks": {
+          "type": "boolean"
+        },
+        "allowNetworkAssets": {
+          "type": "boolean"
+        },
+        "allowPortableEditing": {
+          "type": "boolean"
+        },
+        "maxHistoryEntries": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "maxHistoryBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "defaultAgentScope": {
+          "enum": [
+            "selection",
+            "slide",
+            "document"
+          ]
+        }
+      },
+      "additionalProperties": false
     },
     "generation": {
       "type": "object",

@@ -19,6 +19,10 @@ test('flat groups reject duplicate membership and explicit text scaling is rever
     (cause: unknown) => (cause as { code?: string }).code === 'FLAT_GROUP_DUPLICATE_MEMBER',
   )
   slide.groups = { cards: { id: 'cards', memberIds: ['text_title', 'image_hero'] } }
+  assert.throws(
+    () => applyOperation(document, { opId: 'group-nested', kind: 'group.create', slideId: 'slide_main', group: { id: 'nested', memberIds: ['cards'] } }),
+    (cause: unknown) => (cause as { code?: string }).code === 'ELEMENT_MISSING',
+  )
   const original = cloneJson(document)
   const plain: Operation = { opId: 'group-plain', kind: 'group.resize', slideId: 'slide_main', groupId: 'cards', targetFrame: { x: 0, y: 0, width: 1920, height: 1080 } }
   const plainResult = applyOperation(document, plain)
@@ -85,4 +89,34 @@ test('fact display synchronization is explicit and reversible', () => {
   assert.equal((applied.document.slides.slide_main.elements.text_body as TextElement).content.paragraphs[0].runs[0].text, '42%')
   const restored = applyOperation(applied.document, applied.inverse[0]).document
   assert.equal(canonicalRevision(restored), canonicalRevision(document))
+})
+
+test('optional default fields use explicit unset inverses and preserve the exact revision', () => {
+  const { document } = makeContractDocument()
+  const slide = document.slides.slide_main
+  const image = slide.elements.image_hero
+  const title = slide.elements.text_title as TextElement
+  delete slide.readingOrder
+  delete slide.protectedAnchors
+  delete image.visible
+  delete image.locked
+  delete image.editPolicy
+  delete image.rotationDeg
+  delete title.overflowPolicy
+  const operations: Operation[] = [
+    { opId: 'unset-visible', kind: 'element.setVisibility', slideId: 'slide_main', elementId: image.id, visible: false },
+    { opId: 'unset-locked', kind: 'element.setLocked', slideId: 'slide_main', elementId: image.id, locked: true },
+    { opId: 'unset-policy', kind: 'element.setEditPolicy', slideId: 'slide_main', elementId: image.id, editPolicy: { mode: 'property' } },
+    { opId: 'unset-rotation', kind: 'element.rotate', slideId: 'slide_main', elementId: image.id, rotationDeg: 15 },
+    { opId: 'unset-overflow', kind: 'text.setOverflowPolicy', slideId: 'slide_main', elementId: title.id, overflowPolicy: 'clip' },
+    { opId: 'unset-reading-order', kind: 'slide.setReadingOrder', slideId: 'slide_main', readingOrder: ['text_title', 'text_body', 'image_hero'] },
+    { opId: 'unset-anchors', kind: 'slide.setProtectedAnchors', slideId: 'slide_main', protectedAnchors: [{ target: { kind: 'element', elementId: title.id }, preserve: ['content'] }] },
+  ]
+  const original = cloneJson(document)
+  for (const operation of operations) {
+    const applied = applyOperation(document, operation)
+    let restored = applied.document
+    for (const inverse of applied.inverse) restored = applyOperation(restored, inverse).document
+    assert.equal(canonicalRevision(restored), canonicalRevision(original), `${operation.kind} exact optional inverse`)
+  }
 })

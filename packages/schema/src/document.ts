@@ -370,7 +370,7 @@ export interface ShapeStyle {
   shadow?: Shadow
 }
 
-/** Forward-compatible contract types; Week 1–2 runtime intentionally rejects these. */
+/** Forward-compatible contract types; Stable Core runtime intentionally rejects these. */
 export interface ChartElement extends BaseElement {
   type: 'chart'
   chartType: 'bar' | 'line' | 'area' | 'pie' | 'donut'
