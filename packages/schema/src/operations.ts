@@ -438,6 +438,7 @@ export interface ValidationIssue {
   factId?: FactId
   path?: JsonPointer
   recovery?: string
+  causeId?: string
 }
 
 export interface StructuralDiff {

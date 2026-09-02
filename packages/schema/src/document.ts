@@ -13,6 +13,13 @@ export type TransactionId = string
 export type Revision = string
 export type JsonPointer = string
 
+/** Independent format and protocol versions used at persistence boundaries. */
+export const PPTE_FORMAT = 'ppte' as const
+export const PPTE_FORMAT_VERSION = '2' as const
+export const PPTE_SCHEMA_VERSION = '2.0.0' as const
+export const PPTE_OPERATION_PROTOCOL_VERSION = '1.0' as const
+export const PPTE_COMPATIBILITY_PROFILE = 'ppte-2.0-ga-a.1' as const
+
 export type JsonPrimitive = string | number | boolean | null
 export type JsonValue = JsonPrimitive | JsonValue[] | { [key: string]: JsonValue }
 export type HexColor = `#${string}`

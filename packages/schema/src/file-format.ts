@@ -43,6 +43,8 @@ export interface RecoveryJournalRecord {
   sequence: number
   transaction: Transaction
   requiredAssetHashes?: string[]
+  /** The result is optional for v1 readers; when present it makes the tail auditable without replay. */
+  resultRevision?: Revision
   checksum: string
 }
 export interface PortableOrigin {
