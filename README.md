@@ -17,6 +17,8 @@ pnpm typecheck
 pnpm test
 pnpm validate
 pnpm e2e:vertical-slice
+pnpm e2e:milestone
+pnpm e2e:beta
 pnpm contract-deck
 ```
 
@@ -45,6 +47,17 @@ replayed only when its document and base revision match.
 - `packages/recovery-journal` and `packages/file-format` — host persistence
   boundaries for checksummed append recovery, SHA-256 CAS, and atomic `.ppte`
   checkpoints.
+- `packages/archive` — bounded stored-ZIP primitives for data-only exchange
+  packages.
+- `packages/capability` — explicit per-target capability and degradation
+  reports.
+- `packages/portable-runtime` — offline Viewer and Quick Fix profiles,
+  origin metadata, glyph preflight, presenter controls, and Save as New
+  Project.
+- `packages/reviewer` and `packages/patch-format` — three-way semantic review
+  and data-only `.ppte.patch` transport with safe resource import.
+- `packages/exporter-pdf` — deterministic PDF/PNG baseline exporters with
+  explicit degradation reports.
 - `apps/contract-deck` — the executable acceptance path.
 - `schemas`, `examples`, `scripts/validate.py` — retained public contracts and
   validation fixtures.
@@ -56,16 +69,20 @@ replayed only when its document and base revision match.
 This milestone deliberately does not implement:
 
 - Slidev, Markdown as a content source, or DOM reverse parsing;
-- Chart, Widget, Poster, PPTX, or Patch;
+- Chart, Widget, Poster, or PPTX;
 - nested Groups or Group Rotate;
 - Run-level font or font-size styling;
-- a complete Portable editor;
+- Portable Light Edit, Fact Quick Fix, or a complete Portable editor;
+- CRDT, real-time collaboration, legacy migration/import, or a browser/OS
+  pixel-matrix test lab;
 - direct writes that bypass the Operation Engine.
 
 The schema retains forward-compatible types for later releases, but the
 Stable Core runtime accepts only Text, Image, Shape, and flat logical Groups.
-Unsupported future operations fail with a diagnostic error; they are not
-silently ignored or downgraded.
+Portable and Patch resource operations are transport-layer extensions and are
+still committed through the same Session Operation Engine. Unsupported future
+operations fail with a diagnostic error; they are not silently ignored or
+downgraded.
 
 ## Design invariants
 

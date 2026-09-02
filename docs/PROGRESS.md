@@ -1,5 +1,64 @@
 # PPTe 2.0 Milestone Progress
 
+## 2026-09-03 — Week 11–16 Portable Runtime / Review / Export Beta
+
+### Completed this round
+
+- Added a self-contained Portable Viewer and Quick Fix runtime derived from
+  the semantic Document, with offline playback, fullscreen, slide navigation,
+  Click Steps, notes, origin metadata, explicit no-sync messaging, and
+  capability reporting. Viewer has no edit path; Quick Fix supports Text,
+  Image replacement, Undo, and Save as New Project through the Operation
+  Engine.
+- Added strict Glyph Coverage inspection for portable text edits. Undeclared,
+  incomplete, unsafe, or fallback-only font coverage becomes an explicit
+  error; Viewer degradation is reported as `font-replacement` instead of
+  being hidden.
+- Added three-way semantic Revised Copy comparison over Base, Local, and
+  Revised snapshots. Matching uses element identity, semantic keys, lineage,
+  Fact/Source IDs, and manual-only heuristic/ambiguous suggestions. Review
+  units cover fields, elements, slides, records, and resources; accepted
+  changes become normal review Transactions and can be undone.
+- Added data-only `.ppte.patch` stored ZIP transport with manifest,
+  `operations.jsonl`, content-addressed asset/font payload paths, binary hash
+  checks, safe-path checks, executable-payload rejection, base-revision
+  preconditions, atomic resource import, partial acceptance, and replay/base
+  mismatch protection. CRDT and real-time collaboration remain out of scope.
+- Added deterministic PDF 1.4 and PNG baseline exporters. Unsupported,
+  missing-source, font, layout, and rasterization limitations are returned in
+  the Capability Report and export issues; pages/content are not silently
+  skipped.
+- Added public schemas/examples for Portable Origin, Capability Report,
+  Review, and patch resource maps, plus the `e2e:beta` gate and positive,
+  inverse, conflict, security, and degradation tests.
+
+### Exit-condition evidence
+
+- `pnpm install` — passed.
+- `pnpm -r typecheck` — passed for all 25 selected workspace projects.
+- `pnpm typecheck` — passed.
+- `pnpm test` — 44 tests passed, 0 failed, 0 skipped.
+- `pnpm validate` — 10 schemas/examples, semantic checks, operation parity,
+  markdown structure, and source guards passed.
+- `pnpm e2e:vertical-slice` — passed; existing checkpoint, journal, scope,
+  renderer, and Operation Engine flow remained green.
+- `pnpm e2e:milestone` — passed; existing IR, Recipe, Agent, artwork,
+  comparison, confirmation, and undo flow remained green.
+- `pnpm e2e:beta` — passed; Viewer audit, Quick Fix Text/Image/Undo/Save,
+  Glyph Coverage, three-way Patch, replay protection, PDF, PNG, and explicit
+  degradation all passed.
+- `git diff --check` — passed.
+
+### Explicitly not done
+
+The first GA portable promise is limited to Viewer and Quick Fix. Light Edit,
+Fact Quick Fix, Chart/Widget/Poster/PPTX, a complete Portable editor, crop,
+free geometry, full Agent/Generation Engine, CRDT, real-time collaboration,
+legacy migration/import, and browser/OS pixel-matrix validation are not part
+of this round. PDF/PNG are deterministic baselines with explicit fidelity and
+font limitations, not a claim of complete production export parity. No remote
+is created and no changes are pushed.
+
 ## 2026-09-02 — Week 1–2 gate recovery
 
 ### Completed this round

@@ -139,3 +139,24 @@ L3 targeted visual comparison uses per-slide and per-semantic-element hashes of
 the deterministic reference-render HTML. It reports changed target and
 non-target element IDs without making a browser screenshot or pixel buffer a
 Document source. A browser/OS pixel matrix remains a later release concern.
+
+## 2026-09-03 — Week 11–16 Portable and review boundary
+
+The first GA portable profile is limited to offline Viewer and Quick Fix.
+Viewer is read-only; Quick Fix only creates Text/Image Operations, checks
+Glyph Coverage before Text commit, and saves a new project or derived copy.
+Portable output carries source origin and Capability Report data and states
+that it has no sync or overwrite relationship with the source project.
+
+The Revised Copy flow is file-based three-way review, not real-time
+collaboration. `.ppte.patch` is a data-only stored ZIP whose operations carry
+the Base revision precondition. Asset and embedded-font imports require
+declared metadata, safe package paths, and verified bytes. Resource import
+operations are transport operations outside the Stable Core operation matrix;
+they are applied through the same Session Operation Engine and produce normal
+inverse operations. A Base mismatch is reported and never auto-committed.
+
+PDF and PNG are baseline exporters. Unsupported elements, missing sources,
+font replacement, layout risk, and rasterized output remain visible through
+Capability Reports and export issues. The baseline never silently drops a
+page or unsupported element.
