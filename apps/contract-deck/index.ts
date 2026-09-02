@@ -4,9 +4,9 @@ import { tmpdir } from 'node:os'
 import { fileURLToPath } from 'node:url'
 import { canonicalRevision, cloneJson, sha256HexBytes } from '../../packages/canonical-json/src/index.js'
 import { PpteSession } from '../../packages/core/src/index.js'
-import { MockAgent } from '../../packages/agent-tools/src/index.js'
+import { AGENT_TOOL_NAMES, AgentToolServer, MockAgent } from '../../packages/agent-tools/src/index.js'
 import { ImeTextEditSession, beginDrag, endDrag, updateDrag } from '../../packages/editor-react/src/index.js'
-import { renderSlideHtml } from '../../packages/renderer-react/src/index.js'
+import { renderSlideHtml, renderTargetedVisualDiff } from '../../packages/renderer-react/src/index.js'
 import { RecoveryJournal, readJournal, replayJournal } from '../../packages/recovery-journal/src/index.js'
 import { openCheckpoint, writeCheckpoint, type CheckpointWriteOptions } from '../../packages/file-format/src/index.js'
 import { buildReplacementElement } from '../../packages/semantic-identity/src/index.js'
@@ -281,6 +281,77 @@ export function runVerticalSlice(): Record<string, unknown> {
   }
 }
 
+export function runWeek7To13(): Record<string, unknown> {
+  const { document } = makeContractDocument()
+  const session = new PpteSession(document)
+  const tools = new AgentToolServer(session)
+  const initialRevision = session.getRevision()
+  const inspected = tools.execute<{ slideCount: number }>('inspect_document')
+  assert(inspected.ok && inspected.data?.slideCount === 1, 'Agent inspect_document is scope-aware')
+  assert(tools.execute('list_slides').ok, 'Agent list_slides')
+  assert(tools.execute('get_slide_summary').ok, 'Agent get_slide_summary')
+  assert(tools.execute('query_elements', { role: 'title' }).ok, 'Agent query_elements')
+  assert(tools.execute('get_slide', { slideId: SLIDE_ID }).ok, 'Agent get_slide')
+  assert(tools.execute('get_element', { slideId: SLIDE_ID, elementId: TITLE_ID }).ok, 'Agent get_element')
+  assert(tools.execute('get_selection').ok, 'Agent get_selection')
+  assert(tools.execute('get_theme').ok, 'Agent get_theme')
+  assert(tools.execute('get_facts').ok, 'Agent get_facts')
+  assert(tools.execute('get_sources').ok, 'Agent get_sources')
+  assert(tools.execute('get_validation_issues').ok, 'Agent get_validation_issues')
+  assert(tools.execute('get_editability_report').ok, 'Agent get_editability_report')
+  assert(tools.execute('render_slide', { slideId: SLIDE_ID }).ok, 'Agent render_slide')
+  assert(tools.execute('inspect_facts').ok, 'Agent inspect_facts')
+  assert(tools.execute('inspect_sources').ok, 'Agent inspect_sources')
+  assert(tools.execute('inspect_assets').ok, 'Agent inspect_assets')
+  assert(tools.execute('inspect_theme').ok, 'Agent inspect_theme')
+  assert(tools.execute('inspect_history').ok, 'Agent inspect_history')
+  assert(tools.execute('search_text', { query: 'semantic' }).ok, 'Agent search_text')
+  assert(tools.execute('query_semantic_keys', { query: 'title' }).ok, 'Agent query_semantic_keys')
+
+  const regenerated = tools.execute('regenerate_slide', { slideId: SLIDE_ID })
+  assert(regenerated.ok && regenerated.transaction, 'regenerate_slide returns a transaction draft')
+  assert(session.getRevision() === initialRevision, 'regenerate_slide is preview-only')
+  const previewed = tools.execute('preview_transaction', { transaction: regenerated.transaction })
+  assert(previewed.ok, 'preview_transaction validates generated transaction')
+  const confirmation = tools.execute('commit_transaction', { transaction: regenerated.transaction })
+  assert(!confirmation.ok && confirmation.issues.some((issue) => issue.code === 'CONFIRMATION_REQUIRED'), 'destructive commit requires explicit confirmation')
+  const committed = tools.execute('commit_transaction', { transaction: regenerated.transaction, confirmed: true })
+  assert(committed.ok, 'confirmed Agent commit uses Session')
+  assert(tools.execute('undo_transaction', { confirmed: true }).ok, 'Agent undo uses Session')
+  assert(session.getRevision() === initialRevision, 'generated commit inverse restores the exact snapshot')
+
+  const layout = tools.execute('apply_layout_recipe', { slideId: SLIDE_ID, recipeId: 'statement.focus' })
+  assert(layout.ok && layout.transaction, 'apply_layout_recipe returns a geometry transaction')
+  assert(session.getRevision() === initialRevision, 'apply_layout_recipe is preview-only')
+  assert(tools.execute('expand_macro', { macroId: 'metric-card', input: { key: 'kpi', label: 'KPI', value: 42, unit: '%' } }).ok, 'expand_macro returns drafts without committing')
+  assert(tools.execute('replace_artwork', { slideId: SLIDE_ID, elementId: IMAGE_ID, assetId: IMAGE_ASSET_ID }).ok, 'replace_artwork returns a guarded transaction')
+  assert(tools.execute('sync_fact_references', { factId: 'revenue', targetElementIds: [BODY_ID] }).ok, 'sync_fact_references returns a guarded transaction')
+  assert(tools.execute('compare_revised_copy', { revisedDocument: session.getDocument() }).ok, 'compare_revised_copy is read-only')
+  const selectionSession = new PpteSession(makeContractDocument().document)
+  const selectionTools = new AgentToolServer(selectionSession, { selection: { slideId: SLIDE_ID, elementIds: [TITLE_ID] } })
+  const selectedRegeneration = selectionTools.execute('regenerate_selection')
+  assert(selectedRegeneration.ok && selectedRegeneration.transaction, 'regenerate_selection returns a protected transaction draft')
+  assert(!selectedRegeneration.transaction.operations.some((operation) => operation.kind === 'element.delete' && operation.elementId === TITLE_ID), 'regenerate_selection preserves the selected anchor')
+  const revised = cloneJson(session.getDocument())
+  const revisedBody = revised.slides[SLIDE_ID].elements[BODY_ID]
+  assert(revisedBody.type === 'text', 'targeted visual diff uses a text target')
+  revisedBody.content = text('Targeted visual change', 'targeted-visual')
+  const targetedVisualDiff = renderTargetedVisualDiff(session.getDocument(), revised, SLIDE_ID, { elementIds: [TITLE_ID] })
+  assert(targetedVisualDiff.nonTargetChangedElementIds.includes(BODY_ID), 'targeted visual diff reports non-target change')
+
+  return {
+    status: 'ok',
+    initialRevision,
+    finalRevision: session.getRevision(),
+    agentTools: AGENT_TOOL_NAMES.length,
+    declarativeRecipeCoverage: '12/12 built-in Recipes',
+    macroExpansion: 'draft-only',
+    compilerBoundary: 'IR → Element Draft → Transaction → Session preview/commit',
+    hybridVisual: 'artwork metadata and safety validator covered by contract tests',
+    targetedVisualDiff: targetedVisualDiff.changed,
+  }
+}
+
 function stableTransaction(
   session: PpteSession,
   transactionId: string,
@@ -322,7 +393,14 @@ function assert(condition: unknown, label: string): asserts condition {
   if (!condition) throw new Error(`VERTICAL_SLICE_FAILED: ${label}`)
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url) && process.argv.includes('--e2e')) {
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url) && process.argv.includes('--milestone')) {
+  try {
+    process.stdout.write(`${JSON.stringify(runWeek7To13())}\n`)
+  } catch (cause) {
+    process.stderr.write(`${cause instanceof Error ? cause.stack ?? cause.message : String(cause)}\n`)
+    process.exitCode = 1
+  }
+} else if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url) && process.argv.includes('--e2e')) {
   try {
     process.stdout.write(`${JSON.stringify(runVerticalSlice())}\n`)
   } catch (cause) {

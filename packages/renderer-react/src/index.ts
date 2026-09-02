@@ -1,3 +1,4 @@
+import { canonicalHash, canonicalJsonString } from '../../canonical-json/src/index.js'
 import type {
   Element,
   ImageElement,
@@ -16,6 +17,21 @@ export interface RenderOptions {
   includeDiagnostics?: boolean
 }
 
+export interface VisualDiffScope {
+  elementIds?: string[]
+  semanticKeys?: string[]
+}
+
+export interface TargetedVisualDiff {
+  slideId: string
+  beforeHtmlHash: string
+  afterHtmlHash: string
+  changed: boolean
+  changedElementIds: string[]
+  targetChangedElementIds: string[]
+  nonTargetChangedElementIds: string[]
+}
+
 /**
  * Reference renderer output is derived from the semantic snapshot. It is a
  * string adapter for the contract deck; an editor may mount the same
@@ -31,11 +47,44 @@ export function renderSlideHtml(document: PpteDocument, slideId: string, options
     .map((element) => renderElement(document, element, options))
     .join('')
   const diagnostics = options.includeDiagnostics ? `<meta data-ppte-revision="${escapeAttr(JSON.stringify(document.schemaVersion))}">` : ''
-  return `<div class="ppte-slide" data-ppte-slide-id="${escapeAttr(slide.id)}" data-ppte-type="slide" style="position:relative;overflow:hidden;width:${number(document.canvas.width)}du;height:${number(document.canvas.height)}du;background:${background}">${diagnostics}${children}</div>`
+  const strategy = slide.visualStrategy ?? 'structured'
+  const strategyData = strategy === 'structured' ? '' : ` data-ppte-visual-strategy="${escapeAttr(strategy)}"`
+  return `<div class="ppte-slide" data-ppte-slide-id="${escapeAttr(slide.id)}" data-ppte-type="slide"${strategyData} style="position:relative;overflow:hidden;width:${number(document.canvas.width)}du;height:${number(document.canvas.height)}du;background:${background}">${diagnostics}${children}</div>`
 }
 
 export function renderDocumentHtml(document: PpteDocument, options: RenderOptions = {}): string {
   return document.slideOrder.map((slideId) => renderSlideHtml(document, slideId, options)).join('\n')
+}
+
+/** Compare the deterministic reference-render surface while reporting target leakage by semantic object. */
+export function renderTargetedVisualDiff(before: PpteDocument, after: PpteDocument, slideId: string, scope: VisualDiffScope = {}): TargetedVisualDiff {
+  const beforeHtml = renderSlideHtml(before, slideId)
+  const afterHtml = renderSlideHtml(after, slideId)
+  const beforeUnits = visualUnits(before, slideId)
+  const afterUnits = visualUnits(after, slideId)
+  const keys = [...new Set([...beforeUnits.keys(), ...afterUnits.keys()])].sort()
+  const changedElementIds: string[] = []
+  const targetChangedElementIds: string[] = []
+  const nonTargetChangedElementIds: string[] = []
+  for (const key of keys) {
+    const left = beforeUnits.get(key)
+    const right = afterUnits.get(key)
+    if (canonicalHash(left?.html ?? null) === canonicalHash(right?.html ?? null)) continue
+    const elementId = right?.elementId ?? left?.elementId
+    if (!elementId) continue
+    changedElementIds.push(elementId)
+    const isTarget = (!scope.elementIds?.length && !scope.semanticKeys?.length) || Boolean(scope.elementIds?.includes(elementId) || right?.semanticKey && scope.semanticKeys?.includes(right.semanticKey) || left?.semanticKey && scope.semanticKeys?.includes(left.semanticKey))
+    ;(isTarget ? targetChangedElementIds : nonTargetChangedElementIds).push(elementId)
+  }
+  return {
+    slideId,
+    beforeHtmlHash: `sha256-${canonicalHash(beforeHtml)}`,
+    afterHtmlHash: `sha256-${canonicalHash(afterHtml)}`,
+    changed: beforeHtml !== afterHtml,
+    changedElementIds: [...new Set(changedElementIds)],
+    targetChangedElementIds: [...new Set(targetChangedElementIds)],
+    nonTargetChangedElementIds: [...new Set(nonTargetChangedElementIds)],
+  }
 }
 
 export function renderTextPlain(element: TextElement): string {
@@ -48,6 +97,17 @@ function renderElement(document: PpteDocument, element: Element, options: Render
   if (element.type === 'image') return renderImage(document, element, frame, options)
   if (element.type === 'shape') return renderShape(document, element, frame)
   throw new Error(`UNSUPPORTED_ELEMENT_TYPE: ${element.type}`)
+}
+
+function visualUnits(document: PpteDocument, slideId: string): Map<string, { elementId: string; semanticKey?: string; html: string }> {
+  const slide = document.slides[slideId]
+  if (!slide) throw new Error(`SLIDE_MISSING: ${slideId}`)
+  return new Map(slide.rootOrder.map((elementId) => slide.elements[elementId]).filter((element): element is Element => Boolean(element) && element.visible !== false).map((element) => {
+    const key = element.semanticKey ? `semantic:${element.semanticKey}` : `element:${element.id}`
+    let html: string
+    try { html = renderElement(document, element, {}) } catch { html = `<unsupported data-ppte-element-id="${escapeAttr(element.id)}" data-ppte-type="${escapeAttr(element.type)}">` }
+    return [key, { elementId: element.id, ...(element.semanticKey ? { semanticKey: element.semanticKey } : {}), html }] as const
+  }))
 }
 
 function renderText(document: PpteDocument, element: TextElement, frame: string): string {
@@ -117,7 +177,9 @@ function renderImage(document: PpteDocument, element: ImageElement, frame: strin
   ].join('')
   const alt = element.altText ?? asset.altText ?? ''
   const cropData = crop ? ` data-ppte-crop="${escapeAttr([crop.x, crop.y, crop.width, crop.height].map(number).join(','))}"` : ''
-  return `<div data-ppte-element-id="${escapeAttr(element.id)}" data-ppte-type="image" data-ppte-semantic-key="${escapeAttr(element.semanticKey ?? '')}"${cropData} style="${wrapper}"><img src="${escapeAttr(source)}" alt="${escapeAttr(alt)}" draggable="false" style="${imageCss}"></div>`
+  const artwork = element.role === 'artwork' ? asset.artwork : undefined
+  const artworkData = artwork ? ` data-ppte-artwork="true" data-ppte-safe-text-regions="${escapeAttr(canonicalJsonString(artwork.safeTextRegions ?? []))}" data-ppte-avoid-text-regions="${escapeAttr(canonicalJsonString(artwork.avoidTextRegions ?? []))}" data-ppte-dominant-palette="${escapeAttr(canonicalJsonString(artwork.dominantPalette ?? []))}"${artwork.focalPoint ? ` data-ppte-focal-point="${escapeAttr(canonicalJsonString(artwork.focalPoint))}"` : ''}` : ''
+  return `<div data-ppte-element-id="${escapeAttr(element.id)}" data-ppte-type="image" data-ppte-semantic-key="${escapeAttr(element.semanticKey ?? '')}"${cropData}${artworkData} style="${wrapper}"><img src="${escapeAttr(source)}" alt="${escapeAttr(alt)}" draggable="false" style="${imageCss}"></div>`
 }
 
 function renderShape(document: PpteDocument, element: ShapeElement, frame: string): string {

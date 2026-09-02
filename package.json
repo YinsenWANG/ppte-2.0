@@ -12,6 +12,7 @@
     "test": "pnpm build && node --test dist/tests/*.test.js",
     "validate": "python scripts/validate.py && bash scripts/ci-guards.sh",
     "e2e:vertical-slice": "pnpm build && node dist/apps/contract-deck/index.js --e2e",
+    "e2e:milestone": "pnpm build && node dist/apps/contract-deck/index.js --milestone",
     "contract-deck": "pnpm build && node dist/apps/contract-deck/index.js"
   },
   "devDependencies": {
