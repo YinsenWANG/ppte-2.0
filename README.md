@@ -3,10 +3,11 @@
 PPTe is an open semantic presentation format and a small reference runtime:
 AI or a human creates a stable `document.json`, typed Operations make every
 persistent edit reviewable, and a deterministic renderer produces the view.
-The Week 1–2 vertical slice proves the smallest reliable loop: open a
-Document, render Text/Image/Shape, drag an Image through transient state, edit
-Text safely around IME composition, constrain an Agent edit, diff, commit,
-undo, journal, checkpoint, and reopen with the same canonical revision.
+The Stable Core vertical slice proves the reliable loop: open a Document,
+resolve Style Presets and typed overrides, render Text/Image/Shape, edit Text
+safely around IME composition, constrain an Agent edit, materialize flat Group
+geometry, diff, commit, undo/redo, journal, checkpoint through CAS-backed
+assets, and reopen with the same canonical revision.
 
 ## Quick start
 
@@ -20,17 +21,17 @@ pnpm contract-deck
 ```
 
 `contract-deck` writes a derived preview under `artifacts/`. The package format
-is a ZIP checkpoint containing `document.json`, `manifest.json`, and validated
-asset metadata. Recovery Journal data stays outside the package in a host
-private directory and is replayed only when its document and base revision
-match.
+is a bounded stored ZIP checkpoint containing `document.json`, `manifest.json`,
+style-independent asset metadata, and a bounded recent History tail. Recovery
+Journal data stays outside the package in a host-private directory and is
+replayed only when its document and base revision match.
 
 ## Repository layout
 
 - `packages/schema` — framework-neutral document, Operation, IR, and file types.
 - `packages/canonical-json` — deterministic JSON and SHA-256 revision helpers.
-- `packages/core` — immutable Session, revision, history, derived indexes, and
-  the single Preview/Commit/Undo path.
+- `packages/core` — immutable Session, revision, bounded history/redo, derived
+  indexes, and the single Preview/Commit/Undo/Redo path.
 - `packages/operations` — typed Operation application and inverse generation.
 - `packages/change-contract` — Scope, permissions, actual mutation budgets,
   invariants, policy, and precondition enforcement.
@@ -42,7 +43,8 @@ match.
 - `packages/editor-react` — selection, transient drag, and IME-safe local edit
   adapters.
 - `packages/recovery-journal` and `packages/file-format` — host persistence
-  boundaries for append recovery and atomic `.ppte` checkpoints.
+  boundaries for checksummed append recovery, SHA-256 CAS, and atomic `.ppte`
+  checkpoints.
 - `apps/contract-deck` — the executable acceptance path.
 - `schemas`, `examples`, `scripts/validate.py` — retained public contracts and
   validation fixtures.
@@ -61,7 +63,7 @@ This milestone deliberately does not implement:
 - direct writes that bypass the Operation Engine.
 
 The schema retains forward-compatible types for later releases, but the
-Week 1–2 runtime accepts only Text, Image, Shape, and flat logical Groups.
+Stable Core runtime accepts only Text, Image, Shape, and flat logical Groups.
 Unsupported future operations fail with a diagnostic error; they are not
 silently ignored or downgraded.
 

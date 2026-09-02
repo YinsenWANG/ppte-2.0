@@ -1,7 +1,7 @@
 # Implementation decisions
 
 This file records conservative choices made while implementing the frozen
-Week 1–2 slice.
+Week 1–2 slice and Stable Core milestone.
 
 ## 2026-09-02 — zero runtime dependencies
 
@@ -44,3 +44,59 @@ Each entrypoint invokes the repository TypeScript configuration because this
 prototype intentionally has one compilation graph covering source and tests.
 This keeps the gate complete without inventing package-local compiler
 boundaries or changing runtime behavior.
+
+## 2026-09-03 — Stable Core package and compatibility profile
+
+The Stable Core checkpoint uses the frozen `ppte-2.0-ga-a.1` compatibility
+profile, independent format/schema/operation versions, and a canonical
+`sha256-` content revision. Manifest file hashes remain plain SHA-256 hex
+digests, while Document Asset and Font metadata use the prefixed revision form
+so the two hash domains cannot be confused.
+
+## 2026-09-03 — self-contained assets with host CAS optimization
+
+Checkpoint output always contains the bytes required by the Document. A
+content-addressed store may supply those bytes to the writer, but it is not a
+second source of truth. Journal records can carry the required Asset hashes so
+recovery can verify that the current checkpoint contains the referenced
+content before replay.
+
+## 2026-09-03 — durable commit ordering and bounded History
+
+A commit is considered durable only after the Journal append has been flushed;
+the in-memory snapshot, revision, and History are not advanced when that
+append fails. Standard sessions retain at most 200 History entries by default,
+with an optional byte budget, and checkpoints carry the recent transaction
+tail. Clean checkpoints carry no recent History.
+
+## 2026-09-03 — explicit identity, style, fact, and group policies
+
+Direct edits retain the current element identity. Explicit replacement helpers
+inherit a prior `semanticKey`, record `replacesElementId`, and reject a
+conflicting key or active replacement target. Style resolution is
+Preset → Token → Typed Override; Override Debt is derived diagnostics rather
+than persisted state. Text Fit, Fact display synchronization, and text-style
+scaling during Group Resize are explicit Operations. Flat Groups materialize
+member Frame changes and never create a nested coordinate system.
+
+## 2026-09-03 — Stable Core boundary
+
+This milestone does not implement Chart, Widget, Poster, PPTX, Patch, nested
+Groups, Group Rotate, Run-level font or font-size styling, a complete Portable
+editor, Slidev, Markdown as a content source, or DOM reverse parsing. These
+remain explicit follow-on scope and are rejected or diagnosed at the runtime
+boundary instead of being silently downgraded.
+
+## 2026-09-03 — exact optional-state undo
+
+When an Operation changes an optional field, its inverse records whether the
+field was absent and uses an explicit `unset` branch when necessary. Undo
+therefore restores the exact prior Document state instead of introducing a
+default value that was not present before the edit.
+
+## 2026-09-03 — deterministic contract evidence
+
+The Stable Core contract evidence uses a fixed-seed reversible operation
+sequence and a renderer Golden hash over canonical output. These checks are
+kept dependency-free and complement the positive, inverse, conflict,
+persistence-fault, and reopen tests.

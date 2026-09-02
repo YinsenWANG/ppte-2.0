@@ -2,7 +2,7 @@
   "name": "ppte",
   "version": "0.1.0",
   "private": true,
-  "description": "PPTe semantic presentation core and Week 1-2 vertical slice",
+  "description": "PPTe semantic presentation format and Stable Core reference runtime",
   "license": "Apache-2.0",
   "type": "module",
   "packageManager": "pnpm@11.22.0",
