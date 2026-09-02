@@ -186,6 +186,10 @@ export function analyzeOperation(document: PpteDocument, operation: Operation): 
       permissions.add('structure')
       addElement(operation.slideId, operation.elementId, `/slides/${pointer(operation.slideId)}/elements/${pointer(operation.elementId)}/semanticKey`)
       break
+    case 'element.setSemanticRefs':
+      permissions.add('content')
+      addElement(operation.slideId, operation.elementId, `/slides/${pointer(operation.slideId)}/elements/${pointer(operation.elementId)}/semanticRefs`)
+      break
     case 'element.setStyleRef':
       permissions.add('style')
       addElement(operation.slideId, operation.elementId, `/slides/${pointer(operation.slideId)}/elements/${pointer(operation.elementId)}/style/styleRef`)
@@ -240,11 +244,23 @@ export function analyzeOperation(document: PpteDocument, operation: Operation): 
       addElement(operation.slideId, operation.elementId, `/slides/${pointer(operation.slideId)}/elements/${pointer(operation.elementId)}/style`)
       break
     case 'chart.replaceData':
+      permissions.add('content')
+      addElement(operation.slideId, operation.elementId, `/slides/${pointer(operation.slideId)}/elements/${pointer(operation.elementId)}/data`)
+      break
     case 'chart.updateEncoding':
+      permissions.add('content')
+      addElement(operation.slideId, operation.elementId, `/slides/${pointer(operation.slideId)}/elements/${pointer(operation.elementId)}/encoding`)
+      break
     case 'chart.updateOptions':
+      permissions.add('content')
+      addElement(operation.slideId, operation.elementId, `/slides/${pointer(operation.slideId)}/elements/${pointer(operation.elementId)}/options`)
+      break
     case 'chart.updateStyle':
+      permissions.add('style')
+      addElement(operation.slideId, operation.elementId, `/slides/${pointer(operation.slideId)}/elements/${pointer(operation.elementId)}/style/overrides`)
+      break
     case 'component.updateProps':
-      permissions.add(operation.kind.startsWith('chart.') ? 'content' : 'content')
+      permissions.add('content')
       addElement(operation.slideId, operation.elementId)
       break
     case 'group.create':
@@ -291,9 +307,15 @@ export function analyzeOperation(document: PpteDocument, operation: Operation): 
       break
     case 'fact.syncReferences':
       permissions.add('facts')
+      permissions.add('content')
       paths.add(`/facts/${pointer(operation.factId)}`)
       for (const elementId of operation.targetElementIds) {
-        for (const slideId of document.slideOrder) if (document.slides[slideId].elements[elementId]) addElement(slideId, elementId)
+        for (const slideId of document.slideOrder) {
+          const element = document.slides[slideId].elements[elementId]
+          if (!element) continue
+          const field = element.type === 'chart' ? 'data' : 'content'
+          addElement(slideId, elementId, `/slides/${pointer(slideId)}/elements/${pointer(elementId)}/${field}`)
+        }
       }
       break
     case 'source.upsert':
@@ -503,15 +525,18 @@ function fieldProjection(element: Element, field: string): unknown {
   }
 }
 function contentProjection(element: Element): unknown {
-  return element.type === 'text' ? element.content : undefined
+  if (element.type === 'text') return element.content
+  if (element.type === 'chart') return { data: element.data, encoding: element.encoding, options: element.options }
+  return undefined
 }
 function dataProjection(element: Element): unknown {
-  return element.type === 'chart' ? element.data : undefined
+  return element.type === 'chart' ? { data: element.data, encoding: element.encoding } : undefined
 }
 function styleProjection(element: Element): unknown {
   if (element.type === 'text') return { style: element.style, paragraphStyle: element.paragraphStyle, boxStyle: element.boxStyle, overflowPolicy: element.overflowPolicy, opacity: element.opacity }
   if (element.type === 'shape') return { style: element.style, opacity: element.opacity }
   if (element.type === 'image') return { style: element.style, opacity: element.opacity }
+  if (element.type === 'chart') return { style: element.style, opacity: element.opacity }
   return { opacity: element.opacity }
 }
 function geometryProjection(element: Element): unknown {

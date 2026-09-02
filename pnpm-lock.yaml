@@ -27,6 +27,8 @@ importers:
 
   packages/change-contract: {}
 
+  packages/charts: {}
+
   packages/compatibility: {}
 
   packages/core: {}
@@ -38,6 +40,8 @@ importers:
   packages/editor-react: {}
 
   packages/exporter-pdf: {}
+
+  packages/facts: {}
 
   packages/fault-injection: {}
 

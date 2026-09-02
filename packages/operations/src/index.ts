@@ -1,8 +1,10 @@
 import { cloneJson } from '../../canonical-json/src/index.js'
+import { syncChartFact, validateChartContract } from '../../charts/src/index.js'
+import { formatFactValue } from '../../facts/src/index.js'
 import type {
+  ChartElement,
   Element,
   Frame,
-  Fact,
   ImageElement,
   PpteDocument,
   ShapeElement,
@@ -10,7 +12,7 @@ import type {
   TextElement,
 } from '../../schema/src/index.js'
 
-type StableStyleElement = TextElement | ShapeElement | (ImageElement & { style: NonNullable<ImageElement['style']> })
+type StableStyleElement = TextElement | ShapeElement | ChartElement | (ImageElement & { style: NonNullable<ImageElement['style']> })
 
 /** Operations implemented by the synchronous Stable Core runtime. */
 export const STABLE_CORE_OPERATION_KINDS = [
@@ -21,6 +23,13 @@ export const STABLE_CORE_OPERATION_KINDS = [
   'image.replaceAsset', 'image.setCrop', 'image.setFocalPoint', 'shape.updateStyle',
   'group.create', 'group.delete', 'group.addMembers', 'group.removeMembers', 'group.move', 'group.resize',
   'fact.upsert', 'fact.delete', 'fact.syncReferences', 'source.upsert', 'source.delete', 'layout.align', 'layout.distribute',
+] as const
+
+/** GA-B adds deterministic Bar/Line/Pie mutations without changing the historical Week 1–2 matrix. */
+export const GA_B_OPERATION_KINDS = [
+  ...STABLE_CORE_OPERATION_KINDS,
+  'element.setSemanticRefs',
+  'chart.replaceData', 'chart.updateEncoding', 'chart.updateOptions', 'chart.updateStyle',
 ] as const
 
 /** Backward-compatible name retained for the Week 1–2 operation matrix. */
@@ -257,6 +266,14 @@ export function applyOperation(document: PpteDocument, operation: Operation): Ap
       else element.semanticKey = operation.semanticKey
       return { document: next, inverse: [op(operation, 'element.setSemanticKey', { slideId: operation.slideId, elementId: operation.elementId, semanticKey: before })] }
     }
+    case 'element.setSemanticRefs': {
+      const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)
+      const before = cloneJson(element.semanticRefs)
+      if (operation.unset) delete element.semanticRefs
+      else if (operation.semanticRefs) element.semanticRefs = cloneJson(operation.semanticRefs)
+      else throw error('SCHEMA_INVALID', 'element.setSemanticRefs requires semanticRefs unless unset is true.')
+      return { document: next, inverse: [before === undefined ? op(operation, 'element.setSemanticRefs', { slideId: operation.slideId, elementId: operation.elementId, unset: true }) : op(operation, 'element.setSemanticRefs', { slideId: operation.slideId, elementId: operation.elementId, semanticRefs: before })] }
+    }
     case 'element.setStyleRef': {
       const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)
       assertStyleElement(element)
@@ -393,6 +410,40 @@ export function applyOperation(document: PpteDocument, operation: Operation): Ap
       }
       return { document: next, inverse: [op(operation, 'shape.updateStyle', { slideId: operation.slideId, elementId: operation.elementId, patch: before, replace: true })] }
     }
+    case 'chart.replaceData': {
+      const element = requireChart(next, operation.slideId, operation.elementId)
+      const before = cloneJson(element.data)
+      const candidate = { ...element, data: cloneJson(operation.data) }
+      assertValidChart(candidate)
+      element.data = cloneJson(operation.data)
+      return { document: next, inverse: [op(operation, 'chart.replaceData', { slideId: operation.slideId, elementId: operation.elementId, data: before })] }
+    }
+    case 'chart.updateEncoding': {
+      const element = requireChart(next, operation.slideId, operation.elementId)
+      const before = cloneJson(element.encoding)
+      const candidate = { ...element, encoding: cloneJson(operation.encoding) }
+      assertValidChart(candidate)
+      element.encoding = cloneJson(operation.encoding)
+      return { document: next, inverse: [op(operation, 'chart.updateEncoding', { slideId: operation.slideId, elementId: operation.elementId, encoding: before })] }
+    }
+    case 'chart.updateOptions': {
+      const element = requireChart(next, operation.slideId, operation.elementId)
+      const before = cloneJson(element.options)
+      if (operation.unset) delete element.options
+      else if (operation.replace) element.options = cloneJson(operation.patch)
+      else element.options = { ...(element.options ?? {}), ...cloneJson(operation.patch) }
+      assertValidChart(element)
+      return { document: next, inverse: [before === undefined ? op(operation, 'chart.updateOptions', { slideId: operation.slideId, elementId: operation.elementId, patch: {}, unset: true }) : op(operation, 'chart.updateOptions', { slideId: operation.slideId, elementId: operation.elementId, patch: before, replace: true })] }
+    }
+    case 'chart.updateStyle': {
+      const element = requireChart(next, operation.slideId, operation.elementId)
+      const before = cloneJson(element.style.overrides ?? {})
+      if (operation.unset || (operation.replace && Object.keys(operation.patch).length === 0)) delete element.style.overrides
+      else if (operation.replace) element.style.overrides = cloneJson(operation.patch)
+      else element.style.overrides = { ...(element.style.overrides ?? {}), ...cloneJson(operation.patch) }
+      assertTypedStyleOverrides('chart', operation.patch)
+      return { document: next, inverse: [op(operation, 'chart.updateStyle', { slideId: operation.slideId, elementId: operation.elementId, patch: before, replace: true })] }
+    }
     case 'group.create': {
       const slide = requireSlide(next, operation.slideId)
       if (slide.groups?.[operation.group.id]) throw error('ID_CONFLICT', `Group already exists: ${operation.group.id}.`)
@@ -503,12 +554,8 @@ export function applyOperation(document: PpteDocument, operation: Operation): Ap
       return applyLayoutAlign(next, operation)
     case 'layout.distribute':
       return applyLayoutDistribute(next, operation)
-    case 'chart.replaceData':
-    case 'chart.updateEncoding':
-    case 'chart.updateOptions':
-    case 'chart.updateStyle':
     case 'component.updateProps':
-      throw error('UNSUPPORTED_OPERATION', `${operation.kind} is outside the Stable Core runtime.`)
+      throw error('UNSUPPORTED_OPERATION', `${operation.kind} is outside the GA-B runtime.`)
   }
 }
 
@@ -571,12 +618,13 @@ function applyLayoutDistribute(document: PpteDocument, operation: Extract<Operat
   return { document, inverse: before.map((item) => op(operation, 'element.resize', { slideId: operation.slideId, elementId: item.elementId, frame: item.frame })) }
 }
 
-function assertRuntimeElement(element: Element): asserts element is Exclude<Element, { type: 'chart' | 'component' }> {
-  if (element.type === 'chart' || element.type === 'component') throw error('UNSUPPORTED_ELEMENT_TYPE', `Stable Core runtime does not implement ${element.type}.`)
+function assertRuntimeElement(element: Element): asserts element is Exclude<Element, { type: 'component' }> {
+  if (element.type === 'component') throw error('UNSUPPORTED_ELEMENT_TYPE', 'GA-B runtime does not implement component elements.')
+  if (element.type === 'chart') assertValidChart(element)
 }
 
 function assertStyleElement(element: Element): asserts element is StableStyleElement {
-  if (element.type !== 'text' && element.type !== 'image' && element.type !== 'shape') throw error('OPERATION_TYPE_MISMATCH', 'Element has no Stable Core style binding.')
+  if (element.type !== 'text' && element.type !== 'image' && element.type !== 'shape' && element.type !== 'chart') throw error('OPERATION_TYPE_MISMATCH', 'Element has no GA-B style binding.')
   if (!element.style) throw error('STYLE_BINDING_MISSING', `Element has no style binding: ${element.id}.`)
 }
 
@@ -620,17 +668,20 @@ function effectiveFontSize(document: PpteDocument, element: TextElement): number
   return undefined
 }
 
-function assertTypedStyleOverrides(type: 'text' | 'image' | 'shape', patch: Record<string, unknown>) {
+function assertTypedStyleOverrides(type: 'text' | 'image' | 'shape' | 'chart', patch: Record<string, unknown>) {
   const fields = type === 'text'
     ? new Set(['fontFamily', 'fontSize', 'fontWeight', 'color', 'lineHeight', 'letterSpacing', 'verticalAlign', 'direction'])
     : type === 'shape'
       ? new Set(['fill', 'stroke', 'radius', 'shadow'])
-      : new Set(['border', 'radius', 'shadow'])
+      : type === 'image'
+        ? new Set(['border', 'radius', 'shadow'])
+        : new Set(['palette', 'axisColor', 'labelColor', 'gridColor', 'lineWidth', 'cornerRadius'])
   for (const [field, value] of Object.entries(patch)) {
     if (!fields.has(field)) throw error('STYLE_OVERRIDE_INVALID', `Style override ${field} is not allowed for ${type}.`)
     if (type === 'text' && !validTextStyleField(field, value)) throw error('STYLE_OVERRIDE_INVALID', `Style override ${field} has an invalid typed value.`)
     if (type === 'shape' && !validShapeStyleField(field, value)) throw error('STYLE_OVERRIDE_INVALID', `Style override ${field} has an invalid typed value.`)
     if (type === 'image' && !validImageStyleField(field, value)) throw error('STYLE_OVERRIDE_INVALID', `Style override ${field} has an invalid typed value.`)
+    if (type === 'chart' && !validChartStyleField(field, value)) throw error('STYLE_OVERRIDE_INVALID', `Style override ${field} has an invalid typed value.`)
   }
 }
 
@@ -657,6 +708,14 @@ function validImageStyleField(field: string, value: unknown): boolean {
   if (field === 'border') return validStroke(value)
   if (field === 'radius') return finiteNonNegativeValue(value)
   if (field === 'shadow') return validShadow(value)
+  return false
+}
+
+function validChartStyleField(field: string, value: unknown): boolean {
+  if (field === 'palette') return Array.isArray(value) && value.every((item) => validValueOrToken(item, 'color'))
+  if (field === 'axisColor' || field === 'labelColor' || field === 'gridColor') return validValueOrToken(value, 'color')
+  if (field === 'lineWidth') return finitePositiveValue(value)
+  if (field === 'cornerRadius') return finiteNonNegativeValue(value)
   return false
 }
 
@@ -745,33 +804,34 @@ function assertRichText(content: unknown): asserts content is TextElement['conte
 function applyFactSyncReferences(document: PpteDocument, operation: Extract<import('../../schema/src/index.js').Operation, { kind: 'fact.syncReferences' }>): AppliedOperation {
   const fact = document.facts?.[operation.factId]
   if (!fact) throw error('FACT_REFERENCE_MISSING', `Fact does not exist: ${operation.factId}.`)
-  if (operation.strategy === 'update-chart-values') throw error('UNSUPPORTED_OPERATION', 'Chart fact synchronization is outside the Stable Core runtime.')
   assertUniqueElementIds(operation.targetElementIds)
   const inverse: Operation[] = []
   for (const elementId of operation.targetElementIds) {
     const found = findElement(document, elementId)
     if (!found) throw error('ELEMENT_MISSING', `Element does not exist: ${elementId}.`)
+    if (operation.strategy === 'update-chart-values') {
+      if (found.element.type !== 'chart') throw error('OPERATION_TYPE_MISMATCH', 'update-chart-values requires Chart targets.')
+      const before = cloneJson(found.element.data)
+      const result = syncChartFact(found.element, fact, operation.previousValue)
+      if (!result.changed) throw error('CHART_FACT_INCONSISTENT', `No safe chart cell matched Fact ${operation.factId} on ${found.element.id}.`)
+      found.element.data = result.data
+      inverse.unshift(op(operation, 'chart.replaceData', { slideId: found.slideId, elementId: found.element.id, data: before }))
+      continue
+    }
     if (found.element.type !== 'text') throw error('OPERATION_TYPE_MISMATCH', 'replace-display-value requires Text targets.')
     const before = cloneJson(found.element.content)
     const display = formatFactValue(fact)
+    const previousFact = operation.previousValue === undefined ? fact : { ...fact, value: operation.previousValue }
+    const oldDisplay = formatFactValue(previousFact)
     const nextContent = cloneJson(found.element.content)
     const runs = nextContent.paragraphs.flatMap((paragraph) => paragraph.runs)
     if (runs.length === 0) nextContent.paragraphs = [{ id: `${found.element.id}-fact`, runs: [{ id: `${found.element.id}-fact-run`, text: display }] }]
-    else {
-      const currentText = runs.map((run) => run.text).join('')
-      const oldValue = String(fact.value ?? '')
-      if (oldValue && currentText.includes(oldValue)) {
-        let replaced = false
-        for (const run of runs) {
-          if (!replaced && run.text.includes(oldValue)) {
-            run.text = run.text.replace(oldValue, display)
-            replaced = true
-          }
-        }
-      } else {
-        runs[0].text = display
-        for (const run of runs.slice(1)) run.text = ''
-      }
+    else if (oldDisplay && runs.some((run) => run.text.includes(oldDisplay))) {
+      let replaced = false
+      for (const run of runs) if (!replaced && run.text.includes(oldDisplay)) { run.text = run.text.replace(oldDisplay, display); replaced = true }
+    } else {
+      runs[0]!.text = display
+      for (const run of runs.slice(1)) run.text = ''
     }
     found.element.content = nextContent
     inverse.unshift(op(operation, 'text.replaceContent', { slideId: found.slideId, elementId: found.element.id, content: before }))
@@ -785,11 +845,6 @@ function findElement(document: PpteDocument, elementId: string): { slideId: stri
     if (element) return { slideId, element }
   }
   return undefined
-}
-
-function formatFactValue(fact: Fact): string {
-  const value = fact.value === null ? '' : String(fact.value)
-  return fact.unit ? `${value}${fact.unit}` : value
 }
 
 function restoreOverrides(operation: Operation, before: Record<string, unknown>): Operation[] {
@@ -827,6 +882,16 @@ function requireElement(slide: Slide, elementId: string): Element {
   const element = slide.elements[elementId]
   if (!element) throw error('ELEMENT_MISSING', `Element does not exist: ${elementId}.`)
   return element
+}
+function requireChart(document: PpteDocument, slideId: string, elementId: string): ChartElement {
+  const element = requireElement(requireSlide(document, slideId), elementId)
+  if (element.type !== 'chart') throw error('OPERATION_TYPE_MISMATCH', 'Chart operation requires a Chart element.')
+  assertValidChart(element)
+  return element
+}
+function assertValidChart(element: ChartElement): void {
+  const issue = validateChartContract(element, { runtimeSubset: true })[0]
+  if (issue) throw error(issue.code, issue.message)
 }
 function requireGroup(slide: Slide, groupId: string) {
   const group = slide.groups?.[groupId]

@@ -19,6 +19,7 @@ export const PPTE_FORMAT_VERSION = '2' as const
 export const PPTE_SCHEMA_VERSION = '2.0.0' as const
 export const PPTE_OPERATION_PROTOCOL_VERSION = '1.0' as const
 export const PPTE_COMPATIBILITY_PROFILE = 'ppte-2.0-ga-a.1' as const
+export const PPTE_GA_B_COMPATIBILITY_PROFILE = 'ppte-2.0-ga-b.1' as const
 
 export type JsonPrimitive = string | number | boolean | null
 export type JsonValue = JsonPrimitive | JsonValue[] | { [key: string]: JsonValue }

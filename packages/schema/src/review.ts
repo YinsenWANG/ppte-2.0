@@ -6,6 +6,8 @@ export type ReviewUnitKind = 'slide' | 'element' | 'fact' | 'source' | 'document
 export type ReviewField =
   | 'content'
   | 'data'
+  | 'encoding'
+  | 'options'
   | 'style'
   | 'geometry'
   | 'asset'
@@ -67,4 +69,6 @@ export interface ReviewSelection {
   includeSameChange?: boolean
   includeAdded?: boolean
   includeDeleted?: boolean
+  /** Explicit human resolution for a conflicted or ambiguous unit. */
+  resolutions?: Record<string, 'local' | 'revised'>
 }

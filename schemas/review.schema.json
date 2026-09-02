@@ -23,7 +23,7 @@
       "properties": {
         "unitId": { "type": "string", "minLength": 1 },
         "kind": { "enum": ["slide", "element", "fact", "source", "document"] },
-        "field": { "enum": ["content", "data", "style", "geometry", "asset", "identity", "visibility", "structure", "readingOrder", "fact", "source", "slide"] },
+        "field": { "enum": ["content", "data", "encoding", "options", "style", "geometry", "asset", "identity", "visibility", "structure", "readingOrder", "fact", "source", "slide"] },
         "path": { "type": "string", "pattern": "^/" },
         "slideId": { "type": "string" },
         "elementId": { "type": "string" },

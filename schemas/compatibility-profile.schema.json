@@ -16,7 +16,7 @@
     "migration"
   ],
   "properties": {
-    "id": { "const": "ppte-2.0-ga-a.1" },
+    "id": { "enum": ["ppte-2.0-ga-a.1", "ppte-2.0-ga-b.1"] },
     "formatVersion": { "const": "2" },
     "schemaVersion": { "const": "2.0.0" },
     "operationProtocolVersion": { "const": "1.0" },
@@ -24,7 +24,7 @@
     "portableRuntimeVersion": { "const": "2.0.0" },
     "layoutRecipeVersion": { "const": "1.0" },
     "widgetAbiVersion": { "type": ["null"] },
-    "patchVersion": { "type": ["null"] },
+    "patchVersion": { "type": ["string", "null"] },
     "migration": {
       "type": "object",
       "required": ["from", "direction", "preservesSource"],

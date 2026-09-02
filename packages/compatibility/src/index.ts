@@ -1,4 +1,4 @@
-import { PPTE_COMPATIBILITY_PROFILE, PPTE_FORMAT_VERSION, PPTE_OPERATION_PROTOCOL_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
+import { PPTE_COMPATIBILITY_PROFILE, PPTE_FORMAT_VERSION, PPTE_GA_B_COMPATIBILITY_PROFILE, PPTE_OPERATION_PROTOCOL_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
 
 /** A release-tested combination of the independently versioned contracts. */
 export interface CompatibilityProfile {
@@ -9,8 +9,8 @@ export interface CompatibilityProfile {
   slideIrVersion: '1.0'
   portableRuntimeVersion: '2.0.0'
   layoutRecipeVersion: '1.0'
-  widgetAbiVersion: null
-  patchVersion: null
+  widgetAbiVersion: string | null
+  patchVersion: string | null
   migration: {
     from: string[]
     direction: 'forward-only'
@@ -50,8 +50,26 @@ export const GA_A_PROFILE: CompatibilityProfile = {
   },
 }
 
+export const GA_B_PROFILE: CompatibilityProfile = {
+  id: PPTE_GA_B_COMPATIBILITY_PROFILE,
+  formatVersion: PPTE_FORMAT_VERSION,
+  schemaVersion: PPTE_SCHEMA_VERSION,
+  operationProtocolVersion: PPTE_OPERATION_PROTOCOL_VERSION,
+  slideIrVersion: '1.0',
+  portableRuntimeVersion: '2.0.0',
+  layoutRecipeVersion: '1.0',
+  widgetAbiVersion: null,
+  patchVersion: '1',
+  migration: {
+    from: [PPTE_COMPATIBILITY_PROFILE],
+    direction: 'forward-only',
+    preservesSource: true,
+  },
+}
+
 const PROFILES: Readonly<Record<string, CompatibilityProfile>> = {
   [GA_A_PROFILE.id]: GA_A_PROFILE,
+  [GA_B_PROFILE.id]: GA_B_PROFILE,
 }
 
 export const SUPPORTED_COMPATIBILITY_PROFILES = Object.freeze(Object.keys(PROFILES)) as readonly string[]
@@ -102,7 +120,7 @@ export function checkCompatibility(input: { id?: unknown; formatVersion?: unknow
   if (profileId.startsWith('ppte-') || Object.values(PROFILES).some((candidate) => candidate.migration.from.includes(profileId))) return {
     ok: false,
     disposition: 'migrate',
-    issues: [{ code: 'COMPATIBILITY_PROFILE_MIGRATION_REQUIRED', message: `Package profile ${profileId} is not in the GA-A verification set.`, recovery: 'Run the forward migration and review its report before saving a new package.' }],
+    issues: [{ code: 'COMPATIBILITY_PROFILE_MIGRATION_REQUIRED', message: `Package profile ${profileId} is not in the verified native set.`, recovery: 'Run the forward migration and review its report before saving a new package.' }],
   }
   return {
     ok: false,

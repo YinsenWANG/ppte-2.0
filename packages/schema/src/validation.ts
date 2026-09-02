@@ -7,6 +7,7 @@ import type {
   ValidationIssue,
 } from './index.js'
 import { withErrorSemantics } from './errors.js'
+import { validateChartContract } from '../../charts/src/index.js'
 
 const ELEMENT_TYPES = new Set(['text', 'image', 'shape', 'chart', 'component'])
 const SHAPE_KINDS = new Set(['rectangle', 'rounded-rectangle', 'ellipse', 'line', 'arrow', 'triangle', 'diamond', 'chevron', 'polygon'])
@@ -172,6 +173,8 @@ function validateTheme(theme: PpteDocument['theme'], add: (code: string, message
       for (const [presetId, preset] of Object.entries(bucket)) if (!validShapeStyle(preset)) add('SCHEMA_INVALID', `Shape preset is invalid: ${presetId}.`, { path: `/theme/presets/shape/${escapePointer(presetId)}` })
     } else if (category === 'image') {
       for (const [presetId, preset] of Object.entries(bucket)) if (!validImageStyle(preset)) add('SCHEMA_INVALID', `Image preset is invalid: ${presetId}.`, { path: `/theme/presets/image/${escapePointer(presetId)}` })
+    } else {
+      for (const [presetId, preset] of Object.entries(bucket)) if (!validChartStyle(preset)) add('SCHEMA_INVALID', `Chart preset is invalid: ${presetId}.`, { path: `/theme/presets/chart/${escapePointer(presetId)}` })
     }
   }
 }
@@ -202,17 +205,28 @@ function validImageStyle(value: unknown): boolean {
   return (style.border === undefined || validStroke(style.border)) && (style.radius === undefined || finiteNonNegative(style.radius)) && (style.shadow === undefined || validShadow(style.shadow))
 }
 
+function validChartStyle(value: unknown): boolean {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false
+  const style = value as Record<string, unknown>
+  if (!hasOnlyKeys(style, ['palette', 'axisColor', 'labelColor', 'gridColor', 'lineWidth', 'cornerRadius'])) return false
+  if (style.palette !== undefined && (!Array.isArray(style.palette) || style.palette.some((item) => !validValueOrToken(item, 'color')))) return false
+  for (const field of ['axisColor', 'labelColor', 'gridColor'] as const) if (style[field] !== undefined && !validValueOrToken(style[field], 'color')) return false
+  if (style.lineWidth !== undefined && !finitePositive(style.lineWidth)) return false
+  if (style.cornerRadius !== undefined && !finiteNonNegative(style.cornerRadius)) return false
+  return true
+}
+
 function validateElement(element: Element, add: (code: string, message: string, extra?: Partial<ValidationIssue>) => void, slideId: string, elementId: string, runtimeSubset: boolean) {
   if (!ELEMENT_TYPES.has(element.type)) { add('SCHEMA_INVALID', `Unknown element type: ${element.type}.`, { slideId, elementId }); return }
   if (!validFrame(element.frame)) add('GEOMETRY_INVALID', 'Element frame must contain finite x/y and positive width/height.', { slideId, elementId })
   if (element.rotationDeg !== undefined && !finite(element.rotationDeg)) add('GEOMETRY_INVALID', 'rotationDeg must be finite.', { slideId, elementId })
   if (element.opacity !== undefined && (!finite(element.opacity) || element.opacity < 0 || element.opacity > 1)) add('SCHEMA_INVALID', 'opacity must be between 0 and 1.', { slideId, elementId })
   if (element.appearStep !== undefined && (!Number.isInteger(element.appearStep) || element.appearStep < 0)) add('SCHEMA_INVALID', 'appearStep must be a non-negative integer.', { slideId, elementId })
-  if (runtimeSubset && element.type !== 'text' && element.type !== 'image' && element.type !== 'shape') add('UNSUPPORTED_ELEMENT_TYPE', `Stable Core runtime does not implement ${element.type}.`, { slideId, elementId })
+  if (runtimeSubset && element.type !== 'text' && element.type !== 'image' && element.type !== 'shape' && element.type !== 'chart') add('UNSUPPORTED_ELEMENT_TYPE', `Stable Core runtime does not implement ${element.type}.`, { slideId, elementId })
   if (element.type === 'text') validateText(element, add, slideId)
   if (element.type === 'image') validateImage(element, add, slideId)
   if (element.type === 'shape') validateShape(element, add, slideId)
-  if (element.type === 'chart') validateChart(element, add, slideId)
+  if (element.type === 'chart') validateChart(element, add, slideId, runtimeSubset)
   if (element.type === 'component' && (!element.componentType || !element.componentVersion || !element.fallback)) add('SCHEMA_INVALID', 'Component requires type, version, and fallback.', { slideId, elementId })
 }
 
@@ -261,8 +275,8 @@ function validateShape(element: ShapeElement, add: (code: string, message: strin
   if (element.points !== undefined && (!Array.isArray(element.points) || element.points.some((point) => !point || !finite(point.x) || !finite(point.y)))) add('GEOMETRY_INVALID', 'Shape points must be finite.', { slideId, elementId: element.id })
 }
 
-function validateChart(element: Extract<Element, { type: 'chart' }>, add: (code: string, message: string, extra?: Partial<ValidationIssue>) => void, slideId: string) {
-  if (!['bar', 'line', 'area', 'pie', 'donut'].includes(element.chartType) || !element.data || !element.encoding) add('SCHEMA_INVALID', 'Chart type, data, and encoding are required.', { slideId, elementId: element.id })
+function validateChart(element: Extract<Element, { type: 'chart' }>, add: (code: string, message: string, extra?: Partial<ValidationIssue>) => void, slideId: string, runtimeSubset: boolean) {
+  for (const issue of validateChartContract(element, { runtimeSubset })) add(issue.code, issue.message, { slideId, elementId: element.id, path: issue.path ? `/slides/${escapePointer(slideId)}/elements/${escapePointer(element.id)}${issue.path}` : undefined })
 }
 
 function validateGroups(slide: PpteDocument['slides'][string], elements: Record<string, Element>, add: (code: string, message: string, extra?: Partial<ValidationIssue>) => void, slideId: string) {

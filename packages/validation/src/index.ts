@@ -1,6 +1,7 @@
 import { canonicalHash } from '../../canonical-json/src/index.js'
 import { validateDocument } from '../../schema/src/index.js'
 import { validateSemanticIdentity } from '../../semantic-identity/src/index.js'
+import { checkFactSourceConsistency } from '../../facts/src/index.js'
 import { withErrorSemantics } from '../../schema/src/errors.js'
 import type {
   Element,
@@ -17,6 +18,7 @@ import type {
 const TEXT_STYLE_FIELDS = ['fontFamily', 'fontSize', 'fontWeight', 'color', 'lineHeight', 'letterSpacing', 'verticalAlign', 'direction'] as const
 const SHAPE_STYLE_FIELDS = ['fill', 'stroke', 'radius', 'shadow'] as const
 const IMAGE_STYLE_FIELDS = ['border', 'radius', 'shadow'] as const
+const CHART_STYLE_FIELDS = ['palette', 'axisColor', 'labelColor', 'gridColor', 'lineWidth', 'cornerRadius'] as const
 const KEY_ROLES = new Set(['title', 'subtitle', 'body', 'caption', 'metric', 'source', 'logo', 'image', 'chart', 'cta'])
 const ACTOR_TYPES = new Set(['human', 'agent', 'system', 'importer', 'reviewer'])
 const SCOPE_KINDS = new Set(['selection', 'slide', 'document', 'custom'])
@@ -24,7 +26,7 @@ const SCOPE_PERMISSIONS = new Set(['content', 'geometry', 'style', 'structure', 
 const OPERATION_KINDS = new Set<OperationKind>([
   'document.updateMetadata', 'theme.replace', 'theme.setToken', 'theme.updatePreset',
   'slide.insert', 'slide.delete', 'slide.move', 'slide.update', 'slide.setReadingOrder', 'slide.setProtectedAnchors',
-  'element.insert', 'element.delete', 'element.duplicate', 'element.move', 'element.resize', 'element.rotate', 'element.reorder', 'element.setVisibility', 'element.setLocked', 'element.setEditPolicy', 'element.setSemanticKey', 'element.setStyleRef', 'element.updateStyleOverrides', 'element.clearStyleOverrides',
+  'element.insert', 'element.delete', 'element.duplicate', 'element.move', 'element.resize', 'element.rotate', 'element.reorder', 'element.setVisibility', 'element.setLocked', 'element.setEditPolicy', 'element.setSemanticKey', 'element.setSemanticRefs', 'element.setStyleRef', 'element.updateStyleOverrides', 'element.clearStyleOverrides',
   'text.replaceContent', 'text.setOverflowPolicy', 'text.fitByReducingFont', 'text.resizeBox',
   'image.replaceAsset', 'image.setCrop', 'image.setFocalPoint', 'asset.upsert', 'font.upsert', 'shape.updateStyle',
   'chart.replaceData', 'chart.updateEncoding', 'chart.updateOptions', 'chart.updateStyle', 'component.updateProps',
@@ -79,6 +81,7 @@ export function validateRuntimeDocument(document: PpteDocument): ValidationIssue
     }
   }
   issues.push(...diagnoseOverrideDebt(document))
+  issues.push(...checkFactSourceConsistency(document).issues)
   return normalizeIssues(issues)
 }
 
@@ -177,9 +180,9 @@ function validateOperationShape(operation: Record<string, unknown>, index: numbe
   }
   if (operation.preconditions !== undefined) validatePreconditions(operation.preconditions, path, issues)
 
-  const slideKinds = new Set(['slide.delete', 'slide.move', 'slide.update', 'slide.setReadingOrder', 'slide.setProtectedAnchors', 'element.insert', 'element.delete', 'element.duplicate', 'element.move', 'element.resize', 'element.rotate', 'element.reorder', 'element.setVisibility', 'element.setLocked', 'element.setEditPolicy', 'element.setSemanticKey', 'element.setStyleRef', 'element.updateStyleOverrides', 'element.clearStyleOverrides', 'text.replaceContent', 'text.setOverflowPolicy', 'text.fitByReducingFont', 'text.resizeBox', 'image.replaceAsset', 'image.setCrop', 'image.setFocalPoint', 'shape.updateStyle', 'chart.replaceData', 'chart.updateEncoding', 'chart.updateOptions', 'chart.updateStyle', 'component.updateProps', 'group.create', 'group.delete', 'group.addMembers', 'group.removeMembers', 'group.move', 'group.resize', 'layout.align', 'layout.distribute'])
+  const slideKinds = new Set(['slide.delete', 'slide.move', 'slide.update', 'slide.setReadingOrder', 'slide.setProtectedAnchors', 'element.insert', 'element.delete', 'element.duplicate', 'element.move', 'element.resize', 'element.rotate', 'element.reorder', 'element.setVisibility', 'element.setLocked', 'element.setEditPolicy', 'element.setSemanticKey', 'element.setSemanticRefs', 'element.setStyleRef', 'element.updateStyleOverrides', 'element.clearStyleOverrides', 'text.replaceContent', 'text.setOverflowPolicy', 'text.fitByReducingFont', 'text.resizeBox', 'image.replaceAsset', 'image.setCrop', 'image.setFocalPoint', 'shape.updateStyle', 'chart.replaceData', 'chart.updateEncoding', 'chart.updateOptions', 'chart.updateStyle', 'component.updateProps', 'group.create', 'group.delete', 'group.addMembers', 'group.removeMembers', 'group.move', 'group.resize', 'layout.align', 'layout.distribute'])
   if (slideKinds.has(kind)) requireString('slideId')
-  const elementKinds = new Set(['element.delete', 'element.move', 'element.resize', 'element.rotate', 'element.reorder', 'element.setVisibility', 'element.setLocked', 'element.setEditPolicy', 'element.setSemanticKey', 'element.setStyleRef', 'element.updateStyleOverrides', 'element.clearStyleOverrides', 'text.replaceContent', 'text.setOverflowPolicy', 'text.fitByReducingFont', 'text.resizeBox', 'image.replaceAsset', 'image.setCrop', 'image.setFocalPoint', 'shape.updateStyle', 'chart.replaceData', 'chart.updateEncoding', 'chart.updateOptions', 'chart.updateStyle', 'component.updateProps'])
+  const elementKinds = new Set(['element.delete', 'element.move', 'element.resize', 'element.rotate', 'element.reorder', 'element.setVisibility', 'element.setLocked', 'element.setEditPolicy', 'element.setSemanticKey', 'element.setSemanticRefs', 'element.setStyleRef', 'element.updateStyleOverrides', 'element.clearStyleOverrides', 'text.replaceContent', 'text.setOverflowPolicy', 'text.fitByReducingFont', 'text.resizeBox', 'image.replaceAsset', 'image.setCrop', 'image.setFocalPoint', 'shape.updateStyle', 'chart.replaceData', 'chart.updateEncoding', 'chart.updateOptions', 'chart.updateStyle', 'component.updateProps'])
   if (elementKinds.has(kind)) requireString('elementId')
 
   switch (kind) {
@@ -228,6 +231,7 @@ function validateOperationShape(operation: Record<string, unknown>, index: numbe
     case 'element.setLocked': validateUnsetPair(operation, 'locked', (value) => typeof value === 'boolean', path, issues); break
     case 'element.setEditPolicy': validateUnsetPair(operation, 'editPolicy', isRecord, path, issues); break
     case 'element.setSemanticKey': if (operation.semanticKey !== undefined && !nonEmptyString(operation.semanticKey)) issues.push(error('SCHEMA_INVALID', 'element.setSemanticKey.semanticKey must be a string when present.', `${path}/semanticKey`)); break
+    case 'element.setSemanticRefs': validateUnsetPair(operation, 'semanticRefs', isRecord, path, issues); break
     case 'element.setStyleRef': requireString('styleRef'); break
     case 'element.updateStyleOverrides': requireRecord('patch'); break
     case 'element.clearStyleOverrides': if (operation.paths !== undefined) { if (!Array.isArray(operation.paths)) issues.push(error('SCHEMA_INVALID', 'element.clearStyleOverrides.paths must be an array.', `${path}/paths`)); else checkUniqueStrings(operation.paths, `${path}/paths`, issues) } break
@@ -264,7 +268,13 @@ function validateOperationShape(operation: Record<string, unknown>, index: numbe
     case 'shape.updateStyle': requireRecord('patch'); if (operation.replace !== undefined && typeof operation.replace !== 'boolean') issues.push(error('SCHEMA_INVALID', 'shape.updateStyle.replace must be boolean.', `${path}/replace`)); break
     case 'chart.replaceData': requireRecord('data'); break
     case 'chart.updateEncoding': requireRecord('encoding'); break
-    case 'chart.updateOptions': case 'chart.updateStyle': requireRecord('patch'); break
+    case 'chart.updateOptions': case 'chart.updateStyle':
+      requireRecord('patch')
+      if (operation.replace !== undefined && typeof operation.replace !== 'boolean') issues.push(error('SCHEMA_INVALID', `${kind}.replace must be boolean.`, `${path}/replace`))
+      if (operation.unset !== undefined && typeof operation.unset !== 'boolean') issues.push(error('SCHEMA_INVALID', `${kind}.unset must be boolean.`, `${path}/unset`))
+      if (operation.unset === true && isRecord(operation.patch) && Object.keys(operation.patch).length > 0) issues.push(error('SCHEMA_INVALID', `${kind}.patch must be empty when unset is true.`, `${path}/patch`))
+      if (operation.unset === true && operation.replace === true) issues.push(error('SCHEMA_INVALID', `${kind} cannot set both replace and unset.`, path))
+      break
     case 'component.updateProps': requireRecord('patch'); if (operation.replace !== undefined && typeof operation.replace !== 'boolean') issues.push(error('SCHEMA_INVALID', 'component.updateProps.replace must be boolean.', `${path}/replace`)); break
     case 'group.create': { const group = requireRecord('group'); if (group) { requireStringAt(group, 'id', `${path}/group`, issues); if (!Array.isArray(group.memberIds)) issues.push(error('SCHEMA_INVALID', 'group.create.group.memberIds must be an array.', `${path}/group/memberIds`)); else checkUniqueStrings(group.memberIds, `${path}/group/memberIds`, issues) } break }
     case 'group.delete': requireString('groupId'); break
@@ -449,7 +459,7 @@ export function validateStyleBindings(document: PpteDocument): ValidationIssue[]
       if (!preset) issues.push({ code: 'STYLE_PRESET_MISSING', severity: 'error', message: `Style preset ${style.styleRef} does not exist for ${category}.`, slideId, elementId: element.id, recovery: 'Choose an existing preset or create one through theme.updatePreset.' })
       issues.push(...missingStyleTokenIssues(document, preset, slideId, element.id))
       issues.push(...missingStyleTokenIssues(document, style.overrides, slideId, element.id))
-      const allowed: readonly string[] = category === 'text' ? TEXT_STYLE_FIELDS : category === 'shape' ? SHAPE_STYLE_FIELDS : category === 'image' ? IMAGE_STYLE_FIELDS : []
+      const allowed: readonly string[] = category === 'text' ? TEXT_STYLE_FIELDS : category === 'shape' ? SHAPE_STYLE_FIELDS : category === 'image' ? IMAGE_STYLE_FIELDS : CHART_STYLE_FIELDS
       for (const [field, value] of Object.entries(style.overrides ?? {})) {
         if (!allowed.includes(field as never)) {
           issues.push({ code: 'STYLE_OVERRIDE_INVALID', severity: 'error', message: `Style override ${field} is not allowed for ${category}.`, slideId, elementId: element.id, path: `/slides/${escapePointer(slideId)}/elements/${escapePointer(element.id)}/style/overrides/${escapePointer(field)}` })
@@ -560,6 +570,12 @@ function validStyleField(type: Element['type'], field: string, value: unknown): 
   if (type === 'shape' && field === 'fill') return validPaint(value)
   if ((type === 'shape' || type === 'image') && (field === 'stroke' || field === 'border')) return validStroke(value)
   if ((type === 'shape' || type === 'image') && field === 'shadow') return validShadow(value)
+  if (type === 'chart') {
+    if (field === 'palette') return Array.isArray(value) && value.every((item) => validValueOrToken(item, 'color'))
+    if (field === 'axisColor' || field === 'labelColor' || field === 'gridColor') return validValueOrToken(value, 'color')
+    if (field === 'lineWidth') return finitePositive(value)
+    if (field === 'cornerRadius') return finiteNonNegative(value)
+  }
   return false
 }
 

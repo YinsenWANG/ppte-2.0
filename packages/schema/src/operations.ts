@@ -24,6 +24,7 @@ import type {
   PpteDocument,
   Revision,
   RichTextDocument,
+  SemanticRefs,
   ShapeStyle,
   Slide,
   SlideId,
@@ -135,6 +136,7 @@ export type Operation =
   | ElementSetLockedOperation
   | ElementSetEditPolicyOperation
   | ElementSetSemanticKeyOperation
+  | ElementSetSemanticRefsOperation
   | ElementSetStyleRefOperation
   | ElementUpdateStyleOverridesOperation
   | ElementClearStyleOverridesOperation
@@ -274,6 +276,12 @@ export interface ElementSetSemanticKeyOperation extends OperationBase<'element.s
   elementId: ElementId
   semanticKey?: string
 }
+export interface ElementSetSemanticRefsOperation extends OperationBase<'element.setSemanticRefs'> {
+  slideId: SlideId
+  elementId: ElementId
+  semanticRefs?: SemanticRefs
+  unset?: boolean
+}
 export interface ElementSetStyleRefOperation extends OperationBase<'element.setStyleRef'> {
   slideId: SlideId
   elementId: ElementId
@@ -357,11 +365,15 @@ export interface ChartUpdateOptionsOperation extends OperationBase<'chart.update
   slideId: SlideId
   elementId: ElementId
   patch: Partial<ChartOptions>
+  replace?: boolean
+  unset?: boolean
 }
 export interface ChartUpdateStyleOperation extends OperationBase<'chart.updateStyle'> {
   slideId: SlideId
   elementId: ElementId
   patch: Partial<ChartStyle>
+  replace?: boolean
+  unset?: boolean
 }
 export interface ComponentUpdatePropsOperation extends OperationBase<'component.updateProps'> {
   slideId: SlideId
@@ -409,6 +421,8 @@ export interface FactSyncReferencesOperation extends OperationBase<'fact.syncRef
   factId: FactId
   targetElementIds: ElementId[]
   strategy: 'replace-display-value' | 'update-chart-values'
+  /** Set by a generated Fact update transaction so the sync can replace the prior display. */
+  previousValue?: Fact['value']
 }
 export interface SourceUpsertOperation extends OperationBase<'source.upsert'> {
   source: Source
