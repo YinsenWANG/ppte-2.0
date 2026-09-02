@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ppte:schemas:2.0:portable-origin",
+  "title": "PPTe Portable Origin",
+  "type": "object",
+  "required": ["sourceDocumentId", "sourceRevision", "derivedAt", "profile", "runtimeVersion"],
+  "properties": {
+    "sourceDocumentId": { "type": "string", "minLength": 1 },
+    "sourceRevision": { "type": "string", "minLength": 1 },
+    "derivedAt": { "type": "string", "minLength": 1 },
+    "profile": { "enum": ["viewer", "quick-fix", "light-edit"] },
+    "runtimeVersion": { "type": "string", "minLength": 1 },
+    "branchId": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": false
+}

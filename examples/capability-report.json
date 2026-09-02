@@ -1,0 +1,11 @@
+{
+  "reportVersion": "1",
+  "target": "portable-viewer",
+  "sourceDocumentId": "doc_public_example",
+  "sourceRevision": "sha256-0000000000000000000000000000000000000000000000000000000000000000",
+  "ok": true,
+  "degraded": false,
+  "items": [],
+  "issues": [],
+  "summary": {}
+}

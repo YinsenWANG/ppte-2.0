@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ppte:schemas:2.0:capability-report",
+  "title": "PPTe Capability Report",
+  "type": "object",
+  "required": ["reportVersion", "target", "sourceDocumentId", "sourceRevision", "ok", "degraded", "items", "issues", "summary"],
+  "properties": {
+    "reportVersion": { "const": "1" },
+    "target": { "enum": ["portable-viewer", "portable-quick-fix", "presenter", "pdf", "png"] },
+    "sourceDocumentId": { "type": "string", "minLength": 1 },
+    "sourceRevision": { "type": "string", "minLength": 1 },
+    "ok": { "type": "boolean" },
+    "degraded": { "type": "boolean" },
+    "items": { "type": "array", "items": { "type": "object", "required": ["id", "slideId", "status"], "properties": { "id": { "type": "string" }, "slideId": { "type": "string" }, "elementId": { "type": "string" }, "type": { "type": "string" }, "status": { "enum": ["native", "property", "rasterized", "static", "font-replacement", "layout-risk", "missing-source", "unsupported", "blocked"] }, "reason": { "type": "string" }, "recovery": { "type": "string" }, "sourcePath": { "type": "string" } }, "additionalProperties": false } },
+    "issues": { "type": "array" },
+    "summary": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0 } }
+  },
+  "additionalProperties": false
+}

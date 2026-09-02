@@ -20,6 +20,9 @@ pairs = [
     ('recipe.schema.json', 'recipe.json'),
     ('manifest.schema.json', 'manifest.json'),
     ('patch-manifest.schema.json', 'patch-manifest.json'),
+    ('portable-origin.schema.json', 'portable-origin.json'),
+    ('capability-report.schema.json', 'capability-report.json'),
+    ('review.schema.json', 'review.json'),
 ]
 
 errors: list[str] = []

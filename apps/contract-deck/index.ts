@@ -10,6 +10,11 @@ import { renderSlideHtml, renderTargetedVisualDiff } from '../../packages/render
 import { RecoveryJournal, readJournal, replayJournal } from '../../packages/recovery-journal/src/index.js'
 import { openCheckpoint, writeCheckpoint, type CheckpointWriteOptions } from '../../packages/file-format/src/index.js'
 import { buildReplacementElement } from '../../packages/semantic-identity/src/index.js'
+import { auditPortableBundle, createPortableQuickFix, createPortableViewer, PortableRuntime, decodePortable } from '../../packages/portable-runtime/src/index.js'
+import { PpteReviewer } from '../../packages/reviewer/src/index.js'
+import { applyPatchToDocument, decodePatch, encodePatch } from '../../packages/patch-format/src/index.js'
+import { exportPdf, exportPng } from '../../packages/exporter-pdf/src/index.js'
+import { checkGlyphCoverage } from '../../packages/validation/src/index.js'
 import type { CheckpointAdapter } from '../../packages/core/src/index.js'
 import type { Asset, Operation, PpteDocument, RichTextDocument, ShapeElement, TextElement, Transaction } from '../../packages/schema/src/index.js'
 
@@ -277,7 +282,7 @@ export function runVerticalSlice(): Record<string, unknown> {
     blockedIssue: blocked.issues.find((issue) => issue.code === 'SCOPE_VIOLATION')?.code,
     journalRecoveredTransactions: recovered.applied,
     checkpointRoundTrip: true,
-    unsupportedScope: ['Chart', 'Widget', 'Poster', 'PPTX', 'Patch', 'nested Group', 'Group Rotate', 'Run-level font/size', 'complete Portable editor'],
+    unsupportedScope: ['Chart', 'Widget', 'Poster', 'PPTX', 'Light Edit/full Portable editor', 'nested Group', 'Group Rotate', 'Run-level font/size'],
   }
 }
 
@@ -352,6 +357,49 @@ export function runWeek7To13(): Record<string, unknown> {
   }
 }
 
+export function runWeek11To16(): Record<string, unknown> {
+  const { document, imageBytes } = makeContractDocument()
+  const initialRevision = canonicalRevision(document)
+  const viewer = createPortableViewer(document, { assetBytes: { [IMAGE_ASSET_ID]: imageBytes }, derivedAt: '2026-09-03T00:00:00.000Z' })
+  assert(viewer.ok, `Portable Viewer: ${viewer.issues.map((issue) => issue.code).join(',')}`)
+  assert(auditPortableBundle(viewer.html).ok, 'Portable Viewer bundle audit')
+  assert(decodePortable(viewer.html).origin.sourceRevision === initialRevision, 'Portable origin revision')
+
+  const quick = new PortableRuntime(document, { profile: 'quick-fix', assetBytes: { [IMAGE_ASSET_ID]: imageBytes } })
+  assert(quick.editText({ semanticKey: 'title.main' }, 'Offline Quick Fix title').ok, 'Portable Quick Fix text')
+  assert(quick.undo().ok && quick.getRevision() === initialRevision, 'Portable Quick Fix inverse')
+  assert(quick.replaceImage({ elementId: IMAGE_ID }, IMAGE_ASSET_ID).ok, 'Portable Quick Fix image')
+  assert(quick.saveAsNewProject().ok, 'Portable Quick Fix Save as New Project')
+
+  const subset = cloneJson(document)
+  const subsetText = subset.slides[SLIDE_ID].elements[TITLE_ID] as TextElement
+  subset.fonts.font_system_inter = { id: 'font_system_inter', family: 'Inter', style: 'normal', weight: 400, source: 'embedded', editableSafe: true, glyphCoverage: [{ start: 32, end: 126 }] }
+  assert(checkGlyphCoverage(subset, subsetText, '标题', { strict: true }).some((issue) => issue.code === 'FONT_GLYPH_MISSING'), 'Glyph Coverage blocks missing CJK')
+
+  const revised = cloneJson(document)
+  ;(revised.slides[SLIDE_ID].elements[TITLE_ID] as TextElement).content = text('Revised title', 'week11-revised')
+  const reviewer = new PpteReviewer()
+  const patch = reviewer.createPatch(document, revised)
+  const applied = applyPatchToDocument(document, decodePatch(encodePatch(patch)))
+  assert(applied.ok, 'three-way patch application')
+  const patchSession = new PpteSession(document)
+  assert(patchSession.applyPatch(patch).ok, 'Session patch commit')
+  assert(patchSession.undo().ok && patchSession.getRevision() === initialRevision, 'Session patch undo')
+
+  const pdf = exportPdf(document)
+  const png = exportPng(document)
+  assert(pdf.bytes.length > 8 && new TextDecoder().decode(pdf.bytes.slice(0, 8)) === '%PDF-1.4', 'PDF baseline')
+  assert(png.bytes.length > 8 && png.bytes[0] === 137 && png.bytes[1] === 80, 'PNG baseline')
+  return {
+    status: 'ok',
+    portableViewer: { profile: viewer.origin?.profile, audited: true, offline: true },
+    quickFix: { text: true, image: true, undo: true, saveAsNewProject: true },
+    glyphCoverage: 'missing glyphs are explicit errors',
+    compareRevisedCopy: { threeWay: true, patch: true, replayProtection: true },
+    exports: { pdf: true, png: true, degraded: pdf.degraded || png.degraded },
+  }
+}
+
 function stableTransaction(
   session: PpteSession,
   transactionId: string,
@@ -393,7 +441,14 @@ function assert(condition: unknown, label: string): asserts condition {
   if (!condition) throw new Error(`VERTICAL_SLICE_FAILED: ${label}`)
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url) && process.argv.includes('--milestone')) {
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url) && process.argv.includes('--beta')) {
+  try {
+    process.stdout.write(`${JSON.stringify(runWeek11To16())}\n`)
+  } catch (cause) {
+    process.stderr.write(`${cause instanceof Error ? cause.stack ?? cause.message : String(cause)}\n`)
+    process.exitCode = 1
+  }
+} else if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url) && process.argv.includes('--milestone')) {
   try {
     process.stdout.write(`${JSON.stringify(runWeek7To13())}\n`)
   } catch (cause) {

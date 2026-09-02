@@ -19,7 +19,11 @@ importers:
 
   packages/agent-tools: {}
 
+  packages/archive: {}
+
   packages/canonical-json: {}
+
+  packages/capability: {}
 
   packages/change-contract: {}
 
@@ -31,6 +35,8 @@ importers:
 
   packages/editor-react: {}
 
+  packages/exporter-pdf: {}
+
   packages/file-format: {}
 
   packages/geometry: {}
@@ -41,9 +47,15 @@ importers:
 
   packages/operations: {}
 
+  packages/patch-format: {}
+
+  packages/portable-runtime: {}
+
   packages/recovery-journal: {}
 
   packages/renderer-react: {}
+
+  packages/reviewer: {}
 
   packages/richtext-adapter: {}
 

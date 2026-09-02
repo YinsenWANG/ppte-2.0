@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ppte:schemas:2.0:review",
+  "title": "PPTe Three-way Semantic Review",
+  "type": "object",
+  "required": ["documentId", "baseRevision", "localRevision", "revisedRevision", "baseAvailable", "twoWay", "units", "conflicts", "issues", "autoAcceptable"],
+  "properties": {
+    "documentId": { "type": "string", "minLength": 1 },
+    "baseRevision": { "type": "string", "minLength": 1 },
+    "localRevision": { "type": "string", "minLength": 1 },
+    "revisedRevision": { "type": "string", "minLength": 1 },
+    "baseAvailable": { "type": "boolean" },
+    "twoWay": { "type": "boolean" },
+    "units": { "type": "array", "items": { "$ref": "#/$defs/unit" } },
+    "conflicts": { "type": "array", "items": { "$ref": "#/$defs/unit" } },
+    "issues": { "type": "array" },
+    "autoAcceptable": { "type": "boolean" }
+  },
+  "$defs": {
+    "unit": {
+      "type": "object",
+      "required": ["unitId", "kind", "field", "path", "status", "match"],
+      "properties": {
+        "unitId": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["slide", "element", "fact", "source", "document"] },
+        "field": { "enum": ["content", "data", "style", "geometry", "asset", "identity", "visibility", "structure", "readingOrder", "fact", "source", "slide"] },
+        "path": { "type": "string", "pattern": "^/" },
+        "slideId": { "type": "string" },
+        "elementId": { "type": "string" },
+        "semanticKey": { "type": "string" },
+        "status": { "enum": ["unchanged", "local-only", "revised-only", "same-change", "conflict", "added", "deleted", "ambiguous"] },
+        "match": { "enum": ["elementId", "semanticKey", "lineage", "factId", "sourceId", "heuristic", "none"] },
+        "baseValue": {},
+        "localValue": {},
+        "revisedValue": {}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

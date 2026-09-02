@@ -1,0 +1,8 @@
+{
+  "sourceDocumentId": "doc_public_example",
+  "sourceRevision": "sha256-0000000000000000000000000000000000000000000000000000000000000000",
+  "derivedAt": "2026-09-03T00:00:00Z",
+  "profile": "viewer",
+  "runtimeVersion": "portable-runtime-1",
+  "branchId": "offline-viewer"
+}

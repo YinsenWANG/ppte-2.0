@@ -13,6 +13,7 @@
     "validate": "python scripts/validate.py && bash scripts/ci-guards.sh",
     "e2e:vertical-slice": "pnpm build && node dist/apps/contract-deck/index.js --e2e",
     "e2e:milestone": "pnpm build && node dist/apps/contract-deck/index.js --milestone",
+    "e2e:beta": "pnpm build && node dist/apps/contract-deck/index.js --beta",
     "contract-deck": "pnpm build && node dist/apps/contract-deck/index.js"
   },
   "devDependencies": {

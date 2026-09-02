@@ -1,0 +1,12 @@
+{
+  "documentId": "doc_public_example",
+  "baseRevision": "sha256-0000000000000000000000000000000000000000000000000000000000000000",
+  "localRevision": "sha256-1111111111111111111111111111111111111111111111111111111111111111",
+  "revisedRevision": "sha256-2222222222222222222222222222222222222222222222222222222222222222",
+  "baseAvailable": true,
+  "twoWay": false,
+  "units": [],
+  "conflicts": [],
+  "issues": [],
+  "autoAcceptable": true
+}
