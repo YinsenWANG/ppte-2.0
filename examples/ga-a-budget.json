@@ -1,0 +1,23 @@
+{
+  "capacity": {
+    "maxSlides": 30,
+    "maxElements": 900,
+    "maxGroups": 120,
+    "maxAssetBytes": 52428800,
+    "maxFonts": 20
+  },
+  "performance": {
+    "openToInteractiveMs": 2000,
+    "pageSwitchMs": 100,
+    "selectionMs": 50,
+    "humanCommitMs": 100,
+    "textCommitMs": 150,
+    "journalAppendMs": 100,
+    "undoRedoMs": 100,
+    "checkpoint50MbMs": 3000,
+    "portableViewerFirstScreenMs": 2000,
+    "portableQuickFixFirstScreenMs": 2500,
+    "viewerBundleGzipBytes": 1200000,
+    "quickFixBundleGzipBytes": 2000000
+  }
+}

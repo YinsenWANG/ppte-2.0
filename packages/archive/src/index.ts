@@ -12,6 +12,7 @@ export interface StoredZipEntry {
 const MAX_ARCHIVE_BYTES = 512 * 1024 * 1024
 const MAX_ENTRY_BYTES = 256 * 1024 * 1024
 const MAX_ARCHIVE_ENTRIES = 10_000
+const CRC_TABLE = buildCrcTable()
 
 export function writeStoredZip(entries: StoredZipEntry[]): Uint8Array {
   const localParts: Uint8Array[] = []
@@ -160,9 +161,15 @@ function findEndOfCentralDirectory(data: Uint8Array): number {
 }
 function crc32(data: Uint8Array): number {
   let crc = 0xffffffff
-  for (const byte of data) {
-    crc ^= byte
-    for (let bit = 0; bit < 8; bit += 1) crc = (crc >>> 1) ^ (crc & 1 ? 0xedb88320 : 0)
-  }
+  for (const byte of data) crc = (crc >>> 8) ^ CRC_TABLE[(crc ^ byte) & 0xff]!
   return (crc ^ 0xffffffff) >>> 0
+}
+function buildCrcTable(): Uint32Array {
+  const table = new Uint32Array(256)
+  for (let index = 0; index < table.length; index += 1) {
+    let value = index
+    for (let bit = 0; bit < 8; bit += 1) value = (value >>> 1) ^ (value & 1 ? 0xedb88320 : 0)
+    table[index] = value >>> 0
+  }
+  return table
 }

@@ -22,6 +22,9 @@ pairs = [
     ('patch-manifest.schema.json', 'patch-manifest.json'),
     ('portable-origin.schema.json', 'portable-origin.json'),
     ('capability-report.schema.json', 'capability-report.json'),
+    ('compatibility-profile.schema.json', 'compatibility-profile.json'),
+    ('error.schema.json', 'error.json'),
+    ('ga-a-budget.schema.json', 'ga-a-budget.json'),
     ('review.schema.json', 'review.json'),
 ]
 

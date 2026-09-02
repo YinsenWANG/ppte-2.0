@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ppte.dev/schemas/2.0/ga-a-budget.schema.json",
+  "title": "PPTe GA-A Capacity and Performance Budget",
+  "type": "object",
+  "required": ["capacity", "performance"],
+  "properties": {
+    "capacity": {
+      "type": "object",
+      "required": ["maxSlides", "maxElements", "maxGroups", "maxAssetBytes", "maxFonts"],
+      "properties": {
+        "maxSlides": { "const": 30 },
+        "maxElements": { "const": 900 },
+        "maxGroups": { "const": 120 },
+        "maxAssetBytes": { "const": 52428800 },
+        "maxFonts": { "const": 20 }
+      },
+      "additionalProperties": false
+    },
+    "performance": {
+      "type": "object",
+      "required": [
+        "openToInteractiveMs",
+        "pageSwitchMs",
+        "selectionMs",
+        "humanCommitMs",
+        "textCommitMs",
+        "journalAppendMs",
+        "undoRedoMs",
+        "checkpoint50MbMs",
+        "portableViewerFirstScreenMs",
+        "portableQuickFixFirstScreenMs",
+        "viewerBundleGzipBytes",
+        "quickFixBundleGzipBytes"
+      ],
+      "properties": {
+        "openToInteractiveMs": { "const": 2000 },
+        "pageSwitchMs": { "const": 100 },
+        "selectionMs": { "const": 50 },
+        "humanCommitMs": { "const": 100 },
+        "textCommitMs": { "const": 150 },
+        "journalAppendMs": { "const": 100 },
+        "undoRedoMs": { "const": 100 },
+        "checkpoint50MbMs": { "const": 3000 },
+        "portableViewerFirstScreenMs": { "const": 2000 },
+        "portableQuickFixFirstScreenMs": { "const": 2500 },
+        "viewerBundleGzipBytes": { "const": 1200000 },
+        "quickFixBundleGzipBytes": { "const": 2000000 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

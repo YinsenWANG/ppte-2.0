@@ -2,10 +2,12 @@ import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { tmpdir } from 'node:os'
 import { fileURLToPath } from 'node:url'
+import { gzipSync } from 'node:zlib'
 import { canonicalRevision, cloneJson, sha256HexBytes } from '../../packages/canonical-json/src/index.js'
 import { PpteSession } from '../../packages/core/src/index.js'
 import { AGENT_TOOL_NAMES, AgentToolServer, MockAgent } from '../../packages/agent-tools/src/index.js'
 import { ImeTextEditSession, beginDrag, endDrag, updateDrag } from '../../packages/editor-react/src/index.js'
+import { hitTest } from '../../packages/geometry/src/index.js'
 import { renderSlideHtml, renderTargetedVisualDiff } from '../../packages/renderer-react/src/index.js'
 import { RecoveryJournal, readJournal, replayJournal } from '../../packages/recovery-journal/src/index.js'
 import { openCheckpoint, writeCheckpoint, type CheckpointWriteOptions } from '../../packages/file-format/src/index.js'
@@ -15,8 +17,9 @@ import { PpteReviewer } from '../../packages/reviewer/src/index.js'
 import { applyPatchToDocument, decodePatch, encodePatch } from '../../packages/patch-format/src/index.js'
 import { exportPdf, exportPng } from '../../packages/exporter-pdf/src/index.js'
 import { checkGlyphCoverage } from '../../packages/validation/src/index.js'
+import { GA_A_CAPACITY_BUDGET, GA_A_PERFORMANCE_BUDGET, assertPerformanceBudget, benchmark, evaluateBundleBudget, measureCapacity, validateCapacityBudget } from '../../packages/performance-budget/src/index.js'
 import type { CheckpointAdapter } from '../../packages/core/src/index.js'
-import type { Asset, Operation, PpteDocument, RichTextDocument, ShapeElement, TextElement, Transaction } from '../../packages/schema/src/index.js'
+import type { Asset, Element, Operation, PpteDocument, RichTextDocument, ShapeElement, TextElement, Transaction } from '../../packages/schema/src/index.js'
 
 const SLIDE_ID = 'slide_main'
 const TITLE_ID = 'text_title'
@@ -118,6 +121,159 @@ export function makeContractDocument(imageBytes = pixelPng()): { document: PpteD
     },
   }
   return { document, imageBytes }
+}
+
+/** Build the deterministic 30-slide / 900-element GA-A capacity corpus. */
+export function makeGAAStandardDocument(assetBytes = new Uint8Array(50 * 1024 * 1024)): { document: PpteDocument; assetBytes: Uint8Array } {
+  const base = makeContractDocument(assetBytes).document
+  const document = cloneJson(base)
+  const slides: PpteDocument['slides'] = {}
+  const slideOrder: string[] = []
+  const sourceSlide = document.slides[SLIDE_ID]
+  const sourceText = sourceSlide.elements[TITLE_ID] as TextElement
+  const sourceShape = sourceSlide.elements[SHAPE_ID] as ShapeElement
+  const sourceImage = sourceSlide.elements[IMAGE_ID] as Extract<Element, { type: 'image' }>
+  for (let slideIndex = 0; slideIndex < GA_A_CAPACITY_BUDGET.maxSlides; slideIndex += 1) {
+    const slideId = `slide_${String(slideIndex + 1).padStart(2, '0')}`
+    const elements: Record<string, Element> = {}
+    const rootOrder: string[] = []
+    const readingOrder: string[] = []
+    const shapeIds: string[] = []
+    for (let index = 0; index < 15; index += 1) {
+      const elementId = `${slideId}_text_${String(index + 1).padStart(2, '0')}`
+      const element = cloneJson(sourceText)
+      element.id = elementId
+      element.semanticKey = `${slideId}.text.${index + 1}`
+      element.role = index === 0 ? 'title' : 'body'
+      element.frame = { x: 80 + (index % 3) * 580, y: 80 + Math.floor(index / 3) * 150, width: 500, height: 100 }
+      element.content = text(`Capacity corpus slide ${slideIndex + 1} text ${index + 1}`, `${elementId}-p`)
+      elements[elementId] = element
+      rootOrder.push(elementId)
+      readingOrder.push(elementId)
+    }
+    const shapeCount = slideIndex === 0 ? 14 : 15
+    for (let index = 0; index < shapeCount; index += 1) {
+      const elementId = `${slideId}_shape_${String(index + 1).padStart(2, '0')}`
+      const element = cloneJson(sourceShape)
+      element.id = elementId
+      element.semanticKey = `${slideId}.shape.${index + 1}`
+      element.role = index < 12 ? 'decorative' : 'background'
+      element.frame = { x: 50 + (index % 7) * 260, y: 40 + Math.floor(index / 7) * 430, width: 220, height: 320 }
+      elements[elementId] = element
+      shapeIds.push(elementId)
+      rootOrder.push(elementId)
+    }
+    if (slideIndex === 0) {
+      const imageId = `${slideId}_image`
+      const image = cloneJson(sourceImage)
+      image.id = imageId
+      image.semanticKey = `${slideId}.image.hero`
+      image.frame = { x: 1420, y: 760, width: 360, height: 260 }
+      elements[imageId] = image
+      rootOrder.push(imageId)
+    }
+    const groups: NonNullable<PpteDocument['slides'][string]['groups']> = {}
+    for (let groupIndex = 0; groupIndex < 4; groupIndex += 1) {
+      const memberIds = shapeIds.slice(groupIndex * 3, groupIndex * 3 + 3)
+      groups[`${slideId}_group_${groupIndex + 1}`] = { id: `${slideId}_group_${groupIndex + 1}`, name: `Capacity group ${groupIndex + 1}`, memberIds }
+    }
+    slides[slideId] = { id: slideId, name: `Capacity slide ${slideIndex + 1}`, rootOrder, elements, groups, readingOrder, visualStrategy: 'structured' }
+    slideOrder.push(slideId)
+  }
+  document.documentId = 'doc_ga_a_capacity'
+  document.metadata.title = 'GA-A capacity corpus'
+  document.slideOrder = slideOrder
+  document.slides = slides
+  delete document.facts
+  document.assets[IMAGE_ASSET_ID].byteLength = assetBytes.length
+  document.assets[IMAGE_ASSET_ID].hash = `sha256-${sha256HexBytes(assetBytes)}`
+  for (let index = Object.keys(document.fonts).length; index < GA_A_CAPACITY_BUDGET.maxFonts; index += 1) {
+    const id = `font_capacity_${index + 1}`
+    document.fonts[id] = { id, family: `Capacity Sans ${index + 1}`, style: 'normal', weight: 400, source: 'system', editableSafe: true }
+  }
+  return { document, assetBytes }
+}
+
+export function runGAAStabilization(): Record<string, unknown> {
+  const { document, assetBytes } = makeGAAStandardDocument()
+  const capacity = measureCapacity(document)
+  const capacityViolations = validateCapacityBudget(document)
+  assert(capacityViolations.length === 0, `capacity budget: ${capacityViolations.map((violation) => violation.metric).join(',')}`)
+  const firstSlide = document.slideOrder[0]!
+  const lastSlide = document.slideOrder.at(-1)!
+  const humanSession = new PpteSession(document)
+  let humanSequence = 0
+  const textSession = new PpteSession(document)
+  let textSequence = 0
+  const undoSessions = Array.from({ length: 5 }, (_, index) => {
+    const session = new PpteSession(document)
+    const transaction = new MockAgent().createTextReplaceTransaction(document, session.getRevision(), firstSlide, `${firstSlide}_text_01`, text(`Undo measurement ${index}`, `perf-undo-${index}`), `perf-undo-${index}`)
+    assert(session.commit(transaction).ok, 'undo preparation')
+    return session
+  })
+  const redoSessions = Array.from({ length: 5 }, (_, index) => {
+    const session = new PpteSession(document)
+    const transaction = new MockAgent().createTextReplaceTransaction(document, session.getRevision(), firstSlide, `${firstSlide}_text_01`, text(`Redo measurement ${index}`, `perf-redo-${index}`), `perf-redo-${index}`)
+    assert(session.commit(transaction).ok, 'redo preparation commit')
+    assert(session.undo().ok, 'redo preparation')
+    return session
+  })
+  let undoIndex = 0
+  let redoIndex = 0
+  const metrics = [
+    benchmark('open-to-interactive', () => { new PpteSession(document) }, GA_A_PERFORMANCE_BUDGET.openToInteractiveMs, 5),
+    benchmark('page-switch', () => { renderSlideHtml(document, lastSlide) }, GA_A_PERFORMANCE_BUDGET.pageSwitchMs, 5),
+    benchmark('selection', () => { hitTest(document, firstSlide, { x: 100, y: 100 }) }, GA_A_PERFORMANCE_BUDGET.selectionMs, 5),
+    benchmark('human-commit', () => {
+      const imageId = `${firstSlide}_image`
+      const transaction: Transaction = {
+        transactionId: `perf-human-${humanSequence}`,
+        baseRevision: humanSession.getRevision(),
+        actor: { type: 'human', id: 'performance-harness' },
+        scope: { kind: 'selection', slideIds: [firstSlide], elementIds: [imageId], permissions: ['geometry'], allowInsert: false, allowDelete: false },
+        changeContract: { allowedOperationKinds: ['element.move'], allowedElementIds: [imageId], maxChangedSlides: 1, maxChangedElements: 1, maxInsertedElements: 0, maxDeletedElements: 0, maxReplacedAssets: 0, preserve: { content: 'preserve', data: 'preserve', style: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' } },
+        reason: 'GA-A human commit benchmark',
+        createdAt: '2026-09-03T00:00:00.000Z',
+        validationLevel: 'L1',
+        operations: [{ opId: `perf-human-${humanSequence++}:move`, kind: 'element.move', slideId: firstSlide, elementId: imageId, x: 1420 + humanSequence, y: 760 + humanSequence }],
+      }
+      assert(humanSession.commit(transaction).ok, 'human commit benchmark')
+    }, GA_A_PERFORMANCE_BUDGET.humanCommitMs, 5),
+    benchmark('text-commit', () => {
+      const transaction = new MockAgent().createTextReplaceTransaction(document, textSession.getRevision(), firstSlide, `${firstSlide}_text_01`, text(`Measured capacity edit ${textSequence}`, `perf-text-${textSequence}`), `perf-text-${textSequence++}`)
+      assert(textSession.commit(transaction).ok, 'text commit benchmark')
+    }, GA_A_PERFORMANCE_BUDGET.textCommitMs, 5),
+    benchmark('journal-append', () => {
+      const journalPath = join(mkdtempSync(join(tmpdir(), 'ppte-ga-a-journal-')), 'recovery.journal')
+      const revision = canonicalRevision(document)
+      const journal = new RecoveryJournal(journalPath, { journalVersion: '1', documentId: document.documentId, baseCheckpointRevision: revision, sessionId: 'ga-a-performance', createdAt: '2026-09-03T00:00:00.000Z' })
+      const transaction = new MockAgent().createTextReplaceTransaction(document, revision, firstSlide, `${firstSlide}_text_01`, text('Journal measurement', 'perf-journal'), `perf-journal-${journalPath}`)
+      journal.append(transaction)
+    }, GA_A_PERFORMANCE_BUDGET.journalAppendMs, 5),
+    benchmark('undo', () => { assert(undoSessions[undoIndex++]?.undo().ok, 'undo benchmark') }, GA_A_PERFORMANCE_BUDGET.undoRedoMs, 5),
+    benchmark('redo', () => { assert(redoSessions[redoIndex++]?.redo().ok, 'redo benchmark') }, GA_A_PERFORMANCE_BUDGET.undoRedoMs, 5),
+    benchmark('checkpoint-50mb', () => {
+      const checkpointPath = join(mkdtempSync(join(tmpdir(), 'ppte-ga-a-checkpoint-')), 'capacity.ppte')
+      writeCheckpoint(document, checkpointPath, { clean: true, assetBytes: { [IMAGE_ASSET_ID]: assetBytes }, timestamp: '2026-09-03T00:00:00.000Z' })
+    }, GA_A_PERFORMANCE_BUDGET.checkpoint50MbMs, 3),
+    benchmark('portable-viewer-first-screen', () => {
+      const result = createPortableViewer(document, { assetBytes: { [IMAGE_ASSET_ID]: assetBytes }, derivedAt: '2026-09-03T00:00:00.000Z' })
+      assert(result.ok, `portable viewer: ${result.issues.map((issue) => issue.code).join(',')}`)
+    }, GA_A_PERFORMANCE_BUDGET.portableViewerFirstScreenMs, 1),
+    benchmark('portable-quick-fix-first-screen', () => {
+      const result = createPortableQuickFix(document, { assetBytes: { [IMAGE_ASSET_ID]: assetBytes }, derivedAt: '2026-09-03T00:00:00.000Z' })
+      assert(result.ok, `portable quick fix: ${result.issues.map((issue) => issue.code).join(',')}`)
+    }, GA_A_PERFORMANCE_BUDGET.portableQuickFixFirstScreenMs, 1),
+  ]
+  const viewer = createPortableViewer(document, { assetBytes: { [IMAGE_ASSET_ID]: assetBytes }, derivedAt: '2026-09-03T00:00:00.000Z' })
+  const quickFix = createPortableQuickFix(document, { assetBytes: { [IMAGE_ASSET_ID]: assetBytes }, derivedAt: '2026-09-03T00:00:00.000Z' })
+  assert(viewer.ok && quickFix.ok, 'portable bundle build')
+  const bundles = [
+    evaluateBundleBudget('viewer-bundle-gzip', gzipSync(new TextEncoder().encode(viewer.html)).length, GA_A_PERFORMANCE_BUDGET.viewerBundleGzipBytes),
+    evaluateBundleBudget('quick-fix-bundle-gzip', gzipSync(new TextEncoder().encode(quickFix.html)).length, GA_A_PERFORMANCE_BUDGET.quickFixBundleGzipBytes),
+  ]
+  assertPerformanceBudget(metrics, bundles)
+  return { status: 'ok', capacity, budgets: { capacity: GA_A_CAPACITY_BUDGET, performance: GA_A_PERFORMANCE_BUDGET }, metrics, bundles }
 }
 
 export function runVerticalSlice(): Record<string, unknown> {
@@ -441,7 +597,14 @@ function assert(condition: unknown, label: string): asserts condition {
   if (!condition) throw new Error(`VERTICAL_SLICE_FAILED: ${label}`)
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url) && process.argv.includes('--beta')) {
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url) && process.argv.includes('--ga-a')) {
+  try {
+    process.stdout.write(`${JSON.stringify(runGAAStabilization())}\n`)
+  } catch (cause) {
+    process.stderr.write(`${cause instanceof Error ? cause.stack ?? cause.message : String(cause)}\n`)
+    process.exitCode = 1
+  }
+} else if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url) && process.argv.includes('--beta')) {
   try {
     process.stdout.write(`${JSON.stringify(runWeek11To16())}\n`)
   } catch (cause) {
