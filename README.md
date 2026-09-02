@@ -20,6 +20,7 @@ pnpm e2e:vertical-slice
 pnpm e2e:milestone
 pnpm e2e:beta
 pnpm e2e:ga-a
+pnpm e2e:ga-b
 pnpm contract-deck
 ```
 
@@ -40,6 +41,8 @@ replayed only when its document and base revision match.
   invariants, policy, and precondition enforcement.
 - `packages/diff` — structural and semantic-ready diff primitives.
 - `packages/validation` — runtime subset, text overflow, and glyph preflight.
+- `packages/charts` and `packages/facts` — the GA-B Bar/Line/Pie contract,
+  Fact/Source references, consistency diagnostics, and explicit sync builders.
 - `packages/geometry` — fixed Slide-space geometry and hit testing.
 - `packages/renderer-react` — a derived reference rendering adapter; it never
   writes the document.
@@ -59,6 +62,8 @@ replayed only when its document and base revision match.
   and data-only `.ppte.patch` transport with safe resource import.
 - `packages/exporter-pdf` — deterministic PDF/PNG baseline exporters with
   explicit degradation reports.
+- `packages/exporter-pptx` — Image PPTX export with one self-contained SVG
+  image per page and an embedded Capability Report.
 - `packages/compatibility` — the release-tested Compatibility Profile and
   native/migrate/read-only/reject decisions.
 - `packages/importer-legacy` — data-only forward migration for older semantic
@@ -77,13 +82,14 @@ replayed only when its document and base revision match.
 
 ## Scope
 
-This milestone deliberately does not implement:
+The current release surface deliberately does not implement:
 
 - Slidev, Markdown as a content source, or DOM reverse parsing;
-- Chart, Widget, Poster, or PPTX;
+- Poster, Widget, Portable Light Edit, or Semantic PPTX;
+- Area or Donut Chart runtime support; GA-B is limited to Bar, Line, and Pie;
 - nested Groups or Group Rotate;
 - Run-level font or font-size styling;
-- Portable Light Edit, Fact Quick Fix, or a complete Portable editor;
+- a complete Portable editor;
 - CRDT, real-time collaboration, full legacy markup import, or a browser/OS
   pixel-matrix test lab;
 - direct writes that bypass the Operation Engine.
@@ -94,12 +100,12 @@ The source is never executed or overwritten. Unsupported markup/runtime
 formats remain rejected and must be retained by the host alongside the
 migration report.
 
-The schema retains forward-compatible types for later releases, but the
-Stable Core runtime accepts only Text, Image, Shape, and flat logical Groups.
-Portable and Patch resource operations are transport-layer extensions and are
-still committed through the same Session Operation Engine. Unsupported future
-operations fail with a diagnostic error; they are not silently ignored or
-downgraded.
+The schema retains forward-compatible types for later releases. The GA-B
+runtime accepts Text, Image, Shape, Bar/Line/Pie Chart, and flat logical
+Groups. Portable and Patch resource operations are transport-layer extensions
+and are still committed through the same Session Operation Engine. Unsupported
+future operations fail with a diagnostic error; they are not silently ignored
+or downgraded.
 
 ## Design invariants
 
@@ -134,3 +140,14 @@ The public error surface is `PpteError`/`ErrorSemantics` in
 impact, content safety, whether saving is safe, retryability, and recovery
 action. Journal and checkpoint fault points are named and tested; the last
 complete checkpoint remains the recovery anchor unless replacement finished.
+
+## GA-B release surface
+
+GA-B adds deterministic Bar, Line, and Pie Chart data/encoding/options/style
+operations, Fact/Source references with cross-slide consistency diagnostics,
+numeric Fact Quick Fix, and reviewable Fact synchronization Transactions.
+Revised Copy review covers Chart fields and explicit conflict resolutions; the
+`.ppte.patch` default profile is `ppte-2.0-ga-b.1`. Image PPTX is a derived
+OOXML package containing one self-contained SVG image per page and a Capability
+Report. The default `.ppte` checkpoint profile remains `ppte-2.0-ga-a.1` for
+backward compatibility; callers opt into the GA-B profile when required.

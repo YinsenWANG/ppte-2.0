@@ -1,5 +1,63 @@
 # PPTe 2.0 Milestone Progress
 
+## 2026-09-03 — GA-B Chart / Fact / Review / Patch / Image PPTX
+
+### Completed this round
+
+- Added the GA-B Compatibility Profile `ppte-2.0-ga-b.1` as an explicit
+  interchange profile while keeping the default `.ppte` checkpoint profile at
+  GA-A for backward compatibility.
+- Added public Bar, Line, and Pie Chart contracts with validated columns,
+  rows, encodings, options, typed style overrides, deterministic SVG output,
+  and reversible `chart.*` Operations. Area and Donut remain forward-
+  compatible schema values for GA-C and are rejected by the GA-B runtime.
+- Added Fact/Source references, derived indexes/diagnostics for cross-slide
+  consistency, displayable-source checks, and explicit Fact update
+  Transactions. Numeric Portable Quick Fix and Agent Fact sync use the same
+  Session preview/confirmation/commit/undo path.
+- Completed Chart-aware Revised Copy review and `.ppte.patch` generation:
+  Chart fields, Fact/Source records, two-way manual fallback, explicit
+  conflict resolutions, and normal undoable Transactions are covered.
+- Added deterministic Image PPTX export as a standard OOXML ZIP with one
+  self-contained SVG image per slide and an embedded Capability Report.
+  Missing or hash-mismatched referenced assets retain a visible placeholder
+  and return an explicit failure; no page or asset is silently dropped.
+- Added positive, inverse, conflict, migration, Portable, Agent, export, and
+  capability tests, a public `examples/ga-b-chart-document.json` fixture, and
+  the executable `e2e:ga-b` acceptance path.
+
+### Exit-condition evidence
+
+- `pnpm install` — passed; all 33 workspace projects were up to date and the
+  lockfile passed supply-chain policy checks.
+- `pnpm typecheck` — passed.
+- `pnpm test` — 55 tests passed, 0 failed, 0 skipped.
+- `pnpm validate` — 14 schemas/examples, semantic checks, operation parity,
+  markdown structure, and source guards passed.
+- `pnpm e2e:vertical-slice` — passed; existing checkpoint, Journal, scope,
+  renderer, and Stable Core flow remained green.
+- `pnpm e2e:milestone` — passed; existing IR, Recipe, Agent, artwork,
+  comparison, confirmation, and undo flow remained green.
+- `pnpm e2e:beta` — passed; existing Portable Viewer/Quick Fix, Glyph,
+  Patch, PDF, and PNG flow remained green.
+- `pnpm e2e:ga-a` — passed at the published 30-slide / 900-element /
+  120-group / 50 MiB / 20-font boundary. All P95 and bundle budgets passed;
+  observed P95 values included human commit 90.19 ms, checkpoint 571.78 ms,
+  Viewer first screen 509.90 ms, and Quick Fix first screen 492.26 ms.
+- `pnpm e2e:ga-b` — passed; Chart/Fact cross-slide consistency and explicit
+  synchronization, Chart review/Patch, two-slide Image PPTX packaging,
+  Capability Report, and explicit missing-asset failure all passed.
+- `git diff --check` — passed.
+
+### Explicitly not done
+
+This round does not implement Area/Donut runtime support, Poster, Widget,
+Portable Light Edit, Semantic PPTX, nested Groups, Group Rotate, Run-level
+font or font-size styling, CRDT, real-time collaboration, a complete Portable
+editor, or full legacy markup/runtime import. Image PPTX is intentionally an
+image export rather than a semantic PPTX writer. No remote was created and no
+changes were pushed.
+
 ## 2026-09-03 — GA-A Stabilization / v0.2.0-rc.1 candidate
 
 ### Completed this round

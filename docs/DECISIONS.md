@@ -3,6 +3,35 @@
 This file records conservative choices made while implementing the frozen
 Week 1–2 slice and Stable Core milestone.
 
+## 2026-09-03 — GA-B Chart, Fact/Source, Review, Patch, and Image PPTX boundary
+
+GA-B accepts only Bar, Line, and Pie Charts in the runtime. Area and Donut
+remain schema-level forward-compatible values for the later GA-C profile and
+are rejected by the GA-B runtime and chart renderer.
+
+Fact changes are generated as one reviewable Transaction containing the Fact
+upsert and explicit reference-sync Operations. The builder updates only text
+references whose prior display is identifiable and only chart cells whose row,
+field, or single-cell identity is safe; an unsafe reference is never silently
+overwritten. Agent Fact sync requires both `facts` and `content` permission and
+retains the normal preview/confirmation/commit path.
+
+Revised Copy comparison adds Chart data, encoding, options, style, and
+Fact/Source record units. A missing Base uses a manual two-way fallback and is
+never auto-accepted; same-field conflicts require an explicit revised-side
+resolution. Accepted units become ordinary Session Transactions and remain
+undoable.
+
+Image PPTX is a deterministic OOXML package with one self-contained SVG image
+per page and a bundled Capability Report. It is intentionally an image export,
+not a semantic PPTX writer. Missing or hash-mismatched image payloads produce
+a visible placeholder plus an explicit failure result. The default checkpoint
+profile stays GA-A for compatibility; GA-B is selected explicitly for
+GA-B-specific patch/checkpoint interchange.
+
+This round does not implement Poster, Widget, Portable Light Edit, Semantic
+PPTX, CRDT, real-time collaboration, or full legacy markup/runtime import.
+
 ## 2026-09-02 — zero runtime dependencies
 
 The slice uses TypeScript and platform APIs only. This keeps Core usable in
