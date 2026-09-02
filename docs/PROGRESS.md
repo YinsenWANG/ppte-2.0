@@ -1,5 +1,66 @@
 # PPTe 2.0 Milestone Progress
 
+## 2026-09-03 — GA-A Stabilization / v0.2.0-rc.1 candidate
+
+### Completed this round
+
+- Froze the release-tested `ppte-2.0-ga-a.1` Compatibility Profile and added
+  native, forward-migrate, read-only, and reject decisions for independent
+  format, schema, operation, Slide IR, Portable Runtime, and Recipe versions.
+- Added a data-only forward migration API for JSON-compatible legacy semantic
+  snapshots. It preserves source identity by digest, never executes or
+  overwrites the source, materializes nested Groups into Flat Groups, promotes
+  safe style values to typed overrides, retains unsafe Run-style differences
+  in a non-required migration Extension, and emits deterministic review data.
+- Added the public error semantics/catalog: impact, content safety, save
+  safety, recoverability, retryability, and recovery guidance are attached to
+  validation and boundary diagnostics without removing the original error
+  code/message/severity contract.
+- Added the independent GA-A fault-point list and matrix. Journal corruption,
+  base/CAS mismatch, all Checkpoint replacement stages, archive safety,
+  Patch replay/conflict, and Portable network/payload failures have explicit
+  expected outcomes and recovery policy. Checkpoint injectors verify that the
+  prior file remains readable until replacement completes.
+- Added a real 30-slide / 900-element / 120-group / 50 MiB-asset / 20-font
+  acceptance corpus, capacity validation, P95 performance budgets, and
+  compressed bundle limits to the executable GA-A E2E and CI workflow.
+- Updated the README, CONTRIBUTING guide, CHANGELOG, decisions log, public
+  Compatibility Profile schema/example, and release scripts. The root
+  candidate version is `0.2.0-rc.1`; publication is intentionally local-only.
+
+### Exit-condition evidence
+
+- `pnpm install --frozen-lockfile` — passed; lockfile policy check passed.
+- `pnpm typecheck` — passed.
+- `pnpm -r typecheck` — passed for 29 workspace projects (the root importer
+  has no recursive script).
+- `pnpm test` — 49 tests passed, 0 failed, 0 skipped.
+- `pnpm validate` — 13 schemas/examples, semantic checks, operation parity,
+  markdown structure, and source guards passed.
+- `pnpm e2e:vertical-slice` — passed; checkpoint round trip, journal recovery,
+  and out-of-scope blocking remained green.
+- `pnpm e2e:milestone` — passed; IR, Recipe, Agent, artwork, comparison,
+  confirmation, and undo evidence remained green.
+- `pnpm e2e:beta` — passed; Portable Viewer/Quick Fix, glyph coverage,
+  three-way Patch, replay protection, PDF, PNG, and explicit degradation
+  remained green.
+- `pnpm e2e:ga-a` — passed at the exact capacity boundary. The slowest
+  measured P95 was human commit at 91.9 ms against 100 ms; checkpoint was
+  572.6 ms against 3,000 ms; Portable Viewer was 515.6 ms against 2,000 ms;
+  Portable Quick Fix was 487.5 ms against 2,500 ms. Viewer and Quick Fix gzip
+  bundles were 186,101 and 185,250 bytes against 1,200,000 and 2,000,000
+  byte limits.
+- `git diff --check` — passed.
+
+### Explicitly not done
+
+This candidate supports only data-only legacy semantic snapshot migration. It
+does not execute or import legacy markup/runtime sources. Chart, Widget,
+Poster, PPTX, nested Groups, Group Rotate, Run-level font or font-size
+styling, Portable Light Edit, Fact Quick Fix, a complete Portable editor,
+CRDT, real-time collaboration, and browser/OS pixel-matrix validation remain
+out of scope. No remote was created and no changes were pushed.
+
 ## 2026-09-03 — Week 11–16 Portable Runtime / Review / Export Beta
 
 ### Completed this round

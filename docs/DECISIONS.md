@@ -160,3 +160,55 @@ PDF and PNG are baseline exporters. Unsupported elements, missing sources,
 font replacement, layout risk, and rasterized output remain visible through
 Capability Reports and export issues. The baseline never silently drops a
 page or unsupported element.
+
+## 2026-09-03 — GA-A Compatibility Profile and migration boundary
+
+GA-A publishes only the frozen `ppte-2.0-ga-a.1` combination. The reference
+runtime treats a matching combination as native, older declared combinations
+as forward-migration candidates, higher incompatible major versions as
+read-only, and missing/inconsistent declarations as rejection. No profile is
+implicitly treated as equivalent to another profile.
+
+The migration API accepts JSON-compatible semantic snapshots and produces a
+new `PpteDocument` plus a deterministic report. It never executes source
+payloads and never overwrites the source. Source identity is retained as a
+digest and identifiers in the report. Nested Groups are flattened by
+materializing child Frames and creating a `LogicalGroup`; Run-level font
+differences are retained in a non-required migration Extension when splitting
+would be unsafe; unavailable Style Presets become typed element overrides or
+an explicit target fallback. Ambiguous semantic keys are left unset and
+reported. Unsupported markup and runtime-specific inputs remain outside the
+data-only migration boundary.
+
+## 2026-09-03 — explicit GA-A error semantics
+
+The frozen error code and recovery fields remain available on
+`ValidationIssue`; GA-A adds impact, content safety, save safety,
+recoverability, and retryability with a public error catalog. Existing callers
+may still consume the original code/message/severity fields. New boundary
+diagnostics are enriched at return boundaries, while thrown persistence
+errors retain their stable code prefixes for compatibility with hosts that
+parse them.
+
+## 2026-09-03 — release fault matrix
+
+Faults are named at persistence and transport boundaries so tests do not
+depend on temporary filenames or implementation-local timing. The GA-A matrix
+covers partial/corrupt Journal tails, base and CAS mismatches, all Checkpoint
+replacement stages, archive path/size rejection, Patch replay/conflict, and
+Portable network/payload rejection. A fault before replacement preserves the
+prior checkpoint; a post-replacement fault is reported while the newly
+completed checkpoint remains reopenable. The matrix has an independent
+expected-point list so a missing case cannot make its own completeness check
+pass.
+
+## 2026-09-03 — real capacity and performance gate
+
+The CI benchmark uses an actual deterministic 30-slide, 900-element,
+120-group, 50 MiB-asset, 20-font corpus. It measures P95 rather than an
+average and fails with the observed metric and budget when a limit is missed.
+The corpus is intentionally shared by open, render, edit, Journal, recovery,
+Checkpoint, and Portable measurements; no fake timing or reduced fixture is
+used to satisfy the gate. Binary persistence work may use platform hashing
+and a lookup-table CRC implementation, but canonical JSON/revision semantics
+remain unchanged.

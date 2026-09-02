@@ -12,13 +12,14 @@ assets, and reopen with the same canonical revision.
 ## Quick start
 
 ```text
-pnpm install
+pnpm install --frozen-lockfile
 pnpm typecheck
 pnpm test
 pnpm validate
 pnpm e2e:vertical-slice
 pnpm e2e:milestone
 pnpm e2e:beta
+pnpm e2e:ga-a
 pnpm contract-deck
 ```
 
@@ -58,9 +59,19 @@ replayed only when its document and base revision match.
   and data-only `.ppte.patch` transport with safe resource import.
 - `packages/exporter-pdf` — deterministic PDF/PNG baseline exporters with
   explicit degradation reports.
+- `packages/compatibility` — the release-tested Compatibility Profile and
+  native/migrate/read-only/reject decisions.
+- `packages/importer-legacy` — data-only forward migration for older semantic
+  snapshots, with deterministic output, typed style reattachment, flat-group
+  materialization, and a reviewable migration report.
+- `packages/fault-injection` — the named GA-A Journal/Checkpoint/archive/
+  patch/Portable fault matrix and checkpoint injector.
+- `packages/performance-budget` — capacity counters, P95 budgets, bundle-size
+  checks, and the deterministic GA-A benchmark helpers.
 - `apps/contract-deck` — the executable acceptance path.
 - `schemas`, `examples`, `scripts/validate.py` — retained public contracts and
-  validation fixtures.
+  validation fixtures, including the Compatibility Profile, error contract,
+  and GA-A budget.
 - `docs/PPTe_2.0_完整研发方案_v2.3.md`, `docs/ADR_v2.3_冻结决策.md`, and
   `docs/开发启动清单.md` — the frozen specification inputs.
 
@@ -73,9 +84,15 @@ This milestone deliberately does not implement:
 - nested Groups or Group Rotate;
 - Run-level font or font-size styling;
 - Portable Light Edit, Fact Quick Fix, or a complete Portable editor;
-- CRDT, real-time collaboration, legacy migration/import, or a browser/OS
+- CRDT, real-time collaboration, full legacy markup import, or a browser/OS
   pixel-matrix test lab;
 - direct writes that bypass the Operation Engine.
+
+GA-A does include a deliberately narrow legacy boundary: older JSON-compatible
+semantic snapshots can be migrated forward through `packages/importer-legacy`.
+The source is never executed or overwritten. Unsupported markup/runtime
+formats remain rejected and must be retained by the host alongside the
+migration report.
 
 The schema retains forward-compatible types for later releases, but the
 Stable Core runtime accepts only Text, Image, Shape, and flat logical Groups.
@@ -96,3 +113,24 @@ validated.
 
 Implementation choices not fixed by the specification are recorded in
 [`docs/DECISIONS.md`](docs/DECISIONS.md).
+
+## GA-A release surface
+
+The native package profile is `ppte-2.0-ga-a.1` and is the exact combination
+of format `2`, schema `2.0.0`, operation protocol `1.0`, Slide IR `1.0`,
+Portable Runtime `2.0.0`, and Layout Recipe `1.0`; Widget ABI and Patch are
+unset in this profile. Older supported semantic inputs migrate forward into
+a new document. Higher incompatible major versions are read-only; unknown
+or inconsistent profiles are rejected.
+
+`pnpm e2e:ga-a` builds the 30-slide / 900-element / 120-group / 50 MiB / 20
+font corpus and measures the published P95 budgets, including open, page
+switch, selection, human and text commit, journal append, undo/redo,
+checkpoint, Portable first screen, and bundle size. A failed budget exits
+non-zero and prints the measured value and its limit.
+
+The public error surface is `PpteError`/`ErrorSemantics` in
+`packages/schema/src/errors.ts`. Boundary diagnostics state the error code,
+impact, content safety, whether saving is safe, retryability, and recovery
+action. Journal and checkpoint fault points are named and tested; the last
+complete checkpoint remains the recovery anchor unless replacement finished.
