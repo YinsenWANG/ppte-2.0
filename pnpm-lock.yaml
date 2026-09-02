@@ -25,6 +25,8 @@ importers:
 
   packages/core: {}
 
+  packages/design-compiler: {}
+
   packages/diff: {}
 
   packages/editor-react: {}
@@ -32,6 +34,10 @@ importers:
   packages/file-format: {}
 
   packages/geometry: {}
+
+  packages/layout-recipes: {}
+
+  packages/macros: {}
 
   packages/operations: {}
 
