@@ -30,6 +30,60 @@ Portable editor, nested Groups, Group Rotate, Run-level font or font-size
 styling, Slidev, DOM reverse parsing, or direct writes outside the Operation
 Engine. No remote is created and no changes are pushed.
 
+## 2026-09-03 — Week 7–13 Slide IR / Recipe / Agent milestone
+
+### Completed this round
+
+- Added bounded Presentation IR, Slide IR, Recipe Spec, Layout Constraint,
+  Element Draft, and compiled-draft validation with public JSON examples and
+  schema validation. Unknown fields and non-JSON executable payloads are
+  rejected.
+- Added a deterministic Design Compiler that selects versioned declarative
+  Recipes, resolves normalized Zones and constraints, creates semantic Element
+  Drafts, preserves Reading Order and semantic keys, records provenance, and
+  returns typed initialization/reflow/regeneration Transactions without
+  committing.
+- Added 12 built-in declarative Recipes and a controlled-code registration
+  boundary, keeping the built-in declarative ratio at 100%. Added seven
+  bounded Macros with input validation; expansion ends at Element Drafts.
+- Added the complete Agent query surface from the frozen plan plus aliases for
+  facts, sources, assets, theme, history, text search, semantic keys, preview,
+  commit, undo, selection/slide regeneration, Recipe application, Macro
+  expansion, artwork replacement, Fact synchronization, revised-copy compare,
+  editability, and deterministic slide rendering.
+- Enforced granted Scope on Agent reads and writes, explicit confirmation for
+  destructive generated changes, actual nine-dimension Mutation Budgets,
+  protected regeneration anchors, and one Session preview/commit route.
+- Added Hybrid artwork role/metadata, deterministic renderer markers, safe and
+  avoid-region checks, L3 targeted visual hashes with target-leak reporting,
+  contract tests, and a milestone E2E flow. Existing Stable Core renderer
+  output remains deterministic.
+
+### Exit-condition evidence
+
+- `pnpm install --frozen-lockfile` — passed after adding the three workspace
+  packages.
+- `pnpm -r typecheck` — passed for all selected workspace projects.
+- `pnpm typecheck` — passed.
+- `pnpm test` — 38 tests passed, 0 failed, 0 skipped.
+- `pnpm validate` — 7 schemas/examples, semantic checks, operation parity,
+  and source guards passed.
+- `pnpm e2e:vertical-slice` — passed; checkpoint round trip, journal recovery,
+  and the existing out-of-scope block remained green.
+- `pnpm e2e:milestone` — passed; Agent queries, draft-only generation,
+  confirmation, same-path commit/undo, Recipe, Macro, Fact, artwork, and
+  revised-copy checks completed.
+- `git diff --check` — passed.
+
+### Explicitly not done
+
+This round provides Hybrid Visual foundations and artwork metadata validation,
+not an image-generation service or a visual review model. Chart and Component
+runtime rendering, Recipe Studio UI, full Poster behavior, Portable viewer,
+PPTX/PDF/PNG export, Patch/Merge, migration/import pipelines, and a complete
+browser/OS visual matrix remain follow-on work or the explicit Stable Core
+boundary. No remote is created and no changes are pushed.
+
 ## 2026-09-03 — Week 3–6 Stable Core
 
 ### Completed this round

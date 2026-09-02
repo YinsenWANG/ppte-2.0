@@ -100,3 +100,42 @@ The Stable Core contract evidence uses a fixed-seed reversible operation
 sequence and a renderer Golden hash over canonical output. These checks are
 kept dependency-free and complement the positive, inverse, conflict,
 persistence-fault, and reopen tests.
+
+## 2026-09-03 — normalized declarative Recipe geometry
+
+Recipe Zone coordinates and constraint dimensions use normalized 0..1 values.
+The Design Compiler resolves constraints first and materializes the result to
+the Document Canvas. Only the resulting Frames are eligible for persistence;
+the Recipe and Slide IR remain compilation inputs.
+
+## 2026-09-03 — controlled Recipe and Macro trust boundary
+
+The normal Recipe path is data-only. A controlled Recipe may be registered only
+with an explicit trusted host handler; the handler is not serialized into an
+IR, Draft, Transaction, or `.ppte` package. Macro inputs are bounded JSON and
+Macro output is validated Element Draft data. Macro expansion never commits or
+creates a persistent runtime object.
+
+## 2026-09-03 — Agent preview and confirmation boundary
+
+Agent query tools filter returned semantic data by the granted Scope. Generate,
+reflow, artwork, fact-sync, and comparison tools are draft/preview operations.
+Only `commit_transaction` may call the Session commit path, and a transaction
+marked `requireConfirmation` needs an explicit confirmation value. Actual
+structural Diff values, including Facts, Sources, Theme Tokens, and Style
+Presets, are checked against the Change Contract budgets.
+
+## 2026-09-03 — Hybrid artwork safety metadata
+
+Hybrid artwork remains an Image with `role: artwork`; title, content, source,
+and other key objects stay semantic. Safe regions, avoidance regions, focal
+point, and dominant palette are asset metadata. The reference renderer exposes
+only deterministic data attributes, while the compiler validator rejects
+missing metadata or an artwork region that obscures semantic content.
+
+## 2026-09-03 — targeted visual diff reference surface
+
+L3 targeted visual comparison uses per-slide and per-semantic-element hashes of
+the deterministic reference-render HTML. It reports changed target and
+non-target element IDs without making a browser screenshot or pixel buffer a
+Document source. A browser/OS pixel matrix remains a later release concern.
