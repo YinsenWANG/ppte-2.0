@@ -3,6 +3,8 @@ import { computeStructuralDiff } from '../../diff/src/index.js'
 import { applyTransaction, OperationApplyError } from '../../operations/src/index.js'
 import { checkPreconditions, checkTransactionScope, enforceChangeContract } from '../../change-contract/src/index.js'
 import { validateRuntimeDocument, validateTransactionShape } from '../../validation/src/index.js'
+import { compareDocuments } from '../../reviewer/src/index.js'
+import { buildPatchTransaction, validatePatch } from '../../patch-format/src/index.js'
 import type {
   Element,
   FactId,
@@ -12,6 +14,8 @@ import type {
   Transaction,
   ValidationIssue,
   CommitResult,
+  CompareResult,
+  PptePatch,
   PreviewResult,
   StructuralDiff,
   ScopePermission,
@@ -183,6 +187,26 @@ export class PpteSession {
     }
   }
 
+  compare(revised: PpteDocument, base: PpteDocument = this.document): CompareResult {
+    return compareDocuments(base, this.document, revised)
+  }
+
+  previewPatch(patch: PptePatch): PreviewResult {
+    const patchValidation = validatePatch(patch)
+    if (!patchValidation.ok) return { ok: false, baseRevision: this.revision, issues: patchValidation.issues }
+    if (patch.manifest.documentId !== this.document.documentId) return { ok: false, baseRevision: this.revision, issues: [error('PATCH_BASE_MISMATCH', 'Patch documentId does not match the session document.')] }
+    if (patch.manifest.baseRevision !== this.revision) return { ok: false, baseRevision: this.revision, issues: [error('PATCH_BASE_MISMATCH', `Patch base ${patch.manifest.baseRevision} does not match current revision ${this.revision}.`)] }
+    return this.preview(buildPatchTransaction(patch))
+  }
+
+  applyPatch(patch: PptePatch): CommitResult {
+    const patchValidation = validatePatch(patch)
+    if (!patchValidation.ok) return { ok: false, beforeRevision: this.revision, transactionId: `patch:${patch.manifest.patchId ?? 'unknown'}`, issues: patchValidation.issues }
+    if (patch.manifest.documentId !== this.document.documentId) return failure('PATCH_BASE_MISMATCH', 'Patch documentId does not match the session document.', this.revision, `patch:${patch.manifest.patchId ?? 'unknown'}`)
+    if (patch.manifest.baseRevision !== this.revision) return failure('PATCH_BASE_MISMATCH', `Patch base ${patch.manifest.baseRevision} does not match current revision ${this.revision}.`, this.revision, `patch:${patch.manifest.patchId ?? 'unknown'}`)
+    return this.commit(buildPatchTransaction(patch))
+  }
+
   subscribe(listener: (event: SessionEvent) => void): () => void {
     this.listeners.add(listener)
     return () => this.listeners.delete(listener)
@@ -315,6 +339,14 @@ function requiredAssetHashes(document: PpteDocument, transaction: Transaction): 
   }
   for (const operation of transaction.operations) {
     if (operation.kind === 'image.replaceAsset') addAsset(operation.assetId)
+    if (operation.kind === 'asset.upsert' && !operation.remove) {
+      const hash = operation.asset.hash
+      if (hash) hashes.add(hash.toLowerCase())
+    }
+    if (operation.kind === 'font.upsert' && !operation.remove) {
+      const hash = operation.font.hash
+      if (hash) hashes.add(hash.toLowerCase())
+    }
     if (operation.kind === 'element.insert' && operation.element.type === 'image') addAsset(operation.element.assetId)
     if (operation.kind === 'slide.insert') {
       for (const element of Object.values(operation.slide.elements)) if (element.type === 'image') addAsset(element.assetId)

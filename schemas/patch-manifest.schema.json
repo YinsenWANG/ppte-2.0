@@ -16,6 +16,11 @@
     "patchVersion": {
       "const": "1"
     },
+    "patchId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
     "documentId": {
       "type": "string",
       "minLength": 1,
@@ -101,6 +106,20 @@
           }
         },
         "additionalProperties": false
+      }
+    },
+    "assetFiles": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "fontFiles": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
       }
     }
   },

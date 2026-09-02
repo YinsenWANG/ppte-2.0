@@ -157,6 +157,8 @@
               "image.replaceAsset",
               "image.setCrop",
               "image.setFocalPoint",
+              "asset.upsert",
+              "font.upsert",
               "shape.updateStyle",
               "chart.replaceData",
               "chart.updateEncoding",
@@ -323,6 +325,23 @@
       "minItems": 1,
       "items": {
         "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "opId",
+              "kind",
+              "font"
+            ],
+            "properties": {
+              "opId": { "type": "string", "minLength": 1, "maxLength": 256 },
+              "kind": { "const": "font.upsert" },
+              "font": { "type": "object", "required": ["id", "family", "style", "weight", "source"], "properties": { "id": { "type": "string" }, "family": { "type": "string" }, "style": { "enum": ["normal", "italic"] }, "weight": { "type": "number" }, "source": { "enum": ["embedded", "system", "fallback"] } }, "additionalProperties": true },
+              "remove": { "type": "boolean" },
+              "preconditions": { "type": "array" },
+              "reason": { "type": "string" }
+            },
+            "additionalProperties": false
+          },
           {
             "type": "object",
             "required": [
@@ -17233,6 +17252,46 @@
                   "gaps"
                 ]
               }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "opId",
+              "kind",
+              "asset"
+            ],
+            "properties": {
+              "opId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "kind": {
+                "const": "asset.upsert"
+              },
+              "asset": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "hash",
+                  "mimeType",
+                  "byteLength",
+                  "path"
+                ],
+                "properties": {
+                  "id": { "type": "string", "minLength": 1, "maxLength": 256 },
+                  "hash": { "type": "string", "minLength": 1, "maxLength": 256 },
+                  "mimeType": { "type": "string", "minLength": 1, "maxLength": 256 },
+                  "byteLength": { "type": "integer", "minimum": 0 },
+                  "path": { "type": "string", "minLength": 1, "maxLength": 1024 }
+                },
+                "additionalProperties": true
+              },
+              "remove": { "type": "boolean" },
+              "preconditions": { "type": "array" },
+              "reason": { "type": "string" }
             },
             "additionalProperties": false
           }

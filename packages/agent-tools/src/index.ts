@@ -1,5 +1,6 @@
-import { canonicalHash, canonicalRevision, cloneJson } from '../../canonical-json/src/index.js'
+import { canonicalRevision, cloneJson } from '../../canonical-json/src/index.js'
 import { computeStructuralDiff } from '../../diff/src/index.js'
+import { compareDocuments } from '../../reviewer/src/index.js'
 import type { PpteSession } from '../../core/src/index.js'
 import {
   buildRegenerateTransaction,
@@ -494,19 +495,13 @@ export class AgentToolServer {
 
   private compareRevisedCopy(raw: unknown, rawBase?: unknown): AgentToolResult {
     const revised = raw as PpteDocument
-    const issues = validateRuntimeDocument(revised)
-    if (issues.some((issue) => issue.severity === 'error')) return failureWithIssues('compare_revised_copy', this.revision(), issues)
     const current = this.document()
     const diff = computeStructuralDiff(current, revised)
-    if (!rawBase) return success('compare_revised_copy', this.revision(), { diff, revisedRevision: revisionOf(revised), conflicts: [] })
-    const base = rawBase as PpteDocument
-    const baseIssues = validateRuntimeDocument(base)
-    if (baseIssues.some((issue) => issue.severity === 'error')) return failureWithIssues('compare_revised_copy', this.revision(), baseIssues)
-    const currentDiff = computeStructuralDiff(base, current)
-    const revisedDiff = computeStructuralDiff(base, revised)
-    const candidatePaths = [...new Set(currentDiff.changedPaths.filter((path) => revisedDiff.changedPaths.includes(path)))]
-    const conflicts = candidatePaths.filter((path) => canonicalHash(readPointer(base, path)) !== canonicalHash(readPointer(current, path)) && canonicalHash(readPointer(base, path)) !== canonicalHash(readPointer(revised, path)) && canonicalHash(readPointer(current, path)) !== canonicalHash(readPointer(revised, path)))
-    return success('compare_revised_copy', this.revision(), { diff, revisedRevision: revisionOf(revised), baseRevision: revisionOf(base), conflicts })
+    const base = rawBase as PpteDocument | undefined
+    const comparison = compareDocuments(base ?? current, current, revised)
+    const normalized = base ? comparison : { ...comparison, baseAvailable: false, twoWay: true, conflicts: [], autoAcceptable: false }
+    if (normalized.issues.some((issue) => issue.severity === 'error')) return failureWithIssues('compare_revised_copy', this.revision(), normalized.issues)
+    return success('compare_revised_copy', this.revision(), { diff, comparison: normalized, revisedRevision: revisionOf(revised), ...(base ? { baseRevision: revisionOf(base) } : {}), conflicts: normalized.conflicts })
   }
 
   private compileContext(args: Record<string, unknown>): CompileContext {
