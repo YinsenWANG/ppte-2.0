@@ -1,0 +1,20 @@
+{
+  "format": "ppte",
+  "formatVersion": "2",
+  "schemaVersion": "2.0.0",
+  "operationProtocolVersion": "1.0",
+  "compatibilityProfile": "ppte-2.0-ga-a.1",
+  "documentId": "doc_01K00000000000000000000000",
+  "contentRevision": "sha256-0000000000000000000000000000000000000000000000000000000000000000",
+  "title": "年度经营回顾",
+  "createdAt": "2026-09-02T00:00:00Z",
+  "updatedAt": "2026-09-02T00:00:00Z",
+  "requiredWidgets": [],
+  "clean": false,
+  "files": [],
+  "history": {
+    "mode": "standard",
+    "recentTransactionCount": 0,
+    "deepHistoryExternal": false
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "transactionId": "tx_01K000000000000000000000000",
+  "baseRevision": "sha256-0000000000000000000000000000000000000000000000000000000000000000",
+  "actor": {
+    "type": "agent",
+    "id": "agent_ppte"
+  },
+  "scope": {
+    "kind": "selection",
+    "slideIds": [
+      "sld_01K00000000000000000000000"
+    ],
+    "elementIds": [
+      "el_01K000000000000000000000000"
+    ],
+    "permissions": [
+      "content"
+    ],
+    "allowInsert": false,
+    "allowDelete": false
+  },
+  "changeContract": {
+    "allowedOperationKinds": [
+      "text.replaceContent"
+    ],
+    "allowedElementIds": [
+      "el_01K000000000000000000000000"
+    ],
+    "maxChangedSlides": 1,
+    "maxChangedElements": 1,
+    "maxInsertedElements": 0,
+    "maxDeletedElements": 0,
+    "maxReplacedAssets": 0,
+    "preserve": {
+      "style": "preserve",
+      "geometry": "preserve",
+      "asset": "preserve",
+      "semanticIdentity": "preserve",
+      "readingOrder": "preserve",
+      "facts": "preserve"
+    },
+    "requireConfirmation": false,
+    "userIntentSummary": "只修改标题措辞，不改变排版"
+  },
+  "createdAt": "2026-09-02T00:00:00Z",
+  "validationLevel": "L3",
+  "operations": [
+    {
+      "opId": "op_01K000000000000000000000000",
+      "kind": "text.replaceContent",
+      "slideId": "sld_01K00000000000000000000000",
+      "elementId": "el_01K000000000000000000000000",
+      "content": {
+        "paragraphs": [
+          {
+            "id": "p_1",
+            "runs": [
+              {
+                "id": "r_1",
+                "text": "年度经营情况回顾"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

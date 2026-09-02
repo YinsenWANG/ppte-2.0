@@ -1,0 +1,13 @@
+{
+  "patchVersion": "1",
+  "documentId": "doc_01K00000000000000000000000",
+  "baseRevision": "sha256-0000000000000000000000000000000000000000000000000000000000000000",
+  "createdAt": "2026-09-02T00:00:00Z",
+  "actor": {
+    "type": "human",
+    "id": "reviewer_1"
+  },
+  "operationProtocolVersion": "1.0",
+  "compatibilityProfile": "ppte-2.0-ga-b.1",
+  "files": []
+}

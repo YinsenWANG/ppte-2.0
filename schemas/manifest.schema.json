@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ppte.dev/schemas/2.0/manifest.schema.json",
+  "title": "PPTe Package Manifest",
+  "type": "object",
+  "required": [
+    "format",
+    "formatVersion",
+    "schemaVersion",
+    "operationProtocolVersion",
+    "compatibilityProfile",
+    "documentId",
+    "contentRevision",
+    "title",
+    "createdAt",
+    "updatedAt",
+    "requiredWidgets",
+    "clean",
+    "files"
+  ],
+  "properties": {
+    "format": {
+      "const": "ppte"
+    },
+    "formatVersion": {
+      "const": "2"
+    },
+    "schemaVersion": {
+      "const": "2.0.0"
+    },
+    "operationProtocolVersion": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "compatibilityProfile": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "documentId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "contentRevision": {
+      "type": "string",
+      "pattern": "^sha256-[0-9a-fA-F]{64}$"
+    },
+    "title": {
+      "type": "string"
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "updatedAt": {
+      "type": "string"
+    },
+    "requiredWidgets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "type",
+          "versionRange",
+          "fallbackRequired"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "versionRange": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "fallbackRequired": {
+            "const": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "clean": {
+      "type": "boolean"
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "mediaType",
+          "byteLength",
+          "sha256",
+          "required"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "mediaType": {
+            "type": "string"
+          },
+          "byteLength": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{64}$"
+          },
+          "required": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "history": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "enum": [
+            "standard",
+            "audit",
+            "clean"
+          ]
+        },
+        "snapshotRevision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "recentTransactionCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "deepHistoryExternal": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "mode"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

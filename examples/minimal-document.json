@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "2.0.0",
+  "documentId": "doc_01K00000000000000000000000",
+  "locale": "zh-CN",
+  "metadata": {
+    "title": "年度经营回顾",
+    "source": "generated"
+  },
+  "canvas": {
+    "width": 1920,
+    "height": 1080,
+    "unit": "du",
+    "aspectRatio": "16:9",
+    "defaultBackground": {
+      "kind": "solid",
+      "color": {
+        "kind": "token",
+        "token": "color.background"
+      }
+    }
+  },
+  "theme": {
+    "id": "theme_default",
+    "name": "Default",
+    "tokens": {
+      "colors": {
+        "color.background": "#FFFFFF",
+        "color.text.primary": "#111827",
+        "color.accent": "#2563EB"
+      },
+      "fontFamilies": {
+        "font.heading": "Inter",
+        "font.body": "Inter"
+      },
+      "fontSizes": {
+        "fontSize.title": 64,
+        "fontSize.body": 28
+      },
+      "spacing": {},
+      "radii": {},
+      "shadows": {}
+    },
+    "presets": {
+      "text": {
+        "text.title.primary": {
+          "fontFamily": {
+            "kind": "token",
+            "token": "font.heading"
+          },
+          "fontSize": 64,
+          "fontWeight": 700,
+          "color": {
+            "kind": "token",
+            "token": "color.text.primary"
+          },
+          "lineHeight": 1.15
+        }
+      },
+      "shape": {},
+      "image": {},
+      "chart": {}
+    }
+  },
+  "slideOrder": [
+    "sld_01K00000000000000000000000"
+  ],
+  "slides": {
+    "sld_01K00000000000000000000000": {
+      "id": "sld_01K00000000000000000000000",
+      "rootOrder": [
+        "el_01K000000000000000000000000"
+      ],
+      "readingOrder": [
+        "el_01K000000000000000000000000"
+      ],
+      "elements": {
+        "el_01K000000000000000000000000": {
+          "id": "el_01K000000000000000000000000",
+          "type": "text",
+          "semanticKey": "title.main",
+          "role": "title",
+          "frame": {
+            "x": 160,
+            "y": 120,
+            "width": 1400,
+            "height": 120
+          },
+          "content": {
+            "paragraphs": [
+              {
+                "id": "p_1",
+                "runs": [
+                  {
+                    "id": "r_1",
+                    "text": "年度经营回顾"
+                  }
+                ]
+              }
+            ]
+          },
+          "style": {
+            "styleRef": "text.title.primary"
+          },
+          "overflowPolicy": "warn"
+        }
+      },
+      "groups": {},
+      "visualStrategy": "structured"
+    }
+  },
+  "assets": {},
+  "fonts": {}
+}

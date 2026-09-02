@@ -1,0 +1,21 @@
+{
+  "name": "ppte",
+  "version": "0.1.0",
+  "private": true,
+  "description": "PPTe semantic presentation core and Week 1-2 vertical slice",
+  "license": "Apache-2.0",
+  "type": "module",
+  "packageManager": "pnpm@11.22.0",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "pnpm build && node --test dist/tests/*.test.js",
+    "validate": "python scripts/validate.py && bash scripts/ci-guards.sh",
+    "e2e:vertical-slice": "pnpm build && node dist/apps/contract-deck/index.js --e2e",
+    "contract-deck": "pnpm build && node dist/apps/contract-deck/index.js"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
+  }
+}

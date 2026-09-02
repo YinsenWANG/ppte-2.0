@@ -1,0 +1,53 @@
+{
+  "irVersion": "1.0",
+  "slideKey": "annual-overview",
+  "purpose": "metrics",
+  "message": "收入保持增长，但利润改善仍需观察",
+  "visualStrategy": "hybrid",
+  "density": "medium",
+  "blocks": [
+    {
+      "key": "title",
+      "kind": "heading",
+      "content": "年度经营概览",
+      "semanticKey": "title.main",
+      "importance": "primary",
+      "editabilityTarget": "full"
+    },
+    {
+      "key": "revenue",
+      "kind": "metric",
+      "content": {
+        "label": "收入",
+        "value": 128,
+        "unit": "万元"
+      },
+      "semanticKey": "metric.revenue",
+      "importance": "primary",
+      "editabilityTarget": "full"
+    },
+    {
+      "key": "source",
+      "kind": "source",
+      "content": "财务系统，截至 2026-08-31",
+      "semanticKey": "source.primary",
+      "importance": "supporting",
+      "editabilityTarget": "full"
+    }
+  ],
+  "layoutIntent": {
+    "balance": "balanced",
+    "hierarchy": "single-focus",
+    "whitespace": "generous"
+  },
+  "artworkIntent": {
+    "subject": "抽象增长曲线与轻量空间感",
+    "function": "atmosphere",
+    "placement": "background",
+    "styleKeywords": [
+      "modern",
+      "light",
+      "minimal"
+    ]
+  }
+}

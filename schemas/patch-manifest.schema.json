@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ppte.dev/schemas/1.0/patch-manifest.schema.json",
+  "title": "PPTe Patch Manifest",
+  "type": "object",
+  "required": [
+    "patchVersion",
+    "documentId",
+    "baseRevision",
+    "createdAt",
+    "operationProtocolVersion",
+    "compatibilityProfile",
+    "files"
+  ],
+  "properties": {
+    "patchVersion": {
+      "const": "1"
+    },
+    "documentId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "baseRevision": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "headRevision": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "actor": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "human",
+            "agent",
+            "system",
+            "importer",
+            "reviewer"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "displayName": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "operationProtocolVersion": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "compatibilityProfile": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "mediaType",
+          "byteLength",
+          "sha256",
+          "required"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "mediaType": {
+            "type": "string"
+          },
+          "byteLength": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{64}$"
+          },
+          "required": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
