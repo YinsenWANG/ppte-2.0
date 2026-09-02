@@ -2,11 +2,18 @@ import { cloneJson } from '../../canonical-json/src/index.js'
 import type {
   Element,
   Frame,
+  Fact,
+  ImageElement,
   PpteDocument,
+  ShapeElement,
   Slide,
+  TextElement,
 } from '../../schema/src/index.js'
 
-export const WEEK1_2_OPERATION_KINDS = [
+type StableStyleElement = TextElement | ShapeElement | (ImageElement & { style: NonNullable<ImageElement['style']> })
+
+/** Operations implemented by the synchronous Stable Core runtime. */
+export const STABLE_CORE_OPERATION_KINDS = [
   'document.updateMetadata', 'theme.replace', 'theme.setToken', 'theme.updatePreset',
   'slide.insert', 'slide.delete', 'slide.move', 'slide.update', 'slide.setReadingOrder', 'slide.setProtectedAnchors',
   'element.insert', 'element.delete', 'element.duplicate', 'element.move', 'element.resize', 'element.rotate', 'element.reorder', 'element.setVisibility', 'element.setLocked', 'element.setEditPolicy', 'element.setSemanticKey', 'element.setStyleRef', 'element.updateStyleOverrides', 'element.clearStyleOverrides',
@@ -15,6 +22,9 @@ export const WEEK1_2_OPERATION_KINDS = [
   'group.create', 'group.delete', 'group.addMembers', 'group.removeMembers', 'group.move', 'group.resize',
   'fact.upsert', 'fact.delete', 'source.upsert', 'source.delete', 'layout.align', 'layout.distribute',
 ] as const
+
+/** Backward-compatible name retained for the Week 1–2 operation matrix. */
+export const WEEK1_2_OPERATION_KINDS = STABLE_CORE_OPERATION_KINDS
 import type {
   Operation,
   Transaction,
@@ -118,6 +128,12 @@ export function applyOperation(document: PpteDocument, operation: Operation): Ap
       const slide = requireSlide(next, operation.slideId)
       if (slide.elements[operation.element.id]) throw error('ID_CONFLICT', `Element already exists: ${operation.element.id}.`)
       assertRuntimeElement(operation.element)
+      if (operation.element.semanticKey && Object.values(slide.elements).some((candidate) => candidate.semanticKey === operation.element.semanticKey)) {
+        throw error('SEMANTIC_KEY_DUPLICATE', `Duplicate semanticKey: ${operation.element.semanticKey}.`)
+      }
+      if (operation.element.provenance?.replacesElementId && slide.elements[operation.element.provenance.replacesElementId]) {
+        throw error('SEMANTIC_LINEAGE_AMBIGUOUS', `Replacement target remains active: ${operation.element.provenance.replacesElementId}.`)
+      }
       slide.elements[operation.element.id] = cloneJson(operation.element)
       slide.rootOrder.splice(clampIndex(operation.index, slide.rootOrder.length), 0, operation.element.id)
       return { document: next, inverse: [op(operation, 'element.delete', { slideId: operation.slideId, elementId: operation.element.id })] }
@@ -177,7 +193,7 @@ export function applyOperation(document: PpteDocument, operation: Operation): Ap
       const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)
       assertFrame(operation.frame)
       const before = cloneJson(element.frame)
-      element.frame = cloneJson(operation.frame)
+      element.frame = operation.preserveAspectRatio ? preserveAspectRatioFrame(before, operation.frame) : cloneJson(operation.frame)
       return { document: next, inverse: [op(operation, 'element.resize', { slideId: operation.slideId, elementId: operation.elementId, frame: before })] }
     }
     case 'element.rotate': {
@@ -233,6 +249,7 @@ export function applyOperation(document: PpteDocument, operation: Operation): Ap
     case 'element.updateStyleOverrides': {
       const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)
       assertStyleElement(element)
+      assertTypedStyleOverrides(element.type, operation.patch)
       const before = cloneJson(element.style.overrides ?? {})
       element.style.overrides = { ...(element.style.overrides ?? {}), ...cloneJson(operation.patch) }
       return { document: next, inverse: restoreOverrides(operation, before) }
@@ -249,6 +266,7 @@ export function applyOperation(document: PpteDocument, operation: Operation): Ap
       const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)
       if (element.type !== 'text') throw error('OPERATION_TYPE_MISMATCH', 'text.replaceContent requires a Text element.')
       const before = cloneJson(element.content)
+      assertRichText(operation.content)
       element.content = cloneJson(operation.content)
       return { document: next, inverse: [op(operation, 'text.replaceContent', { slideId: operation.slideId, elementId: operation.elementId, content: before })] }
     }
@@ -262,7 +280,10 @@ export function applyOperation(document: PpteDocument, operation: Operation): Ap
     case 'text.fitByReducingFont': {
       const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)
       if (element.type !== 'text') throw error('OPERATION_TYPE_MISMATCH', 'text.fitByReducingFont requires a Text element.')
+      assertFinite(operation.minFontSize, operation.resolvedFontSize)
       if (operation.resolvedFontSize < operation.minFontSize || operation.minFontSize <= 0) throw error('SCHEMA_INVALID', 'Resolved font size is below minFontSize.')
+      const currentFontSize = effectiveFontSize(next, element)
+      if (currentFontSize !== undefined && operation.resolvedFontSize > currentFontSize + 0.001) throw error('STYLE_OVERRIDE_INVALID', 'text.fitByReducingFont may not increase the effective font size.')
       const before = cloneJson(element.style.overrides ?? {})
       element.style.overrides = { ...(element.style.overrides ?? {}), fontSize: operation.resolvedFontSize }
       return { document: next, inverse: restoreOverrides(operation, before) }
@@ -303,6 +324,7 @@ export function applyOperation(document: PpteDocument, operation: Operation): Ap
       const before = cloneJson(element.focalPoint)
       if (operation.focalPoint) {
         assertFinite(operation.focalPoint.x, operation.focalPoint.y)
+        if (operation.focalPoint.x < 0 || operation.focalPoint.x > 1 || operation.focalPoint.y < 0 || operation.focalPoint.y > 1) throw error('GEOMETRY_INVALID', 'Focal point must be inside 0–1.')
         element.focalPoint = cloneJson(operation.focalPoint)
       } else delete element.focalPoint
       return { document: next, inverse: [op(operation, 'image.setFocalPoint', { slideId: operation.slideId, elementId: operation.elementId, focalPoint: before })] }
@@ -310,16 +332,21 @@ export function applyOperation(document: PpteDocument, operation: Operation): Ap
     case 'shape.updateStyle': {
       const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)
       if (element.type !== 'shape') throw error('OPERATION_TYPE_MISMATCH', 'shape.updateStyle requires a Shape element.')
+      assertTypedStyleOverrides('shape', operation.patch)
       const before = cloneJson(element.style.overrides ?? {})
       if (operation.replace) {
         if (Object.keys(operation.patch).length === 0) delete element.style.overrides
         else element.style.overrides = cloneJson(operation.patch)
-      } else element.style.overrides = { ...(element.style.overrides ?? {}), ...cloneJson(operation.patch) }
+      } else {
+        assertTypedStyleOverrides('shape', operation.patch)
+        element.style.overrides = { ...(element.style.overrides ?? {}), ...cloneJson(operation.patch) }
+      }
       return { document: next, inverse: [op(operation, 'shape.updateStyle', { slideId: operation.slideId, elementId: operation.elementId, patch: before, replace: true })] }
     }
     case 'group.create': {
       const slide = requireSlide(next, operation.slideId)
       if (slide.groups?.[operation.group.id]) throw error('ID_CONFLICT', `Group already exists: ${operation.group.id}.`)
+      assertUniqueElementIds(operation.group.memberIds)
       assertGroupMembersAvailable(slide, operation.group.memberIds)
       slide.groups ??= {}
       slide.groups[operation.group.id] = cloneJson(operation.group)
@@ -335,6 +362,7 @@ export function applyOperation(document: PpteDocument, operation: Operation): Ap
     case 'group.addMembers': {
       const slide = requireSlide(next, operation.slideId)
       const group = requireGroup(slide, operation.groupId)
+      assertUniqueElementIds(operation.elementIds)
       assertGroupMembersAvailable(slide, operation.elementIds, group.id)
       const added = operation.elementIds.filter((elementId) => !group.memberIds.includes(elementId))
       for (const elementId of added) group.memberIds.push(elementId)
@@ -369,6 +397,9 @@ export function applyOperation(document: PpteDocument, operation: Operation): Ap
       const scaleX = operation.targetFrame.width / bounds.width
       const scaleY = operation.targetFrame.height / bounds.height
       const before = members.map((element) => ({ elementId: element.id, frame: cloneJson(element.frame) }))
+      const beforeStyles = members
+        .filter((element): element is TextElement => element.type === 'text' && operation.scaleTextStyle === true)
+        .map((element) => ({ elementId: element.id, overrides: cloneJson(element.style.overrides ?? {}) }))
       for (const element of members) {
         element.frame = {
           x: operation.targetFrame.x + (element.frame.x - bounds.x) * scaleX,
@@ -377,8 +408,20 @@ export function applyOperation(document: PpteDocument, operation: Operation): Ap
           height: element.frame.height * scaleY,
         }
       }
-      // The v1 contract never changes Text style as a side effect of a group resize.
-      return { document: next, inverse: before.map((item) => op(operation, 'element.resize', { slideId: operation.slideId, elementId: item.elementId, frame: item.frame })) }
+      if (operation.scaleTextStyle === true) {
+        // Non-uniform group scaling has no single axis. The geometric mean is
+        // deterministic and keeps typography proportional to the area change.
+        const textScale = Math.sqrt(Math.abs(scaleX * scaleY))
+        for (const element of members) {
+          if (element.type !== 'text') continue
+          const fontSize = effectiveFontSize(next, element)
+          if (fontSize === undefined) throw error('STYLE_OVERRIDE_INVALID', `Text preset has no numeric fontSize: ${element.id}.`)
+          element.style.overrides = { ...(element.style.overrides ?? {}), fontSize: fontSize * textScale }
+        }
+      }
+      const inverse: Operation[] = before.map((item) => op(operation, 'element.resize', { slideId: operation.slideId, elementId: item.elementId, frame: item.frame }))
+      for (const item of beforeStyles) inverse.push(...restoreOverrides({ ...operation, elementId: item.elementId } as Operation, item.overrides))
+      return { document: next, inverse }
     }
     case 'fact.upsert': {
       const before = cloneJson(next.facts?.[operation.fact.id])
@@ -393,7 +436,7 @@ export function applyOperation(document: PpteDocument, operation: Operation): Ap
       return { document: next, inverse: [op(operation, 'fact.upsert', { fact: cloneJson(before) })] }
     }
     case 'fact.syncReferences':
-      throw error('UNSUPPORTED_OPERATION', 'fact.syncReferences is reserved for the later explicit-sync slice.')
+      return applyFactSyncReferences(next, operation)
     case 'source.upsert': {
       const before = cloneJson(next.sources?.[operation.source.id])
       next.sources ??= {}
@@ -415,7 +458,7 @@ export function applyOperation(document: PpteDocument, operation: Operation): Ap
     case 'chart.updateOptions':
     case 'chart.updateStyle':
     case 'component.updateProps':
-      throw error('UNSUPPORTED_OPERATION', `${operation.kind} is outside the Week 1–2 runtime.`)
+      throw error('UNSUPPORTED_OPERATION', `${operation.kind} is outside the Stable Core runtime.`)
   }
 }
 
@@ -479,19 +522,25 @@ function applyLayoutDistribute(document: PpteDocument, operation: Extract<Operat
 }
 
 function assertRuntimeElement(element: Element): asserts element is Exclude<Element, { type: 'chart' | 'component' }> {
-  if (element.type === 'chart' || element.type === 'component') throw error('UNSUPPORTED_ELEMENT_TYPE', `Week 1–2 runtime does not implement ${element.type}.`)
+  if (element.type === 'chart' || element.type === 'component') throw error('UNSUPPORTED_ELEMENT_TYPE', `Stable Core runtime does not implement ${element.type}.`)
 }
 
-function assertStyleElement(element: Element): asserts element is Extract<Element, { style: unknown }> {
-  if (element.type !== 'text' && element.type !== 'image' && element.type !== 'shape') throw error('OPERATION_TYPE_MISMATCH', 'Element has no Week 1–2 style binding.')
+function assertStyleElement(element: Element): asserts element is StableStyleElement {
+  if (element.type !== 'text' && element.type !== 'image' && element.type !== 'shape') throw error('OPERATION_TYPE_MISMATCH', 'Element has no Stable Core style binding.')
+  if (!element.style) throw error('STYLE_BINDING_MISSING', `Element has no style binding: ${element.id}.`)
 }
 
 function assertGroupMembersAvailable(slide: Slide, memberIds: string[], ownGroupId?: string) {
+  assertUniqueElementIds(memberIds)
   for (const elementId of memberIds) requireElement(slide, elementId)
   for (const [groupId, group] of Object.entries(slide.groups ?? {})) {
     if (groupId === ownGroupId) continue
     for (const elementId of memberIds) if (group.memberIds.includes(elementId)) throw error('FLAT_GROUP_DUPLICATE_MEMBER', `Element belongs to another group: ${elementId}.`)
   }
+}
+
+function assertUniqueElementIds(elementIds: string[]) {
+  if (new Set(elementIds).size !== elementIds.length) throw error('FLAT_GROUP_DUPLICATE_MEMBER', 'A flat group may not repeat an element.')
 }
 
 function boundingFrame(frames: Frame[]): Frame {
@@ -500,6 +549,170 @@ function boundingFrame(frames: Frame[]): Frame {
   const right = Math.max(...frames.map((frame) => frame.x + frame.width))
   const bottom = Math.max(...frames.map((frame) => frame.y + frame.height))
   return { x, y, width: right - x, height: bottom - y }
+}
+
+function preserveAspectRatioFrame(before: Frame, requested: Frame): Frame {
+  const ratio = before.width / before.height
+  let width = requested.width
+  let height = width / ratio
+  if (height > requested.height) {
+    height = requested.height
+    width = height * ratio
+  }
+  return { x: requested.x, y: requested.y, width, height }
+}
+
+function effectiveFontSize(document: PpteDocument, element: TextElement): number | undefined {
+  const override = element.style.overrides?.fontSize
+  if (typeof override === 'number' && Number.isFinite(override)) return override
+  const preset = document.theme.presets?.text?.[element.style.styleRef]
+  if (typeof preset?.fontSize === 'number' && Number.isFinite(preset.fontSize)) return preset.fontSize
+  return undefined
+}
+
+function assertTypedStyleOverrides(type: 'text' | 'image' | 'shape', patch: Record<string, unknown>) {
+  const fields = type === 'text'
+    ? new Set(['fontFamily', 'fontSize', 'fontWeight', 'color', 'lineHeight', 'letterSpacing', 'verticalAlign', 'direction'])
+    : type === 'shape'
+      ? new Set(['fill', 'stroke', 'radius', 'shadow'])
+      : new Set(['border', 'radius', 'shadow'])
+  for (const [field, value] of Object.entries(patch)) {
+    if (!fields.has(field)) throw error('STYLE_OVERRIDE_INVALID', `Style override ${field} is not allowed for ${type}.`)
+    if (type === 'text' && !validTextStyleField(field, value)) throw error('STYLE_OVERRIDE_INVALID', `Style override ${field} has an invalid typed value.`)
+    if (type === 'shape' && !validShapeStyleField(field, value)) throw error('STYLE_OVERRIDE_INVALID', `Style override ${field} has an invalid typed value.`)
+    if (type === 'image' && !validImageStyleField(field, value)) throw error('STYLE_OVERRIDE_INVALID', `Style override ${field} has an invalid typed value.`)
+  }
+}
+
+function validTextStyleField(field: string, value: unknown): boolean {
+  if (field === 'fontFamily' || field === 'color') return validValueOrToken(value)
+  if (field === 'fontSize' || field === 'lineHeight') return finitePositiveValue(value)
+  if (field === 'fontWeight') return typeof value === 'number' && Number.isFinite(value) && value >= 100 && value <= 1000
+  if (field === 'letterSpacing') return typeof value === 'number' && Number.isFinite(value)
+  if (field === 'verticalAlign') return value === 'top' || value === 'middle' || value === 'bottom'
+  if (field === 'direction') return value === 'ltr' || value === 'rtl' || value === 'auto'
+  return false
+}
+
+function validShapeStyleField(field: string, value: unknown): boolean {
+  if (field === 'fill') return validPaint(value)
+  if (field === 'stroke') return validStroke(value)
+  if (field === 'radius') return finiteNonNegativeValue(value)
+  if (field === 'shadow') return validShadow(value)
+  return false
+}
+
+function validImageStyleField(field: string, value: unknown): boolean {
+  if (field === 'border') return validStroke(value)
+  if (field === 'radius') return finiteNonNegativeValue(value)
+  if (field === 'shadow') return validShadow(value)
+  return false
+}
+
+function validValueOrToken(value: unknown): boolean {
+  if (!value || typeof value !== 'object') return false
+  const candidate = value as Record<string, unknown>
+  if (candidate.kind === 'token') return typeof candidate.token === 'string' && candidate.token.length > 0
+  return candidate.kind === 'value' && typeof candidate.value === 'string' && candidate.value.length > 0
+}
+
+function validPaint(value: unknown): boolean {
+  if (!value || typeof value !== 'object') return false
+  const candidate = value as Record<string, unknown>
+  if (candidate.kind === 'none') return true
+  if (candidate.kind === 'solid') return validValueOrToken(candidate.color)
+  if (candidate.kind === 'linear-gradient') return Array.isArray(candidate.stops) && candidate.stops.length >= 2 && candidate.stops.every((stop) => {
+    if (!stop || typeof stop !== 'object') return false
+    const item = stop as Record<string, unknown>
+    return typeof item.offset === 'number' && Number.isFinite(item.offset) && item.offset >= 0 && item.offset <= 1 && validValueOrToken(item.color)
+  })
+  return false
+}
+
+function validStroke(value: unknown): boolean {
+  if (!value || typeof value !== 'object') return false
+  const candidate = value as Record<string, unknown>
+  return validValueOrToken(candidate.color) && finiteNonNegativeValue(candidate.width)
+}
+
+function validShadow(value: unknown): boolean {
+  if (!value || typeof value !== 'object') return false
+  const candidate = value as Record<string, unknown>
+  return validValueOrToken(candidate.color) && typeof candidate.offsetX === 'number' && Number.isFinite(candidate.offsetX) && typeof candidate.offsetY === 'number' && Number.isFinite(candidate.offsetY) && finiteNonNegativeValue(candidate.blur)
+}
+
+function finitePositiveValue(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value) && value > 0
+}
+
+function finiteNonNegativeValue(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value) && value >= 0
+}
+
+function assertRichText(content: unknown): asserts content is TextElement['content'] {
+  if (!content || typeof content !== 'object' || !Array.isArray((content as { paragraphs?: unknown }).paragraphs)) throw error('SCHEMA_INVALID', 'Rich text content must contain paragraphs.')
+  const paragraphIds = new Set<string>()
+  for (const paragraph of (content as TextElement['content']).paragraphs) {
+    if (!paragraph || typeof paragraph !== 'object' || !paragraph.id || paragraphIds.has(paragraph.id) || !Array.isArray(paragraph.runs)) throw error('SCHEMA_INVALID', 'Rich text paragraphs require unique ids and runs.')
+    paragraphIds.add(paragraph.id)
+    const runIds = new Set<string>()
+    for (const run of paragraph.runs) {
+      if (!run || typeof run !== 'object' || !run.id || runIds.has(run.id) || typeof run.text !== 'string' || run.text.includes('\u0000')) throw error('SCHEMA_INVALID', 'Rich text runs require unique ids and NUL-free text.')
+      runIds.add(run.id)
+      if (Object.keys(run as unknown as Record<string, unknown>).some((key) => !['id', 'text', 'marks'].includes(key))) throw error('SCHEMA_INVALID', 'Run-level font and font-size fields are not supported.')
+      if (run.marks && Object.keys(run.marks).some((key) => !['bold', 'italic', 'underline', 'strike', 'color'].includes(key))) throw error('SCHEMA_INVALID', 'Unsupported run mark.')
+    }
+  }
+}
+
+function applyFactSyncReferences(document: PpteDocument, operation: Extract<import('../../schema/src/index.js').Operation, { kind: 'fact.syncReferences' }>): AppliedOperation {
+  const fact = document.facts?.[operation.factId]
+  if (!fact) throw error('FACT_REFERENCE_MISSING', `Fact does not exist: ${operation.factId}.`)
+  if (operation.strategy === 'update-chart-values') throw error('UNSUPPORTED_OPERATION', 'Chart fact synchronization is outside the Stable Core runtime.')
+  assertUniqueElementIds(operation.targetElementIds)
+  const inverse: Operation[] = []
+  for (const elementId of operation.targetElementIds) {
+    const found = findElement(document, elementId)
+    if (!found) throw error('ELEMENT_MISSING', `Element does not exist: ${elementId}.`)
+    if (found.element.type !== 'text') throw error('OPERATION_TYPE_MISMATCH', 'replace-display-value requires Text targets.')
+    const before = cloneJson(found.element.content)
+    const display = formatFactValue(fact)
+    const nextContent = cloneJson(found.element.content)
+    const runs = nextContent.paragraphs.flatMap((paragraph) => paragraph.runs)
+    if (runs.length === 0) nextContent.paragraphs = [{ id: `${found.element.id}-fact`, runs: [{ id: `${found.element.id}-fact-run`, text: display }] }]
+    else {
+      const currentText = runs.map((run) => run.text).join('')
+      const oldValue = String(fact.value ?? '')
+      if (oldValue && currentText.includes(oldValue)) {
+        let replaced = false
+        for (const run of runs) {
+          if (!replaced && run.text.includes(oldValue)) {
+            run.text = run.text.replace(oldValue, display)
+            replaced = true
+          }
+        }
+      } else {
+        runs[0].text = display
+        for (const run of runs.slice(1)) run.text = ''
+      }
+    }
+    found.element.content = nextContent
+    inverse.unshift(op(operation, 'text.replaceContent', { slideId: found.slideId, elementId: found.element.id, content: before }))
+  }
+  return { document, inverse }
+}
+
+function findElement(document: PpteDocument, elementId: string): { slideId: string; element: Element } | undefined {
+  for (const slideId of document.slideOrder) {
+    const element = document.slides[slideId]?.elements[elementId]
+    if (element) return { slideId, element }
+  }
+  return undefined
+}
+
+function formatFactValue(fact: Fact): string {
+  const value = fact.value === null ? '' : String(fact.value)
+  return fact.unit ? `${value}${fact.unit}` : value
 }
 
 function restoreOverrides(operation: Operation, before: Record<string, unknown>): Operation[] {

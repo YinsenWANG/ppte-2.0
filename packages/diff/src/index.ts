@@ -29,10 +29,16 @@ export function computeStructuralDiff(before: PpteDocument, after: PpteDocument)
     }
   }
 
+  const replacedElementIds = new Set(replacedElements.flatMap((item) => [item.beforeElementId, item.afterElementId]))
+  const changedElementCount = new Set([
+    ...changedElementIds,
+    ...addedElements.map((item) => item.elementId),
+    ...removedElements.map((item) => item.elementId),
+  ].filter((elementId) => !replacedElementIds.has(elementId))).size + replacedElements.length
   const changedPaths = deepChangedPaths(before, after)
   const mutationSummary: MutationSummary = {
     changedSlides: new Set([...changedSlides, ...addedSlides, ...removedSlides]).size,
-    changedElements: new Set([...changedElementIds, ...addedElements.map((item) => item.elementId), ...removedElements.map((item) => item.elementId)]).size,
+    changedElements: changedElementCount,
     insertedElements: addedElements.length,
     deletedElements: removedElements.length,
     replacedAssets: countAssetReplacements(before, after),

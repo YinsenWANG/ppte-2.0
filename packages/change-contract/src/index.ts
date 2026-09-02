@@ -35,12 +35,12 @@ export function analyzeOperation(document: PpteDocument, operation: Operation): 
   let deletes = 0
   let replacedAssets = 0
 
-  const addElement = (slideId: string, elementId: string, path = `/slides/${pointer(slideId)}/elements/${pointer(elementId)}`) => {
+  const addElement = (slideId: string, elementId: string, path = `/slides/${pointer(slideId)}/elements/${pointer(elementId)}`, semanticKey?: string) => {
     slideIds.add(slideId)
     elementIds.add(elementId)
     paths.add(path)
     const element = document.slides[slideId]?.elements[elementId]
-    if (element?.semanticKey) semanticKeys.add(element.semanticKey)
+    if (element?.semanticKey ?? semanticKey) semanticKeys.add((element?.semanticKey ?? semanticKey) as string)
   }
   const addGroupMembers = (slideId: string, groupId: string) => {
     slideIds.add(slideId)
@@ -98,7 +98,7 @@ export function analyzeOperation(document: PpteDocument, operation: Operation): 
       break
     case 'element.insert':
       permissions.add('structure')
-      addElement(operation.slideId, operation.element.id)
+      addElement(operation.slideId, operation.element.id, `/slides/${pointer(operation.slideId)}/elements/${pointer(operation.element.id)}`, operation.element.semanticKey)
       inserts += 1
       break
     case 'element.delete':
@@ -223,6 +223,13 @@ export function analyzeOperation(document: PpteDocument, operation: Operation): 
     case 'group.resize':
       permissions.add('geometry')
       addGroupMembers(operation.slideId, operation.groupId)
+      if (operation.scaleTextStyle) {
+        permissions.add('style')
+        for (const elementId of document.slides[operation.slideId]?.groups?.[operation.groupId]?.memberIds ?? []) {
+          const element = document.slides[operation.slideId]?.elements[elementId]
+          if (element?.type === 'text') paths.add(`/slides/${pointer(operation.slideId)}/elements/${pointer(elementId)}/style/overrides/fontSize`)
+        }
+      }
       break
     case 'fact.upsert':
       permissions.add('facts')
@@ -325,8 +332,14 @@ export function checkPreconditions(document: PpteDocument, revision: string, ope
 
 export function checkTransactionScope(scope: TransactionScope): ValidationIssue[] {
   const issues: ValidationIssue[] = []
-  if (scope.permissions.length === 0) issues.push(issue('SCOPE_VIOLATION', 'A transaction must grant at least one permission.'))
+  if (!scope || typeof scope !== 'object') return [issue('SCOPE_VIOLATION', 'Transaction scope must be an object.')]
+  if (!Array.isArray(scope.permissions) || scope.permissions.length === 0) issues.push(issue('SCOPE_VIOLATION', 'A transaction must grant at least one permission.'))
+  if (Array.isArray(scope.permissions) && new Set(scope.permissions).size !== scope.permissions.length) issues.push(issue('SCOPE_VIOLATION', 'Transaction permissions must be unique.'))
   if (scope.kind === 'selection' && !scope.elementIds?.length && !scope.semanticKeys?.length) issues.push(issue('SCOPE_VIOLATION', 'Selection scope must name elementIds or semanticKeys.'))
+  if (scope.kind === 'slide' && !scope.slideIds?.length) issues.push(issue('SCOPE_VIOLATION', 'Slide scope must name at least one slideId.'))
+  if (scope.elementIds && new Set(scope.elementIds).size !== scope.elementIds.length) issues.push(issue('SCOPE_VIOLATION', 'Scope elementIds must be unique.'))
+  if (scope.semanticKeys && new Set(scope.semanticKeys).size !== scope.semanticKeys.length) issues.push(issue('SCOPE_VIOLATION', 'Scope semanticKeys must be unique.'))
+  if (scope.slideIds && new Set(scope.slideIds).size !== scope.slideIds.length) issues.push(issue('SCOPE_VIOLATION', 'Scope slideIds must be unique.'))
   return issues
 }
 
@@ -339,7 +352,8 @@ function checkPrecondition(document: PpteDocument, revision: string, preconditio
     case 'element-exists':
       return document.slides[precondition.slideId]?.elements[precondition.elementId] ? undefined : issue('SCHEMA_INVALID', `Precondition element does not exist: ${precondition.elementId}.`, { slideId: precondition.slideId, elementId: precondition.elementId })
     case 'semantic-key-resolves': {
-      const found = Object.values(document.slides[precondition.slideId]?.elements ?? {}).find((element) => element.semanticKey === precondition.semanticKey)
+      const matches = Object.values(document.slides[precondition.slideId]?.elements ?? {}).filter((element) => element.semanticKey === precondition.semanticKey)
+      const found = matches.length === 1 ? matches[0] : undefined
       if (!found || (precondition.elementId && found.id !== precondition.elementId)) return issue('SEMANTIC_LINEAGE_AMBIGUOUS', `Precondition semanticKey does not resolve uniquely: ${precondition.semanticKey}.`, { slideId: precondition.slideId, semanticKey: precondition.semanticKey })
       return undefined
     }
@@ -361,12 +375,11 @@ function checkEditPolicy(document: PpteDocument, operation: Operation, actorType
   for (const elementId of analyzeOperation(document, operation).elementIds) {
     const slideId = findElementSlide(document, elementId)
     const element = slideId ? document.slides[slideId].elements[elementId] : undefined
-    if (!element) continue
+    if (!slideId || !element) continue
     if (element.locked || element.editPolicy?.mode === 'locked') issues.push(issue('EDIT_POLICY_VIOLATION', `Element ${elementId} is locked.`, { slideId, elementId }))
     if (actorType === 'agent' && element.editPolicy?.agentEditable === false) issues.push(issue('EDIT_POLICY_VIOLATION', `Agent editing is disabled for ${elementId}.`, { slideId, elementId }))
-    if (operation.kind === 'text.replaceContent' && element.editPolicy?.lockedFields?.some((path) => path === '/content' || path.startsWith('/content/'))) issues.push(issue('EDIT_POLICY_VIOLATION', `Text content is locked for ${elementId}.`, { slideId, elementId }))
-    if (operation.kind === 'image.replaceAsset' && element.editPolicy?.mode === 'replace' && element.role !== 'artwork') continue
-    if (operation.kind === 'image.replaceAsset' && element.editPolicy?.lockedFields?.some((path) => path === '/assetId' || path.startsWith('/assetId/'))) issues.push(issue('EDIT_POLICY_VIOLATION', `Asset is locked for ${elementId}.`, { slideId, elementId }))
+    if (element.editPolicy?.mode === 'replace' && operation.kind !== 'image.replaceAsset') issues.push(issue('EDIT_POLICY_VIOLATION', `Only explicit asset replacement is allowed for replace-only element ${elementId}.`, { slideId, elementId }))
+    if (element.editPolicy?.lockedFields?.some((lockedPath) => analyzeOperation(document, operation).paths.some((path) => path === `/slides/${pointer(slideId)}/elements/${pointer(elementId)}${lockedPath}` || path.startsWith(`/slides/${pointer(slideId)}/elements/${pointer(elementId)}${lockedPath}/`)))) issues.push(issue('EDIT_POLICY_VIOLATION', `Operation ${operation.kind} touches a locked field on ${elementId}.`, { slideId, elementId }))
   }
   return issues
 }
@@ -377,9 +390,9 @@ function checkInvariants(before: PpteDocument, after: PpteDocument, contract: Ch
   const beforeElements = allElements(before)
   const afterElements = allElements(after)
   for (const [key, beforeElement] of beforeElements) {
-    const afterElement = afterElements.get(key)
+    const afterElement = afterElements.get(key) ?? findReplacement(afterElements, beforeElement)
     if (!afterElement) {
-      if (preserve.content === 'preserve' || preserve.data === 'preserve' || preserve.geometry === 'preserve' || preserve.style === 'preserve' || preserve.asset === 'preserve' || preserve.semanticIdentity === 'preserve') issues.push(issue('CHANGE_INVARIANT_VIOLATION', `Element ${key} was removed while an invariant is preserved.`, { elementId: key }))
+      if (preserve.content === 'preserve' || preserve.data === 'preserve' || preserve.geometry === 'preserve' || preserve.style === 'preserve' || preserve.asset === 'preserve' || preserve.semanticIdentity === 'preserve' || preserve.semanticIdentity === 'allow-replacement') issues.push(issue('CHANGE_INVARIANT_VIOLATION', `Element ${key} was removed while an invariant is preserved.`, { elementId: key }))
       continue
     }
     if (preserve.content === 'preserve' && canonicalHash(contentProjection(beforeElement)) !== canonicalHash(contentProjection(afterElement))) issues.push(issue('CHANGE_INVARIANT_VIOLATION', `Content changed for ${key}.`, { elementId: key }))
@@ -388,6 +401,7 @@ function checkInvariants(before: PpteDocument, after: PpteDocument, contract: Ch
     if (preserve.geometry === 'preserve' && canonicalHash(geometryProjection(beforeElement)) !== canonicalHash(geometryProjection(afterElement))) issues.push(issue('CHANGE_INVARIANT_VIOLATION', `Geometry changed for ${key}.`, { elementId: key }))
     if (preserve.asset === 'preserve' && canonicalHash(assetProjection(beforeElement)) !== canonicalHash(assetProjection(afterElement))) issues.push(issue('CHANGE_INVARIANT_VIOLATION', `Asset changed for ${key}.`, { elementId: key }))
     if (preserve.semanticIdentity === 'preserve' && (beforeElement.id !== afterElement.id || beforeElement.semanticKey !== afterElement.semanticKey)) issues.push(issue('CHANGE_INVARIANT_VIOLATION', `Semantic identity changed for ${key}.`, { elementId: key }))
+    if (preserve.semanticIdentity === 'allow-replacement' && afterElement.id !== beforeElement.id && !isLineageReplacement(beforeElement, afterElement)) issues.push(issue('CHANGE_INVARIANT_VIOLATION', `Replacement for ${key} does not carry explicit lineage.`, { elementId: key }))
   }
   if (preserve.readingOrder === 'preserve' && canonicalHash(readingOrderProjection(before)) !== canonicalHash(readingOrderProjection(after))) issues.push(issue('CHANGE_INVARIANT_VIOLATION', 'Reading order changed while it is preserved.', { path: '/slides' }))
   if (preserve.facts === 'preserve' && canonicalHash(before.facts ?? {}) !== canonicalHash(after.facts ?? {})) issues.push(issue('CHANGE_INVARIANT_VIOLATION', 'Facts changed while they are preserved.', { path: '/facts' }))
@@ -453,12 +467,21 @@ function assetProjection(element: Element): unknown {
   return element.type === 'image' ? { assetId: element.assetId, crop: element.crop, focalPoint: element.focalPoint } : undefined
 }
 function readingOrderProjection(document: PpteDocument): unknown {
-  return document.slideOrder.map((slideId) => [slideId, document.slides[slideId].readingOrder ?? []])
+  return document.slideOrder.map((slideId) => [slideId, (document.slides[slideId].readingOrder ?? []).map((elementId) => {
+    const element = document.slides[slideId].elements[elementId]
+    return element?.semanticKey ?? elementId
+  })])
 }
 function allElements(document: PpteDocument): Map<string, Element> {
   const result = new Map<string, Element>()
   for (const slide of Object.values(document.slides)) for (const [elementId, element] of Object.entries(slide.elements)) result.set(elementId, element)
   return result
+}
+function findReplacement(afterElements: Map<string, Element>, beforeElement: Element): Element | undefined {
+  return [...afterElements.values()].find((candidate) => isLineageReplacement(beforeElement, candidate))
+}
+function isLineageReplacement(beforeElement: Element, candidate: Element): boolean {
+  return candidate.provenance?.replacesElementId === beforeElement.id || (Boolean(beforeElement.semanticKey) && candidate.provenance?.sourceSemanticKey === beforeElement.semanticKey)
 }
 function findElementSlide(document: PpteDocument, elementId: string): string | undefined {
   return document.slideOrder.find((slideId) => Boolean(document.slides[slideId]?.elements[elementId]))
