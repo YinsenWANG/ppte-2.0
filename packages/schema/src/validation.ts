@@ -6,6 +6,7 @@ import type {
   TextElement,
   ValidationIssue,
 } from './index.js'
+import { withErrorSemantics } from './errors.js'
 
 const ELEMENT_TYPES = new Set(['text', 'image', 'shape', 'chart', 'component'])
 const SHAPE_KINDS = new Set(['rectangle', 'rounded-rectangle', 'ellipse', 'line', 'arrow', 'triangle', 'diamond', 'chevron', 'polygon'])
@@ -13,9 +14,9 @@ const SHAPE_KINDS = new Set(['rectangle', 'rounded-rectangle', 'ellipse', 'line'
 /** Structural/runtime validation kept dependency-free for open and commit gates. */
 export function validateDocument(document: PpteDocument, options: { runtimeSubset?: boolean } = {}): ValidationIssue[] {
   const issues: ValidationIssue[] = []
-  const add = (code: string, message: string, extra: Partial<ValidationIssue> = {}) => issues.push({ code, severity: 'error', message, ...extra })
+  const add = (code: string, message: string, extra: Partial<ValidationIssue> = {}) => issues.push(withErrorSemantics({ code, severity: 'error', message, ...extra }))
   const root = document as unknown as Record<string, unknown> | undefined
-  if (!root || typeof root !== 'object') return [{ code: 'SCHEMA_INVALID', severity: 'error', message: 'Document must be an object.', path: '/' }]
+  if (!root || typeof root !== 'object') return [withErrorSemantics({ code: 'SCHEMA_INVALID', severity: 'error', message: 'Document must be an object.', path: '/' })]
 
   if (document.schemaVersion !== '2.0.0') add('SCHEMA_VERSION_UNSUPPORTED', 'Only document schema 2.0.0 is supported.')
   if (!document.documentId || typeof document.documentId !== 'string') add('SCHEMA_INVALID', 'documentId is required.', { path: '/documentId' })
@@ -122,7 +123,7 @@ export function validateDocument(document: PpteDocument, options: { runtimeSubse
     if (font.path !== undefined && !safeRelativeFontPath(font.path)) add('ASSET_PATH_INVALID', `Font path is not a safe package path: ${font.path}.`, { path: `/fonts/${escapePointer(fontId)}/path` })
     if (font.glyphCoverage !== undefined && (!Array.isArray(font.glyphCoverage) || font.glyphCoverage.some((range) => !range || !Number.isInteger(range.start) || !Number.isInteger(range.end) || range.start < 0 || range.end < range.start))) add('SCHEMA_INVALID', `Font glyph coverage is invalid: ${fontId}.`, { path: `/fonts/${escapePointer(fontId)}/glyphCoverage` })
   }
-  return issues
+  return issues.map(withErrorSemantics)
 }
 
 function validatePolicies(policies: NonNullable<PpteDocument['policies']>, add: (code: string, message: string, extra?: Partial<ValidationIssue>) => void) {

@@ -1,4 +1,5 @@
 import { cloneJson } from '../../canonical-json/src/index.js'
+import { withErrorSemantics } from '../../schema/src/errors.js'
 import type { Element, ElementId, PpteDocument, SlideId, ValidationIssue } from '../../schema/src/index.js'
 
 export interface SemanticKeyMatch {
@@ -80,5 +81,5 @@ export function validateSemanticIdentity(document: PpteDocument): ValidationIssu
       current = replacementGraph.get(current)
     }
   }
-  return issues
+  return issues.map(withErrorSemantics)
 }

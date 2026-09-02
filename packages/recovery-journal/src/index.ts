@@ -5,6 +5,7 @@ import { applyTransaction, OperationApplyError } from '../../operations/src/inde
 import { computeStructuralDiff } from '../../diff/src/index.js'
 import { enforceChangeContract } from '../../change-contract/src/index.js'
 import { validateRuntimeDocument, validateTransactionShape } from '../../validation/src/index.js'
+import { withErrorSemantics } from '../../schema/src/errors.js'
 import type { PpteDocument, RecoveryJournalHeader, RecoveryJournalRecord, Revision, Transaction, ValidationIssue } from '../../schema/src/index.js'
 
 export interface JournalReadResult {
@@ -225,5 +226,5 @@ function normalizeAssetHashes(value: unknown, throwOnInvalid = true): string[] {
   return [...hashes].sort()
 }
 function error(code: string, message: string): ValidationIssue {
-  return { code, severity: 'error', message, recovery: 'Keep the last valid checkpoint and inspect the journal tail before recovery.' }
+  return withErrorSemantics({ code, severity: 'error', message, recovery: 'Keep the last valid checkpoint and inspect the journal tail before recovery.' })
 }

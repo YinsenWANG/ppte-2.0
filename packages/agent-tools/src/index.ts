@@ -12,6 +12,7 @@ import { expandMacro, MacroRegistry } from '../../macros/src/index.js'
 import { RecipeRegistry } from '../../layout-recipes/src/index.js'
 import { renderSlideHtml, renderTextPlain } from '../../renderer-react/src/index.js'
 import { diagnoseOverrideDebt, validateRuntimeDocument, validateTransactionShape } from '../../validation/src/index.js'
+import { withErrorSemantics } from '../../schema/src/errors.js'
 import type {
   ChangeContract,
   BlockIR,
@@ -681,7 +682,7 @@ function generatedResult(tool: AgentToolName, revision: Revision, data: unknown,
 function success<T>(tool: AgentToolName, revision: Revision, data: T): AgentToolResult<T> { return { tool, ok: true, revision, data, issues: [] } }
 function failure<T = unknown>(tool: AgentToolName, code: string, revision: Revision, message: string): AgentToolResult<T> { return { tool, ok: false, revision, issues: [toolIssue(code, message)] } }
 function failureWithIssues(tool: AgentToolName, revision: Revision, issues: ValidationIssue[]): AgentToolResult { return { tool, ok: false, revision, issues } }
-function toolIssue(code: string, message: string): ValidationIssue { return { code, severity: 'error', message } }
+function toolIssue(code: string, message: string): ValidationIssue { return withErrorSemantics({ code, severity: 'error', message }) }
 function transactionArgument(value: unknown): Transaction { return value as Transaction }
 function stringArg(args: Record<string, unknown>, key: string): string { const value = args[key]; if (typeof value !== 'string' || value.length === 0) throw new Error(`ARGUMENT_INVALID: ${key} is required.`); return value }
 function stringArgOr(args: Record<string, unknown>, key: string, fallback: string): string { const value = args[key]; return typeof value === 'string' && value.length > 0 ? value : fallback }

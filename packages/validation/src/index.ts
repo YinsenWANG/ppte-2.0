@@ -1,6 +1,7 @@
 import { canonicalHash } from '../../canonical-json/src/index.js'
 import { validateDocument } from '../../schema/src/index.js'
 import { validateSemanticIdentity } from '../../semantic-identity/src/index.js'
+import { withErrorSemantics } from '../../schema/src/errors.js'
 import type {
   Element,
   FontAsset,
@@ -63,8 +64,8 @@ export interface GlyphCoverageReport {
 
 export function validateRuntimeDocument(document: PpteDocument): ValidationIssue[] {
   const issues = validateDocument(document, { runtimeSubset: true })
-  if (!document || typeof document !== 'object') return issues
-  if (!document.slides || typeof document.slides !== 'object') return dedupeIssues(issues)
+  if (!document || typeof document !== 'object') return normalizeIssues(issues)
+  if (!document.slides || typeof document.slides !== 'object') return normalizeIssues(issues)
   issues.push(...validateSemanticIdentity(document))
   issues.push(...validateStyleBindings(document))
   for (const slide of Object.values(document.slides ?? {})) {
@@ -78,12 +79,12 @@ export function validateRuntimeDocument(document: PpteDocument): ValidationIssue
     }
   }
   issues.push(...diagnoseOverrideDebt(document))
-  return dedupeIssues(issues)
+  return normalizeIssues(issues)
 }
 
 export function validateTransactionShape(transaction: Transaction): ValidationIssue[] {
   const issues: ValidationIssue[] = []
-  if (!transaction || typeof transaction !== 'object' || Array.isArray(transaction)) return [error('SCHEMA_INVALID', 'Transaction must be an object.', '/')]
+  if (!transaction || typeof transaction !== 'object' || Array.isArray(transaction)) return normalizeIssues([error('SCHEMA_INVALID', 'Transaction must be an object.', '/')])
   const value = transaction as unknown as Record<string, unknown>
   if (!nonEmptyString(value.transactionId)) issues.push(error('SCHEMA_INVALID', 'transactionId is required.', '/transactionId'))
   if (!nonEmptyString(value.baseRevision)) issues.push(error('SCHEMA_INVALID', 'baseRevision is required.', '/baseRevision'))
@@ -123,7 +124,7 @@ export function validateTransactionShape(transaction: Transaction): ValidationIs
     if (!OPERATION_KINDS.has(operation.kind as OperationKind)) issues.push(error('SCHEMA_INVALID', `Unknown operation kind ${String(operation.kind)}.`, `/operations/${index}/kind`))
     else validateOperationShape(operation, index, issues)
   }
-  return issues
+  return normalizeIssues(issues)
 }
 
 function validateChangeContractShape(contract: Record<string, unknown>, issues: ValidationIssue[]) {
@@ -337,14 +338,14 @@ export function validateTextOverflow(document: PpteDocument, slideId: string, el
   const availableHeight = Math.max(0, height - (padding?.top ?? 0) - (padding?.bottom ?? 0))
   const estimatedHeight = estimatedLines * style.fontSize * (finitePositiveNumber(lineHeight) ? lineHeight : 1.2)
   if (estimatedHeight <= availableHeight + 0.001) return []
-  return [{
+  return [withErrorSemantics({
     code: 'TEXT_OVERFLOW',
     severity: 'warning',
     message: `Text ${element.id} exceeds its fixed frame; font size and frame were not changed implicitly.`,
     slideId,
     elementId: element.id,
     recovery: 'Shorten text, resize the text box, explicitly fit the font, or change overflow policy.',
-  }]
+  })]
 }
 
 /**
@@ -371,9 +372,9 @@ export function inspectGlyphCoverage(document: PpteDocument, element: TextElemen
 export function checkGlyphCoverage(document: PpteDocument, element: TextElement, addedText?: string, options: { strict?: boolean } = {}): ValidationIssue[] {
   const report = inspectGlyphCoverage(document, element, addedText, options)
   if (report.covered) return []
-  if (report.source === 'unresolved') return [{ code: 'FONT_GLYPH_MISSING', severity: 'error', message: `Font ${report.fontFamily} has no explicit coverage declaration for portable editing.`, elementId: element.id, recovery: 'Choose a declared system-safe font or embed a font with glyph coverage.' }]
-  if (report.source === 'unsafe') return [{ code: 'FONT_GLYPH_MISSING', severity: 'error', message: `Font ${report.fontFamily} is not marked editableSafe for portable editing.`, elementId: element.id, recovery: 'Choose a font with declared editable coverage.' }]
-  return [{ code: 'FONT_GLYPH_MISSING', severity: 'error', message: `Font ${report.fontFamily} does not cover ${report.missingCodePoints.map((codePoint) => `U+${codePoint.toString(16).toUpperCase()}`).join(', ')}.`, elementId: element.id, recovery: 'Choose a compatible font, add coverage, or cancel the edit.' }]
+  if (report.source === 'unresolved') return [withErrorSemantics({ code: 'FONT_GLYPH_MISSING', severity: 'error', message: `Font ${report.fontFamily} has no explicit coverage declaration for portable editing.`, elementId: element.id, recovery: 'Choose a declared system-safe font or embed a font with glyph coverage.' })]
+  if (report.source === 'unsafe') return [withErrorSemantics({ code: 'FONT_GLYPH_MISSING', severity: 'error', message: `Font ${report.fontFamily} is not marked editableSafe for portable editing.`, elementId: element.id, recovery: 'Choose a font with declared editable coverage.' })]
+  return [withErrorSemantics({ code: 'FONT_GLYPH_MISSING', severity: 'error', message: `Font ${report.fontFamily} does not cover ${report.missingCodePoints.map((codePoint) => `U+${codePoint.toString(16).toUpperCase()}`).join(', ')}.`, elementId: element.id, recovery: 'Choose a compatible font, add coverage, or cancel the edit.' })]
 }
 
 export function effectiveTextStyle(document: PpteDocument, element: TextElement): ResolvedTextStyle {
@@ -422,12 +423,12 @@ export function computeOverrideDebt(document: PpteDocument): OverrideDebtReport 
 export function diagnoseOverrideDebt(document: PpteDocument, warningThreshold = 0.25): ValidationIssue[] {
   const report = computeOverrideDebt(document)
   if (report.overrideDebt <= warningThreshold || report.overriddenFields === 0) return []
-  return [{
+  return [withErrorSemantics({
     code: 'STYLE_OVERRIDE_DEBT',
     severity: 'warning',
     message: `Style override debt is ${(report.overrideDebt * 100).toFixed(1)}% across ${report.keyElementCount} key elements.`,
     recovery: 'Reset local overrides, reattach the element to a preset, or save the style as a new preset.',
-  }]
+  })]
 }
 
 export function validateStyleBindings(document: PpteDocument): ValidationIssue[] {
@@ -458,7 +459,7 @@ export function validateStyleBindings(document: PpteDocument): ValidationIssue[]
       }
     }
   }
-  return issues
+  return normalizeIssues(issues)
 }
 
 function resolveTextStyle(document: PpteDocument, element: TextElement): ResolvedTextStyle {
@@ -517,7 +518,7 @@ function missingStyleTokenIssues(document: PpteDocument, value: unknown, slideId
     Object.values(record).forEach(visit)
   }
   visit(value)
-  return [...missing].map((token) => ({ code: 'STYLE_TOKEN_MISSING', severity: 'error' as const, message: `Style token ${token} is not defined in the active theme.`, slideId, elementId, recovery: 'Define the token or select a preset using existing theme tokens.' }))
+  return [...missing].map((token) => withErrorSemantics({ code: 'STYLE_TOKEN_MISSING', severity: 'error' as const, message: `Style token ${token} is not defined in the active theme.`, slideId, elementId, recovery: 'Define the token or select a preset using existing theme tokens.' }))
 }
 
 function tokenExists(document: PpteDocument, token: string): boolean {
@@ -613,8 +614,9 @@ export function invariantHash(document: PpteDocument, selector: (element: Elemen
 }
 
 function error(code: string, message: string, path: string): ValidationIssue {
-  return { code, severity: 'error', message, path }
+  return withErrorSemantics({ code, severity: 'error', message, path })
 }
+function normalizeIssues(issues: ValidationIssue[]): ValidationIssue[] { return dedupeIssues(issues).map(withErrorSemantics) }
 function dedupeIssues(issues: ValidationIssue[]): ValidationIssue[] {
   const seen = new Set<string>()
   return issues.filter((item) => {

@@ -1,12 +1,15 @@
 import { existsSync, fsyncSync, mkdirSync, openSync, closeSync, readFileSync, renameSync, statSync, unlinkSync, writeFileSync } from 'node:fs'
+import { createHash } from 'node:crypto'
 import { dirname, basename, join } from 'node:path'
-import { canonicalHash, canonicalJsonString, canonicalRevision, sha256HexBytes } from '../../canonical-json/src/index.js'
+import { canonicalHash, canonicalJsonString, canonicalRevision } from '../../canonical-json/src/index.js'
+import { checkCompatibility } from '../../compatibility/src/index.js'
 import { validateRuntimeDocument, validateTransactionShape } from '../../validation/src/index.js'
 import { PPTE_COMPATIBILITY_PROFILE, PPTE_FORMAT, PPTE_FORMAT_VERSION, PPTE_OPERATION_PROTOCOL_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
 import type { PpteDocument, PpteManifest, PortableProfile, Revision, Transaction, ValidationIssue } from '../../schema/src/index.js'
 import { ContentAddressedStore } from './cas.js'
 import { buildPortable as buildPortableRuntime } from '../../portable-runtime/src/index.js'
 import type { PortableBuildOptions, PortableBuildResult } from '../../portable-runtime/src/index.js'
+import type { FaultInjector, FaultPoint } from '../../fault-injection/src/index.js'
 
 export { ContentAddressedStore } from './cas.js'
 
@@ -17,7 +20,8 @@ export interface CheckpointWriteOptions {
   assetBytes?: Record<string, Uint8Array>
   fontBytes?: Record<string, Uint8Array>
   cas?: ContentAddressedStore
-  fault?: 'before-rename' | 'after-rename'
+  fault?: FaultPoint | 'before-rename' | 'after-rename'
+  faultInjector?: FaultInjector
   readyFile?: string
   pauseBeforeRenameMs?: number
 }
@@ -37,6 +41,7 @@ export interface OpenCheckpointResult {
 const MAX_ARCHIVE_BYTES = 512 * 1024 * 1024
 const MAX_ENTRY_BYTES = 256 * 1024 * 1024
 const MAX_ARCHIVE_ENTRIES = 10_000
+const CRC_TABLE = buildCrcTable()
 
 export class PpteFileService {
   write(document: PpteDocument, target: string, options: CheckpointWriteOptions = {}, recentTransactions?: ReadonlyArray<Transaction>): CheckpointResult {
@@ -88,31 +93,31 @@ export function writeCheckpoint(document: PpteDocument, target: string, options:
   for (const [assetId, data] of Object.entries(options.assetBytes ?? {})) {
     const asset = document.assets[assetId]
     if (!asset) throw new Error(`ASSET_MISSING: ${assetId}`)
-    if (data.length !== asset.byteLength || normalizeHash(asset.hash) !== sha256HexBytes(data)) throw new Error(`ASSET_HASH_MISMATCH: ${assetId}`)
+    if (data.length !== asset.byteLength || normalizeHash(asset.hash) !== sha256Binary(data)) throw new Error(`ASSET_HASH_MISMATCH: ${assetId}`)
     addEntry(entries, safePackagePath(asset.path, `assets/${assetId}`, 'assets/'), data)
   }
   for (const asset of Object.values(document.assets)) {
     const data = options.assetBytes?.[asset.id] ?? options.cas?.get(asset.hash)
     if (!data) throw new Error(`ASSET_MISSING: checkpoint requires bytes for ${asset.id}`)
     if (!options.assetBytes?.[asset.id]) {
-      if (data.length !== asset.byteLength || normalizeHash(asset.hash) !== sha256HexBytes(data)) throw new Error(`ASSET_HASH_MISMATCH: ${asset.id}`)
+      if (data.length !== asset.byteLength || normalizeHash(asset.hash) !== sha256Binary(data)) throw new Error(`ASSET_HASH_MISMATCH: ${asset.id}`)
       addEntry(entries, safePackagePath(asset.path, `assets/${asset.id}`, 'assets/'), data)
     }
   }
   for (const [fontId, data] of Object.entries(options.fontBytes ?? {})) {
     const font = document.fonts[fontId]
     if (!font) throw new Error(`FONT_MISSING: ${fontId}`)
-    if (font.hash && normalizeHash(font.hash) !== sha256HexBytes(data)) throw new Error(`ASSET_HASH_MISMATCH: ${fontId}`)
+    if (font.hash && normalizeHash(font.hash) !== sha256Binary(data)) throw new Error(`ASSET_HASH_MISMATCH: ${fontId}`)
     addEntry(entries, safePackagePath(font.path ?? `fonts/${fontId}.woff2`, `fonts/${fontId}.woff2`, 'fonts/'), data)
   }
   for (const font of Object.values(document.fonts)) {
     if (font.source !== 'embedded') continue
     const data = options.fontBytes?.[font.id] ?? (font.hash ? options.cas?.get(font.hash) : undefined)
     if (!data) throw new Error(`FONT_MISSING: checkpoint requires bytes for ${font.id}`)
-    if (font.hash && normalizeHash(font.hash) !== sha256HexBytes(data)) throw new Error(`FONT_HASH_MISMATCH: ${font.id}`)
+    if (font.hash && normalizeHash(font.hash) !== sha256Binary(data)) throw new Error(`FONT_HASH_MISMATCH: ${font.id}`)
     if (!options.fontBytes?.[font.id]) addEntry(entries, safePackagePath(font.path ?? `fonts/${font.id}.woff2`, `fonts/${font.id}.woff2`, 'fonts/'), data)
   }
-  const files = entries.filter((entry) => entry.name !== 'mimetype').map((entry) => ({ path: entry.name, mediaType: mediaTypeFor(entry.name), byteLength: entry.data.length, sha256: sha256HexBytes(entry.data), required: entry.name === 'document.json' }))
+  const files = entries.filter((entry) => entry.name !== 'mimetype').map((entry) => ({ path: entry.name, mediaType: mediaTypeFor(entry.name), byteLength: entry.data.length, sha256: sha256Binary(entry.data), required: entry.name === 'document.json' }))
   const manifest: PpteManifest = {
     format: 'ppte',
     formatVersion: '2',
@@ -132,6 +137,7 @@ export function writeCheckpoint(document: PpteDocument, target: string, options:
   validateManifest(manifest)
   addEntry(entries, 'manifest.json', bytes(canonicalJsonString(manifest)))
   const archive = writeZip(entries)
+  hitFault(options, 'checkpoint.build')
   // Validate the exact bytes that are about to become the checkpoint before
   // any rename can make them visible to a reader.
   readZip(archive)
@@ -141,15 +147,17 @@ export function writeCheckpoint(document: PpteDocument, target: string, options:
   try {
     descriptor = openSync(temporary, 'w', 0o600)
     writeFileSync(descriptor, archive)
+    hitFault(options, 'checkpoint.fsync')
     fsyncSync(descriptor)
     closeSync(descriptor)
     descriptor = undefined
     if (options.readyFile) writeFileSync(options.readyFile, 'checkpoint-ready\n', { mode: 0o600 })
     if (options.pauseBeforeRenameMs) pause(options.pauseBeforeRenameMs)
-    if (options.fault === 'before-rename') throw new Error('CHECKPOINT_FAULT_BEFORE_RENAME')
+    hitFault(options, 'checkpoint.before-rename')
+    hitFault(options, 'checkpoint.rename')
     renameSync(temporary, target)
     fsyncDirectory(dirname(target))
-    if (options.fault === 'after-rename') throw new Error('CHECKPOINT_FAULT_AFTER_RENAME')
+    hitFault(options, 'checkpoint.after-rename')
     return { revision, path: target, bytes: archive.length }
   } finally {
     if (descriptor !== undefined) closeSync(descriptor)
@@ -185,18 +193,18 @@ export function openCheckpointBytes(bytesOnDisk: Uint8Array): OpenCheckpointResu
   for (const entry of manifest.files ?? []) {
     const data = archive.get(entry.path)
     if (!data) throw new Error(`CHECKPOINT_FAILED: manifest file is missing: ${entry.path}`)
-    if (data.length !== entry.byteLength || sha256HexBytes(data) !== entry.sha256) throw new Error(`CHECKPOINT_FAILED: manifest hash mismatch: ${entry.path}`)
+    if (data.length !== entry.byteLength || sha256Binary(data) !== entry.sha256) throw new Error(`CHECKPOINT_FAILED: manifest hash mismatch: ${entry.path}`)
   }
   for (const asset of Object.values(document.assets)) {
     const data = archive.get(safePackagePath(asset.path, `assets/${asset.id}`, 'assets/'))
-    if (!data || data.length !== asset.byteLength || normalizeHash(asset.hash) !== sha256HexBytes(data)) throw new Error(`ASSET_HASH_MISMATCH: ${asset.id}`)
+    if (!data || data.length !== asset.byteLength || normalizeHash(asset.hash) !== sha256Binary(data)) throw new Error(`ASSET_HASH_MISMATCH: ${asset.id}`)
   }
   for (const font of Object.values(document.fonts)) {
     if (font.source !== 'embedded') continue
     const fontPath = safePackagePath(font.path ?? `fonts/${font.id}.woff2`, `fonts/${font.id}.woff2`, 'fonts/')
     const data = archive.get(fontPath)
     if (!data) throw new Error(`FONT_MISSING: ${font.id}`)
-    if (font.hash && normalizeHash(font.hash) !== sha256HexBytes(data)) throw new Error(`FONT_HASH_MISMATCH: ${font.id}`)
+    if (font.hash && normalizeHash(font.hash) !== sha256Binary(data)) throw new Error(`FONT_HASH_MISMATCH: ${font.id}`)
   }
   const descriptor = parseJson<Record<string, unknown>>(archive, 'history/descriptor.json')
   const history = manifest.history
@@ -227,31 +235,31 @@ export function buildCheckpointBytes(document: PpteDocument, options: Checkpoint
   for (const [assetId, data] of Object.entries(options.assetBytes ?? {})) {
     const asset = document.assets[assetId]
     if (!asset) throw new Error(`ASSET_MISSING: ${assetId}`)
-    if (data.length !== asset.byteLength || normalizeHash(asset.hash) !== sha256HexBytes(data)) throw new Error(`ASSET_HASH_MISMATCH: ${assetId}`)
+    if (data.length !== asset.byteLength || normalizeHash(asset.hash) !== sha256Binary(data)) throw new Error(`ASSET_HASH_MISMATCH: ${assetId}`)
     addEntry(entries, safePackagePath(asset.path, `assets/${assetId}`, 'assets/'), data)
   }
   for (const asset of Object.values(document.assets)) {
     const data = options.assetBytes?.[asset.id] ?? options.cas?.get(asset.hash)
     if (!data) throw new Error(`ASSET_MISSING: checkpoint requires bytes for ${asset.id}`)
     if (!options.assetBytes?.[asset.id]) {
-      if (data.length !== asset.byteLength || normalizeHash(asset.hash) !== sha256HexBytes(data)) throw new Error(`ASSET_HASH_MISMATCH: ${asset.id}`)
+      if (data.length !== asset.byteLength || normalizeHash(asset.hash) !== sha256Binary(data)) throw new Error(`ASSET_HASH_MISMATCH: ${asset.id}`)
       addEntry(entries, safePackagePath(asset.path, `assets/${asset.id}`, 'assets/'), data)
     }
   }
   for (const [fontId, data] of Object.entries(options.fontBytes ?? {})) {
     const font = document.fonts[fontId]
     if (!font) throw new Error(`FONT_MISSING: ${fontId}`)
-    if (font.hash && normalizeHash(font.hash) !== sha256HexBytes(data)) throw new Error(`FONT_HASH_MISMATCH: ${fontId}`)
+    if (font.hash && normalizeHash(font.hash) !== sha256Binary(data)) throw new Error(`FONT_HASH_MISMATCH: ${fontId}`)
     addEntry(entries, safePackagePath(font.path ?? `fonts/${fontId}.woff2`, `fonts/${fontId}.woff2`, 'fonts/'), data)
   }
   for (const font of Object.values(document.fonts)) {
     if (font.source !== 'embedded') continue
     const data = options.fontBytes?.[font.id] ?? (font.hash ? options.cas?.get(font.hash) : undefined)
     if (!data) throw new Error(`FONT_MISSING: checkpoint requires bytes for ${font.id}`)
-    if (font.hash && normalizeHash(font.hash) !== sha256HexBytes(data)) throw new Error(`FONT_HASH_MISMATCH: ${font.id}`)
+    if (font.hash && normalizeHash(font.hash) !== sha256Binary(data)) throw new Error(`FONT_HASH_MISMATCH: ${font.id}`)
     if (!options.fontBytes?.[font.id]) addEntry(entries, safePackagePath(font.path ?? `fonts/${font.id}.woff2`, `fonts/${font.id}.woff2`, 'fonts/'), data)
   }
-  const files = entries.filter((entry) => entry.name !== 'mimetype').map((entry) => ({ path: entry.name, mediaType: mediaTypeFor(entry.name), byteLength: entry.data.length, sha256: sha256HexBytes(entry.data), required: entry.name === 'document.json' }))
+  const files = entries.filter((entry) => entry.name !== 'mimetype').map((entry) => ({ path: entry.name, mediaType: mediaTypeFor(entry.name), byteLength: entry.data.length, sha256: sha256Binary(entry.data), required: entry.name === 'document.json' }))
   const manifest: PpteManifest = {
     format: 'ppte',
     formatVersion: '2',
@@ -271,6 +279,7 @@ export function buildCheckpointBytes(document: PpteDocument, options: Checkpoint
   validateManifest(manifest)
   addEntry(entries, 'manifest.json', bytes(canonicalJsonString(manifest)))
   const archive = writeZip(entries)
+  hitFault(options, 'checkpoint.build')
   readZip(archive)
   return archive
 }
@@ -289,6 +298,8 @@ export function validateManifest(manifest: PpteManifest): void {
   if (!manifest || typeof manifest !== 'object') throw new Error('CHECKPOINT_FAILED: manifest must be an object')
   if (manifest.format !== PPTE_FORMAT || manifest.formatVersion !== PPTE_FORMAT_VERSION || manifest.schemaVersion !== PPTE_SCHEMA_VERSION) throw new Error('CHECKPOINT_FAILED: unsupported manifest format or schema version')
   if (manifest.operationProtocolVersion !== PPTE_OPERATION_PROTOCOL_VERSION || manifest.compatibilityProfile !== PPTE_COMPATIBILITY_PROFILE) throw new Error('CHECKPOINT_FAILED: unsupported compatibility profile')
+  const compatibility = checkCompatibility(manifest)
+  if (!compatibility.ok || compatibility.disposition !== 'native') throw new Error(`CHECKPOINT_FAILED: ${compatibility.issues[0]?.code ?? 'COMPATIBILITY_PROFILE_UNSUPPORTED'}`)
   if (typeof manifest.documentId !== 'string' || !manifest.documentId || typeof manifest.contentRevision !== 'string' || !/^sha256-[0-9a-fA-F]{64}$/.test(manifest.contentRevision)) throw new Error('CHECKPOINT_FAILED: invalid manifest identity or revision')
   if (typeof manifest.title !== 'string' || typeof manifest.createdAt !== 'string' || typeof manifest.updatedAt !== 'string' || typeof manifest.clean !== 'boolean' || !Array.isArray(manifest.requiredWidgets) || !Array.isArray(manifest.files)) throw new Error('CHECKPOINT_FAILED: invalid manifest metadata')
   for (const requirement of manifest.requiredWidgets) if (!requirement || typeof requirement !== 'object' || typeof requirement.type !== 'string' || !requirement.type || typeof requirement.versionRange !== 'string' || !requirement.versionRange || requirement.fallbackRequired !== true) throw new Error('CHECKPOINT_FAILED: invalid required widget declaration')
@@ -508,6 +519,7 @@ function mediaTypeFor(path: string): string {
 function normalizeHash(hash: string): string {
   return (hash.startsWith('sha256-') ? hash.slice('sha256-'.length) : hash).toLowerCase()
 }
+function sha256Binary(data: Uint8Array): string { return createHash('sha256').update(data).digest('hex') }
 function bytes(text: string): Uint8Array {
   return new TextEncoder().encode(text)
 }
@@ -528,11 +540,17 @@ function findEndOfCentralDirectory(data: Uint8Array): number {
 }
 function crc32(data: Uint8Array): number {
   let crc = 0xffffffff
-  for (const byte of data) {
-    crc ^= byte
-    for (let bit = 0; bit < 8; bit += 1) crc = (crc >>> 1) ^ (crc & 1 ? 0xedb88320 : 0)
-  }
+  for (const byte of data) crc = (crc >>> 8) ^ CRC_TABLE[(crc ^ byte) & 0xff]!
   return (crc ^ 0xffffffff) >>> 0
+}
+function buildCrcTable(): Uint32Array {
+  const table = new Uint32Array(256)
+  for (let index = 0; index < table.length; index += 1) {
+    let value = index
+    for (let bit = 0; bit < 8; bit += 1) value = (value >>> 1) ^ (value & 1 ? 0xedb88320 : 0)
+    table[index] = value >>> 0
+  }
+  return table
 }
 function fsyncDirectory(path: string) {
   try { const descriptor = openSync(path, 'r'); fsyncSync(descriptor); closeSync(descriptor) } catch { /* unsupported on some platforms */ }
@@ -540,6 +558,13 @@ function fsyncDirectory(path: string) {
 function pause(milliseconds: number) {
   const shared = new SharedArrayBuffer(4)
   Atomics.wait(new Int32Array(shared), 0, 0, milliseconds)
+}
+
+function hitFault(options: CheckpointWriteOptions, point: FaultPoint): void {
+  if (point === 'checkpoint.before-rename' && options.fault === 'before-rename') throw new Error('CHECKPOINT_FAULT_BEFORE_RENAME')
+  if (point === 'checkpoint.after-rename' && options.fault === 'after-rename') throw new Error('CHECKPOINT_FAULT_AFTER_RENAME')
+  if (options.fault === point) throw new Error(`CHECKPOINT_FAULT_INJECTED: ${point}`)
+  options.faultInjector?.hit(point)
 }
 
 export type { ValidationIssue }

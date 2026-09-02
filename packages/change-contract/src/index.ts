@@ -1,4 +1,5 @@
 import { canonicalHash } from '../../canonical-json/src/index.js'
+import { withErrorSemantics } from '../../schema/src/errors.js'
 import type {
   ChangeContract,
   Element,
@@ -558,7 +559,7 @@ function pointer(value: string): string {
   return value.replaceAll('~', '~0').replaceAll('/', '~1')
 }
 function issue(code: string, message: string, extra: Partial<ValidationIssue> = {}): ValidationIssue {
-  return { code, severity: 'error', message, ...extra }
+  return withErrorSemantics({ code, severity: 'error', message, ...extra })
 }
 function dedupeIssues(issues: ValidationIssue[]): ValidationIssue[] {
   const seen = new Set<string>()

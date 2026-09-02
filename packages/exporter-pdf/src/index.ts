@@ -2,6 +2,7 @@ import { deflateSync } from 'node:zlib'
 import { canonicalRevision } from '../../canonical-json/src/index.js'
 import { buildCapabilityReport } from '../../capability/src/index.js'
 import { validateDocument, type Element, type Paint, type PpteDocument, type ValidationIssue } from '../../schema/src/index.js'
+import { withErrorSemantics } from '../../schema/src/errors.js'
 import { textContent } from '../../validation/src/index.js'
 
 export interface PdfExportOptions {
@@ -182,4 +183,4 @@ function pngChunk(type: string, data: Uint8Array): Uint8Array { const typeBytes 
 function view(data: Uint8Array): DataView { return new DataView(data.buffer, data.byteOffset, data.byteLength) }
 function crc32(data: Uint8Array): number { let crc = 0xffffffff; for (const byte of data) { crc ^= byte; for (let bit = 0; bit < 8; bit += 1) crc = (crc >>> 1) ^ (crc & 1 ? 0xedb88320 : 0) } return (crc ^ 0xffffffff) >>> 0 }
 function concat(parts: Uint8Array[]): Uint8Array { const result = new Uint8Array(parts.reduce((sum, part) => sum + part.length, 0)); let offset = 0; for (const part of parts) { result.set(part, offset); offset += part.length } return result }
-function dedupe(issues: ValidationIssue[]): ValidationIssue[] { const seen = new Set<string>(); return issues.filter((issue) => { const key = `${issue.code}|${issue.message}|${issue.elementId ?? ''}`; if (seen.has(key)) return false; seen.add(key); return true }) }
+function dedupe(issues: ValidationIssue[]): ValidationIssue[] { const seen = new Set<string>(); return issues.filter((issue) => { const key = `${issue.code}|${issue.message}|${issue.elementId ?? ''}`; if (seen.has(key)) return false; seen.add(key); return true }).map(withErrorSemantics) }

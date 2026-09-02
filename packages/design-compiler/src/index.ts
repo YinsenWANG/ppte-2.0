@@ -1,6 +1,7 @@
 import { canonicalHash, canonicalJsonString, cloneJson } from '../../canonical-json/src/index.js'
 import { validateCompiledSlideDraft, validatePresentationIR, validateSlideIR } from '../../schema/src/index.js'
 import { RecipeRegistry, matchBlocksToSlots, resolveRecipeZones, selectRecipe } from '../../layout-recipes/src/index.js'
+import { withErrorSemantics } from '../../schema/src/errors.js'
 import type {
   Asset,
   CanvasSpec,
@@ -395,7 +396,7 @@ function digest(value: unknown): string { try { return `sha256-${canonicalHash(v
 function jsonData(value: unknown): ElementDraft['data'] { return value as ElementDraft['data'] }
 function draftId(slideKey: string, blockKey: string): string { return `draft:${safeId(slideKey)}:${safeId(blockKey)}` }
 function safeId(value: string): string { return value.replace(/[^A-Za-z0-9_-]/g, '_') }
-function compilerIssue(code: string, message: string, path: string): ValidationIssue { return { code, severity: 'error', message, path, recovery: 'Adjust the IR or provide the missing local asset and preview again.' } }
+function compilerIssue(code: string, message: string, path: string): ValidationIssue { return withErrorSemantics({ code, severity: 'error', message, path, recovery: 'Adjust the IR or provide the missing local asset and preview again.' }) }
 function uniqueIssues(issues: ValidationIssue[]): ValidationIssue[] { const seen = new Set<string>(); return issues.filter((issue) => { const key = `${issue.code}|${issue.path ?? ''}|${issue.message}`; if (seen.has(key)) return false; seen.add(key); return true }) }
 function isRecord(value: unknown): value is Record<string, any> { return Boolean(value) && typeof value === 'object' && !Array.isArray(value) }
 function recordData(value: ElementDraft['data']): Record<string, any> { return isRecord(value) ? value : {} }

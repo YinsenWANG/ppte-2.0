@@ -1,5 +1,6 @@
 import { canonicalHash, canonicalRevision, cloneJson } from '../../canonical-json/src/index.js'
 import { validateDocument } from '../../schema/src/index.js'
+import { PPTE_COMPATIBILITY_PROFILE } from '../../schema/src/index.js'
 import type { Asset, CompareResult, Element, Fact, FontAsset, Operation, PpteDocument, PptePatch, ReviewField, ReviewSelection, SemanticMatchMethod, SemanticReviewUnit, Source, Transaction, ValidationIssue } from '../../schema/src/index.js'
 import { encodePatch } from '../../patch-format/src/index.js'
 
@@ -177,7 +178,7 @@ export function createPatch(base: PpteDocument, revised: PpteDocument, options: 
       createdAt: options.createdAt ?? '1970-01-01T00:00:00.000Z',
       actor: options.actor ?? { type: 'reviewer', id: 'three-way-review' },
       operationProtocolVersion: '1.0',
-      compatibilityProfile: options.compatibilityProfile ?? 'ppte-2.0-ga-b.1',
+      compatibilityProfile: options.compatibilityProfile ?? PPTE_COMPATIBILITY_PROFILE,
       files: [],
     },
     operations,

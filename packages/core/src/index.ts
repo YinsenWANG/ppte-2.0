@@ -5,6 +5,7 @@ import { checkPreconditions, checkTransactionScope, enforceChangeContract } from
 import { validateRuntimeDocument, validateTransactionShape } from '../../validation/src/index.js'
 import { compareDocuments } from '../../reviewer/src/index.js'
 import { buildPatchTransaction, validatePatch } from '../../patch-format/src/index.js'
+import { withErrorSemantics } from '../../schema/src/errors.js'
 import type {
   Element,
   FactId,
@@ -355,7 +356,7 @@ function requiredAssetHashes(document: PpteDocument, transaction: Transaction): 
   return [...hashes].sort()
 }
 function error(code: string, message: string, path?: string, recovery?: string): ValidationIssue {
-  return { code, severity: 'error', message, path, recovery }
+  return withErrorSemantics({ code, severity: 'error', message, path, recovery })
 }
 function failure(code: string, message: string, revision: Revision, transactionId: string): CommitResult {
   return { ok: false, beforeRevision: revision, transactionId, issues: [error(code, message)] }

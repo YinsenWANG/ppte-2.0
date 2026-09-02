@@ -1,4 +1,5 @@
 import { canonicalJsonString, canonicalRevision, sha256HexBytes } from '../../canonical-json/src/index.js'
+import { createHash } from 'node:crypto'
 import { gzipSync } from 'node:zlib'
 import { PpteSession } from '../../core/src/index.js'
 import { contentOnlyContract, replaceAssetContract } from '../../change-contract/src/index.js'
@@ -8,6 +9,7 @@ import { checkGlyphCoverage, validateRuntimeDocument, validateTransactionShape }
 import { plainTextToRichText } from '../../richtext-adapter/src/index.js'
 import { buildCapabilityReport, type CapabilityReport } from '../../capability/src/index.js'
 import { PPTE_COMPATIBILITY_PROFILE, PPTE_FORMAT, PPTE_FORMAT_VERSION, PPTE_OPERATION_PROTOCOL_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
+import { withErrorSemantics } from '../../schema/src/errors.js'
 import type { AssetId, Element, FontId, PpteDocument, PpteManifest, PortableOrigin, PortableProfile, Revision, Transaction, ValidationIssue } from '../../schema/src/index.js'
 
 export interface PortableBuildOptions {
@@ -79,7 +81,7 @@ export function buildPortable(document: PpteDocument, options: PortableBuildOpti
   for (const asset of Object.values(document.assets)) {
     const data = options.assetBytes?.[asset.id]
     if (!data) issues.push(issue('ASSET_MISSING', `Portable package requires embedded bytes for asset ${asset.id}.`, asset.id, 'Embed the asset before creating an offline package.'))
-    else if (data.length !== asset.byteLength || normalizeHash(asset.hash) !== sha256HexBytes(data)) issues.push(issue('ASSET_HASH_MISMATCH', `Portable asset ${asset.id} failed hash verification.`, asset.id, 'Use the bytes that belong to the declared asset hash.'))
+    else if (data.length !== asset.byteLength || normalizeHash(asset.hash) !== sha256Binary(data)) issues.push(issue('ASSET_HASH_MISMATCH', `Portable asset ${asset.id} failed hash verification.`, asset.id, 'Use the bytes that belong to the declared asset hash.'))
     else {
       assets[asset.id] = base64(data)
       assetSources[asset.id] = `data:${asset.mimeType};base64,${assets[asset.id]}`
@@ -89,7 +91,7 @@ export function buildPortable(document: PpteDocument, options: PortableBuildOpti
   for (const font of Object.values(document.fonts)) if (font.source === 'embedded') {
     const data = options.fontBytes?.[font.id]
     if (!data) issues.push(issue('FONT_MISSING', `Portable package requires embedded bytes for font ${font.id}.`, font.id, 'Embed the font or switch to an explicitly declared system-safe font.'))
-    else if (font.hash && normalizeHash(font.hash) !== sha256HexBytes(data)) issues.push(issue('FONT_HASH_MISMATCH', `Portable font ${font.id} failed hash verification.`, font.id, 'Use the bytes that belong to the declared font hash.'))
+    else if (font.hash && normalizeHash(font.hash) !== sha256Binary(data)) issues.push(issue('FONT_HASH_MISMATCH', `Portable font ${font.id} failed hash verification.`, font.id, 'Use the bytes that belong to the declared font hash.'))
     else fonts[font.id] = base64(data)
   }
   if (options.profile === 'quick-fix') for (const slide of Object.values(document.slides)) for (const element of Object.values(slide.elements)) if (element.type === 'text') issues.push(...checkGlyphCoverage(document, element, undefined, { strict: true }))
@@ -341,7 +343,7 @@ function safePortablePath(path: string, fallback: string, prefix: string): strin
 }
 function verifyPortableBytes(byteLength: number | undefined, hash: string, data: Uint8Array, message: string) {
   if (byteLength !== undefined && data.length !== byteLength) throw new Error(message)
-  if (normalizeHash(hash) !== sha256HexBytes(data)) throw new Error(message)
+  if (normalizeHash(hash) !== sha256Binary(data)) throw new Error(message)
 }
 function portableMediaType(path: string): string {
   if (path.endsWith('.json')) return 'application/json'
@@ -373,8 +375,9 @@ function findElement(document: PpteDocument, target: { slideId?: string; element
   return undefined
 }
 function cloneBytes(value: Record<string, Uint8Array> | undefined): Record<string, Uint8Array> { return Object.fromEntries(Object.entries(value ?? {}).map(([key, data]) => [key, new Uint8Array(data)])) }
-function base64(data: Uint8Array): string { const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'; let result = ''; for (let index = 0; index < data.length; index += 3) { const a = data[index]; const b = data[index + 1] ?? 0; const c = data[index + 2] ?? 0; const n = (a << 16) | (b << 8) | c; result += alphabet[(n >>> 18) & 63] + alphabet[(n >>> 12) & 63] + (index + 1 < data.length ? alphabet[(n >>> 6) & 63] : '=') + (index + 2 < data.length ? alphabet[n & 63] : '=') } return result }
+function base64(data: Uint8Array): string { return Buffer.from(data).toString('base64') }
 function css(value: string): string { return value.replace(/[^A-Za-z0-9 ,._:-]/g, '') }
 function normalizeHash(hash: string): string { return (hash.startsWith('sha256-') ? hash.slice(7) : hash).toLowerCase() }
-function issue(code: string, message: string, elementId?: string, recovery?: string): ValidationIssue { return { code, severity: 'error', message, elementId, recovery } }
+function sha256Binary(data: Uint8Array): string { return createHash('sha256').update(data).digest('hex') }
+function issue(code: string, message: string, elementId?: string, recovery?: string): ValidationIssue { return withErrorSemantics({ code, severity: 'error', message, elementId, recovery }) }
 function dedupe(issues: ValidationIssue[]): ValidationIssue[] { const seen = new Set<string>(); return issues.filter((item) => { const key = `${item.code}|${item.message}|${item.elementId ?? ''}`; if (seen.has(key)) return false; seen.add(key); return true }) }

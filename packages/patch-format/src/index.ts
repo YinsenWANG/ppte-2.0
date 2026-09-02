@@ -1,6 +1,8 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname } from 'node:path'
 import { canonicalHash, canonicalJsonString, canonicalRevision, sha256HexBytes } from '../../canonical-json/src/index.js'
+import { checkCompatibility } from '../../compatibility/src/index.js'
+import { withErrorSemantics } from '../../schema/src/errors.js'
 import { applyTransaction } from '../../operations/src/index.js'
 import { computeStructuralDiff } from '../../diff/src/index.js'
 import { enforceChangeContract } from '../../change-contract/src/index.js'
@@ -227,6 +229,8 @@ function guardPatchOperations(operations: Operation[], baseRevision: string): Op
 function validatePatchManifest(manifest: PatchManifest, requireFiles = true): void {
   if (!manifest || typeof manifest !== 'object' || manifest.patchVersion !== '1' || !manifest.documentId || !manifest.baseRevision || !manifest.createdAt || !manifest.compatibilityProfile || !Array.isArray(manifest.files)) throw new Error('PATCH_INVALID: incomplete patch manifest')
   if (manifest.operationProtocolVersion !== PPTE_OPERATION_PROTOCOL_VERSION) throw new Error(`PATCH_INVALID: unsupported operation protocol ${manifest.operationProtocolVersion}`)
+  const compatibility = checkCompatibility(manifest)
+  if (!compatibility.ok || compatibility.disposition !== 'native') throw new Error(`PATCH_INVALID: ${compatibility.issues[0]?.code ?? 'COMPATIBILITY_PROFILE_UNSUPPORTED'}`)
   const paths = new Set<string>()
   for (const file of manifest.files ?? []) {
     if (!file.path || file.path.startsWith('/') || file.path.includes('..') || file.path.includes('\\') || paths.has(file.path)) throw new Error(`PATCH_INVALID: unsafe or duplicate file path ${file.path}`)
@@ -313,7 +317,7 @@ function mediaTypeFor(path: string): string {
 function normalizeHash(hash: string): string { return (hash.startsWith('sha256-') ? hash.slice(7) : hash).toLowerCase() }
 function text(value: string): Uint8Array { return new TextEncoder().encode(value) }
 function decodeText(value: Uint8Array | undefined): string { return new TextDecoder().decode(value ?? new Uint8Array()) }
-function error(code: string, message: string): ValidationIssue { return { code, severity: 'error', message } }
+function error(code: string, message: string): ValidationIssue { return withErrorSemantics({ code, severity: 'error', message }) }
 function dedupe(issues: ValidationIssue[]): ValidationIssue[] {
   const seen = new Set<string>()
   return issues.filter((issue) => { const key = `${issue.code}|${issue.message}|${issue.path ?? ''}`; if (seen.has(key)) return false; seen.add(key); return true })

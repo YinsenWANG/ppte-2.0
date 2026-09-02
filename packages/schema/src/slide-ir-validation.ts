@@ -1,4 +1,5 @@
 import type { ValidationIssue } from './operations.js'
+import { withErrorSemantics } from './errors.js'
 import type {
   BlockIR,
   LayoutConstraint,
@@ -27,7 +28,7 @@ export function validateSlideIR(value: unknown): ValidationIssue[] {
   const issues: ValidationIssue[] = []
   const add = (message: string, path = '/') => issues.push({ code: 'SLIDE_IR_INVALID', severity: 'error', message, path })
   const object = record(value, add, 'Slide IR')
-  if (!object) return issues
+  if (!object) return normalizeIssues(issues)
   checkKnown(object, ['irVersion', 'slideKey', 'purpose', 'message', 'visualStrategy', 'density', 'blocks', 'layoutIntent', 'artworkIntent', 'protectedContent', 'sourceIds'], add)
   requireString(object, 'irVersion', add, '1.0')
   requireString(object, 'slideKey', add)
@@ -50,13 +51,13 @@ export function validateSlideIR(value: unknown): ValidationIssue[] {
     else object.protectedContent.forEach((item, index) => validateProtectedContent(item, index, add))
   }
   validateStringArray(object.sourceIds, '/sourceIds', add)
-  return issues
+  return normalizeIssues(issues)
 }
 
 export function validatePresentationIR(value: unknown): ValidationIssue[] {
   const issues = validateBasePresentation(value)
   const object = isRecord(value) ? value : undefined
-  if (!object) return issues
+  if (!object) return normalizeIssues(issues)
   const add = (message: string, path = '/') => issues.push({ code: 'PRESENTATION_IR_INVALID', severity: 'error', message, path })
   checkKnown(object, ['irVersion', 'title', 'audience', 'objective', 'narrative', 'slides', 'themeIntent', 'sourceIds'], add)
   if (!Array.isArray(object.narrative) || object.narrative.length > MAX_ARRAY) add(`narrative must be an array of at most ${MAX_ARRAY} items.`, '/narrative')
@@ -81,14 +82,14 @@ export function validatePresentationIR(value: unknown): ValidationIssue[] {
   }
   if (object.themeIntent !== undefined) validateThemeIntent(object.themeIntent, add)
   validateStringArray(object.sourceIds, '/sourceIds', add)
-  return issues
+  return normalizeIssues(issues)
 }
 
 export function validateRecipeSpec(value: unknown): ValidationIssue[] {
   const issues: ValidationIssue[] = []
   const add = (message: string, path = '/') => issues.push({ code: 'RECIPE_INVALID', severity: 'error', message, path })
   const object = record(value, add, 'Recipe')
-  if (!object) return issues
+  if (!object) return normalizeIssues(issues)
   checkKnown(object, ['id', 'version', 'supports', 'slots', 'zones', 'constraints', 'variants', 'artworkSafeRegions', 'qualityRules'], add)
   requireString(object, 'id', add)
   requireString(object, 'version', add)
@@ -110,14 +111,14 @@ export function validateRecipeSpec(value: unknown): ValidationIssue[] {
   if (object.artworkSafeRegions !== undefined) validateRects(object.artworkSafeRegions, '/artworkSafeRegions', add)
   if (object.qualityRules !== undefined && (!Array.isArray(object.qualityRules) || object.qualityRules.length > MAX_ARRAY)) add(`qualityRules must contain at most ${MAX_ARRAY} items.`, '/qualityRules')
   if (Array.isArray(object.qualityRules)) object.qualityRules.forEach((rule, index) => validateQualityRule(rule, index, add))
-  return issues
+  return normalizeIssues(issues)
 }
 
 export function validateCompiledSlideDraft(value: unknown): ValidationIssue[] {
   const issues: ValidationIssue[] = []
   const add = (message: string, path = '/') => issues.push({ code: 'COMPILED_DRAFT_INVALID', severity: 'error', message, path })
   const object = record(value, add, 'Compiled slide draft')
-  if (!object) return issues
+  if (!object) return normalizeIssues(issues)
   checkKnown(object, ['slideKey', 'slide', 'elementDrafts', 'groups', 'readingOrder', 'semanticKeyMap', 'assetIds', 'validationIssues', 'provenance'], add)
   requireString(object, 'slideKey', add)
   if (!isRecord(object.slide)) add('slide must be a slide draft object.', '/slide')
@@ -203,7 +204,7 @@ export function validateCompiledSlideDraft(value: unknown): ValidationIssue[] {
     for (const field of ['compilerVersion', 'slideIrDigest', 'fontMetricsFingerprint'] as const) requireString(object.provenance, field, add, undefined, '/provenance')
     for (const field of ['recipeId', 'recipeVersion', 'seed'] as const) if (object.provenance[field] !== undefined && (typeof object.provenance[field] !== 'string' || !object.provenance[field])) add(`${field} must be a non-empty string when present.`, `/provenance/${field}`)
   }
-  return issues
+  return normalizeIssues(issues)
 }
 
 function validateBasePresentation(value: unknown): ValidationIssue[] {
@@ -393,6 +394,8 @@ function isJsonValue(value: unknown, depth: number): boolean {
   if (isRecord(value)) return Object.keys(value).length <= MAX_ARRAY && Object.entries(value).every(([key, item]) => key.length <= MAX_STRING && !key.includes('\u0000') && isJsonValue(item, depth + 1))
   return false
 }
+
+function normalizeIssues(issues: ValidationIssue[]): ValidationIssue[] { return issues.map(withErrorSemantics) }
 
 export function isSlideIR(value: unknown): value is SlideIR { return validateSlideIR(value).every((issue) => issue.severity !== 'error') }
 export function isPresentationIR(value: unknown): value is PresentationIR { return validatePresentationIR(value).every((issue) => issue.severity !== 'error') }
