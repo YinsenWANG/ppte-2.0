@@ -1,6 +1,28 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://ppte.dev/schemas/2.0/document.schema.json",
+  "$defs": {
+    "point": {
+      "type": "object",
+      "required": ["x", "y"],
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "rect": {
+      "type": "object",
+      "required": ["x", "y", "width", "height"],
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "width": { "type": "number", "exclusiveMinimum": 0 },
+        "height": { "type": "number", "exclusiveMinimum": 0 }
+      },
+      "additionalProperties": false
+    }
+  },
   "title": "PPTe 2.0 Semantic Document",
   "type": "object",
   "required": [
@@ -4228,7 +4250,57 @@
           },
           "artwork": {
             "type": "object",
-            "additionalProperties": true
+            "properties": {
+              "subjectBounds": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/rect"
+                }
+              },
+              "safeTextRegions": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/rect"
+                }
+              },
+              "avoidTextRegions": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/rect"
+                }
+              },
+              "dominantPalette": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$"
+                },
+                "uniqueItems": true
+              },
+              "contrastMapAssetId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "focalPoint": {
+                "$ref": "#/$defs/point"
+              },
+              "generationPromptSummary": {
+                "type": "string",
+                "maxLength": 4096
+              },
+              "generatorId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "generatorVersion": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            },
+            "additionalProperties": false
           }
         },
         "additionalProperties": false

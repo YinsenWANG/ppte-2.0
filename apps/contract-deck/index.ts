@@ -10,18 +10,20 @@ import { ImeTextEditSession, beginDrag, endDrag, updateDrag } from '../../packag
 import { hitTest } from '../../packages/geometry/src/index.js'
 import { renderSlideHtml, renderTargetedVisualDiff } from '../../packages/renderer-react/src/index.js'
 import { RecoveryJournal, readJournal, replayJournal } from '../../packages/recovery-journal/src/index.js'
-import { openCheckpoint, writeCheckpoint, type CheckpointWriteOptions } from '../../packages/file-format/src/index.js'
+import { openCheckpoint, openCheckpointBytes, writeCheckpoint, type CheckpointWriteOptions } from '../../packages/file-format/src/index.js'
 import { buildReplacementElement } from '../../packages/semantic-identity/src/index.js'
-import { auditPortableBundle, createPortableQuickFix, createPortableViewer, PortableRuntime, decodePortable } from '../../packages/portable-runtime/src/index.js'
+import { auditPortableBundle, createPortableLightEdit, createPortableQuickFix, createPortableViewer, PortableRuntime, decodePortable } from '../../packages/portable-runtime/src/index.js'
 import { PpteReviewer } from '../../packages/reviewer/src/index.js'
 import { applyPatchToDocument, decodePatch, encodePatch } from '../../packages/patch-format/src/index.js'
 import { exportPdf, exportPng } from '../../packages/exporter-pdf/src/index.js'
-import { exportImagePptx, inspectPptx } from '../../packages/exporter-pptx/src/index.js'
+import { compileSemanticPptx, exportImagePptx, exportSemanticPptx, inspectPptx } from '../../packages/exporter-pptx/src/index.js'
+import { buildPosterTransaction, validatePosterSlide } from '../../packages/design-compiler/src/index.js'
+import { getBuiltinWidgetRegistry, validateWidgetElement } from '../../packages/widgets/src/index.js'
 import { buildFactUpdateTransaction, checkFactSourceConsistency } from '../../packages/facts/src/index.js'
 import { checkGlyphCoverage, validateRuntimeDocument } from '../../packages/validation/src/index.js'
 import { GA_A_CAPACITY_BUDGET, GA_A_PERFORMANCE_BUDGET, assertPerformanceBudget, benchmark, evaluateBundleBudget, measureCapacity, validateCapacityBudget } from '../../packages/performance-budget/src/index.js'
 import type { CheckpointAdapter } from '../../packages/core/src/index.js'
-import type { Asset, ChartElement, Element, Operation, PpteDocument, RichTextDocument, ShapeElement, TextElement, Transaction } from '../../packages/schema/src/index.js'
+import type { Asset, ChartElement, ComponentElement, Element, Operation, PpteDocument, RichTextDocument, ShapeElement, TextElement, Transaction } from '../../packages/schema/src/index.js'
 
 const SLIDE_ID = 'slide_main'
 const TITLE_ID = 'text_title'
@@ -640,6 +642,103 @@ export function runGABStabilization(): Record<string, unknown> {
   }
 }
 
+export function runGACStabilization(): Record<string, unknown> {
+  const { document, imageBytes } = makeGABContractDocument()
+  const area = document.slides.slide_main.elements.chart_revenue as ChartElement
+  area.chartType = 'area'
+  const donut = cloneJson(area)
+  donut.id = 'chart_mix'
+  donut.semanticKey = 'chart.mix'
+  donut.chartType = 'donut'
+  donut.frame = { x: 1040, y: 740, width: 620, height: 260 }
+  document.slides.slide_main.elements[donut.id] = donut
+  document.slides.slide_main.rootOrder.push(donut.id)
+  document.slides.slide_main.readingOrder?.push(donut.id)
+
+  const widgets: ComponentElement[] = [
+    {
+      id: 'widget_table', type: 'component', semanticKey: 'widget.table', role: 'body',
+      frame: { x: 160, y: 790, width: 760, height: 220 }, componentType: 'core/table', componentVersion: '1.0.0',
+      props: { columns: ['Period', 'Value'], rows: [['Q1', 42], ['Q2', 38]], caption: 'Revenue' },
+      fallback: { kind: 'placeholder', label: 'Table unavailable' },
+    },
+    {
+      id: 'widget_code', type: 'component', semanticKey: 'widget.code', role: 'body',
+      frame: { x: 40, y: 790, width: 100, height: 100 }, componentType: 'core/code', componentVersion: '1.0.0',
+      props: { code: 'return 42', language: 'text' }, fallback: { kind: 'placeholder', label: 'Code unavailable' },
+    },
+    {
+      id: 'widget_equation', type: 'component', semanticKey: 'widget.equation', role: 'body',
+      frame: { x: 40, y: 900, width: 100, height: 100 }, componentType: 'core/equation', componentVersion: '1.0.0',
+      props: { expression: 'x = y + 1' }, fallback: { kind: 'placeholder', label: 'Equation unavailable' },
+    },
+  ]
+  for (const widget of widgets) {
+    document.slides.slide_main.elements[widget.id] = widget
+    document.slides.slide_main.rootOrder.push(widget.id)
+    document.slides.slide_main.readingOrder?.push(widget.id)
+  }
+  document.widgetRequirements = widgets.map((widget) => ({ type: widget.componentType, versionRange: '^1.0.0', fallbackRequired: true }))
+  document.assets[IMAGE_ASSET_ID].artwork = {
+    safeTextRegions: [{ x: 0, y: 0, width: 1, height: 1 }],
+    avoidTextRegions: [],
+    dominantPalette: ['#112233'],
+    focalPoint: { x: 0.5, y: 0.5 },
+  }
+
+  const initialRevision = canonicalRevision(document)
+  const gaCIssues = validateRuntimeDocument(document, { runtimeProfile: 'ga-c' }).filter((issue) => issue.severity === 'error')
+  assert(gaCIssues.length === 0, `GA-C runtime validation: ${gaCIssues.map((issue) => issue.code).join(',')}`)
+  const gaBIssues = validateRuntimeDocument(document, { runtimeProfile: 'ga-b' })
+  assert(gaBIssues.some((issue) => issue.code === 'CHART_TYPE_UNSUPPORTED'), 'GA-B rejects GA-C chart types')
+  assert(gaBIssues.some((issue) => issue.code === 'UNSUPPORTED_ELEMENT_TYPE'), 'GA-B rejects controlled Widgets')
+
+  const registry = getBuiltinWidgetRegistry()
+  assert(widgets.every((widget) => validateWidgetElement(widget, registry).ok), 'built-in Widget props validate')
+  assert(renderSlideHtml(document, SLIDE_ID).includes('data-ppte-widget="table"'), 'Table Widget renders through host registry')
+
+  const session = new PpteSession(document)
+  const posterTransaction = buildPosterTransaction(document, { transactionId: 'ga-c:poster', baseRevision: initialRevision, slideId: SLIDE_ID, artworkAssetId: IMAGE_ASSET_ID })
+  assert(session.preview(posterTransaction).ok, 'Poster preview')
+  assert(session.commit(posterTransaction).ok, 'Poster commit')
+  assert(session.undo().ok && session.getRevision() === initialRevision, 'Poster inverse restores exact revision')
+  assert(validatePosterSlide(document, SLIDE_ID).ok, 'Poster safety metadata')
+
+  const light = new PortableRuntime(document, { profile: 'light-edit', assetBytes: { [IMAGE_ASSET_ID]: imageBytes } })
+  assert(light.cropImage({ elementId: IMAGE_ID }, { x: 0.1, y: 0.1, width: 0.8, height: 0.8 }).ok, 'Light Edit image crop')
+  assert(light.undo().ok && light.getRevision() === initialRevision, 'Light Edit crop inverse')
+  const editedData = cloneJson(area.data)
+  editedData.rows[0]!.values.revenue = 55
+  assert(light.updateChartData({ elementId: area.id }, editedData).ok, 'Light Edit Chart Data')
+  assert(light.undo().ok && light.getRevision() === initialRevision, 'Light Edit Chart Data inverse')
+  assert(light.moveElement({ elementId: IMAGE_ID }, { x: 300, y: 200 }).ok, 'Light Edit move')
+  assert(light.undo().ok, 'Light Edit move inverse')
+  assert(light.resizeElement({ elementId: IMAGE_ID }, { x: 100, y: 100, width: 400, height: 300 }).ok, 'Light Edit resize')
+  assert(light.undo().ok && light.getRevision() === initialRevision, 'Light Edit resize inverse')
+  const portable = createPortableLightEdit(document, { assetBytes: { [IMAGE_ASSET_ID]: imageBytes }, derivedAt: '2026-09-03T00:00:00.000Z' })
+  assert(portable.ok && auditPortableBundle(portable.html).ok, 'Light Edit portable audit')
+  const saved = light.saveAsProject()
+  assert(saved.ok, 'Light Edit save as project')
+  assert(openCheckpointBytes(saved.bytes!).manifest.compatibilityProfile === 'ppte-2.0-ga-c.1', 'Light Edit checkpoint profile')
+
+  const semantic = compileSemanticPptx(document)
+  assert(semantic.ok && semantic.slides.some((slide) => slide.nodes.some((node) => node.kind === 'text-box')), 'semantic PPTX mapping compiler')
+  const pptx = exportSemanticPptx(document, { assetBytes: { [IMAGE_ASSET_ID]: imageBytes } })
+  const inspection = inspectPptx(pptx.bytes)
+  assert(pptx.ok && inspection.valid && inspection.slideCount === 2 && inspection.hasSemanticText && !inspection.hasSlideImages, 'semantic PPTX package')
+
+  return {
+    status: 'ok',
+    initialRevision,
+    finalRevision: session.getRevision(),
+    charts: { area: true, donut: true, gaBBoundary: true },
+    widgets: { table: true, code: true, equation: true, hostRegistry: true, fallback: true },
+    poster: { metadata: true, safety: true, transaction: true, undo: true },
+    lightEdit: { crop: true, chartData: true, move: true, resize: true, undo: true, saveAsProject: true },
+    semanticPptx: { slides: inspection.slideCount, editableText: inspection.hasSemanticText, imageSlideAbsent: !inspection.hasSlideImages },
+  }
+}
+
 function stableTransaction(
   session: PpteSession,
   transactionId: string,
@@ -691,6 +790,13 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
 } else if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url) && process.argv.includes('--ga-b')) {
   try {
     process.stdout.write(`${JSON.stringify(runGABStabilization())}\n`)
+  } catch (cause) {
+    process.stderr.write(`${cause instanceof Error ? cause.stack ?? cause.message : String(cause)}\n`)
+    process.exitCode = 1
+  }
+} else if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url) && process.argv.includes('--ga-c')) {
+  try {
+    process.stdout.write(`${JSON.stringify(runGACStabilization())}\n`)
   } catch (cause) {
     process.stderr.write(`${cause instanceof Error ? cause.stack ?? cause.message : String(cause)}\n`)
     process.exitCode = 1

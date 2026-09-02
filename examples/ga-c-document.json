@@ -1,0 +1,220 @@
+{
+  "schemaVersion": "2.0.0",
+  "documentId": "doc_ga_c_example",
+  "locale": "en-US",
+  "metadata": {
+    "title": "GA-C semantic presentation example",
+    "source": "generated"
+  },
+  "canvas": {
+    "width": 1920,
+    "height": 1080,
+    "unit": "du",
+    "aspectRatio": "16:9",
+    "defaultBackground": {
+      "kind": "solid",
+      "color": {
+        "kind": "value",
+        "value": "#F8FAFC"
+      }
+    }
+  },
+  "theme": {
+    "id": "theme_ga_c_example",
+    "name": "GA-C Example Theme",
+    "tokens": {
+      "colors": {
+        "color.background": "#F8FAFC",
+        "color.text.primary": "#172033",
+        "color.accent": "#2563EB",
+        "color.surface": "#FFFFFF"
+      },
+      "fontFamilies": {
+        "font.heading": "Arial",
+        "font.body": "Arial"
+      },
+      "fontSizes": {
+        "fontSize.title": 56,
+        "fontSize.body": 24
+      },
+      "spacing": {},
+      "radii": {},
+      "shadows": {}
+    },
+    "presets": {
+      "text": {
+        "text.title.primary": {
+          "fontFamily": {
+            "kind": "token",
+            "token": "font.heading"
+          },
+          "fontSize": 56,
+          "fontWeight": 700,
+          "color": {
+            "kind": "token",
+            "token": "color.text.primary"
+          },
+          "lineHeight": 1.15
+        }
+      },
+      "shape": {},
+      "image": {},
+      "chart": {
+        "chart.default": {
+          "palette": [
+            {
+              "kind": "value",
+              "value": "#2563EB"
+            },
+            {
+              "kind": "value",
+              "value": "#14B8A6"
+            }
+          ],
+          "axisColor": {
+            "kind": "value",
+            "value": "#64748B"
+          },
+          "labelColor": {
+            "kind": "value",
+            "value": "#334155"
+          },
+          "gridColor": {
+            "kind": "value",
+            "value": "#CBD5E1"
+          },
+          "lineWidth": 2,
+          "cornerRadius": 3
+        }
+      }
+    }
+  },
+  "slideOrder": ["slide_ga_c"],
+  "slides": {
+    "slide_ga_c": {
+      "id": "slide_ga_c",
+      "name": "Semantic GA-C surface",
+      "rootOrder": [
+        "title",
+        "artwork",
+        "area",
+        "donut",
+        "table"
+      ],
+      "readingOrder": ["title", "area", "donut", "table"],
+      "visualStrategy": "poster",
+      "elements": {
+        "title": {
+          "id": "title",
+          "type": "text",
+          "semanticKey": "title.main",
+          "role": "title",
+          "frame": { "x": 160, "y": 120, "width": 900, "height": 100 },
+          "content": {
+            "paragraphs": [
+              {
+                "id": "title.paragraph",
+                "runs": [
+                  { "id": "title.run", "text": "Semantic GA-C surface" }
+                ]
+              }
+            ]
+          },
+          "style": { "styleRef": "text.title.primary" },
+          "overflowPolicy": "warn"
+        },
+        "artwork": {
+          "id": "artwork",
+          "type": "image",
+          "role": "artwork",
+          "frame": { "x": 0, "y": 0, "width": 1920, "height": 1080 },
+          "assetId": "asset_artwork",
+          "fit": "cover",
+          "style": { "styleRef": "image.default" },
+          "altText": "Abstract presentation artwork"
+        },
+        "area": {
+          "id": "area",
+          "type": "chart",
+          "semanticKey": "chart.area",
+          "role": "chart",
+          "frame": { "x": 120, "y": 300, "width": 820, "height": 520 },
+          "chartType": "area",
+          "data": {
+            "columns": [
+              { "id": "period", "label": "Period", "type": "string" },
+              { "id": "value", "label": "Value", "type": "number" }
+            ],
+            "rows": [
+              { "id": "q1", "values": { "period": "Q1", "value": 32 } },
+              { "id": "q2", "values": { "period": "Q2", "value": 48 } },
+              { "id": "q3", "values": { "period": "Q3", "value": 42 } }
+            ]
+          },
+          "encoding": { "categoryField": "period", "valueFields": ["value"] },
+          "options": { "showLegend": false, "showLabels": true },
+          "style": { "styleRef": "chart.default" }
+        },
+        "donut": {
+          "id": "donut",
+          "type": "chart",
+          "semanticKey": "chart.mix",
+          "role": "chart",
+          "frame": { "x": 1030, "y": 300, "width": 700, "height": 520 },
+          "chartType": "donut",
+          "data": {
+            "columns": [
+              { "id": "segment", "label": "Segment", "type": "string" },
+              { "id": "value", "label": "Value", "type": "number" }
+            ],
+            "rows": [
+              { "id": "one", "values": { "segment": "One", "value": 52 } },
+              { "id": "two", "values": { "segment": "Two", "value": 28 } },
+              { "id": "three", "values": { "segment": "Three", "value": 20 } }
+            ]
+          },
+          "encoding": { "categoryField": "segment", "valueFields": ["value"] },
+          "options": { "showLegend": true, "showLabels": true },
+          "style": { "styleRef": "chart.default" }
+        },
+        "table": {
+          "id": "table",
+          "type": "component",
+          "semanticKey": "widget.table",
+          "role": "body",
+          "frame": { "x": 120, "y": 860, "width": 1610, "height": 130 },
+          "componentType": "core/table",
+          "componentVersion": "1.0.0",
+          "props": {
+            "columns": ["Period", "Value"],
+            "rows": [["Q1", 32], ["Q2", 48]],
+            "caption": "Selected values"
+          },
+          "fallback": { "kind": "placeholder", "label": "Table unavailable" }
+        }
+      },
+      "groups": {}
+    }
+  },
+  "assets": {
+    "asset_artwork": {
+      "id": "asset_artwork",
+      "hash": "sha256-0000000000000000000000000000000000000000000000000000000000000000",
+      "mimeType": "image/png",
+      "byteLength": 0,
+      "path": "assets/artwork.png",
+      "width": 1920,
+      "height": 1080,
+      "artwork": {
+        "safeTextRegions": [{ "x": 0, "y": 0, "width": 1, "height": 1 }],
+        "avoidTextRegions": [],
+        "dominantPalette": ["#112233"],
+        "focalPoint": { "x": 0.5, "y": 0.5 }
+      }
+    }
+  },
+  "fonts": {},
+  "widgetRequirements": [
+    { "type": "core/table", "versionRange": "^1.0.0", "fallbackRequired": true }
+  ]
+}
