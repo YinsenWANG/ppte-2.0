@@ -21,6 +21,7 @@ pnpm e2e:milestone
 pnpm e2e:beta
 pnpm e2e:ga-a
 pnpm e2e:ga-b
+pnpm e2e:ga-c
 pnpm contract-deck
 ```
 
@@ -41,8 +42,11 @@ replayed only when its document and base revision match.
   invariants, policy, and precondition enforcement.
 - `packages/diff` — structural and semantic-ready diff primitives.
 - `packages/validation` — runtime subset, text overflow, and glyph preflight.
-- `packages/charts` and `packages/facts` — the GA-B Bar/Line/Pie contract,
-  Fact/Source references, consistency diagnostics, and explicit sync builders.
+- `packages/charts` and `packages/facts` — the GA-B Bar/Line/Pie and GA-C
+  Area/Donut contracts, Fact/Source references, consistency diagnostics, and
+  explicit sync builders.
+- `packages/widgets` — host-owned, deterministic Table/Code/Equation Widget
+  definitions with JSON Props validation and static fallback rendering.
 - `packages/geometry` — fixed Slide-space geometry and hit testing.
 - `packages/renderer-react` — a derived reference rendering adapter; it never
   writes the document.
@@ -55,15 +59,15 @@ replayed only when its document and base revision match.
   packages.
 - `packages/capability` — explicit per-target capability and degradation
   reports.
-- `packages/portable-runtime` — offline Viewer and Quick Fix profiles,
-  origin metadata, glyph preflight, presenter controls, and Save as New
-  Project.
+- `packages/portable-runtime` — offline Viewer, Quick Fix, and Light Edit
+  profiles, origin metadata, glyph preflight, presenter controls, and Save as
+  New Project.
 - `packages/reviewer` and `packages/patch-format` — three-way semantic review
   and data-only `.ppte.patch` transport with safe resource import.
 - `packages/exporter-pdf` — deterministic PDF/PNG baseline exporters with
   explicit degradation reports.
-- `packages/exporter-pptx` — Image PPTX export with one self-contained SVG
-  image per page and an embedded Capability Report.
+- `packages/exporter-pptx` — Image PPTX and semantic PPTX mapping exports with
+  embedded Capability Reports.
 - `packages/compatibility` — the release-tested Compatibility Profile and
   native/migrate/read-only/reject decisions.
 - `packages/importer-legacy` — data-only forward migration for older semantic
@@ -85,11 +89,9 @@ replayed only when its document and base revision match.
 The current release surface deliberately does not implement:
 
 - Slidev, Markdown as a content source, or DOM reverse parsing;
-- Poster, Widget, Portable Light Edit, or Semantic PPTX;
-- Area or Donut Chart runtime support; GA-B is limited to Bar, Line, and Pie;
+- Video Widget, native PPTX Chart authoring, or a full Portable editor;
 - nested Groups or Group Rotate;
 - Run-level font or font-size styling;
-- a complete Portable editor;
 - CRDT, real-time collaboration, full legacy markup import, or a browser/OS
   pixel-matrix test lab;
 - direct writes that bypass the Operation Engine.
@@ -100,12 +102,12 @@ The source is never executed or overwritten. Unsupported markup/runtime
 formats remain rejected and must be retained by the host alongside the
 migration report.
 
-The schema retains forward-compatible types for later releases. The GA-B
-runtime accepts Text, Image, Shape, Bar/Line/Pie Chart, and flat logical
-Groups. Portable and Patch resource operations are transport-layer extensions
-and are still committed through the same Session Operation Engine. Unsupported
-future operations fail with a diagnostic error; they are not silently ignored
-or downgraded.
+The schema retains forward-compatible types for later releases. The GA-C
+runtime accepts Text, Image, Shape, Area/Donut and GA-B Chart types, controlled
+Widgets, Poster artwork, and flat logical Groups. Portable and Patch resource
+operations are transport-layer extensions and are still committed through the
+same Session Operation Engine. Unsupported future operations fail with a
+diagnostic error; they are not silently ignored or downgraded.
 
 ## Design invariants
 
@@ -151,3 +153,17 @@ Revised Copy review covers Chart fields and explicit conflict resolutions; the
 OOXML package containing one self-contained SVG image per page and a Capability
 Report. The default `.ppte` checkpoint profile remains `ppte-2.0-ga-a.1` for
 backward compatibility; callers opt into the GA-B profile when required.
+GA-C checkpoints opt into `ppte-2.0-ga-c.1` when Area/Donut, Poster, or
+Widget content is present.
+
+## GA-C release surface
+
+GA-C publishes `ppte-2.0-ga-c.1` as a forward-only profile from GA-B. It adds
+deterministic Area and Donut charts, Poster artwork with safety metadata,
+host-owned Table/Code/Equation Widgets, and Portable Light Edit for Image
+Crop, Chart Data, and simple Move/Resize. `pnpm e2e:ga-c` exercises the same
+Session preview/commit/undo path, checkpoint round trip, offline audit, and
+semantic PPTX mapping compiler. Semantic PPTX preserves Text as editable text
+boxes and maps Image/Artwork to Pictures and Shape to native Shapes; static
+Chart SVG, Widget fallback, Poster artwork, missing payload, and degradation
+states remain explicit in the Capability Report.

@@ -1,7 +1,56 @@
 # Implementation decisions
 
 This file records conservative choices made while implementing the frozen
-Week 1–2 slice and Stable Core milestone.
+milestones.
+
+## 2026-09-03 — GA-C Poster, Widget, Light Edit, and Semantic PPTX boundary
+
+GA-C publishes the explicit `ppte-2.0-ga-c.1` Compatibility Profile. It is
+forward-only from GA-B; the GA-A default checkpoint and GA-B runtime boundary
+remain unchanged. Area and Donut use the same deterministic SVG chart
+renderer as the reference surface. Older runtime profiles reject them with a
+diagnostic instead of treating them as another chart type.
+
+Poster is represented by a `visualStrategy: poster` slide plus a semantic
+Image whose role is `artwork`. The artwork Asset must declare safe text
+regions, a focal point, and a dominant palette before the compiler creates a
+Poster transaction. Existing title, metric, CTA, logo, and source objects are
+kept as independent semantic elements; the transaction sets the strategy and
+adds one artwork layer, requires confirmation by default, and remains fully
+undoable. This round does not generate artwork pixels; it consumes a resolved
+local Asset and records its safety metadata.
+
+Controlled Widgets are host-owned `WidgetRegistry` definitions. The document
+stores only component type/version, JSON Props, and an asset-or-placeholder
+fallback. GA-C includes deterministic `core/table`, `core/code`, and
+`core/equation` definitions. Unknown or invalid definitions render the
+declared fallback; no Widget implementation, network capability, or arbitrary
+code is stored in a document. `component.updateProps` is a GA-C-only typed
+Operation with an exact inverse and the usual Scope/Change Contract path.
+
+Portable Light Edit is limited to Image Crop, Chart Data replacement, and
+simple Move/Resize. Each action creates one typed Transaction in the existing
+Session, has a field-specific contract, validates the GA-C runtime, and can be
+undone. Light Edit output defaults to the GA-C checkpoint profile, embeds
+required bytes, keeps origin/capability metadata, and remains offline. Group
+editing, free transforms, and a full Portable editor remain out of scope.
+
+Semantic PPTX is a mapping compiler, not a screenshot export: Text becomes an
+editable Text Box, Image/Artwork becomes a Picture, Shape becomes a native
+Shape, and Flat Group coordinates are materialized. Charts are deterministic
+SVG Pictures, Components use their static fallback, Posters map to the
+Artwork Picture, and animation is represented by the final static state.
+Missing or mismatched payloads emit a visible placeholder and an explicit
+error. The exporter never parses rendered DOM back into a document and never
+silently drops an unsupported object.
+
+Legacy migration accepts GA-C Area/Donut, controlled Widgets, Poster strategy,
+and artwork metadata only when the explicit GA-C target is requested. Older
+targets omit unsupported Area/Donut and Widget objects or downgrade Poster to
+structured while retaining safe semantic elements; each decision is reported
+as a migration warning and preserves the source boundary. Video Widgets,
+native PPTX Chart authoring, private Widget registries, real-time
+collaboration, and CRDT remain unimplemented.
 
 ## 2026-09-03 — GA-B Chart, Fact/Source, Review, Patch, and Image PPTX boundary
 

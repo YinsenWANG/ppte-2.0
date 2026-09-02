@@ -15,6 +15,7 @@ pnpm e2e:milestone
 pnpm e2e:beta
 pnpm e2e:ga-a
 pnpm e2e:ga-b
+pnpm e2e:ga-c
 ```
 
 Changes that add a persisted field, operation, renderer primitive, or recovery
@@ -23,10 +24,11 @@ tests, and a note in `docs/DECISIONS.md` when the frozen specification leaves
 an implementation detail open. All writes must go through the Operation Engine.
 
 The GA-A E2E also enforces the published capacity corpus and P95 performance
-budgets; GA-B adds Chart/Fact/Review/Patch/Image PPTX acceptance coverage. Do
-not lower a budget, reduce the corpus, add `skip`/`only`, or alter the test
-meaning to make a gate pass. If a local environment cannot meet a budget,
-report the measured failure and its cause.
+budgets; GA-B adds Chart/Fact/Review/Patch/Image PPTX acceptance coverage;
+GA-C adds Poster/Widget/Light Edit/semantic PPTX acceptance coverage. Do not
+lower a budget, reduce the corpus, add `skip`/`only`, or alter the test meaning
+to make a gate pass. If a local environment cannot meet a budget, report the
+measured failure and its cause.
 
 Compatibility changes must preserve the forward-only migration rule and must
 not overwrite the source package. Migration reports need deterministic output,

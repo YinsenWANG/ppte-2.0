@@ -2,6 +2,32 @@
 
 All notable changes to the PPTe reference runtime are recorded here.
 
+## [0.4.0-rc.1] — 2026-09-03
+
+### Added
+
+- GA-C Compatibility Profile `ppte-2.0-ga-c.1`, forward-only from GA-B.
+- Deterministic Area and Donut Chart runtime support.
+- Poster artwork transactions with safe-region, focal-point, and palette
+  metadata checks.
+- Host-owned Table, Code, and Equation Widgets with JSON Props and static
+  fallbacks.
+- Portable Light Edit for Image Crop, Chart Data, and simple Move/Resize,
+  including exact Undo and GA-C checkpoint save.
+- Semantic PPTX mapping export for editable Text Boxes, Pictures, native
+  Shapes, static Chart SVG, Widget fallback, Poster artwork, and Capability
+  Reports.
+- GA-C legacy migration, public example/schema coverage, and a dedicated E2E
+  acceptance command.
+
+### Scope
+
+- Video Widget, native PPTX Chart authoring, a full Portable editor, private
+  Widget registries, CRDT, real-time collaboration, and full legacy
+  markup/runtime import remain out of scope.
+- Semantic PPTX degradation and missing payloads are explicit; unsupported
+  content is never silently dropped.
+
 ## [0.3.0-rc.1] — 2026-09-03
 
 ### Added

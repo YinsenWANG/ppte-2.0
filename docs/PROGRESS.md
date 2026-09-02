@@ -1,5 +1,68 @@
 # PPTe 2.0 Milestone Progress
 
+## 2026-09-03 — GA-C complete: 全部里程碑完成
+
+### Completed this round
+
+- Published the forward-only `ppte-2.0-ga-c.1` Compatibility Profile from
+  GA-B, with public Area and Donut Chart contracts and deterministic SVG
+  rendering.
+- Added Poster transactions driven by resolved local Artwork Assets. Safe text
+  regions, avoidance regions, focal point, and dominant palette are checked
+  before the strategy/layer transaction is previewed, confirmed, committed,
+  and undone. Existing semantic elements remain in the document.
+- Added host-owned Table, Code, and Equation Widgets. Documents contain only
+  component type/version, JSON Props, requirements, and an asset-or-placeholder
+  fallback; unknown definitions and invalid Props never execute document code.
+- Added Portable Light Edit for Image Crop, Chart Data, and simple Move/Resize.
+  Each edit uses the existing Session Operation Engine and exact inverse path;
+  GA-C checkpoint save embeds required bytes and passes offline audit.
+- Added semantic PPTX mapping export: editable Text Boxes, Pictures, native
+  Shapes, static Chart SVG, Widget fallbacks, and Poster Artwork Pictures.
+  Missing or mismatched payloads remain visible as placeholders and produce
+  explicit Capability Report errors; no slide-image shortcut or silent drop is
+  used.
+- Added GA-C legacy migration, Poster downgrade warnings for older targets,
+  public schema/example coverage, renderer markers, release documentation, and
+  a dedicated `e2e:ga-c` acceptance command.
+
+### Exit-condition evidence
+
+- `pnpm install` — passed; all 34 workspace projects were already up to date.
+- `pnpm typecheck` — passed.
+- `pnpm test` — 61 tests passed, 0 failed, 0 skipped.
+- `pnpm validate` — 15 schemas/examples, semantic checks, operation parity,
+  markdown structure, and source guards passed.
+- `pnpm e2e:vertical-slice` — passed; existing Stable Core, Journal,
+  Checkpoint, renderer, scope, and out-of-scope boundary remained green.
+- `pnpm e2e:milestone` — passed; existing IR, Recipe, Agent, artwork,
+  comparison, confirmation, and undo flow remained green.
+- `pnpm e2e:beta` — passed; existing Portable Viewer/Quick Fix, Glyph, Patch,
+  PDF, and PNG flow remained green.
+- `pnpm e2e:ga-a` — passed at the published 30-slide / 900-element /
+  120-group / 50 MiB / 20-font boundary; every published P95 and bundle
+  budget passed.
+- `pnpm e2e:ga-b` — passed; existing Chart/Fact, Review/Patch, and Image PPTX
+  acceptance remained green.
+- `pnpm e2e:ga-c` — passed; Area/Donut boundary, Table/Code/Equation Widget
+  registry/fallback, Poster safety and undo, Light Edit edits/save/audit, and
+  semantic PPTX mapping all passed.
+- Semantic PPTX independent package check — passed; a 19,130-byte, two-slide
+  package passed `unzip -t`, every XML part passed `xmllint`, and LibreOffice
+  converted it to a valid two-page PDF.
+- `git diff --check` — passed.
+
+### Explicitly not done
+
+This release does not generate Artwork pixels; Poster consumes a resolved local
+Asset and its declared safety metadata. Video Widget, private Widget
+registries, native PPTX Chart authoring, PPTX semantic import, a complete
+Portable editor, nested Groups, Group Rotate, Run-level font or font-size
+styling, CRDT, real-time collaboration, full legacy markup/runtime import, and
+browser/OS pixel-matrix validation remain outside the release-tested surface.
+Semantic PPTX Charts are static SVG Pictures and Widgets use explicit static
+fallbacks. No remote was created and no changes were pushed.
+
 ## 2026-09-03 — GA-B Chart / Fact / Review / Patch / Image PPTX
 
 ### Completed this round
