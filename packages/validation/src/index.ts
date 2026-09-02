@@ -151,7 +151,7 @@ function validateChangeContractShape(contract: Record<string, unknown>, issues: 
       const fields = new Set(['content', 'data', 'style', 'geometry', 'asset', 'semanticIdentity', 'readingOrder', 'facts'])
       for (const [field, value] of Object.entries(preserve)) {
         if (!fields.has(field)) issues.push(error('SCHEMA_INVALID', `Unknown change invariant ${field}.`, `/changeContract/preserve/${escapePointer(field)}`))
-        else if (field === 'semanticIdentity' ? !['preserve', 'allow-replacement'].includes(String(value)) : !['preserve', 'allow'].includes(String(value))) issues.push(error('SCHEMA_INVALID', `Invalid change invariant ${field}.`, `/changeContract/preserve/${escapePointer(field)}`))
+        else if (field === 'semanticIdentity' ? !['preserve', 'allow-replacement'].includes(String(value)) : field === 'facts' ? !['preserve', 'allow', 'allow-explicit-sync'].includes(String(value)) : !['preserve', 'allow'].includes(String(value))) issues.push(error('SCHEMA_INVALID', `Invalid change invariant ${field}.`, `/changeContract/preserve/${escapePointer(field)}`))
       }
     }
   }

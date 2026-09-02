@@ -1,0 +1,181 @@
+{
+  "schemaVersion": "2.0.0",
+  "documentId": "doc_ga_b_chart_example",
+  "locale": "en-US",
+  "metadata": {
+    "title": "Quarterly revenue chart",
+    "source": "generated"
+  },
+  "canvas": {
+    "width": 1920,
+    "height": 1080,
+    "unit": "du",
+    "aspectRatio": "16:9",
+    "defaultBackground": {
+      "kind": "solid",
+      "color": {
+        "kind": "value",
+        "value": "#F8FAFC"
+      }
+    }
+  },
+  "theme": {
+    "id": "theme_ga_b_example",
+    "name": "GA-B Example Theme",
+    "tokens": {
+      "colors": {
+        "color.background": "#F8FAFC",
+        "color.text.primary": "#172033",
+        "color.accent": "#2563EB"
+      },
+      "fontFamilies": {
+        "font.body": "Arial"
+      },
+      "fontSizes": {
+        "fontSize.body": 28
+      },
+      "spacing": {},
+      "radii": {},
+      "shadows": {}
+    },
+    "presets": {
+      "text": {},
+      "shape": {},
+      "image": {},
+      "chart": {
+        "chart.default": {
+          "palette": [
+            {
+              "kind": "value",
+              "value": "#2563EB"
+            },
+            {
+              "kind": "value",
+              "value": "#14B8A6"
+            }
+          ],
+          "axisColor": {
+            "kind": "value",
+            "value": "#64748B"
+          },
+          "labelColor": {
+            "kind": "value",
+            "value": "#334155"
+          },
+          "gridColor": {
+            "kind": "value",
+            "value": "#CBD5E1"
+          },
+          "lineWidth": 2,
+          "cornerRadius": 3
+        }
+      }
+    }
+  },
+  "slideOrder": [
+    "slide_chart"
+  ],
+  "slides": {
+    "slide_chart": {
+      "id": "slide_chart",
+      "name": "Revenue",
+      "rootOrder": [
+        "chart_revenue"
+      ],
+      "readingOrder": [
+        "chart_revenue"
+      ],
+      "elements": {
+        "chart_revenue": {
+          "id": "chart_revenue",
+          "type": "chart",
+          "semanticKey": "chart.revenue",
+          "role": "chart",
+          "frame": {
+            "x": 160,
+            "y": 120,
+            "width": 1600,
+            "height": 820
+          },
+          "chartType": "bar",
+          "data": {
+            "columns": [
+              {
+                "id": "period",
+                "label": "Period",
+                "type": "string"
+              },
+              {
+                "id": "revenue",
+                "label": "Revenue",
+                "type": "number",
+                "format": "0"
+              }
+            ],
+            "rows": [
+              {
+                "id": "revenue",
+                "values": {
+                  "period": "Q1",
+                  "revenue": 42
+                }
+              },
+              {
+                "id": "q2",
+                "values": {
+                  "period": "Q2",
+                  "revenue": 38
+                }
+              }
+            ]
+          },
+          "encoding": {
+            "categoryField": "period",
+            "valueFields": [
+              "revenue"
+            ]
+          },
+          "options": {
+            "showLegend": false,
+            "showLabels": true
+          },
+          "style": {
+            "styleRef": "chart.default"
+          },
+          "semanticRefs": {
+            "factIds": [
+              "revenue"
+            ],
+            "sourceIds": [
+              "source_report"
+            ]
+          },
+          "altText": "Quarterly revenue"
+        }
+      },
+      "groups": {},
+      "visualStrategy": "structured"
+    }
+  },
+  "facts": {
+    "revenue": {
+      "id": "revenue",
+      "key": "revenue",
+      "label": "Revenue",
+      "value": 42,
+      "unit": "%",
+      "sourceIds": [
+        "source_report"
+      ]
+    }
+  },
+  "sources": {
+    "source_report": {
+      "id": "source_report",
+      "title": "Public report",
+      "citation": "Public report, 2026"
+    }
+  },
+  "assets": {},
+  "fonts": {}
+}

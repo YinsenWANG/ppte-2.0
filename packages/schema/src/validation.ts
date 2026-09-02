@@ -1,4 +1,5 @@
 import type {
+  ChartElement,
   Element,
   ImageElement,
   PpteDocument,
@@ -372,6 +373,6 @@ function escapePointer(value: string): string { return value.replaceAll('~', '~0
 function safeRelativeAssetPath(value: string): boolean { return typeof value === 'string' && value.startsWith('assets/') && !value.startsWith('/') && !value.includes('..') && !value.includes('\\') && !value.includes('\u0000') }
 function safeRelativeFontPath(value: string): boolean { return typeof value === 'string' && value.startsWith('fonts/') && !value.startsWith('/') && !value.includes('..') && !value.includes('\\') && !value.includes('\u0000') }
 
-export type RuntimeElement = TextElement | ImageElement | ShapeElement
+export type RuntimeElement = TextElement | ImageElement | ShapeElement | ChartElement
 export type RuntimeShape = ShapeElement
 export type RuntimeImage = ImageElement

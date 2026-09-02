@@ -8,7 +8,8 @@ import { renderDocumentHtml } from '../../renderer-react/src/index.js'
 import { checkGlyphCoverage, validateRuntimeDocument, validateTransactionShape } from '../../validation/src/index.js'
 import { plainTextToRichText } from '../../richtext-adapter/src/index.js'
 import { buildCapabilityReport, type CapabilityReport } from '../../capability/src/index.js'
-import { PPTE_COMPATIBILITY_PROFILE, PPTE_FORMAT, PPTE_FORMAT_VERSION, PPTE_OPERATION_PROTOCOL_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
+import { buildFactUpdateTransaction } from '../../facts/src/index.js'
+import { PPTE_COMPATIBILITY_PROFILE, PPTE_FORMAT, PPTE_FORMAT_VERSION, PPTE_GA_B_COMPATIBILITY_PROFILE, PPTE_OPERATION_PROTOCOL_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
 import { withErrorSemantics } from '../../schema/src/errors.js'
 import type { AssetId, Element, FontId, PpteDocument, PpteManifest, PortableOrigin, PortableProfile, Revision, Transaction, ValidationIssue } from '../../schema/src/index.js'
 
@@ -146,6 +147,7 @@ export class PortableRuntime {
   private readonly fontBytes: Record<string, Uint8Array>
   private slideIndex = 0
   private step = 0
+  private lastTransaction?: Transaction
 
   constructor(document: PpteDocument, options: { profile?: Exclude<PortableProfile, 'light-edit'>; assetBytes?: Record<AssetId, Uint8Array>; fontBytes?: Record<FontId, Uint8Array> } = {}) {
     if ((options.profile as string | undefined) === 'light-edit') throw new Error('PORTABLE_PROFILE_UNSUPPORTED: Light Edit is outside the first GA portable profile.')
@@ -162,6 +164,7 @@ export class PortableRuntime {
   getCapabilityReport(): CapabilityReport { return buildCapabilityReport(this.session.getDocument(), this.profile === 'quick-fix' ? 'portable-quick-fix' : 'portable-viewer', { sourceRevision: this.session.getRevision() }) }
   getAssetBytes(): Record<string, Uint8Array> { return cloneBytes(this.assetBytes) }
   getFontBytes(): Record<string, Uint8Array> { return cloneBytes(this.fontBytes) }
+  getLastTransaction(): Readonly<Transaction> | undefined { return this.lastTransaction ? structuredClone(this.lastTransaction) : undefined }
 
   editText(target: { slideId?: string; elementId?: string; semanticKey?: string }, value: string): QuickFixResult {
     if (this.profile !== 'quick-fix') return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Viewer profile does not allow edits.')] }
@@ -173,6 +176,7 @@ export class PortableRuntime {
     try { content = plainTextToRichText(value, `${found.element.id}-p`) } catch (cause) { return { ok: false, issues: [issue('TEXT_INVALID', cause instanceof Error ? cause.message : String(cause))] } }
     const transaction = textTransaction(this.session.getRevision(), found.slideId, found.element.id, content)
     const result = this.session.commit(transaction)
+    if (result.ok) this.lastTransaction = transaction
     return { ok: result.ok, revision: result.afterRevision, issues: result.issues }
   }
 
@@ -193,8 +197,25 @@ export class PortableRuntime {
       operations: [{ opId: `portable:image:${found.element.id}`, kind: 'image.replaceAsset', slideId: found.slideId, elementId: found.element.id, assetId, preserveCrop: true }],
     }
     const result = this.session.commit(transaction)
+    if (result.ok) this.lastTransaction = transaction
     return { ok: result.ok, revision: result.afterRevision, issues: result.issues }
   }
+
+  /** Numeric Fact Quick Fix. The generated update and every display sync are one reviewable Transaction. */
+  editFact(factId: string, value: number): QuickFixResult {
+    if (this.profile !== 'quick-fix') return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Viewer profile does not allow Fact edits.')] }
+    if (!Number.isFinite(value)) return { ok: false, issues: [issue('SCHEMA_INVALID', 'Fact Quick Fix accepts a finite numeric value.')] }
+    let transaction: Transaction
+    try {
+      transaction = buildFactUpdateTransaction(this.session.getDocument(), factId, value, { actor: { type: 'human', id: 'portable-quick-fix' }, requireConfirmation: false })
+    } catch (cause) { return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', cause instanceof Error ? cause.message : String(cause))] } }
+    const result = this.session.commit(transaction)
+    if (result.ok) this.lastTransaction = transaction
+    return { ok: result.ok, revision: result.afterRevision, issues: result.issues }
+  }
+
+  updateFact(factId: string, value: number): QuickFixResult { return this.editFact(factId, value) }
+  editFactValue(factId: string, value: number): QuickFixResult { return this.editFact(factId, value) }
 
   undo(): QuickFixResult {
     if (this.profile !== 'quick-fix') return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Viewer profile does not allow undo.')] }
@@ -202,14 +223,14 @@ export class PortableRuntime {
     return { ok: result.ok, revision: result.afterRevision, issues: result.issues }
   }
 
-  saveAsProject(options: { timestamp?: string; clean?: boolean } = {}): QuickFixResult {
+  saveAsProject(options: { timestamp?: string; clean?: boolean; compatibilityProfile?: string } = {}): QuickFixResult {
     try {
-      const bytes = buildPortableCheckpointBytes(this.session.getDocument(), { timestamp: options.timestamp ?? '1970-01-01T00:00:00.000Z', clean: options.clean, recentTransactions: options.clean ? [] : this.session.getHistory().map((entry) => entry.transaction), assetBytes: this.assetBytes, fontBytes: this.fontBytes })
+      const bytes = buildPortableCheckpointBytes(this.session.getDocument(), { timestamp: options.timestamp ?? '1970-01-01T00:00:00.000Z', clean: options.clean, compatibilityProfile: options.compatibilityProfile, recentTransactions: options.clean ? [] : this.session.getHistory().map((entry) => entry.transaction), assetBytes: this.assetBytes, fontBytes: this.fontBytes })
       return { ok: true, revision: this.session.getRevision(), bytes, issues: [] }
     } catch (cause) { return { ok: false, issues: [issue('CHECKPOINT_FAILED', cause instanceof Error ? cause.message : String(cause))] } }
   }
 
-  saveAsNewProject(options: { timestamp?: string } = {}): QuickFixResult { return this.saveAsProject(options) }
+  saveAsNewProject(options: { timestamp?: string; compatibilityProfile?: string } = {}): QuickFixResult { return this.saveAsProject(options) }
 
   saveAsPortable(options: Omit<PortableBuildOptions, 'profile'> = {}): PortableBuildResult {
     return buildPortable(this.session.getDocument(), { ...options, profile: this.profile, sourceRevision: this.session.getRevision(), assetBytes: this.assetBytes, fontBytes: this.fontBytes })
@@ -257,10 +278,12 @@ function assembleHtml(document: PpteDocument, payload: PortablePayload, assetSou
  * adapter. Portable Runtime may depend on Core, but Core/File Format must not
  * become a dependency cycle through the Portable package.
  */
-function buildPortableCheckpointBytes(document: PpteDocument, options: { timestamp?: string; clean?: boolean; recentTransactions?: Transaction[]; assetBytes?: Record<string, Uint8Array>; fontBytes?: Record<string, Uint8Array> }): Uint8Array {
+function buildPortableCheckpointBytes(document: PpteDocument, options: { timestamp?: string; clean?: boolean; compatibilityProfile?: string; recentTransactions?: Transaction[]; assetBytes?: Record<string, Uint8Array>; fontBytes?: Record<string, Uint8Array> }): Uint8Array {
   const issues = validateRuntimeDocument(document).filter((item) => item.severity === 'error')
   if (issues.length) throw new Error(issues.map((item) => `${item.code}: ${item.message}`).join('\n'))
   const snapshot = options.clean ? cleanPortableSnapshot(document) : document
+  const compatibilityProfile = options.compatibilityProfile ?? PPTE_COMPATIBILITY_PROFILE
+  assertPortableDocumentCompatibility(snapshot, compatibilityProfile)
   const revision = canonicalRevision(snapshot)
   const recent = options.recentTransactions ?? []
   if (options.clean && recent.length) throw new Error('CHECKPOINT_FAILED: clean checkpoint cannot contain recent history')
@@ -306,7 +329,7 @@ function buildPortableCheckpointBytes(document: PpteDocument, options: { timesta
     formatVersion: PPTE_FORMAT_VERSION,
     schemaVersion: PPTE_SCHEMA_VERSION,
     operationProtocolVersion: PPTE_OPERATION_PROTOCOL_VERSION,
-    compatibilityProfile: PPTE_COMPATIBILITY_PROFILE,
+    compatibilityProfile,
     documentId: snapshot.documentId,
     contentRevision: revision,
     title: snapshot.metadata.title,
@@ -321,6 +344,11 @@ function buildPortableCheckpointBytes(document: PpteDocument, options: { timesta
   const archive = writeStoredZip(entries)
   readStoredZip(archive)
   return archive
+}
+
+function assertPortableDocumentCompatibility(document: PpteDocument, compatibilityProfile: string): void {
+  const hasChart = Object.values(document.slides).some((slide) => Object.values(slide.elements).some((element) => element.type === 'chart'))
+  if (hasChart && compatibilityProfile !== PPTE_GA_B_COMPATIBILITY_PROFILE) throw new Error(`CHECKPOINT_FAILED: Chart documents require compatibility profile ${PPTE_GA_B_COMPATIBILITY_PROFILE}.`)
 }
 
 function cleanPortableSnapshot(document: PpteDocument): PpteDocument {

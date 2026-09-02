@@ -1,6 +1,6 @@
 import { canonicalRevision, cloneJson } from '../../canonical-json/src/index.js'
 import { computeStructuralDiff } from '../../diff/src/index.js'
-import { compareDocuments } from '../../reviewer/src/index.js'
+import { compareDocuments, compareTwoWayDocuments } from '../../reviewer/src/index.js'
 import type { PpteSession } from '../../core/src/index.js'
 import {
   buildRegenerateTransaction,
@@ -483,7 +483,7 @@ export class AgentToolServer {
       transactionId: stringArgOr(args, 'transactionId', `fact-sync:${factId}:${this.revision()}`),
       baseRevision: this.revision(),
       actor: { type: 'agent', id: 'fact-sync' },
-      scope: { kind: targetSlides.length === 1 ? 'slide' : 'document', ...(targetSlides.length === 1 ? { slideIds: targetSlides } : {}), elementIds: targetElementIds, permissions: ['facts'], allowInsert: false, allowDelete: false },
+      scope: { kind: targetSlides.length === 1 ? 'slide' : 'document', ...(targetSlides.length === 1 ? { slideIds: targetSlides } : {}), elementIds: targetElementIds, permissions: ['facts', 'content'], allowInsert: false, allowDelete: false },
       changeContract: { allowedOperationKinds: ['fact.syncReferences'], allowedElementIds: targetElementIds, maxChangedSlides: targetSlides.length, maxChangedElements: targetElementIds.length, maxInsertedElements: 0, maxDeletedElements: 0, maxReplacedAssets: 0, maxChangedFacts: 0, preserve: { facts: 'preserve' }, requireConfirmation: args.requireConfirmation !== false, userIntentSummary: 'Synchronize selected display references to an existing fact.' },
       reason: stringArgOr(args, 'reason', 'Synchronize fact references.'),
       createdAt: stringArgOr(args, 'createdAt', '2026-09-03T00:00:00.000Z'),
@@ -499,8 +499,8 @@ export class AgentToolServer {
     const current = this.document()
     const diff = computeStructuralDiff(current, revised)
     const base = rawBase as PpteDocument | undefined
-    const comparison = compareDocuments(base ?? current, current, revised)
-    const normalized = base ? comparison : { ...comparison, baseAvailable: false, twoWay: true, conflicts: [], autoAcceptable: false }
+    const comparison = base ? compareDocuments(base, current, revised) : compareTwoWayDocuments(current, revised)
+    const normalized = comparison
     if (normalized.issues.some((issue) => issue.severity === 'error')) return failureWithIssues('compare_revised_copy', this.revision(), normalized.issues)
     return success('compare_revised_copy', this.revision(), { diff, comparison: normalized, revisedRevision: revisionOf(revised), ...(base ? { baseRevision: revisionOf(base) } : {}), conflicts: normalized.conflicts })
   }

@@ -1,6 +1,6 @@
 import { canonicalHash, canonicalRevision, cloneJson } from '../../canonical-json/src/index.js'
 import { validateDocument } from '../../schema/src/index.js'
-import { PPTE_COMPATIBILITY_PROFILE } from '../../schema/src/index.js'
+import { PPTE_GA_B_COMPATIBILITY_PROFILE } from '../../schema/src/index.js'
 import type { Asset, CompareResult, Element, Fact, FontAsset, Operation, PpteDocument, PptePatch, ReviewField, ReviewSelection, SemanticMatchMethod, SemanticReviewUnit, Source, Transaction, ValidationIssue } from '../../schema/src/index.js'
 import { encodePatch } from '../../patch-format/src/index.js'
 
@@ -16,6 +16,10 @@ export interface PatchBuildOptions {
 export class PpteReviewer {
   compare(base: PpteDocument, local: PpteDocument, revised: PpteDocument): CompareResult {
     return compareDocuments(base, local, revised)
+  }
+
+  compareTwoWay(local: PpteDocument, revised: PpteDocument): CompareResult {
+    return compareTwoWayDocuments(local, revised)
   }
 
   buildAcceptTransaction(result: CompareResult, selection: ReviewSelection = {}, actor: Transaction['actor'] = { type: 'reviewer', id: 'three-way-review' }): Transaction {
@@ -95,19 +99,30 @@ export function compareDocuments(base: PpteDocument, local: PpteDocument, revise
 }
 
 export const compareRevisedCopy = compareDocuments
+
+/** Two-way fallback used when the original base snapshot is unavailable. */
+export function compareTwoWayDocuments(local: PpteDocument, revised: PpteDocument): CompareResult {
+  const result = compareDocuments(local, local, revised)
+  return { ...result, baseAvailable: false, twoWay: true, autoAcceptable: false }
+}
+
 export const exportPatch = createPatch
 export const buildPatch = createPatch
 
 export function buildAcceptTransaction(result: CompareResult, selection: ReviewSelection = {}, actor: Transaction['actor'] = { type: 'reviewer', id: 'three-way-review' }): Transaction {
   const selectedIds = selection.unitIds ? new Set(selection.unitIds) : undefined
   const include = (unit: SemanticReviewUnit) => {
-    if (unit.status === 'conflict' || unit.status === 'ambiguous' || !unit.operations?.length) return false
+    const resolution = selection.resolutions?.[unit.unitId]
+    if ((unit.status === 'conflict' || unit.status === 'ambiguous') && resolution !== 'revised') return false
+    if (!unit.operations?.length) return false
     if (unit.match === 'heuristic' && !selectedIds) return false
-    if (selectedIds) return selectedIds.has(unit.unitId)
-    if (unit.status === 'revised-only' || unit.status === 'same-change') return true
+    if (selectedIds && !selectedIds.has(unit.unitId) && !resolution) return false
+    if (resolution === 'local') return false
+    if (unit.status === 'revised-only') return selection.includeRevisedOnly !== false
+    if (unit.status === 'same-change') return selection.includeSameChange !== false
     if (unit.status === 'added') return selection.includeAdded !== false
     if (unit.status === 'deleted') return selection.includeDeleted === true
-    return false
+    return resolution === 'revised'
   }
   const operations: Operation[] = []
   const seen = new Set<string>()
@@ -178,7 +193,7 @@ export function createPatch(base: PpteDocument, revised: PpteDocument, options: 
       createdAt: options.createdAt ?? '1970-01-01T00:00:00.000Z',
       actor: options.actor ?? { type: 'reviewer', id: 'three-way-review' },
       operationProtocolVersion: '1.0',
-      compatibilityProfile: options.compatibilityProfile ?? PPTE_COMPATIBILITY_PROFILE,
+      compatibilityProfile: options.compatibilityProfile ?? PPTE_GA_B_COMPATIBILITY_PROFILE,
       files: [],
     },
     operations,
@@ -304,6 +319,8 @@ function elementFields(element: Element): Partial<Record<ReviewField, unknown>> 
   return {
     content: element.type === 'text' ? element.content : undefined,
     data: element.type === 'chart' ? element.data : undefined,
+    encoding: element.type === 'chart' ? element.encoding : undefined,
+    options: element.type === 'chart' ? element.options : undefined,
     style: 'style' in element ? { style: element.style, paragraphStyle: element.type === 'text' ? element.paragraphStyle : undefined, boxStyle: element.type === 'text' ? element.boxStyle : undefined } : undefined,
     geometry: { frame: element.frame, rotationDeg: element.rotationDeg, flipX: element.flipX, flipY: element.flipY },
     asset: element.type === 'image' ? { assetId: element.assetId, crop: element.crop, focalPoint: element.focalPoint } : undefined,
@@ -320,6 +337,8 @@ function operationsForField(slideId: string, local: Element, revised: Element, f
   const prefix = `review:${slideId}:${local.id}:${field}`
   if (field === 'content' && local.type === 'text' && revised.type === 'text') return [{ opId: prefix, kind: 'text.replaceContent', slideId, elementId: local.id, content: cloneJson(revised.content) }]
   if (field === 'data' && local.type === 'chart' && revised.type === 'chart') return [{ opId: prefix, kind: 'chart.replaceData', slideId, elementId: local.id, data: cloneJson(revised.data) }]
+  if (field === 'encoding' && local.type === 'chart' && revised.type === 'chart') return [{ opId: prefix, kind: 'chart.updateEncoding', slideId, elementId: local.id, encoding: cloneJson(revised.encoding) }]
+  if (field === 'options' && local.type === 'chart' && revised.type === 'chart') return [{ opId: prefix, kind: 'chart.updateOptions', slideId, elementId: local.id, patch: cloneJson(revised.options ?? {}), ...(revised.options === undefined ? { unset: true } : { replace: true }) }]
   if (field === 'geometry') {
     const operations: Operation[] = []
     if (!sameValue(local.frame, revised.frame)) operations.push({ opId: `${prefix}:frame`, kind: 'element.resize', slideId, elementId: local.id, frame: cloneJson(revised.frame) })
@@ -329,7 +348,12 @@ function operationsForField(slideId: string, local: Element, revised: Element, f
   if (field === 'asset' && local.type === 'image' && revised.type === 'image') return [
     ...imageAssetOperations(slideId, local, revised, prefix),
   ]
-  if (field === 'identity' && local.semanticKey !== revised.semanticKey && local.type === revised.type && local.role === revised.role && local.name === revised.name && sameValue(local.semanticRefs, revised.semanticRefs)) return [{ opId: prefix, kind: 'element.setSemanticKey', slideId, elementId: local.id, semanticKey: revised.semanticKey }]
+  if (field === 'identity' && local.type === revised.type && local.role === revised.role && local.name === revised.name) {
+    const operations: Operation[] = []
+    if (local.semanticKey !== revised.semanticKey) operations.push({ opId: `${prefix}:key`, kind: 'element.setSemanticKey', slideId, elementId: local.id, semanticKey: revised.semanticKey })
+    if (!sameValue(local.semanticRefs, revised.semanticRefs)) operations.push({ opId: `${prefix}:refs`, kind: 'element.setSemanticRefs', slideId, elementId: local.id, semanticRefs: cloneJson(revised.semanticRefs), unset: revised.semanticRefs === undefined })
+    return operations
+  }
   if (field === 'visibility') {
     const operations: Operation[] = []
     if (local.visible !== revised.visible) operations.push({ opId: `${prefix}:visible`, kind: 'element.setVisibility', slideId, elementId: local.id, visible: revised.visible, unset: revised.visible === undefined })
@@ -341,7 +365,10 @@ function operationsForField(slideId: string, local: Element, revised: Element, f
     if (local.type === 'text' && revised.type === 'text' && (!sameValue(local.paragraphStyle, revised.paragraphStyle) || !sameValue(local.boxStyle, revised.boxStyle))) return []
     const operations: Operation[] = []
     if (local.style.styleRef !== revised.style.styleRef) operations.push({ opId: `${prefix}:ref`, kind: 'element.setStyleRef', slideId, elementId: local.id, styleRef: revised.style.styleRef })
-    if (revised.style.overrides) {
+    if (local.type === 'chart' && revised.type === 'chart') {
+      if (revised.style.overrides) operations.push({ opId: `${prefix}:chart-style`, kind: 'chart.updateStyle', slideId, elementId: local.id, patch: cloneJson(revised.style.overrides), replace: true })
+      else operations.push({ opId: `${prefix}:chart-style`, kind: 'chart.updateStyle', slideId, elementId: local.id, patch: {}, replace: true, unset: true })
+    } else if (revised.style.overrides) {
       operations.push({ opId: `${prefix}:clear`, kind: 'element.clearStyleOverrides', slideId, elementId: local.id })
       operations.push({ opId: `${prefix}:overrides`, kind: 'element.updateStyleOverrides', slideId, elementId: local.id, patch: cloneJson(revised.style.overrides) as Record<string, never> })
     } else operations.push({ opId: `${prefix}:clear`, kind: 'element.clearStyleOverrides', slideId, elementId: local.id })
@@ -401,6 +428,9 @@ function documentIssues(document: PpteDocument, side: string): ValidationIssue[]
   return validateDocument(document, { runtimeSubset: false }).filter((issue) => issue.severity === 'error').map((issue) => ({ ...issue, message: `${side}: ${issue.message}` }))
 }
 function permissionsFor(operation: Operation): Transaction['scope']['permissions'] {
+  if (operation.kind === 'element.setSemanticRefs') return ['content']
+  if (operation.kind === 'fact.syncReferences') return ['facts', 'content']
+  if (operation.kind === 'chart.updateStyle') return ['style']
   if (operation.kind.startsWith('text.') || operation.kind === 'document.updateMetadata') return ['content']
   if (operation.kind.startsWith('image.') || operation.kind === 'asset.upsert' || operation.kind === 'font.upsert') return ['assets']
   if (operation.kind.startsWith('element.') || operation.kind.startsWith('group.') || operation.kind.startsWith('slide.') || operation.kind.startsWith('layout.')) return ['structure', 'geometry']

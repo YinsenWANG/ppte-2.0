@@ -91,8 +91,13 @@ export function buildFactUpdateTransaction(document: PpteDocument, factId: FactI
   const targetElementIds = options.targetElementIds ?? references.map((reference) => reference.elementId)
   if (!targetElementIds.length) throw new Error(`FACT_REFERENCE_MISSING: Fact ${factId} has no references.`)
   const selectedReferences = references.filter((reference) => targetElementIds.includes(reference.elementId))
-  const textTargets = selectedReferences.filter((reference) => reference.elementType === 'text').map((reference) => reference.elementId)
+  const textTargets = selectedReferences.filter((reference) => {
+    if (reference.elementType !== 'text') return false
+    const element = document.slides[reference.slideId]?.elements[reference.elementId]
+    return element?.type === 'text' && canSynchronizeText(element, before)
+  }).map((reference) => reference.elementId)
   const chartTargets = selectedReferences.filter((reference) => reference.elementType === 'chart').map((reference) => reference.elementId)
+  const syncElementIds = [...new Set([...textTargets, ...chartTargets])]
   const operations: Operation[] = [{ opId: `fact:${factId}:upsert`, kind: 'fact.upsert', fact: next }]
   const explicitStrategy = options.strategy
   if ((explicitStrategy ?? 'replace-display-value') === 'replace-display-value' && textTargets.length) operations.push({ opId: `fact:${factId}:sync:text`, kind: 'fact.syncReferences', factId, targetElementIds: [...new Set(textTargets)], strategy: 'replace-display-value', previousValue: before.value })
@@ -106,7 +111,7 @@ export function buildFactUpdateTransaction(document: PpteDocument, factId: FactI
     changeContract: {
       allowedOperationKinds: ['fact.upsert', 'fact.syncReferences'],
       maxChangedSlides: references.length ? new Set(references.map((reference) => reference.slideId)).size : 0,
-      maxChangedElements: targetElementIds.length,
+      maxChangedElements: syncElementIds.length,
       maxInsertedElements: 0,
       maxDeletedElements: 0,
       maxReplacedAssets: 0,
@@ -121,12 +126,17 @@ export function buildFactUpdateTransaction(document: PpteDocument, factId: FactI
     reason: 'Explicit Fact synchronization',
     createdAt: options.createdAt ?? '1970-01-01T00:00:00.000Z',
     validationLevel: 'L2',
-    metadata: { kind: 'fact-sync', factId, targetElementIds: [...new Set(targetElementIds)] },
+    metadata: { kind: 'fact-sync', factId, targetElementIds: syncElementIds },
     operations,
   }
 }
 
 function plainText(element: Extract<Element, { type: 'text' }>): string { return element.content.paragraphs.flatMap((paragraph) => paragraph.runs.map((run) => run.text)).join('\n') }
+function canSynchronizeText(element: Extract<Element, { type: 'text' }>, fact: Fact): boolean {
+  const text = plainText(element)
+  const previousDisplay = formatFactValue(fact)
+  return previousDisplay.length > 0 ? text.includes(previousDisplay) : text.length === 0
+}
 function extractFactCandidates(text: string, fact: Fact): string[] {
   const display = formatFactValue(fact)
   if (display && text.includes(display)) return [display]
@@ -139,10 +149,10 @@ function extractFactCandidates(text: string, fact: Fact): string[] {
 function chartFactValues(element: Extract<Element, { type: 'chart' }>, fact: Fact): number[] {
   const keys = new Set([fact.id, fact.key])
   const fields = new Set(element.encoding.valueFields)
-  const values: number[] = []
-  for (const row of element.data.rows) if (keys.has(row.id)) for (const field of fields) if (typeof row.values[field] === 'number') values.push(row.values[field] as number)
-  for (const row of element.data.rows) for (const field of fields) if (keys.has(field) && typeof row.values[field] === 'number') values.push(row.values[field] as number)
-  return values
+  const rowMatches = element.data.rows.filter((row) => keys.has(row.id))
+  if (rowMatches.length) return rowMatches.flatMap((row) => [...fields].filter((field) => typeof row.values[field] === 'number').map((field) => row.values[field] as number))
+  const fieldMatches = element.data.rows.flatMap((row) => [...fields].filter((field) => keys.has(field) && typeof row.values[field] === 'number').map((field) => row.values[field] as number))
+  return fieldMatches.length === 1 ? fieldMatches : []
 }
 function isDisplayableSource(source: Source): boolean { return Boolean(source.citation || source.title || source.author || source.publisher || source.url) }
 function formatNumber(value: number, format?: string): string {

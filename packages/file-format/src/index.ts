@@ -4,7 +4,7 @@ import { dirname, basename, join } from 'node:path'
 import { canonicalHash, canonicalJsonString, canonicalRevision } from '../../canonical-json/src/index.js'
 import { checkCompatibility } from '../../compatibility/src/index.js'
 import { validateRuntimeDocument, validateTransactionShape } from '../../validation/src/index.js'
-import { PPTE_COMPATIBILITY_PROFILE, PPTE_FORMAT, PPTE_FORMAT_VERSION, PPTE_OPERATION_PROTOCOL_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
+import { PPTE_COMPATIBILITY_PROFILE, PPTE_FORMAT, PPTE_FORMAT_VERSION, PPTE_GA_B_COMPATIBILITY_PROFILE, PPTE_OPERATION_PROTOCOL_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
 import type { PpteDocument, PpteManifest, PortableProfile, Revision, Transaction, ValidationIssue } from '../../schema/src/index.js'
 import { ContentAddressedStore } from './cas.js'
 import { buildPortable as buildPortableRuntime } from '../../portable-runtime/src/index.js'
@@ -24,6 +24,8 @@ export interface CheckpointWriteOptions {
   faultInjector?: FaultInjector
   readyFile?: string
   pauseBeforeRenameMs?: number
+  /** Defaults to GA-A for backward-compatible Stable Core checkpoints. */
+  compatibilityProfile?: string
 }
 
 export interface CheckpointResult {
@@ -77,6 +79,8 @@ export function writeCheckpoint(document: PpteDocument, target: string, options:
   if (issues.length) throw new Error(issues.map((issue) => `${issue.code}: ${issue.message}`).join('\n'))
   const revision = canonicalRevision(document)
   const timestamp = options.timestamp ?? new Date().toISOString()
+  const compatibilityProfile = options.compatibilityProfile ?? PPTE_COMPATIBILITY_PROFILE
+  assertDocumentCompatibility(document, compatibilityProfile)
   const entries: ZipEntry[] = []
   addEntry(entries, 'mimetype', bytes('application/vnd.ppte+zip'))
   addEntry(entries, 'document.json', bytes(canonicalJsonString(document)))
@@ -123,7 +127,7 @@ export function writeCheckpoint(document: PpteDocument, target: string, options:
     formatVersion: '2',
     schemaVersion: '2.0.0',
     operationProtocolVersion: '1.0',
-    compatibilityProfile: PPTE_COMPATIBILITY_PROFILE,
+    compatibilityProfile,
     documentId: document.documentId,
     contentRevision: revision,
     title: document.metadata.title,
@@ -183,6 +187,7 @@ export function openCheckpointBytes(bytesOnDisk: Uint8Array): OpenCheckpointResu
   const document = parseJson<PpteDocument>(archive, 'document.json')
   const issues = validateRuntimeDocument(document).filter((issue) => issue.severity === 'error')
   if (issues.length) throw new Error(issues.map((issue) => `${issue.code}: ${issue.message}`).join('\n'))
+  assertDocumentCompatibility(document, manifest.compatibilityProfile)
   if (manifest.documentId !== document.documentId) throw new Error('CHECKPOINT_FAILED: manifest/document documentId mismatch')
   const revision = canonicalRevision(document)
   if (manifest.contentRevision !== revision) throw new Error(`CHECKPOINT_FAILED: manifest revision ${manifest.contentRevision} does not match document ${revision}`)
@@ -219,6 +224,8 @@ export function buildCheckpointBytes(document: PpteDocument, options: Checkpoint
   if (issues.length) throw new Error(issues.map((issue) => `${issue.code}: ${issue.message}`).join('\n'))
   const revision = canonicalRevision(document)
   const timestamp = options.timestamp ?? '1970-01-01T00:00:00.000Z'
+  const compatibilityProfile = options.compatibilityProfile ?? PPTE_COMPATIBILITY_PROFILE
+  assertDocumentCompatibility(document, compatibilityProfile)
   const entries: ZipEntry[] = []
   addEntry(entries, 'mimetype', bytes('application/vnd.ppte+zip'))
   addEntry(entries, 'document.json', bytes(canonicalJsonString(document)))
@@ -265,7 +272,7 @@ export function buildCheckpointBytes(document: PpteDocument, options: Checkpoint
     formatVersion: '2',
     schemaVersion: '2.0.0',
     operationProtocolVersion: '1.0',
-    compatibilityProfile: PPTE_COMPATIBILITY_PROFILE,
+    compatibilityProfile,
     documentId: document.documentId,
     contentRevision: revision,
     title: document.metadata.title,
@@ -297,7 +304,6 @@ export function cleanDocumentSnapshot(document: PpteDocument): PpteDocument {
 export function validateManifest(manifest: PpteManifest): void {
   if (!manifest || typeof manifest !== 'object') throw new Error('CHECKPOINT_FAILED: manifest must be an object')
   if (manifest.format !== PPTE_FORMAT || manifest.formatVersion !== PPTE_FORMAT_VERSION || manifest.schemaVersion !== PPTE_SCHEMA_VERSION) throw new Error('CHECKPOINT_FAILED: unsupported manifest format or schema version')
-  if (manifest.operationProtocolVersion !== PPTE_OPERATION_PROTOCOL_VERSION || manifest.compatibilityProfile !== PPTE_COMPATIBILITY_PROFILE) throw new Error('CHECKPOINT_FAILED: unsupported compatibility profile')
   const compatibility = checkCompatibility(manifest)
   if (!compatibility.ok || compatibility.disposition !== 'native') throw new Error(`CHECKPOINT_FAILED: ${compatibility.issues[0]?.code ?? 'COMPATIBILITY_PROFILE_UNSUPPORTED'}`)
   if (typeof manifest.documentId !== 'string' || !manifest.documentId || typeof manifest.contentRevision !== 'string' || !/^sha256-[0-9a-fA-F]{64}$/.test(manifest.contentRevision)) throw new Error('CHECKPOINT_FAILED: invalid manifest identity or revision')
@@ -315,6 +321,11 @@ export function validateManifest(manifest: PpteManifest): void {
     if (!['standard', 'audit', 'clean'].includes(manifest.history.mode) || (manifest.history.snapshotRevision !== undefined && manifest.history.snapshotRevision !== manifest.contentRevision) || (manifest.history.recentTransactionCount !== undefined && (!Number.isInteger(manifest.history.recentTransactionCount) || manifest.history.recentTransactionCount < 0))) throw new Error('CHECKPOINT_FAILED: invalid manifest history descriptor')
     if (manifest.clean && manifest.history.mode !== 'clean') throw new Error('CHECKPOINT_FAILED: clean checkpoint has a non-clean history descriptor')
   }
+}
+
+function assertDocumentCompatibility(document: PpteDocument, compatibilityProfile: string): void {
+  const hasChart = Object.values(document.slides).some((slide) => Object.values(slide.elements).some((element) => element.type === 'chart'))
+  if (hasChart && compatibilityProfile !== PPTE_GA_B_COMPATIBILITY_PROFILE) throw new Error(`CHECKPOINT_FAILED: Chart documents require compatibility profile ${PPTE_GA_B_COMPATIBILITY_PROFILE}.`)
 }
 
 function readRecentTransactions(archive: Map<string, Uint8Array>, manifest: PpteManifest): Transaction[] {

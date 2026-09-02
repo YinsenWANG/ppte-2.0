@@ -1,9 +1,11 @@
 import { canonicalRevision } from '../../canonical-json/src/index.js'
+import { GA_B_CHART_TYPES, validateChartContract } from '../../charts/src/index.js'
+import { checkFactSourceConsistency } from '../../facts/src/index.js'
 import { validateDocument } from '../../schema/src/index.js'
 import { checkGlyphCoverage, inspectGlyphCoverage, textContent, validateTextOverflow } from '../../validation/src/index.js'
 import type { Element, PpteDocument, ValidationIssue } from '../../schema/src/index.js'
 
-export type CapabilityTarget = 'portable-viewer' | 'portable-quick-fix' | 'presenter' | 'pdf' | 'png'
+export type CapabilityTarget = 'portable-viewer' | 'portable-quick-fix' | 'presenter' | 'pdf' | 'png' | 'pptx-image'
 export type CapabilityStatus = 'native' | 'property' | 'rasterized' | 'static' | 'font-replacement' | 'layout-risk' | 'missing-source' | 'unsupported' | 'blocked'
 
 export interface CapabilityItem {
@@ -32,7 +34,10 @@ export interface CapabilityReport {
 const STATUS_ORDER: CapabilityStatus[] = ['blocked', 'unsupported', 'font-replacement', 'missing-source', 'layout-risk', 'rasterized', 'property', 'static', 'native']
 
 export function buildCapabilityReport(document: PpteDocument, target: CapabilityTarget, options: { sourceRevision?: string } = {}): CapabilityReport {
-  const issues = validateDocument(document, { runtimeSubset: false }).filter((issue) => issue.severity === 'error')
+  const issues = [
+    ...validateDocument(document, { runtimeSubset: false }).filter((issue) => issue.severity === 'error'),
+    ...checkFactSourceConsistency(document).issues,
+  ]
   const items: CapabilityItem[] = []
   for (const slideId of document.slideOrder ?? []) {
     const slide = document.slides?.[slideId]
@@ -42,13 +47,13 @@ export function buildCapabilityReport(document: PpteDocument, target: Capability
     }
   }
   const summary = Object.fromEntries(STATUS_ORDER.map((status) => [status, items.filter((item) => item.status === status).length])) as Record<CapabilityStatus, number>
-  const degraded = items.some((item) => ['blocked', 'unsupported', 'font-replacement', 'missing-source', 'layout-risk'].includes(item.status))
+  const degraded = items.some((item) => ['blocked', 'unsupported', 'font-replacement', 'missing-source', 'layout-risk', 'rasterized'].includes(item.status))
   return {
     reportVersion: '1',
     target,
     sourceDocumentId: document.documentId,
     sourceRevision: options.sourceRevision ?? canonicalRevision(document),
-    ok: issues.length === 0 && !items.some((item) => ['blocked', 'unsupported', 'missing-source'].includes(item.status)),
+    ok: !issues.some((issue) => issue.severity === 'error' || ['FACT_DISPLAY_INCONSISTENT', 'CHART_FACT_INCONSISTENT', 'SOURCE_CITATION_MISSING'].includes(issue.code)) && !items.some((item) => ['blocked', 'unsupported', 'missing-source'].includes(item.status)),
     degraded,
     items,
     issues,
@@ -84,6 +89,16 @@ function capabilityForElement(document: PpteDocument, slideId: string, element: 
     reason = `Asset ${element.assetId} is not present in the document asset table.`
     recovery = 'Embed the asset or remove the image before export.'
   }
+  if (element.type === 'chart' && !GA_B_CHART_TYPES.includes(element.chartType as typeof GA_B_CHART_TYPES[number])) {
+    status = 'unsupported'
+    reason = `Chart type ${element.chartType} is outside the GA-B Bar/Line/Pie runtime.`
+    recovery = 'Use a Bar, Line, or Pie chart, or keep the document in a forward-compatible profile.'
+  }
+  if (element.type === 'chart' && !validateChartContract(element, { runtimeSubset: true }).length && target === 'pptx-image') {
+    status = 'rasterized'
+    reason = 'The chart is included in the single-page image surface; chart data is not editable in PPTX.'
+    recovery = 'Edit the Fact or Chart in PPTe and export again.'
+  }
   if (element.semanticRefs?.sourceIds?.some((sourceId) => !document.sources?.[sourceId])) {
     status = 'missing-source'
     reason = 'A referenced source is not present in the document.'
@@ -94,7 +109,9 @@ function capabilityForElement(document: PpteDocument, slideId: string, element: 
 }
 
 function baseStatus(element: Element, target: CapabilityTarget): CapabilityStatus {
-  if (element.type === 'chart' || element.type === 'component') return 'unsupported'
+  if (element.type === 'component') return 'unsupported'
+  if (target === 'pptx-image') return element.type === 'chart' || element.type === 'text' || element.type === 'shape' || element.type === 'image' ? 'rasterized' : 'unsupported'
+  if (element.type === 'chart') return target === 'portable-quick-fix' ? 'static' : target === 'png' || target === 'pdf' ? 'rasterized' : 'native'
   if (target === 'portable-viewer' || target === 'presenter') return 'native'
   if (target === 'portable-quick-fix') return element.type === 'text' || element.type === 'image' ? 'property' : 'static'
   if (target === 'png') return 'rasterized'

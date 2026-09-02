@@ -6,7 +6,7 @@
   "required": ["reportVersion", "target", "sourceDocumentId", "sourceRevision", "ok", "degraded", "items", "issues", "summary"],
   "properties": {
     "reportVersion": { "const": "1" },
-    "target": { "enum": ["portable-viewer", "portable-quick-fix", "presenter", "pdf", "png"] },
+    "target": { "enum": ["portable-viewer", "portable-quick-fix", "presenter", "pdf", "png", "pptx-image"] },
     "sourceDocumentId": { "type": "string", "minLength": 1 },
     "sourceRevision": { "type": "string", "minLength": 1 },
     "ok": { "type": "boolean" },

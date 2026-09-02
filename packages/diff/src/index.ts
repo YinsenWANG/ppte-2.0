@@ -57,8 +57,8 @@ export function deepChangedPaths(before: unknown, after: unknown): string[] {
 }
 
 export function elementFieldHash(element: Element, field: 'content' | 'style' | 'geometry' | 'asset' | 'identity'): string {
-  if (field === 'content') return hashPresent(element.type === 'text' ? element.content : undefined)
-  if (field === 'style') return hashPresent(element.type === 'text' || element.type === 'shape' || element.type === 'image' ? element.style : undefined)
+  if (field === 'content') return hashPresent(element.type === 'text' ? element.content : element.type === 'chart' ? { data: element.data, encoding: element.encoding, options: element.options } : undefined)
+  if (field === 'style') return hashPresent(element.type === 'text' || element.type === 'shape' || element.type === 'image' || element.type === 'chart' ? element.style : undefined)
   if (field === 'geometry') return hashPresent({ frame: element.frame, rotationDeg: element.rotationDeg, flipX: element.flipX, flipY: element.flipY })
   if (field === 'asset') return hashPresent(element.type === 'image' ? { assetId: element.assetId, crop: element.crop, focalPoint: element.focalPoint } : undefined)
   return hashPresent({ id: element.id, semanticKey: element.semanticKey })

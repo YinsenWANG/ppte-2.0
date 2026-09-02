@@ -14,6 +14,7 @@ EXAMPLES = ROOT / 'examples'
 
 pairs = [
     ('document.schema.json', 'minimal-document.json'),
+    ('document.schema.json', 'ga-b-chart-document.json'),
     ('transaction.schema.json', 'text-change-transaction.json'),
     ('slide-ir.schema.json', 'slide-ir.json'),
     ('presentation-ir.schema.json', 'presentation-ir.json'),

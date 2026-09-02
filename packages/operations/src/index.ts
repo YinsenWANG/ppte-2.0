@@ -734,9 +734,13 @@ function assertThemePreset(category: 'text' | 'shape' | 'image' | 'chart', value
     const fields = new Set(['fontFamily', 'fontSize', 'fontWeight', 'color', 'lineHeight', 'letterSpacing', 'verticalAlign', 'direction'])
     if (!validValueOrToken(record.fontFamily, 'string') || !finitePositiveValue(record.fontSize) || !validValueOrToken(record.color, 'color')) throw error('STYLE_PRESET_INVALID', 'Text preset requires typed fontFamily, positive fontSize, and color.')
     for (const [field, fieldValue] of Object.entries(record)) if (!fields.has(field) || !validTextStyleField(field, fieldValue)) throw error('STYLE_PRESET_INVALID', `Invalid text preset field ${field}.`)
+    return
   }
-  const fields = category === 'shape' ? new Set(['fill', 'stroke', 'radius', 'shadow']) : category === 'image' ? new Set(['border', 'radius', 'shadow']) : undefined
-  if (fields) for (const [field, fieldValue] of Object.entries(record)) if (!fields.has(field) || (category === 'shape' && !validShapeStyleField(field, fieldValue)) || (category === 'image' && !validImageStyleField(field, fieldValue))) throw error('STYLE_PRESET_INVALID', `Invalid ${category} preset field ${field}.`)
+  const fields = category === 'shape' ? new Set(['fill', 'stroke', 'radius', 'shadow']) : category === 'image' ? new Set(['border', 'radius', 'shadow']) : new Set(['palette', 'axisColor', 'labelColor', 'gridColor', 'lineWidth', 'cornerRadius'])
+  for (const [field, fieldValue] of Object.entries(record)) {
+    const valid = category === 'shape' ? validShapeStyleField(field, fieldValue) : category === 'image' ? validImageStyleField(field, fieldValue) : validChartStyleField(field, fieldValue)
+    if (!fields.has(field) || !valid) throw error('STYLE_PRESET_INVALID', `Invalid ${category} preset field ${field}.`)
+  }
 }
 
 function validValueOrToken(value: unknown, valueType: 'string' | 'color' = 'color'): boolean {

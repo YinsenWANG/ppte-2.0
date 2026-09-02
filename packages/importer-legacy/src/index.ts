@@ -1,9 +1,16 @@
 import { canonicalJsonString, sha256HexBytes } from '../../canonical-json/src/index.js'
+import { GA_B_CHART_TYPES } from '../../charts/src/index.js'
 import { getCompatibilityProfile, type CompatibilityProfile, type CompatibilityDisposition } from '../../compatibility/src/index.js'
 import { withErrorSemantics } from '../../schema/src/errors.js'
 import { validateRuntimeDocument } from '../../validation/src/index.js'
 import type {
   Asset,
+  ChartColumn,
+  ChartData,
+  ChartElement,
+  ChartEncoding,
+  ChartOptions,
+  ChartStyle,
   ContentSafety,
   Element,
   ErrorImpact,
@@ -272,6 +279,7 @@ function mapElement(raw: RecordLike, hint: string, parent: Transform, context: M
       fit: raw.fit === 'contain' || raw.fit === 'cover' || raw.fit === 'fill' ? raw.fit : 'contain',
       crop: validNormalizedRect(raw.crop),
       focalPoint: validPoint(raw.focalPoint),
+      semanticRefs: normalizeSemanticRefs(raw),
       style: normalizeStyleBinding(raw.style, 'image', context.theme, context.report),
       altText: stringValue(raw.altText) ?? stringValue(raw.description),
     }
@@ -287,10 +295,21 @@ function mapElement(raw: RecordLike, hint: string, parent: Transform, context: M
       name: stringValue(raw.name),
       frame,
       shape,
+      semanticRefs: normalizeSemanticRefs(raw),
       style: normalizeStyleBinding(raw.style, 'shape', context.theme, context.report),
       points: Array.isArray(raw.points) ? raw.points.map(validPoint).filter((point): point is Point => Boolean(point)) : undefined,
     }
     return { element, elements: [element], leafIds: [element.id], nestedGroup: false }
+  }
+  if (rawType === 'chart') {
+    if (context.profile.id !== 'ppte-2.0-ga-b.1') {
+      context.report.degradedElements += 1
+      addIssue(context.report, { code: 'MIGRATION_UNSUPPORTED_ELEMENT', severity: 'warning', message: 'Chart elements require the GA-B target profile and were not imported into the GA-A runtime.', path: hint, slideId, recovery: 'Migrate again with targetProfile ppte-2.0-ga-b.1 or export the chart as a safe image.' })
+      return undefined
+    }
+    const chart = normalizeChartElement(raw, hint, frame, context, slideId)
+    if (!chart) return undefined
+    return { element: chart, elements: [chart], leafIds: [chart.id], nestedGroup: false }
   }
   if (rawType) {
     context.report.degradedElements += 1
@@ -311,12 +330,104 @@ function mapText(raw: RecordLike, hint: string, frame: Frame, context: Migration
     name: stringValue(raw.name),
     frame,
     content: contentResult.content,
+    semanticRefs: normalizeSemanticRefs(raw),
     style: { styleRef: style.styleRef, ...(Object.keys(style.overrides).length ? { overrides: style.overrides } : {}) },
     paragraphStyle: isRecord(raw.paragraphStyle) ? raw.paragraphStyle as TextElement['paragraphStyle'] : undefined,
     overflowPolicy: raw.overflowPolicy === 'clip' || raw.overflowPolicy === 'ellipsis' || raw.overflowPolicy === 'warn' ? raw.overflowPolicy : 'warn',
     extensions: contentResult.runStyleExtension ? [contentResult.runStyleExtension] : undefined,
   }
   return { element, elements: [element], leafIds: [element.id], nestedGroup: false }
+}
+
+function normalizeChartElement(raw: RecordLike, hint: string, frame: Frame, context: MigrationContext, slideId: string): ChartElement | undefined {
+  const requestedType = String(raw.chartType ?? raw.type)
+  const chartType = GA_B_CHART_TYPES.includes(requestedType as typeof GA_B_CHART_TYPES[number]) ? requestedType as ChartElement['chartType'] : undefined
+  const data = normalizeChartData(raw.data ?? raw.chartData)
+  if (!chartType || !data) {
+    context.report.degradedElements += 1
+    addIssue(context.report, { code: 'MIGRATION_UNSUPPORTED_ELEMENT', severity: 'warning', message: `Chart ${hint} has no valid GA-B chart type or data and was not imported.`, path: hint, slideId, recovery: 'Provide columns, rows, and a Bar, Line, or Pie chart type.' })
+    return undefined
+  }
+  const encoding = normalizeChartEncoding(raw.encoding, data)
+  if (!encoding) {
+    context.report.degradedElements += 1
+    addIssue(context.report, { code: 'MIGRATION_UNSUPPORTED_ELEMENT', severity: 'warning', message: `Chart ${hint} has no valid data encoding and was not imported.`, path: `${hint}/encoding`, slideId, recovery: 'Provide categoryField and numeric valueFields.' })
+    return undefined
+  }
+  const rawOptions = asRecord(raw.options)
+  const options: ChartOptions | undefined = rawOptions ? {
+    orientation: rawOptions.orientation === 'horizontal' ? 'horizontal' : rawOptions.orientation === 'vertical' ? 'vertical' : undefined,
+    stacked: rawOptions.stacked === true,
+    showLegend: rawOptions.showLegend !== false,
+    showLabels: rawOptions.showLabels === true,
+    showXAxis: rawOptions.showXAxis !== false,
+    showYAxis: rawOptions.showYAxis !== false,
+    showGrid: rawOptions.showGrid !== false,
+    sort: rawOptions.sort === 'ascending' || rawOptions.sort === 'descending' ? rawOptions.sort : 'none',
+  } : undefined
+  return {
+    id: uniqueId(stringValue(raw.id) ?? hint, 'el', context.usedElementIds, context.report, `${hint}/id`),
+    type: 'chart',
+    chartType,
+    semanticKey: safeSemanticKey(raw.semanticKey ?? raw.key, context, slideId),
+    role: validRole(raw.role) ?? 'chart',
+    name: stringValue(raw.name),
+    frame,
+    data,
+    encoding,
+    options,
+    semanticRefs: normalizeSemanticRefs(raw),
+    style: normalizeStyleBinding(raw.style, 'chart', context.theme, context.report) as ChartElement['style'],
+    altText: stringValue(raw.altText) ?? stringValue(raw.description),
+  }
+}
+
+function normalizeChartData(raw: unknown): ChartData | undefined {
+  const record = asRecord(raw)
+  const columnsRaw = record && Array.isArray(record.columns) ? record.columns : []
+  const rowsRaw = record && Array.isArray(record.rows) ? record.rows : []
+  const columns: ChartColumn[] = columnsRaw.map((value, index) => {
+    const column = asRecord(value)
+    const type = column?.type === 'number' || column?.type === 'date' ? column.type : 'string'
+    return { id: stringValue(column?.id) ?? `column_${index + 1}`, label: stringValue(column?.label) ?? stringValue(column?.id) ?? `Column ${index + 1}`, type, format: stringValue(column?.format) }
+  })
+  if (columns.length < 2) return undefined
+  const ids = new Set(columns.map((column) => column.id))
+  if (ids.size !== columns.length) return undefined
+  const rows = rowsRaw.map((value, index) => {
+    const row = asRecord(value)
+    const valuesRecord = asRecord(row?.values) ?? {}
+    const values: Record<string, string | number | null> = {}
+    for (const column of columns) {
+      const cell = valuesRecord[column.id]
+      if (cell === null || typeof cell === 'string' || typeof cell === 'number' && Number.isFinite(cell)) values[column.id] = cell
+      else values[column.id] = null
+    }
+    return { id: stringValue(row?.id) ?? `row_${index + 1}`, values }
+  })
+  return { columns, rows }
+}
+
+function normalizeChartEncoding(raw: unknown, data: ChartData): ChartEncoding | undefined {
+  const record = asRecord(raw)
+  const columnIds = new Set(data.columns.map((column) => column.id))
+  const categoryField = stringValue(record?.categoryField) ?? data.columns.find((column) => column.type !== 'number')?.id
+  const valueFieldsRaw = Array.isArray(record?.valueFields) ? record.valueFields : data.columns.filter((column) => column.type === 'number').map((column) => column.id)
+  const valueFields = valueFieldsRaw.filter((field): field is string => typeof field === 'string' && columnIds.has(field) && data.columns.find((column) => column.id === field)?.type === 'number')
+  if (!categoryField || !columnIds.has(categoryField) || valueFields.length === 0) return undefined
+  return {
+    categoryField,
+    valueFields: [...new Set(valueFields)],
+    seriesField: typeof record?.seriesField === 'string' && columnIds.has(record.seriesField) ? record.seriesField : undefined,
+    labelField: typeof record?.labelField === 'string' && columnIds.has(record.labelField) ? record.labelField : undefined,
+  }
+}
+
+function normalizeSemanticRefs(raw: RecordLike): Element['semanticRefs'] | undefined {
+  const source = asRecord(raw.semanticRefs) ?? raw
+  const factIds = Array.isArray(source?.factIds) ? [...new Set(source.factIds.filter((value): value is string => typeof value === 'string' && value.length > 0))] : []
+  const sourceIds = Array.isArray(source?.sourceIds) ? [...new Set(source.sourceIds.filter((value): value is string => typeof value === 'string' && value.length > 0))] : []
+  return factIds.length || sourceIds.length ? { ...(factIds.length ? { factIds } : {}), ...(sourceIds.length ? { sourceIds } : {}) } : undefined
 }
 
 function normalizeRichText(raw: unknown, hint: string, report: MigrationReport, slideId: string): { content: RichTextDocument; runStyleExtension?: NonNullable<TextElement['extensions']>[number] } {
@@ -369,14 +480,21 @@ function normalizeTextStyle(raw: unknown, role: string, theme: ThemeDefinition, 
   return { styleRef, overrides }
 }
 
-function normalizeStyleBinding(raw: unknown, type: 'image' | 'shape', theme: ThemeDefinition, report: MigrationReport): { styleRef: string; overrides?: Record<string, unknown> } {
+function normalizeStyleBinding(raw: unknown, type: 'image' | 'shape' | 'chart', theme: ThemeDefinition, report: MigrationReport): { styleRef: string; overrides?: Record<string, unknown> } {
   const record = asRecord(raw)
   const nestedOverrides = asRecord(record?.overrides)
   const requestedStyleRef = stringValue(record?.styleRef)
-  const fallbackStyleRef = type === 'image' ? 'image.hero' : 'shape.surface'
+  const fallbackStyleRef = type === 'image' ? 'image.hero' : type === 'shape' ? 'shape.surface' : 'chart.default'
   const styleRef = requestedStyleRef && theme.presets[type][requestedStyleRef] ? requestedStyleRef : fallbackStyleRef
   if (requestedStyleRef && !theme.presets[type][requestedStyleRef]) addIssue(report, { code: 'MIGRATION_STYLE_REATTACHED', severity: 'warning', message: `Style ${requestedStyleRef} was not available in the target theme and was reattached to ${fallbackStyleRef}.`, path: '/style/styleRef', recovery: 'Create a matching preset or select another Style Preset.' })
   const overrides: Record<string, unknown> = {}
+  if (type === 'chart') {
+    if (Array.isArray(record?.palette)) overrides.palette = record.palette.filter((value): value is string => typeof value === 'string' && /^#[0-9a-f]{6,8}$/i.test(value)).map((value) => ({ kind: 'value', value }))
+    for (const field of ['axisColor', 'labelColor', 'gridColor'] as const) if (typeof record?.[field] === 'string' && /^#[0-9a-f]{6,8}$/i.test(record[field] as string)) overrides[field] = { kind: 'value', value: record[field] }
+    if (validNumber(record?.lineWidth)) overrides.lineWidth = Number(record.lineWidth)
+    if (validNumber(record?.cornerRadius)) overrides.cornerRadius = Number(record.cornerRadius)
+    return Object.keys(overrides).length ? { styleRef, overrides } : { styleRef }
+  }
   if (type === 'shape') {
     const fill = record?.fill ?? nestedOverrides?.fill
     const radius = record?.radius ?? nestedOverrides?.radius
@@ -386,7 +504,7 @@ function normalizeStyleBinding(raw: unknown, type: 'image' | 'shape', theme: The
     const radius = record?.radius ?? nestedOverrides?.radius
     if (validNumber(radius)) overrides.radius = Number(radius)
   }
-  return Object.keys(overrides).length ? { styleRef, overrides } : { styleRef }
+      return Object.keys(overrides).length ? { styleRef, overrides } : { styleRef }
 }
 
 function normalizeTheme(raw: unknown, report: MigrationReport): ThemeDefinition {
@@ -401,6 +519,9 @@ function normalizeTheme(raw: unknown, report: MigrationReport): ThemeDefinition 
   for (const category of ['text', 'shape', 'image', 'chart'] as const) {
     const bucket = asRecord(presets?.[category])
     if (bucket) Object.assign(theme.presets[category], cloneJsonRecord(bucket))
+  }
+  if (!theme.presets.chart['chart.default']) {
+    theme.presets.chart['chart.default'] = defaultChartStyle()
   }
   if (source?.id !== undefined && stringValue(source.id)) theme.id = stringValue(source.id)!
   if (source?.name !== undefined && stringValue(source.name)) theme.name = stringValue(source.name)!
@@ -422,8 +543,24 @@ function defaultTheme(): ThemeDefinition {
         'text.body': { fontFamily: { kind: 'token', token: 'font.body' }, fontSize: 28, fontWeight: 400, color: { kind: 'token', token: 'color.text.primary' }, lineHeight: 1.2 },
       },
       shape: { 'shape.surface': { fill: { kind: 'solid', color: { kind: 'token', token: 'color.surface' } }, stroke: { color: { kind: 'token', token: 'color.accent' }, width: 1 }, radius: 16 } },
-      image: { 'image.hero': {} }, chart: {},
+      image: { 'image.hero': {} }, chart: { 'chart.default': defaultChartStyle() },
     },
+  }
+}
+
+function defaultChartStyle(): ChartStyle {
+  return {
+    palette: [
+      { kind: 'value', value: '#2563EB' },
+      { kind: 'value', value: '#14B8A6' },
+      { kind: 'value', value: '#F97316' },
+      { kind: 'value', value: '#8B5CF6' },
+    ],
+    axisColor: { kind: 'value', value: '#64748B' },
+    labelColor: { kind: 'value', value: '#334155' },
+    gridColor: { kind: 'value', value: '#CBD5E1' },
+    lineWidth: 2,
+    cornerRadius: 3,
   }
 }
 
