@@ -1,4 +1,4 @@
-import { canonicalRevision, cloneJson, deepFreeze } from '../../canonical-json/src/index.js'
+import { canonicalJsonString, canonicalRevision, cloneJson, deepFreeze } from '../../canonical-json/src/index.js'
 import { computeStructuralDiff } from '../../diff/src/index.js'
 import { applyTransaction, OperationApplyError } from '../../operations/src/index.js'
 import { checkPreconditions, checkTransactionScope, enforceChangeContract } from '../../change-contract/src/index.js'
@@ -20,11 +20,11 @@ import type {
 export type SaveState = 'modified' | 'saving' | 'saved' | 'recoverable' | 'save-failed' | 'readonly-recovery'
 
 export interface JournalSink {
-  append(transaction: Transaction): void
+  append(transaction: Transaction, resultRevision?: Revision, requiredAssetHashes?: string[]): void
 }
 
 export interface CheckpointAdapter<TTarget = unknown, TOptions = unknown> {
-  write(document: PpteDocument, target: TTarget, options?: TOptions): { revision: Revision }
+  write(document: PpteDocument, target: TTarget, options?: TOptions, recentTransactions?: ReadonlyArray<Transaction>): { revision: Revision }
   clearRecovery?(): void
 }
 
@@ -32,6 +32,8 @@ export interface SessionOptions {
   journal?: JournalSink
   checkpoint?: CheckpointAdapter
   initialSaveState?: SaveState
+  historyLimit?: number
+  historyBytesLimit?: number
 }
 
 export interface DerivedIndexes {
@@ -44,7 +46,7 @@ export interface DerivedIndexes {
   roleIndex: Map<string, Set<{ slideId: string; elementId: string }>>
 }
 
-interface HistoryEntry {
+export interface HistoryEntry {
   transaction: Transaction
   inverse: Transaction
   beforeRevision: Revision
@@ -67,6 +69,8 @@ export class PpteSession {
   private readonly redoStack: HistoryEntry[] = []
   private readonly indexes: DerivedIndexes
   private saveState: SaveState
+  private readonly historyLimit: number
+  private readonly historyBytesLimit: number
 
   constructor(document: PpteDocument, options: SessionOptions = {}) {
     const initialIssues = validateRuntimeDocument(document)
@@ -76,6 +80,8 @@ export class PpteSession {
     this.journal = options.journal
     this.checkpointAdapter = options.checkpoint
     this.saveState = options.initialSaveState ?? 'saved'
+    this.historyLimit = validHistoryLimit(options.historyLimit ?? document.policies?.maxHistoryEntries ?? 200, 'historyLimit')
+    this.historyBytesLimit = validHistoryLimit(options.historyBytesLimit ?? document.policies?.maxHistoryBytes ?? Number.MAX_SAFE_INTEGER, 'historyBytesLimit')
     this.indexes = buildDerivedIndexes(this.document)
   }
 
@@ -95,9 +101,18 @@ export class PpteSession {
     return this.indexes
   }
 
+  getHistory(): ReadonlyArray<HistoryEntry> {
+    return deepFreeze(cloneJson(this.history))
+  }
+
+  getRedoHistory(): ReadonlyArray<HistoryEntry> {
+    return deepFreeze(cloneJson(this.redoStack))
+  }
+
   preview(transaction: Transaction): PreviewResult {
     const shapeIssues = validateTransactionShape(transaction)
     const issues: ValidationIssue[] = [...shapeIssues]
+    if (shapeIssues.some((issue) => issue.severity === 'error')) return { ok: false, baseRevision: this.revision, issues: dedupe(issues) }
     if (transaction.baseRevision !== this.revision) issues.push(error('REVISION_CONFLICT', `Transaction base ${transaction.baseRevision} does not match current revision ${this.revision}.`))
     issues.push(...checkTransactionScope(transaction.scope))
     issues.push(...checkPreconditions(this.document, this.revision, transaction.operations))
@@ -147,7 +162,7 @@ export class PpteSession {
   redo(): CommitResult {
     const entry = this.redoStack[this.redoStack.length - 1]
     if (!entry) return failure('REDO_EMPTY', 'There is no transaction to redo.', this.revision, 'redo')
-    const result = this.performCommit({ ...cloneJson(entry.transaction), baseRevision: this.revision, transactionId: `${entry.transaction.transactionId}:redo:${this.redoStack.length}` }, true, false, 'redone')
+    const result = this.performCommit(rebaseForRedo(entry.transaction, this.revision, `${entry.transaction.transactionId}:redo:${this.redoStack.length}`), true, false, 'redone')
     if (result.ok) this.redoStack.pop()
     return result
   }
@@ -156,7 +171,7 @@ export class PpteSession {
     if (!this.checkpointAdapter) return { ok: false, issues: [error('CHECKPOINT_FAILED', 'No checkpoint adapter is attached to this session.')] }
     this.saveState = 'saving'
     try {
-      const result = this.checkpointAdapter.write(this.document, target, options)
+      const result = this.checkpointAdapter.write(this.document, target, options, this.history.map((entry) => cloneJson(entry.transaction)))
       if (result.revision !== this.revision) throw new Error('Checkpoint adapter returned a revision different from the committed snapshot.')
       this.checkpointAdapter.clearRecovery?.()
       this.saveState = 'saved'
@@ -189,10 +204,27 @@ export class PpteSession {
       baseRevision: afterRevision,
       actor: { type: 'system', id: 'undo' },
       scope: { kind: 'document', permissions: allPermissions(), allowInsert: true, allowDelete: true },
-      changeContract: { allowedOperationKinds: applied.inverseOperations.map((operation) => operation.kind), maxChangedSlides: Number.MAX_SAFE_INTEGER, maxChangedElements: Number.MAX_SAFE_INTEGER, maxInsertedElements: Number.MAX_SAFE_INTEGER, maxDeletedElements: Number.MAX_SAFE_INTEGER, maxReplacedAssets: Number.MAX_SAFE_INTEGER },
+      changeContract: { allowedOperationKinds: [...new Set(applied.inverseOperations.map((operation) => operation.kind))], maxChangedSlides: Number.MAX_SAFE_INTEGER, maxChangedElements: Number.MAX_SAFE_INTEGER, maxInsertedElements: Number.MAX_SAFE_INTEGER, maxDeletedElements: Number.MAX_SAFE_INTEGER, maxReplacedAssets: Number.MAX_SAFE_INTEGER },
       reason: `Inverse of ${transaction.transactionId}`,
       createdAt: new Date().toISOString(),
       operations: applied.inverseOperations,
+    }
+    if (this.journal) {
+      try {
+        // A transaction is not confirmed until its recovery record is durable.
+        // This keeps the in-memory committed snapshot and recovery tail atomic
+        // from the caller's point of view.
+        this.journal.append(transaction, afterRevision, requiredAssetHashes(this.document, transaction))
+      } catch (cause) {
+        this.saveState = 'readonly-recovery'
+        return {
+          ok: false,
+          beforeRevision,
+          transactionId: transaction.transactionId,
+          diff: preview.diff,
+          issues: [error('JOURNAL_APPEND_FAILED', cause instanceof Error ? cause.message : String(cause), undefined, 'The transaction was not applied in memory; inspect the recovery journal before retrying.')],
+        }
+      }
     }
     this.document = applied.document
     this.revision = afterRevision
@@ -204,20 +236,13 @@ export class PpteSession {
     this.indexes.sourceRefIndex.clear()
     this.indexes.roleIndex.clear()
     rebuildIndexes(this.document, this.indexes)
-    if (recordHistory) this.history.push({ transaction: cloneJson(transaction), inverse, beforeRevision, afterRevision })
+    if (recordHistory) {
+      this.history.push({ transaction: cloneJson(transaction), inverse, beforeRevision, afterRevision })
+      while (this.history.length > this.historyLimit || (this.history.length > 0 && historyBytes(this.history) > this.historyBytesLimit)) this.history.shift()
+    }
     if (clearRedo) this.redoStack.length = 0
     const issues: ValidationIssue[] = []
-    if (this.journal) {
-      try {
-        this.journal.append(transaction)
-        this.saveState = 'recoverable'
-      } catch (cause) {
-        this.saveState = 'recoverable'
-        issues.push({ code: 'JOURNAL_APPEND_FAILED', severity: 'warning', message: cause instanceof Error ? cause.message : String(cause), recovery: 'Keep the session open and checkpoint as soon as possible.' })
-      }
-    } else {
-      this.saveState = 'modified'
-    }
+    this.saveState = this.journal ? 'recoverable' : 'modified'
     this.notify({ type: eventType, revision: afterRevision, diff: preview.diff })
     return { ok: true, beforeRevision, afterRevision, transactionId: transaction.transactionId, inverseTransaction: inverse, diff: preview.diff, issues }
   }
@@ -262,6 +287,40 @@ function addSet<T>(map: Map<string, Set<T>>, key: string, value: T) {
 }
 function allPermissions(): ScopePermission[] {
   return ['content', 'geometry', 'style', 'structure', 'theme', 'assets', 'facts', 'sources', 'notes', 'animation', 'review']
+}
+function rebaseForRedo(transaction: Transaction, revision: Revision, transactionId: string): Transaction {
+  const rebased = cloneJson(transaction)
+  rebased.baseRevision = revision
+  rebased.transactionId = transactionId
+  rebased.operations = rebased.operations.map((operation) => ({
+    ...operation,
+    preconditions: operation.preconditions?.map((precondition) => precondition.kind === 'revision-equals' ? { ...precondition, revision } : precondition),
+  })) as Transaction['operations']
+  return rebased
+}
+function validHistoryLimit(value: number, name: string): number {
+  if (!Number.isInteger(value) || value <= 0) throw new Error(`SCHEMA_INVALID: ${name} must be a positive integer.`)
+  return value
+}
+
+function historyBytes(history: ReadonlyArray<HistoryEntry>): number {
+  return new TextEncoder().encode(canonicalJsonString(history)).length
+}
+
+function requiredAssetHashes(document: PpteDocument, transaction: Transaction): string[] {
+  const hashes = new Set<string>()
+  const addAsset = (assetId: string) => {
+    const hash = document.assets?.[assetId]?.hash
+    if (hash) hashes.add(hash.toLowerCase())
+  }
+  for (const operation of transaction.operations) {
+    if (operation.kind === 'image.replaceAsset') addAsset(operation.assetId)
+    if (operation.kind === 'element.insert' && operation.element.type === 'image') addAsset(operation.element.assetId)
+    if (operation.kind === 'slide.insert') {
+      for (const element of Object.values(operation.slide.elements)) if (element.type === 'image') addAsset(element.assetId)
+    }
+  }
+  return [...hashes].sort()
 }
 function error(code: string, message: string, path?: string, recovery?: string): ValidationIssue {
   return { code, severity: 'error', message, path, recovery }

@@ -1,8 +1,12 @@
 import { existsSync, fsyncSync, mkdirSync, openSync, closeSync, readFileSync, renameSync, statSync, unlinkSync, writeFileSync } from 'node:fs'
 import { dirname, basename, join } from 'node:path'
-import { canonicalJsonString, canonicalRevision, sha256HexBytes } from '../../canonical-json/src/index.js'
-import { validateRuntimeDocument } from '../../validation/src/index.js'
+import { canonicalHash, canonicalJsonString, canonicalRevision, sha256HexBytes } from '../../canonical-json/src/index.js'
+import { validateRuntimeDocument, validateTransactionShape } from '../../validation/src/index.js'
+import { PPTE_COMPATIBILITY_PROFILE, PPTE_FORMAT, PPTE_FORMAT_VERSION, PPTE_OPERATION_PROTOCOL_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
 import type { PpteDocument, PpteManifest, Revision, Transaction, ValidationIssue } from '../../schema/src/index.js'
+import { ContentAddressedStore } from './cas.js'
+
+export { ContentAddressedStore } from './cas.js'
 
 export interface CheckpointWriteOptions {
   timestamp?: string
@@ -10,6 +14,7 @@ export interface CheckpointWriteOptions {
   recentTransactions?: Transaction[]
   assetBytes?: Record<string, Uint8Array>
   fontBytes?: Record<string, Uint8Array>
+  cas?: ContentAddressedStore
   fault?: 'before-rename' | 'after-rename'
   readyFile?: string
   pauseBeforeRenameMs?: number
@@ -24,11 +29,16 @@ export interface CheckpointResult {
 export interface OpenCheckpointResult {
   document: PpteDocument
   manifest: PpteManifest
+  recentTransactions: Transaction[]
 }
 
+const MAX_ARCHIVE_BYTES = 512 * 1024 * 1024
+const MAX_ENTRY_BYTES = 256 * 1024 * 1024
+const MAX_ARCHIVE_ENTRIES = 10_000
+
 export class PpteFileService {
-  write(document: PpteDocument, target: string, options: CheckpointWriteOptions = {}): CheckpointResult {
-    return writeCheckpoint(document, target, options)
+  write(document: PpteDocument, target: string, options: CheckpointWriteOptions = {}, recentTransactions?: ReadonlyArray<Transaction>): CheckpointResult {
+    return writeCheckpoint(document, target, { ...options, recentTransactions: recentTransactions?.length ? [...recentTransactions] : options.recentTransactions })
   }
 
   open(target: string): OpenCheckpointResult {
@@ -52,6 +62,11 @@ export function writeCheckpoint(document: PpteDocument, target: string, options:
   addEntry(entries, 'assets/index.json', bytes(canonicalJsonString(document.assets)))
   addEntry(entries, 'fonts/index.json', bytes(canonicalJsonString(document.fonts)))
   const recent = options.recentTransactions ?? []
+  if (options.clean && recent.length) throw new Error('CHECKPOINT_FAILED: clean checkpoint cannot contain recent history')
+  for (const [index, transaction] of recent.entries()) {
+    const transactionIssues = validateTransactionShape(transaction).filter((issue) => issue.severity === 'error')
+    if (transactionIssues.length) throw new Error(`CHECKPOINT_FAILED: invalid recent transaction ${index + 1}: ${transactionIssues.map((issue) => issue.message).join('; ')}`)
+  }
   addEntry(entries, 'history/descriptor.json', bytes(canonicalJsonString({ mode: options.clean ? 'clean' : 'standard', snapshotRevision: revision, recentTransactionCount: options.clean ? 0 : recent.length, deepHistoryExternal: !options.clean })))
   if (!options.clean && recent.length) addEntry(entries, 'history/recent.jsonl', bytes(recent.map((transaction) => canonicalJsonString(transaction)).join('\n') + '\n'))
   for (const [assetId, data] of Object.entries(options.assetBytes ?? {})) {
@@ -60,12 +75,26 @@ export function writeCheckpoint(document: PpteDocument, target: string, options:
     if (data.length !== asset.byteLength || normalizeHash(asset.hash) !== sha256HexBytes(data)) throw new Error(`ASSET_HASH_MISMATCH: ${assetId}`)
     addEntry(entries, safePackagePath(asset.path, `assets/${assetId}`, 'assets/'), data)
   }
-  for (const asset of Object.values(document.assets)) if (!options.assetBytes?.[asset.id]) throw new Error(`ASSET_MISSING: checkpoint requires bytes for ${asset.id}`)
+  for (const asset of Object.values(document.assets)) {
+    const data = options.assetBytes?.[asset.id] ?? options.cas?.get(asset.hash)
+    if (!data) throw new Error(`ASSET_MISSING: checkpoint requires bytes for ${asset.id}`)
+    if (!options.assetBytes?.[asset.id]) {
+      if (data.length !== asset.byteLength || normalizeHash(asset.hash) !== sha256HexBytes(data)) throw new Error(`ASSET_HASH_MISMATCH: ${asset.id}`)
+      addEntry(entries, safePackagePath(asset.path, `assets/${asset.id}`, 'assets/'), data)
+    }
+  }
   for (const [fontId, data] of Object.entries(options.fontBytes ?? {})) {
     const font = document.fonts[fontId]
     if (!font) throw new Error(`FONT_MISSING: ${fontId}`)
     if (font.hash && normalizeHash(font.hash) !== sha256HexBytes(data)) throw new Error(`ASSET_HASH_MISMATCH: ${fontId}`)
     addEntry(entries, safePackagePath(font.path ?? `fonts/${fontId}.woff2`, `fonts/${fontId}.woff2`, 'fonts/'), data)
+  }
+  for (const font of Object.values(document.fonts)) {
+    if (font.source !== 'embedded') continue
+    const data = options.fontBytes?.[font.id] ?? (font.hash ? options.cas?.get(font.hash) : undefined)
+    if (!data) throw new Error(`FONT_MISSING: checkpoint requires bytes for ${font.id}`)
+    if (font.hash && normalizeHash(font.hash) !== sha256HexBytes(data)) throw new Error(`FONT_HASH_MISMATCH: ${font.id}`)
+    if (!options.fontBytes?.[font.id]) addEntry(entries, safePackagePath(font.path ?? `fonts/${font.id}.woff2`, `fonts/${font.id}.woff2`, 'fonts/'), data)
   }
   const files = entries.filter((entry) => entry.name !== 'mimetype').map((entry) => ({ path: entry.name, mediaType: mediaTypeFor(entry.name), byteLength: entry.data.length, sha256: sha256HexBytes(entry.data), required: entry.name === 'document.json' }))
   const manifest: PpteManifest = {
@@ -73,7 +102,7 @@ export function writeCheckpoint(document: PpteDocument, target: string, options:
     formatVersion: '2',
     schemaVersion: '2.0.0',
     operationProtocolVersion: '1.0',
-    compatibilityProfile: 'ppte-2.0-week1-2.1',
+    compatibilityProfile: PPTE_COMPATIBILITY_PROFILE,
     documentId: document.documentId,
     contentRevision: revision,
     title: document.metadata.title,
@@ -84,6 +113,7 @@ export function writeCheckpoint(document: PpteDocument, target: string, options:
     files,
     history: { mode: options.clean ? 'clean' : 'standard', snapshotRevision: revision, recentTransactionCount: options.clean ? 0 : recent.length, deepHistoryExternal: !options.clean },
   }
+  validateManifest(manifest)
   addEntry(entries, 'manifest.json', bytes(canonicalJsonString(manifest)))
   const archive = writeZip(entries)
   // Validate the exact bytes that are about to become the checkpoint before
@@ -112,15 +142,26 @@ export function writeCheckpoint(document: PpteDocument, target: string, options:
 }
 
 export function openCheckpoint(target: string): OpenCheckpointResult {
-  const archive = readZip(new Uint8Array(readFileSync(target)))
+  const bytesOnDisk = new Uint8Array(readFileSync(target))
+  const archive = readZip(bytesOnDisk)
   if (new TextDecoder().decode(archive.get('mimetype') ?? new Uint8Array()) !== 'application/vnd.ppte+zip') throw new Error('CHECKPOINT_FAILED: invalid mimetype')
   const manifest = parseJson<PpteManifest>(archive, 'manifest.json')
+  validateManifest(manifest)
+  const expectedEntries = new Set(['mimetype', 'manifest.json', ...manifest.files.map((entry) => entry.path)])
+  for (const entry of archive.keys()) if (!expectedEntries.has(entry)) throw new Error(`CHECKPOINT_FAILED: archive contains an unlisted entry: ${entry}`)
+  for (const required of ['document.json', 'assets/index.json', 'fonts/index.json', 'history/descriptor.json']) {
+    if (!manifest.files.some((entry) => entry.path === required)) throw new Error(`CHECKPOINT_FAILED: manifest omits required package entry: ${required}`)
+  }
   const document = parseJson<PpteDocument>(archive, 'document.json')
   const issues = validateRuntimeDocument(document).filter((issue) => issue.severity === 'error')
   if (issues.length) throw new Error(issues.map((issue) => `${issue.code}: ${issue.message}`).join('\n'))
   if (manifest.documentId !== document.documentId) throw new Error('CHECKPOINT_FAILED: manifest/document documentId mismatch')
   const revision = canonicalRevision(document)
   if (manifest.contentRevision !== revision) throw new Error(`CHECKPOINT_FAILED: manifest revision ${manifest.contentRevision} does not match document ${revision}`)
+  const archivedAssets = parseJson<unknown>(archive, 'assets/index.json')
+  const archivedFonts = parseJson<unknown>(archive, 'fonts/index.json')
+  if (canonicalHash(archivedAssets) !== canonicalHash(document.assets)) throw new Error('CHECKPOINT_FAILED: assets index does not match document')
+  if (canonicalHash(archivedFonts) !== canonicalHash(document.fonts)) throw new Error('CHECKPOINT_FAILED: fonts index does not match document')
   for (const entry of manifest.files ?? []) {
     const data = archive.get(entry.path)
     if (!data) throw new Error(`CHECKPOINT_FAILED: manifest file is missing: ${entry.path}`)
@@ -130,11 +171,68 @@ export function openCheckpoint(target: string): OpenCheckpointResult {
     const data = archive.get(safePackagePath(asset.path, `assets/${asset.id}`, 'assets/'))
     if (!data || data.length !== asset.byteLength || normalizeHash(asset.hash) !== sha256HexBytes(data)) throw new Error(`ASSET_HASH_MISMATCH: ${asset.id}`)
   }
-  return { document, manifest }
+  for (const font of Object.values(document.fonts)) {
+    if (font.source !== 'embedded') continue
+    const fontPath = safePackagePath(font.path ?? `fonts/${font.id}.woff2`, `fonts/${font.id}.woff2`, 'fonts/')
+    const data = archive.get(fontPath)
+    if (!data) throw new Error(`FONT_MISSING: ${font.id}`)
+    if (font.hash && normalizeHash(font.hash) !== sha256HexBytes(data)) throw new Error(`FONT_HASH_MISMATCH: ${font.id}`)
+  }
+  const descriptor = parseJson<Record<string, unknown>>(archive, 'history/descriptor.json')
+  const history = manifest.history
+  if (!history || descriptor.mode !== history.mode || descriptor.snapshotRevision !== history.snapshotRevision || descriptor.recentTransactionCount !== history.recentTransactionCount || descriptor.deepHistoryExternal !== history.deepHistoryExternal) throw new Error('CHECKPOINT_FAILED: history descriptor does not match manifest')
+  const recentTransactions = readRecentTransactions(archive, manifest)
+  return { document, manifest, recentTransactions }
 }
 
-export function checkpointAdapter(): { write(document: PpteDocument, target: string, options?: CheckpointWriteOptions): CheckpointResult } {
-  return { write: writeCheckpoint }
+export function validateManifest(manifest: PpteManifest): void {
+  if (!manifest || typeof manifest !== 'object') throw new Error('CHECKPOINT_FAILED: manifest must be an object')
+  if (manifest.format !== PPTE_FORMAT || manifest.formatVersion !== PPTE_FORMAT_VERSION || manifest.schemaVersion !== PPTE_SCHEMA_VERSION) throw new Error('CHECKPOINT_FAILED: unsupported manifest format or schema version')
+  if (manifest.operationProtocolVersion !== PPTE_OPERATION_PROTOCOL_VERSION || manifest.compatibilityProfile !== PPTE_COMPATIBILITY_PROFILE) throw new Error('CHECKPOINT_FAILED: unsupported compatibility profile')
+  if (typeof manifest.documentId !== 'string' || !manifest.documentId || typeof manifest.contentRevision !== 'string' || !/^sha256-[0-9a-fA-F]{64}$/.test(manifest.contentRevision)) throw new Error('CHECKPOINT_FAILED: invalid manifest identity or revision')
+  if (typeof manifest.title !== 'string' || typeof manifest.createdAt !== 'string' || typeof manifest.updatedAt !== 'string' || typeof manifest.clean !== 'boolean' || !Array.isArray(manifest.requiredWidgets) || !Array.isArray(manifest.files)) throw new Error('CHECKPOINT_FAILED: invalid manifest metadata')
+  for (const requirement of manifest.requiredWidgets) if (!requirement || typeof requirement !== 'object' || typeof requirement.type !== 'string' || !requirement.type || typeof requirement.versionRange !== 'string' || !requirement.versionRange || requirement.fallbackRequired !== true) throw new Error('CHECKPOINT_FAILED: invalid required widget declaration')
+  const paths = new Set<string>()
+  for (const entry of manifest.files) {
+    if (!entry || typeof entry !== 'object' || typeof entry.path !== 'string' || !entry.path || paths.has(entry.path) || typeof entry.mediaType !== 'string' || !entry.mediaType || !Number.isInteger(entry.byteLength) || entry.byteLength < 0 || entry.byteLength > MAX_ENTRY_BYTES || typeof entry.sha256 !== 'string' || !/^[0-9a-fA-F]{64}$/.test(entry.sha256) || typeof entry.required !== 'boolean') throw new Error('CHECKPOINT_FAILED: invalid manifest file entry')
+    validatePackagePath(entry.path)
+    if (entry.path === 'mimetype' || entry.path === 'manifest.json') throw new Error('CHECKPOINT_FAILED: manifest cannot list reserved package entries')
+    if (entry.path !== 'document.json' && !/^(assets|fonts|history)\//.test(entry.path)) throw new Error(`CHECKPOINT_FAILED: unsupported manifest file path ${entry.path}`)
+    paths.add(entry.path)
+  }
+  if (manifest.history) {
+    if (!['standard', 'audit', 'clean'].includes(manifest.history.mode) || (manifest.history.snapshotRevision !== undefined && manifest.history.snapshotRevision !== manifest.contentRevision) || (manifest.history.recentTransactionCount !== undefined && (!Number.isInteger(manifest.history.recentTransactionCount) || manifest.history.recentTransactionCount < 0))) throw new Error('CHECKPOINT_FAILED: invalid manifest history descriptor')
+    if (manifest.clean && manifest.history.mode !== 'clean') throw new Error('CHECKPOINT_FAILED: clean checkpoint has a non-clean history descriptor')
+  }
+}
+
+function readRecentTransactions(archive: Map<string, Uint8Array>, manifest: PpteManifest): Transaction[] {
+  const expected = manifest.history?.recentTransactionCount ?? 0
+  const data = archive.get('history/recent.jsonl')
+  if (!data) {
+    if (expected !== 0) throw new Error('CHECKPOINT_FAILED: history descriptor requires recent.jsonl')
+    return []
+  }
+  if (manifest.clean) throw new Error('CHECKPOINT_FAILED: clean checkpoint contains recent history')
+  const transactions: Transaction[] = []
+  for (const [index, line] of new TextDecoder().decode(data).split('\n').filter(Boolean).entries()) {
+    let transaction: Transaction
+    try { transaction = JSON.parse(line) as Transaction } catch (cause) { throw new Error(`CHECKPOINT_FAILED: invalid history transaction ${index + 1}: ${cause instanceof Error ? cause.message : String(cause)}`) }
+    const issues = validateTransactionShape(transaction).filter((issue) => issue.severity === 'error')
+    if (issues.length) throw new Error(`CHECKPOINT_FAILED: invalid history transaction ${index + 1}: ${issues.map((issue) => issue.message).join('; ')}`)
+    transactions.push(transaction)
+  }
+  if (transactions.length !== expected) throw new Error(`CHECKPOINT_FAILED: history count ${transactions.length} does not match descriptor ${expected}`)
+  return transactions
+}
+
+export function checkpointAdapter(): { write(document: PpteDocument, target: string, options?: CheckpointWriteOptions, recentTransactions?: ReadonlyArray<Transaction>): CheckpointResult } {
+  return {
+    write: (document, target, options = {}, recentTransactions) => writeCheckpoint(document, target, {
+      ...options,
+      recentTransactions: recentTransactions?.length ? [...recentTransactions] : options.recentTransactions,
+    }),
+  }
 }
 
 interface ZipEntry {
@@ -207,38 +305,64 @@ function writeZip(entries: ZipEntry[]): Uint8Array {
 }
 
 function readZip(data: Uint8Array): Map<string, Uint8Array> {
+  if (data.length > MAX_ARCHIVE_BYTES) throw new Error('CHECKPOINT_FAILED: ZIP archive exceeds size limit')
   const result = new Map<string, Uint8Array>()
   const end = findEndOfCentralDirectory(data)
+  const commentLength = readU16(data, end + 20)
+  if (end + 22 + commentLength !== data.length) throw new Error('CHECKPOINT_FAILED: ZIP has trailing data or an invalid comment length')
+  if (readU16(data, end + 4) !== 0 || readU16(data, end + 6) !== 0) throw new Error('CHECKPOINT_FAILED: multi-disk ZIP is not supported')
   const count = readU16(data, end + 10)
+  if (readU16(data, end + 8) !== count) throw new Error('CHECKPOINT_FAILED: ZIP entry counts do not match')
   const centralSize = readU32(data, end + 12)
   const centralOffset = readU32(data, end + 16)
-  if (count > 10000 || centralOffset + centralSize > data.length) throw new Error('CHECKPOINT_FAILED: unsafe ZIP directory')
+  if (count > MAX_ARCHIVE_ENTRIES || centralOffset > data.length || centralSize > data.length - centralOffset) throw new Error('CHECKPOINT_FAILED: unsafe ZIP directory')
+  const centralEnd = centralOffset + centralSize
+  if (centralEnd !== end) throw new Error('CHECKPOINT_FAILED: ZIP central directory is not adjacent to the end record')
   let cursor = centralOffset
+  let totalUncompressed = 0
+  const localRanges: Array<{ start: number; end: number }> = []
   for (let index = 0; index < count; index += 1) {
+    if (cursor > centralEnd || centralEnd - cursor < 46) throw new Error('CHECKPOINT_FAILED: truncated ZIP central directory')
     if (readU32(data, cursor) !== 0x02014b50) throw new Error('CHECKPOINT_FAILED: invalid ZIP central directory')
     const method = readU16(data, cursor + 10)
+    const flags = readU16(data, cursor + 8)
     const compressedSize = readU32(data, cursor + 20)
     const uncompressedSize = readU32(data, cursor + 24)
     const nameLength = readU16(data, cursor + 28)
     const extraLength = readU16(data, cursor + 30)
     const commentLength = readU16(data, cursor + 32)
     const localOffset = readU32(data, cursor + 42)
+    const centralNameStart = cursor + 46
+    const centralEntryLength = 46 + nameLength + extraLength + commentLength
+    if (centralEntryLength > centralEnd - cursor || centralNameStart + nameLength > centralEnd) throw new Error('CHECKPOINT_FAILED: truncated ZIP central entry')
     const name = new TextDecoder().decode(data.slice(cursor + 46, cursor + 46 + nameLength))
     validatePackagePath(name)
     if (result.has(name)) throw new Error(`CHECKPOINT_FAILED: duplicate ZIP entry ${name}`)
-    if (method !== 0 || compressedSize !== uncompressedSize) throw new Error('CHECKPOINT_FAILED: only stored ZIP entries are supported')
+    if (flags !== 0 || method !== 0 || compressedSize !== uncompressedSize || compressedSize > MAX_ENTRY_BYTES) throw new Error('CHECKPOINT_FAILED: only bounded stored ZIP entries are supported')
+    totalUncompressed += uncompressedSize
+    if (totalUncompressed > MAX_ARCHIVE_BYTES) throw new Error('CHECKPOINT_FAILED: ZIP uncompressed size exceeds limit')
+    if (localOffset > data.length || data.length - localOffset < 30) throw new Error('CHECKPOINT_FAILED: truncated ZIP local header')
     if (readU32(data, localOffset) !== 0x04034b50) throw new Error('CHECKPOINT_FAILED: invalid ZIP local header')
+    if (readU16(data, localOffset + 6) !== 0 || readU16(data, localOffset + 8) !== 0) throw new Error('CHECKPOINT_FAILED: unsupported ZIP local flags or method')
     const localNameLength = readU16(data, localOffset + 26)
     const localExtraLength = readU16(data, localOffset + 28)
-    const start = localOffset + 30 + localNameLength + localExtraLength
+    const localNameStart = localOffset + 30
+    const start = localNameStart + localNameLength + localExtraLength
+    if (localNameStart + localNameLength > data.length || start < localNameStart || start > data.length) throw new Error('CHECKPOINT_FAILED: truncated ZIP local entry')
+    const localName = new TextDecoder().decode(data.slice(localNameStart, localNameStart + localNameLength))
+    if (localName !== name) throw new Error('CHECKPOINT_FAILED: ZIP central/local name mismatch')
+    if (readU32(data, localOffset + 18) !== compressedSize || readU32(data, localOffset + 22) !== uncompressedSize) throw new Error('CHECKPOINT_FAILED: ZIP size mismatch')
     const endOffset = start + compressedSize
-    if (endOffset > data.length) throw new Error('CHECKPOINT_FAILED: ZIP entry exceeds file')
+    if (endOffset < start || endOffset > centralOffset) throw new Error('CHECKPOINT_FAILED: ZIP entry overlaps the central directory')
+    if (localRanges.some((range) => start < range.end && endOffset > range.start)) throw new Error('CHECKPOINT_FAILED: ZIP local entries overlap')
+    localRanges.push({ start: localOffset, end: endOffset })
     const content = data.slice(start, endOffset)
     const crc = readU32(data, cursor + 16)
     if (crc32(content) !== crc) throw new Error(`CHECKPOINT_FAILED: ZIP CRC mismatch: ${name}`)
     result.set(name, new Uint8Array(content))
-    cursor += 46 + nameLength + extraLength + commentLength
+    cursor += centralEntryLength
   }
+  if (cursor !== centralEnd) throw new Error('CHECKPOINT_FAILED: ZIP central directory size mismatch')
   return result
 }
 
@@ -252,13 +376,9 @@ function parseJson<T>(archive: Map<string, Uint8Array>, name: string): T {
   }
 }
 function safePackagePath(path: string, fallback: string, requiredPrefix: string): string {
-  try {
-    validatePackagePath(path)
-    if (!path.startsWith(requiredPrefix)) throw new Error('wrong package directory')
-    return path
-  } catch {
-    return fallback
-  }
+  validatePackagePath(path)
+  if (!path.startsWith(requiredPrefix)) throw new Error(`CHECKPOINT_FAILED: package path must start with ${requiredPrefix}: ${path}`)
+  return path || fallback
 }
 function validatePackagePath(path: string) {
   if (!path || path.startsWith('/') || path.includes('..') || path.includes('\\') || path.includes('\u0000')) throw new Error(`CHECKPOINT_FAILED: unsafe package path ${path}`)
@@ -273,7 +393,7 @@ function mediaTypeFor(path: string): string {
   return 'application/octet-stream'
 }
 function normalizeHash(hash: string): string {
-  return hash.startsWith('sha256-') ? hash.slice('sha256-'.length) : hash
+  return (hash.startsWith('sha256-') ? hash.slice('sha256-'.length) : hash).toLowerCase()
 }
 function bytes(text: string): Uint8Array {
   return new TextEncoder().encode(text)

@@ -29,14 +29,10 @@
       "const": "2.0.0"
     },
     "operationProtocolVersion": {
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 256
+      "const": "1.0"
     },
     "compatibilityProfile": {
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 256
+      "const": "ppte-2.0-ga-a.1"
     },
     "documentId": {
       "type": "string",
@@ -99,7 +95,8 @@
         ],
         "properties": {
           "path": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^(document\\.json|assets/|fonts/|history/)"
           },
           "mediaType": {
             "type": "string"
@@ -131,8 +128,7 @@
         },
         "snapshotRevision": {
           "type": "string",
-          "minLength": 1,
-          "maxLength": 256
+          "pattern": "^sha256-[0-9a-fA-F]{64}$"
         },
         "recentTransactionCount": {
           "type": "integer",
