@@ -1,16 +1,17 @@
-import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { tmpdir } from 'node:os'
 import { fileURLToPath } from 'node:url'
-import { canonicalRevision, sha256HexBytes } from '../../packages/canonical-json/src/index.js'
+import { canonicalRevision, cloneJson, sha256HexBytes } from '../../packages/canonical-json/src/index.js'
 import { PpteSession } from '../../packages/core/src/index.js'
 import { MockAgent } from '../../packages/agent-tools/src/index.js'
 import { ImeTextEditSession, beginDrag, endDrag, updateDrag } from '../../packages/editor-react/src/index.js'
 import { renderSlideHtml } from '../../packages/renderer-react/src/index.js'
 import { RecoveryJournal, readJournal, replayJournal } from '../../packages/recovery-journal/src/index.js'
 import { openCheckpoint, writeCheckpoint, type CheckpointWriteOptions } from '../../packages/file-format/src/index.js'
+import { buildReplacementElement } from '../../packages/semantic-identity/src/index.js'
 import type { CheckpointAdapter } from '../../packages/core/src/index.js'
-import type { Asset, FontAsset, PpteDocument, RichTextDocument, ShapeElement, TextElement } from '../../packages/schema/src/index.js'
+import type { Asset, Operation, PpteDocument, RichTextDocument, ShapeElement, TextElement, Transaction } from '../../packages/schema/src/index.js'
 
 const SLIDE_ID = 'slide_main'
 const TITLE_ID = 'text_title'
@@ -22,7 +23,7 @@ const IMAGE_ASSET_ID = 'asset_pixel'
 export function makeContractDocument(imageBytes = pixelPng()): { document: PpteDocument; imageBytes: Uint8Array } {
   const image: Asset = {
     id: IMAGE_ASSET_ID,
-    hash: sha256HexBytes(imageBytes),
+    hash: `sha256-${sha256HexBytes(imageBytes)}`,
     mimeType: 'image/png',
     byteLength: imageBytes.length,
     path: 'assets/pixel.png',
@@ -50,6 +51,7 @@ export function makeContractDocument(imageBytes = pixelPng()): { document: PpteD
     frame: { x: 160, y: 330, width: 780, height: 260 },
     content: text('Text, image, and shape use one semantic document.', 'body-p'),
     style: { styleRef: 'text.body' },
+    semanticRefs: { factIds: ['revenue'] },
     overflowPolicy: 'warn',
   }
   const surface: ShapeElement = {
@@ -82,8 +84,8 @@ export function makeContractDocument(imageBytes = pixelPng()): { document: PpteD
           'text.title.primary': { fontFamily: { kind: 'token', token: 'font.heading' }, fontSize: 64, fontWeight: 700, color: { kind: 'token', token: 'color.text.primary' }, lineHeight: 1.15 },
           'text.body': { fontFamily: { kind: 'token', token: 'font.body' }, fontSize: 28, fontWeight: 400, color: { kind: 'token', token: 'color.text.muted' }, lineHeight: 1.35 },
         },
-        shape: { 'shape.surface': { fill: { kind: 'solid', color: { kind: 'token', token: 'color.surface' } }, radius: 28 } },
-        image: {},
+        shape: { 'shape.surface': { fill: { kind: 'solid', color: { kind: 'token', token: 'color.surface' } }, stroke: { color: { kind: 'token', token: 'color.accent' }, width: 2, opacity: 0.5 }, radius: 28, shadow: { color: { kind: 'value', value: '#172033' }, offsetX: 0, offsetY: 12, blur: 28, opacity: 0.12 } } },
+        image: { 'image.hero': { border: { color: { kind: 'token', token: 'color.accent' }, width: 2, opacity: 0.6 }, radius: 20, shadow: { color: { kind: 'value', value: '#172033' }, offsetX: 0, offsetY: 8, blur: 20, opacity: 0.16 } } },
         chart: {},
       },
     },
@@ -98,13 +100,14 @@ export function makeContractDocument(imageBytes = pixelPng()): { document: PpteD
           [SHAPE_ID]: surface,
           [TITLE_ID]: title,
           [BODY_ID]: body,
-          [IMAGE_ID]: { id: IMAGE_ID, type: 'image', semanticKey: 'image.hero', role: 'image', frame: { x: 1120, y: 250, width: 560, height: 430 }, assetId: IMAGE_ASSET_ID, fit: 'fill', altText: 'A contract-deck image' },
+          [IMAGE_ID]: { id: IMAGE_ID, type: 'image', semanticKey: 'image.hero', role: 'image', frame: { x: 1120, y: 250, width: 560, height: 430 }, assetId: IMAGE_ASSET_ID, fit: 'fill', style: { styleRef: 'image.hero' }, altText: 'A contract-deck image' },
         },
         groups: {},
         visualStrategy: 'structured',
       },
     },
     assets: { [IMAGE_ASSET_ID]: image },
+    facts: { revenue: { id: 'revenue', key: 'revenue', value: 42, unit: '%' } },
     fonts: {
       font_system_inter: { id: 'font_system_inter', family: 'Inter', style: 'normal', weight: 400, source: 'system', editableSafe: true },
     },
@@ -120,7 +123,10 @@ export function runVerticalSlice(): Record<string, unknown> {
   const initialRevision = canonicalRevision(document)
   const journal = new RecoveryJournal(journalPath, { journalVersion: '1', documentId: document.documentId, baseCheckpointRevision: initialRevision, sessionId: 'contract-deck-session', createdAt: '2026-09-02T00:00:00.000Z' })
   const checkpoint: CheckpointAdapter<string, CheckpointWriteOptions> = {
-    write: (snapshot, target, options) => writeCheckpoint(snapshot, target, options),
+    write: (snapshot, target, options, recentTransactions) => writeCheckpoint(snapshot, target, {
+      ...options,
+      recentTransactions: recentTransactions?.length ? [...recentTransactions] : options?.recentTransactions,
+    }),
     clearRecovery: () => journal.clear(),
   }
   const session = new PpteSession(document, { journal, checkpoint })
@@ -165,6 +171,85 @@ export function runVerticalSlice(): Record<string, unknown> {
   assert(session.redo().ok, 'Redo restores the same semantic edit')
   assert(session.getRevision() === afterAgentRevision, 'Redo restores committed revision')
 
+  const styleTransaction = stableTransaction(session, 'stable:style-override', [{ opId: 'stable:style-override:op', kind: 'element.updateStyleOverrides', slideId: SLIDE_ID, elementId: TITLE_ID, patch: { letterSpacing: 1 } }], {
+    kind: 'selection', slideIds: [SLIDE_ID], elementIds: [TITLE_ID], permissions: ['style'], allowInsert: false, allowDelete: false,
+  }, [TITLE_ID], { content: 'preserve', geometry: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' })
+  assert(session.commit(styleTransaction).ok, 'typed Style Override commit')
+  assert((session.getDocument().slides[SLIDE_ID].elements[TITLE_ID] as TextElement).style.overrides?.letterSpacing === 1, 'typed Style Override persisted')
+  assert(session.undo().ok, 'Style Override inverse')
+
+  const fitTransaction = stableTransaction(session, 'stable:text-fit', [{ opId: 'stable:text-fit:op', kind: 'text.fitByReducingFont', slideId: SLIDE_ID, elementId: TITLE_ID, minFontSize: 24, resolvedFontSize: 48 }], {
+    kind: 'selection', slideIds: [SLIDE_ID], elementIds: [TITLE_ID], permissions: ['style'], allowInsert: false, allowDelete: false,
+  }, [TITLE_ID], { content: 'preserve', geometry: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' })
+  assert(session.commit(fitTransaction).ok, 'explicit Text Fit commit')
+  assert((session.getDocument().slides[SLIDE_ID].elements[TITLE_ID] as TextElement).style.overrides?.fontSize === 48, 'explicit Text Fit changed only font size')
+  assert(session.undo().ok, 'Text Fit inverse')
+
+  const imageStyleTransaction = stableTransaction(session, 'stable:image-style', [{ opId: 'stable:image-style:op', kind: 'element.updateStyleOverrides', slideId: SLIDE_ID, elementId: IMAGE_ID, patch: { radius: 24 } }], {
+    kind: 'selection', slideIds: [SLIDE_ID], elementIds: [IMAGE_ID], permissions: ['style'], allowInsert: false, allowDelete: false,
+  }, [IMAGE_ID], { content: 'preserve', geometry: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' })
+  assert(session.commit(imageStyleTransaction).ok, 'Image typed style commit')
+  assert(session.undo().ok, 'Image typed style inverse')
+
+  const imageViewTransaction = stableTransaction(session, 'stable:image-view', [
+    { opId: 'stable:image-view:crop', kind: 'image.setCrop', slideId: SLIDE_ID, elementId: IMAGE_ID, crop: { x: 0.08, y: 0.12, width: 0.84, height: 0.72 } },
+    { opId: 'stable:image-view:focal', kind: 'image.setFocalPoint', slideId: SLIDE_ID, elementId: IMAGE_ID, focalPoint: { x: 0.64, y: 0.38 } },
+  ], {
+    kind: 'selection', slideIds: [SLIDE_ID], elementIds: [IMAGE_ID], permissions: ['assets'], allowInsert: false, allowDelete: false,
+  }, [IMAGE_ID], { content: 'preserve', style: 'preserve', geometry: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' })
+  assert(session.commit(imageViewTransaction).ok, 'Image crop and focal-point commit')
+  assert((session.getDocument().slides[SLIDE_ID].elements[IMAGE_ID] as { crop?: { x: number } }).crop?.x === 0.08, 'Image crop persisted')
+  assert(session.undo().ok, 'Image crop and focal-point inverse')
+
+  const shapeStyleTransaction = stableTransaction(session, 'stable:shape-style', [{ opId: 'stable:shape-style:op', kind: 'shape.updateStyle', slideId: SLIDE_ID, elementId: SHAPE_ID, patch: { radius: 36 } }], {
+    kind: 'selection', slideIds: [SLIDE_ID], elementIds: [SHAPE_ID], permissions: ['style'], allowInsert: false, allowDelete: false,
+  }, [SHAPE_ID], { content: 'preserve', geometry: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' })
+  assert(session.commit(shapeStyleTransaction).ok, 'Shape style commit')
+  assert(session.undo().ok, 'Shape style inverse')
+
+  const factTransaction = stableTransaction(session, 'stable:fact-sync', [{ opId: 'stable:fact-sync:op', kind: 'fact.syncReferences', factId: 'revenue', targetElementIds: [BODY_ID], strategy: 'replace-display-value' }], {
+    kind: 'selection', slideIds: [SLIDE_ID], elementIds: [BODY_ID], permissions: ['facts'], allowInsert: false, allowDelete: false,
+  }, [BODY_ID], { style: 'preserve', geometry: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' })
+  assert(session.commit(factTransaction).ok, 'Explicit Fact display synchronization')
+  assert((session.getDocument().slides[SLIDE_ID].elements[BODY_ID] as TextElement).content.paragraphs[0].runs[0].text === '42%', 'Fact display value synchronized')
+  assert(session.undo().ok, 'Fact synchronization inverse')
+
+  const previousTitle = session.getDocument().slides[SLIDE_ID].elements[TITLE_ID] as TextElement
+  const replacement = buildReplacementElement(session.getDocument(), SLIDE_ID, TITLE_ID, { ...cloneJson(previousTitle), id: 'text_title_v2', content: text('A regenerated operating review', 'title-regenerated') })
+  const lineageTransaction = stableTransaction(session, 'stable:lineage-replacement', [
+    { opId: 'stable:lineage-replacement:delete', kind: 'element.delete', slideId: SLIDE_ID, elementId: TITLE_ID },
+    { opId: 'stable:lineage-replacement:insert', kind: 'element.insert', slideId: SLIDE_ID, element: replacement, index: 1 },
+    { opId: 'stable:lineage-replacement:reading-order', kind: 'slide.setReadingOrder', slideId: SLIDE_ID, readingOrder: ['text_title_v2', BODY_ID, IMAGE_ID] },
+  ], {
+    kind: 'selection', slideIds: [SLIDE_ID], elementIds: [TITLE_ID, 'text_title_v2'], semanticKeys: ['title.main'], permissions: ['structure'], allowInsert: true, allowDelete: true,
+  }, [TITLE_ID, 'text_title_v2'], { geometry: 'preserve', style: 'preserve', asset: 'preserve', semanticIdentity: 'allow-replacement', readingOrder: 'preserve', facts: 'preserve' }, 1)
+  assert(session.commit(lineageTransaction).ok, 'Replacement Lineage commit')
+  assert(session.getDocument().slides[SLIDE_ID].elements.text_title_v2.provenance?.replacesElementId === TITLE_ID, 'Replacement Lineage points to prior instance')
+  assert(session.undo().ok, 'Replacement Lineage inverse')
+
+  const groupMembers = [TITLE_ID, BODY_ID, IMAGE_ID]
+  const groupCreate = stableTransaction(session, 'stable:group-create', [{ opId: 'stable:group-create:op', kind: 'group.create', slideId: SLIDE_ID, group: { id: 'content-cluster', semanticKey: 'content.cluster', memberIds: groupMembers } }], {
+    kind: 'slide', slideIds: [SLIDE_ID], permissions: ['structure'], allowInsert: false, allowDelete: false,
+  }, groupMembers, { content: 'preserve', style: 'preserve', geometry: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' })
+  assert(session.commit(groupCreate).ok, 'Flat Group create')
+  const groupMove = stableTransaction(session, 'stable:group-move', [{ opId: 'stable:group-move:op', kind: 'group.move', slideId: SLIDE_ID, groupId: 'content-cluster', dx: 24, dy: 16 }], {
+    kind: 'slide', slideIds: [SLIDE_ID], permissions: ['geometry'], allowInsert: false, allowDelete: false,
+  }, groupMembers, { content: 'preserve', style: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' })
+  assert(session.commit(groupMove).ok, 'Flat Group move')
+  assert(session.undo().ok, 'Flat Group move inverse')
+  const groupResize = stableTransaction(session, 'stable:group-resize', [{ opId: 'stable:group-resize:op', kind: 'group.resize', slideId: SLIDE_ID, groupId: 'content-cluster', targetFrame: { x: 120, y: 180, width: 1600, height: 600 } }], {
+    kind: 'slide', slideIds: [SLIDE_ID], permissions: ['geometry'], allowInsert: false, allowDelete: false,
+  }, groupMembers, { content: 'preserve', style: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' })
+  assert(session.commit(groupResize).ok, 'Flat Group resize without implicit text scaling')
+  assert((session.getDocument().slides[SLIDE_ID].elements[TITLE_ID] as TextElement).style.overrides?.fontSize === undefined, 'Flat Group resize leaves text style unchanged by default')
+  const groupResizeUndo = session.undo()
+  assert(groupResizeUndo.ok, `Flat Group resize inverse ${groupResizeUndo.issues.map((issue) => `${issue.code}:${issue.message}`).join('|')}`)
+  const groupDelete = stableTransaction(session, 'stable:group-delete', [{ opId: 'stable:group-delete:op', kind: 'group.delete', slideId: SLIDE_ID, groupId: 'content-cluster' }], {
+    kind: 'slide', slideIds: [SLIDE_ID], permissions: ['structure'], allowInsert: false, allowDelete: false,
+  }, groupMembers, { content: 'preserve', style: 'preserve', geometry: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' })
+  assert(session.commit(groupDelete).ok, 'Flat Group delete')
+  assert(session.undo().ok, 'Flat Group delete inverse')
+
   const failedCheckpoint = session.checkpoint(checkpointPath, { timestamp: '2026-09-02T00:03:00.000Z', assetBytes: { [IMAGE_ASSET_ID]: imageBytes }, fault: 'before-rename' })
   assert(!failedCheckpoint.ok, 'fault-injected checkpoint reports failure')
   const original = openCheckpoint(checkpointPath)
@@ -181,16 +266,49 @@ export function runVerticalSlice(): Record<string, unknown> {
   const reopened = openCheckpoint(checkpointPath)
   assert(canonicalRevision(reopened.document) === session.getRevision(), 'reopen canonical hash matches')
   assert(canonicalRevision(reopened.document) === canonicalRevision(session.getDocument()), 'document round trip is canonical-hash equal')
+  assert(reopened.recentTransactions.length === session.getHistory().length, 'recent History tail round trips')
 
   return {
     status: 'ok',
     renderedTypes: ['text', 'image', 'shape'],
+    stableCoreCoverage: ['Style Preset + typed Override', 'explicit Text Fit + IME', 'Image crop + focal point', 'Shape style', 'Flat Group move + resize + inverse', 'Fact explicit sync', 'semanticKey + Replacement Lineage', 'Revision + bounded History + redo', 'Journal + CAS-compatible Checkpoint + reopen'],
     initialRevision,
     finalRevision: session.getRevision(),
     blockedIssue: blocked.issues.find((issue) => issue.code === 'SCOPE_VIOLATION')?.code,
     journalRecoveredTransactions: recovered.applied,
     checkpointRoundTrip: true,
-    unsupportedScope: ['Chart', 'Widget', 'Poster', 'PPTX', 'Patch', 'nested Group', 'Run-level font/size', 'complete Portable editor'],
+    unsupportedScope: ['Chart', 'Widget', 'Poster', 'PPTX', 'Patch', 'nested Group', 'Group Rotate', 'Run-level font/size', 'complete Portable editor'],
+  }
+}
+
+function stableTransaction(
+  session: PpteSession,
+  transactionId: string,
+  operations: Operation[],
+  scope: Transaction['scope'],
+  allowedElementIds: string[] | undefined,
+  preserve: NonNullable<Transaction['changeContract']['preserve']>,
+  maxChangedElements = Math.max(1, allowedElementIds?.length ?? 1),
+): Transaction {
+  return {
+    transactionId,
+    baseRevision: session.getRevision(),
+    actor: { type: 'human', id: 'contract-deck' },
+    scope,
+    changeContract: {
+      allowedOperationKinds: [...new Set(operations.map((operation) => operation.kind))],
+      allowedElementIds,
+      maxChangedSlides: 1,
+      maxChangedElements,
+      maxInsertedElements: scope.allowInsert === true ? 1 : 0,
+      maxDeletedElements: scope.allowDelete === true ? 1 : 0,
+      maxReplacedAssets: 0,
+      preserve,
+    },
+    reason: `Stable Core contract coverage: ${transactionId}`,
+    createdAt: '2026-09-02T00:05:00.000Z',
+    validationLevel: 'L2',
+    operations,
   }
 }
 
