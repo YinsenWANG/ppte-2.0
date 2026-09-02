@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ppte.dev/schemas/2.0/compatibility-profile.schema.json",
+  "title": "PPTe Compatibility Profile",
+  "type": "object",
+  "required": [
+    "id",
+    "formatVersion",
+    "schemaVersion",
+    "operationProtocolVersion",
+    "slideIrVersion",
+    "portableRuntimeVersion",
+    "layoutRecipeVersion",
+    "widgetAbiVersion",
+    "patchVersion",
+    "migration"
+  ],
+  "properties": {
+    "id": { "const": "ppte-2.0-ga-a.1" },
+    "formatVersion": { "const": "2" },
+    "schemaVersion": { "const": "2.0.0" },
+    "operationProtocolVersion": { "const": "1.0" },
+    "slideIrVersion": { "const": "1.0" },
+    "portableRuntimeVersion": { "const": "2.0.0" },
+    "layoutRecipeVersion": { "const": "1.0" },
+    "widgetAbiVersion": { "type": ["null"] },
+    "patchVersion": { "type": ["null"] },
+    "migration": {
+      "type": "object",
+      "required": ["from", "direction", "preservesSource"],
+      "properties": {
+        "from": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "direction": { "const": "forward-only" },
+        "preservesSource": { "const": true }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -27,6 +27,8 @@ importers:
 
   packages/change-contract: {}
 
+  packages/compatibility: {}
+
   packages/core: {}
 
   packages/design-compiler: {}
@@ -37,9 +39,13 @@ importers:
 
   packages/exporter-pdf: {}
 
+  packages/fault-injection: {}
+
   packages/file-format: {}
 
   packages/geometry: {}
+
+  packages/importer-legacy: {}
 
   packages/layout-recipes: {}
 
@@ -48,6 +54,8 @@ importers:
   packages/operations: {}
 
   packages/patch-format: {}
+
+  packages/performance-budget: {}
 
   packages/portable-runtime: {}
 

@@ -34,6 +34,7 @@ import type {
   ThemeDefinition,
   TransactionId,
 } from './document.js'
+import type { ErrorImpact, ContentSafety, Recoverability } from './errors.js'
 
 export type ActorType = 'human' | 'agent' | 'system' | 'importer' | 'reviewer'
 export interface Actor {
@@ -464,6 +465,11 @@ export interface ValidationIssue {
   path?: JsonPointer
   recovery?: string
   causeId?: string
+  impact?: ErrorImpact
+  contentSafety?: ContentSafety
+  canSave?: boolean
+  recoverability?: Recoverability
+  retryable?: boolean
 }
 
 export interface StructuralDiff {

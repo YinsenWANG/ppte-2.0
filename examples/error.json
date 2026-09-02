@@ -1,0 +1,12 @@
+{
+  "code": "ASSET_MISSING",
+  "message": "Asset hero is unavailable.",
+  "severity": "error",
+  "recovery": "Remove or replace the invalid resource, then validate again.",
+  "impact": "resource",
+  "contentSafety": "at-risk",
+  "canSave": false,
+  "recoverability": "manual",
+  "retryable": false,
+  "elementId": "image_hero"
+}

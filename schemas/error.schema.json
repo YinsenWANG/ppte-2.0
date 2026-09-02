@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ppte.dev/schemas/2.0/error.schema.json",
+  "title": "PPTe Error",
+  "type": "object",
+  "required": [
+    "code",
+    "message",
+    "severity",
+    "recovery",
+    "impact",
+    "contentSafety",
+    "canSave",
+    "recoverability",
+    "retryable"
+  ],
+  "properties": {
+    "code": { "type": "string", "minLength": 1 },
+    "message": { "type": "string", "minLength": 1 },
+    "severity": { "enum": ["error", "warning", "info"] },
+    "recovery": { "type": "string", "minLength": 1 },
+    "impact": { "enum": ["document", "transaction", "content", "resource", "persistence", "security", "compatibility", "export", "runtime"] },
+    "contentSafety": { "enum": ["safe", "at-risk", "unknown"] },
+    "canSave": { "type": "boolean" },
+    "recoverability": { "enum": ["none", "retry", "journal", "manual", "readonly"] },
+    "retryable": { "type": "boolean" },
+    "slideId": { "type": "string", "minLength": 1 },
+    "elementId": { "type": "string", "minLength": 1 },
+    "semanticKey": { "type": "string", "minLength": 1 },
+    "factId": { "type": "string", "minLength": 1 },
+    "path": { "type": "string", "minLength": 1 },
+    "causeId": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": false
+}

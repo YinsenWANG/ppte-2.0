@@ -1,0 +1,16 @@
+{
+  "id": "ppte-2.0-ga-a.1",
+  "formatVersion": "2",
+  "schemaVersion": "2.0.0",
+  "operationProtocolVersion": "1.0",
+  "slideIrVersion": "1.0",
+  "portableRuntimeVersion": "2.0.0",
+  "layoutRecipeVersion": "1.0",
+  "widgetAbiVersion": null,
+  "patchVersion": null,
+  "migration": {
+    "from": ["ppte-2.0-ga-a.0", "ppte-2.2", "legacy-semantic-json", "legacy-presentation-package"],
+    "direction": "forward-only",
+    "preservesSource": true
+  }
+}
