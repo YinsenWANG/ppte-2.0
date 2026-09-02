@@ -14,7 +14,7 @@ const ELEMENT_TYPES = new Set(['text', 'image', 'shape', 'chart', 'component'])
 const SHAPE_KINDS = new Set(['rectangle', 'rounded-rectangle', 'ellipse', 'line', 'arrow', 'triangle', 'diamond', 'chevron', 'polygon'])
 
 /** Structural/runtime validation kept dependency-free for open and commit gates. */
-export function validateDocument(document: PpteDocument, options: { runtimeSubset?: boolean } = {}): ValidationIssue[] {
+export function validateDocument(document: PpteDocument, options: { runtimeSubset?: boolean; runtimeProfile?: 'ga-a' | 'ga-b' | 'ga-c' } = {}): ValidationIssue[] {
   const issues: ValidationIssue[] = []
   const add = (code: string, message: string, extra: Partial<ValidationIssue> = {}) => issues.push(withErrorSemantics({ code, severity: 'error', message, ...extra }))
   const root = document as unknown as Record<string, unknown> | undefined
@@ -73,8 +73,9 @@ export function validateDocument(document: PpteDocument, options: { runtimeSubse
       }
       if (element.id !== elementId) add('SCHEMA_INVALID', 'Element map key must equal element.id.', { slideId, elementId })
       if (!element.id || typeof element.id !== 'string' || !element.type) add('SCHEMA_INVALID', 'Element id and type are required.', { slideId, elementId })
-      validateElement(element, add, slideId, elementId, options.runtimeSubset === true)
+      validateElement(element, add, slideId, elementId, options.runtimeSubset === true, options.runtimeProfile ?? (options.runtimeSubset ? 'ga-b' : 'ga-c'))
       if (element.type === 'image' && !document.assets?.[element.assetId]) add('ASSET_MISSING', `Image references missing asset ${element.assetId}.`, { slideId, elementId })
+      if (element.type === 'component' && element.fallback && element.fallback.kind === 'asset' && element.fallback.assetId && !document.assets?.[element.fallback.assetId]) add('ASSET_MISSING', `Component fallback references missing asset ${element.fallback.assetId}.`, { slideId, elementId })
       validateRefs(document, element, add, slideId)
     }
     for (const elementId of rootOrder) if (!elements[elementId]) add('SCHEMA_INVALID', `rootOrder references missing element: ${elementId}`, { slideId, elementId })
@@ -217,18 +218,18 @@ function validChartStyle(value: unknown): boolean {
   return true
 }
 
-function validateElement(element: Element, add: (code: string, message: string, extra?: Partial<ValidationIssue>) => void, slideId: string, elementId: string, runtimeSubset: boolean) {
+function validateElement(element: Element, add: (code: string, message: string, extra?: Partial<ValidationIssue>) => void, slideId: string, elementId: string, runtimeSubset: boolean, runtimeProfile: 'ga-a' | 'ga-b' | 'ga-c') {
   if (!ELEMENT_TYPES.has(element.type)) { add('SCHEMA_INVALID', `Unknown element type: ${element.type}.`, { slideId, elementId }); return }
   if (!validFrame(element.frame)) add('GEOMETRY_INVALID', 'Element frame must contain finite x/y and positive width/height.', { slideId, elementId })
   if (element.rotationDeg !== undefined && !finite(element.rotationDeg)) add('GEOMETRY_INVALID', 'rotationDeg must be finite.', { slideId, elementId })
   if (element.opacity !== undefined && (!finite(element.opacity) || element.opacity < 0 || element.opacity > 1)) add('SCHEMA_INVALID', 'opacity must be between 0 and 1.', { slideId, elementId })
   if (element.appearStep !== undefined && (!Number.isInteger(element.appearStep) || element.appearStep < 0)) add('SCHEMA_INVALID', 'appearStep must be a non-negative integer.', { slideId, elementId })
-  if (runtimeSubset && element.type !== 'text' && element.type !== 'image' && element.type !== 'shape' && element.type !== 'chart') add('UNSUPPORTED_ELEMENT_TYPE', `Stable Core runtime does not implement ${element.type}.`, { slideId, elementId })
+  if (runtimeSubset && element.type === 'component' && runtimeProfile !== 'ga-c') add('UNSUPPORTED_ELEMENT_TYPE', `Runtime profile ${runtimeProfile} does not implement component elements.`, { slideId, elementId })
   if (element.type === 'text') validateText(element, add, slideId)
   if (element.type === 'image') validateImage(element, add, slideId)
   if (element.type === 'shape') validateShape(element, add, slideId)
-  if (element.type === 'chart') validateChart(element, add, slideId, runtimeSubset)
-  if (element.type === 'component' && (!element.componentType || !element.componentVersion || !element.fallback)) add('SCHEMA_INVALID', 'Component requires type, version, and fallback.', { slideId, elementId })
+  if (element.type === 'chart') validateChart(element, add, slideId, runtimeSubset, runtimeProfile)
+  if (element.type === 'component') validateComponent(element, add, slideId, elementId)
 }
 
 function validateText(element: TextElement, add: (code: string, message: string, extra?: Partial<ValidationIssue>) => void, slideId: string) {
@@ -276,8 +277,17 @@ function validateShape(element: ShapeElement, add: (code: string, message: strin
   if (element.points !== undefined && (!Array.isArray(element.points) || element.points.some((point) => !point || !finite(point.x) || !finite(point.y)))) add('GEOMETRY_INVALID', 'Shape points must be finite.', { slideId, elementId: element.id })
 }
 
-function validateChart(element: Extract<Element, { type: 'chart' }>, add: (code: string, message: string, extra?: Partial<ValidationIssue>) => void, slideId: string, runtimeSubset: boolean) {
-  for (const issue of validateChartContract(element, { runtimeSubset })) add(issue.code, issue.message, { slideId, elementId: element.id, path: issue.path ? `/slides/${escapePointer(slideId)}/elements/${escapePointer(element.id)}${issue.path}` : undefined })
+function validateChart(element: Extract<Element, { type: 'chart' }>, add: (code: string, message: string, extra?: Partial<ValidationIssue>) => void, slideId: string, runtimeSubset: boolean, runtimeProfile: 'ga-a' | 'ga-b' | 'ga-c') {
+  for (const issue of validateChartContract(element, { runtimeSubset, runtimeProfile: runtimeProfile === 'ga-c' ? 'ga-c' : 'ga-b' })) add(issue.code, issue.message, { slideId, elementId: element.id, path: issue.path ? `/slides/${escapePointer(slideId)}/elements/${escapePointer(element.id)}${issue.path}` : undefined })
+}
+
+function validateComponent(element: Extract<Element, { type: 'component' }>, add: (code: string, message: string, extra?: Partial<ValidationIssue>) => void, slideId: string, elementId: string) {
+  if (typeof element.componentType !== 'string' || !element.componentType || typeof element.componentVersion !== 'string' || !element.componentVersion) add('SCHEMA_INVALID', 'Component requires non-empty type and version.', { slideId, elementId })
+  if (!isPlainObject(element.props) || !isJsonValue(element.props)) add('SCHEMA_INVALID', 'Component props must be a JSON object.', { slideId, elementId })
+  const fallback = element.fallback as unknown as Record<string, unknown> | undefined
+  if (!fallback || typeof fallback !== 'object' || Array.isArray(fallback) || !['asset', 'placeholder'].includes(String(fallback.kind))) add('SCHEMA_INVALID', 'Component fallback must be an asset or placeholder.', { slideId, elementId })
+  else if (fallback.kind === 'asset' && (typeof fallback.assetId !== 'string' || !fallback.assetId)) add('SCHEMA_INVALID', 'Asset component fallback requires assetId.', { slideId, elementId })
+  if (fallback?.assetId !== undefined && typeof fallback.assetId !== 'string') add('SCHEMA_INVALID', 'Component fallback assetId must be a string.', { slideId, elementId })
 }
 
 function validateGroups(slide: PpteDocument['slides'][string], elements: Record<string, Element>, add: (code: string, message: string, extra?: Partial<ValidationIssue>) => void, slideId: string) {
@@ -355,6 +365,13 @@ function finite(value: unknown): value is number { return typeof value === 'numb
 function finitePositive(value: unknown): value is number { return finite(value) && value > 0 }
 function finiteNonNegative(value: unknown): value is number { return finite(value) && value >= 0 }
 function isPlainObject(value: unknown): value is Record<string, unknown> { return Boolean(value) && typeof value === 'object' && !Array.isArray(value) }
+function isJsonValue(value: unknown): boolean {
+  if (value === null || typeof value === 'string' || typeof value === 'boolean') return true
+  if (typeof value === 'number') return Number.isFinite(value)
+  if (Array.isArray(value)) return value.every(isJsonValue)
+  if (isPlainObject(value)) return Object.values(value).every(isJsonValue)
+  return false
+}
 function hasOnlyKeys(value: Record<string, unknown>, allowed: string[]): boolean { return Object.keys(value).every((key) => allowed.includes(key)) }
 function validFrame(frame: unknown): frame is { x: number; y: number; width: number; height: number } {
   if (!frame || typeof frame !== 'object') return false

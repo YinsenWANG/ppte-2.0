@@ -47,6 +47,18 @@ export function contentOnlyContract(elementId: string): ChangeContract {
   return { allowedOperationKinds: ['text.replaceContent'], allowedElementIds: [elementId], ...zeroBudget(1), preserve: { geometry: 'preserve', style: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' }, requireConfirmation: false, userIntentSummary: 'Only replace selected text content.' }
 }
 
+export function componentPropsContract(elementId: string, requireConfirmation = false): ChangeContract {
+  return { allowedOperationKinds: ['component.updateProps'], allowedElementIds: [elementId], ...zeroBudget(1), preserve: { geometry: 'preserve', style: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' }, requireConfirmation, userIntentSummary: 'Only update the selected Widget properties.' }
+}
+
+export function cropOnlyContract(elementId: string, requireConfirmation = false): ChangeContract {
+  return { allowedOperationKinds: ['image.setCrop'], allowedElementIds: [elementId], ...zeroBudget(1), preserve: { content: 'preserve', data: 'preserve', style: 'preserve', geometry: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' }, requireConfirmation, userIntentSummary: 'Only update the selected Image crop.' }
+}
+
+export function chartDataOnlyContract(elementId: string, requireConfirmation = false): ChangeContract {
+  return { allowedOperationKinds: ['chart.replaceData'], allowedElementIds: [elementId], ...zeroBudget(1), preserve: { content: 'allow', style: 'preserve', geometry: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' }, requireConfirmation, userIntentSummary: 'Only replace the selected Chart data.' }
+}
+
 export function geometryOnlyContract(elementIds: string[], requireConfirmation = true): ChangeContract {
   return { allowedOperationKinds: ['element.move', 'element.resize', 'layout.align', 'layout.distribute'], allowedElementIds: elementIds, ...zeroBudget(elementIds.length), preserve: { content: 'preserve', data: 'preserve', style: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' }, requireConfirmation, userIntentSummary: 'Change geometry while preserving semantic content and style.' }
 }
@@ -527,6 +539,7 @@ function fieldProjection(element: Element, field: string): unknown {
 function contentProjection(element: Element): unknown {
   if (element.type === 'text') return element.content
   if (element.type === 'chart') return { data: element.data, encoding: element.encoding, options: element.options }
+  if (element.type === 'component') return element.props
   return undefined
 }
 function dataProjection(element: Element): unknown {

@@ -1,4 +1,4 @@
-import { PPTE_COMPATIBILITY_PROFILE, PPTE_FORMAT_VERSION, PPTE_GA_B_COMPATIBILITY_PROFILE, PPTE_OPERATION_PROTOCOL_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
+import { PPTE_COMPATIBILITY_PROFILE, PPTE_FORMAT_VERSION, PPTE_GA_B_COMPATIBILITY_PROFILE, PPTE_GA_C_COMPATIBILITY_PROFILE, PPTE_OPERATION_PROTOCOL_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
 
 /** A release-tested combination of the independently versioned contracts. */
 export interface CompatibilityProfile {
@@ -67,9 +67,27 @@ export const GA_B_PROFILE: CompatibilityProfile = {
   },
 }
 
+export const GA_C_PROFILE: CompatibilityProfile = {
+  id: PPTE_GA_C_COMPATIBILITY_PROFILE,
+  formatVersion: PPTE_FORMAT_VERSION,
+  schemaVersion: PPTE_SCHEMA_VERSION,
+  operationProtocolVersion: PPTE_OPERATION_PROTOCOL_VERSION,
+  slideIrVersion: '1.0',
+  portableRuntimeVersion: '2.0.0',
+  layoutRecipeVersion: '1.0',
+  widgetAbiVersion: '1.0',
+  patchVersion: '1',
+  migration: {
+    from: [PPTE_GA_B_COMPATIBILITY_PROFILE],
+    direction: 'forward-only',
+    preservesSource: true,
+  },
+}
+
 const PROFILES: Readonly<Record<string, CompatibilityProfile>> = {
   [GA_A_PROFILE.id]: GA_A_PROFILE,
   [GA_B_PROFILE.id]: GA_B_PROFILE,
+  [GA_C_PROFILE.id]: GA_C_PROFILE,
 }
 
 export const SUPPORTED_COMPATIBILITY_PROFILES = Object.freeze(Object.keys(PROFILES)) as readonly string[]

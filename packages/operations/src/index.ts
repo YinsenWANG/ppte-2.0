@@ -32,6 +32,12 @@ export const GA_B_OPERATION_KINDS = [
   'chart.replaceData', 'chart.updateEncoding', 'chart.updateOptions', 'chart.updateStyle',
 ] as const
 
+/** GA-C adds Area/Donut chart data paths and the controlled Widget props path. */
+export const GA_C_OPERATION_KINDS = [
+  ...GA_B_OPERATION_KINDS,
+  'component.updateProps',
+] as const
+
 /** Backward-compatible name retained for the Week 1–2 operation matrix. */
 export const WEEK1_2_OPERATION_KINDS = STABLE_CORE_OPERATION_KINDS
 import type {
@@ -58,9 +64,14 @@ export interface AppliedTransaction {
   inverseOperations: Operation[]
 }
 
+export interface OperationApplyOptions {
+  runtimeProfile?: 'ga-a' | 'ga-b' | 'ga-c'
+}
+
 /** Apply one typed operation to a cloned snapshot. The input is never mutated. */
-export function applyOperation(document: PpteDocument, operation: Operation): AppliedOperation {
+export function applyOperation(document: PpteDocument, operation: Operation, options: OperationApplyOptions = {}): AppliedOperation {
   const next = cloneJson(document)
+  const runtimeProfile = options.runtimeProfile ?? 'ga-b'
   switch (operation.kind) {
     case 'document.updateMetadata': {
       const before = cloneJson(next.metadata)
@@ -144,7 +155,7 @@ export function applyOperation(document: PpteDocument, operation: Operation): Ap
     case 'element.insert': {
       const slide = requireSlide(next, operation.slideId)
       if (slide.elements[operation.element.id]) throw error('ID_CONFLICT', `Element already exists: ${operation.element.id}.`)
-      assertRuntimeElement(operation.element)
+      assertRuntimeElement(operation.element, runtimeProfile)
       if (operation.element.semanticKey && Object.values(slide.elements).some((candidate) => candidate.semanticKey === operation.element.semanticKey)) {
         throw error('SEMANTIC_KEY_DUPLICATE', `Duplicate semanticKey: ${operation.element.semanticKey}.`)
       }
@@ -180,7 +191,7 @@ export function applyOperation(document: PpteDocument, operation: Operation): Ap
       const slide = requireSlide(next, operation.slideId)
       const source = requireElement(slide, operation.sourceElementId)
       if (slide.elements[operation.newElementId]) throw error('ID_CONFLICT', `Element already exists: ${operation.newElementId}.`)
-      assertRuntimeElement(source)
+      assertRuntimeElement(source, runtimeProfile)
       const duplicate = cloneJson(source)
       duplicate.id = operation.newElementId
       duplicate.frame.x += operation.offset?.x ?? 24
@@ -411,32 +422,32 @@ export function applyOperation(document: PpteDocument, operation: Operation): Ap
       return { document: next, inverse: [op(operation, 'shape.updateStyle', { slideId: operation.slideId, elementId: operation.elementId, patch: before, replace: true })] }
     }
     case 'chart.replaceData': {
-      const element = requireChart(next, operation.slideId, operation.elementId)
+      const element = requireChart(next, operation.slideId, operation.elementId, runtimeProfile)
       const before = cloneJson(element.data)
       const candidate = { ...element, data: cloneJson(operation.data) }
-      assertValidChart(candidate)
+      assertValidChart(candidate, runtimeProfile)
       element.data = cloneJson(operation.data)
       return { document: next, inverse: [op(operation, 'chart.replaceData', { slideId: operation.slideId, elementId: operation.elementId, data: before })] }
     }
     case 'chart.updateEncoding': {
-      const element = requireChart(next, operation.slideId, operation.elementId)
+      const element = requireChart(next, operation.slideId, operation.elementId, runtimeProfile)
       const before = cloneJson(element.encoding)
       const candidate = { ...element, encoding: cloneJson(operation.encoding) }
-      assertValidChart(candidate)
+      assertValidChart(candidate, runtimeProfile)
       element.encoding = cloneJson(operation.encoding)
       return { document: next, inverse: [op(operation, 'chart.updateEncoding', { slideId: operation.slideId, elementId: operation.elementId, encoding: before })] }
     }
     case 'chart.updateOptions': {
-      const element = requireChart(next, operation.slideId, operation.elementId)
+      const element = requireChart(next, operation.slideId, operation.elementId, runtimeProfile)
       const before = cloneJson(element.options)
       if (operation.unset) delete element.options
       else if (operation.replace) element.options = cloneJson(operation.patch)
       else element.options = { ...(element.options ?? {}), ...cloneJson(operation.patch) }
-      assertValidChart(element)
+      assertValidChart(element, runtimeProfile)
       return { document: next, inverse: [before === undefined ? op(operation, 'chart.updateOptions', { slideId: operation.slideId, elementId: operation.elementId, patch: {}, unset: true }) : op(operation, 'chart.updateOptions', { slideId: operation.slideId, elementId: operation.elementId, patch: before, replace: true })] }
     }
     case 'chart.updateStyle': {
-      const element = requireChart(next, operation.slideId, operation.elementId)
+      const element = requireChart(next, operation.slideId, operation.elementId, runtimeProfile)
       const before = cloneJson(element.style.overrides ?? {})
       if (operation.unset || (operation.replace && Object.keys(operation.patch).length === 0)) delete element.style.overrides
       else if (operation.replace) element.style.overrides = cloneJson(operation.patch)
@@ -537,7 +548,7 @@ export function applyOperation(document: PpteDocument, operation: Operation): Ap
       return { document: next, inverse: [op(operation, 'fact.upsert', { fact: cloneJson(before) })] }
     }
     case 'fact.syncReferences':
-      return applyFactSyncReferences(next, operation)
+      return applyFactSyncReferences(next, operation, runtimeProfile)
     case 'source.upsert': {
       const before = cloneJson(next.sources?.[operation.source.id])
       next.sources ??= {}
@@ -554,16 +565,23 @@ export function applyOperation(document: PpteDocument, operation: Operation): Ap
       return applyLayoutAlign(next, operation)
     case 'layout.distribute':
       return applyLayoutDistribute(next, operation)
-    case 'component.updateProps':
-      throw error('UNSUPPORTED_OPERATION', `${operation.kind} is outside the GA-B runtime.`)
+    case 'component.updateProps': {
+      if (runtimeProfile !== 'ga-c') throw error('UNSUPPORTED_OPERATION', `${operation.kind} is outside the ${runtimeProfile.toUpperCase()} runtime.`)
+      const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)
+      if (element.type !== 'component') throw error('OPERATION_TYPE_MISMATCH', 'component.updateProps requires a Component element.')
+      assertComponentProps(operation.patch)
+      const before = cloneJson(element.props)
+      element.props = operation.replace ? cloneJson(operation.patch) : { ...element.props, ...cloneJson(operation.patch) }
+      return { document: next, inverse: [op(operation, 'component.updateProps', { slideId: operation.slideId, elementId: operation.elementId, patch: before, replace: true })] }
+    }
   }
 }
 
-export function applyTransaction(document: PpteDocument, transaction: Transaction): AppliedTransaction {
+export function applyTransaction(document: PpteDocument, transaction: Transaction, options: OperationApplyOptions = {}): AppliedTransaction {
   let current = cloneJson(document)
   const inverseOperations: Operation[] = []
   for (const operation of transaction.operations) {
-    const result = applyOperation(current, operation)
+    const result = applyOperation(current, operation, options)
     current = result.document
     inverseOperations.unshift(...result.inverse)
   }
@@ -618,9 +636,12 @@ function applyLayoutDistribute(document: PpteDocument, operation: Extract<Operat
   return { document, inverse: before.map((item) => op(operation, 'element.resize', { slideId: operation.slideId, elementId: item.elementId, frame: item.frame })) }
 }
 
-function assertRuntimeElement(element: Element): asserts element is Exclude<Element, { type: 'component' }> {
-  if (element.type === 'component') throw error('UNSUPPORTED_ELEMENT_TYPE', 'GA-B runtime does not implement component elements.')
-  if (element.type === 'chart') assertValidChart(element)
+function assertRuntimeElement(element: Element, runtimeProfile: 'ga-a' | 'ga-b' | 'ga-c'): void {
+  if (element.type === 'component') {
+    if (runtimeProfile !== 'ga-c') throw error('UNSUPPORTED_ELEMENT_TYPE', `${runtimeProfile.toUpperCase()} runtime does not implement component elements.`)
+    assertComponentProps(element.props)
+  }
+  if (element.type === 'chart') assertValidChart(element, runtimeProfile)
 }
 
 function assertStyleElement(element: Element): asserts element is StableStyleElement {
@@ -805,7 +826,7 @@ function assertRichText(content: unknown): asserts content is TextElement['conte
   }
 }
 
-function applyFactSyncReferences(document: PpteDocument, operation: Extract<import('../../schema/src/index.js').Operation, { kind: 'fact.syncReferences' }>): AppliedOperation {
+function applyFactSyncReferences(document: PpteDocument, operation: Extract<import('../../schema/src/index.js').Operation, { kind: 'fact.syncReferences' }>, runtimeProfile: 'ga-a' | 'ga-b' | 'ga-c'): AppliedOperation {
   const fact = document.facts?.[operation.factId]
   if (!fact) throw error('FACT_REFERENCE_MISSING', `Fact does not exist: ${operation.factId}.`)
   assertUniqueElementIds(operation.targetElementIds)
@@ -815,6 +836,7 @@ function applyFactSyncReferences(document: PpteDocument, operation: Extract<impo
     if (!found) throw error('ELEMENT_MISSING', `Element does not exist: ${elementId}.`)
     if (operation.strategy === 'update-chart-values') {
       if (found.element.type !== 'chart') throw error('OPERATION_TYPE_MISMATCH', 'update-chart-values requires Chart targets.')
+      assertValidChart(found.element, runtimeProfile)
       const before = cloneJson(found.element.data)
       const result = syncChartFact(found.element, fact, operation.previousValue)
       if (!result.changed) throw error('CHART_FACT_INCONSISTENT', `No safe chart cell matched Fact ${operation.factId} on ${found.element.id}.`)
@@ -887,15 +909,27 @@ function requireElement(slide: Slide, elementId: string): Element {
   if (!element) throw error('ELEMENT_MISSING', `Element does not exist: ${elementId}.`)
   return element
 }
-function requireChart(document: PpteDocument, slideId: string, elementId: string): ChartElement {
+function requireChart(document: PpteDocument, slideId: string, elementId: string, runtimeProfile: 'ga-a' | 'ga-b' | 'ga-c' = 'ga-b'): ChartElement {
   const element = requireElement(requireSlide(document, slideId), elementId)
   if (element.type !== 'chart') throw error('OPERATION_TYPE_MISMATCH', 'Chart operation requires a Chart element.')
-  assertValidChart(element)
+  assertValidChart(element, runtimeProfile)
   return element
 }
-function assertValidChart(element: ChartElement): void {
-  const issue = validateChartContract(element, { runtimeSubset: true })[0]
+function assertValidChart(element: ChartElement, runtimeProfile: 'ga-a' | 'ga-b' | 'ga-c' = 'ga-b'): void {
+  const issue = validateChartContract(element, { runtimeSubset: true, runtimeProfile: runtimeProfile === 'ga-c' ? 'ga-c' : 'ga-b' })[0]
   if (issue) throw error(issue.code, issue.message)
+}
+
+function assertComponentProps(value: unknown): asserts value is Record<string, import('../../schema/src/index.js').JsonValue> {
+  if (!value || typeof value !== 'object' || Array.isArray(value) || !isJsonValue(value)) throw error('SCHEMA_INVALID', 'Component props must be a JSON object.')
+}
+
+function isJsonValue(value: unknown): boolean {
+  if (value === null || typeof value === 'string' || typeof value === 'boolean') return true
+  if (typeof value === 'number') return Number.isFinite(value)
+  if (Array.isArray(value)) return value.every(isJsonValue)
+  if (value && typeof value === 'object') return Object.values(value).every(isJsonValue)
+  return false
 }
 function requireGroup(slide: Slide, groupId: string) {
   const group = slide.groups?.[groupId]

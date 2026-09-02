@@ -20,6 +20,7 @@ import type {
   PreviewResult,
   StructuralDiff,
   ScopePermission,
+  RuntimeProfile,
 } from '../../schema/src/index.js'
 
 export type SaveState = 'modified' | 'saving' | 'saved' | 'recoverable' | 'save-failed' | 'readonly-recovery'
@@ -39,6 +40,7 @@ export interface SessionOptions {
   initialSaveState?: SaveState
   historyLimit?: number
   historyBytesLimit?: number
+  runtimeProfile?: RuntimeProfile
 }
 
 export interface DerivedIndexes {
@@ -76,9 +78,11 @@ export class PpteSession {
   private saveState: SaveState
   private readonly historyLimit: number
   private readonly historyBytesLimit: number
+  private readonly runtimeProfile: RuntimeProfile
 
   constructor(document: PpteDocument, options: SessionOptions = {}) {
-    const initialIssues = validateRuntimeDocument(document)
+    this.runtimeProfile = options.runtimeProfile ?? inferRuntimeProfile(document)
+    const initialIssues = validateRuntimeDocument(document, { runtimeProfile: this.runtimeProfile })
     if (initialIssues.some((issue) => issue.severity === 'error')) throw new Error(initialIssues.map((issue) => `${issue.code}: ${issue.message}`).join('\n'))
     this.document = cloneJson(document)
     this.revision = canonicalRevision(this.document)
@@ -125,7 +129,7 @@ export class PpteSession {
 
     let applied: ReturnType<typeof applyTransaction>
     try {
-      applied = applyTransaction(this.document, transaction)
+      applied = applyTransaction(this.document, transaction, { runtimeProfile: this.runtimeProfile })
     } catch (cause) {
       const operationError = cause instanceof OperationApplyError ? cause : undefined
       issues.push(error(operationError?.code ?? 'OPERATION_APPLY_FAILED', operationError?.message ?? String(cause)))
@@ -133,7 +137,7 @@ export class PpteSession {
     }
     const diff = computeStructuralDiff(this.document, applied.document)
     issues.push(...enforceChangeContract(this.document, applied.document, transaction, diff))
-    issues.push(...validateRuntimeDocument(applied.document))
+    issues.push(...validateRuntimeDocument(applied.document, { runtimeProfile: this.runtimeProfile }))
     const ok = !issues.some((issue) => issue.severity === 'error')
     const proposedRevision = ok ? canonicalRevision(applied.document) : undefined
     const result: PreviewResult = {
@@ -219,7 +223,7 @@ export class PpteSession {
     if (!preview.ok || !preview.document || !preview.diff) return { ok: false, beforeRevision, transactionId: transaction.transactionId, diff: preview.diff, issues: preview.issues }
     let applied: ReturnType<typeof applyTransaction>
     try {
-      applied = applyTransaction(this.document, transaction)
+      applied = applyTransaction(this.document, transaction, { runtimeProfile: this.runtimeProfile })
     } catch (cause) {
       return { ok: false, beforeRevision, transactionId: transaction.transactionId, issues: [error('OPERATION_APPLY_FAILED', cause instanceof Error ? cause.message : String(cause))] }
     }
@@ -354,6 +358,16 @@ function requiredAssetHashes(document: PpteDocument, transaction: Transaction): 
     }
   }
   return [...hashes].sort()
+}
+
+function inferRuntimeProfile(document: PpteDocument): RuntimeProfile {
+  for (const slide of Object.values(document.slides ?? {})) {
+    if (slide.visualStrategy === 'poster') return 'ga-c'
+    for (const element of Object.values(slide.elements ?? {})) {
+      if (element.type === 'component' || element.type === 'chart' && (element.chartType === 'area' || element.chartType === 'donut')) return 'ga-c'
+    }
+  }
+  return 'ga-b'
 }
 function error(code: string, message: string, path?: string, recovery?: string): ValidationIssue {
   return withErrorSemantics({ code, severity: 'error', message, path, recovery })

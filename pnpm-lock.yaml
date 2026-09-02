@@ -79,6 +79,8 @@ importers:
 
   packages/validation: {}
 
+  packages/widgets: {}
+
 packages:
 
   '@types/node@22.20.1':

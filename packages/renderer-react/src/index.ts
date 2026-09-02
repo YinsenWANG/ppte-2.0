@@ -1,5 +1,6 @@
 import { canonicalHash, canonicalJsonString } from '../../canonical-json/src/index.js'
 import { renderChartSvg } from '../../charts/src/index.js'
+import { getBuiltinWidgetRegistry, renderWidgetHtml, renderWidgetSvg, type WidgetRegistry } from '../../widgets/src/index.js'
 import type {
   Element,
   ImageElement,
@@ -16,6 +17,7 @@ import type {
 export interface RenderOptions {
   assetSources?: Record<string, string>
   includeDiagnostics?: boolean
+  widgetRegistry?: WidgetRegistry
 }
 
 export interface VisualDiffScope {
@@ -115,7 +117,7 @@ function renderElement(document: PpteDocument, element: Element, options: Render
   else if (element.type === 'image') rendered = renderImage(document, element, frame, options)
   else if (element.type === 'shape') rendered = renderShape(document, element, frame)
   else if (element.type === 'chart') rendered = renderChart(document, element, frame)
-  else throw new Error(`UNSUPPORTED_ELEMENT_TYPE: ${element.type}`)
+  else rendered = renderComponent(document, element, frame, options)
   return element.appearStep === undefined ? rendered : rendered.replace(/^<(\w+)/, `<$1 data-ppte-appear-step="${number(element.appearStep)}"`)
 }
 
@@ -245,8 +247,19 @@ function renderChart(document: PpteDocument, element: Extract<Element, { type: '
     gridColor: typeof style.gridColor === 'string' ? style.gridColor : undefined,
     lineWidth: asNumber(style.lineWidth),
     cornerRadius: asNumber(style.cornerRadius),
+    runtimeProfile: element.chartType === 'area' || element.chartType === 'donut' ? 'ga-c' : 'ga-b',
   })
   return `<div data-ppte-element-id="${escapeAttr(element.id)}" data-ppte-type="chart" data-ppte-chart-type="${escapeAttr(element.chartType)}" data-ppte-semantic-key="${escapeAttr(element.semanticKey ?? '')}" style="position:absolute;${frame};overflow:hidden;">${svg}</div>`
+}
+
+function renderComponent(document: PpteDocument, element: Extract<Element, { type: 'component' }>, frame: string, options: RenderOptions): string {
+  const fallbackAsset = element.fallback.kind === 'asset' && element.fallback.assetId ? document.assets[element.fallback.assetId] : undefined
+  if (fallbackAsset) {
+    const source = options.assetSources?.[fallbackAsset.id] ?? fallbackAsset.path
+    return `<div data-ppte-element-id="${escapeAttr(element.id)}" data-ppte-type="component" data-ppte-component-type="${escapeAttr(element.componentType)}" data-ppte-widget-fallback="asset" style="${frame}overflow:hidden;"><img src="${escapeAttr(source)}" alt="${escapeAttr(fallbackAsset.altText ?? element.fallback.label ?? element.componentType)}" style="width:100%;height:100%;object-fit:contain;"></div>`
+  }
+  const widget = renderWidgetHtml(element, options.widgetRegistry ?? getBuiltinWidgetRegistry())
+  return `<div data-ppte-element-id="${escapeAttr(element.id)}" data-ppte-type="component" data-ppte-component-type="${escapeAttr(element.componentType)}" data-ppte-semantic-key="${escapeAttr(element.semanticKey ?? '')}" style="${frame}overflow:hidden;">${widget}</div>`
 }
 
 function renderElementSvg(document: PpteDocument, element: Element, options: RenderOptions, defs: string[]): string {
@@ -257,7 +270,11 @@ function renderElementSvg(document: PpteDocument, element: Element, options: Ren
   else if (element.type === 'image') body = renderImageSvg(document, element, options, defs)
   else if (element.type === 'shape') body = renderShapeSvg(document, element, defs)
   else if (element.type === 'chart') body = renderChartSvgElement(document, element)
-  else throw new Error(`UNSUPPORTED_ELEMENT_TYPE: ${element.type}`)
+  else if (element.fallback.kind === 'asset' && element.fallback.assetId && document.assets[element.fallback.assetId]) {
+    const asset = document.assets[element.fallback.assetId]
+    const source = options.assetSources?.[asset.id] ?? asset.path
+    body = `<image x="0" y="0" width="${number(element.frame.width)}" height="${number(element.frame.height)}" href="${escapeAttr(source)}" xlink:href="${escapeAttr(source)}" preserveAspectRatio="xMidYMid meet"/>`
+  } else body = renderWidgetSvg(element, element.frame.width, element.frame.height, options.widgetRegistry ?? getBuiltinWidgetRegistry())
   return `<g data-ppte-element-id="${escapeAttr(element.id)}" data-ppte-type="${escapeAttr(element.type)}"${element.semanticKey ? ` data-ppte-semantic-key="${escapeAttr(element.semanticKey)}"` : ''} transform="${transform}"${opacity}>${body}</g>`
 }
 
@@ -319,7 +336,7 @@ function renderChartSvgElement(document: PpteDocument, element: Extract<Element,
   const preset = document.theme.presets.chart[element.style.styleRef] ?? {}
   const style = resolveStyle({ ...preset, ...(element.style.overrides ?? {}) }, document) as Record<string, unknown>
   const palette = Array.isArray(style.palette) ? style.palette.filter((value): value is string => typeof value === 'string') : undefined
-  return renderChartSvg(element, { width: element.frame.width, height: element.frame.height, palette, axisColor: typeof style.axisColor === 'string' ? style.axisColor : undefined, labelColor: typeof style.labelColor === 'string' ? style.labelColor : undefined, gridColor: typeof style.gridColor === 'string' ? style.gridColor : undefined, lineWidth: asNumber(style.lineWidth), cornerRadius: asNumber(style.cornerRadius) })
+  return renderChartSvg(element, { width: element.frame.width, height: element.frame.height, palette, axisColor: typeof style.axisColor === 'string' ? style.axisColor : undefined, labelColor: typeof style.labelColor === 'string' ? style.labelColor : undefined, gridColor: typeof style.gridColor === 'string' ? style.gridColor : undefined, lineWidth: asNumber(style.lineWidth), cornerRadius: asNumber(style.cornerRadius), runtimeProfile: element.chartType === 'area' || element.chartType === 'donut' ? 'ga-c' : 'ga-b' })
 }
 
 function svgStroke(stroke: Stroke, document: PpteDocument): string {

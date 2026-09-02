@@ -317,7 +317,7 @@ function matchElements(base: Element[], candidates: Element[]): Map<string, { el
 
 function elementFields(element: Element): Partial<Record<ReviewField, unknown>> {
   return {
-    content: element.type === 'text' ? element.content : undefined,
+    content: element.type === 'text' ? element.content : element.type === 'component' ? element.props : undefined,
     data: element.type === 'chart' ? element.data : undefined,
     encoding: element.type === 'chart' ? element.encoding : undefined,
     options: element.type === 'chart' ? element.options : undefined,
@@ -336,6 +336,7 @@ function elementIdentity(element: Element): unknown {
 function operationsForField(slideId: string, local: Element, revised: Element, field: ReviewField): Operation[] {
   const prefix = `review:${slideId}:${local.id}:${field}`
   if (field === 'content' && local.type === 'text' && revised.type === 'text') return [{ opId: prefix, kind: 'text.replaceContent', slideId, elementId: local.id, content: cloneJson(revised.content) }]
+  if (field === 'content' && local.type === 'component' && revised.type === 'component') return [{ opId: prefix, kind: 'component.updateProps', slideId, elementId: local.id, patch: cloneJson(revised.props), replace: true }]
   if (field === 'data' && local.type === 'chart' && revised.type === 'chart') return [{ opId: prefix, kind: 'chart.replaceData', slideId, elementId: local.id, data: cloneJson(revised.data) }]
   if (field === 'encoding' && local.type === 'chart' && revised.type === 'chart') return [{ opId: prefix, kind: 'chart.updateEncoding', slideId, elementId: local.id, encoding: cloneJson(revised.encoding) }]
   if (field === 'options' && local.type === 'chart' && revised.type === 'chart') return [{ opId: prefix, kind: 'chart.updateOptions', slideId, elementId: local.id, patch: cloneJson(revised.options ?? {}), ...(revised.options === undefined ? { unset: true } : { replace: true }) }]

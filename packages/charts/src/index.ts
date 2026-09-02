@@ -2,6 +2,8 @@ import type { ChartData, ChartElement, ChartEncoding, ChartOptions, Fact } from 
 
 export const GA_B_CHART_TYPES = ['bar', 'line', 'pie'] as const
 export type GaBChartType = typeof GA_B_CHART_TYPES[number]
+export const GA_C_CHART_TYPES = ['bar', 'line', 'area', 'pie', 'donut'] as const
+export type GaCChartType = typeof GA_C_CHART_TYPES[number]
 
 export interface ChartValidationIssue {
   code: 'SCHEMA_INVALID' | 'CHART_TYPE_UNSUPPORTED'
@@ -24,13 +26,16 @@ export interface ChartSvgOptions {
   gridColor?: string
   lineWidth?: number
   cornerRadius?: number
+  runtimeProfile?: 'ga-b' | 'ga-c'
 }
 
 /** Validate the chart contract without depending on the runtime or renderer. */
-export function validateChartContract(element: ChartElement, options: { runtimeSubset?: boolean } = {}): ChartValidationIssue[] {
+export function validateChartContract(element: ChartElement, options: { runtimeSubset?: boolean; runtimeProfile?: 'ga-b' | 'ga-c' } = {}): ChartValidationIssue[] {
   const issues: ChartValidationIssue[] = []
-  if (!GA_B_CHART_TYPES.includes(element.chartType as GaBChartType)) {
-    if (options.runtimeSubset) issues.push({ code: 'CHART_TYPE_UNSUPPORTED', message: `GA-B supports Bar, Line, and Pie charts; received ${element.chartType}.`, path: '/chartType' })
+  const runtimeProfile = options.runtimeProfile ?? (options.runtimeSubset ? 'ga-b' : 'ga-c')
+  const supported = runtimeProfile === 'ga-c' ? GA_C_CHART_TYPES : GA_B_CHART_TYPES
+  if (!supported.includes(element.chartType as never)) {
+    if (options.runtimeSubset) issues.push({ code: 'CHART_TYPE_UNSUPPORTED', message: runtimeProfile === 'ga-b' ? `GA-B supports Bar, Line, and Pie charts; received ${element.chartType}.` : `GA-C runtime does not support ${element.chartType} charts; received ${element.chartType}.`, path: '/chartType' })
     else if (!['bar', 'line', 'area', 'pie', 'donut'].includes(element.chartType)) issues.push({ code: 'SCHEMA_INVALID', message: `Unknown chart type ${element.chartType}.`, path: '/chartType' })
   }
   issues.push(...validateChartData(element.data, element.encoding))
@@ -120,7 +125,9 @@ export function syncChartFact(element: ChartElement, fact: Fact, previousValue?:
 
 /** Deterministic SVG renderer used by the reference HTML renderer and image exports. */
 export function renderChartSvg(element: ChartElement, options: ChartSvgOptions = {}): string {
-  if (!GA_B_CHART_TYPES.includes(element.chartType as GaBChartType)) throw new Error(`CHART_TYPE_UNSUPPORTED: ${element.chartType}`)
+  const runtimeProfile = options.runtimeProfile ?? 'ga-b'
+  const supported = runtimeProfile === 'ga-c' ? GA_C_CHART_TYPES : GA_B_CHART_TYPES
+  if (!supported.includes(element.chartType as never)) throw new Error(`CHART_TYPE_UNSUPPORTED: ${element.chartType}`)
   const width = finitePositive(options.width) ? options.width! : 640
   const height = finitePositive(options.height) ? options.height! : 360
   const palette = options.palette?.length ? options.palette : ['#2563eb', '#14b8a6', '#f97316', '#8b5cf6', '#e11d48', '#0891b2']
@@ -147,9 +154,11 @@ export function renderChartSvg(element: ChartElement, options: ChartSvgOptions =
   }
   if (element.chartType === 'bar') parts.push(...renderBars(element, categories, margin, plotWidth, plotHeight, minValue, range, palette, cornerRadius, labelColor))
   else if (element.chartType === 'line') parts.push(...renderLines(element, categories, margin, plotWidth, plotHeight, minValue, range, palette, lineWidth, labelColor))
+  else if (element.chartType === 'area') parts.push(...renderAreas(element, categories, margin, plotWidth, plotHeight, minValue, range, palette, lineWidth, labelColor))
+  else if (element.chartType === 'donut') parts.push(...renderDonut(element, margin, plotWidth, plotHeight, palette, labelColor))
   else parts.push(...renderPie(element, margin, plotWidth, plotHeight, palette, labelColor))
-  if (optionsForChart.showXAxis !== false && element.chartType !== 'pie') parts.push(`<line x1="${num(margin.left)}" y1="${num(margin.top + plotHeight)}" x2="${num(margin.left + plotWidth)}" y2="${num(margin.top + plotHeight)}" stroke="${esc(axisColor)}" stroke-width="1"/>`)
-  if (optionsForChart.showYAxis !== false && element.chartType !== 'pie') parts.push(`<line x1="${num(margin.left)}" y1="${num(margin.top)}" x2="${num(margin.left)}" y2="${num(margin.top + plotHeight)}" stroke="${esc(axisColor)}" stroke-width="1"/>`)
+  if (optionsForChart.showXAxis !== false && element.chartType !== 'pie' && element.chartType !== 'donut') parts.push(`<line x1="${num(margin.left)}" y1="${num(margin.top + plotHeight)}" x2="${num(margin.left + plotWidth)}" y2="${num(margin.top + plotHeight)}" stroke="${esc(axisColor)}" stroke-width="1"/>`)
+  if (optionsForChart.showYAxis !== false && element.chartType !== 'pie' && element.chartType !== 'donut') parts.push(`<line x1="${num(margin.left)}" y1="${num(margin.top)}" x2="${num(margin.left)}" y2="${num(margin.top + plotHeight)}" stroke="${esc(axisColor)}" stroke-width="1"/>`)
   if (optionsForChart.showLegend !== false && valueFields.length > 0) valueFields.forEach((field, index) => {
     const x = width - margin.right + 12
     const y = margin.top + index * 20
@@ -214,6 +223,32 @@ function renderLines(element: ChartElement, categories: string[], margin: { left
   return parts
 }
 
+function renderAreas(element: ChartElement, categories: string[], margin: { left: number; top: number }, plotWidth: number, plotHeight: number, minValue: number, range: number, palette: string[], lineWidth: number, labelColor: string): string[] {
+  const parts: string[] = []
+  element.encoding.valueFields.forEach((field, seriesIndex) => {
+    const points = element.data.rows.map((row, rowIndex) => {
+      const value = numericValue(row.values[field]) ?? 0
+      const x = margin.left + (element.data.rows.length <= 1 ? plotWidth / 2 : rowIndex * plotWidth / (element.data.rows.length - 1))
+      const y = margin.top + plotHeight - (value - minValue) / range * plotHeight
+      return { x, y, value }
+    })
+    const baseline = margin.top + plotHeight - (0 - minValue) / range * plotHeight
+    const first = points[0]
+    const last = points[points.length - 1]
+    if (first && last) {
+      const areaPath = `M ${num(first.x)} ${num(baseline)} L ${points.map((point) => `${num(point.x)} ${num(point.y)}`).join(' L ')} L ${num(last.x)} ${num(baseline)} Z`
+      parts.push(`<path d="${areaPath}" fill="${esc(palette[seriesIndex % palette.length]!)}" fill-opacity="0.22"/>`)
+      parts.push(`<polyline points="${points.map((point) => `${num(point.x)},${num(point.y)}`).join(' ')}" fill="none" stroke="${esc(palette[seriesIndex % palette.length]!)}" stroke-width="${num(lineWidth)}" stroke-linejoin="round" stroke-linecap="round"/>`)
+      for (const point of points) parts.push(`<circle cx="${num(point.x)}" cy="${num(point.y)}" r="${num(Math.max(2, lineWidth))}" fill="${esc(palette[seriesIndex % palette.length]!)}"${element.options?.showLabels ? `/><text x="${num(point.x)}" y="${num(point.y - 7)}" text-anchor="middle" fill="${esc(labelColor)}" font-size="10">${esc(String(point.value))}</text>` : '/>'}`)
+    }
+  })
+  if (element.options?.showXAxis !== false) element.data.rows.forEach((_, rowIndex) => {
+    const x = margin.left + (element.data.rows.length <= 1 ? plotWidth / 2 : rowIndex * plotWidth / (element.data.rows.length - 1))
+    parts.push(`<text x="${num(x)}" y="${num(margin.top + plotHeight + 18)}" text-anchor="middle" fill="${esc(labelColor)}" font-size="10">${esc(categories[rowIndex]!)}</text>`)
+  })
+  return parts
+}
+
 function renderPie(element: ChartElement, margin: { left: number; right?: number; top: number }, plotWidth: number, plotHeight: number, palette: string[], labelColor: string): string[] {
   const values = element.data.rows.map((row) => Math.max(0, numericValue(row.values[element.encoding.valueFields[0]!] ?? null) ?? 0))
   const total = values.reduce((sum, value) => sum + value, 0)
@@ -231,6 +266,29 @@ function renderPie(element: ChartElement, margin: { left: number; right?: number
     const y2 = cy + radius * Math.sin(end)
     const path = `<path d="M ${num(cx)} ${num(cy)} L ${num(x1)} ${num(y1)} A ${num(radius)} ${num(radius)} 0 ${large} 1 ${num(x2)} ${num(y2)} Z" fill="${esc(palette[index % palette.length]!)}"/>`
     const label = element.options?.showLabels ? `<text x="${num(cx + radius * 0.62 * Math.cos((start + end) / 2))}" y="${num(cy + radius * 0.62 * Math.sin((start + end) / 2))}" text-anchor="middle" fill="${esc(labelColor)}" font-size="10">${esc(String(value))}</text>` : ''
+    start = end
+    return `${path}${label}`
+  })
+}
+
+function renderDonut(element: ChartElement, margin: { left: number; right?: number; top: number }, plotWidth: number, plotHeight: number, palette: string[], labelColor: string): string[] {
+  const values = element.data.rows.map((row) => Math.max(0, numericValue(row.values[element.encoding.valueFields[0]!] ?? null) ?? 0))
+  const total = values.reduce((sum, value) => sum + value, 0)
+  const cx = margin.left + plotWidth / 2
+  const cy = margin.top + plotHeight / 2
+  const radius = Math.max(1, Math.min(plotWidth, plotHeight) * 0.38)
+  const inner = radius * 0.55
+  if (total <= 0) return [`<circle cx="${num(cx)}" cy="${num(cy)}" r="${num(radius)}" fill="none" stroke="${esc(labelColor)}" stroke-width="${num(Math.max(1, radius - inner))}"/>`]
+  let start = -Math.PI / 2
+  return values.map((value, index) => {
+    const end = start + value / total * Math.PI * 2
+    const large = end - start > Math.PI ? 1 : 0
+    const outerStart = `${num(cx + radius * Math.cos(start))} ${num(cy + radius * Math.sin(start))}`
+    const outerEnd = `${num(cx + radius * Math.cos(end))} ${num(cy + radius * Math.sin(end))}`
+    const innerEnd = `${num(cx + inner * Math.cos(end))} ${num(cy + inner * Math.sin(end))}`
+    const innerStart = `${num(cx + inner * Math.cos(start))} ${num(cy + inner * Math.sin(start))}`
+    const path = `<path d="M ${outerStart} A ${num(radius)} ${num(radius)} 0 ${large} 1 ${outerEnd} L ${innerEnd} A ${num(inner)} ${num(inner)} 0 ${large} 0 ${innerStart} Z" fill="${esc(palette[index % palette.length]!)}"/>`
+    const label = element.options?.showLabels ? `<text x="${num(cx + radius * 0.78 * Math.cos((start + end) / 2))}" y="${num(cy + radius * 0.78 * Math.sin((start + end) / 2))}" text-anchor="middle" fill="${esc(labelColor)}" font-size="10">${esc(String(value))}</text>` : ''
     start = end
     return `${path}${label}`
   })

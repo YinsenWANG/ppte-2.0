@@ -138,7 +138,7 @@ export class DesignCompiler {
         }
       }
     }
-    if (ir.visualStrategy === 'hybrid' && ir.artworkIntent && context.resolveArtwork) {
+    if ((ir.visualStrategy === 'hybrid' || ir.visualStrategy === 'poster') && ir.artworkIntent && context.resolveArtwork) {
       const artwork = context.resolveArtwork(ir.artworkIntent)
       if (artwork) {
         const resolution = typeof artwork === 'string' ? { assetId: artwork } : artwork
@@ -307,7 +307,7 @@ export function buildRegenerateTransaction(document: PpteDocument, draft: Compil
 
 export function validateArtworkPlacement(document: PpteDocument, slideId: string): ArtworkSafetyResult {
   const slide = document.slides[slideId]
-  if (!slide || slide.visualStrategy !== 'hybrid') return { ok: true, issues: [] }
+  if (!slide || (slide.visualStrategy !== 'hybrid' && slide.visualStrategy !== 'poster')) return { ok: true, issues: [] }
   const issues: ValidationIssue[] = []
   const artwork = Object.values(slide.elements).filter((element) => element.type === 'image' && element.role === 'artwork')
   const protectedElements = Object.values(slide.elements).filter((element) => element.role !== 'artwork' && element.role !== 'background' && element.role !== 'decorative')

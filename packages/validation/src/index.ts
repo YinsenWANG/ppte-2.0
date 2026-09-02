@@ -8,6 +8,7 @@ import type {
   FontAsset,
   OperationKind,
   PpteDocument,
+  RuntimeProfile,
   TextElement,
   TextStyle,
   Transaction,
@@ -64,8 +65,9 @@ export interface GlyphCoverageReport {
   source: 'declared' | 'system-safe' | 'unresolved' | 'unsafe'
 }
 
-export function validateRuntimeDocument(document: PpteDocument): ValidationIssue[] {
-  const issues = validateDocument(document, { runtimeSubset: true })
+export function validateRuntimeDocument(document: PpteDocument, options: { runtimeProfile?: RuntimeProfile } = {}): ValidationIssue[] {
+  const runtimeProfile = options.runtimeProfile ?? 'ga-b'
+  const issues = validateDocument(document, { runtimeSubset: true, runtimeProfile })
   if (!document || typeof document !== 'object') return normalizeIssues(issues)
   if (!document.slides || typeof document.slides !== 'object') return normalizeIssues(issues)
   issues.push(...validateSemanticIdentity(document))
