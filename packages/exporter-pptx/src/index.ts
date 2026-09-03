@@ -9,6 +9,8 @@ import { referenceFontCss, renderReferencePng } from '../../exporter-pdf/src/ref
 
 const PPT_NS = 'http://schemas.openxmlformats.org/presentationml/2006/main'
 const DRAWING_NS = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+const CHART_NS = 'http://schemas.openxmlformats.org/drawingml/2006/chart'
+const CHART_URI = CHART_NS
 const REL_NS = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
 const PACKAGE_REL_NS = 'http://schemas.openxmlformats.org/package/2006/relationships'
 
@@ -74,6 +76,11 @@ export interface SemanticPptxNode {
   crop?: { x: number; y: number; width: number; height: number }
   posterAsArtwork?: boolean
   paragraphs?: SemanticPptxParagraph[]
+  nativeChart?: boolean
+  chartType?: ChartElement['chartType']
+  chartData?: ChartElement['data']
+  chartEncoding?: ChartElement['encoding']
+  chartOptions?: ChartElement['options']
 }
 
 export interface SemanticPptxParagraph {
@@ -210,7 +217,7 @@ export function compileSemanticPptx(document: PpteDocument, options: PptxExportO
       slides.push({ slideId, strategy, nodes, posterAsArtwork: false, background: slide.background ?? document.canvas.defaultBackground })
     }
   }
-  const degraded = capabilityReport.degraded || slides.some((slide) => slide.posterAsArtwork || slide.nodes.some((node) => node.kind === 'chart-svg' || node.kind === 'component-fallback' || node.fallbackLabel !== undefined))
+  const degraded = capabilityReport.degraded || slides.some((slide) => slide.posterAsArtwork || slide.nodes.some((node) => (node.kind === 'chart-svg' && node.nativeChart !== true) || node.kind === 'component-fallback' || node.fallbackLabel !== undefined))
   return { ok: !issues.some((issue) => issue.severity === 'error'), sourceRevision, slides, capabilityReport, issues, degraded }
 }
 
@@ -261,7 +268,7 @@ function semanticNode(document: PpteDocument, slideId: string, element: Element)
     const stroke = style.stroke as Stroke | undefined
     return { id: `${slideId}:${element.id}`, sourceElementId: element.id, kind: 'shape', frame: element.frame, ...elementFields(element), shape: element.shape, fill: paintColor(fillPaint, document), fillPaint, fillOpacity: fillPaint?.kind === 'solid' || fillPaint?.kind === 'linear-gradient' ? fillPaint.opacity : undefined, stroke: strokeColor(stroke, document), strokeWidth: stroke?.width, strokeOpacity: stroke?.opacity, strokeDash: stroke?.dash, lineCap: stroke?.lineCap, lineJoin: stroke?.lineJoin }
   }
-  if (element.type === 'chart') return { id: `${slideId}:${element.id}`, sourceElementId: element.id, kind: 'chart-svg', frame: element.frame, ...elementFields(element), staticSvg: renderChartSvg(element, { width: element.frame.width, height: element.frame.height, runtimeProfile: 'ga-c' }) }
+  if (element.type === 'chart') return { id: `${slideId}:${element.id}`, sourceElementId: element.id, kind: 'chart-svg', frame: element.frame, ...elementFields(element), staticSvg: renderChartSvg(element, { width: element.frame.width, height: element.frame.height, runtimeProfile: 'ga-c' }), nativeChart: ['bar', 'line', 'pie'].includes(element.chartType), chartType: element.chartType, chartData: element.data, chartEncoding: element.encoding, chartOptions: element.options }
   if (element.type === 'component' && element.fallback.kind === 'asset' && element.fallback.assetId) return { id: `${slideId}:${element.id}`, sourceElementId: element.id, kind: 'picture', frame: element.frame, ...elementFields(element), assetId: element.fallback.assetId, fallbackLabel: element.fallback.label ?? `${element.componentType} static fallback` }
   if (element.type === 'component') return { id: `${slideId}:${element.id}`, sourceElementId: element.id, kind: 'component-fallback', frame: element.frame, ...elementFields(element), fallbackLabel: element.fallback.label ?? `${element.componentType} fallback` }
   return undefined
@@ -293,8 +300,14 @@ function prepareSemanticMedia(document: PpteDocument, compilation: SemanticPptxC
 function buildSemanticPptx(document: PpteDocument, compilation: SemanticPptxCompilation, options: PptxExportOptions, capabilityReport: CapabilityReport, media: Map<string, { filename: string; data: Uint8Array }>): Uint8Array {
   const width = emu(document.canvas.width)
   const height = emu(document.canvas.height)
+  const chartParts = new Map<string, { filename: string; data: Uint8Array }>()
+  for (const slide of compilation.slides) for (const node of slide.nodes) {
+    if (node.nativeChart !== true || !node.chartType || !node.chartData || !node.chartEncoding) continue
+    const filename = `chart${chartParts.size + 1}.xml`
+    chartParts.set(`chartpart:${node.id}`, { filename, data: text(nativeChartPart(node)) })
+  }
   const entries: StoredZipEntry[] = [
-    { name: '[Content_Types].xml', data: text(contentTypes(compilation.slides.length, options.includeCapabilityReport !== false)) },
+    { name: '[Content_Types].xml', data: text(contentTypes(compilation.slides.length, options.includeCapabilityReport !== false, chartParts.size)) },
     { name: '_rels/.rels', data: text(rootRelationships()) },
     { name: 'docProps/core.xml', data: text(coreProperties(document, options.createdAt)) },
     { name: 'docProps/app.xml', data: text(appProperties(compilation.slides.length)) },
@@ -313,21 +326,22 @@ function buildSemanticPptx(document: PpteDocument, compilation: SemanticPptxComp
     const relationIds = new Map<string, string>()
     let relationIndex = 2
     for (const node of slide.nodes) {
-      const key = node.kind === 'chart-svg' ? `chart:${node.id}` : node.assetId ? `asset:${node.assetId}` : undefined
-      if (key && media.has(key) && !relationIds.has(key)) relationIds.set(key, `rId${relationIndex++}`)
+      const key = relationKey(node)
+      if (key && (media.has(key) || chartParts.has(key)) && !relationIds.has(key)) relationIds.set(key, `rId${relationIndex++}`)
     }
     entries.push({ name: `ppt/slides/slide${number}.xml`, data: text(semanticSlide(width, height, slide, relationIds, document)) })
-    entries.push({ name: `ppt/slides/_rels/slide${number}.xml.rels`, data: text(semanticSlideRelationships(slide, relationIds, media)) })
+    entries.push({ name: `ppt/slides/_rels/slide${number}.xml.rels`, data: text(semanticSlideRelationships(slide, relationIds, media, chartParts)) })
   }
+  for (const item of [...chartParts.values()].sort((left, right) => left.filename.localeCompare(right.filename))) entries.push({ name: `ppt/charts/${item.filename}`, data: item.data })
   for (const item of [...media.values()].sort((left, right) => left.filename.localeCompare(right.filename))) entries.push({ name: `ppt/media/${item.filename}`, data: item.data })
   if (options.includeCapabilityReport !== false) entries.push({ name: 'ppt/ppte/capability-report.json', data: text(JSON.stringify(capabilityReport, null, 2)) })
   return writeStoredZip(entries)
 }
 
 function semanticSlide(width: number, height: number, slide: SemanticPptxSlide, relationIds: Map<string, string>, document: PpteDocument): string {
-  const nodes = slide.nodes.map((node, index) => semanticNodeXml(node, 2 + index, relationIds.get(node.kind === 'chart-svg' ? `chart:${node.id}` : node.assetId ? `asset:${node.assetId}` : ''), document)).join('')
+  const nodes = slide.nodes.map((node, index) => semanticNodeXml(node, 2 + index, relationIds.get(relationKey(node) ?? ''), document)).join('')
   const background = slide.background ? `<p:bg><p:bgPr>${paintXml(slide.background, document)}<a:effectLst/></p:bgPr></p:bg>` : ''
-  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><p:sld xmlns:a="${DRAWING_NS}" xmlns:r="${REL_NS}" xmlns:p="${PPT_NS}"><p:cSld name="${escapeXml(slide.slideId)}">${background}<p:spTree><p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr><p:grpSpPr/>${nodes}</p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:sld>`
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><p:sld xmlns:a="${DRAWING_NS}" xmlns:c="${CHART_NS}" xmlns:r="${REL_NS}" xmlns:p="${PPT_NS}"><p:cSld name="${escapeXml(slide.slideId)}">${background}<p:spTree><p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr><p:grpSpPr/>${nodes}</p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:sld>`
 }
 
 function semanticNodeXml(node: SemanticPptxNode, numericId: number, relationId: string | undefined, document: PpteDocument): string {
@@ -336,8 +350,71 @@ function semanticNodeXml(node: SemanticPptxNode, numericId: number, relationId: 
   if (node.kind === 'text-box') return semanticTextShape(node, numericId, xfrm, false, document)
   if (node.kind === 'component-fallback') return semanticTextShape(node, numericId, xfrm, true, document)
   if (node.kind === 'shape') return `<p:sp><p:nvSpPr><p:cNvPr id="${numericId}" name="${escapeXml(node.sourceElementId ?? node.id)}"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr>${xfrm}<a:prstGeom prst="${shapePreset(node.shape)}"><a:avLst/></a:prstGeom>${shapeFillXml(node.fillPaint ?? node.fill, node.stroke, document, node.opacity, node.strokeOpacity, node.strokeWidth, node.strokeDash, node.lineCap, node.lineJoin)}</p:spPr></p:sp>`
+  if (node.kind === 'chart-svg' && node.nativeChart === true && relationId) return nativeChartFrame(node, numericId, relationId)
   if (node.kind === 'chart-svg' && relationId) return `<p:pic><p:nvPicPr><p:cNvPr id="${numericId}" name="${escapeXml(node.sourceElementId ?? node.id)}"/><p:cNvPicPr preferRelativeResize="0"/><p:nvPr/></p:nvPicPr><p:blipFill><a:blip r:embed="${relationId}">${node.opacity === undefined ? '' : `<a:alphaModFix amt="${Math.round(clamp01(node.opacity) * 100000)}"/>`}</a:blip><a:stretch><a:fillRect/></a:stretch></p:blipFill><p:spPr>${xfrm}<a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr></p:pic>`
   return ''
+}
+
+function relationKey(node: SemanticPptxNode): string | undefined {
+  if (node.kind === 'chart-svg') return node.nativeChart === true ? `chartpart:${node.id}` : `chart:${node.id}`
+  return node.assetId ? `asset:${node.assetId}` : undefined
+}
+
+function nativeChartFrame(node: SemanticPptxNode, numericId: number, relationId: string): string {
+  const rotation = node.rotationDeg === undefined ? '' : ` rot="${Math.round(node.rotationDeg * 60000)}"`
+  return `<p:graphicFrame><p:nvGraphicFramePr><p:cNvPr id="${numericId}" name="${escapeXml(node.sourceElementId ?? node.id)}"/><p:cNvGraphicFramePr/><p:nvPr/></p:nvGraphicFramePr><p:xfrm${rotation}><a:off x="${emu(node.frame.x)}" y="${emu(node.frame.y)}"/><a:ext cx="${emu(node.frame.width)}" cy="${emu(node.frame.height)}"/></p:xfrm><a:graphic><a:graphicData uri="${CHART_URI}"><c:chart r:id="${relationId}"/></a:graphicData></a:graphic></p:graphicFrame>`
+}
+
+function nativeChartPart(node: SemanticPptxNode): string {
+  const data = node.chartData!
+  const encoding = node.chartEncoding!
+  const categories = data.rows.map((row) => String(row.values[encoding.categoryField] ?? row.id))
+  const valueFields = encoding.valueFields.filter((field) => data.columns.some((column) => column.id === field && column.type === 'number'))
+  const series = valueFields.map((field, index) => nativeChartSeries(data, encoding, categories, field, index)).join('')
+  const chartType = node.chartType!
+  const axisIds = { category: 48650112, value: 48672768 }
+  const plot = chartType === 'bar'
+    ? `<c:barChart><c:barDir val="${node.chartOptions?.orientation === 'horizontal' ? 'bar' : 'col'}"/><c:grouping val="${node.chartOptions?.stacked ? 'stacked' : 'clustered'}"/><c:varyColors val="0"/>${series}<c:gapWidth val="150"/><c:overlap val="${node.chartOptions?.stacked ? '100' : '0'}"/><c:axId val="${axisIds.category}"/><c:axId val="${axisIds.value}"/></c:barChart>`
+    : chartType === 'line'
+      ? `<c:lineChart><c:grouping val="standard"/><c:varyColors val="0"/>${series}<c:marker val="1"/><c:smooth val="0"/><c:axId val="${axisIds.category}"/><c:axId val="${axisIds.value}"/></c:lineChart>`
+      : `<c:pieChart><c:varyColors val="1"/>${series}<c:dLbls><c:showLegendKey val="0"/><c:showVal val="0"/><c:showCatName val="0"/><c:showSerName val="0"/><c:showPercent val="0"/><c:showLeaderLines val="0"/></c:dLbls></c:pieChart>`
+  const axes = chartType === 'pie' ? '' : nativeChartAxes(axisIds.category, axisIds.value)
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><c:chartSpace xmlns:c="${CHART_NS}" xmlns:a="${DRAWING_NS}" xmlns:r="${REL_NS}"><c:date1904 val="0"/><c:lang val="en-US"/><c:roundedCorners val="0"/><c:style val="10"/><c:chart><c:autoTitleDeleted val="1"/><c:plotArea><c:layout/>${plot}${axes}</c:plotArea><c:plotVisOnly val="1"/><c:dispBlanksAs val="gap"/><c:showDLblsOverMax val="0"/></c:chart><c:printSettings><c:headerFooter/><c:pageMargins b="0.75" l="0.7" r="0.7" t="0.75" header="0.3" footer="0.3"/><c:pageSetup/></c:printSettings></c:chartSpace>`
+}
+
+function nativeChartSeries(data: ChartElement['data'], encoding: ChartElement['encoding'], categories: string[], field: string, index: number): string {
+  const fieldColumn = data.columns.find((column) => column.id === field)
+  const categoryColumn = data.columns.find((column) => column.id === encoding.categoryField)
+  const fieldColumnIndex = Math.max(0, data.columns.findIndex((column) => column.id === field))
+  const categoryColumnIndex = Math.max(0, data.columns.findIndex((column) => column.id === encoding.categoryField))
+  const values = data.rows.map((row) => typeof row.values[field] === 'number' && Number.isFinite(row.values[field]) ? row.values[field] as number : 0)
+  const categoryFormula = `Sheet1!$${excelColumn(categoryColumnIndex)}$2:$${excelColumn(categoryColumnIndex)}$${Math.max(2, categories.length + 1)}`
+  const valueFormula = `Sheet1!$${excelColumn(fieldColumnIndex)}$2:$${excelColumn(fieldColumnIndex)}$${Math.max(2, values.length + 1)}`
+  const titleFormula = `Sheet1!$${excelColumn(fieldColumnIndex)}$1`
+  const title = fieldColumn?.label ?? field
+  const categoryCache = categories.map((category, pointIndex) => `<c:pt idx="${pointIndex}"><c:v>${escapeXml(category)}</c:v></c:pt>`).join('')
+  const valueCache = values.map((value, pointIndex) => `<c:pt idx="${pointIndex}"><c:v>${String(value)}</c:v></c:pt>`).join('')
+  const marker = '<c:marker><c:symbol val="circle"/><c:size val="6"/></c:marker>'
+  return `<c:ser><c:idx val="${index}"/><c:order val="${index}"/><c:tx><c:strRef><c:f>${escapeXml(titleFormula)}</c:f><c:strCache><c:ptCount val="1"/><c:pt idx="0"><c:v>${escapeXml(title)}</c:v></c:pt></c:strCache></c:strRef></c:tx><c:cat><c:strRef><c:f>${escapeXml(categoryFormula)}</c:f><c:strCache><c:ptCount val="${categories.length}"/>${categoryCache}</c:strCache></c:strRef></c:cat><c:val><c:numRef><c:f>${escapeXml(valueFormula)}</c:f><c:numCache><c:formatCode>General</c:formatCode><c:ptCount val="${values.length}"/>${valueCache}</c:numCache></c:numRef></c:val>${nodeSeriesMarker(data, encoding, marker)}</c:ser>`
+}
+
+function nodeSeriesMarker(data: ChartElement['data'], encoding: ChartElement['encoding'], marker: string): string {
+  return data && encoding ? marker : ''
+}
+
+function nativeChartAxes(categoryId: number, valueId: number): string {
+  return `<c:catAx><c:axId val="${categoryId}"/><c:scaling><c:orientation val="minMax"/></c:scaling><c:delete val="0"/><c:axPos val="b"/><c:majorTickMark val="none"/><c:minorTickMark val="none"/><c:tickLblPos val="nextTo"/><c:crossAx val="${valueId}"/><c:crosses val="autoZero"/><c:auto val="1"/><c:lblAlgn val="ctr"/><c:lblOffset val="100"/></c:catAx><c:valAx><c:axId val="${valueId}"/><c:scaling><c:orientation val="minMax"/></c:scaling><c:delete val="0"/><c:axPos val="l"/><c:majorGridlines/><c:majorTickMark val="none"/><c:minorTickMark val="none"/><c:tickLblPos val="nextTo"/><c:numFmt formatCode="General" sourceLinked="1"/><c:crossAx val="${categoryId}"/><c:crosses val="autoZero"/><c:crossBetween val="midCat"/></c:valAx>`
+}
+
+function excelColumn(index: number): string {
+  let value = index + 1
+  let result = ''
+  while (value > 0) {
+    const remainder = (value - 1) % 26
+    result = String.fromCharCode(65 + remainder) + result
+    value = Math.floor((value - 1) / 26)
+  }
+  return result
 }
 
 function semanticTextShape(node: SemanticPptxNode, numericId: number, xfrm: string, fallback: boolean, document: PpteDocument): string {
@@ -418,8 +495,12 @@ function colorAlpha(value: string): number | undefined {
   return /^[0-9A-Fa-f]{8}$/.test(normalized) ? parseInt(normalized.slice(6), 16) / 255 : undefined
 }
 
-function semanticSlideRelationships(slide: SemanticPptxSlide, relationIds: Map<string, string>, media: Map<string, { filename: string; data: Uint8Array }>): string {
+function semanticSlideRelationships(slide: SemanticPptxSlide, relationIds: Map<string, string>, media: Map<string, { filename: string; data: Uint8Array }>, chartParts: Map<string, { filename: string; data: Uint8Array }>): string {
   const relationships = [...relationIds.entries()].sort((left, right) => left[1].localeCompare(right[1])).map(([key, id]) => {
+    if (key.startsWith('chartpart:')) {
+      const filename = chartParts.get(key)?.filename ?? `chart-${safeId(key)}.xml`
+      return `<Relationship Id="${id}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart" Target="../charts/${filename}"/>`
+    }
     const filename = media.get(key)?.filename ?? `asset-${safeId(key)}.svg`
     return `<Relationship Id="${id}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/${filename}"/>`
   }).join('')
@@ -542,7 +623,7 @@ function finalizeReport(report: CapabilityReport, issues: ValidationIssue[], for
   return { ...report, ok: report.ok && !merged.some((issue) => issue.severity === 'error') && !items.some((item) => ['blocked', 'unsupported', 'missing-source'].includes(item.status)), degraded: report.degraded || forceDegraded || merged.length > 0 || items.some((item) => ['blocked', 'unsupported', 'missing-source', 'font-replacement', 'layout-risk', 'rasterized'].includes(item.status)), items, issues: merged, summary }
 }
 
-function contentTypes(slideCount: number, includeReport: boolean): string {
+function contentTypes(slideCount: number, includeReport: boolean, chartCount = 0): string {
   const overrides = [
     '<Override PartName="/ppt/presentation.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml"/>',
     '<Override PartName="/ppt/slideMasters/slideMaster1.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slideMaster+xml"/>',
@@ -553,6 +634,7 @@ function contentTypes(slideCount: number, includeReport: boolean): string {
     '<Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/>',
     '<Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/>',
     ...Array.from({ length: slideCount }, (_, index) => `<Override PartName="/ppt/slides/slide${index + 1}.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slide+xml"/>`),
+    ...Array.from({ length: chartCount }, (_, index) => `<Override PartName="/ppt/charts/chart${index + 1}.xml" ContentType="application/vnd.openxmlformats-officedocument.drawingml.chart+xml"/>`),
   ]
   if (includeReport) overrides.push('<Override PartName="/ppt/ppte/capability-report.json" ContentType="application/json"/>')
   return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="svg" ContentType="image/svg+xml"/><Default Extension="png" ContentType="image/png"/><Default Extension="jpg" ContentType="image/jpeg"/><Default Extension="jpeg" ContentType="image/jpeg"/><Default Extension="webp" ContentType="image/webp"/><Default Extension="json" ContentType="application/json"/>${overrides.join('')}</Types>`

@@ -70,7 +70,8 @@ function capabilityForElement(document: PpteDocument, slideId: string, element: 
   let status = baseStatus(element, target)
   let reason: string | undefined
   let recovery: string | undefined
-  const item: CapabilityItem = { id: `${slideId}:${element.id}`, slideId, elementId: element.id, type: element.type, status, ...(target === 'pptx-semantic' && element.type === 'chart' ? { nativeChart: true } : {}) }
+  const nativePptxChart = target === 'pptx-semantic' && element.type === 'chart' && ['bar', 'line', 'pie'].includes(element.chartType)
+  const item: CapabilityItem = { id: `${slideId}:${element.id}`, slideId, elementId: element.id, type: element.type, status, ...(nativePptxChart ? { nativeChart: true } : {}) }
   if (element.type === 'text') {
     const glyph = inspectGlyphCoverage(document, element, undefined, { strict: target === 'portable-quick-fix' || target === 'portable-light-edit' })
     const glyphIssues = checkGlyphCoverage(document, element, undefined, { strict: target === 'portable-quick-fix' || target === 'portable-light-edit' })
@@ -137,7 +138,7 @@ function capabilityForElement(document: PpteDocument, slideId: string, element: 
 function baseStatus(element: Element, target: CapabilityTarget): CapabilityStatus {
   if (element.type === 'component') return target === 'pptx-semantic' || target === 'portable-light-edit' ? 'static' : 'unsupported'
   if (target === 'pptx-image') return element.type === 'chart' || element.type === 'text' || element.type === 'shape' || element.type === 'image' ? 'rasterized' : 'unsupported'
-  if (target === 'pptx-semantic' && element.type === 'chart') return 'native'
+  if (target === 'pptx-semantic' && element.type === 'chart') return ['bar', 'line', 'pie'].includes(element.chartType) ? 'native' : 'static'
   if (element.type === 'chart') return target === 'portable-quick-fix' ? 'static' : target === 'portable-light-edit' ? 'property' : target === 'png' || target === 'pdf' ? 'rasterized' : 'native'
   if (target === 'portable-viewer' || target === 'presenter') return 'native'
   if (target === 'portable-quick-fix' || target === 'portable-light-edit') return element.type === 'text' || element.type === 'image' ? 'property' : 'static'
