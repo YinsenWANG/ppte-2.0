@@ -433,3 +433,30 @@ verified bytes, so this fallback is not treated as payload availability.
 
 No new content source, Slidev path, arbitrary HTML source, CRDT, nested Group,
 or Run-level font styling is introduced by R5.
+
+## 2026-09-03 — R6 revised-copy review and Patch closure
+
+Review comparison now emits units for every persisted document, slide, element,
+Fact/Source, and resource domain that it can identify. A changed field with no
+typed Operation is represented as `REVIEW_CAPABILITY_GAP`; it is never silently
+treated as unchanged and cannot be accepted into a Transaction. Existing typed
+Operations are used for notes, transition, ordering, animation, appearance,
+text paragraph/box style, and other supported fields. Delete-versus-any-modify
+is always a conflict unit, including when only one surviving copy changed.
+
+Patch application remains base-guarded. A stale target can enter semantic
+Compare only when the caller supplies the matching common Base snapshot; no
+automatic merge is inferred. A generated Patch carries a proof over its
+guarded operations and declared revisions, and both the direct Patch API and
+Session Patch entry points verify the resulting `headRevision`.
+
+Patch compatibility is inferred from the revised document content. An explicit
+profile that disagrees with that inference is rejected, and apply/preview paths
+use the manifest profile for runtime and final compatibility checks. Patch JSON
+validation is structural and field-typed: arbitrary data strings, object keys,
+RichText text, and controlled Widget `props.code` are data, not executable
+source. Override Debt uses the complete supported style-field set for the
+element type as its denominator, even when the current preset omits a field.
+
+No new content source, Slidev path, arbitrary HTML source, CRDT, nested Group,
+or Run-level font styling is introduced by R6.

@@ -4,6 +4,59 @@ import type { Operation, ValidationIssue } from './operations.js'
 /** The semantic granularity at which a revised copy can be reviewed. */
 export type ReviewUnitKind = 'slide' | 'element' | 'fact' | 'source' | 'document'
 export type ReviewField =
+  | 'schemaVersion'
+  | 'documentId'
+  | 'locale'
+  | 'metadata'
+  | 'canvas'
+  | 'theme'
+  | 'slideOrder'
+  | 'widgetRequirements'
+  | 'policies'
+  | 'generation'
+  | 'extensions'
+  | 'name'
+  | 'hidden'
+  | 'background'
+  | 'rootOrder'
+  | 'groups'
+  | 'notes'
+  | 'transition'
+  | 'semantic'
+  | 'visualStrategy'
+  | 'protectedAnchors'
+  | 'provenance'
+  | 'type'
+  | 'semanticKey'
+  | 'role'
+  | 'tags'
+  | 'description'
+  | 'frame'
+  | 'rotationDeg'
+  | 'flipX'
+  | 'flipY'
+  | 'opacity'
+  | 'visible'
+  | 'locked'
+  | 'appearStep'
+  | 'animation'
+  | 'editPolicy'
+  | 'semanticRefs'
+  | 'paragraphStyle'
+  | 'boxStyle'
+  | 'overflowPolicy'
+  | 'assetId'
+  | 'fit'
+  | 'crop'
+  | 'focalPoint'
+  | 'altText'
+  | 'shape'
+  | 'points'
+  | 'chartType'
+  | 'componentType'
+  | 'componentVersion'
+  | 'props'
+  | 'fallback'
   | 'content'
   | 'data'
   | 'encoding'
@@ -17,6 +70,7 @@ export type ReviewField =
   | 'readingOrder'
   | 'fact'
   | 'source'
+  | 'font'
   | 'slide'
 
 export type ReviewUnitStatus =
@@ -30,6 +84,14 @@ export type ReviewUnitStatus =
   | 'ambiguous'
 
 export type SemanticMatchMethod = 'elementId' | 'semanticKey' | 'lineage' | 'factId' | 'sourceId' | 'heuristic' | 'none'
+
+export interface ReviewCapabilityGap {
+  code: 'REVIEW_CAPABILITY_GAP'
+  field: ReviewField
+  path: JsonPointer
+  message: string
+  supported: false
+}
 
 export interface SemanticReviewUnit {
   unitId: string
@@ -48,6 +110,8 @@ export interface SemanticReviewUnit {
   operations?: Operation[]
   candidates?: string[]
   reason?: string
+  /** A changed field with no typed operation is visible to the reviewer and cannot be silently dropped. */
+  capabilityGap?: ReviewCapabilityGap
 }
 
 export interface CompareResult {
@@ -59,6 +123,7 @@ export interface CompareResult {
   twoWay: boolean
   units: SemanticReviewUnit[]
   conflicts: SemanticReviewUnit[]
+  capabilityGaps: ReviewCapabilityGap[]
   issues: ValidationIssue[]
   autoAcceptable: boolean
 }

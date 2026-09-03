@@ -31,11 +31,13 @@ import type {
   Source,
   SourceId,
   StylePresetRegistry,
+  TextElement,
   TextStyle,
   ThemeDefinition,
   TransactionId,
 } from './document.js'
 import type { ErrorImpact, ContentSafety, Recoverability } from './errors.js'
+import type { CompareResult } from './review.js'
 
 export type ActorType = 'human' | 'agent' | 'system' | 'importer' | 'reviewer'
 export interface Actor {
@@ -141,6 +143,7 @@ export type Operation =
   | ElementUpdateStyleOverridesOperation
   | ElementClearStyleOverridesOperation
   | TextReplaceContentOperation
+  | TextUpdateStyleOperation
   | TextSetOverflowPolicyOperation
   | TextFitByReducingFontOperation
   | TextResizeBoxOperation
@@ -303,6 +306,15 @@ export interface TextReplaceContentOperation extends OperationBase<'text.replace
   slideId: SlideId
   elementId: ElementId
   content: RichTextDocument
+}
+/** Replace persisted text paragraph/box style as typed fields, without Run-level font styling. */
+export interface TextUpdateStyleOperation extends OperationBase<'text.updateStyle'> {
+  slideId: SlideId
+  elementId: ElementId
+  paragraphStyle?: TextElement['paragraphStyle']
+  boxStyle?: TextElement['boxStyle']
+  unsetParagraphStyle?: boolean
+  unsetBoxStyle?: boolean
 }
 export interface TextSetOverflowPolicyOperation extends OperationBase<'text.setOverflowPolicy'> {
   slideId: SlideId
@@ -510,6 +522,7 @@ export interface PreviewResult {
   proposedRevision?: Revision
   document?: Readonly<PpteDocument>
   diff?: StructuralDiff
+  compare?: CompareResult
   issues: ValidationIssue[]
   requiresConfirmation?: boolean
 }
@@ -521,5 +534,6 @@ export interface CommitResult {
   transactionId: TransactionId
   inverseTransaction?: Transaction
   diff?: StructuralDiff
+  compare?: CompareResult
   issues: ValidationIssue[]
 }

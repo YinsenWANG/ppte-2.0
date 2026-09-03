@@ -3,7 +3,7 @@
   "$id": "urn:ppte:schemas:2.0:review",
   "title": "PPTe Three-way Semantic Review",
   "type": "object",
-  "required": ["documentId", "baseRevision", "localRevision", "revisedRevision", "baseAvailable", "twoWay", "units", "conflicts", "issues", "autoAcceptable"],
+  "required": ["documentId", "baseRevision", "localRevision", "revisedRevision", "baseAvailable", "twoWay", "units", "conflicts", "capabilityGaps", "issues", "autoAcceptable"],
   "properties": {
     "documentId": { "type": "string", "minLength": 1 },
     "baseRevision": { "type": "string", "minLength": 1 },
@@ -13,6 +13,7 @@
     "twoWay": { "type": "boolean" },
     "units": { "type": "array", "items": { "$ref": "#/$defs/unit" } },
     "conflicts": { "type": "array", "items": { "$ref": "#/$defs/unit" } },
+    "capabilityGaps": { "type": "array", "items": { "$ref": "#/$defs/capabilityGap" } },
     "issues": { "type": "array" },
     "autoAcceptable": { "type": "boolean" }
   },
@@ -23,7 +24,7 @@
       "properties": {
         "unitId": { "type": "string", "minLength": 1 },
         "kind": { "enum": ["slide", "element", "fact", "source", "document"] },
-        "field": { "enum": ["content", "data", "encoding", "options", "style", "geometry", "asset", "identity", "visibility", "structure", "readingOrder", "fact", "source", "slide"] },
+        "field": { "enum": ["schemaVersion", "documentId", "locale", "metadata", "canvas", "theme", "slideOrder", "widgetRequirements", "policies", "generation", "extensions", "name", "hidden", "background", "rootOrder", "groups", "notes", "transition", "semantic", "visualStrategy", "protectedAnchors", "provenance", "type", "semanticKey", "role", "tags", "description", "frame", "rotationDeg", "flipX", "flipY", "opacity", "visible", "locked", "appearStep", "animation", "editPolicy", "semanticRefs", "paragraphStyle", "boxStyle", "overflowPolicy", "assetId", "fit", "crop", "focalPoint", "altText", "shape", "points", "chartType", "componentType", "componentVersion", "props", "fallback", "content", "data", "encoding", "options", "style", "geometry", "asset", "identity", "visibility", "structure", "readingOrder", "fact", "source", "font", "slide"] },
         "path": { "type": "string", "pattern": "^/" },
         "slideId": { "type": "string" },
         "elementId": { "type": "string" },
@@ -32,9 +33,22 @@
         "match": { "enum": ["elementId", "semanticKey", "lineage", "factId", "sourceId", "heuristic", "none"] },
         "baseValue": {},
         "localValue": {},
-        "revisedValue": {}
+        "revisedValue": {},
+        "capabilityGap": { "$ref": "#/$defs/capabilityGap" }
       },
       "additionalProperties": true
+    },
+    "capabilityGap": {
+      "type": "object",
+      "required": ["code", "field", "path", "message", "supported"],
+      "properties": {
+        "code": { "const": "REVIEW_CAPABILITY_GAP" },
+        "field": { "$ref": "#/$defs/unit/properties/field" },
+        "path": { "type": "string", "pattern": "^/" },
+        "message": { "type": "string" },
+        "supported": { "const": false }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false
