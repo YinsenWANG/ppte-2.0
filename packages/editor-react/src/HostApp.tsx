@@ -366,6 +366,10 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     setSelection({ slideId: activeSlideId, elementIds: nextIds, primaryElementId: elementId })
     const element = activeSlide.elements[elementId]
     if (element.type === 'image' && element.locked !== true) {
+      // The image wrapper is the semantic drag target. Prevent the browser's
+      // native image-selection/drag gesture so pointer capture remains owned
+      // by the Host until pointer-up commits the transient frame.
+      event.preventDefault()
       dragRef.current = beginDrag(documentNode, canonicalRevision(documentNode), activeSlideId, elementId, pointerInDu(event))
       setDragFrame(dragRef.current.currentFrame)
       event.currentTarget.setPointerCapture(event.pointerId)
@@ -374,6 +378,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
 
   function onPointerMove(event: ReactPointerEvent<HTMLDivElement>): void {
     if (!dragRef.current) return
+    event.preventDefault()
     const next = updateDrag(dragRef.current, pointerInDu(event))
     dragRef.current = next
     setDragFrame(next.currentFrame)
@@ -384,6 +389,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     dragRef.current = undefined
     setDragFrame(undefined)
     if (!transient) return
+    event.preventDefault()
     const transaction = endDrag(transient, nextOperationId('drag'), now())
     if (transaction) commitTransaction(transaction, '图片位置已提交')
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId)

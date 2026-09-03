@@ -388,6 +388,16 @@ async function runHostJourney(ctx, options = {}) {
     await page.locator('input[data-ppte-action="import-image"]').setInputFiles({ name: 'hero.png', mimeType: 'image/png', buffer: Buffer.from(pixelPng()) })
     const image = page.locator('[data-ppte-element-id^="image_host_"]').first()
     await image.waitFor({ state: 'visible' })
+    // Wait for the import transaction and its React-derived surface to settle
+    // before measuring the pointer origin. Without this barrier a cold
+    // Chromium run could measure the pre-commit frame and then drag a stale
+    // screen point, even though the later Add page/history checks still ran.
+    await page.waitForFunction(() => document.querySelector('[data-ppte-host]')?.getAttribute('data-ppte-history-depth') === '3')
+    await page.waitForFunction(() => {
+      const node = document.querySelector('[data-ppte-element-id^="image_host_"]')
+      const rect = node?.getBoundingClientRect()
+      return Boolean(rect && rect.width > 0 && rect.height > 0)
+    })
     const beforeImage = await image.boundingBox()
     if (!beforeImage) throw new GateFailure('Host image import did not produce a measurable image surface.')
     const beforeImageFrame = await image.evaluate((node) => ({ left: node.style.left, top: node.style.top }))
@@ -396,7 +406,7 @@ async function runHostJourney(ctx, options = {}) {
     await page.mouse.down()
     await page.mouse.move(imagePoint.x + 36, imagePoint.y + 24, { steps: 5 })
     await page.mouse.up()
-    await page.waitForFunction(() => Number(document.querySelector('[data-ppte-host]')?.getAttribute('data-ppte-history-depth') ?? 0) >= 4)
+    await page.waitForFunction(() => document.querySelector('[data-ppte-host]')?.getAttribute('data-ppte-history-depth') === '4')
     await page.waitForFunction((before) => {
       const node = document.querySelector('[data-ppte-element-id^="image_host_"]')
       if (!node) return false

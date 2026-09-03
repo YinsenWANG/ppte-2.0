@@ -58,7 +58,9 @@ button, input, textarea { font: inherit; }
 .ppte-thumbnail-label { overflow: hidden; padding: 0 .15rem .1rem; font-size: .7rem; text-overflow: ellipsis; white-space: nowrap; }
 
 .ppte-host-main { min-width: 0; min-height: 0; display: grid; place-items: center; overflow: auto; padding: clamp(1rem, 4vw, 3rem); background: radial-gradient(circle at 50% 25%, #1e293b 0, #111827 55%); }
-.ppte-canvas-wrap { position: relative; width: min(100%, 1200px); aspect-ratio: 16 / 9; }
+.ppte-canvas-wrap { position: relative; width: min(100%, 1200px); aspect-ratio: 16 / 9; touch-action: none; }
+.ppte-rendered-slide [data-ppte-type="image"] { cursor: grab; touch-action: none; }
+.ppte-rendered-slide [data-ppte-type="image"]:active { cursor: grabbing; }
 .ppte-rendered-slide { position: absolute; inset: 0; display: grid; place-items: start; overflow: visible; }
 .ppte-rendered-slide > .ppte-slide { transform-origin: top left; transform: scale(var(--ppte-scale, 1)); box-shadow: 0 1.6rem 3rem #0008; }
 @keyframes ppte-enter-fade { from { opacity: 0; } to { opacity: 1; } }
