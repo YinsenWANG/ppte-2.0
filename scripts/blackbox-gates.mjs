@@ -324,6 +324,130 @@ async function withBrowser(htmlPath, callback) {
   }
 }
 
+let hostBuildPromise
+async function ensureHost() {
+  if (!hostBuildPromise) {
+    hostBuildPromise = Promise.resolve().then(() => {
+      const result = spawnSync('pnpm', ['host:build'], { cwd: ROOT, encoding: 'utf8' })
+      if (result.error || result.status !== 0) {
+        const raw = `${result.stdout ?? ''}${result.stderr ?? ''}`
+        throw new HarnessFailure('The Product Host build failed before browser execution.', raw || result.error?.message)
+      }
+    })
+  }
+  await hostBuildPromise
+}
+
+async function withHostBrowser(callback) {
+  await ensureHost()
+  let playwright
+  try {
+    playwright = await import('playwright')
+  } catch (cause) {
+    const raw = cause instanceof Error ? cause.message : String(cause)
+    throw new GateFailure('Playwright is required for Product Host gates but could not be loaded.', { host: join(ROOT, 'apps', 'host', 'dist', 'index.html') }, raw)
+  }
+  let browser
+  try {
+    browser = await playwright.chromium.launch({ headless: true })
+    const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 })
+    const hostPath = join(ROOT, 'apps', 'host', 'dist', 'index.html')
+    await page.goto(pathToFileURL(hostPath).href, { waitUntil: 'load' })
+    await page.waitForSelector('[data-ppte-host]')
+    return await callback(page)
+  } catch (cause) {
+    if (cause instanceof GateFailure) throw cause
+    const raw = cause instanceof Error ? cause.message : String(cause)
+    throw new GateFailure('Chromium could not execute the Product Host file:// journey.', { host: join(ROOT, 'apps', 'host', 'dist', 'index.html') }, raw)
+  } finally {
+    await browser?.close()
+  }
+}
+
+async function runHostJourney(ctx, options = {}) {
+  return withHostBrowser(async (page) => {
+    const evidence = {}
+    await page.locator('[data-ppte-action="new"]').click()
+    evidence.created = await page.locator('[data-ppte-host]').getAttribute('data-ppte-slide-count')
+
+    await page.locator('input[data-ppte-action="agent-source"]').setInputFiles({ name: 'brief.txt', mimeType: 'text/plain', buffer: Buffer.from('季度经营回顾\n目标：统一团队叙事\n受众：管理层') })
+    await page.locator('[data-ppte-agent-objective]').fill('季度经营回顾')
+    await page.locator('[data-ppte-agent-audience]').fill('管理层')
+    await page.locator('[data-ppte-action="generate"]').click()
+    await page.waitForFunction(() => document.querySelector('[data-ppte-host]')?.getAttribute('data-ppte-slide-count') === '10')
+    evidence.generatedSlides = Number(await page.locator('[data-ppte-host]').getAttribute('data-ppte-slide-count'))
+    evidence.agentGenerated = await page.locator('[data-ppte-host]').getAttribute('data-ppte-agent-generated')
+
+    const title = page.locator('[data-ppte-element-id="text_title"]').first()
+    await title.dblclick()
+    await title.fill('R7 真人路径标题')
+    await title.blur()
+    await page.waitForFunction(() => Number(document.querySelector('[data-ppte-host]')?.getAttribute('data-ppte-history-depth') ?? 0) >= 2)
+    evidence.editedText = await page.locator('[data-ppte-element-id="text_title"]').first().innerText()
+
+    await page.locator('input[data-ppte-action="import-image"]').setInputFiles({ name: 'hero.png', mimeType: 'image/png', buffer: Buffer.from(pixelPng()) })
+    const image = page.locator('[data-ppte-element-id^="image_host_"]').first()
+    await image.waitFor({ state: 'visible' })
+    const beforeImage = await image.boundingBox()
+    if (!beforeImage) throw new GateFailure('Host image import did not produce a measurable image surface.')
+    const beforeImageFrame = await image.evaluate((node) => ({ left: node.style.left, top: node.style.top }))
+    const imagePoint = { x: beforeImage.x + beforeImage.width / 2, y: beforeImage.y + beforeImage.height / 2 }
+    await page.mouse.move(imagePoint.x, imagePoint.y)
+    await page.mouse.down()
+    await page.mouse.move(imagePoint.x + 36, imagePoint.y + 24, { steps: 5 })
+    await page.mouse.up()
+    await page.waitForFunction(() => Number(document.querySelector('[data-ppte-host]')?.getAttribute('data-ppte-history-depth') ?? 0) >= 4)
+    await page.waitForFunction((before) => {
+      const node = document.querySelector('[data-ppte-element-id^="image_host_"]')
+      if (!node) return false
+      return (node instanceof HTMLElement) && (node.style.left !== before.left || node.style.top !== before.top)
+    }, beforeImageFrame)
+    const afterImage = await image.boundingBox()
+    const afterImageFrame = await image.evaluate((node) => ({ left: node.style.left, top: node.style.top }))
+    evidence.imageDragged = Boolean(afterImage && (afterImageFrame.left !== beforeImageFrame.left || afterImageFrame.top !== beforeImageFrame.top))
+
+    await page.locator('[data-ppte-action="add-page"]').click()
+    await page.waitForFunction(() => document.querySelector('[data-ppte-host]')?.getAttribute('data-ppte-slide-count') === '11')
+    evidence.addedPage = Number(await page.locator('[data-ppte-host]').getAttribute('data-ppte-slide-count'))
+
+    await page.locator('[data-ppte-action="present"]').click()
+    await page.waitForFunction(() => document.querySelector('[data-ppte-host]')?.getAttribute('data-ppte-presenting') === 'true')
+    evidence.presenterSlideBeforeNavigation = Number(await page.locator('[data-ppte-host]').getAttribute('data-ppte-presenter-slide'))
+    await page.keyboard.press('ArrowLeft')
+    evidence.presenting = await page.locator('[data-ppte-host]').getAttribute('data-ppte-presenting')
+    evidence.presenterSlide = Number(await page.locator('[data-ppte-host]').getAttribute('data-ppte-presenter-slide'))
+
+    const [download] = await Promise.all([
+      page.waitForEvent('download'),
+      page.locator('[data-ppte-action="save"]').click(),
+    ])
+    const downloadPath = await download.path()
+    if (!downloadPath) throw new GateFailure('Host Save did not produce a downloadable .ppte checkpoint.')
+    evidence.savedFilename = download.suggestedFilename()
+
+    await page.locator('input[data-ppte-action="open"]').setInputFiles(downloadPath)
+    await page.waitForFunction(() => document.querySelector('[data-ppte-status]')?.textContent?.includes('已打开'))
+    await page.waitForFunction(() => document.querySelector('[data-ppte-host]')?.getAttribute('data-ppte-slide-count') === '11')
+    evidence.reopenedSlides = Number(await page.locator('[data-ppte-host]').getAttribute('data-ppte-slide-count'))
+    evidence.reopenedHistory = Number(await page.locator('[data-ppte-host]').getAttribute('data-ppte-history-depth'))
+    const undo = page.locator('[data-ppte-action="undo"]')
+    evidence.undoEnabled = await undo.isEnabled()
+    await undo.click()
+    await page.waitForFunction(() => document.querySelector('[data-ppte-host]')?.getAttribute('data-ppte-slide-count') === '10')
+    evidence.afterUndoSlides = Number(await page.locator('[data-ppte-host]').getAttribute('data-ppte-slide-count'))
+    evidence.afterUndoHistory = Number(await page.locator('[data-ppte-host]').getAttribute('data-ppte-history-depth'))
+
+    ctx.expectGate(evidence.created === '1', 'Host New did not create the initial document.', evidence)
+    ctx.expectGate(evidence.generatedSlides === 10 && evidence.agentGenerated === 'true', 'Host Agent journey did not generate ten semantic pages.', evidence)
+    ctx.expectGate(evidence.editedText === 'R7 真人路径标题', 'Double-click text editing did not commit the authored title.', evidence)
+    ctx.expectGate(evidence.imageDragged === true, 'Pointer drag did not commit image geometry.', evidence)
+    ctx.expectGate(evidence.addedPage === 11, 'Host Add page did not create a semantic page.', evidence)
+    ctx.expectGate(evidence.presenting === 'true' && evidence.presenterSlideBeforeNavigation === 1 && evidence.presenterSlide === 0, 'Host Present control did not run the presenter state machine.', evidence)
+    ctx.expectGate(evidence.reopenedSlides === 11 && evidence.reopenedHistory > 0 && evidence.undoEnabled && evidence.afterUndoSlides === 10 && evidence.afterUndoHistory === evidence.reopenedHistory - 1, 'Saved Host checkpoint did not restore an actionable Undo stack.', evidence)
+    return evidence
+  })
+}
+
 function runExternal(command, args, options = {}) {
   const result = spawnSync(command, args, { cwd: ROOT, encoding: 'utf8', ...options })
   const raw = `${result.stdout ?? ''}${result.stderr ?? ''}`
@@ -356,8 +480,13 @@ function runPythonPptx(pptxPath) {
     '    raise SystemExit("PPTX_SEMANTIC_ASSERTION_FAILED: paragraphs/style/rotation were not preserved")',
   ].join('\n')
   const { raw } = runExternal('uv', ['run', '--with', 'python-pptx', 'python', '-c', script, pptxPath])
-  const line = raw.split('\n').map((item) => item.trim()).filter(Boolean).at(-1) ?? '{}'
-  try { return JSON.parse(line) } catch (cause) { throw new GateFailure('python-pptx did not return JSON evidence.', { raw }, cause instanceof Error ? cause.message : String(cause)) }
+  // uv may write its dependency-install progress after the child process's
+  // stdout. Parse the child's JSON evidence independently of that harness noise.
+  const evidence = raw.split(/\r?\n/).map((item) => item.trim()).filter(Boolean).map((line) => {
+    try { return JSON.parse(line) } catch { return undefined }
+  }).filter((value) => value && typeof value === 'object').at(-1)
+  if (!evidence) throw new GateFailure('python-pptx did not return JSON evidence.', { raw })
+  return evidence
 }
 
 function runPdftotext(pdfPath) {
@@ -1133,37 +1262,36 @@ register('review-patch', '31', 'Release evidence is independently verifiable.', 
 })
 
 register('section-41', '§41-A', 'Scenario A: AI new presentation starts in a real Host.', 'New user provides local source material, objective, and audience, then requests a ten-slide generated presentation.', 'Host exposes upload/goal/generate controls and renders ten semantic slides in Chromium', async (ctx) => {
-  const rt = await ctx.ensureRuntime()
-  await ctx.withTempDirectory(async (directory) => {
-    const path = ctx.writeFixtureHtml(directory, 'scenario-a.html', rt.renderer.renderDocumentHtml(makeCoreFixture().document))
-    await ctx.withBrowser(path, async (page) => {
-      const observed = await page.evaluate(() => ({
-        fileInputs: document.querySelectorAll('input[type="file"]').length,
-        generate: document.querySelectorAll('[data-ppte-action="generate"]').length,
-        slides: document.querySelectorAll('[data-ppte-type="slide"]').length,
-      }))
-      ctx.expectGate(observed.fileInputs > 0 && observed.generate > 0 && observed.slides === 10, 'Scenario A has no ten-slide AI generation Host journey.', observed)
-      return observed
-    })
-  })
-  return { hostJourney: true }
+  return runHostJourney(ctx)
 })
 
 register('section-41', '§41-B', 'Scenario B: human small edit crosses the browser transaction boundary.', 'User double-clicks a text box, enters IME text, sees no intermediate commits, then saves and reopens.', 'Chromium exposes editable text and save/reopen controls for the file journey', async (ctx) => {
-  const rt = await ctx.ensureRuntime()
-  await ctx.withTempDirectory(async (directory) => {
-    const path = ctx.writeFixtureHtml(directory, 'scenario-b.html', rt.renderer.renderDocumentHtml(makeCoreFixture().document))
-    await ctx.withBrowser(path, async (page) => {
-      const observed = await page.evaluate(() => ({
-        editable: document.querySelectorAll('[contenteditable="true"]').length,
-        save: document.querySelectorAll('[data-ppte-action="save"]').length,
-        undo: document.querySelectorAll('[data-ppte-action="undo"]').length,
-      }))
-      ctx.expectGate(observed.editable > 0 && observed.save > 0 && observed.undo > 0, 'Scenario B has no browser editing transaction surface.', observed)
-      return observed
-    })
+  return withHostBrowser(async (page) => {
+    await page.locator('[data-ppte-action="new"]').click()
+    const title = page.locator('[data-ppte-element-id="text_title"]').first()
+    await title.dblclick()
+    await title.dispatchEvent('compositionstart')
+    await title.fill('B 场景输入法标题')
+    const duringComposition = await page.locator('[data-ppte-host]').getAttribute('data-ppte-history-depth')
+    ctx.expectEqual(duringComposition, '0', 'IME composition committed before compositionend.')
+    await title.dispatchEvent('compositionend')
+    await page.waitForFunction(() => document.querySelector('[data-ppte-host]')?.getAttribute('data-ppte-history-depth') === '1')
+    const edited = await page.locator('[data-ppte-element-id="text_title"]').first().innerText()
+    const [download] = await Promise.all([page.waitForEvent('download'), page.locator('[data-ppte-action="save"]').click()])
+    const downloadPath = await download.path()
+    if (!downloadPath) throw new GateFailure('Scenario B save did not produce a checkpoint download.')
+    await page.locator('input[data-ppte-action="open"]').setInputFiles(downloadPath)
+    await page.waitForFunction(() => document.querySelector('[data-ppte-status]')?.textContent?.includes('已打开'))
+    const undo = page.locator('[data-ppte-action="undo"]')
+    const reopenedText = await page.locator('[data-ppte-element-id="text_title"]').first().innerText()
+    const undoEnabled = await undo.isEnabled()
+    await undo.click()
+    await page.waitForFunction(() => document.querySelector('[data-ppte-host]')?.getAttribute('data-ppte-history-depth') === '0')
+    const afterUndo = await page.locator('[data-ppte-element-id="text_title"]').first().innerText()
+    const observed = { edited, reopenedText, undoEnabled, afterUndo, saveName: download.suggestedFilename() }
+    ctx.expectGate(edited === 'B 场景输入法标题' && reopenedText === edited && undoEnabled && afterUndo === 'Untitled presentation', 'Scenario B save/reopen did not preserve and undo the IME edit.', observed)
+    return observed
   })
-  return { browserEdit: true }
 })
 
 register('section-41', '§41-C', 'Scenario C: Flat Group happy path remains exact.', 'Human creates a flat group, moves and resizes it, then undoes geometry without implicit text-style changes.', 'create/move/resize/undo all succeed and restore exact member frames', async (ctx) => {

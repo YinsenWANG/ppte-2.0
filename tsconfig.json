@@ -4,6 +4,7 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "strict": true,
+    "jsx": "react-jsx",
     "noEmit": true,
     "skipLibCheck": true,
     "exactOptionalPropertyTypes": false,
@@ -11,6 +12,6 @@
     "lib": ["ES2022", "DOM"],
     "types": ["node"]
   },
-  "include": ["packages/**/*.ts", "apps/**/*.ts", "tests/**/*.ts"],
+  "include": ["packages/**/*.ts", "packages/**/*.tsx", "apps/**/*.ts", "apps/**/*.tsx", "tests/**/*.ts"],
   "exclude": ["dist", "node_modules"]
 }

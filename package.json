@@ -1,6 +1,6 @@
 {
   "name": "ppte",
-  "version": "0.4.0-rc.1",
+  "version": "0.5.0",
   "private": true,
   "description": "PPTe semantic presentation format and Stable Core reference runtime",
   "license": "Apache-2.0",
@@ -8,6 +8,7 @@
   "packageManager": "pnpm@11.22.0",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
+    "host:build": "pnpm --dir apps/host build",
     "typecheck": "tsc --noEmit",
     "test": "pnpm build && node --test dist/tests/*.test.js",
     "validate": "python scripts/validate.py && bash scripts/ci-guards.sh",
@@ -16,12 +17,21 @@
     "e2e:beta": "pnpm build && node dist/apps/contract-deck/index.js --beta",
     "e2e:ga-a": "pnpm build && node dist/apps/contract-deck/index.js --ga-a",
     "e2e:ga-b": "pnpm build && node dist/apps/contract-deck/index.js --ga-b",
-    "e2e:ga-c": "pnpm build && node scripts/blackbox-gates.mjs --milestone r6",
+    "e2e:ga-c": "pnpm build && pnpm host:build && node scripts/blackbox-gates.mjs --milestone final",
+    "blackbox:final": "node scripts/blackbox-gates.mjs --milestone final",
+    "blackbox:report": "node scripts/blackbox-gates.mjs --report",
     "perf:ga-a": "pnpm build && node dist/apps/contract-deck/index.js --ga-a",
     "contract-deck": "pnpm build && node dist/apps/contract-deck/index.js"
   },
   "devDependencies": {
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
     "@types/node": "^22.0.0",
-    "typescript": "^5.7.0"
+    "@vitejs/plugin-react": "^5.0.2",
+    "playwright": "^1.55.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "typescript": "^5.7.0",
+    "vite": "^7.1.3"
   }
 }

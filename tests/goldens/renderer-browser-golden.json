@@ -1,0 +1,18 @@
+{
+  "computed": {
+    "slideWidth": "1920px",
+    "slideHeight": "1080px",
+    "slideBackground": "rgb(247, 248, 250)",
+    "titleLeft": "160px",
+    "titleTop": "130px",
+    "titleFontSize": "64px",
+    "titleWidth": 820,
+    "titleHeight": 130,
+    "allElementPosition": "absolute"
+  },
+  "screenshot": {
+    "width": 1920,
+    "height": 1080,
+    "pngSignature": "89504e470d0a1a0a"
+  }
+}

@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+    "typecheck": "tsc -p ../../tsconfig.json --noEmit",
+    "host:build": "pnpm --dir ../../apps/host build"
   }
 }
