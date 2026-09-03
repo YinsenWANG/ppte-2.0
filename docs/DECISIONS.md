@@ -39,9 +39,15 @@ milestones.
 
 ## 2026-09-04 — r0 section-41 A 基线漂移判定与修复
 
-- 初始 `node scripts/blackbox-gates.mjs --report` 连续两次均为 51 个绿断言、section-41 A 的 1 个红断言；失败证据均为 `Pointer drag did not commit image geometry`，`imageDragged:false`。
+- 初始 `node scripts/blackbox-gates.mjs --report` 两次复跑一绿一红；红结果为 51 个绿断言、section-41 A 的 1 个红断言，失败证据为 `Pointer drag did not commit image geometry`，`imageDragged:false`。
 - 随后以独立子进程复跑完整 `final` 6 次、section-41 10 次，均为全绿；浏览器事件探针也确认图片节点收到了 pointer down/move/up，事务 history 从 3 增至 4，位置从 `left:1120px;top:260px` 变为 `left:1179.178px;top:299.452px`。因此判定为冷启动下的浏览器测量/原生图片手势竞争造成的 flaky，而非稳定实现回归。
 - 修复边界保持在 Host 与第三方门禁的同步：图片拖拽开始/移动/结束时阻止原生默认手势，画布声明 `touch-action:none`；门禁在取样前等待导入事务深度为 3、有效渲染矩形，在释放后等待精确提交深度为 4。未删除或放宽任何既有断言。
+
+## 2026-09-04 — r0 section-41 A 第二次取样竞态
+
+- 当前基线聚焦复跑 8 次出现 2 次红；失败时后续 `history-depth` 仍为 5，且浏览器探针看到完整 pointer down/move/up 与 pointer capture，说明拖拽事务已提交。
+- 失败取样的证据是：同一轮先读到 `image.style.left/top = 1179.18px/299.452px`，紧接着独立的 `Locator.boundingBox()` 返回 `null`，再次 `Locator.evaluate()` 又读到移动后的新节点；这是上传 Asset URL settle 引起 React `innerHTML` 替换时读到了已卸载旧节点，不是实现回归。
+- 门禁改为在同一次页面评估中同时验证 frame 已改变且 `getBoundingClientRect()` 非零，再读取结果句柄；没有删除 History、frame 或可见矩形断言，也没有把 History 增长单独当作拖拽成功。
 
 ## 2026-09-04 — r0 新能力断言的保守边界
 

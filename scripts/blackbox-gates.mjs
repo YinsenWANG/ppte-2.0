@@ -452,14 +452,17 @@ async function runHostJourney(ctx, options = {}) {
     await page.mouse.move(imagePoint.x + 36, imagePoint.y + 24, { steps: 5 })
     await page.mouse.up()
     await page.waitForFunction(() => document.querySelector('[data-ppte-host]')?.getAttribute('data-ppte-history-depth') === '4')
-    await page.waitForFunction((before) => {
+    const draggedImage = await page.waitForFunction((before) => {
       const node = document.querySelector('[data-ppte-element-id^="image_host_"]')
       if (!node) return false
-      return (node instanceof HTMLElement) && (node.style.left !== before.left || node.style.top !== before.top)
+      const rect = node.getBoundingClientRect()
+      return (node instanceof HTMLElement) && rect.width > 0 && rect.height > 0 && (node.style.left !== before.left || node.style.top !== before.top)
     }, beforeImageFrame)
-    const afterImage = await image.boundingBox()
-    const afterImageFrame = await image.evaluate((node) => ({ left: node.style.left, top: node.style.top }))
-    evidence.imageDragged = Boolean(afterImage && (afterImageFrame.left !== beforeImageFrame.left || afterImageFrame.top !== beforeImageFrame.top))
+    // Keep the geometry assertion in the same browser evaluation as the
+    // bounding-box read. React may replace the rendered innerHTML once the
+    // uploaded asset URL settles; a separate Locator.boundingBox() can then
+    // observe the detached old node even though the committed frame changed.
+    evidence.imageDragged = Boolean(await draggedImage.jsonValue())
 
     await page.locator('[data-ppte-action="add-page"]').click()
     await page.waitForFunction(() => document.querySelector('[data-ppte-host]')?.getAttribute('data-ppte-slide-count') === '11')
