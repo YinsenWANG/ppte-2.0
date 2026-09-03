@@ -401,6 +401,12 @@ export class PortableRuntime {
     return { ok: result.ok, revision: result.afterRevision, issues: result.issues }
   }
 
+  redo(): QuickFixResult {
+    if (!quickFixEditingEnabled(this.profile)) return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Viewer profile does not allow redo.')] }
+    const result = this.session.redo()
+    return { ok: result.ok, revision: result.afterRevision, issues: result.issues }
+  }
+
   saveAsProject(options: { timestamp?: string; clean?: boolean; compatibilityProfile?: string } = {}): QuickFixResult {
     try {
       const bytes = buildPortableCheckpointBytes(this.session.getDocument(), { timestamp: options.timestamp ?? '1970-01-01T00:00:00.000Z', clean: options.clean, compatibilityProfile: options.compatibilityProfile ?? inferCompatibilityProfile(this.session.getDocument()), runtimeProfile: this.profile === 'light-edit' || this.profile === 'full-portable' ? 'ga-c' : runtimeProfileForCompatibility(inferCompatibilityProfile(this.session.getDocument())), recentTransactions: options.clean ? [] : this.session.getHistory().map((entry) => entry.transaction), assetBytes: this.assetBytes, fontBytes: this.fontBytes })
