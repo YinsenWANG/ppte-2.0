@@ -26,6 +26,7 @@ import type {
   PreviewResult,
   Revision,
   RichTextDocument,
+  SlideIR,
   ScopePermission,
   Slide,
   SlideId,
@@ -34,6 +35,7 @@ import type {
   TransactionScope,
   ValidationIssue,
 } from '../../schema/src/index.js'
+import { validateSlideIR } from '../../schema/src/index.js'
 
 export interface ToolContext {
   documentId: string
@@ -75,6 +77,7 @@ export type AgentToolName =
   | 'commit_transaction'
   | 'undo_transaction'
   | 'regenerate_selection'
+  | 'redesign_others'
   | 'regenerate_slide'
   | 'apply_layout_recipe'
   | 'expand_macro'
@@ -134,6 +137,7 @@ export const AGENT_TOOL_NAMES: readonly AgentToolName[] = [
   'commit_transaction',
   'undo_transaction',
   'regenerate_selection',
+  'redesign_others',
   'regenerate_slide',
   'apply_layout_recipe',
   'expand_macro',
@@ -145,7 +149,7 @@ export const AGENT_TOOL_NAMES: readonly AgentToolName[] = [
 export const AGENT_TOOL_DEFINITIONS: readonly AgentToolDefinition[] = AGENT_TOOL_NAMES.map((name) => ({
   name,
   mutates: ['commit_transaction', 'undo_transaction'].includes(name),
-  requiresConfirmation: ['commit_transaction', 'undo_transaction', 'regenerate_selection', 'regenerate_slide', 'apply_layout_recipe', 'replace_artwork', 'sync_fact_references'].includes(name),
+  requiresConfirmation: ['commit_transaction', 'undo_transaction', 'regenerate_selection', 'redesign_others', 'regenerate_slide', 'apply_layout_recipe', 'replace_artwork', 'sync_fact_references'].includes(name),
   description: name === 'commit_transaction' ? 'Commit a validated Transaction through the Session.' : name === 'preview_transaction' ? 'Preview a Transaction and return actual Diff and Issues.' : `Execute the ${name} Agent tool within the granted Scope.`,
 }))
 
@@ -207,6 +211,7 @@ export class AgentToolServer {
         case 'commit_transaction': return this.commitTransaction(args.transaction, args.confirmed === true) as AgentToolResult<T>
         case 'undo_transaction': return this.undoTransaction(args.confirmed === true) as AgentToolResult<T>
         case 'regenerate_selection': return this.regenerateSelection(args) as AgentToolResult<T>
+        case 'redesign_others': return this.redesignOthers(args) as AgentToolResult<T>
         case 'regenerate_slide': return this.regenerateSlide(args) as AgentToolResult<T>
         case 'apply_layout_recipe': return this.applyLayoutRecipe(args) as AgentToolResult<T>
         case 'expand_macro': return this.expandMacroTool(args) as AgentToolResult<T>
@@ -405,13 +410,22 @@ export class AgentToolServer {
     const slideId = this.selection?.slideId ?? optionalString(args, 'slideId')
     if (!slideId) return failure('regenerate_selection', 'SELECTION_MISSING', this.revision(), 'A selected slide is required.')
     const selected = this.selection?.elementIds ?? stringArray(args, 'elementIds')
-    return this.regenerateSlide({ ...args, slideId, protectedElementIds: selected, requireConfirmation: args.requireConfirmation ?? true }, 'regenerate_selection')
+    if (selected.length === 0) return failure('regenerate_selection', 'SELECTION_MISSING', this.revision(), 'At least one selected element is required.')
+    return this.regenerateSlide({ ...args, slideId, targetElementIds: selected, requireConfirmation: args.requireConfirmation ?? true }, 'regenerate_selection')
+  }
+
+  private redesignOthers(args: Record<string, unknown>): AgentToolResult {
+    const slideId = this.selection?.slideId ?? optionalString(args, 'slideId')
+    if (!slideId) return failure('redesign_others', 'SELECTION_MISSING', this.revision(), 'A selected slide is required.')
+    const selected = this.selection?.elementIds ?? stringArray(args, 'elementIds')
+    if (selected.length === 0) return failure('redesign_others', 'SELECTION_MISSING', this.revision(), 'At least one protected selected element is required.')
+    return this.regenerateSlide({ ...args, slideId, protectedElementIds: selected, requireConfirmation: args.requireConfirmation ?? true }, 'redesign_others')
   }
 
   private regenerateSlide(args: Record<string, unknown>, tool: AgentToolName = 'regenerate_slide'): AgentToolResult {
     const slideId = stringArg(args, 'slideId')
     if (!this.canReadSlide(slideId)) return failure(tool, 'SCOPE_VIOLATION', this.revision(), `Slide ${slideId} is outside the granted scope.`)
-    const ir = inferSlideIR(this.document(), slideId)
+    const ir = readSlideIR(args.slideIR) ?? inferSlideIR(this.document(), slideId)
     const draft = compileSlide(ir, this.compileContext(args))
     const base = { draft, validationIssues: draft.validationIssues }
     if (draft.validationIssues.some((issue) => issue.severity === 'error')) return { tool, ok: false, revision: this.revision(), data: base, issues: draft.validationIssues }
@@ -422,6 +436,8 @@ export class AgentToolServer {
         actor: { type: 'agent', id: 'design-compiler' },
         reason: stringArgOr(args, 'reason', 'Regenerate from a validated semantic draft.'),
         protectedElementIds: stringArray(args, 'protectedElementIds'),
+        protectedContent: ir.protectedContent,
+        targetElementIds: stringArray(args, 'targetElementIds'),
         protectedSemanticKeys: stringArray(args, 'protectedSemanticKeys'),
         requireConfirmation: args.requireConfirmation !== false,
       })
@@ -435,7 +451,7 @@ export class AgentToolServer {
   private applyLayoutRecipe(args: Record<string, unknown>): AgentToolResult {
     const slideId = stringArg(args, 'slideId')
     if (!this.canReadSlide(slideId)) return failure('apply_layout_recipe', 'SCOPE_VIOLATION', this.revision(), `Slide ${slideId} is outside the granted scope.`)
-    const ir = inferSlideIR(this.document(), slideId)
+    const ir = readSlideIR(args.slideIR) ?? inferSlideIR(this.document(), slideId)
     const draft = compileSlide(ir, this.compileContext(args))
     if (draft.validationIssues.some((issue) => issue.severity === 'error')) return { tool: 'apply_layout_recipe', ok: false, revision: this.revision(), data: { draft, validationIssues: draft.validationIssues }, issues: draft.validationIssues }
     try {
@@ -623,7 +639,7 @@ function replaceArtworkTransaction(revision: Revision, slideId: string, elementI
   }
 }
 
-function inferSlideIR(document: PpteDocument, slideId: string) {
+function inferSlideIR(document: PpteDocument, slideId: string): SlideIR {
   const slide = document.slides[slideId]
   if (!slide) throw new Error(`SLIDE_MISSING: ${slideId}`)
   const blocks = slide.rootOrder.map((elementId) => slide.elements[elementId]).filter((element): element is Element => Boolean(element)).filter((element) => element.role !== 'decorative' && element.role !== 'background').map(elementToBlock)
@@ -634,11 +650,18 @@ function inferSlideIR(document: PpteDocument, slideId: string) {
 function elementToBlock(element: Element): BlockIR {
   if (element.type === 'text') {
     const kind: BlockIR['kind'] = element.role === 'title' ? 'heading' : element.role === 'source' ? 'source' : element.role === 'metric' ? 'metric' : element.role === 'cta' ? 'cta' : 'paragraph'
-    return { key: element.id, kind, content: renderTextPlain(element), semanticKey: element.semanticKey, importance: element.role === 'title' ? 'primary' as const : 'supporting' as const, editabilityTarget: 'full' as const }
+    return { key: element.id, kind, content: renderTextPlain(element), semanticKey: element.semanticKey, ...(element.semanticRefs?.factIds ? { factIds: cloneJson(element.semanticRefs.factIds) } : {}), ...(element.semanticRefs?.sourceIds ? { sourceIds: cloneJson(element.semanticRefs.sourceIds) } : {}), importance: element.role === 'title' ? 'primary' as const : 'supporting' as const, editabilityTarget: 'full' as const }
   }
-  if (element.type === 'image') return { key: element.id, kind: 'image' as const, content: { assetId: element.assetId }, semanticKey: element.semanticKey, importance: element.role === 'artwork' ? 'supporting' as const : 'secondary' as const, editabilityTarget: 'replace' as const }
-  if (element.type === 'chart') return { key: element.id, kind: 'chart' as const, content: { chartType: element.chartType, data: element.data } as unknown as JsonValue, semanticKey: element.semanticKey, importance: 'secondary' as const, editabilityTarget: 'property' as const }
-  return { key: element.id, kind: 'paragraph' as const, content: element.description ?? '', semanticKey: element.semanticKey, importance: 'supporting' as const, editabilityTarget: 'property' as const }
+  if (element.type === 'image') return { key: element.id, kind: 'image' as const, content: { assetId: element.assetId }, semanticKey: element.semanticKey, ...(element.semanticRefs?.factIds ? { factIds: cloneJson(element.semanticRefs.factIds) } : {}), ...(element.semanticRefs?.sourceIds ? { sourceIds: cloneJson(element.semanticRefs.sourceIds) } : {}), importance: element.role === 'artwork' ? 'supporting' as const : 'secondary' as const, editabilityTarget: 'replace' as const }
+  if (element.type === 'chart') return { key: element.id, kind: 'chart' as const, content: { chartType: element.chartType, data: element.data } as unknown as JsonValue, semanticKey: element.semanticKey, ...(element.semanticRefs?.factIds ? { factIds: cloneJson(element.semanticRefs.factIds) } : {}), ...(element.semanticRefs?.sourceIds ? { sourceIds: cloneJson(element.semanticRefs.sourceIds) } : {}), importance: 'secondary' as const, editabilityTarget: 'property' as const }
+  return { key: element.id, kind: 'paragraph' as const, content: element.description ?? '', semanticKey: element.semanticKey, ...(element.semanticRefs?.factIds ? { factIds: cloneJson(element.semanticRefs.factIds) } : {}), ...(element.semanticRefs?.sourceIds ? { sourceIds: cloneJson(element.semanticRefs.sourceIds) } : {}), importance: 'supporting' as const, editabilityTarget: 'property' as const }
+}
+
+function readSlideIR(value: unknown): SlideIR | undefined {
+  if (value === undefined) return undefined
+  const issues = validateSlideIR(value)
+  if (issues.some((issue) => issue.severity === 'error')) throw new Error(issues.map((issue) => `${issue.code}: ${issue.message}`).join('\n'))
+  return cloneJson(value as SlideIR)
 }
 
 function scopeWithin(requested: TransactionScope, granted: TransactionScope): boolean {

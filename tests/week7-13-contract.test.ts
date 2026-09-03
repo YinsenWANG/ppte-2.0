@@ -151,7 +151,15 @@ test('regeneration and layout tools preview only; artwork metadata is rendered a
   const selectedRegeneration = selectionServer.execute('regenerate_selection')
   assert.equal(selectedRegeneration.ok, true)
   assert.ok(selectedRegeneration.transaction)
-  assert.equal(selectedRegeneration.transaction?.operations.some((operation) => operation.kind === 'element.delete' && operation.elementId === 'text_title'), false)
+  const selectedOperations = selectedRegeneration.transaction?.operations ?? []
+  const nonTargetIds = new Set(['shape_surface', 'text_body', 'image_hero'])
+  assert.equal(selectedOperations.some((operation) => {
+    if ('elementId' in operation) return nonTargetIds.has(operation.elementId)
+    if (operation.kind === 'element.insert') return nonTargetIds.has(operation.element.id)
+    if (operation.kind === 'slide.setReadingOrder') return operation.readingOrder?.some((elementId) => nonTargetIds.has(elementId)) === true
+    return false
+  }), false)
+  assert.equal(selectedOperations.some((operation) => operation.kind === 'element.delete' && operation.elementId === 'text_title' || operation.kind === 'element.insert' && operation.element.semanticKey === 'title.main'), true)
 
   const hybrid = cloneJson(base) as PpteDocument
   hybrid.slides.slide_main.visualStrategy = 'hybrid'

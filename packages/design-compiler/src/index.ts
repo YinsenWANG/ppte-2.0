@@ -66,6 +66,9 @@ export interface DraftTransactionOptions {
 export interface RegenerateTransactionOptions extends DraftTransactionOptions {
   protectedSemanticKeys?: string[]
   protectedElementIds?: string[]
+  protectedContent?: SlideIR['protectedContent']
+  /** When present, only these current element instances are replacement targets. */
+  targetElementIds?: string[]
   requireConfirmation?: boolean
 }
 
@@ -281,22 +284,33 @@ export function buildRegenerateTransaction(document: PpteDocument, draft: Compil
   if (!slide) throw new Error(`SLIDE_MISSING: ${slideId}`)
   const protectedKeys = new Set(options.protectedSemanticKeys ?? [])
   const protectedIds = new Set(options.protectedElementIds ?? [])
-  const keep = Object.values(slide.elements).filter((element) => protectedIds.has(element.id) || (element.semanticKey !== undefined && protectedKeys.has(element.semanticKey)))
+  for (const protectedContent of options.protectedContent ?? []) {
+    if (protectedContent.semanticKey) protectedKeys.add(protectedContent.semanticKey)
+    if (protectedContent.factId) for (const element of Object.values(slide.elements)) if (element.semanticRefs?.factIds?.includes(protectedContent.factId)) protectedIds.add(element.id)
+  }
+  for (const element of Object.values(slide.elements)) if (element.editPolicy?.protected === true) protectedIds.add(element.id)
+
+  const targetIds = [...new Set(options.targetElementIds ?? [])]
+  if (targetIds.length > 0) return buildSelectionRegenerationTransaction(document, draft, slideId, targetIds, options)
+
+  const keep = slide.rootOrder.map((elementId) => slide.elements[elementId]).filter((element): element is Element => Boolean(element) && (protectedIds.has(element.id) || (element.semanticKey !== undefined && protectedKeys.has(element.semanticKey))))
+  const keepSet = new Set(keep.map((element) => element.id))
   const keepKeys = new Set(keep.map((element) => element.semanticKey).filter((key): key is string => Boolean(key)))
   const replacements = new Map<string, Element>()
   for (const element of Object.values(slide.elements)) if (element.semanticKey) replacements.set(element.semanticKey, element)
   const materialized = draft.elementDrafts.filter((item) => !(item.semanticKey && keepKeys.has(item.semanticKey))).map((item) => {
-    const element = materializeElementDraft(item, draft)
+    const generated = materializeElementDraft(item, draft)
     const prior = item.semanticKey ? replacements.get(item.semanticKey) : undefined
-    if (!prior || keep.includes(prior)) return element
+    const element = prior && !keepSet.has(prior.id) ? inheritRegenerationProperties(prior, generated) : generated
+    if (!prior || keepSet.has(prior.id)) return element
     element.provenance = { ...element.provenance, replacesElementId: prior.id, sourceSemanticKey: prior.semanticKey, kind: 'generated' }
     return element
   })
-  const removed = Object.values(slide.elements).filter((element) => !keep.includes(element))
+  const removed = Object.values(slide.elements).filter((element) => !keepSet.has(element.id))
   const operations: Transaction['operations'] = []
   for (const element of removed) operations.push({ opId: `${options.transactionId}:delete:${element.id}`, kind: 'element.delete', slideId, elementId: element.id })
   for (const element of materialized) operations.push({ opId: `${options.transactionId}:insert:${element.id}`, kind: 'element.insert', slideId, element, index: slide.rootOrder.length })
-  const nextReadingOrder = [...keep.filter((element) => slide.readingOrder?.includes(element.id) ?? true), ...materialized.filter((element) => element.role !== 'artwork' && element.role !== 'background')].map((element) => element.id)
+  const nextReadingOrder = [...(slide.readingOrder ?? []).filter((elementId) => keepSet.has(elementId)), ...materialized.filter((element) => element.role !== 'artwork' && element.role !== 'background')].map((element) => typeof element === 'string' ? element : element.id)
   if (nextReadingOrder.length > 0) operations.push({ opId: `${options.transactionId}:reading-order`, kind: 'slide.setReadingOrder', slideId, readingOrder: nextReadingOrder })
   if (operations.length === 0) throw new Error('REGENERATE_EMPTY: no replacement or protected content was produced.')
   const elementIds = [...new Set([...removed.map((element) => element.id), ...materialized.map((element) => element.id)])]
@@ -307,6 +321,46 @@ export function buildRegenerateTransaction(document: PpteDocument, draft: Compil
     scope: { kind: 'slide', slideIds: [slideId], elementIds, semanticKeys: [...new Set(elementIds.map((id) => slide.elements[id]?.semanticKey ?? materialized.find((element) => element.id === id)?.semanticKey).filter((key): key is string => Boolean(key)))], permissions: ['structure'], allowInsert: true, allowDelete: true },
     changeContract: { allowedOperationKinds: ['element.delete', 'element.insert', 'slide.setReadingOrder'], maxChangedSlides: 1, maxChangedElements: Math.max(1, elementIds.length), maxInsertedElements: materialized.length, maxDeletedElements: removed.length, maxReplacedAssets: 0, maxChangedFacts: 0, maxChangedSources: 0, maxChangedThemeTokens: 0, maxChangedStylePresets: 0, requireConfirmation: options.requireConfirmation ?? true, userIntentSummary: 'Regenerate a slide through semantic drafts while retaining protected anchors.' },
     reason: options.reason ?? 'Regenerate slide from Design Compiler draft',
+    createdAt: options.createdAt ?? '2026-09-03T00:00:00.000Z',
+    validationLevel: 'L3',
+    operations,
+  }
+}
+
+function buildSelectionRegenerationTransaction(document: PpteDocument, draft: CompiledSlideDraft, slideId: string, targetIds: string[], options: RegenerateTransactionOptions): Transaction {
+  const slide = document.slides[slideId]
+  if (!slide) throw new Error(`SLIDE_MISSING: ${slideId}`)
+  const targets = targetIds.map((elementId) => {
+    const element = slide.elements[elementId]
+    if (!element) throw new Error(`ELEMENT_MISSING: ${elementId}`)
+    const draftElement = draft.elementDrafts.find((item) => item.semanticKey === element.semanticKey || item.sourceBlockKey === element.id || item.draftId === element.id)
+    if (!draftElement) throw new Error(`REGENERATION_TARGET_MISSING: no Slide IR block resolves selected element ${elementId}.`)
+    const rootIndex = slide.rootOrder.indexOf(elementId)
+    const readingOrderIndex = slide.readingOrder?.indexOf(elementId) ?? -1
+    const generated = materializeElementDraft(draftElement, draft)
+    const replacement = inheritRegenerationProperties(element, generated)
+    // Selection regeneration is an object-level replacement, not a reflow;
+    // keep the selected object's current placement exactly where the user
+    // selected it.
+    replacement.frame = cloneJson(element.frame)
+    replacement.provenance = { ...replacement.provenance, replacesElementId: element.id, sourceSemanticKey: element.semanticKey, kind: 'generated' }
+    return { element, replacement, rootIndex: rootIndex < 0 ? slide.rootOrder.length : rootIndex, readingOrderIndex }
+  }).sort((left, right) => right.rootIndex - left.rootIndex || right.element.id.localeCompare(left.element.id))
+  const operations: Transaction['operations'] = []
+  for (const target of targets) operations.push({ opId: `${options.transactionId}:delete:${target.element.id}`, kind: 'element.delete', slideId, elementId: target.element.id })
+  for (const target of [...targets].sort((left, right) => left.rootIndex - right.rootIndex || left.element.id.localeCompare(right.element.id))) {
+    operations.push({ opId: `${options.transactionId}:insert:${target.replacement.id}`, kind: 'element.insert', slideId, element: target.replacement, index: target.rootIndex, ...(target.readingOrderIndex < 0 ? {} : { readingOrderIndex: target.readingOrderIndex }) })
+  }
+  const elementIds = [...new Set(targets.flatMap((target) => [target.element.id, target.replacement.id]))]
+  const semanticKeys = [...new Set(targets.map((target) => target.element.semanticKey ?? target.replacement.semanticKey).filter((key): key is string => Boolean(key)))]
+  const replacedAssetCount = targets.filter((target) => target.element.type === 'image' && target.replacement.type === 'image' && target.element.assetId !== target.replacement.assetId).length
+  return {
+    transactionId: options.transactionId,
+    baseRevision: options.baseRevision,
+    actor: options.actor ?? { type: 'agent', id: 'design-compiler' },
+    scope: { kind: 'selection', slideIds: [slideId], elementIds, semanticKeys, permissions: ['structure'], allowInsert: true, allowDelete: true },
+    changeContract: { allowedOperationKinds: ['element.delete', 'element.insert'], allowedElementIds: elementIds, allowedSemanticKeys: semanticKeys, maxChangedSlides: 1, maxChangedElements: targets.length, maxInsertedElements: targets.length, maxDeletedElements: targets.length, maxReplacedAssets: replacedAssetCount, maxChangedFacts: 0, maxChangedSources: 0, maxChangedThemeTokens: 0, maxChangedStylePresets: 0, preserve: { geometry: 'preserve', style: 'preserve', semanticIdentity: 'allow-replacement', readingOrder: 'preserve', facts: 'preserve' }, requireConfirmation: options.requireConfirmation ?? true, userIntentSummary: 'Regenerate only the selected semantic objects while preserving the rest of the slide.' },
+    reason: options.reason ?? 'Regenerate selected semantic objects from a Slide IR draft',
     createdAt: options.createdAt ?? '2026-09-03T00:00:00.000Z',
     validationLevel: 'L3',
     operations,
@@ -419,6 +473,53 @@ function materializeElementDraft(draft: ElementDraft, compiled: CompiledSlideDra
   if (draft.kind === 'shape') return { ...base, type: 'shape', shape: shapeKind(data.shape), style: { styleRef: styleRef(data, 'shape.card') } }
   if (draft.kind === 'chart') return { ...base, type: 'chart', chartType: chartType(data.chartType), data: chartData(data.data), encoding: chartEncoding(data.encoding), style: { styleRef: styleRef(data, 'chart.default') } }
   return { ...base, type: 'component', componentType: typeof data.componentType === 'string' ? data.componentType : 'core/placeholder', componentVersion: typeof data.componentVersion === 'string' ? data.componentVersion : '1.0.0', props: isRecord(data.props) ? cloneJson(data.props) as Record<string, import('../../schema/src/index.js').JsonValue> : {}, fallback: { kind: 'placeholder', label: typeof data.label === 'string' ? data.label : draft.draftId } }
+}
+
+/** Reapply properties owned by the current document instance when a semantic
+ * object is regenerated. Recipe output still owns the new semantic content
+ * and frame; local editing state, policy, references, and typed overrides do
+ * not silently disappear with the old element id. */
+function inheritRegenerationProperties(prior: Element, generated: Element): Element {
+  const inherited = cloneJson(generated) as Element
+  const source = prior as unknown as Record<string, unknown>
+  const target = inherited as unknown as Record<string, unknown>
+  for (const key of ['name', 'tags', 'description', 'rotationDeg', 'flipX', 'flipY', 'opacity', 'visible', 'locked', 'appearStep', 'animation', 'editPolicy', 'extensions']) {
+    if (source[key] !== undefined) target[key] = cloneJson(source[key])
+  }
+  const priorRefs = prior.semanticRefs
+  const generatedRefs = generated.semanticRefs
+  if (priorRefs || generatedRefs) {
+    const factIds = [...new Set([...(priorRefs?.factIds ?? []), ...(generatedRefs?.factIds ?? [])])]
+    const sourceIds = [...new Set([...(priorRefs?.sourceIds ?? []), ...(generatedRefs?.sourceIds ?? [])])]
+    inherited.semanticRefs = { ...(factIds.length ? { factIds } : {}), ...(sourceIds.length ? { sourceIds } : {}) }
+  }
+  if (prior.type === generated.type) {
+    if ('style' in prior && 'style' in inherited && prior.style) {
+      const generatedStyle = (inherited as unknown as { style?: Record<string, unknown> }).style ?? {}
+      const priorStyle = prior.style as unknown as Record<string, unknown>
+      ;(inherited as unknown as { style: Record<string, unknown> }).style = { ...generatedStyle, ...(priorStyle.styleRef === undefined ? {} : { styleRef: cloneJson(priorStyle.styleRef) }), ...(priorStyle.overrides === undefined ? {} : { overrides: cloneJson(priorStyle.overrides) }) }
+    }
+    if (prior.type === 'text' && inherited.type === 'text') {
+      if (prior.paragraphStyle !== undefined) inherited.paragraphStyle = cloneJson(prior.paragraphStyle)
+      if (prior.boxStyle !== undefined) inherited.boxStyle = cloneJson(prior.boxStyle)
+      if (prior.overflowPolicy !== undefined) inherited.overflowPolicy = prior.overflowPolicy
+    }
+    if (prior.type === 'image' && inherited.type === 'image') {
+      if (prior.crop !== undefined) inherited.crop = cloneJson(prior.crop)
+      if (prior.focalPoint !== undefined) inherited.focalPoint = cloneJson(prior.focalPoint)
+      if (prior.altText !== undefined) inherited.altText = prior.altText
+      if (prior.fit !== undefined) inherited.fit = prior.fit
+    }
+    if (prior.type === 'chart' && inherited.type === 'chart') {
+      if (prior.options !== undefined) inherited.options = cloneJson(prior.options)
+      if (prior.altText !== undefined) inherited.altText = prior.altText
+    }
+    if (prior.type === 'component' && inherited.type === 'component') {
+      inherited.fallback = cloneJson(prior.fallback)
+    }
+    if (prior.editPolicy?.mode === 'property' || prior.editPolicy?.mode === 'replace') inherited.frame = cloneJson(prior.frame)
+  }
+  return inherited
 }
 
 function emptyDraft(ir: unknown, provenance: CompiledSlideDraft['provenance'], issues: ValidationIssue[]): CompiledSlideDraft {

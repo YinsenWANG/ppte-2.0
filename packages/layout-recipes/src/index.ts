@@ -139,7 +139,11 @@ export function builtInRecipeSpecs(): RecipeSpec[] {
     recipe('process.steps', ['process'], [slot('title', ['heading'], true), slot('steps', ['process', 'paragraph'], true, 1, 6)], [zone('title', 0.08, 0.08, 0.84, 0.14), zone('steps', 0.08, 0.32, 0.84, 0.48)], ['safe-area', 'grid']),
     recipe('quote.focus', ['quote'], [slot('quote', ['quote'], true), slot('source', ['source', 'paragraph'], false)], [zone('quote', 0.14, 0.20, 0.72, 0.38), zone('source', 0.24, 0.66, 0.52, 0.12)], ['safe-area']),
     recipe('closing.cta', ['closing'], [slot('title', ['heading'], true), slot('body', ['paragraph', 'source'], false), slot('cta', ['cta'], true)], [zone('title', 0.10, 0.16, 0.80, 0.16), zone('body', 0.18, 0.38, 0.64, 0.18), zone('cta', 0.32, 0.68, 0.36, 0.14)], ['safe-area']),
-    recipe('hybrid.editorial', ['cover', 'section', 'statement', 'explanation', 'summary', 'closing'], [slot('title', ['heading'], true), slot('content', ['paragraph', 'metric', 'source', 'cta', 'quote'], false), slot('artwork', ['image'], false)], [zone('title', 0.08, 0.10, 0.54, 0.18), zone('content', 0.08, 0.34, 0.50, 0.48), zone('artwork', 0.58, 0.04, 0.38, 0.92)], ['safe-area', 'avoid-region']),
+    // GA-B/GA-C hybrid pages may mix narrative text, metrics, charts, and
+    // visual blocks in one slide. Keep one deterministic content slot so the
+    // declarative matcher does not reject a valid mixed semantic page merely
+    // because its data-bearing object is not the first block.
+    recipe('hybrid.editorial', ['cover', 'section', 'statement', 'explanation', 'summary', 'closing', 'comparison', 'metrics', 'chart', 'timeline', 'process'], [slot('title', ['heading'], true), slot('content', ['paragraph', 'metric', 'source', 'cta', 'quote', 'chart', 'comparison', 'process', 'timeline'], false), slot('artwork', ['image'], false)], [zone('title', 0.08, 0.10, 0.54, 0.18), zone('content', 0.08, 0.34, 0.50, 0.48), zone('artwork', 0.58, 0.04, 0.38, 0.92)], ['safe-area', 'avoid-region']),
     recipe('summary.grid', ['summary', 'metrics'], [slot('title', ['heading'], true), slot('cards', ['metric', 'paragraph', 'image'], true, 1, 6)], [zone('title', 0.08, 0.08, 0.84, 0.14), zone('cards', 0.08, 0.30, 0.84, 0.54)], ['safe-area', 'grid']),
     recipe('chart.focus', ['chart'], [slot('title', ['heading'], true), slot('chart', ['chart', 'image'], true), slot('source', ['source'], false)], [zone('title', 0.08, 0.08, 0.84, 0.14), zone('chart', 0.12, 0.28, 0.76, 0.54), zone('source', 0.12, 0.86, 0.76, 0.06)], ['safe-area']),
   ]
