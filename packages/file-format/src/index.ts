@@ -1,11 +1,14 @@
-import { existsSync, fsyncSync, mkdirSync, openSync, closeSync, readFileSync, renameSync, statSync, unlinkSync, writeFileSync } from 'node:fs'
+import { existsSync, fsyncSync, mkdirSync, openSync, closeSync, readFileSync, readdirSync, renameSync, statSync, unlinkSync, writeFileSync } from 'node:fs'
 import { createHash } from 'node:crypto'
 import { dirname, basename, join } from 'node:path'
 import { canonicalHash, canonicalJsonString, canonicalRevision } from '../../canonical-json/src/index.js'
 import { assertDocumentCompatibility, checkCompatibility, inferCompatibilityProfile, runtimeProfileForCompatibility } from '../../compatibility/src/index.js'
+import { readJournal, replayJournal } from '../../recovery-journal/src/index.js'
+import type { BlobResolver } from '../../recovery-journal/src/index.js'
 import { validateRuntimeDocument, validateTransactionShape } from '../../validation/src/index.js'
 import { PPTE_FORMAT, PPTE_FORMAT_VERSION, PPTE_OPERATION_PROTOCOL_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
-import type { PpteDocument, PpteManifest, PortableProfile, Revision, Transaction, ValidationIssue } from '../../schema/src/index.js'
+import { attachSessionRestoreContext, readPersistedHistoryMetadata } from '../../schema/src/file-format.js'
+import type { PpteDocument, PpteManifest, PortableProfile, Revision, SessionHistoryEntrySnapshot, Transaction, ValidationIssue } from '../../schema/src/index.js'
 import { ContentAddressedStore } from './cas.js'
 import { buildPortable as buildPortableRuntime } from '../../portable-runtime/src/index.js'
 import type { PortableBuildOptions, PortableBuildResult } from '../../portable-runtime/src/index.js'
@@ -20,6 +23,7 @@ export interface CheckpointWriteOptions {
   assetBytes?: Record<string, Uint8Array>
   fontBytes?: Record<string, Uint8Array>
   cas?: ContentAddressedStore
+  blobResolver?: BlobResolver | ((hash: string) => Uint8Array | undefined)
   fault?: FaultPoint | 'before-rename' | 'after-rename'
   faultInjector?: FaultInjector
   readyFile?: string
@@ -38,11 +42,45 @@ export interface OpenCheckpointResult {
   document: PpteDocument
   manifest: PpteManifest
   recentTransactions: Transaction[]
+  recovery?: RecoveryResult
+}
+
+export type RecoveryAction = 'recover' | 'discard' | 'save-as' | 'prompt' | 'ignore'
+
+export interface OpenCheckpointOptions {
+  /** Defaults to recover for the legacy Host open path. */
+  recovery?: RecoveryAction
+  /** Override the canonical adjacent Journal path or provide a candidate set. */
+  journalPath?: string
+  journalPaths?: string[]
+  recoveryDirectory?: string
+  /** Optional CAS/blob lookup used to verify required Journal payloads. */
+  cas?: ContentAddressedStore
+  blobResolver?: BlobResolver | ((hash: string) => Uint8Array | undefined)
+  saveAsTarget?: string
+  timestamp?: string
+  assetBytes?: Record<string, Uint8Array>
+  fontBytes?: Record<string, Uint8Array>
+  /** Internal Host switch: scan all adjacent *.journal files when requested. */
+  discoverAllJournals?: boolean
+}
+
+export interface RecoveryResult {
+  status: 'none' | 'available' | 'recovered' | 'discarded' | 'saved-as' | 'rejected' | 'ambiguous' | 'ignored'
+  journalPath?: string
+  baseRevision: Revision
+  recoveredRevision?: Revision
+  records: number
+  issues: ValidationIssue[]
+  /** Present for `prompt`, allowing the UI to inspect the isolated draft. */
+  draft?: PpteDocument
+  checkpoint?: CheckpointResult
 }
 
 const MAX_ARCHIVE_BYTES = 512 * 1024 * 1024
 const MAX_ENTRY_BYTES = 256 * 1024 * 1024
 const MAX_ARCHIVE_ENTRIES = 10_000
+const MAX_RECENT_HISTORY_ENTRIES = 200
 const CRC_TABLE = buildCrcTable()
 
 export class PpteFileService {
@@ -54,8 +92,18 @@ export class PpteFileService {
     return this.write(document, target, options, recentTransactions)
   }
 
-  open(target: string | Uint8Array): OpenCheckpointResult {
-    return typeof target === 'string' ? openCheckpoint(target) : openCheckpointBytes(target)
+  open(target: string | Uint8Array, options: OpenCheckpointOptions = {}): OpenCheckpointResult {
+    return typeof target === 'string' ? openCheckpoint(target, { ...options, discoverAllJournals: true }) : openCheckpointBytes(target)
+  }
+
+  /** UI-oriented entry point: inspect an isolated recovery draft first. */
+  openWithRecovery(target: string, options: Omit<OpenCheckpointOptions, 'recovery'> = {}): OpenCheckpointResult {
+    return openCheckpoint(target, { ...options, recovery: 'prompt', discoverAllJournals: true })
+  }
+
+  /** Apply one of the three user-facing recovery choices. */
+  recover(target: string, action: Exclude<RecoveryAction, 'ignore' | 'prompt'> = 'recover', options: Omit<OpenCheckpointOptions, 'recovery'> = {}): OpenCheckpointResult {
+    return openCheckpoint(target, { ...options, recovery: action, discoverAllJournals: true })
   }
 
   /** Build a history-free checkpoint for sharing without mutating the source document. */
@@ -101,7 +149,7 @@ export function writeCheckpoint(document: PpteDocument, target: string, options:
     addEntry(entries, safePackagePath(asset.path, `assets/${assetId}`, 'assets/'), data)
   }
   for (const asset of Object.values(document.assets)) {
-    const data = options.assetBytes?.[asset.id] ?? options.cas?.get(asset.hash)
+    const data = options.assetBytes?.[asset.id] ?? options.cas?.get(asset.hash) ?? resolveBlob(options.blobResolver, asset.hash)
     if (!data) throw new Error(`ASSET_MISSING: checkpoint requires bytes for ${asset.id}`)
     if (!options.assetBytes?.[asset.id]) {
       if (data.length !== asset.byteLength || normalizeHash(asset.hash) !== sha256Binary(data)) throw new Error(`ASSET_HASH_MISMATCH: ${asset.id}`)
@@ -116,7 +164,7 @@ export function writeCheckpoint(document: PpteDocument, target: string, options:
   }
   for (const font of Object.values(document.fonts)) {
     if (font.source !== 'embedded') continue
-    const data = options.fontBytes?.[font.id] ?? (font.hash ? options.cas?.get(font.hash) : undefined)
+    const data = options.fontBytes?.[font.id] ?? (font.hash ? options.cas?.get(font.hash) ?? resolveBlob(options.blobResolver, font.hash) : undefined)
     if (!data) throw new Error(`FONT_MISSING: checkpoint requires bytes for ${font.id}`)
     if (font.hash && normalizeHash(font.hash) !== sha256Binary(data)) throw new Error(`FONT_HASH_MISMATCH: ${font.id}`)
     if (!options.fontBytes?.[font.id]) addEntry(entries, safePackagePath(font.path ?? `fonts/${font.id}.woff2`, `fonts/${font.id}.woff2`, 'fonts/'), data)
@@ -169,9 +217,20 @@ export function writeCheckpoint(document: PpteDocument, target: string, options:
   }
 }
 
-export function openCheckpoint(target: string): OpenCheckpointResult {
+export function openCheckpoint(target: string, options: OpenCheckpointOptions = {}): OpenCheckpointResult {
   const bytesOnDisk = new Uint8Array(readFileSync(target))
-  return openCheckpointBytes(bytesOnDisk)
+  const opened = openCheckpointBytes(bytesOnDisk)
+  return resolveCheckpointRecovery(opened, target, options)
+}
+
+/** Host entry point: discover matching Journals and return an isolated draft. */
+export function openCheckpointWithRecovery(target: string, options: Omit<OpenCheckpointOptions, 'recovery'> = {}): OpenCheckpointResult {
+  return openCheckpoint(target, { ...options, recovery: 'prompt', discoverAllJournals: true })
+}
+
+/** Host entry point: apply recover, discard, or save-as to the matching Journal. */
+export function recoverCheckpoint(target: string, action: Exclude<RecoveryAction, 'ignore' | 'prompt'> = 'recover', options: Omit<OpenCheckpointOptions, 'recovery'> = {}): OpenCheckpointResult {
+  return openCheckpoint(target, { ...options, recovery: action, discoverAllJournals: true })
 }
 
 export function openCheckpointBytes(bytesOnDisk: Uint8Array): OpenCheckpointResult {
@@ -215,6 +274,7 @@ export function openCheckpointBytes(bytesOnDisk: Uint8Array): OpenCheckpointResu
   const history = manifest.history
   if (!history || descriptor.mode !== history.mode || descriptor.snapshotRevision !== history.snapshotRevision || descriptor.recentTransactionCount !== history.recentTransactionCount || descriptor.deepHistoryExternal !== history.deepHistoryExternal) throw new Error('CHECKPOINT_FAILED: history descriptor does not match manifest')
   const recentTransactions = readRecentTransactions(archive, manifest)
+  attachCheckpointRestoreContext(document, recentTransactions, manifest.compatibilityProfile)
   return { document, manifest, recentTransactions }
 }
 
@@ -246,7 +306,7 @@ export function buildCheckpointBytes(document: PpteDocument, options: Checkpoint
     addEntry(entries, safePackagePath(asset.path, `assets/${assetId}`, 'assets/'), data)
   }
   for (const asset of Object.values(document.assets)) {
-    const data = options.assetBytes?.[asset.id] ?? options.cas?.get(asset.hash)
+    const data = options.assetBytes?.[asset.id] ?? options.cas?.get(asset.hash) ?? resolveBlob(options.blobResolver, asset.hash)
     if (!data) throw new Error(`ASSET_MISSING: checkpoint requires bytes for ${asset.id}`)
     if (!options.assetBytes?.[asset.id]) {
       if (data.length !== asset.byteLength || normalizeHash(asset.hash) !== sha256Binary(data)) throw new Error(`ASSET_HASH_MISMATCH: ${asset.id}`)
@@ -261,7 +321,7 @@ export function buildCheckpointBytes(document: PpteDocument, options: Checkpoint
   }
   for (const font of Object.values(document.fonts)) {
     if (font.source !== 'embedded') continue
-    const data = options.fontBytes?.[font.id] ?? (font.hash ? options.cas?.get(font.hash) : undefined)
+    const data = options.fontBytes?.[font.id] ?? (font.hash ? options.cas?.get(font.hash) ?? resolveBlob(options.blobResolver, font.hash) : undefined)
     if (!data) throw new Error(`FONT_MISSING: checkpoint requires bytes for ${font.id}`)
     if (font.hash && normalizeHash(font.hash) !== sha256Binary(data)) throw new Error(`FONT_HASH_MISMATCH: ${font.id}`)
     if (!options.fontBytes?.[font.id]) addEntry(entries, safePackagePath(font.path ?? `fonts/${font.id}.woff2`, `fonts/${font.id}.woff2`, 'fonts/'), data)
@@ -341,6 +401,189 @@ function readRecentTransactions(archive: Map<string, Uint8Array>, manifest: Ppte
   }
   if (transactions.length !== expected) throw new Error(`CHECKPOINT_FAILED: history count ${transactions.length} does not match descriptor ${expected}`)
   return transactions
+}
+
+function attachCheckpointRestoreContext(document: PpteDocument, transactions: Transaction[], compatibilityProfile: string): void {
+  const historyEntries = historyEntriesFromTransactions(transactions)
+  if (!historyEntries?.length) return
+  attachSessionRestoreContext(document, {
+    historyEntries,
+    runtimeProfile: runtimeProfileForCompatibility(compatibilityProfile),
+    compatibilityProfile,
+    source: 'checkpoint',
+  })
+}
+
+function historyEntriesFromTransactions(transactions: ReadonlyArray<Transaction>): SessionHistoryEntrySnapshot[] | undefined {
+  if (!transactions.length) return undefined
+  const entries: SessionHistoryEntrySnapshot[] = []
+  for (const transaction of transactions) {
+    const metadata = readPersistedHistoryMetadata(transaction)
+    if (!metadata) return undefined
+    const inverseIssues = validateTransactionShape(metadata.inverse).filter((issue) => issue.severity === 'error')
+    if (inverseIssues.length || !isRevisionString(metadata.beforeRevision) || !isRevisionString(metadata.afterRevision) || transaction.baseRevision !== metadata.beforeRevision || metadata.inverse.baseRevision !== metadata.afterRevision) throw new Error(`CHECKPOINT_FAILED: invalid inverse history metadata for ${transaction.transactionId}`)
+    entries.push({
+      transaction,
+      inverse: metadata.inverse,
+      beforeRevision: metadata.beforeRevision,
+      afterRevision: metadata.afterRevision,
+    })
+  }
+  return entries
+}
+
+interface RecoveryCandidate {
+  path: string
+  journal: import('../../recovery-journal/src/index.js').JournalReadResult
+}
+
+function resolveCheckpointRecovery(opened: OpenCheckpointResult, checkpointPath: string, options: OpenCheckpointOptions): OpenCheckpointResult {
+  const action = options.recovery ?? 'recover'
+  if (action === 'ignore') return opened
+  const candidates = discoverRecoveryCandidates(checkpointPath, opened, options)
+  if (!candidates.length) return opened
+  if (candidates.length > 1) {
+    return {
+      ...opened,
+      recovery: {
+        status: 'ambiguous',
+        baseRevision: opened.manifest.contentRevision,
+        records: candidates.reduce((sum, candidate) => sum + candidate.journal.records.length, 0),
+        issues: [recoveryIssue('RECOVERY_AMBIGUOUS', 'More than one Journal matches this document and checkpoint revision; no tail was applied.')],
+      },
+    }
+  }
+  const candidate = candidates[0]!
+  if (action === 'discard') {
+    unlinkSync(candidate.path)
+    return {
+      ...opened,
+      recovery: { status: 'discarded', journalPath: candidate.path, baseRevision: opened.manifest.contentRevision, records: candidate.journal.records.length, issues: [] },
+    }
+  }
+  const replay = replayJournal(opened.document, candidate.journal, {
+    compatibilityProfile: opened.manifest.compatibilityProfile,
+    blobResolver: options.blobResolver ?? options.cas,
+  })
+  const hasErrors = replay.issues.some((issue) => issue.severity === 'error') || replay.applied !== candidate.journal.records.length
+  if (hasErrors) {
+    return {
+      ...opened,
+      recovery: {
+        status: 'rejected',
+        journalPath: candidate.path,
+        baseRevision: opened.manifest.contentRevision,
+        recoveredRevision: replay.revision,
+        records: candidate.journal.records.length,
+        issues: replay.issues,
+      },
+    }
+  }
+
+  const checkpointHistory = historyEntriesFromTransactions(opened.recentTransactions) ?? []
+  const historyEntries = [...checkpointHistory, ...replay.history].slice(-MAX_RECENT_HISTORY_ENTRIES)
+  const recoveredTransactions = historyEntries.map((entry) => entry.transaction)
+  attachSessionRestoreContext(replay.document, {
+    historyEntries,
+    runtimeProfile: runtimeProfileForCompatibility(opened.manifest.compatibilityProfile),
+    compatibilityProfile: opened.manifest.compatibilityProfile,
+    source: 'recovery',
+    clearRecovery: () => {
+      if (existsSync(candidate.path)) unlinkSync(candidate.path)
+    },
+  })
+  const recoveredManifest: PpteManifest = {
+    ...opened.manifest,
+    title: replay.document.metadata.title,
+    contentRevision: replay.revision,
+    clean: false,
+    history: {
+      ...(opened.manifest.history ?? { mode: 'standard' }),
+      mode: 'standard',
+      snapshotRevision: replay.revision,
+      recentTransactionCount: recoveredTransactions.length,
+      deepHistoryExternal: true,
+    },
+  }
+  const recovery: RecoveryResult = {
+    status: action === 'save-as' ? 'saved-as' : action === 'prompt' ? 'available' : 'recovered',
+    journalPath: candidate.path,
+    baseRevision: opened.manifest.contentRevision,
+    recoveredRevision: replay.revision,
+    records: candidate.journal.records.length,
+    issues: replay.issues.filter((issue) => issue.severity !== 'error'),
+    ...(action === 'prompt' ? { draft: replay.document } : {}),
+  }
+  if (action === 'prompt') return { ...opened, recovery }
+  if (action === 'save-as') {
+    if (!options.saveAsTarget) {
+      return {
+        ...opened,
+        recovery: { ...recovery, status: 'rejected', issues: [recoveryIssue('RECOVERY_SAVE_TARGET_REQUIRED', 'Save-as recovery requires saveAsTarget.')] },
+      }
+    }
+    try {
+      const checkpoint = writeCheckpoint(replay.document, options.saveAsTarget, {
+        timestamp: options.timestamp,
+        clean: false,
+        recentTransactions: recoveredTransactions,
+        assetBytes: options.assetBytes,
+        fontBytes: options.fontBytes,
+        cas: options.cas,
+        blobResolver: options.blobResolver,
+        compatibilityProfile: opened.manifest.compatibilityProfile,
+      })
+      unlinkSync(candidate.path)
+      recovery.checkpoint = checkpoint
+    } catch (cause) {
+      return {
+        ...opened,
+        recovery: { ...recovery, status: 'rejected', issues: [recoveryIssue('RECOVERY_CHECKPOINT_FAILED', cause instanceof Error ? cause.message : String(cause))] },
+      }
+    }
+  }
+  return { document: replay.document, manifest: recoveredManifest, recentTransactions: recoveredTransactions, recovery }
+}
+
+function discoverRecoveryCandidates(checkpointPath: string, opened: OpenCheckpointResult, options: OpenCheckpointOptions): RecoveryCandidate[] {
+  const explicit = options.journalPaths ?? (options.journalPath ? [options.journalPath] : undefined)
+  const paths = explicit ?? discoverJournalPaths(options.recoveryDirectory ?? dirname(checkpointPath), options.discoverAllJournals === true)
+  const candidates: RecoveryCandidate[] = []
+  for (const path of paths) {
+    if (!existsSync(path) || path === checkpointPath) continue
+    let journal: import('../../recovery-journal/src/index.js').JournalReadResult
+    try { journal = readJournal(path) } catch { continue }
+    if (!journal.header || journal.header.documentId !== opened.manifest.documentId || journal.header.baseCheckpointRevision !== opened.manifest.contentRevision || journal.records.length === 0) continue
+    candidates.push({ path, journal })
+  }
+  return candidates.sort((left, right) => right.journal.records.length - left.journal.records.length || left.path.localeCompare(right.path))
+}
+
+function discoverJournalPaths(directory: string, allJournals = false): string[] {
+  try {
+    return readdirSync(directory, { withFileTypes: true })
+      .filter((entry) => entry.isFile() && (allJournals ? entry.name.endsWith('.journal') : entry.name === 'recovery.journal'))
+      .map((entry) => join(directory, entry.name))
+  } catch {
+    return []
+  }
+}
+
+function recoveryIssue(code: string, message: string): ValidationIssue {
+  return { code, severity: 'error', message, recovery: 'Keep the last valid checkpoint and inspect the recovery Journal before retrying.' }
+}
+
+function isRevisionString(value: unknown): value is Revision {
+  return typeof value === 'string' && /^sha256-[0-9a-fA-F]{64}$/.test(value)
+}
+
+function resolveBlob(resolver: CheckpointWriteOptions['blobResolver'], hash: string): Uint8Array | undefined {
+  if (!resolver) return undefined
+  try {
+    return typeof resolver === 'function' ? resolver(hash) : resolver.resolve?.(hash) ?? resolver.get?.(hash)
+  } catch {
+    return undefined
+  }
 }
 
 export function checkpointAdapter(): { write(document: PpteDocument, target: string, options?: CheckpointWriteOptions, recentTransactions?: ReadonlyArray<Transaction>): CheckpointResult } {

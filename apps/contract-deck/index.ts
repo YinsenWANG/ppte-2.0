@@ -404,11 +404,15 @@ export function runVerticalSlice(): Record<string, unknown> {
   assert(session.commit(shapeStyleTransaction).ok, 'Shape style commit')
   assert(session.undo().ok, 'Shape style inverse')
 
-  const factTransaction = stableTransaction(session, 'stable:fact-sync', [{ opId: 'stable:fact-sync:op', kind: 'fact.syncReferences', factId: 'revenue', targetElementIds: [BODY_ID], strategy: 'replace-display-value' }], {
+  const factSeedTransaction = stableTransaction(session, 'stable:fact-seed', [{ opId: 'stable:fact-seed:op', kind: 'text.replaceContent', slideId: SLIDE_ID, elementId: BODY_ID, content: text('Revenue 41% last year; target is 50%.', 'fact-seed') }], {
+    kind: 'selection', slideIds: [SLIDE_ID], elementIds: [BODY_ID], permissions: ['content'], allowInsert: false, allowDelete: false,
+  }, [BODY_ID], { geometry: 'preserve', style: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' })
+  assert(session.commit(factSeedTransaction).ok, 'Fact display seed')
+  const factTransaction = stableTransaction(session, 'stable:fact-sync', [{ opId: 'stable:fact-sync:op', kind: 'fact.syncReferences', factId: 'revenue', targetElementIds: [BODY_ID], strategy: 'replace-display-value', previousValue: 41 }], {
     kind: 'selection', slideIds: [SLIDE_ID], elementIds: [BODY_ID], permissions: ['facts', 'content'], allowInsert: false, allowDelete: false,
   }, [BODY_ID], { style: 'preserve', geometry: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' })
   assert(session.commit(factTransaction).ok, 'Explicit Fact display synchronization')
-  assert((session.getDocument().slides[SLIDE_ID].elements[BODY_ID] as TextElement).content.paragraphs[0].runs[0].text === '42%', 'Fact display value synchronized')
+  assert((session.getDocument().slides[SLIDE_ID].elements[BODY_ID] as TextElement).content.paragraphs[0].runs[0].text === 'Revenue 42% last year; target is 50%.', 'Fact display value synchronized')
   assert(session.undo().ok, 'Fact synchronization inverse')
 
   const previousTitle = session.getDocument().slides[SLIDE_ID].elements[TITLE_ID] as TextElement
@@ -449,7 +453,7 @@ export function runVerticalSlice(): Record<string, unknown> {
 
   const failedCheckpoint = session.checkpoint(checkpointPath, { timestamp: '2026-09-02T00:03:00.000Z', assetBytes: { [IMAGE_ASSET_ID]: imageBytes }, fault: 'before-rename' })
   assert(!failedCheckpoint.ok, 'fault-injected checkpoint reports failure')
-  const original = openCheckpoint(checkpointPath)
+  const original = openCheckpoint(checkpointPath, { recovery: 'ignore' })
   assert(canonicalRevision(original.document) === initialRevision, 'atomic checkpoint keeps original file readable')
   const journalState = readJournal(journalPath)
   assert(journalState.records.length >= 5, 'journal contains successful commits including undo/redo')
