@@ -82,6 +82,11 @@ function capabilityForElement(document: PpteDocument, slideId: string, element: 
       reason = 'Text exceeds its fixed frame; no implicit reflow is applied.'
       recovery = 'Shorten text or resize the text box explicitly.'
     }
+    if (target === 'pptx-semantic' && status === 'native') {
+      status = 'font-replacement'
+      reason = 'Semantic PPTX preserves the requested typeface attributes but does not embed the source font payload; the receiving Office host may substitute metrics.'
+      recovery = 'Embed a licensed font in the target package or accept the reported layout risk.'
+    }
     if (!textContent(element) && status === 'blocked') recovery = 'Add editable text content or choose Viewer-only output.'
   }
   if (element.type === 'image' && !document.assets[element.assetId]) {

@@ -1,10 +1,11 @@
 import { canonicalRevision, sha256HexBytes } from '../../canonical-json/src/index.js'
 import { buildCapabilityReport, type CapabilityReport } from '../../capability/src/index.js'
 import { writeStoredZip, readStoredZip, type StoredZipEntry } from '../../archive/src/index.js'
-import { renderSlideSvg } from '../../renderer-react/src/index.js'
+import { renderSlideHtml } from '../../renderer-react/src/index.js'
 import { renderChartSvg } from '../../charts/src/index.js'
-import { validateDocument, type ChartElement, type Element, type PpteDocument, type ValidationIssue } from '../../schema/src/index.js'
+import { validateDocument, type ChartElement, type Element, type Paint, type ParagraphStyle, type PpteDocument, type RichTextDocument, type Stroke, type TextMarks, type ValidationIssue } from '../../schema/src/index.js'
 import { withErrorSemantics } from '../../schema/src/errors.js'
+import { referenceFontCss, renderReferencePng } from '../../exporter-pdf/src/reference-render.js'
 
 const PPT_NS = 'http://schemas.openxmlformats.org/presentationml/2006/main'
 const DRAWING_NS = 'http://schemas.openxmlformats.org/drawingml/2006/main'
@@ -14,6 +15,8 @@ const PACKAGE_REL_NS = 'http://schemas.openxmlformats.org/package/2006/relations
 export interface PptxExportOptions {
   /** Asset bytes are required for a self-contained image package. */
   assetBytes?: Record<string, Uint8Array>
+  /** Embedded font payloads used by the fixed Reference Renderer. */
+  fontBytes?: Record<string, Uint8Array>
   sourceRevision?: string
   createdAt?: string
   includeCapabilityReport?: boolean
@@ -45,6 +48,10 @@ export interface SemanticPptxNode {
   sourceElementId?: string
   kind: SemanticPptxNodeKind
   frame: { x: number; y: number; width: number; height: number }
+  rotationDeg?: number
+  opacity?: number
+  flipX?: boolean
+  flipY?: boolean
   text?: string
   fontSize?: number
   fontFamily?: string
@@ -56,9 +63,32 @@ export interface SemanticPptxNode {
   fallbackLabel?: string
   shape?: string
   fill?: string
+  fillPaint?: Paint
+  fillOpacity?: number
   stroke?: string
+  strokeWidth?: number
+  strokeOpacity?: number
+  strokeDash?: number[]
+  lineCap?: Stroke['lineCap']
+  lineJoin?: Stroke['lineJoin']
   crop?: { x: number; y: number; width: number; height: number }
   posterAsArtwork?: boolean
+  paragraphs?: SemanticPptxParagraph[]
+}
+
+export interface SemanticPptxParagraph {
+  runs: SemanticPptxRun[]
+  align?: 'left' | 'center' | 'right'
+  list?: 'bullet' | 'number'
+  spaceBefore?: number
+  spaceAfter?: number
+  lineHeight?: number
+  indent?: number
+}
+
+export interface SemanticPptxRun {
+  text: string
+  marks?: TextMarks
 }
 
 export interface SemanticPptxSlide {
@@ -66,6 +96,7 @@ export interface SemanticPptxSlide {
   strategy: 'structured' | 'hybrid' | 'poster'
   nodes: SemanticPptxNode[]
   posterAsArtwork: boolean
+  background?: Paint
 }
 
 export interface SemanticPptxCompilation {
@@ -89,9 +120,10 @@ export interface SemanticPptxExportResult {
 }
 
 /**
- * Export every slide as one deterministic SVG image in an otherwise ordinary
- * OOXML presentation. The image boundary is deliberate: the semantic PPTe
- * snapshot and capability report remain the editable source of truth.
+ * Export every slide as one deterministic raster image wrapped in an SVG
+ * media part in an otherwise ordinary OOXML presentation. The image boundary
+ * is deliberate: the semantic PPTe snapshot and capability report remain the
+ * editable source of truth.
  */
 export function exportImagePptx(document: PpteDocument, options: PptxExportOptions = {}): PptxExportResult {
   const sourceRevision = options.sourceRevision ?? canonicalRevision(document)
@@ -99,11 +131,16 @@ export function exportImagePptx(document: PpteDocument, options: PptxExportOptio
   const structuralIssues = validateDocument(document, { runtimeSubset: false }).filter((issue) => issue.severity === 'error')
   const issues: ValidationIssue[] = [...report.issues, ...structuralIssues]
   const assetSources = buildAssetSources(document, options.assetBytes ?? {}, issues)
+  const fontCss = buildFontCss(document, options.fontBytes, issues)
+  collectFontIssues(document, options.fontBytes, issues)
+  addCapabilityWarnings(report, issues)
   const slideSvgs: string[] = []
   if (structuralIssues.length === 0) {
     for (const slideId of document.slideOrder) {
       try {
-        slideSvgs.push(renderSlideSvg(document, slideId, { assetSources }))
+        const html = renderSlideHtml(document, slideId, { assetSources, editable: false, includeHostControls: false })
+        const png = renderReferencePng(htmlWithCanvasSize(html, document.canvas.width, document.canvas.height, fontCss), Math.round(document.canvas.width), Math.round(document.canvas.height))
+        slideSvgs.push(rasterizedSlideSvg(document.canvas.width, document.canvas.height, png))
       } catch (cause) {
         const message = cause instanceof Error ? cause.message : String(cause)
         issues.push(withErrorSemantics({ code: 'EXPORT_DEGRADED', severity: 'error', message: `Slide ${slideId} could not be rendered as a self-contained image: ${message}`, slideId, recovery: 'Keep the source document, resolve the reported element/resource, and export again.' }))
@@ -163,33 +200,39 @@ export function compileSemanticPptx(document: PpteDocument, options: PptxExportO
           slideId,
           strategy,
           posterAsArtwork: true,
+          background: slide.background ?? document.canvas.defaultBackground,
           nodes: [artworkNode, ...semanticNodes(document, slideId, semanticElements, issues)],
         })
         if (!artwork) issues.push(exportIssue('POSTER_ARTWORK_MISSING', `Poster slide ${slideId} has no artwork Image element.`, slideId))
         continue
       }
       const nodes = semanticNodes(document, slideId, slide.rootOrder.map((elementId) => slide.elements[elementId]).filter((element): element is Element => Boolean(element) && element.visible !== false), issues)
-      slides.push({ slideId, strategy, nodes, posterAsArtwork: false })
+      slides.push({ slideId, strategy, nodes, posterAsArtwork: false, background: slide.background ?? document.canvas.defaultBackground })
     }
   }
-  const degraded = slides.some((slide) => slide.posterAsArtwork || slide.nodes.some((node) => node.kind === 'chart-svg' || node.kind === 'component-fallback' || node.fallbackLabel !== undefined))
+  const degraded = capabilityReport.degraded || slides.some((slide) => slide.posterAsArtwork || slide.nodes.some((node) => node.kind === 'chart-svg' || node.kind === 'component-fallback' || node.fallbackLabel !== undefined))
   return { ok: !issues.some((issue) => issue.severity === 'error'), sourceRevision, slides, capabilityReport, issues, degraded }
 }
 
 export function exportSemanticPptx(document: PpteDocument, options: PptxExportOptions = {}): SemanticPptxExportResult {
   const compilation = compileSemanticPptx(document, options)
   const issues = [...compilation.issues]
-  let bytes: Uint8Array<ArrayBufferLike> = new Uint8Array()
-  if (compilation.slides.length === document.slideOrder.length && !issues.some((issue) => issue.severity === 'error')) {
+  collectFontIssues(document, options.fontBytes, issues)
+  addCapabilityWarnings(compilation.capabilityReport, issues)
+  const media = prepareSemanticMedia(document, compilation, options, issues)
+  let capabilityReport = finalizeReport(compilation.capabilityReport, issues)
+  let bytes: Uint8Array = new Uint8Array()
+  if (compilation.slides.length === document.slideOrder.length && !compilation.issues.some((issue) => issue.severity === 'error')) {
     try {
-      bytes = buildSemanticPptx(document, compilation, options, issues)
+      bytes = buildSemanticPptx(document, compilation, options, capabilityReport, media)
     } catch (cause) {
       issues.push(exportIssue('EXPORT_FAILED', cause instanceof Error ? cause.message : String(cause)))
     }
   }
-  const capabilityReport = finalizeReport(compilation.capabilityReport, issues)
+  capabilityReport = finalizeReport(compilation.capabilityReport, issues)
   const finalIssues = dedupe(issues)
-  return { ok: bytes.length > 0 && !finalIssues.some((issue) => issue.severity === 'error') && capabilityReport.ok, format: 'pptx-semantic', bytes, slideCount: compilation.slides.length, degraded: compilation.degraded || finalIssues.length > 0, capabilityReport, compilation: { ...compilation, capabilityReport, issues: finalIssues, ok: !finalIssues.some((issue) => issue.severity === 'error'), degraded: compilation.degraded || finalIssues.length > 0 }, issues: finalIssues }
+  const degraded = compilation.degraded || capabilityReport.degraded || finalIssues.length > 0
+  return { ok: bytes.length > 0 && !finalIssues.some((issue) => issue.severity === 'error') && capabilityReport.ok, format: 'pptx-semantic', bytes, slideCount: compilation.slides.length, degraded, capabilityReport, compilation: { ...compilation, capabilityReport, issues: finalIssues, ok: !finalIssues.some((issue) => issue.severity === 'error'), degraded }, issues: finalIssues }
 }
 
 export const exportPptxSemantic = exportSemanticPptx
@@ -208,21 +251,23 @@ function semanticNode(document: PpteDocument, slideId: string, element: Element)
   if (element.type === 'text') {
     const preset = document.theme.presets.text[element.style.styleRef]
     const style = { ...preset, ...(element.style.overrides ?? {}) }
-    return { id: `${slideId}:${element.id}`, sourceElementId: element.id, kind: 'text-box', frame: element.frame, text: element.content.paragraphs.map((paragraph) => paragraph.runs.map((run) => run.text).join('')).join('\n'), fontSize: typeof style.fontSize === 'number' ? style.fontSize : undefined, fontFamily: resolveTextFamily(style.fontFamily, document), color: resolveTextColor(style.color, document), bold: typeof style.fontWeight === 'number' && style.fontWeight >= 600, align: element.paragraphStyle?.align }
+    return { id: `${slideId}:${element.id}`, sourceElementId: element.id, kind: 'text-box', frame: element.frame, ...elementFields(element), text: element.content.paragraphs.map((paragraph) => paragraph.runs.map((run) => run.text).join('')).join('\n'), fontSize: typeof style.fontSize === 'number' ? style.fontSize : undefined, fontFamily: resolveTextFamily(style.fontFamily, document), color: resolveTextColor(style.color, document), bold: typeof style.fontWeight === 'number' && style.fontWeight >= 600, align: element.paragraphStyle?.align, paragraphs: semanticParagraphs(element.content, element.paragraphStyle, typeof style.lineHeight === 'number' ? style.lineHeight : undefined) }
   }
-  if (element.type === 'image') return { id: `${slideId}:${element.id}`, sourceElementId: element.id, kind: 'picture', frame: element.frame, assetId: element.assetId, crop: element.crop }
+  if (element.type === 'image') return { id: `${slideId}:${element.id}`, sourceElementId: element.id, kind: 'picture', frame: element.frame, ...elementFields(element), assetId: element.assetId, crop: element.crop }
   if (element.type === 'shape') {
     const preset = document.theme.presets.shape[element.style.styleRef] ?? {}
     const style = { ...preset, ...(element.style.overrides ?? {}) }
-    return { id: `${slideId}:${element.id}`, sourceElementId: element.id, kind: 'shape', frame: element.frame, shape: element.shape, fill: paintColor(style.fill, document), stroke: strokeColor(style.stroke, document) }
+    const fillPaint = style.fill as Paint | undefined
+    const stroke = style.stroke as Stroke | undefined
+    return { id: `${slideId}:${element.id}`, sourceElementId: element.id, kind: 'shape', frame: element.frame, ...elementFields(element), shape: element.shape, fill: paintColor(fillPaint, document), fillPaint, fillOpacity: fillPaint?.kind === 'solid' || fillPaint?.kind === 'linear-gradient' ? fillPaint.opacity : undefined, stroke: strokeColor(stroke, document), strokeWidth: stroke?.width, strokeOpacity: stroke?.opacity, strokeDash: stroke?.dash, lineCap: stroke?.lineCap, lineJoin: stroke?.lineJoin }
   }
-  if (element.type === 'chart') return { id: `${slideId}:${element.id}`, sourceElementId: element.id, kind: 'chart-svg', frame: element.frame, staticSvg: renderChartSvg(element, { width: element.frame.width, height: element.frame.height, runtimeProfile: 'ga-c' }) }
-  if (element.type === 'component' && element.fallback.kind === 'asset' && element.fallback.assetId) return { id: `${slideId}:${element.id}`, sourceElementId: element.id, kind: 'picture', frame: element.frame, assetId: element.fallback.assetId, fallbackLabel: element.fallback.label ?? `${element.componentType} static fallback` }
-  if (element.type === 'component') return { id: `${slideId}:${element.id}`, sourceElementId: element.id, kind: 'component-fallback', frame: element.frame, fallbackLabel: element.fallback.label ?? `${element.componentType} fallback` }
+  if (element.type === 'chart') return { id: `${slideId}:${element.id}`, sourceElementId: element.id, kind: 'chart-svg', frame: element.frame, ...elementFields(element), staticSvg: renderChartSvg(element, { width: element.frame.width, height: element.frame.height, runtimeProfile: 'ga-c' }) }
+  if (element.type === 'component' && element.fallback.kind === 'asset' && element.fallback.assetId) return { id: `${slideId}:${element.id}`, sourceElementId: element.id, kind: 'picture', frame: element.frame, ...elementFields(element), assetId: element.fallback.assetId, fallbackLabel: element.fallback.label ?? `${element.componentType} static fallback` }
+  if (element.type === 'component') return { id: `${slideId}:${element.id}`, sourceElementId: element.id, kind: 'component-fallback', frame: element.frame, ...elementFields(element), fallbackLabel: element.fallback.label ?? `${element.componentType} fallback` }
   return undefined
 }
 
-function buildSemanticPptx(document: PpteDocument, compilation: SemanticPptxCompilation, options: PptxExportOptions, issues: ValidationIssue[]): Uint8Array {
+function prepareSemanticMedia(document: PpteDocument, compilation: SemanticPptxCompilation, options: PptxExportOptions, issues: ValidationIssue[]): Map<string, { filename: string; data: Uint8Array }> {
   const media = new Map<string, { filename: string; data: Uint8Array }>()
   const addMedia = (key: string, filename: string, data: Uint8Array) => { if (!media.has(key)) media.set(key, { filename, data }) }
   for (const slide of compilation.slides) for (const node of slide.nodes) {
@@ -242,6 +287,10 @@ function buildSemanticPptx(document: PpteDocument, compilation: SemanticPptxComp
       } else addMedia(`asset:${asset.id}`, `asset-${safeId(asset.id)}.${extensionForMime(asset.mimeType)}`, new Uint8Array(data))
     }
   }
+  return media
+}
+
+function buildSemanticPptx(document: PpteDocument, compilation: SemanticPptxCompilation, options: PptxExportOptions, capabilityReport: CapabilityReport, media: Map<string, { filename: string; data: Uint8Array }>): Uint8Array {
   const width = emu(document.canvas.width)
   const height = emu(document.canvas.height)
   const entries: StoredZipEntry[] = [
@@ -267,36 +316,106 @@ function buildSemanticPptx(document: PpteDocument, compilation: SemanticPptxComp
       const key = node.kind === 'chart-svg' ? `chart:${node.id}` : node.assetId ? `asset:${node.assetId}` : undefined
       if (key && media.has(key) && !relationIds.has(key)) relationIds.set(key, `rId${relationIndex++}`)
     }
-    entries.push({ name: `ppt/slides/slide${number}.xml`, data: text(semanticSlide(width, height, slide, relationIds)) })
+    entries.push({ name: `ppt/slides/slide${number}.xml`, data: text(semanticSlide(width, height, slide, relationIds, document)) })
     entries.push({ name: `ppt/slides/_rels/slide${number}.xml.rels`, data: text(semanticSlideRelationships(slide, relationIds, media)) })
   }
   for (const item of [...media.values()].sort((left, right) => left.filename.localeCompare(right.filename))) entries.push({ name: `ppt/media/${item.filename}`, data: item.data })
-  if (options.includeCapabilityReport !== false) entries.push({ name: 'ppt/ppte/capability-report.json', data: text(JSON.stringify(compilation.capabilityReport, null, 2)) })
+  if (options.includeCapabilityReport !== false) entries.push({ name: 'ppt/ppte/capability-report.json', data: text(JSON.stringify(capabilityReport, null, 2)) })
   return writeStoredZip(entries)
 }
 
-function semanticSlide(width: number, height: number, slide: SemanticPptxSlide, relationIds: Map<string, string>): string {
-  const nodes = slide.nodes.map((node, index) => semanticNodeXml(node, 2 + index, relationIds.get(node.kind === 'chart-svg' ? `chart:${node.id}` : node.assetId ? `asset:${node.assetId}` : ''))).join('')
-  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><p:sld xmlns:a="${DRAWING_NS}" xmlns:r="${REL_NS}" xmlns:p="${PPT_NS}"><p:cSld name="${escapeXml(slide.slideId)}"><p:spTree><p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr><p:grpSpPr/>${nodes}</p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:sld>`
+function semanticSlide(width: number, height: number, slide: SemanticPptxSlide, relationIds: Map<string, string>, document: PpteDocument): string {
+  const nodes = slide.nodes.map((node, index) => semanticNodeXml(node, 2 + index, relationIds.get(node.kind === 'chart-svg' ? `chart:${node.id}` : node.assetId ? `asset:${node.assetId}` : ''), document)).join('')
+  const background = slide.background ? `<p:bg><p:bgPr>${paintXml(slide.background, document)}<a:effectLst/></p:bgPr></p:bg>` : ''
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><p:sld xmlns:a="${DRAWING_NS}" xmlns:r="${REL_NS}" xmlns:p="${PPT_NS}"><p:cSld name="${escapeXml(slide.slideId)}">${background}<p:spTree><p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr><p:grpSpPr/>${nodes}</p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:sld>`
 }
 
-function semanticNodeXml(node: SemanticPptxNode, numericId: number, relationId?: string): string {
-  const xfrm = `<a:xfrm><a:off x="${emu(node.frame.x)}" y="${emu(node.frame.y)}"/><a:ext cx="${emu(node.frame.width)}" cy="${emu(node.frame.height)}"/></a:xfrm>`
-  if (node.kind === 'picture' && relationId) return `<p:pic><p:nvPicPr><p:cNvPr id="${numericId}" name="${escapeXml(node.sourceElementId ?? node.id)}"/><p:cNvPicPr preferRelativeResize="0"/><p:nvPr/></p:nvPicPr><p:blipFill>${node.crop ? `<a:srcRect l="${Math.round(node.crop.x * 100000)}" t="${Math.round(node.crop.y * 100000)}" r="${Math.round((1 - node.crop.x - node.crop.width) * 100000)}" b="${Math.round((1 - node.crop.y - node.crop.height) * 100000)}"/>` : ''}<a:blip r:embed="${relationId}"/><a:stretch><a:fillRect/></a:stretch></p:blipFill><p:spPr>${xfrm}<a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr></p:pic>`
-  if (node.kind === 'text-box') return semanticTextShape(node, numericId, xfrm, false)
-  if (node.kind === 'component-fallback') return semanticTextShape(node, numericId, xfrm, true)
-  if (node.kind === 'shape') return `<p:sp><p:nvSpPr><p:cNvPr id="${numericId}" name="${escapeXml(node.sourceElementId ?? node.id)}"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr>${xfrm}<a:prstGeom prst="${shapePreset(node.shape)}"><a:avLst/></a:prstGeom>${shapeFillXml(node.fill, node.stroke)}</p:spPr></p:sp>`
-  if (node.kind === 'chart-svg' && relationId) return `<p:pic><p:nvPicPr><p:cNvPr id="${numericId}" name="${escapeXml(node.sourceElementId ?? node.id)}"/><p:cNvPicPr preferRelativeResize="0"/><p:nvPr/></p:nvPicPr><p:blipFill><a:blip r:embed="${relationId}"/><a:stretch><a:fillRect/></a:stretch></p:blipFill><p:spPr>${xfrm}<a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr></p:pic>`
+function semanticNodeXml(node: SemanticPptxNode, numericId: number, relationId: string | undefined, document: PpteDocument): string {
+  const xfrm = transformXml(node)
+  if (node.kind === 'picture' && relationId) return `<p:pic><p:nvPicPr><p:cNvPr id="${numericId}" name="${escapeXml(node.sourceElementId ?? node.id)}"/><p:cNvPicPr preferRelativeResize="0"/><p:nvPr/></p:nvPicPr><p:blipFill>${node.crop ? `<a:srcRect l="${Math.round(node.crop.x * 100000)}" t="${Math.round(node.crop.y * 100000)}" r="${Math.round((1 - node.crop.x - node.crop.width) * 100000)}" b="${Math.round((1 - node.crop.y - node.crop.height) * 100000)}"/>` : ''}<a:blip r:embed="${relationId}">${node.opacity === undefined ? '' : `<a:alphaModFix amt="${Math.round(clamp01(node.opacity) * 100000)}"/>`}</a:blip><a:stretch><a:fillRect/></a:stretch></p:blipFill><p:spPr>${xfrm}<a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr></p:pic>`
+  if (node.kind === 'text-box') return semanticTextShape(node, numericId, xfrm, false, document)
+  if (node.kind === 'component-fallback') return semanticTextShape(node, numericId, xfrm, true, document)
+  if (node.kind === 'shape') return `<p:sp><p:nvSpPr><p:cNvPr id="${numericId}" name="${escapeXml(node.sourceElementId ?? node.id)}"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr>${xfrm}<a:prstGeom prst="${shapePreset(node.shape)}"><a:avLst/></a:prstGeom>${shapeFillXml(node.fillPaint ?? node.fill, node.stroke, document, node.opacity, node.strokeOpacity, node.strokeWidth, node.strokeDash, node.lineCap, node.lineJoin)}</p:spPr></p:sp>`
+  if (node.kind === 'chart-svg' && relationId) return `<p:pic><p:nvPicPr><p:cNvPr id="${numericId}" name="${escapeXml(node.sourceElementId ?? node.id)}"/><p:cNvPicPr preferRelativeResize="0"/><p:nvPr/></p:nvPicPr><p:blipFill><a:blip r:embed="${relationId}">${node.opacity === undefined ? '' : `<a:alphaModFix amt="${Math.round(clamp01(node.opacity) * 100000)}"/>`}</a:blip><a:stretch><a:fillRect/></a:stretch></p:blipFill><p:spPr>${xfrm}<a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr></p:pic>`
   return ''
 }
 
-function semanticTextShape(node: SemanticPptxNode, numericId: number, xfrm: string, fallback: boolean): string {
+function semanticTextShape(node: SemanticPptxNode, numericId: number, xfrm: string, fallback: boolean, document: PpteDocument): string {
   const textValue = node.text ?? node.fallbackLabel ?? ''
-  const fill = fallback ? '<a:solidFill><a:srgbClr val="F1F5F9"/></a:solidFill><a:ln><a:solidFill><a:srgbClr val="94A3B8"/></a:solidFill></a:ln>' : ''
-  const fontSize = Math.max(100, Math.round((node.fontSize ?? 18) * 100))
+  const fill = fallback ? shapeFillXml('#F1F5F9', '#94A3B8', node.opacity) : ''
+  const fontSize = Math.max(100, Math.round((node.fontSize ?? 18) * 75))
   const color = colorValue(node.color ?? (fallback ? '#334155' : '#1F2937'))
-  const align = node.align ? ` algn="${node.align === 'center' ? 'ctr' : node.align === 'right' ? 'r' : 'l'}"` : ''
-  return `<p:sp><p:nvSpPr><p:cNvPr id="${numericId}" name="${escapeXml(node.sourceElementId ?? node.id)}"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr>${xfrm}<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>${fill}</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p${align}><a:r><a:rPr lang="en-US" sz="${fontSize}"${node.bold ? ' b="1"' : ''}><a:solidFill><a:srgbClr val="${color}"/></a:solidFill>${node.fontFamily ? `<a:latin typeface="${escapeXml(node.fontFamily)}"/>` : ''}</a:rPr><a:t>${escapeXml(textValue)}</a:t></a:r><a:endParaRPr lang="en-US" sz="${fontSize}"/></a:p></p:txBody></p:sp>`
+  const paragraphs = node.paragraphs?.length ? node.paragraphs : [{ runs: [{ text: textValue, marks: node.bold ? { bold: true } : undefined }], align: node.align }]
+  const textBody = paragraphs.map((paragraph) => semanticParagraphXml(paragraph, fontSize, node.fontFamily, color, node.opacity, node.bold === true, document)).join('')
+  return `<p:sp><p:nvSpPr><p:cNvPr id="${numericId}" name="${escapeXml(node.sourceElementId ?? node.id)}"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr>${xfrm}<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>${fill}</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/>${textBody}</p:txBody></p:sp>`
+}
+
+function transformXml(node: SemanticPptxNode): string {
+  const attributes = [
+    node.rotationDeg === undefined ? '' : ` rot="${Math.round(node.rotationDeg * 60000)}"`,
+    node.flipX ? ' flipH="1"' : '',
+    node.flipY ? ' flipV="1"' : '',
+  ].join('')
+  return `<a:xfrm${attributes}><a:off x="${emu(node.frame.x)}" y="${emu(node.frame.y)}"/><a:ext cx="${emu(node.frame.width)}" cy="${emu(node.frame.height)}"/></a:xfrm>`
+}
+
+function semanticParagraphXml(paragraph: SemanticPptxParagraph, fontSize: number, fontFamily: string | undefined, defaultColor: string, opacity: number | undefined, defaultBold: boolean, document: PpteDocument): string {
+  const alignment = paragraph.align ? ` algn="${paragraph.align === 'center' ? 'ctr' : paragraph.align === 'right' ? 'r' : 'l'}"` : ''
+  const bullet = paragraph.list === 'bullet' ? '<a:buChar char="•"/>' : paragraph.list === 'number' ? '<a:buAutoNum type="arabicPeriod"/>' : ''
+  const spacing = `${paragraph.spaceBefore === undefined ? '' : `<a:spcBef><a:spcPts val="${Math.max(0, Math.round(points100(paragraph.spaceBefore)))}"/></a:spcBef>`}${paragraph.spaceAfter === undefined ? '' : `<a:spcAft><a:spcPts val="${Math.max(0, Math.round(points100(paragraph.spaceAfter)))}"/></a:spcAft>`}`
+  const lineSpacing = paragraph.lineHeight === undefined ? '' : `<a:lnSpc><a:spcPct val="${Math.round(Math.max(0, paragraph.lineHeight) * 100000)}"/></a:lnSpc>`
+  const indent = paragraph.indent === undefined ? '' : ` marL="${emu(Math.max(0, paragraph.indent))}"`
+  const paragraphProperties = alignment || bullet || spacing || lineSpacing || indent ? `<a:pPr${alignment}${indent}>${bullet}${spacing}${lineSpacing}</a:pPr>` : ''
+  const runs = paragraph.runs.map((run) => semanticRunXml(run, fontSize, fontFamily, defaultColor, opacity, defaultBold, document)).join('')
+  const endParagraph = fontFamily
+    ? `<a:endParaRPr lang="en-US" sz="${fontSize}"><a:latin typeface="${escapeXml(fontFamily)}"/></a:endParaRPr>`
+    : `<a:endParaRPr lang="en-US" sz="${fontSize}"/>`
+  return `<a:p>${paragraphProperties}${runs}${endParagraph}</a:p>`
+}
+
+function semanticRunXml(run: SemanticPptxRun, fontSize: number, fontFamily: string | undefined, defaultColor: string, opacity: number | undefined, defaultBold: boolean, document: PpteDocument): string {
+  const marks = run.marks
+  const color = marks?.color ? resolveTextColor(marks.color, document) ?? defaultColor : defaultColor
+  const attributes = [
+    ` lang="en-US" sz="${fontSize}"`,
+    marks?.bold || defaultBold ? ' b="1"' : '',
+    marks?.italic ? ' i="1"' : '',
+    marks?.underline ? ' u="sng"' : '',
+    marks?.strike ? ' strike="sng"' : '',
+  ].join('')
+  const family = fontFamily ? `<a:latin typeface="${escapeXml(fontFamily)}"/>` : ''
+  return `<a:r><a:rPr${attributes}><a:solidFill>${srgbColorXml(color, opacity)}</a:solidFill>${family}</a:rPr><a:t>${escapeXml(run.text)}</a:t></a:r>`
+}
+
+function semanticParagraphs(content: RichTextDocument, paragraphStyle?: ParagraphStyle, lineHeight?: number): SemanticPptxParagraph[] {
+  return content.paragraphs.map((paragraph, index) => ({ runs: paragraph.runs.map((run) => ({ text: run.text, marks: run.marks })), align: paragraph.align ?? paragraphStyle?.align, list: paragraph.list?.type, spaceBefore: paragraph.spaceBefore, spaceAfter: paragraph.spaceAfter ?? (index < content.paragraphs.length - 1 ? paragraphStyle?.paragraphSpacing : undefined), lineHeight: lineHeight ?? paragraphStyle?.lineHeight, indent: paragraphStyle?.listIndent }))
+}
+
+function elementFields(element: Element): Pick<SemanticPptxNode, 'rotationDeg' | 'opacity' | 'flipX' | 'flipY'> {
+  return { rotationDeg: element.rotationDeg, opacity: element.opacity, flipX: element.flipX, flipY: element.flipY }
+}
+
+function paintXml(paint: Paint, document: PpteDocument, opacityMultiplier = 1): string {
+  if (paint.kind === 'none') return '<a:noFill/>'
+  if (paint.kind === 'solid') return `<a:solidFill>${srgbColorXml(resolveTextColor(paint.color, document) ?? '#FFFFFF', multiplyOpacity(paint.opacity, opacityMultiplier))}</a:solidFill>`
+  const stops = paint.stops.map((stop) => `<a:gs pos="${Math.round(Math.max(0, Math.min(1, stop.offset)) * 100000)}">${srgbColorXml(resolveTextColor(stop.color, document) ?? '#FFFFFF', multiplyOpacity(paint.opacity, opacityMultiplier))}</a:gs>`).join('')
+  return `<a:gradFill rotWithShape="1"><a:gsLst>${stops}</a:gsLst><a:lin ang="${Math.round(((paint.angleDeg % 360) + 360) % 360 * 60000)}" scaled="1"/></a:gradFill>`
+}
+
+function srgbColorXml(value: string, opacity?: number): string {
+  const normalized = colorValue(value)
+  const alpha = multiplyOpacity(colorAlpha(value), opacity)
+  return `<a:srgbClr val="${normalized}">${alpha === undefined || alpha >= 1 ? '' : `<a:alpha val="${Math.round(clamp01(alpha) * 100000)}"/>`}</a:srgbClr>`
+}
+
+function multiplyOpacity(left: number | undefined, right: number | undefined): number | undefined {
+  if (left === undefined && right === undefined) return undefined
+  return clamp01((left ?? 1) * (right ?? 1))
+}
+
+function colorAlpha(value: string): number | undefined {
+  const normalized = value.replace('#', '')
+  return /^[0-9A-Fa-f]{8}$/.test(normalized) ? parseInt(normalized.slice(6), 16) / 255 : undefined
 }
 
 function semanticSlideRelationships(slide: SemanticPptxSlide, relationIds: Map<string, string>, media: Map<string, { filename: string; data: Uint8Array }>): string {
@@ -337,25 +456,25 @@ function buildPptx(document: PpteDocument, slides: string[], report: CapabilityR
 function buildAssetSources(document: PpteDocument, bytesById: Record<string, Uint8Array>, issues: ValidationIssue[]): Record<string, string> {
   const sources: Record<string, string> = {}
   const referencedAssetIds = new Set(
-    document.slideOrder.flatMap((slideId) => Object.values(document.slides[slideId]?.elements ?? []).filter((element) => element.type === 'image').map((element) => element.assetId)),
+    document.slideOrder.flatMap((slideId) => Object.values(document.slides[slideId]?.elements ?? {}).flatMap((element) => element.type === 'image' ? [element.assetId] : element.type === 'component' && element.fallback.kind === 'asset' && element.fallback.assetId ? [element.fallback.assetId] : [])),
   )
   for (const asset of Object.values(document.assets)) {
     if (!referencedAssetIds.has(asset.id)) continue
     const bytes = bytesById[asset.id]
     if (!bytes) {
-      issues.push(withErrorSemantics({ code: 'ASSET_PAYLOAD_MISSING', severity: 'error', message: `Image PPTX export requires bytes for asset ${asset.id}.`, elementId: asset.id, path: `/assets/${asset.id}`, recovery: 'Provide assetBytes for every referenced asset, then export again.' }))
+      addAssetIssue(document, asset.id, 'ASSET_PAYLOAD_MISSING', `Image PPTX export requires bytes for asset ${asset.id}.`, issues, 'Provide assetBytes for every referenced asset, then export again.')
       sources[asset.id] = placeholderDataUri(asset.id)
       continue
     }
     const digest = `sha256-${sha256HexBytes(bytes)}`
     const expected = normalizeHash(asset.hash)
     if (expected && digest.slice('sha256-'.length) !== expected) {
-      issues.push(withErrorSemantics({ code: 'ASSET_HASH_MISMATCH', severity: 'error', message: `Asset ${asset.id} bytes do not match the declared hash.`, elementId: asset.id, path: `/assets/${asset.id}/hash`, recovery: 'Use the bytes matching the document asset hash; the source document remains unchanged.' }))
+      addAssetIssue(document, asset.id, 'ASSET_HASH_MISMATCH', `Asset ${asset.id} bytes do not match the declared hash.`, issues, 'Use the bytes matching the document asset hash; the source document remains unchanged.', `/assets/${asset.id}/hash`)
       sources[asset.id] = placeholderDataUri(asset.id)
       continue
     }
     if (asset.byteLength > 0 && asset.byteLength !== bytes.length) {
-      issues.push(withErrorSemantics({ code: 'ASSET_PAYLOAD_MISSING', severity: 'error', message: `Asset ${asset.id} byteLength does not match the supplied bytes.`, elementId: asset.id, path: `/assets/${asset.id}/byteLength`, recovery: 'Use the complete asset payload declared by the document.' }))
+      addAssetIssue(document, asset.id, 'ASSET_PAYLOAD_MISSING', `Asset ${asset.id} byteLength does not match the supplied bytes.`, issues, 'Use the complete asset payload declared by the document.', `/assets/${asset.id}/byteLength`)
       sources[asset.id] = placeholderDataUri(asset.id)
       continue
     }
@@ -364,9 +483,63 @@ function buildAssetSources(document: PpteDocument, bytesById: Record<string, Uin
   return sources
 }
 
+function addAssetIssue(document: PpteDocument, assetId: string, code: 'ASSET_PAYLOAD_MISSING' | 'ASSET_HASH_MISMATCH', message: string, issues: ValidationIssue[], recovery: string, path = `/assets/${assetId}`): void {
+  const references = document.slideOrder.flatMap((slideId) => Object.values(document.slides[slideId]?.elements ?? {}).filter((element) => (element.type === 'image' && element.assetId === assetId) || (element.type === 'component' && element.fallback.kind === 'asset' && element.fallback.assetId === assetId)).map((element) => ({ slideId, elementId: element.id })))
+  if (!references.length) {
+    issues.push(withErrorSemantics({ code, severity: 'error', message, elementId: assetId, path, recovery }))
+    return
+  }
+  for (const reference of references) issues.push(withErrorSemantics({ code, severity: 'error', message, slideId: reference.slideId, elementId: reference.elementId, path, recovery }))
+}
+
+function collectFontIssues(document: PpteDocument, fontBytes: Record<string, Uint8Array> | undefined, issues: ValidationIssue[]): void {
+  for (const font of Object.values(document.fonts ?? {})) {
+    if (font.source !== 'embedded') continue
+    const bytes = fontBytes?.[font.id]
+    if (!bytes) {
+      issues.push(withErrorSemantics({ code: 'FONT_PAYLOAD_MISSING', severity: 'warning', message: `PPTX export did not receive embedded bytes for font ${font.family}; font-replacement risk is reported.`, elementId: font.id, path: `/fonts/${font.id}`, recovery: 'Provide the declared font payload or accept receiving-host substitution.' }))
+      continue
+    }
+    if (font.hash && normalizeHash(font.hash) !== sha256HexBytes(bytes)) issues.push(withErrorSemantics({ code: 'FONT_HASH_MISMATCH', severity: 'warning', message: `PPTX export rejected bytes for font ${font.family}; font-replacement risk is reported.`, elementId: font.id, path: `/fonts/${font.id}/hash`, recovery: 'Provide bytes matching the declared font hash.' }))
+  }
+}
+
+function buildFontCss(document: PpteDocument, fontBytes: Record<string, Uint8Array> | undefined, issues: ValidationIssue[]): string {
+  const verifiedBytes: Record<string, Uint8Array> = {}
+  for (const font of Object.values(document.fonts ?? {})) {
+    const bytes = fontBytes?.[font.id]
+    if (font.source !== 'embedded') {
+      if (bytes?.length) verifiedBytes[font.id] = bytes
+      continue
+    }
+    if (!bytes) continue
+    if (font.hash && normalizeHash(font.hash) !== sha256HexBytes(bytes)) continue
+    verifiedBytes[font.id] = bytes
+  }
+  return referenceFontCss(document.fonts, verifiedBytes)
+}
+
+function addCapabilityWarnings(report: CapabilityReport, issues: ValidationIssue[]): void {
+  for (const item of report.items) {
+    if (!['unsupported', 'blocked', 'missing-source', 'font-replacement', 'layout-risk', 'rasterized', 'static'].includes(item.status)) continue
+    issues.push(withErrorSemantics({ code: 'EXPORT_DEGRADED', severity: 'warning', message: `${item.id} exported with capability status ${item.status}.`, slideId: item.slideId, elementId: item.elementId, recovery: item.recovery ?? 'Inspect the capability report before publishing.' }))
+  }
+}
+
 function finalizeReport(report: CapabilityReport, issues: ValidationIssue[], forceDegraded = false): CapabilityReport {
   const merged = dedupe([...report.issues, ...issues])
-  return { ...report, ok: report.ok && !merged.some((issue) => issue.severity === 'error'), degraded: report.degraded || forceDegraded || merged.length > 0, issues: merged }
+  const items = report.items.map((item) => {
+    const related = merged.find((issue) => {
+      if (['ASSET_PAYLOAD_MISSING', 'ASSET_HASH_MISMATCH'].includes(issue.code)) return issue.slideId === item.slideId && issue.elementId === item.elementId
+      if (['FONT_PAYLOAD_MISSING', 'FONT_HASH_MISMATCH'].includes(issue.code)) return item.type === 'text' && (!issue.slideId || issue.slideId === item.slideId)
+      return false
+    })
+    if (!related) return item
+    const font = related.code.startsWith('FONT_')
+    return { ...item, status: (font ? 'font-replacement' : 'missing-source') as CapabilityReport['items'][number]['status'], reason: related.message, recovery: related.recovery }
+  })
+  const summary = Object.fromEntries(Object.keys(report.summary).map((status) => [status, items.filter((item) => item.status === status).length])) as CapabilityReport['summary']
+  return { ...report, ok: report.ok && !merged.some((issue) => issue.severity === 'error') && !items.some((item) => ['blocked', 'unsupported', 'missing-source'].includes(item.status)), degraded: report.degraded || forceDegraded || merged.length > 0 || items.some((item) => ['blocked', 'unsupported', 'missing-source', 'font-replacement', 'layout-risk', 'rasterized'].includes(item.status)), items, issues: merged, summary }
 }
 
 function contentTypes(slideCount: number, includeReport: boolean): string {
@@ -445,7 +618,7 @@ function resolveTextFamily(value: unknown, document: PpteDocument): string | und
 function resolveTextColor(value: unknown, document: PpteDocument): string | undefined {
   const candidate = value && typeof value === 'object' ? value as { kind?: string; value?: unknown; token?: string } : undefined
   const color = candidate?.kind === 'value' ? candidate.value : candidate?.kind === 'token' && typeof candidate.token === 'string' ? document.theme.tokens.colors[candidate.token] ?? candidate.token : typeof value === 'string' ? value : undefined
-  return typeof color === 'string' && /^#[0-9A-Fa-f]{6}$/.test(color) ? color : undefined
+  return typeof color === 'string' && /^#[0-9A-Fa-f]{6}(?:[0-9A-Fa-f]{2})?$/.test(color) ? color : undefined
 }
 
 function paintColor(value: unknown, document: PpteDocument): string | undefined {
@@ -471,15 +644,37 @@ function shapePreset(shape: string | undefined): string {
   return 'rect'
 }
 
-function shapeFillXml(fill: string | undefined, stroke: string | undefined): string {
-  const fillXml = fill ? `<a:solidFill><a:srgbClr val="${colorValue(fill)}"/></a:solidFill>` : '<a:noFill/>'
-  const strokeXml = stroke ? `<a:ln><a:solidFill><a:srgbClr val="${colorValue(stroke)}"/></a:solidFill></a:ln>` : '<a:ln><a:noFill/></a:ln>'
+function shapeFillXml(fill: string | Paint | undefined, stroke: string | undefined, documentOrOpacity: PpteDocument | number | undefined, opacity?: number, strokeOpacity?: number, strokeWidth?: number, strokeDash?: number[], lineCap?: Stroke['lineCap'], lineJoin?: Stroke['lineJoin']): string {
+  const document = typeof documentOrOpacity === 'object' ? documentOrOpacity : undefined
+  const nodeOpacity = typeof documentOrOpacity === 'number' ? documentOrOpacity : opacity
+  const fillXml = fill
+    ? typeof fill === 'object' && document ? paintXml(fill, document, nodeOpacity) : `<a:solidFill>${srgbColorXml(fill as string, nodeOpacity)}</a:solidFill>`
+    : '<a:noFill/>'
+  const lineAttributes = [
+    strokeWidth === undefined ? '' : ` w="${emu(strokeWidth)}"`,
+    lineCap ? ` cap="${lineCap === 'round' ? 'rnd' : lineCap === 'square' ? 'sq' : 'flat'}"` : '',
+  ].join('')
+  const dash = strokeDash?.length ? '<a:prstDash val="dash"/>' : ''
+  const join = lineJoin === 'round' ? '<a:round/>' : lineJoin === 'bevel' ? '<a:bevel/>' : lineJoin === 'miter' ? '<a:miter lim="800000"/>' : ''
+  const strokeXml = stroke ? `<a:ln${lineAttributes}><a:solidFill>${srgbColorXml(stroke, multiplyOpacity(strokeOpacity, nodeOpacity))}</a:solidFill>${dash}${join}</a:ln>` : '<a:ln><a:noFill/></a:ln>'
   return `${fillXml}${strokeXml}`
 }
 
 function colorValue(value: string): string {
   const normalized = value.replace('#', '').toUpperCase()
-  return /^[0-9A-F]{6}$/.test(normalized) ? normalized : '1F2937'
+  return /^[0-9A-F]{6}(?:[0-9A-F]{2})?$/.test(normalized) ? normalized.slice(0, 6) : '1F2937'
+}
+
+function points100(value: number): number { return value * 0.75 * 100 }
+
+function clamp01(value: number): number { return Math.max(0, Math.min(1, Number.isFinite(value) ? value : 1)) }
+
+function htmlWithCanvasSize(html: string, width: number, height: number, fontCss = ''): string {
+  return `${fontCss}<style data-ppte-pptx-reference-size>html,body{width:${number(width)}px;height:${number(height)}px;margin:0;padding:0;overflow:hidden}</style>${html}`
+}
+
+function rasterizedSlideSvg(width: number, height: number, png: Uint8Array): string {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${number(width)}" height="${number(height)}" viewBox="0 0 ${number(width)} ${number(height)}"><image x="0" y="0" width="${number(width)}" height="${number(height)}" preserveAspectRatio="none" href="data:image/png;base64,${toBase64(png)}"/></svg>`
 }
 
 function extensionForMime(mimeType: string): string {
@@ -499,7 +694,8 @@ function exportIssue(code: string, message: string, slideId?: string, elementId?
 }
 
 function renderFailureSvg(width: number, height: number, slideId: string): string {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${number(width)}" height="${number(height)}" viewBox="0 0 ${number(width)} ${number(height)}"><rect width="100%" height="100%" fill="#F8FAFC"/><rect x="32" y="32" width="${number(Math.max(0, width - 64))}" height="${number(Math.max(0, height - 64))}" fill="none" stroke="#CBD5E1" stroke-width="4"/><text x="64" y="96" fill="#475569" font-family="Arial, sans-serif" font-size="28">Slide image unavailable</text><text x="64" y="140" fill="#64748B" font-family="Arial, sans-serif" font-size="18">Source slide: ${escapeXml(slideId)}</text></svg>`
+  const seed = [...slideId].reduce((sum, character) => sum + character.codePointAt(0)!, 0) % 4
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${number(width)}" height="${number(height)}" viewBox="0 0 ${number(width)} ${number(height)}"><rect width="100%" height="100%" fill="#F8FAFC"/><rect x="32" y="32" width="${number(Math.max(0, width - 64))}" height="${number(Math.max(0, height - 64))}" fill="none" stroke="#CBD5E1" stroke-width="4"/><path d="M${number(width / 2 - 64)} ${number(height / 2 - 48)}h128v96H${number(width / 2 - 64)}z" fill="#E2E8F0"/><path d="m${number(width / 2 - 42 + seed * 8)} ${number(height / 2 + 24)} 24-24 20 18 22-30 34 36" fill="none" stroke="#64748B" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>`
 }
 
 function placeholderDataUri(assetId: string): string {
