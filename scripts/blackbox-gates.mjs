@@ -361,8 +361,23 @@ function runPythonPptx(pptxPath) {
 }
 
 function runPdftotext(pdfPath) {
-  const { raw } = runExternal('pdftotext', [pdfPath, '-'])
-  return raw
+  const result = spawnSync('pdftotext', [pdfPath, '-'], { cwd: ROOT, encoding: 'utf8' })
+  if (!result.error && result.status === 0) return `${result.stdout ?? ''}${result.stderr ?? ''}`
+  if (result.error?.code !== 'ENOENT') {
+    const raw = `${result.stdout ?? ''}${result.stderr ?? ''}`
+    throw new GateFailure(`pdftotext ${pdfPath} - failed.`, { status: result.status, signal: result.signal }, raw || result.error?.message)
+  }
+  // Infrastructure fallback for hosts without Poppler. PyMuPDF uses the
+  // same embedded PDF text map and keeps the gate's Unicode assertions intact;
+  // a missing executable must not turn a valid export into an environment red.
+  const fallback = spawnSync('python3', ['-c', [
+    'import fitz, sys',
+    'pdf = fitz.open(sys.argv[1])',
+    'sys.stdout.write("".join(page.get_text() for page in pdf))',
+  ].join('\n'), pdfPath], { cwd: ROOT, encoding: 'utf8' })
+  if (!fallback.error && fallback.status === 0) return `${fallback.stdout ?? ''}${fallback.stderr ?? ''}`
+  const raw = `${fallback.stdout ?? ''}${fallback.stderr ?? ''}`
+  throw new GateFailure(`pdftotext ${pdfPath} - failed and the local text-extraction fallback was unavailable.`, { status: fallback.status, signal: fallback.signal }, raw || fallback.error?.message || result.error.message)
 }
 
 function readPng(bytes) {

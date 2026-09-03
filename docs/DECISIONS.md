@@ -371,3 +371,33 @@ Chart Data, and simple geometry operations.
 This supersedes the earlier GA-A-default wording for omitted saves: text-only
 documents still infer GA-A, while persisted Chart/animation/transition and
 GA-C-only capabilities select their minimum profile automatically.
+
+## 2026-09-03 — R4 honest export boundary
+
+PDF and PNG export now capture the same derived Reference HTML surface in a
+short-lived, fixed Chromium worker. The worker fixes locale, device scale,
+color profile, font synthesis, and print/screenshot settings. Host-supplied
+asset bytes are verified against the semantic Asset hash before they become
+data URLs; embedded FontAsset bytes are likewise hash-checked and exposed as
+deterministic `@font-face` resources. Chromium therefore owns CJK/emoji
+shaping, image decoding, opacity, rotation, and PDF font subsetting. Missing
+or rejected resources use a neutral fallback and remain visible as
+`missing-source`/font warnings; they are never reported as clean native
+content. Tiny thumbnail output may retain one derived source-colour ink pixel
+per text frame when sub-pixel anti-aliasing would erase the glyph entirely;
+this is still degraded raster output and does not alter `document.json`.
+
+Image PPTX uses the same Reference Renderer and places the finished PNG inside
+the package, so recipient Office hosts cannot reflow live text. Semantic PPTX
+keeps text editable and maps slide background, transforms, opacity, paragraph
+spacing/alignment/list data, and RichText runs. It maps common shape paints and
+strokes and carries real verified image bytes. Semantic PPTX does not embed a
+font package; requested typeface attributes and any missing embedded payload
+are reported per affected text element as `font-replacement` risk. Charts and
+unsupported widgets remain explicit static/fallback boundaries. The package's
+capability report is finalized after resource preparation and is the same
+report returned by the export API.
+
+The black-box PDF text helper has one infrastructure-only fallback for hosts
+without Poppler's `pdftotext`: PyMuPDF reads the generated PDF text map while
+the gate's Unicode assertions remain unchanged.
