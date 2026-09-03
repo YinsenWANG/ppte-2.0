@@ -17,8 +17,11 @@ export const IDS = Object.freeze({
   asset: 'bb_asset_pixel',
   assetNew: 'bb_asset_new',
   chart: 'bb_chart_revenue',
+  chartLine: 'bb_chart_line',
+  chartPie: 'bb_chart_pie',
   metric: 'bb_metric_revenue',
   widget: 'bb_widget_code',
+  videoWidget: 'bb_widget_video',
 })
 
 export function clone(value) {
@@ -257,6 +260,24 @@ export function makeChartFixture() {
   return { document, imageBytes }
 }
 
+export function makeChartVariantsFixture() {
+  const fixture = makeChartFixture()
+  const slide = fixture.document.slides[IDS.slide]
+  const baseChart = slide.elements[IDS.chart]
+  for (const [id, chartType, y] of [[IDS.chartLine, 'line', 160], [IDS.chartPie, 'pie', 740]]) {
+    slide.elements[id] = {
+      ...clone(baseChart),
+      id,
+      semanticKey: `chart.${chartType}`,
+      chartType,
+      frame: { ...baseChart.frame, y },
+    }
+    slide.rootOrder.push(id)
+    slide.readingOrder.push(id)
+  }
+  return fixture
+}
+
 export function makeWidgetFixture() {
   const { document, imageBytes } = makeCoreFixture()
   document.metadata.title = 'Black-box Widget fixture'
@@ -277,6 +298,88 @@ export function makeWidgetFixture() {
   slide.readingOrder.push(IDS.widget)
   document.widgetRequirements = [{ type: 'core/code', versionRange: '^1.0.0', fallbackRequired: true }]
   return { document, imageBytes }
+}
+
+export function makeVideoWidgetFixture() {
+  const { document, imageBytes } = makeCoreFixture()
+  document.metadata.title = 'Black-box Video Widget fixture'
+  const video = {
+    id: IDS.videoWidget,
+    type: 'component',
+    semanticKey: 'widget.video',
+    role: 'artwork',
+    frame: { x: 1040, y: 160, width: 760, height: 560 },
+    componentType: 'core/video',
+    componentVersion: '1.0.0',
+    props: {
+      source: 'media/quarterly-review.mp4',
+      posterAssetId: IDS.asset,
+      controls: true,
+      muted: true,
+    },
+    fallback: { kind: 'asset', assetId: IDS.asset, label: 'Video poster' },
+  }
+  const slide = document.slides[IDS.slide]
+  slide.elements[IDS.videoWidget] = video
+  slide.rootOrder.push(IDS.videoWidget)
+  slide.readingOrder.push(IDS.videoWidget)
+  document.widgetRequirements = [{ type: 'core/video', versionRange: '^1.0.0', fallbackRequired: true }]
+  return { document, imageBytes }
+}
+
+export function makeLegacyBoundarySource() {
+  const { document, imageBytes } = makeCoreFixture()
+  document.schemaVersion = '1.0.0'
+  document.documentId = 'legacy_slidev_reference'
+  document.metadata = { ...document.metadata, title: 'Legacy Slidev boundary fixture' }
+  document.format = 'slidev'
+  document.sourceFormat = 'slidev'
+  const slide = document.slides[IDS.slide]
+  slide.name = 'Legacy Slidev semantic source'
+  slide.visualStrategy = 'poster'
+  slide.elements[IDS.image].role = 'artwork'
+  document.assets[IDS.asset].artwork = {
+    subjectBounds: [{ x: 0.12, y: 0.1, width: 0.7, height: 0.75 }],
+    safeTextRegions: [{ x: 0.02, y: 0.02, width: 0.35, height: 0.22 }],
+    dominantPalette: ['#2563EB', '#F8FAFC'],
+    focalPoint: { x: 0.5, y: 0.45 },
+    generationPromptSummary: 'Legacy poster artwork fixture',
+  }
+  const chartData = {
+    columns: [{ id: 'period', label: 'Period', type: 'string' }, { id: 'revenue', label: 'Revenue', type: 'number' }],
+    rows: [{ id: 'q1', values: { period: 'Q1', revenue: 42 } }, { id: 'q2', values: { period: 'Q2', revenue: 38 } }],
+  }
+  for (const [id, chartType, x] of [['legacy_area', 'area', 1040], ['legacy_donut', 'donut', 1040]]) {
+    slide.elements[id] = {
+      id,
+      type: 'chart',
+      semanticKey: `legacy.${chartType}`,
+      role: 'chart',
+      frame: { x, y: id === 'legacy_area' ? 160 : 740, width: 700, height: 400 },
+      chartType,
+      data: clone(chartData),
+      encoding: { categoryField: 'period', valueFields: ['revenue'] },
+      options: { showLegend: true, showLabels: true },
+      style: { styleRef: 'chart.default' },
+    }
+    slide.rootOrder.push(id)
+    slide.readingOrder.push(id)
+  }
+  const widgetId = 'legacy_widget_static'
+  slide.elements[widgetId] = {
+    id: widgetId,
+    type: 'component',
+    semanticKey: 'legacy.widget',
+    role: 'body',
+    frame: { x: 160, y: 760, width: 760, height: 160 },
+    componentType: 'legacy/kpi-widget',
+    componentVersion: '1.0.0',
+    props: { label: 'Revenue', value: 42 },
+    fallback: { kind: 'placeholder', label: 'Legacy KPI static fallback' },
+  }
+  slide.rootOrder.push(widgetId)
+  slide.readingOrder.push(widgetId)
+  return { source: document, imageBytes }
 }
 
 export function makeOverflowDocument() {

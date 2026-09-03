@@ -28,11 +28,14 @@ import {
   alternatePng,
   clone,
   makeChartFixture,
+  makeChartVariantsFixture,
   makeCoreFixture,
   makeExportFixture,
+  makeLegacyBoundarySource,
   makeOverflowDocument,
   makeSlideIR,
   makeWidgetFixture,
+  makeVideoWidgetFixture,
   pixelPng,
   richText,
   textContent,
@@ -41,7 +44,7 @@ import {
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const GOLDENS = JSON.parse(readFileSync(join(ROOT, 'scripts', 'blackbox-goldens.json'), 'utf8'))
 
-const GROUP_ORDER = [
+const BASE_GROUP_ORDER = [
   'core-basic',
   'agent-scope',
   'lock-undo',
@@ -54,6 +57,9 @@ const GROUP_ORDER = [
   'review-patch',
   'section-41',
 ]
+
+const NEW_GROUP_ORDER = ['video-widget', 'pptx-chart', 'full-portable', 'group-rotate', 'legacy-import']
+const GROUP_ORDER = [...BASE_GROUP_ORDER, ...NEW_GROUP_ORDER]
 
 const GROUP_META = {
   'core-basic': {
@@ -100,6 +106,26 @@ const GROUP_META = {
     description: '§41 A–J scenario completion gates.',
     findings: '§41 A–J',
   },
+  'video-widget': {
+    description: 'GA-C Video Widget registry, poster fallback, checkpoint, Portable downgrade, and export honesty.',
+    findings: 'Video Widget',
+  },
+  'pptx-chart': {
+    description: 'Semantic bar/line/pie charts exported as native PPTX chart parts with capability evidence.',
+    findings: 'Native PPTX Chart',
+  },
+  'full-portable': {
+    description: 'Full Portable file:// editor surface and save-new-project journey.',
+    findings: 'Full Portable',
+  },
+  'group-rotate': {
+    description: 'Explicit member transforms for Group Rotate with exact undo and Host/renderer parity.',
+    findings: 'Group Rotate',
+  },
+  'legacy-import': {
+    description: 'Slidev/Markdown legacy migration and GA-A/GA-B/GA-C boundary coverage.',
+    findings: 'Legacy Import',
+  },
 }
 
 const MILESTONE_GROUPS = {
@@ -109,7 +135,13 @@ const MILESTONE_GROUPS = {
   r4: ['core-basic', 'agent-scope', 'lock-undo', 'host', 'pages-notes-animation', 'compiler-quality', 'portable', 'export'],
   r5: ['core-basic', 'agent-scope', 'lock-undo', 'host', 'pages-notes-animation', 'compiler-quality', 'portable', 'export', 'recovery'],
   r6: ['core-basic', 'agent-scope', 'lock-undo', 'host', 'pages-notes-animation', 'compiler-quality', 'portable', 'export', 'recovery', 'review-patch'],
+  'video-widget': [...BASE_GROUP_ORDER, 'video-widget'],
+  'pptx-chart': [...BASE_GROUP_ORDER, 'video-widget', 'pptx-chart'],
+  'full-portable': [...BASE_GROUP_ORDER, 'video-widget', 'pptx-chart', 'full-portable'],
+  'group-rotate': [...BASE_GROUP_ORDER, 'video-widget', 'pptx-chart', 'full-portable', 'group-rotate'],
+  'legacy-import': [...GROUP_ORDER],
   final: [...GROUP_ORDER],
+  final3: [...GROUP_ORDER],
 }
 
 const CASE_SPECS = Object.fromEntries(GROUP_ORDER.map((group) => [group, []]))
@@ -240,6 +272,13 @@ function fixtureWithNewAsset() {
   const newBytes = alternatePng()
   addAlternateAsset(fixture.document, newBytes)
   return { ...fixture, newBytes }
+}
+
+function nativeChartFixture() {
+  const fixture = makeChartVariantsFixture()
+  delete fixture.document.facts
+  for (const element of Object.values(fixture.document.slides[IDS.slide].elements)) delete element.semanticRefs
+  return fixture
 }
 
 function textTransaction(rt, document, revision, value, options = {}) {
@@ -534,10 +573,13 @@ function runPythonNativeChart(pptxPath) {
     'if len(chart_shapes) < 3 or len(chart_parts) < 3 or not {"Q1", "Q2"}.issubset(set(categories)) or not {42.0, 38.0}.issubset(set(values)):',
     '    raise SystemExit("PPTX_NATIVE_CHART_ASSERTION_FAILED: native chart parts/categories/values were not preserved")',
   ].join('\n')
-  const { raw } = runExternal('uv', ['run', '--with', 'python-pptx', 'python', '-c', script, pptxPath])
+  const args = ['run', '--with', 'python-pptx', 'python', '-c', script, pptxPath]
+  const result = spawnSync('uv', args, { cwd: ROOT, encoding: 'utf8' })
+  const raw = `${result.stdout ?? ''}${result.stderr ?? ''}`
   const evidence = raw.split(/\r?\n/).map((item) => item.trim()).filter(Boolean).map((line) => {
     try { return JSON.parse(line) } catch { return undefined }
   }).filter((value) => value && typeof value === 'object').at(-1)
+  if (result.error || result.status !== 0) throw new GateFailure('python-pptx native chart assertion failed.', evidence ?? { status: result.status, signal: result.signal }, raw || result.error?.message)
   if (!evidence) throw new GateFailure('python-pptx native chart check did not return JSON evidence.', { raw })
   return evidence
 }
@@ -1472,6 +1514,227 @@ register('section-41', '§41-J', 'Scenario J: export is visually and semanticall
   ctx.expectGate(stats.uniqueColors > 1 && stats.darkPixels > 0, 'Scenario J PNG is flat or missing text pixels.', stats)
   ctx.assertGolden(image, GOLDENS['png-content-32x18'])
   return { png: stats, pdfAndPptx: 'validated by the export group' }
+})
+
+register('video-widget', 'GA-C-video-registry', 'GA-C Video Widget is resolved through the controlled registry.', 'A GA-C document contains a Video Widget with a local poster asset; the host must resolve its controlled definition and expose a poster-backed static fallback.', 'registry validation succeeds; rendered widget contains a video surface and a poster/fallback path', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document } = makeVideoWidgetFixture()
+  const element = document.slides[IDS.slide].elements[IDS.videoWidget]
+  const registry = rt.widgets.createBuiltinWidgetRegistry()
+  const validation = rt.widgets.validateWidgetElement(element, registry)
+  const rendered = rt.widgets.renderWidgetHtml(element, registry)
+  const observed = {
+    registered: Boolean(validation.definition),
+    valid: validation.ok,
+    exportPolicy: validation.definition?.exportPolicy,
+    hasVideo: /<video\b/i.test(rendered),
+    hasPosterOrFallback: /poster|fallback|<img\b/i.test(rendered),
+    rendered,
+  }
+  ctx.expectGate(observed.valid && observed.registered && observed.exportPolicy === 'static-fallback' && observed.hasVideo && observed.hasPosterOrFallback, 'GA-C Video Widget was not resolved to a controlled poster-capable definition.', observed)
+  return { ...observed, rendered: undefined }
+})
+
+register('video-widget', 'GA-C-video-roundtrip', 'Video Widget checkpoint round-trip retains the downgrade contract.', 'A user saves and reopens a GA-C Video Widget project, then opens its Light Edit derivative; semantic props/fallback must survive and the derivative must report an actionable static downgrade.', 'checkpoint round-trip preserves Video Widget props/fallback; Light Edit reports static status, reason, recovery, and degraded=true', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document, imageBytes } = makeVideoWidgetFixture()
+  const bytes = rt.file.buildCheckpointBytes(document, {
+    assetBytes: { [IDS.asset]: imageBytes },
+    compatibilityProfile: 'ppte-2.0-ga-c.1',
+    timestamp: '2026-09-04T00:00:00.000Z',
+  })
+  const opened = rt.file.openCheckpointBytes(bytes)
+  const reopened = opened.document.slides[IDS.slide].elements[IDS.videoWidget]
+  const built = rt.portable.createPortableLightEdit(document, { assetBytes: { [IDS.asset]: imageBytes } })
+  const item = built.capabilityReport?.items.find((candidate) => candidate.elementId === IDS.videoWidget)
+  const roundTrip = reopened?.type === 'component'
+    && reopened.componentType === 'core/video'
+    && reopened.props.source === 'media/quarterly-review.mp4'
+    && reopened.props.posterAssetId === IDS.asset
+    && reopened.fallback.kind === 'asset'
+    && reopened.fallback.assetId === IDS.asset
+  const observed = {
+    roundTrip,
+    portableOk: built.ok,
+    status: item?.status,
+    reason: item?.reason,
+    recovery: item?.recovery,
+    degraded: built.capabilityReport?.degraded,
+  }
+  ctx.expectGate(roundTrip && built.ok && item?.status === 'static' && Boolean(item.reason) && Boolean(item.recovery) && built.capabilityReport?.degraded === true, 'Video Widget Light Edit did not expose an actionable static downgrade after checkpoint-compatible round-trip.', observed)
+  return observed
+})
+
+register('video-widget', 'GA-C-video-export', 'PDF and PNG export a Video poster or report honest degradation.', 'A user exports a GA-C Video Widget with its local poster bytes; each raster export must either contain the poster-capable path or explicitly report the degraded capability.', 'both PDF and PNG are non-empty and each has poster evidence or an element-scoped EXPORT_DEGRADED report', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document, imageBytes } = makeVideoWidgetFixture()
+  const assetBytes = { [IDS.asset]: imageBytes }
+  const outputs = [
+    rt.pdf.exportPdf(document, { assetBytes }),
+    rt.pdf.exportPng(document, { slideId: IDS.slide, width: 192, height: 108, assetBytes }),
+  ]
+  const observed = outputs.map((output) => {
+    const item = output.capabilityReport.items.find((candidate) => candidate.elementId === IDS.videoWidget)
+    const degraded = output.degraded && output.issues.some((issue) => issue.code === 'EXPORT_DEGRADED' && issue.elementId === IDS.videoWidget)
+    const posterPath = output.ok && ['native', 'static'].includes(item?.status)
+    return { format: output.format, ok: output.ok, bytes: output.bytes.length, status: item?.status, posterPath, degraded }
+  })
+  ctx.expectGate(observed.every((output) => output.bytes > 0 && (output.posterPath || output.degraded)), 'Video Widget PDF/PNG output was neither poster-backed nor honestly marked degraded.', observed)
+  return observed
+})
+
+register('pptx-chart', 'native-chart-parts', 'Semantic bar/line/pie charts become native PPTX chart parts.', 'A user exports semantic Bar, Line, and Pie Chart elements; Python python-pptx must observe native chart shapes, chart parts, categories Q1/Q2, and values 42/38.', 'python-pptx reports at least three native chart shapes/parts and preserves the fixture categories and values', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document, imageBytes } = nativeChartFixture()
+  const exported = rt.pptx.exportSemanticPptx(document, { assetBytes: { [IDS.asset]: imageBytes } })
+  const exportObserved = { ok: exported.ok, bytes: exported.bytes.length, degraded: exported.degraded, issueCodes: exported.issues.map((issue) => issue.code) }
+  ctx.expectGate(exported.ok && exported.bytes.length > 0, 'Semantic PPTX chart fixture could not be exported for native-chart inspection.', exportObserved)
+  return ctx.withTempDirectory(async (directory) => {
+    const path = join(directory, 'native-charts.pptx')
+    writeFileSync(path, exported.bytes)
+    return ctx.runPythonNativeChart(path)
+  })
+})
+
+register('pptx-chart', 'native-chart-capability', 'PPTX capability evidence identifies native charts.', 'The semantic PPTX export advertises its Chart mapping explicitly so a consumer can distinguish a native chart from an SVG picture.', 'capability report includes native-chart=true for every exported semantic Chart', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document, imageBytes } = nativeChartFixture()
+  const exported = rt.pptx.exportSemanticPptx(document, { assetBytes: { [IDS.asset]: imageBytes } })
+  const chartItems = exported.capabilityReport.items.filter((item) => item.type === 'chart')
+  const native = chartItems.length === 3 && chartItems.every((item) => item.nativeChart === true || item['native-chart'] === true)
+    || exported.capabilityReport.nativeChart === true
+    || exported.capabilityReport['native-chart'] === true
+  const observed = { native, reportOk: exported.capabilityReport.ok, reportDegraded: exported.capabilityReport.degraded, chartItems: chartItems.map((item) => ({ id: item.elementId, status: item.status, nativeChart: item.nativeChart, nativeChartDashed: item['native-chart'] })), issueCodes: exported.issues.map((issue) => issue.code) }
+  ctx.expectGate(native, 'Semantic PPTX capability report did not declare native-chart=true.', observed)
+  return { native, chartCount: chartItems.length }
+})
+
+register('full-portable', 'full-portable-bundle', 'full-portable packages the complete editor API.', 'A user chooses profile full-portable and expects multi-selection, Move/Scale/Rotate, Crop, Chart data, undo/redo, and Save as New Project in one self-contained artifact.', 'bundle audit passes for full-portable and the embedded API exposes every full-editor method', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document, imageBytes } = makeChartFixture()
+  const built = rt.portable.buildPortable(document, { profile: 'full-portable', assetBytes: { [IDS.asset]: imageBytes } })
+  const audit = rt.portable.auditPortableBundle(built.html)
+  const requiredMethods = ['select', 'selectMany', 'moveElement', 'resizeElement', 'scaleElement', 'rotateElement', 'cropImage', 'updateChartData', 'undo', 'redo', 'saveAsNewProject']
+  const missingMethods = requiredMethods.filter((method) => !built.html.includes(method))
+  const observed = { built: built.ok, profile: built.origin?.profile, audit: audit.ok, auditIssueCodes: audit.issues.map((issue) => issue.code), missingMethods }
+  ctx.expectGate(built.ok && built.origin?.profile === 'full-portable' && audit.ok && missingMethods.length === 0, 'full-portable bundle is missing the complete editor contract or is rejected by its own audit.', observed)
+  return observed
+})
+
+register('full-portable', 'full-portable-file-url', 'full-portable executes the complete file:// journey.', 'A user opens a full-portable file locally, invokes its API, and saves a new project; the browser must expose the full method surface.', 'file:// exposes full-portable profile, all required methods, and a successful saveAsNewProject result', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document, imageBytes } = makeChartFixture()
+  const built = rt.portable.buildPortable(document, { profile: 'full-portable', assetBytes: { [IDS.asset]: imageBytes } })
+  return ctx.withTempDirectory(async (directory) => {
+    const path = join(directory, 'full-portable.ppte.html')
+    writeFileSync(path, built.html)
+    return ctx.withBrowser(path, async (page) => {
+      await page.waitForFunction(() => Boolean(globalThis.PPTEPortable))
+      const observed = await page.evaluate(() => {
+        const api = globalThis.PPTEPortable
+        const required = ['select', 'selectMany', 'moveElement', 'resizeElement', 'scaleElement', 'rotateElement', 'cropImage', 'updateChartData', 'undo', 'redo', 'saveAsNewProject']
+        const missing = required.filter((method) => typeof api?.[method] !== 'function')
+        let saved
+        try { saved = api?.saveAsNewProject?.() } catch (error) { saved = { ok: false, error: String(error) } }
+        return { profile: api?.origin?.profile, missing, saveOk: saved?.ok === true, saveBytes: saved?.bytes?.length ?? 0 }
+      })
+      ctx.expectGate(observed.profile === 'full-portable' && observed.missing.length === 0 && observed.saveOk && observed.saveBytes > 0, 'full-portable file:// API did not complete the full editor/save journey.', observed)
+      return observed
+    })
+  })
+})
+
+register('group-rotate', 'explicit-member-rotate', 'Group Rotate commits explicit member transforms and exact undo.', 'A human rotates a flat group containing three elements by 90 degrees; the operation must change each member frame/rotation, keep the group flat, and undo byte-exactly.', 'group.rotate commits; all three members receive explicit frame/rotation changes; group has no coordinate-system fields; undo restores the source snapshot', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document } = makeCoreFixture()
+  const slide = document.slides[IDS.slide]
+  const groupId = 'bb_group_rotate'
+  const memberIds = [IDS.title, IDS.body, IDS.image]
+  slide.groups[groupId] = { id: groupId, semanticKey: 'group.rotate.fixture', memberIds: [...memberIds] }
+  const before = clone(document)
+  const session = new rt.core.PpteSession(document, { runtimeProfile: 'ga-b' })
+  const committed = session.commit(ctx.transaction({
+    id: 'bb-group-rotate',
+    baseRevision: session.getRevision(),
+    scope: ctx.scope('selection', ['geometry'], { slideIds: [IDS.slide], elementIds: memberIds }),
+    contract: ctx.broadContract(['group.rotate'], { allowedElementIds: memberIds, maxChangedElements: memberIds.length, preserve: { content: 'preserve', data: 'preserve', style: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' } }),
+    operations: [{ opId: 'bb-group-rotate:operation', kind: 'group.rotate', slideId: IDS.slide, groupId, rotationDeg: 90 }],
+  }))
+  ctx.expectGate(committed.ok === true, 'Group Rotate was not accepted as a semantic transaction.', committed)
+  const after = session.getDocument()
+  const afterSlide = after.slides[IDS.slide]
+  const afterGroup = afterSlide.groups[groupId]
+  const changedMembers = memberIds.every((elementId) => {
+    const original = before.slides[IDS.slide].elements[elementId]
+    const current = afterSlide.elements[elementId]
+    return JSON.stringify(original.frame) !== JSON.stringify(current.frame) && (current.rotationDeg ?? 0) !== (original.rotationDeg ?? 0)
+  })
+  const forbiddenGroupFields = ['frame', 'rotationDeg', 'transform', 'coordinateSystem']
+  const flatGroup = afterGroup && forbiddenGroupFields.every((field) => !Object.prototype.hasOwnProperty.call(afterGroup, field))
+  const rendered = rt.renderer.renderSlideHtml(after, IDS.slide)
+  const rendererMembers = memberIds.every((elementId) => {
+    const rotation = afterSlide.elements[elementId].rotationDeg ?? 0
+    return rendered.includes(`data-ppte-element-id="${elementId}"`) && rendered.includes(`transform:rotate(${rotation}deg)`)
+  })
+  const undo = session.undo()
+  const exactUndo = undo.ok && JSON.stringify(session.getDocument()) === JSON.stringify(before)
+  let hostMembers = []
+  await ctx.withTempDirectory(async (directory) => {
+    const path = ctx.writeFixtureHtml(directory, 'group-rotate.html', rt.renderer.renderDocumentHtml(after))
+    await ctx.withBrowser(path, async (page) => {
+      hostMembers = await page.evaluate((ids) => ids.map((id) => {
+        const node = document.querySelector(`[data-ppte-element-id="${id}"]`)
+        return { id, transform: node?.style.transform ?? '', frame: node ? { left: node.style.left, top: node.style.top } : undefined }
+      }), memberIds)
+    })
+  })
+  const hostConsistent = hostMembers.length === memberIds.length && hostMembers.every((item) => {
+    const element = afterSlide.elements[item.id]
+    return item.transform === `rotate(${element.rotationDeg ?? 0}deg)`
+      && Math.abs(Number.parseFloat(item.frame.left) - element.frame.x) < 0.01
+      && Math.abs(Number.parseFloat(item.frame.top) - element.frame.y) < 0.01
+  })
+  const observed = { committed: committed.ok, changedMembers, flatGroup, rendererMembers, hostConsistent, hostMembers, exactUndo, operationIssues: committed.issues }
+  ctx.expectGate(changedMembers && flatGroup && rendererMembers && hostConsistent && exactUndo, 'Group Rotate did not produce explicit member transforms with renderer/Host parity and exact undo.', observed)
+  return observed
+})
+
+register('legacy-import', 'slidev-markdown-source', 'Slidev and Markdown files migrate into semantic documents.', 'A user opens old Slidev and Markdown source files; import must parse them into semantic slides without treating raw markup as a document source.', 'both legacy text formats produce a non-empty semantic document with sourceFormat and migration evidence', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const sources = {
+    slidev: '---\ntitle: Quarterly Review\n---\n# 年度经营回顾\n\nRevenue was **42%**.',
+    markdown: '# 年度经营回顾\n\n- Revenue: 42%\n- Target: 50%',
+  }
+  const observed = Object.entries(sources).map(([sourceFormat, source]) => {
+    const result = rt.legacy.migrateLegacyDocument(source, { sourceFormat, targetProfile: 'ppte-2.0-ga-c.1', targetDocumentId: `legacy-${sourceFormat}` })
+    return { sourceFormat, ok: result.ok, slides: result.document.slideOrder.length, metadataFormat: result.document.metadata.sourceFormat, disposition: result.report.disposition, issueCodes: result.report.issues.map((issue) => issue.code) }
+  })
+  ctx.expectGate(observed.every((item) => item.ok && item.slides > 0 && item.metadataFormat === item.sourceFormat && item.disposition === 'migrate'), 'Legacy Slidev/Markdown text was not imported into a semantic document.', observed)
+  return observed
+})
+
+register('legacy-import', 'legacy-profile-boundaries', 'Legacy migration preserves GA-C boundaries and honest fallbacks.', 'A legacy Slidev semantic snapshot contains Area/Donut charts, Poster artwork, and a Widget; GA-C retains them while GA-B downgrades unsupported content with migration issues.', 'GA-C retains Area/Donut, Poster artwork, and Widget static fallback; GA-B retains safe semantics, drops unsupported objects, and reports each downgrade', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { source, imageBytes } = makeLegacyBoundarySource()
+  const options = { sourceFormat: 'slidev', assetBytes: { [IDS.asset]: imageBytes } }
+  const gaC = rt.legacy.migrateLegacyDocument(source, { ...options, targetProfile: 'ppte-2.0-ga-c.1', targetDocumentId: 'legacy-ga-c' })
+  const gaB = rt.legacy.migrateLegacyDocument(source, { ...options, targetProfile: 'ppte-2.0-ga-b.1', targetDocumentId: 'legacy-ga-b' })
+  const gaCSlide = gaC.document.slides[gaC.document.slideOrder[0]]
+  const gaBSlide = gaB.document.slides[gaB.document.slideOrder[0]]
+  const gaCElements = Object.values(gaCSlide?.elements ?? {})
+  const gaBElements = Object.values(gaBSlide?.elements ?? {})
+  const gaCCharts = gaCElements.filter((element) => element.type === 'chart').map((element) => element.chartType)
+  const gaBCharts = gaBElements.filter((element) => element.type === 'chart').map((element) => element.chartType)
+  const gaCWidget = gaCElements.find((element) => element.type === 'component' && element.semanticKey === 'legacy.widget')
+  const staticFallback = gaCWidget?.type === 'component' && rt.widgets.renderWidgetHtml(gaCWidget).includes('data-ppte-widget-fallback="true"')
+  const gaCArtwork = gaCElements.find((element) => element.type === 'image' && element.role === 'artwork')
+  const gaBIssueCodes = gaB.report.issues.map((issue) => issue.code)
+  const observed = {
+    gaC: { ok: gaC.ok, charts: gaCCharts, poster: gaCSlide?.visualStrategy, artwork: gaCArtwork?.type, widget: gaCWidget?.type, staticFallback },
+    gaB: { ok: gaB.ok, charts: gaBCharts, visualStrategy: gaBSlide?.visualStrategy, widget: gaBElements.some((element) => element.type === 'component'), issueCodes: gaBIssueCodes },
+  }
+  ctx.expectGate(gaC.ok && gaCCharts.includes('area') && gaCCharts.includes('donut') && gaCSlide?.visualStrategy === 'poster' && gaCArtwork?.type === 'image' && staticFallback && gaB.ok && !gaBCharts.includes('area') && !gaBCharts.includes('donut') && gaBSlide?.visualStrategy === 'structured' && !observed.gaB.widget && gaBIssueCodes.includes('MIGRATION_UNSUPPORTED_ELEMENT') && gaBIssueCodes.includes('MIGRATION_UNSUPPORTED_VISUAL_STRATEGY'), 'Legacy migration did not honor the GA-C/GA-B Area, Donut, Poster, and Widget fallback boundaries.', observed)
+  return observed
 })
 
 function summarizeCase(spec, status, extra = {}) {
