@@ -23,9 +23,15 @@ export function computeStructuralDiff(before: PpteDocument, after: PpteDocument)
     const afterByKey = new Map(Object.values(afterElements).filter((element) => element.semanticKey).map((element) => [element.semanticKey as string, element]))
     for (const [semanticKey, beforeElement] of beforeByKey) {
       const afterElement = afterByKey.get(semanticKey)
-      if (afterElement && beforeElement.id !== afterElement.id && afterElement.provenance?.replacesElementId === beforeElement.id) {
+      if (afterElement && beforeElement.id !== afterElement.id && (afterElement.provenance?.replacesElementId === beforeElement.id || afterElement.provenance?.sourceSemanticKey === semanticKey)) {
         replacedElements.push({ slideId, beforeElementId: beforeElement.id, afterElementId: afterElement.id, semanticKey })
       }
+    }
+    for (const afterElement of Object.values(afterElements)) {
+      const beforeElementId = afterElement.provenance?.replacesElementId
+      const beforeElement = beforeElementId ? beforeElements[beforeElementId] : undefined
+      if (!beforeElement || beforeElement.id === afterElement.id || replacedElements.some((item) => item.slideId === slideId && item.beforeElementId === beforeElement.id && item.afterElementId === afterElement.id)) continue
+      replacedElements.push({ slideId, beforeElementId: beforeElement.id, afterElementId: afterElement.id, ...(afterElement.semanticKey ?? beforeElement.semanticKey ? { semanticKey: afterElement.semanticKey ?? beforeElement.semanticKey } : {}) })
     }
   }
 
@@ -86,11 +92,18 @@ function countAssetReplacements(before: PpteDocument, after: PpteDocument): numb
     const afterElements = after.slides[slideId]?.elements ?? {}
     for (const elementId of Object.keys(beforeElements)) {
       const oldElement = beforeElements[elementId]
-      const newElement = afterElements[elementId]
-      if (oldElement?.type === 'image' && newElement?.type === 'image' && oldElement.assetId !== newElement.assetId) count += 1
+      if (oldElement?.type !== 'image') continue
+      const newElement = matchingImageReplacement(oldElement, afterElements)
+      if (newElement?.type === 'image' && oldElement.assetId !== newElement.assetId) count += 1
     }
   }
   return count
+}
+
+function matchingImageReplacement(oldElement: Extract<Element, { type: 'image' }>, afterElements: Record<string, Element>): Extract<Element, { type: 'image' }> | undefined {
+  const sameId = afterElements[oldElement.id]
+  if (sameId?.type === 'image') return sameId
+  return Object.values(afterElements).find((candidate): candidate is Extract<Element, { type: 'image' }> => candidate.type === 'image' && (candidate.provenance?.replacesElementId === oldElement.id || candidate.semanticKey === oldElement.semanticKey && candidate.provenance?.sourceSemanticKey === oldElement.semanticKey))
 }
 function changedMapKeys(before: Record<string, unknown>, after: Record<string, unknown>): number {
   return [...new Set([...Object.keys(before), ...Object.keys(after)])].filter((key) => hashPresent(before[key]) !== hashPresent(after[key])).length

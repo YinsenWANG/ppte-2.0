@@ -222,6 +222,7 @@ function validateOperationShape(operation: Record<string, unknown>, index: numbe
       const element = requireRecord('element')
       if (element) { requireStringAt(element, 'id', `${path}/element`, issues); requireStringAt(element, 'type', `${path}/element`, issues) }
       requireInteger('index')
+      if (operation.readingOrderIndex !== undefined) requireInteger('readingOrderIndex')
       break
     }
     case 'element.duplicate': requireString('sourceElementId'); requireString('newElementId'); if (operation.offset !== undefined) requirePoint('offset'); if (operation.index !== undefined) requireInteger('index'); break

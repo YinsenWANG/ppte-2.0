@@ -60,6 +60,11 @@ export interface HistoryEntry {
   afterRevision: Revision
 }
 
+export interface PreviewOptions {
+  /** Internal-only policy bypass for the inverse produced by this Session. */
+  allowSystemInversePolicy?: boolean
+}
+
 export interface SessionEvent {
   type: 'previewed' | 'committed' | 'undone' | 'redone' | 'checkpointed'
   revision: Revision
@@ -80,6 +85,7 @@ export class PpteSession {
   private readonly historyBytesLimit: number
   private readonly runtimeProfile: RuntimeProfile
   private readonly runtimeProfileExplicit: boolean
+  private systemInversePreview = false
 
   constructor(document: PpteDocument, options: SessionOptions = {}) {
     this.runtimeProfile = options.runtimeProfile ?? inferRuntimeProfile(document)
@@ -120,7 +126,7 @@ export class PpteSession {
     return deepFreeze(cloneJson(this.redoStack))
   }
 
-  preview(transaction: Transaction): PreviewResult {
+  preview(transaction: Transaction, options: PreviewOptions = {}): PreviewResult {
     const shapeIssues = validateTransactionShape(transaction)
     const issues: ValidationIssue[] = [...shapeIssues]
     if (shapeIssues.some((issue) => issue.severity === 'error')) return { ok: false, baseRevision: this.revision, issues: dedupe(issues) }
@@ -132,14 +138,14 @@ export class PpteSession {
     const runtimeProfile = this.runtimeProfileForTransaction(transaction)
     let applied: ReturnType<typeof applyTransaction>
     try {
-      applied = applyTransaction(this.document, transaction, { runtimeProfile })
+      applied = applyTransaction(this.document, transaction, { runtimeProfile, strictFactSync: true })
     } catch (cause) {
       const operationError = cause instanceof OperationApplyError ? cause : undefined
       issues.push(error(operationError?.code ?? 'OPERATION_APPLY_FAILED', operationError?.message ?? String(cause)))
       return { ok: false, baseRevision: this.revision, issues: dedupe(issues) }
     }
     const diff = computeStructuralDiff(this.document, applied.document)
-    issues.push(...enforceChangeContract(this.document, applied.document, transaction, diff))
+    issues.push(...enforceChangeContract(this.document, applied.document, transaction, diff, { allowSystemInversePolicy: options.allowSystemInversePolicy === true && this.systemInversePreview }))
     issues.push(...validateRuntimeDocument(applied.document, { runtimeProfile }))
     const ok = !issues.some((issue) => issue.severity === 'error')
     const proposedRevision = ok ? canonicalRevision(applied.document) : undefined
@@ -163,7 +169,7 @@ export class PpteSession {
   undo(): CommitResult {
     const entry = this.history[this.history.length - 1]
     if (!entry) return failure('UNDO_EMPTY', 'There is no committed transaction to undo.', this.revision, 'undo')
-    const result = this.performCommit({ ...cloneJson(entry.inverse), baseRevision: this.revision, transactionId: `${entry.transaction.transactionId}:undo:${this.history.length}` }, false, false, 'undone')
+    const result = this.performCommit({ ...cloneJson(entry.inverse), baseRevision: this.revision, transactionId: `${entry.transaction.transactionId}:undo:${this.history.length}` }, false, false, 'undone', true)
     if (result.ok) {
       this.history.pop()
       this.redoStack.push(entry)
@@ -220,13 +226,20 @@ export class PpteSession {
     return () => this.listeners.delete(listener)
   }
 
-  private performCommit(transaction: Transaction, recordHistory: boolean, clearRedo: boolean, eventType: SessionEvent['type']): CommitResult {
+  private performCommit(transaction: Transaction, recordHistory: boolean, clearRedo: boolean, eventType: SessionEvent['type'], allowSystemInversePolicy = false): CommitResult {
     const beforeRevision = this.revision
-    const preview = this.preview(transaction)
+    const priorInverseState = this.systemInversePreview
+    this.systemInversePreview = allowSystemInversePolicy
+    let preview: PreviewResult
+    try {
+      preview = this.preview(transaction, { allowSystemInversePolicy: allowSystemInversePolicy && transaction.actor.type === 'system' })
+    } finally {
+      this.systemInversePreview = priorInverseState
+    }
     if (!preview.ok || !preview.document || !preview.diff) return { ok: false, beforeRevision, transactionId: transaction.transactionId, diff: preview.diff, issues: preview.issues }
     let applied: ReturnType<typeof applyTransaction>
     try {
-      applied = applyTransaction(this.document, transaction, { runtimeProfile: this.runtimeProfileForTransaction(transaction) })
+      applied = applyTransaction(this.document, transaction, { runtimeProfile: this.runtimeProfileForTransaction(transaction), strictFactSync: true })
     } catch (cause) {
       return { ok: false, beforeRevision, transactionId: transaction.transactionId, issues: [error('OPERATION_APPLY_FAILED', cause instanceof Error ? cause.message : String(cause))] }
     }
@@ -273,7 +286,7 @@ export class PpteSession {
       while (this.history.length > this.historyLimit || (this.history.length > 0 && historyBytes(this.history) > this.historyBytesLimit)) this.history.shift()
     }
     if (clearRedo) this.redoStack.length = 0
-    const issues: ValidationIssue[] = []
+    const issues: ValidationIssue[] = preview.issues.filter((issue) => issue.severity !== 'error')
     this.saveState = this.journal ? 'recoverable' : 'modified'
     this.notify({ type: eventType, revision: afterRevision, diff: preview.diff })
     return { ok: true, beforeRevision, afterRevision, transactionId: transaction.transactionId, inverseTransaction: inverse, diff: preview.diff, issues }

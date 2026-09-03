@@ -218,6 +218,8 @@ export interface ElementInsertOperation extends OperationBase<'element.insert'> 
   slideId: SlideId
   element: Element
   index: number
+  /** Optional reading-order insertion point used by semantic replacements. */
+  readingOrderIndex?: number
 }
 export interface ElementDeleteOperation extends OperationBase<'element.delete'> {
   slideId: SlideId

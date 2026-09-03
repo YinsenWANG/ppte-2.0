@@ -8641,6 +8641,10 @@
               "index": {
                 "type": "integer",
                 "minimum": 0
+              },
+              "readingOrderIndex": {
+                "type": "integer",
+                "minimum": 0
               }
             },
             "additionalProperties": false

@@ -100,7 +100,10 @@ export function validateDocument(document: PpteDocument, options: { runtimeSubse
         add('SCHEMA_INVALID', 'Protected anchor must preserve at least one field.', { slideId })
         continue
       }
-      if (anchor.target?.kind === 'element' && !elements[anchor.target.elementId]) add('PROTECTED_ANCHOR_VIOLATION', 'Protected element anchor cannot be resolved.', { slideId, elementId: anchor.target.elementId })
+      if (anchor.target?.kind === 'element') {
+        const targetElementId = anchor.target.elementId
+        if (!elements[targetElementId] && !Object.values(elements).some((element) => element?.provenance?.replacesElementId === targetElementId)) add('PROTECTED_ANCHOR_VIOLATION', 'Protected element anchor cannot be resolved.', { slideId, elementId: targetElementId })
+      }
       if (anchor.target?.kind === 'semantic' && !semanticKeys.has(anchor.target.semanticKey)) add('PROTECTED_ANCHOR_VIOLATION', 'Protected semantic anchor cannot be resolved.', { slideId, semanticKey: anchor.target.semanticKey })
       if (anchor.target?.kind === 'fact' && !document.facts?.[anchor.target.factId]) add('PROTECTED_ANCHOR_VIOLATION', 'Protected fact anchor cannot be resolved.', { slideId, factId: anchor.target.factId })
     }

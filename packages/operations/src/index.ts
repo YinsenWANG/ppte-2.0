@@ -1,6 +1,7 @@
 import { cloneJson } from '../../canonical-json/src/index.js'
 import { syncChartFact, validateChartContract } from '../../charts/src/index.js'
 import { formatFactValue } from '../../facts/src/index.js'
+import { validateTextOverflow } from '../../validation/src/index.js'
 import type {
   ChartElement,
   Element,
@@ -40,6 +41,11 @@ export const GA_C_OPERATION_KINDS = [
 
 /** Backward-compatible name retained for the Week 1–2 operation matrix. */
 export const WEEK1_2_OPERATION_KINDS = STABLE_CORE_OPERATION_KINDS
+
+/** Generic slide.update is intentionally limited to these persisted metadata fields. */
+export const SLIDE_UPDATE_METADATA_KEYS = [
+  'name', 'hidden', 'background', 'notes', 'transition', 'semantic', 'visualStrategy', 'provenance', 'extensions',
+] as const
 import type {
   Operation,
   Transaction,
@@ -66,6 +72,8 @@ export interface AppliedTransaction {
 
 export interface OperationApplyOptions {
   runtimeProfile?: 'ga-a' | 'ga-b' | 'ga-c'
+  /** Core sessions enable this to reject unsafe Fact display fallbacks. */
+  strictFactSync?: boolean
 }
 
 /** Apply one typed operation to a cloned snapshot. The input is never mutated. */
@@ -129,6 +137,7 @@ export function applyOperation(document: PpteDocument, operation: Operation, opt
       const slide = requireSlide(next, operation.slideId)
       const before: Record<string, unknown> = {}
       for (const [key, value] of Object.entries(operation.patch)) {
+        if (!(SLIDE_UPDATE_METADATA_KEYS as readonly string[]).includes(key)) throw error('SLIDE_UPDATE_FIELD_NOT_ALLOWED', `slide.update may only change slide metadata; field ${key} has a dedicated operation or is not mutable.`)
         before[key] = cloneJson((slide as unknown as Record<string, unknown>)[key])
         ;(slide as unknown as Record<string, unknown>)[key] = cloneJson(value)
       }
@@ -164,6 +173,7 @@ export function applyOperation(document: PpteDocument, operation: Operation, opt
       }
       slide.elements[operation.element.id] = cloneJson(operation.element)
       slide.rootOrder.splice(clampIndex(operation.index, slide.rootOrder.length), 0, operation.element.id)
+      if (operation.readingOrderIndex !== undefined && slide.readingOrder) slide.readingOrder.splice(clampIndex(operation.readingOrderIndex, slide.readingOrder.length), 0, operation.element.id)
       return { document: next, inverse: [op(operation, 'element.delete', { slideId: operation.slideId, elementId: operation.element.id })] }
     }
     case 'element.delete': {
@@ -333,7 +343,9 @@ export function applyOperation(document: PpteDocument, operation: Operation, opt
       const currentFontSize = effectiveFontSize(next, element)
       if (currentFontSize !== undefined && operation.resolvedFontSize > currentFontSize + 0.001) throw error('STYLE_OVERRIDE_INVALID', 'text.fitByReducingFont may not increase the effective font size.')
       const before = cloneJson(element.style.overrides ?? {})
-      element.style.overrides = { ...(element.style.overrides ?? {}), fontSize: operation.resolvedFontSize }
+      const upperBound = Math.min(currentFontSize ?? operation.resolvedFontSize, operation.resolvedFontSize)
+      const resolvedFontSize = solveFittingFontSize(next, operation.slideId, element, before, operation.minFontSize, upperBound)
+      element.style.overrides = { ...(element.style.overrides ?? {}), fontSize: resolvedFontSize }
       return { document: next, inverse: restoreOverrides(operation, before) }
     }
     case 'text.resizeBox': {
@@ -548,7 +560,7 @@ export function applyOperation(document: PpteDocument, operation: Operation, opt
       return { document: next, inverse: [op(operation, 'fact.upsert', { fact: cloneJson(before) })] }
     }
     case 'fact.syncReferences':
-      return applyFactSyncReferences(next, operation, runtimeProfile)
+      return applyFactSyncReferences(next, operation, runtimeProfile, options.strictFactSync === true)
     case 'source.upsert': {
       const before = cloneJson(next.sources?.[operation.source.id])
       next.sources ??= {}
@@ -689,6 +701,27 @@ function effectiveFontSize(document: PpteDocument, element: TextElement): number
   return undefined
 }
 
+function solveFittingFontSize(document: PpteDocument, slideId: string, element: TextElement, beforeOverrides: Record<string, unknown>, minFontSize: number, upperBound: number): number {
+  if (!Number.isFinite(minFontSize) || minFontSize <= 0 || !Number.isFinite(upperBound) || upperBound < minFontSize) throw error('TEXT_FIT_UNRESOLVED', `No valid font-size interval exists for ${element.id}.`)
+  const candidateFits = (fontSize: number): boolean => {
+    element.style.overrides = { ...beforeOverrides, fontSize }
+    return validateTextOverflow(document, slideId, element).length === 0
+  }
+  if (candidateFits(upperBound)) return upperBound
+  if (!candidateFits(minFontSize)) throw error('TEXT_FIT_UNRESOLVED', `Text ${element.id} still overflows at the minimum font size ${minFontSize}.`)
+
+  let low = minFontSize
+  let high = upperBound
+  for (let index = 0; index < 32; index += 1) {
+    const middle = (low + high) / 2
+    if (candidateFits(middle)) low = middle
+    else high = middle
+  }
+  // Round down so serialization never turns a fitting value into a slightly
+  // overflowing one at a measurement boundary.
+  return Math.max(minFontSize, Math.floor(low * 1000) / 1000)
+}
+
 function assertTypedStyleOverrides(type: 'text' | 'image' | 'shape' | 'chart', patch: Record<string, unknown>) {
   const fields = type === 'text'
     ? new Set(['fontFamily', 'fontSize', 'fontWeight', 'color', 'lineHeight', 'letterSpacing', 'verticalAlign', 'direction'])
@@ -826,7 +859,7 @@ function assertRichText(content: unknown): asserts content is TextElement['conte
   }
 }
 
-function applyFactSyncReferences(document: PpteDocument, operation: Extract<import('../../schema/src/index.js').Operation, { kind: 'fact.syncReferences' }>, runtimeProfile: 'ga-a' | 'ga-b' | 'ga-c'): AppliedOperation {
+function applyFactSyncReferences(document: PpteDocument, operation: Extract<import('../../schema/src/index.js').Operation, { kind: 'fact.syncReferences' }>, runtimeProfile: 'ga-a' | 'ga-b' | 'ga-c', strict = false): AppliedOperation {
   const fact = document.facts?.[operation.factId]
   if (!fact) throw error('FACT_REFERENCE_MISSING', `Fact does not exist: ${operation.factId}.`)
   assertUniqueElementIds(operation.targetElementIds)
@@ -851,11 +884,20 @@ function applyFactSyncReferences(document: PpteDocument, operation: Extract<impo
     const oldDisplay = formatFactValue(previousFact)
     const nextContent = cloneJson(found.element.content)
     const runs = nextContent.paragraphs.flatMap((paragraph) => paragraph.runs)
-    if (runs.length === 0) nextContent.paragraphs = [{ id: `${found.element.id}-fact`, runs: [{ id: `${found.element.id}-fact-run`, text: display }] }]
-    else if (oldDisplay && runs.some((run) => run.text.includes(oldDisplay))) {
+    const occurrences = oldDisplay ? runs.reduce((count, run) => count + countOccurrences(run.text, oldDisplay), 0) : 0
+    if (strict && operation.previousValue === undefined) throw error('FACT_SYNC_CONFLICT', `Fact ${operation.factId} synchronization requires previousValue for Text ${found.element.id}.`)
+    if (strict && occurrences !== 1) throw error('FACT_SYNC_CONFLICT', `Fact ${operation.factId} does not have one uniquely matching prior display in Text ${found.element.id}.`)
+    if (runs.length === 0) {
+      if (strict) throw error('FACT_SYNC_CONFLICT', `Text ${found.element.id} has no display range for Fact ${operation.factId}.`)
+      nextContent.paragraphs = [{ id: `${found.element.id}-fact`, runs: [{ id: `${found.element.id}-fact-run`, text: display }] }]
+    } else if (occurrences === 1) {
       let replaced = false
       for (const run of runs) if (!replaced && run.text.includes(oldDisplay)) { run.text = run.text.replace(oldDisplay, display); replaced = true }
+    } else if (strict) {
+      throw error('FACT_SYNC_CONFLICT', `Fact ${operation.factId} has no safe prior display match in Text ${found.element.id}.`)
     } else {
+      // Keep the legacy low-level applyOperation behavior for callers that use
+      // it as a primitive. Core Sessions always enable strict synchronization.
       runs[0]!.text = display
       for (const run of runs.slice(1)) run.text = ''
     }
@@ -863,6 +905,18 @@ function applyFactSyncReferences(document: PpteDocument, operation: Extract<impo
     inverse.unshift(op(operation, 'text.replaceContent', { slideId: found.slideId, elementId: found.element.id, content: before }))
   }
   return { document, inverse }
+}
+
+function countOccurrences(text: string, needle: string): number {
+  if (!needle) return 0
+  let count = 0
+  let offset = 0
+  while (true) {
+    const index = text.indexOf(needle, offset)
+    if (index < 0) return count
+    count += 1
+    offset = index + needle.length
+  }
 }
 
 function findElement(document: PpteDocument, elementId: string): { slideId: string; element: Element } | undefined {
