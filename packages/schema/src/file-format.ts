@@ -1,4 +1,4 @@
-import type { AssetId, DocumentId, FontId, JsonValue, Revision, TransactionId } from './document.js'
+import type { AssetId, DocumentId, FontId, JsonValue, PpteDocument, Revision, RuntimeProfile, TransactionId } from './document.js'
 import type { Actor, Operation, Transaction } from './operations.js'
 
 export type PortableProfile = 'viewer' | 'quick-fix' | 'light-edit'
@@ -31,6 +31,87 @@ export interface HistoryDescriptor {
   recentTransactionCount?: number
   deepHistoryExternal?: boolean
 }
+
+/**
+ * Host-owned restore metadata. It is intentionally not part of PpteDocument,
+ * so document.json remains the only persisted content source. The symbol is
+ * only a same-process transport from a validated open boundary to Session.
+ */
+export const PPTE_SESSION_RESTORE_CONTEXT = Symbol.for('ppte.session.restore-context')
+export const PPTE_HISTORY_METADATA_KEY = '__ppteHistory'
+
+export interface SessionHistoryEntrySnapshot {
+  transaction: Transaction
+  inverse: Transaction
+  beforeRevision: Revision
+  afterRevision: Revision
+}
+
+export interface SessionRestoreContext {
+  historyEntries: SessionHistoryEntrySnapshot[]
+  runtimeProfile?: RuntimeProfile
+  compatibilityProfile?: string
+  source: 'checkpoint' | 'journal' | 'recovery'
+  /** Host-only cleanup invoked after the recovered snapshot is checkpointed. */
+  clearRecovery?: () => void
+}
+
+export interface PersistedHistoryMetadata {
+  version: 1
+  beforeRevision: Revision
+  afterRevision: Revision
+  inverse: Transaction
+  runtimeProfile?: RuntimeProfile
+}
+
+/** Attach Host-only metadata without changing canonical document bytes. */
+export function attachSessionRestoreContext(document: PpteDocument, context: SessionRestoreContext): PpteDocument {
+  Object.defineProperty(document, PPTE_SESSION_RESTORE_CONTEXT, {
+    configurable: true,
+    enumerable: false,
+    writable: true,
+    value: context,
+  })
+  return document
+}
+
+export function getSessionRestoreContext(document: PpteDocument): SessionRestoreContext | undefined {
+  return (document as PpteDocument & { [PPTE_SESSION_RESTORE_CONTEXT]?: SessionRestoreContext })[PPTE_SESSION_RESTORE_CONTEXT]
+}
+
+/**
+ * Recent forward transactions carry their generated inverse in history
+ * metadata. This makes checkpoint Undo exact without guessing a prior
+ * snapshot, while keeping that metadata outside document.json.
+ */
+export function withPersistedHistoryMetadata(
+  transaction: Transaction,
+  metadata: Omit<PersistedHistoryMetadata, 'version'> & { version?: 1 },
+): Transaction {
+  const history: PersistedHistoryMetadata = {
+    version: 1,
+    beforeRevision: metadata.beforeRevision,
+    afterRevision: metadata.afterRevision,
+    inverse: metadata.inverse,
+    ...(metadata.runtimeProfile === undefined ? {} : { runtimeProfile: metadata.runtimeProfile }),
+  }
+  return {
+    ...transaction,
+    metadata: {
+      ...(transaction.metadata ?? {}),
+      [PPTE_HISTORY_METADATA_KEY]: history as unknown as JsonValue,
+    },
+  }
+}
+
+export function readPersistedHistoryMetadata(transaction: Transaction): PersistedHistoryMetadata | undefined {
+  const value = transaction?.metadata?.[PPTE_HISTORY_METADATA_KEY]
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return undefined
+  const candidate = value as Record<string, unknown>
+  if (candidate.version !== 1 || typeof candidate.beforeRevision !== 'string' || typeof candidate.afterRevision !== 'string' || !candidate.inverse || typeof candidate.inverse !== 'object' || Array.isArray(candidate.inverse)) return undefined
+  return candidate as unknown as PersistedHistoryMetadata
+}
+
 export interface RecoveryJournalHeader {
   journalVersion: '1'
   documentId: DocumentId
@@ -38,6 +119,8 @@ export interface RecoveryJournalHeader {
   sessionId: string
   createdAt: string
   lastTransactionId?: TransactionId
+  /** The persisted runtime contract used to interpret journal operations. */
+  compatibilityProfile?: string
 }
 export interface RecoveryJournalRecord {
   sequence: number
