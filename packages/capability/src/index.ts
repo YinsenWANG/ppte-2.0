@@ -17,6 +17,8 @@ export interface CapabilityItem {
   reason?: string
   recovery?: string
   sourcePath?: string
+  /** True when a semantic Chart is emitted as an editable Office chart part. */
+  nativeChart?: boolean
 }
 
 export interface CapabilityReport {
@@ -47,7 +49,7 @@ export function buildCapabilityReport(document: PpteDocument, target: Capability
     }
   }
   const summary = Object.fromEntries(STATUS_ORDER.map((status) => [status, items.filter((item) => item.status === status).length])) as Record<CapabilityStatus, number>
-  const degraded = items.some((item) => ['blocked', 'unsupported', 'font-replacement', 'missing-source', 'layout-risk', 'rasterized'].includes(item.status))
+  const degraded = items.some((item) => ['blocked', 'unsupported', 'font-replacement', 'missing-source', 'layout-risk', 'rasterized', 'static'].includes(item.status))
   return {
     reportVersion: '1',
     target,
@@ -68,7 +70,7 @@ function capabilityForElement(document: PpteDocument, slideId: string, element: 
   let status = baseStatus(element, target)
   let reason: string | undefined
   let recovery: string | undefined
-  const item: CapabilityItem = { id: `${slideId}:${element.id}`, slideId, elementId: element.id, type: element.type, status }
+  const item: CapabilityItem = { id: `${slideId}:${element.id}`, slideId, elementId: element.id, type: element.type, status, ...(target === 'pptx-semantic' && element.type === 'chart' ? { nativeChart: true } : {}) }
   if (element.type === 'text') {
     const glyph = inspectGlyphCoverage(document, element, undefined, { strict: target === 'portable-quick-fix' || target === 'portable-light-edit' })
     const glyphIssues = checkGlyphCoverage(document, element, undefined, { strict: target === 'portable-quick-fix' || target === 'portable-light-edit' })
@@ -115,6 +117,14 @@ function capabilityForElement(document: PpteDocument, slideId: string, element: 
     reason = `Widget fallback asset ${element.fallback.assetId} is not present in the document asset table.`
     recovery = 'Embed the fallback asset or use a host with the Widget implementation.'
   }
+  if (element.type === 'component' && status === 'static' && !reason) {
+    reason = element.componentType === 'core/video'
+      ? 'Video playback is unavailable in the offline Light Edit surface; the controlled poster fallback is retained.'
+      : 'The controlled Widget is represented by its declared static fallback in this target.'
+    recovery = element.componentType === 'core/video'
+      ? 'Open the source document in a GA-C Host with the Video Widget registry to restore playback.'
+      : 'Open the source document in a Host with the Widget definition to restore interactive behavior.'
+  }
   if (element.semanticRefs?.sourceIds?.some((sourceId) => !document.sources?.[sourceId])) {
     status = 'missing-source'
     reason = 'A referenced source is not present in the document.'
@@ -127,7 +137,7 @@ function capabilityForElement(document: PpteDocument, slideId: string, element: 
 function baseStatus(element: Element, target: CapabilityTarget): CapabilityStatus {
   if (element.type === 'component') return target === 'pptx-semantic' || target === 'portable-light-edit' ? 'static' : 'unsupported'
   if (target === 'pptx-image') return element.type === 'chart' || element.type === 'text' || element.type === 'shape' || element.type === 'image' ? 'rasterized' : 'unsupported'
-  if (target === 'pptx-semantic' && element.type === 'chart') return 'static'
+  if (target === 'pptx-semantic' && element.type === 'chart') return 'native'
   if (element.type === 'chart') return target === 'portable-quick-fix' ? 'static' : target === 'portable-light-edit' ? 'property' : target === 'png' || target === 'pdf' ? 'rasterized' : 'native'
   if (target === 'portable-viewer' || target === 'presenter') return 'native'
   if (target === 'portable-quick-fix' || target === 'portable-light-edit') return element.type === 'text' || element.type === 'image' ? 'property' : 'static'

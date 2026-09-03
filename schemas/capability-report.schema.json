@@ -11,7 +11,7 @@
     "sourceRevision": { "type": "string", "minLength": 1 },
     "ok": { "type": "boolean" },
     "degraded": { "type": "boolean" },
-    "items": { "type": "array", "items": { "type": "object", "required": ["id", "slideId", "status"], "properties": { "id": { "type": "string" }, "slideId": { "type": "string" }, "elementId": { "type": "string" }, "type": { "type": "string" }, "status": { "enum": ["native", "property", "rasterized", "static", "font-replacement", "layout-risk", "missing-source", "unsupported", "blocked"] }, "reason": { "type": "string" }, "recovery": { "type": "string" }, "sourcePath": { "type": "string" } }, "additionalProperties": false } },
+    "items": { "type": "array", "items": { "type": "object", "required": ["id", "slideId", "status"], "properties": { "id": { "type": "string" }, "slideId": { "type": "string" }, "elementId": { "type": "string" }, "type": { "type": "string" }, "status": { "enum": ["native", "property", "rasterized", "static", "font-replacement", "layout-risk", "missing-source", "unsupported", "blocked"] }, "reason": { "type": "string" }, "recovery": { "type": "string" }, "sourcePath": { "type": "string" }, "nativeChart": { "type": "boolean" } }, "additionalProperties": false } },
     "issues": { "type": "array" },
     "summary": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0 } }
   },

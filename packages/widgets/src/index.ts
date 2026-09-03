@@ -49,7 +49,7 @@ let builtinRegistry: WidgetRegistry | undefined
 
 export function createBuiltinWidgetRegistry(): WidgetRegistry {
   const registry = new WidgetRegistry()
-  registry.register(tableWidget()).register(codeWidget()).register(equationWidget())
+  registry.register(tableWidget()).register(codeWidget()).register(equationWidget()).register(videoWidget())
   return registry
 }
 
@@ -120,6 +120,31 @@ function equationWidget(): WidgetDefinition {
     validateProps: (props) => typeof props.expression === 'string' ? [] : ['core/equation requires a string expression prop.'],
     renderHtml: (props) => `<div data-ppte-widget="equation" role="math">${escapeHtml(typeof props.expression === 'string' ? props.expression : '')}</div>`,
     renderSvg: (props, width, height) => `<text x="${num(width / 2)}" y="${num(height / 2)}" text-anchor="middle" dominant-baseline="middle" font-family="serif" font-size="${num(Math.max(12, Math.min(30, height * 0.28)))}" fill="#1e293b">${escapeXml(typeof props.expression === 'string' ? props.expression : '')}</text>`,
+  }
+}
+
+function videoWidget(): WidgetDefinition {
+  return {
+    componentType: 'core/video',
+    componentVersion: '1.0.0',
+    exportPolicy: 'static-fallback',
+    validateProps: (props) => {
+      const issues: string[] = []
+      if (typeof props.source !== 'string' || !props.source.trim()) issues.push('core/video requires a non-empty local source prop.')
+      else if (/^(?:https?:|data:|javascript:)/i.test(props.source)) issues.push('core/video does not allow network or executable sources.')
+      if (props.posterAssetId !== undefined && (typeof props.posterAssetId !== 'string' || !props.posterAssetId.trim())) issues.push('core/video posterAssetId must be a non-empty string when provided.')
+      if (props.controls !== undefined && typeof props.controls !== 'boolean') issues.push('core/video controls must be boolean.')
+      if (props.muted !== undefined && typeof props.muted !== 'boolean') issues.push('core/video muted must be boolean.')
+      return issues
+    },
+    renderHtml: (props) => {
+      const source = typeof props.source === 'string' ? props.source : ''
+      const posterAssetId = typeof props.posterAssetId === 'string' ? props.posterAssetId : ''
+      const controls = props.controls !== false ? ' controls' : ''
+      const muted = props.muted === true ? ' muted' : ''
+      return `<video data-ppte-widget="video" data-ppte-video-source="${escapeHtml(source)}"${posterAssetId ? ` data-ppte-poster-asset-id="${escapeHtml(posterAssetId)}"` : ''}${controls}${muted} preload="metadata"><span data-ppte-video-fallback="true">Video poster fallback</span></video>`
+    },
+    renderSvg: (_props, width, height) => `<rect x="0" y="0" width="${num(width)}" height="${num(height)}" rx="8" fill="#0f172a"/><path d="M ${num(width * 0.44)} ${num(height * 0.36)} L ${num(width * 0.66)} ${num(height / 2)} L ${num(width * 0.44)} ${num(height * 0.64)} Z" fill="#f8fafc"/><text x="${num(width / 2)}" y="${num(height * 0.86)}" text-anchor="middle" font-family="Arial, sans-serif" font-size="${num(Math.max(10, Math.min(18, height * 0.12)))}" fill="#cbd5e1">Video poster</text>`,
   }
 }
 
