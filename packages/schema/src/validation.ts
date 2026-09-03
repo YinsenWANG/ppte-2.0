@@ -57,6 +57,8 @@ export function validateDocument(document: PpteDocument, options: { runtimeSubse
     }
     if (slide.id !== slideId) add('SCHEMA_INVALID', 'Slide map key must equal slide.id.', { path: `/slides/${escapePointer(slideId)}/id` })
     if (options.runtimeSubset && slide.visualStrategy === 'poster' && (options.runtimeProfile ?? 'ga-b') !== 'ga-c') add('UNSUPPORTED_VISUAL_STRATEGY', `Runtime profile ${options.runtimeProfile ?? 'ga-b'} does not implement Poster slides.`, { slideId })
+    if (slide.notes !== undefined && !validSlideNotes(slide.notes)) add('SCHEMA_INVALID', 'Slide notes metadata is invalid.', { slideId, path: `/slides/${escapePointer(slideId)}/notes` })
+    if (slide.transition !== undefined && !validTransition(slide.transition)) add('SCHEMA_INVALID', 'Slide transition metadata is invalid.', { slideId, path: `/slides/${escapePointer(slideId)}/transition` })
     if (!Array.isArray(slide.rootOrder)) add('SCHEMA_INVALID', 'rootOrder must be an array.', { slideId })
     if (!slide.elements || typeof slide.elements !== 'object' || Array.isArray(slide.elements)) add('SCHEMA_INVALID', 'elements must be an object map.', { slideId })
     if (slide.groups !== undefined && (!slide.groups || typeof slide.groups !== 'object' || Array.isArray(slide.groups))) add('SCHEMA_INVALID', 'groups must be an object map.', { slideId })
@@ -228,6 +230,7 @@ function validateElement(element: Element, add: (code: string, message: string, 
   if (element.rotationDeg !== undefined && !finite(element.rotationDeg)) add('GEOMETRY_INVALID', 'rotationDeg must be finite.', { slideId, elementId })
   if (element.opacity !== undefined && (!finite(element.opacity) || element.opacity < 0 || element.opacity > 1)) add('SCHEMA_INVALID', 'opacity must be between 0 and 1.', { slideId, elementId })
   if (element.appearStep !== undefined && (!Number.isInteger(element.appearStep) || element.appearStep < 0)) add('SCHEMA_INVALID', 'appearStep must be a non-negative integer.', { slideId, elementId })
+  if (element.animation !== undefined && !validAnimation(element.animation)) add('SCHEMA_INVALID', 'Element animation metadata is invalid.', { slideId, elementId })
   if (runtimeSubset && element.type === 'component' && runtimeProfile !== 'ga-c') add('UNSUPPORTED_ELEMENT_TYPE', `Runtime profile ${runtimeProfile} does not implement component elements.`, { slideId, elementId })
   if (element.type === 'text') validateText(element, add, slideId)
   if (element.type === 'image') validateImage(element, add, slideId)
@@ -357,6 +360,25 @@ function validShadow(value: unknown): boolean {
   if (!value || typeof value !== 'object') return false
   const shadow = value as Record<string, unknown>
   return hasOnlyKeys(shadow, ['color', 'offsetX', 'offsetY', 'blur', 'spread', 'opacity']) && validValueOrToken(shadow.color, 'color') && finite(shadow.offsetX) && finite(shadow.offsetY) && finiteNonNegative(shadow.blur) && (shadow.spread === undefined || finite(shadow.spread)) && validOpacity(shadow.opacity)
+}
+function validTransition(value: unknown): boolean {
+  if (!isPlainObject(value) || !['none', 'fade', 'slide', 'push'].includes(String(value.type))) return false
+  if (value.durationMs !== undefined && (!Number.isInteger(value.durationMs) || Number(value.durationMs) < 0)) return false
+  return value.direction === undefined || ['left', 'right', 'up', 'down'].includes(String(value.direction))
+}
+function validSlideNotes(value: unknown): boolean {
+  if (!isPlainObject(value) || !hasOnlyKeys(value, ['speaker', 'private', 'handout'])) return false
+  return ['speaker', 'private', 'handout'].every((key) => value[key] === undefined || typeof value[key] === 'string')
+}
+function validAnimation(value: unknown): boolean {
+  if (!isPlainObject(value) || !hasOnlyKeys(value, ['enter', 'exit'])) return false
+  return ['enter', 'exit'].every((key) => value[key] === undefined || validAnimationSpec(value[key]))
+}
+function validAnimationSpec(value: unknown): boolean {
+  if (!isPlainObject(value) || !hasOnlyKeys(value, ['type', 'durationMs', 'delayMs', 'easing']) || !['fade', 'slide-up', 'slide-left', 'scale'].includes(String(value.type))) return false
+  if (value.durationMs !== undefined && (!Number.isInteger(value.durationMs) || Number(value.durationMs) < 0)) return false
+  if (value.delayMs !== undefined && (!Number.isInteger(value.delayMs) || Number(value.delayMs) < 0)) return false
+  return value.easing === undefined || ['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out'].includes(String(value.easing))
 }
 function validValueOrToken(value: unknown, valueType: 'color' | 'string' = 'color'): boolean {
   if (!value || typeof value !== 'object') return false

@@ -130,6 +130,15 @@ export function analyzeOperation(document: PpteDocument, operation: Operation): 
       paths.add('/slideOrder')
       inserts += Object.keys(operation.slide.elements).length
       break
+    case 'slide.duplicate': {
+      permissions.add('structure')
+      slideIds.add(operation.sourceSlideId)
+      slideIds.add(operation.newSlideId)
+      paths.add('/slideOrder')
+      paths.add(`/slides/${pointer(operation.newSlideId)}`)
+      inserts += Object.keys(document.slides[operation.sourceSlideId]?.elements ?? {}).length
+      break
+    }
     case 'slide.delete':
       permissions.add('structure')
       slideIds.add(operation.slideId)
@@ -147,6 +156,16 @@ export function analyzeOperation(document: PpteDocument, operation: Operation): 
         paths.add(`/slides/${pointer(operation.slideId)}/${pointer(key)}`)
         permissions.add(key === 'notes' ? 'notes' : 'structure')
       }
+      break
+    case 'slide.setNotes':
+      permissions.add('notes')
+      slideIds.add(operation.slideId)
+      paths.add(`/slides/${pointer(operation.slideId)}/notes`)
+      break
+    case 'slide.setTransition':
+      permissions.add('animation')
+      slideIds.add(operation.slideId)
+      paths.add(`/slides/${pointer(operation.slideId)}/transition`)
       break
     case 'slide.setReadingOrder':
       permissions.add('structure')
@@ -197,6 +216,14 @@ export function analyzeOperation(document: PpteDocument, operation: Operation): 
     case 'element.setLocked':
       permissions.add('structure')
       addElement(operation.slideId, operation.elementId, `/slides/${pointer(operation.slideId)}/elements/${pointer(operation.elementId)}/locked`)
+      break
+    case 'element.setAppearStep':
+      permissions.add('animation')
+      addElement(operation.slideId, operation.elementId, `/slides/${pointer(operation.slideId)}/elements/${pointer(operation.elementId)}/appearStep`)
+      break
+    case 'element.setAnimation':
+      permissions.add('animation')
+      addElement(operation.slideId, operation.elementId, `/slides/${pointer(operation.slideId)}/elements/${pointer(operation.elementId)}/animation`)
       break
     case 'element.setEditPolicy':
       permissions.add('structure')

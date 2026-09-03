@@ -7,6 +7,7 @@ import type {
   ChartStyle,
   DocumentMetadata,
   EditPolicy,
+  ElementAnimation,
   Element,
   ElementId,
   Fact,
@@ -122,9 +123,12 @@ export type Operation =
   | ThemeSetTokenOperation
   | ThemeUpdatePresetOperation
   | SlideInsertOperation
+  | SlideDuplicateOperation
   | SlideDeleteOperation
   | SlideMoveOperation
   | SlideUpdateOperation
+  | SlideSetNotesOperation
+  | SlideSetTransitionOperation
   | SlideSetReadingOrderOperation
   | SlideSetProtectedAnchorsOperation
   | ElementInsertOperation
@@ -136,6 +140,8 @@ export type Operation =
   | ElementReorderOperation
   | ElementSetVisibilityOperation
   | ElementSetLockedOperation
+  | ElementSetAppearStepOperation
+  | ElementSetAnimationOperation
   | ElementSetEditPolicyOperation
   | ElementSetSemanticKeyOperation
   | ElementSetSemanticRefsOperation
@@ -196,6 +202,13 @@ export interface SlideInsertOperation extends OperationBase<'slide.insert'> {
   slide: Slide
   index: number
 }
+/** Duplicate a complete slide through the canonical deep-rekey path. */
+export interface SlideDuplicateOperation extends OperationBase<'slide.duplicate'> {
+  sourceSlideId: SlideId
+  newSlideId: SlideId
+  index?: number
+  offset?: Point
+}
 export interface SlideDeleteOperation extends OperationBase<'slide.delete'> {
   slideId: SlideId
 }
@@ -206,6 +219,16 @@ export interface SlideMoveOperation extends OperationBase<'slide.move'> {
 export interface SlideUpdateOperation extends OperationBase<'slide.update'> {
   slideId: SlideId
   patch: Record<string, JsonValue>
+}
+export interface SlideSetNotesOperation extends OperationBase<'slide.setNotes'> {
+  slideId: SlideId
+  notes?: Slide['notes']
+  unset?: boolean
+}
+export interface SlideSetTransitionOperation extends OperationBase<'slide.setTransition'> {
+  slideId: SlideId
+  transition?: Slide['transition']
+  unset?: boolean
 }
 export interface SlideSetReadingOrderOperation extends OperationBase<'slide.setReadingOrder'> {
   slideId: SlideId
@@ -268,6 +291,18 @@ export interface ElementSetLockedOperation extends OperationBase<'element.setLoc
   slideId: SlideId
   elementId: ElementId
   locked?: boolean
+  unset?: boolean
+}
+export interface ElementSetAppearStepOperation extends OperationBase<'element.setAppearStep'> {
+  slideId: SlideId
+  elementId: ElementId
+  appearStep?: number
+  unset?: boolean
+}
+export interface ElementSetAnimationOperation extends OperationBase<'element.setAnimation'> {
+  slideId: SlideId
+  elementId: ElementId
+  animation?: ElementAnimation
   unset?: boolean
 }
 export interface ElementSetEditPolicyOperation extends OperationBase<'element.setEditPolicy'> {

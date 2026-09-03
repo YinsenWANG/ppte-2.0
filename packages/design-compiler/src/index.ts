@@ -2,6 +2,7 @@ import { canonicalHash, canonicalJsonString, cloneJson } from '../../canonical-j
 import { validateCompiledSlideDraft, validatePresentationIR, validateSlideIR } from '../../schema/src/index.js'
 import { RecipeRegistry, matchBlocksToSlots, resolveRecipeZones, selectRecipe } from '../../layout-recipes/src/index.js'
 import { withErrorSemantics } from '../../schema/src/errors.js'
+import { measureTextLayout, type ResolvedTextStyle } from '../../validation/src/index.js'
 import type {
   Asset,
   CanvasSpec,
@@ -182,7 +183,7 @@ export class DesignCompiler {
       validationIssues: issues,
       provenance: { ...provenanceBase, recipeId: recipe.id, recipeVersion: recipe.version },
     }
-    draft.validationIssues.push(...validateCompiledSlideDraft(draft))
+    draft.validationIssues.push(...validateCompiledSlideDraft(draft), ...qualityIssuesForDraft(recipe, drafts, context))
     draft.validationIssues = uniqueIssues(draft.validationIssues)
     return draft
   }
@@ -539,11 +540,56 @@ function toCanvasFrame(frame: Frame, canvas: Pick<CanvasSpec, 'width' | 'height'
 function artworkFrame(placement: NonNullable<SlideIR['artworkIntent']>['placement'], canvas: Pick<CanvasSpec, 'width' | 'height'>): Frame { if (placement === 'side') return { x: canvas.width * 0.56, y: canvas.height * 0.04, width: canvas.width * 0.40, height: canvas.height * 0.92 }; if (placement === 'center') return { x: canvas.width * 0.20, y: canvas.height * 0.16, width: canvas.width * 0.60, height: canvas.height * 0.68 }; return { x: 0, y: 0, width: canvas.width, height: canvas.height } }
 function roleForBlock(kind: SlideIR['blocks'][number]['kind']): Element['role'] { if (kind === 'heading') return 'title'; if (kind === 'source') return 'source'; if (kind === 'metric') return 'metric'; if (kind === 'image') return 'image'; if (kind === 'chart') return 'chart'; if (kind === 'cta') return 'cta'; return 'body' }
 function defaultStyleForRole(role: Element['role'], context: CompileContext): string {
-  const preferred = role === 'title' ? 'text.title.primary' : role === 'metric' ? 'text.metric.value' : role === 'source' ? 'text.source' : role === 'cta' ? 'text.cta' : role === 'image' || role === 'artwork' ? 'image.hero' : role === 'chart' ? 'chart.default' : role === 'decorative' || role === 'background' ? 'shape.card' : 'text.body'
+  const preferred = role === 'title' ? ['text.title.primary', 'text.title', 'text.body'] : role === 'metric' ? ['text.metric.value', 'text.metric', 'text.body'] : role === 'source' ? ['text.source', 'text.body'] : role === 'cta' ? ['text.cta', 'text.body'] : role === 'image' || role === 'artwork' ? ['image.hero'] : role === 'chart' ? ['chart.default'] : role === 'decorative' || role === 'background' ? ['shape.card'] : ['text.body']
   const category = role === 'image' || role === 'artwork' ? 'image' : role === 'chart' ? 'chart' : role === 'decorative' || role === 'background' ? 'shape' : 'text'
   const bucket = context.theme?.presets?.[category]
-  return bucket && Object.keys(bucket).length > 0 ? (bucket[preferred] ? preferred : Object.keys(bucket).sort()[0]) : preferred
+  if (!bucket || Object.keys(bucket).length === 0) return preferred[0]
+  return preferred.find((candidate) => Object.prototype.hasOwnProperty.call(bucket, candidate)) ?? Object.keys(bucket).sort()[0]
 }
+
+function qualityIssuesForDraft(recipe: RecipeSpec, drafts: ElementDraft[], context: CompileContext): ValidationIssue[] {
+  const rule = recipe.qualityRules?.find((candidate) => candidate.kind === 'max-overflow')
+  if (!rule || typeof rule.value !== 'number') return []
+  const overflows = drafts.flatMap((draft) => {
+    if (draft.kind !== 'text') return []
+    const data = recordData(draft.data)
+    const content = data.content
+    const text = isRecord(content) && Array.isArray(content.paragraphs)
+      ? content.paragraphs.map((paragraph) => isRecord(paragraph) && Array.isArray(paragraph.runs) ? paragraph.runs.map((run) => isRecord(run) && typeof run.text === 'string' ? run.text : '').join('') : '').join('\n')
+      : ''
+    const measurement = measureTextLayout(text, draft.frame, compilerTextStyle(data, context))
+    return measurement.overflowX || measurement.overflowY ? [{ draft, measurement }] : []
+  })
+  if (overflows.length <= rule.value) return []
+  return overflows.map(({ draft, measurement }) => compilerIssue('QUALITY_OVERFLOW', `Text draft ${draft.draftId} exceeds its materialized frame under the declared font metrics (${measurement.lines} line(s), ${roundQualityNumber(measurement.contentHeight)} height). The selected Recipe allows ${rule.value} overflow(s).`, `/elementDrafts/${safeId(draft.draftId)}`))
+}
+
+function compilerTextStyle(data: Record<string, any>, context: CompileContext): ResolvedTextStyle {
+  const ref = styleRef(data, 'text.body')
+  const preset = context.theme?.presets.text?.[ref] ?? context.theme?.presets.text?.['text.body']
+  const merged = { ...(preset ?? {}), ...(isRecord(data.style) && isRecord(data.style.overrides) ? data.style.overrides : {}) } as Record<string, unknown>
+  const tokens = context.theme?.tokens
+  const fontFamily = resolveCompilerValue(merged.fontFamily, tokens?.fontFamilies, 'Inter')
+  const color = resolveCompilerValue(merged.color, tokens?.colors, '#111827')
+  return {
+    fontFamily,
+    color,
+    fontSize: typeof merged.fontSize === 'number' && Number.isFinite(merged.fontSize) && merged.fontSize > 0 ? merged.fontSize : 28,
+    fontWeight: typeof merged.fontWeight === 'number' ? merged.fontWeight : undefined,
+    lineHeight: typeof merged.lineHeight === 'number' && Number.isFinite(merged.lineHeight) && merged.lineHeight > 0 ? merged.lineHeight : undefined,
+    letterSpacing: typeof merged.letterSpacing === 'number' && Number.isFinite(merged.letterSpacing) ? merged.letterSpacing : undefined,
+    verticalAlign: merged.verticalAlign === 'middle' || merged.verticalAlign === 'bottom' ? merged.verticalAlign : 'top',
+    direction: merged.direction === 'ltr' || merged.direction === 'rtl' ? merged.direction : 'auto',
+  }
+}
+
+function resolveCompilerValue(value: unknown, bucket: Record<string, string> | undefined, fallback: string): string {
+  if (isRecord(value) && value.kind === 'value' && typeof value.value === 'string') return value.value
+  if (isRecord(value) && value.kind === 'token' && typeof value.token === 'string') return bucket?.[value.token] ?? fallback
+  return typeof value === 'string' ? value : fallback
+}
+
+function roundQualityNumber(value: number): string { return String(Math.round(value * 10) / 10) }
 function blockText(block: SlideIR['blocks'][number]): string {
   const content = block.content
   if (typeof content === 'string' || typeof content === 'number' || typeof content === 'boolean') return String(content)

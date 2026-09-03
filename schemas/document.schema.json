@@ -21,6 +21,25 @@
         "height": { "type": "number", "exclusiveMinimum": 0 }
       },
       "additionalProperties": false
+    },
+    "animationSpec": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "enum": ["fade", "slide-up", "slide-left", "scale"] },
+        "durationMs": { "type": "integer", "minimum": 0 },
+        "delayMs": { "type": "integer", "minimum": 0 },
+        "easing": { "enum": ["linear", "ease", "ease-in", "ease-out", "ease-in-out"] }
+      },
+      "additionalProperties": false
+    },
+    "elementAnimation": {
+      "type": "object",
+      "properties": {
+        "enter": { "$ref": "#/$defs/animationSpec" },
+        "exit": { "$ref": "#/$defs/animationSpec" }
+      },
+      "additionalProperties": false
     }
   },
   "title": "PPTe 2.0 Semantic Document",
@@ -1403,6 +1422,9 @@
                       "type": "integer",
                       "minimum": 0
                     },
+                    "animation": {
+                      "$ref": "#/$defs/elementAnimation"
+                    },
                     "editPolicy": {
                       "type": "object",
                       "properties": {
@@ -1966,6 +1988,9 @@
                       "type": "integer",
                       "minimum": 0
                     },
+                    "animation": {
+                      "$ref": "#/$defs/elementAnimation"
+                    },
                     "editPolicy": {
                       "type": "object",
                       "properties": {
@@ -2466,6 +2491,9 @@
                     "appearStep": {
                       "type": "integer",
                       "minimum": 0
+                    },
+                    "animation": {
+                      "$ref": "#/$defs/elementAnimation"
                     },
                     "editPolicy": {
                       "type": "object",
@@ -3092,6 +3120,9 @@
                       "type": "integer",
                       "minimum": 0
                     },
+                    "animation": {
+                      "$ref": "#/$defs/elementAnimation"
+                    },
                     "editPolicy": {
                       "type": "object",
                       "properties": {
@@ -3498,6 +3529,9 @@
                     "appearStep": {
                       "type": "integer",
                       "minimum": 0
+                    },
+                    "animation": {
+                      "$ref": "#/$defs/elementAnimation"
                     },
                     "editPolicy": {
                       "type": "object",

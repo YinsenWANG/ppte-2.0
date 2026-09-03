@@ -29,6 +29,8 @@ export const STABLE_CORE_OPERATION_KINDS = [
 /** GA-B adds deterministic Bar/Line/Pie mutations without changing the historical Week 1–2 matrix. */
 export const GA_B_OPERATION_KINDS = [
   ...STABLE_CORE_OPERATION_KINDS,
+  'slide.duplicate', 'slide.setNotes', 'slide.setTransition',
+  'element.setAppearStep', 'element.setAnimation',
   'element.setSemanticRefs',
   'text.updateStyle',
   'chart.replaceData', 'chart.updateEncoding', 'chart.updateOptions', 'chart.updateStyle',
@@ -42,6 +44,40 @@ export const GA_C_OPERATION_KINDS = [
 
 /** Backward-compatible name retained for the Week 1–2 operation matrix. */
 export const WEEK1_2_OPERATION_KINDS = STABLE_CORE_OPERATION_KINDS
+
+/** R2 operations are kept separate so the historical Week 1–2 matrix remains stable. */
+export const R2_OPERATION_KINDS = [
+  ...STABLE_CORE_OPERATION_KINDS,
+  'slide.duplicate', 'slide.setNotes', 'slide.setTransition',
+  'element.setAppearStep', 'element.setAnimation',
+] as const
+
+export interface DuplicateSlideOperationOptions {
+  opId?: string
+  index?: number
+  offset?: { x: number; y: number }
+  reason?: string
+}
+
+/** Build the one canonical operation used by Hosts when duplicating a slide. */
+export function buildDuplicateSlideOperation(document: PpteDocument, sourceSlideId: string, newSlideId: string, options: DuplicateSlideOperationOptions = {}): Extract<Operation, { kind: 'slide.duplicate' }> {
+  if (!document.slides[sourceSlideId]) throw new Error(`SLIDE_MISSING: ${sourceSlideId}`)
+  if (!newSlideId) throw new Error('SLIDE_ID_INVALID: newSlideId is required.')
+  if (document.slides[newSlideId]) throw new Error(`ID_CONFLICT: Slide already exists: ${newSlideId}.`)
+  return {
+    opId: options.opId ?? `slide.duplicate:${sourceSlideId}:${newSlideId}`,
+    kind: 'slide.duplicate',
+    sourceSlideId,
+    newSlideId,
+    ...(options.index === undefined ? {} : { index: options.index }),
+    ...(options.offset === undefined ? {} : { offset: { ...options.offset } }),
+    ...(options.reason === undefined ? {} : { reason: options.reason }),
+  }
+}
+
+export const createDuplicateSlideOperation = buildDuplicateSlideOperation
+export const duplicateSlideOperation = buildDuplicateSlideOperation
+export const duplicateSlide = buildDuplicateSlideOperation
 
 /** Generic slide.update is intentionally limited to these persisted metadata fields. */
 export const SLIDE_UPDATE_METADATA_KEYS = [
@@ -119,6 +155,17 @@ export function applyOperation(document: PpteDocument, operation: Operation, opt
       next.slideOrder.splice(clampIndex(operation.index, next.slideOrder.length), 0, operation.slide.id)
       return { document: next, inverse: [op(operation, 'slide.delete', { slideId: operation.slide.id })] }
     }
+    case 'slide.duplicate': {
+      const source = requireSlide(next, operation.sourceSlideId)
+      if (next.slides[operation.newSlideId]) throw error('ID_CONFLICT', `Slide already exists: ${operation.newSlideId}.`)
+      const offset = operation.offset ?? { x: 0, y: 0 }
+      assertFinite(offset.x, offset.y)
+      const duplicate = rekeySlide(source, operation.newSlideId, offset)
+      next.slides[duplicate.id] = duplicate
+      const index = clampIndex(operation.index ?? next.slideOrder.length, next.slideOrder.length)
+      next.slideOrder.splice(index, 0, duplicate.id)
+      return { document: next, inverse: [op(operation, 'slide.delete', { slideId: duplicate.id })] }
+    }
     case 'slide.delete': {
       const slide = requireSlide(next, operation.slideId)
       const index = next.slideOrder.indexOf(operation.slideId)
@@ -143,6 +190,24 @@ export function applyOperation(document: PpteDocument, operation: Operation, opt
         ;(slide as unknown as Record<string, unknown>)[key] = cloneJson(value)
       }
       return { document: next, inverse: [op(operation, 'slide.update', { slideId: operation.slideId, patch: before as never })] }
+    }
+    case 'slide.setNotes': {
+      const slide = requireSlide(next, operation.slideId)
+      const before = cloneJson(slide.notes)
+      if (operation.unset) delete slide.notes
+      else if (operation.notes !== undefined) slide.notes = cloneJson(operation.notes)
+      else throw error('SCHEMA_INVALID', 'slide.setNotes requires notes unless unset is true.')
+      return { document: next, inverse: [before === undefined ? op(operation, 'slide.setNotes', { slideId: operation.slideId, unset: true }) : op(operation, 'slide.setNotes', { slideId: operation.slideId, notes: before })] }
+    }
+    case 'slide.setTransition': {
+      const slide = requireSlide(next, operation.slideId)
+      const before = cloneJson(slide.transition)
+      if (operation.unset) delete slide.transition
+      else if (operation.transition !== undefined) {
+        assertTransition(operation.transition)
+        slide.transition = cloneJson(operation.transition)
+      } else throw error('SCHEMA_INVALID', 'slide.setTransition requires transition unless unset is true.')
+      return { document: next, inverse: [before === undefined ? op(operation, 'slide.setTransition', { slideId: operation.slideId, unset: true }) : op(operation, 'slide.setTransition', { slideId: operation.slideId, transition: before })] }
     }
     case 'slide.setReadingOrder': {
       const slide = requireSlide(next, operation.slideId)
@@ -270,6 +335,24 @@ export function applyOperation(document: PpteDocument, operation: Operation, opt
       else if (operation.locked !== undefined) element.locked = operation.locked
       else throw error('SCHEMA_INVALID', 'element.setLocked requires locked unless unset is true.')
       return { document: next, inverse: [before === undefined ? op(operation, 'element.setLocked', { slideId: operation.slideId, elementId: operation.elementId, unset: true }) : op(operation, 'element.setLocked', { slideId: operation.slideId, elementId: operation.elementId, locked: before })] }
+    }
+    case 'element.setAppearStep': {
+      const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)
+      const before = element.appearStep
+      if (operation.unset) delete element.appearStep
+      else if (operation.appearStep !== undefined && Number.isInteger(operation.appearStep) && operation.appearStep >= 0) element.appearStep = operation.appearStep
+      else throw error('SCHEMA_INVALID', 'element.setAppearStep requires a non-negative integer unless unset is true.')
+      return { document: next, inverse: [before === undefined ? op(operation, 'element.setAppearStep', { slideId: operation.slideId, elementId: operation.elementId, unset: true }) : op(operation, 'element.setAppearStep', { slideId: operation.slideId, elementId: operation.elementId, appearStep: before })] }
+    }
+    case 'element.setAnimation': {
+      const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)
+      const before = cloneJson(element.animation)
+      if (operation.unset) delete element.animation
+      else if (operation.animation !== undefined) {
+        assertAnimation(operation.animation)
+        element.animation = cloneJson(operation.animation)
+      } else throw error('SCHEMA_INVALID', 'element.setAnimation requires animation unless unset is true.')
+      return { document: next, inverse: [before === undefined ? op(operation, 'element.setAnimation', { slideId: operation.slideId, elementId: operation.elementId, unset: true }) : op(operation, 'element.setAnimation', { slideId: operation.slideId, elementId: operation.elementId, animation: before })] }
     }
     case 'element.setEditPolicy': {
       const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)
@@ -997,6 +1080,95 @@ function uniqueSemanticKey(slide: Slide, preferred: string): string {
   let index = 2
   while (keys.has(`${preferred}.${index}`)) index += 1
   return `${preferred}.${index}`
+}
+
+/**
+ * Rekey every instance-local identity in a copied slide. Semantic keys and
+ * Fact/Source identities intentionally remain unchanged because they are
+ * business identities scoped to a slide or document, respectively.
+ */
+export function rekeySlide(source: Slide, newSlideId: string, offset: { x: number; y: number } = { x: 0, y: 0 }): Slide {
+  if (!newSlideId || newSlideId === source.id) throw error('ID_CONFLICT', `New slide id must differ from ${source.id}.`)
+  assertFinite(offset.x, offset.y)
+  const elementIds = buildRekeyMap(Object.keys(source.elements), newSlideId, 'element')
+  const groupIds = buildRekeyMap(Object.keys(source.groups ?? {}), newSlideId, 'group')
+  const elements = Object.fromEntries(Object.entries(source.elements).map(([oldId, value]) => {
+    const element = cloneJson(value)
+    const newId = elementIds.get(oldId)!
+    element.id = newId
+    element.frame = { ...element.frame, x: element.frame.x + offset.x, y: element.frame.y + offset.y }
+    if (element.provenance?.replacesElementId) element.provenance.replacesElementId = elementIds.get(element.provenance.replacesElementId) ?? element.provenance.replacesElementId
+    if (element.type === 'text') {
+      const paragraphIds = buildRekeyMap(element.content.paragraphs.map((paragraph, paragraphIndex) => paragraph.id || String(paragraphIndex)), newId, 'paragraph')
+      element.content.paragraphs = element.content.paragraphs.map((paragraph, paragraphIndex) => {
+        const paragraphId = paragraphIds.get(paragraph.id || String(paragraphIndex))!
+        const runIds = buildRekeyMap(paragraph.runs.map((run, runIndex) => run.id || String(runIndex)), paragraphId, 'run')
+        const runs = paragraph.runs.map((run, runIndex) => {
+          const runId = runIds.get(run.id || String(runIndex))!
+          return { ...run, id: runId }
+        })
+        return { ...paragraph, id: paragraphId, runs }
+      })
+    }
+    return [newId, element]
+  })) as Slide['elements']
+  const groups = Object.fromEntries(Object.entries(source.groups ?? {}).map(([oldId, value]) => {
+    const group = cloneJson(value)
+    const newId = groupIds.get(oldId)!
+    group.id = newId
+    group.memberIds = group.memberIds.map((elementId) => elementIds.get(elementId) ?? elementId)
+    return [newId, group]
+  }))
+  const duplicate = cloneJson(source)
+  duplicate.id = newSlideId
+  duplicate.elements = elements
+  duplicate.rootOrder = source.rootOrder.map((elementId) => elementIds.get(elementId) ?? elementId)
+  if (source.readingOrder) duplicate.readingOrder = source.readingOrder.map((elementId) => elementIds.get(elementId) ?? elementId)
+  if (source.groups) duplicate.groups = groups
+  if (source.protectedAnchors) duplicate.protectedAnchors = source.protectedAnchors.map((anchor) => {
+    const next = cloneJson(anchor)
+    if (next.target.kind === 'element') next.target.elementId = elementIds.get(next.target.elementId) ?? next.target.elementId
+    return next
+  })
+  return duplicate
+}
+
+function rekeyInstanceId(owner: string, kind: string, sourceId: string): string {
+  const safe = sourceId.replace(/[^A-Za-z0-9_-]/g, '_')
+  return `${owner}__${kind}__${safe}`
+}
+
+function buildRekeyMap(sourceIds: string[], owner: string, kind: string): Map<string, string> {
+  const result = new Map<string, string>()
+  const used = new Set<string>()
+  for (const sourceId of sourceIds) {
+    const base = rekeyInstanceId(owner, kind, sourceId)
+    let candidate = base
+    let suffix = 2
+    while (used.has(candidate)) candidate = `${base}__${suffix++}`
+    used.add(candidate)
+    result.set(sourceId, candidate)
+  }
+  return result
+}
+
+function assertTransition(value: unknown): asserts value is NonNullable<Slide['transition']> {
+  if (!value || typeof value !== 'object' || !['none', 'fade', 'slide', 'push'].includes(String((value as { type?: unknown }).type))) throw error('SCHEMA_INVALID', 'Slide transition type is invalid.')
+  const transition = value as { durationMs?: unknown; direction?: unknown }
+  if (transition.durationMs !== undefined && (!Number.isInteger(transition.durationMs) || Number(transition.durationMs) < 0)) throw error('SCHEMA_INVALID', 'Slide transition durationMs must be a non-negative integer.')
+  if (transition.direction !== undefined && !['left', 'right', 'up', 'down'].includes(String(transition.direction))) throw error('SCHEMA_INVALID', 'Slide transition direction is invalid.')
+}
+
+function assertAnimation(value: unknown): asserts value is NonNullable<import('../../schema/src/index.js').ElementAnimation> {
+  if (!value || typeof value !== 'object') throw error('SCHEMA_INVALID', 'Element animation must be an object.')
+  for (const key of ['enter', 'exit'] as const) {
+    const spec = (value as Record<string, unknown>)[key]
+    if (spec === undefined) continue
+    if (!spec || typeof spec !== 'object' || !['fade', 'slide-up', 'slide-left', 'scale'].includes(String((spec as { type?: unknown }).type))) throw error('SCHEMA_INVALID', `Element animation ${key} type is invalid.`)
+    const record = spec as { durationMs?: unknown; delayMs?: unknown; easing?: unknown }
+    for (const field of ['durationMs', 'delayMs'] as const) if (record[field] !== undefined && (!Number.isInteger(record[field]) || Number(record[field]) < 0)) throw error('SCHEMA_INVALID', `Element animation ${key}.${field} must be a non-negative integer.`)
+    if (record.easing !== undefined && !['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out'].includes(String(record.easing))) throw error('SCHEMA_INVALID', `Element animation ${key}.easing is invalid.`)
+  }
 }
 
 function requireSlide(document: PpteDocument, slideId: string): Slide {

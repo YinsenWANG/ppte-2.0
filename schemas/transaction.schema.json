@@ -1,6 +1,27 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://ppte.dev/schemas/1.0/transaction.schema.json",
+  "$defs": {
+    "animationSpec": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "enum": ["fade", "slide-up", "slide-left", "scale"] },
+        "durationMs": { "type": "integer", "minimum": 0 },
+        "delayMs": { "type": "integer", "minimum": 0 },
+        "easing": { "enum": ["linear", "ease", "ease-in", "ease-out", "ease-in-out"] }
+      },
+      "additionalProperties": false
+    },
+    "elementAnimation": {
+      "type": "object",
+      "properties": {
+        "enter": { "$ref": "#/$defs/animationSpec" },
+        "exit": { "$ref": "#/$defs/animationSpec" }
+      },
+      "additionalProperties": false
+    }
+  },
   "title": "PPTe Operation Transaction 1.0",
   "type": "object",
   "required": [
@@ -131,9 +152,12 @@
               "theme.setToken",
               "theme.updatePreset",
               "slide.insert",
+              "slide.duplicate",
               "slide.delete",
               "slide.move",
               "slide.update",
+              "slide.setNotes",
+              "slide.setTransition",
               "slide.setReadingOrder",
               "slide.setProtectedAnchors",
               "element.insert",
@@ -145,6 +169,8 @@
               "element.reorder",
               "element.setVisibility",
               "element.setLocked",
+              "element.setAppearStep",
+              "element.setAnimation",
               "element.setEditPolicy",
               "element.setSemanticKey",
               "element.setSemanticRefs",
@@ -2353,6 +2379,9 @@
                               "type": "integer",
                               "minimum": 0
                             },
+                            "animation": {
+                              "$ref": "#/$defs/elementAnimation"
+                            },
                             "editPolicy": {
                               "type": "object",
                               "properties": {
@@ -2916,6 +2945,9 @@
                               "type": "integer",
                               "minimum": 0
                             },
+                            "animation": {
+                              "$ref": "#/$defs/elementAnimation"
+                            },
                             "editPolicy": {
                               "type": "object",
                               "properties": {
@@ -3416,6 +3448,9 @@
                             "appearStep": {
                               "type": "integer",
                               "minimum": 0
+                            },
+                            "animation": {
+                              "$ref": "#/$defs/elementAnimation"
                             },
                             "editPolicy": {
                               "type": "object",
@@ -4042,6 +4077,9 @@
                               "type": "integer",
                               "minimum": 0
                             },
+                            "animation": {
+                              "$ref": "#/$defs/elementAnimation"
+                            },
                             "editPolicy": {
                               "type": "object",
                               "properties": {
@@ -4448,6 +4486,9 @@
                             "appearStep": {
                               "type": "integer",
                               "minimum": 0
+                            },
+                            "animation": {
+                              "$ref": "#/$defs/elementAnimation"
                             },
                             "editPolicy": {
                               "type": "object",
@@ -17259,6 +17300,144 @@
                 ]
               }
             },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": ["opId", "kind", "sourceSlideId", "newSlideId"],
+            "properties": {
+              "opId": { "type": "string", "minLength": 1, "maxLength": 256 },
+              "kind": { "const": "slide.duplicate" },
+              "preconditions": { "type": "array" },
+              "reason": { "type": "string" },
+              "sourceSlideId": { "type": "string", "minLength": 1, "maxLength": 256 },
+              "newSlideId": { "type": "string", "minLength": 1, "maxLength": 256 },
+              "index": { "type": "integer", "minimum": 0 },
+              "offset": {
+                "type": "object",
+                "required": ["x", "y"],
+                "properties": { "x": { "type": "number" }, "y": { "type": "number" } },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": ["opId", "kind", "slideId"],
+            "properties": {
+              "opId": { "type": "string", "minLength": 1, "maxLength": 256 },
+              "kind": { "const": "slide.setNotes" },
+              "preconditions": { "type": "array" },
+              "reason": { "type": "string" },
+              "slideId": { "type": "string", "minLength": 1, "maxLength": 256 },
+              "notes": {
+                "type": "object",
+                "properties": {
+                  "speaker": { "type": "string" },
+                  "private": { "type": "string" },
+                  "handout": { "type": "string" }
+                },
+                "additionalProperties": false
+              },
+              "unset": { "const": true }
+            },
+            "oneOf": [
+              { "required": ["notes"], "not": { "required": ["unset"] } },
+              { "required": ["unset"], "not": { "required": ["notes"] } }
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": ["opId", "kind", "slideId"],
+            "properties": {
+              "opId": { "type": "string", "minLength": 1, "maxLength": 256 },
+              "kind": { "const": "slide.setTransition" },
+              "preconditions": { "type": "array" },
+              "reason": { "type": "string" },
+              "slideId": { "type": "string", "minLength": 1, "maxLength": 256 },
+              "transition": {
+                "type": "object",
+                "required": ["type"],
+                "properties": {
+                  "type": { "enum": ["none", "fade", "slide", "push"] },
+                  "durationMs": { "type": "integer", "minimum": 0 },
+                  "direction": { "enum": ["left", "right", "up", "down"] }
+                },
+                "additionalProperties": false
+              },
+              "unset": { "const": true }
+            },
+            "oneOf": [
+              { "required": ["transition"], "not": { "required": ["unset"] } },
+              { "required": ["unset"], "not": { "required": ["transition"] } }
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": ["opId", "kind", "slideId", "elementId"],
+            "properties": {
+              "opId": { "type": "string", "minLength": 1, "maxLength": 256 },
+              "kind": { "const": "element.setAppearStep" },
+              "preconditions": { "type": "array" },
+              "reason": { "type": "string" },
+              "slideId": { "type": "string", "minLength": 1, "maxLength": 256 },
+              "elementId": { "type": "string", "minLength": 1, "maxLength": 256 },
+              "appearStep": { "type": "integer", "minimum": 0 },
+              "unset": { "const": true }
+            },
+            "oneOf": [
+              { "required": ["appearStep"], "not": { "required": ["unset"] } },
+              { "required": ["unset"], "not": { "required": ["appearStep"] } }
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": ["opId", "kind", "slideId", "elementId"],
+            "properties": {
+              "opId": { "type": "string", "minLength": 1, "maxLength": 256 },
+              "kind": { "const": "element.setAnimation" },
+              "preconditions": { "type": "array" },
+              "reason": { "type": "string" },
+              "slideId": { "type": "string", "minLength": 1, "maxLength": 256 },
+              "elementId": { "type": "string", "minLength": 1, "maxLength": 256 },
+              "animation": {
+                "type": "object",
+                "properties": {
+                  "enter": {
+                    "type": "object",
+                    "required": ["type"],
+                    "properties": {
+                      "type": { "enum": ["fade", "slide-up", "slide-left", "scale"] },
+                      "durationMs": { "type": "integer", "minimum": 0 },
+                      "delayMs": { "type": "integer", "minimum": 0 },
+                      "easing": { "enum": ["linear", "ease", "ease-in", "ease-out", "ease-in-out"] }
+                    },
+                    "additionalProperties": false
+                  },
+                  "exit": {
+                    "type": "object",
+                    "required": ["type"],
+                    "properties": {
+                      "type": { "enum": ["fade", "slide-up", "slide-left", "scale"] },
+                      "durationMs": { "type": "integer", "minimum": 0 },
+                      "delayMs": { "type": "integer", "minimum": 0 },
+                      "easing": { "enum": ["linear", "ease", "ease-in", "ease-out", "ease-in-out"] }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              },
+              "unset": { "const": true }
+            },
+            "oneOf": [
+              { "required": ["animation"], "not": { "required": ["unset"] } },
+              { "required": ["unset"], "not": { "required": ["animation"] } }
+            ],
             "additionalProperties": false
           },
           {

@@ -26,9 +26,9 @@ const SCOPE_KINDS = new Set(['selection', 'slide', 'document', 'custom'])
 const SCOPE_PERMISSIONS = new Set(['content', 'geometry', 'style', 'structure', 'theme', 'assets', 'facts', 'sources', 'notes', 'animation', 'review'])
 const OPERATION_KINDS = new Set<OperationKind>([
   'document.updateMetadata', 'theme.replace', 'theme.setToken', 'theme.updatePreset',
-  'slide.insert', 'slide.delete', 'slide.move', 'slide.update', 'slide.setReadingOrder', 'slide.setProtectedAnchors',
-  'element.insert', 'element.delete', 'element.duplicate', 'element.move', 'element.resize', 'element.rotate', 'element.reorder', 'element.setVisibility', 'element.setLocked', 'element.setEditPolicy', 'element.setSemanticKey', 'element.setSemanticRefs', 'element.setStyleRef', 'element.updateStyleOverrides', 'element.clearStyleOverrides',
-  'text.replaceContent', 'text.setOverflowPolicy', 'text.fitByReducingFont', 'text.resizeBox',
+  'slide.insert', 'slide.duplicate', 'slide.delete', 'slide.move', 'slide.update', 'slide.setNotes', 'slide.setTransition', 'slide.setReadingOrder', 'slide.setProtectedAnchors',
+  'element.insert', 'element.delete', 'element.duplicate', 'element.move', 'element.resize', 'element.rotate', 'element.reorder', 'element.setVisibility', 'element.setLocked', 'element.setAppearStep', 'element.setAnimation', 'element.setEditPolicy', 'element.setSemanticKey', 'element.setSemanticRefs', 'element.setStyleRef', 'element.updateStyleOverrides', 'element.clearStyleOverrides',
+  'text.replaceContent', 'text.updateStyle', 'text.setOverflowPolicy', 'text.fitByReducingFont', 'text.resizeBox',
   'image.replaceAsset', 'image.setCrop', 'image.setFocalPoint', 'asset.upsert', 'font.upsert', 'shape.updateStyle',
   'chart.replaceData', 'chart.updateEncoding', 'chart.updateOptions', 'chart.updateStyle', 'component.updateProps',
   'group.create', 'group.delete', 'group.addMembers', 'group.removeMembers', 'group.move', 'group.resize',
@@ -63,6 +63,16 @@ export interface GlyphCoverageReport {
   covered: boolean
   missingCodePoints: number[]
   source: 'declared' | 'system-safe' | 'unresolved' | 'unsafe'
+}
+
+export interface TextLayoutMeasurement {
+  lines: number
+  maxLineWidth: number
+  contentHeight: number
+  availableWidth: number
+  availableHeight: number
+  overflowX: boolean
+  overflowY: boolean
 }
 
 export function validateRuntimeDocument(document: PpteDocument, options: { runtimeProfile?: RuntimeProfile } = {}): ValidationIssue[] {
@@ -182,9 +192,9 @@ function validateOperationShape(operation: Record<string, unknown>, index: numbe
   }
   if (operation.preconditions !== undefined) validatePreconditions(operation.preconditions, path, issues)
 
-  const slideKinds = new Set(['slide.delete', 'slide.move', 'slide.update', 'slide.setReadingOrder', 'slide.setProtectedAnchors', 'element.insert', 'element.delete', 'element.duplicate', 'element.move', 'element.resize', 'element.rotate', 'element.reorder', 'element.setVisibility', 'element.setLocked', 'element.setEditPolicy', 'element.setSemanticKey', 'element.setSemanticRefs', 'element.setStyleRef', 'element.updateStyleOverrides', 'element.clearStyleOverrides', 'text.replaceContent', 'text.setOverflowPolicy', 'text.fitByReducingFont', 'text.resizeBox', 'image.replaceAsset', 'image.setCrop', 'image.setFocalPoint', 'shape.updateStyle', 'chart.replaceData', 'chart.updateEncoding', 'chart.updateOptions', 'chart.updateStyle', 'component.updateProps', 'group.create', 'group.delete', 'group.addMembers', 'group.removeMembers', 'group.move', 'group.resize', 'layout.align', 'layout.distribute'])
+  const slideKinds = new Set(['slide.delete', 'slide.move', 'slide.update', 'slide.setNotes', 'slide.setTransition', 'slide.setReadingOrder', 'slide.setProtectedAnchors', 'element.insert', 'element.delete', 'element.duplicate', 'element.move', 'element.resize', 'element.rotate', 'element.reorder', 'element.setVisibility', 'element.setLocked', 'element.setAppearStep', 'element.setAnimation', 'element.setEditPolicy', 'element.setSemanticKey', 'element.setSemanticRefs', 'element.setStyleRef', 'element.updateStyleOverrides', 'element.clearStyleOverrides', 'text.replaceContent', 'text.updateStyle', 'text.setOverflowPolicy', 'text.fitByReducingFont', 'text.resizeBox', 'image.replaceAsset', 'image.setCrop', 'image.setFocalPoint', 'shape.updateStyle', 'chart.replaceData', 'chart.updateEncoding', 'chart.updateOptions', 'chart.updateStyle', 'component.updateProps', 'group.create', 'group.delete', 'group.addMembers', 'group.removeMembers', 'group.move', 'group.resize', 'layout.align', 'layout.distribute'])
   if (slideKinds.has(kind)) requireString('slideId')
-  const elementKinds = new Set(['element.delete', 'element.move', 'element.resize', 'element.rotate', 'element.reorder', 'element.setVisibility', 'element.setLocked', 'element.setEditPolicy', 'element.setSemanticKey', 'element.setSemanticRefs', 'element.setStyleRef', 'element.updateStyleOverrides', 'element.clearStyleOverrides', 'text.replaceContent', 'text.setOverflowPolicy', 'text.fitByReducingFont', 'text.resizeBox', 'image.replaceAsset', 'image.setCrop', 'image.setFocalPoint', 'shape.updateStyle', 'chart.replaceData', 'chart.updateEncoding', 'chart.updateOptions', 'chart.updateStyle', 'component.updateProps'])
+  const elementKinds = new Set(['element.delete', 'element.move', 'element.resize', 'element.rotate', 'element.reorder', 'element.setVisibility', 'element.setLocked', 'element.setAppearStep', 'element.setAnimation', 'element.setEditPolicy', 'element.setSemanticKey', 'element.setSemanticRefs', 'element.setStyleRef', 'element.updateStyleOverrides', 'element.clearStyleOverrides', 'text.replaceContent', 'text.updateStyle', 'text.setOverflowPolicy', 'text.fitByReducingFont', 'text.resizeBox', 'image.replaceAsset', 'image.setCrop', 'image.setFocalPoint', 'shape.updateStyle', 'chart.replaceData', 'chart.updateEncoding', 'chart.updateOptions', 'chart.updateStyle', 'component.updateProps'])
   if (elementKinds.has(kind)) requireString('elementId')
 
   switch (kind) {
@@ -212,7 +222,10 @@ function validateOperationShape(operation: Record<string, unknown>, index: numbe
       break
     }
     case 'slide.delete': case 'slide.move': requireString('slideId'); if (kind === 'slide.move') requireInteger('index'); break
+    case 'slide.duplicate': requireString('sourceSlideId'); requireString('newSlideId'); if (operation.index !== undefined) requireInteger('index'); if (operation.offset !== undefined) requirePoint('offset'); break
     case 'slide.update': requireRecord('patch'); break
+    case 'slide.setNotes': validateUnsetPair(operation, 'notes', validSlideNotes, path, issues); break
+    case 'slide.setTransition': validateUnsetPair(operation, 'transition', validTransition, path, issues); break
     case 'slide.setReadingOrder':
       validateUnsetPair(operation, 'readingOrder', (value) => Array.isArray(value), path, issues)
       if (operation.unset !== true && Array.isArray(operation.readingOrder)) checkUniqueStrings(operation.readingOrder, `${path}/readingOrder`, issues)
@@ -232,6 +245,8 @@ function validateOperationShape(operation: Record<string, unknown>, index: numbe
     case 'element.reorder': requireInteger('index'); break
     case 'element.setVisibility': validateUnsetPair(operation, 'visible', (value) => typeof value === 'boolean', path, issues); break
     case 'element.setLocked': validateUnsetPair(operation, 'locked', (value) => typeof value === 'boolean', path, issues); break
+    case 'element.setAppearStep': validateUnsetPair(operation, 'appearStep', (value) => Number.isInteger(value) && Number(value) >= 0, path, issues); break
+    case 'element.setAnimation': validateUnsetPair(operation, 'animation', validAnimation, path, issues); break
     case 'element.setEditPolicy': validateUnsetPair(operation, 'editPolicy', isRecord, path, issues); break
     case 'element.setSemanticKey': if (operation.semanticKey !== undefined && !nonEmptyString(operation.semanticKey)) issues.push(error('SCHEMA_INVALID', 'element.setSemanticKey.semanticKey must be a string when present.', `${path}/semanticKey`)); break
     case 'element.setSemanticRefs': validateUnsetPair(operation, 'semanticRefs', isRecord, path, issues); break
@@ -340,6 +355,29 @@ function validateUnsetPair(record: Record<string, unknown>, field: string, valid
   } else if (!valid(record[field])) issues.push(error('SCHEMA_INVALID', `${field} is required unless unset is true.`, `${path}/${field}`))
 }
 
+function validSlideNotes(value: unknown): boolean {
+  if (!isRecord(value) || !hasOnlyKeys(value, ['speaker', 'private', 'handout'])) return false
+  return ['speaker', 'private', 'handout'].every((key) => value[key] === undefined || typeof value[key] === 'string')
+}
+
+function validTransition(value: unknown): boolean {
+  if (!isRecord(value) || !hasOnlyKeys(value, ['type', 'durationMs', 'direction']) || !['none', 'fade', 'slide', 'push'].includes(String(value.type))) return false
+  if (value.durationMs !== undefined && (!Number.isInteger(value.durationMs) || Number(value.durationMs) < 0)) return false
+  return value.direction === undefined || ['left', 'right', 'up', 'down'].includes(String(value.direction))
+}
+
+function validAnimation(value: unknown): boolean {
+  if (!isRecord(value) || !hasOnlyKeys(value, ['enter', 'exit'])) return false
+  return ['enter', 'exit'].every((key) => value[key] === undefined || validAnimationSpec(value[key]))
+}
+
+function validAnimationSpec(value: unknown): boolean {
+  if (!isRecord(value) || !hasOnlyKeys(value, ['type', 'durationMs', 'delayMs', 'easing']) || !['fade', 'slide-up', 'slide-left', 'scale'].includes(String(value.type))) return false
+  if (value.durationMs !== undefined && (!Number.isInteger(value.durationMs) || Number(value.durationMs) < 0)) return false
+  if (value.delayMs !== undefined && (!Number.isInteger(value.delayMs) || Number(value.delayMs) < 0)) return false
+  return value.easing === undefined || ['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out'].includes(String(value.easing))
+}
+
 function requireFiniteNumberAt(record: Record<string, unknown>, field: string, path: string, issues: ValidationIssue[]) {
   if (!finite(record[field])) issues.push(error('SCHEMA_INVALID', `${field} must be finite.`, `${path}/${field}`))
 }
@@ -347,29 +385,67 @@ function requireFiniteNumberAt(record: Record<string, unknown>, field: string, p
 function asRecord(value: unknown): Record<string, unknown> | undefined { return isRecord(value) ? value : undefined }
 function isRecord(value: unknown): value is Record<string, unknown> { return Boolean(value) && typeof value === 'object' && !Array.isArray(value) }
 function nonEmptyString(value: unknown): value is string { return typeof value === 'string' && value.length > 0 }
-
 export function validateTextOverflow(document: PpteDocument, slideId: string, element: TextElement): ValidationIssue[] {
   const text = textContent(element)
   const style = effectiveTextStyle(document, element)
   const padding = element.boxStyle?.padding && typeof element.boxStyle.padding === 'object' ? element.boxStyle.padding : undefined
   const width = finitePositiveNumber(element.frame?.width) ? element.frame.width : 1
   const height = finiteNonNegativeNumber(element.frame?.height) ? element.frame.height : 0
-  const availableWidth = Math.max(1, width - (padding?.left ?? 0) - (padding?.right ?? 0))
-  const estimatedLineWidth = Math.max(1, availableWidth / Math.max(style.fontSize, 1))
-  const estimatedLines = text.split('\n').reduce((sum, line) => sum + Math.max(1, Math.ceil([...line].length / estimatedLineWidth)), 0)
-  const lineHeight = style.lineHeight ?? 1.2
-  const availableHeight = Math.max(0, height - (padding?.top ?? 0) - (padding?.bottom ?? 0))
-  const estimatedHeight = estimatedLines * style.fontSize * (finitePositiveNumber(lineHeight) ? lineHeight : 1.2)
-  if (estimatedHeight <= availableHeight + 0.001) return []
+  const measurement = measureTextLayout(text, { width, height }, style, padding)
+  if (!measurement.overflowX && !measurement.overflowY) return []
   return [withErrorSemantics({
     code: 'TEXT_OVERFLOW',
     severity: 'warning',
-    message: `Text ${element.id} exceeds its fixed frame; font size and frame were not changed implicitly.`,
+    message: `Text ${element.id} exceeds its fixed frame under the declared font metrics (${measurement.lines} line(s), ${numberForMessage(measurement.contentHeight)} height). Font size and frame were not changed implicitly.`,
     slideId,
     elementId: element.id,
     recovery: 'Shorten text, resize the text box, explicitly fit the font, or change overflow policy.',
   })]
 }
+
+/**
+ * Measure text with the same deterministic glyph-advance model used by the
+ * compiler quality gate. CJK/full-width glyphs use a full em; Latin, digits,
+ * punctuation, whitespace, and combining marks use their reference advances.
+ * This is intentionally a layout measurement, not a character-count guess.
+ */
+export function measureTextLayout(text: string, frame: { width: number; height: number }, style: ResolvedTextStyle, padding: { top: number; right: number; bottom: number; left: number } = { top: 0, right: 0, bottom: 0, left: 0 }): TextLayoutMeasurement {
+  const fontSize = finitePositive(style.fontSize) ? style.fontSize : 28
+  const lineHeight = finitePositive(style.lineHeight) ? style.lineHeight : 1.2
+  const availableWidth = Math.max(0, frame.width - padding.left - padding.right)
+  const availableHeight = Math.max(0, frame.height - padding.top - padding.bottom)
+  const lines = text.split('\n')
+  let lineCount = 0
+  let maxLineWidth = 0
+  for (const sourceLine of lines) {
+    let currentWidth = 0
+    let wrapped = false
+    for (const character of [...sourceLine]) {
+      const advance = glyphAdvance(character, fontSize, style.letterSpacing ?? 0)
+      if (currentWidth > 0 && currentWidth + advance > availableWidth) {
+        maxLineWidth = Math.max(maxLineWidth, currentWidth)
+        lineCount += 1
+        currentWidth = advance
+        wrapped = true
+      } else currentWidth += advance
+    }
+    maxLineWidth = Math.max(maxLineWidth, currentWidth)
+    lineCount += 1
+    if (!wrapped && sourceLine.length === 0) maxLineWidth = Math.max(maxLineWidth, 0)
+  }
+  const contentHeight = lineCount * fontSize * lineHeight
+  return { lines: lineCount, maxLineWidth, contentHeight, availableWidth, availableHeight, overflowX: maxLineWidth > availableWidth + 0.001, overflowY: contentHeight > availableHeight + 0.001 }
+}
+
+function glyphAdvance(character: string, fontSize: number, letterSpacing: number): number {
+  const codePoint = character.codePointAt(0) ?? 0
+  const combining = /\p{M}/u.test(character)
+  const wide = codePoint >= 0x1100 && (codePoint <= 0x115f || codePoint === 0x2329 || codePoint === 0x232a || (codePoint >= 0x2e80 && codePoint <= 0xa4cf) || (codePoint >= 0xac00 && codePoint <= 0xd7a3) || (codePoint >= 0xf900 && codePoint <= 0xfaff) || (codePoint >= 0xfe10 && codePoint <= 0xfe19) || (codePoint >= 0xfe30 && codePoint <= 0xfe6f) || (codePoint >= 0xff00 && codePoint <= 0xff60) || (codePoint >= 0x1f300 && codePoint <= 0x1faff))
+  const base = combining ? 0 : wide ? 1 : /\s/u.test(character) ? 0.28 : /[A-Za-z0-9]/.test(character) ? (/[A-Z]/.test(character) ? 0.64 : 0.56) : /[\u2000-\u206f\u2e00-\u2e7f]/u.test(character) ? 0.5 : 0.72
+  return Math.max(0, base * fontSize + (combining ? 0 : letterSpacing))
+}
+
+function numberForMessage(value: number): string { return String(Math.round(value * 10) / 10) }
 
 /**
  * Inspect the complete text content, including supplementary-plane characters.
