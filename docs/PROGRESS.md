@@ -1,8 +1,15 @@
 # PPTe 2.0 Milestone Progress
 
-## 2026-09-03 — GA-C complete: 全部里程碑完成
+## 2026-09-03 — R0 audit intake: reference-core prototype（修复流水线进行中）
 
-### Completed this round
+独立审计报告 [`REVIEW_v2.3_GA_AUDIT.md`](REVIEW_v2.3_GA_AUDIT.md) 已入库。
+当前交付物只能诚实地称为 **reference-core prototype**：底层语义
+Document/Operation/Session/Checkpoint 等内核边界有可复用实现，但产品入口、
+Portable 编辑、恢复、导出与完整修订回流仍按审计报告缺失。下方早期里程碑条目
+记录的是当时的实现变更和自证结果，不再作为 GA-C 产品完成证据；黑盒修复门禁
+正在建立并会逐组恢复。
+
+### 本轮已记录
 
 - Published the forward-only `ppte-2.0-ga-c.1` Compatibility Profile from
   GA-B, with public Area and Donut Chart contracts and deterministic SVG
@@ -26,7 +33,7 @@
   public schema/example coverage, renderer markers, release documentation, and
   a dedicated `e2e:ga-c` acceptance command.
 
-### Exit-condition evidence
+### Historical self-check（非独立产品验收）
 
 - `pnpm install` — passed; all 34 workspace projects were already up to date.
 - `pnpm typecheck` — passed.

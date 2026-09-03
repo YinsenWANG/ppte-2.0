@@ -2,7 +2,16 @@
 
 All notable changes to the PPTe reference runtime are recorded here.
 
-## [0.4.0-rc.1] — 2026-09-03
+## Audit status — 2026-09-03
+
+The independent GA audit reclassifies this checkout as a **reference-core
+prototype**. The entries below record implementation history and repository
+self-checks; they do not mean that the corresponding product journey is
+complete or GA-accepted. Product-surface gaps from the audit are being tracked
+by the R0 black-box gate repair pipeline. No GA-C-complete or all-milestones-
+complete claim is currently made.
+
+## [0.4.0-rc.1] — 2026-09-03 (reference-core prototype; audit reclassification)
 
 ### Added
 
@@ -20,13 +29,16 @@ All notable changes to the PPTe reference runtime are recorded here.
 - GA-C legacy migration, public example/schema coverage, and a dedicated E2E
   acceptance command.
 
-### Scope
+### Scope and audit boundary
 
-- Video Widget, native PPTX Chart authoring, a full Portable editor, private
-  Widget registries, CRDT, real-time collaboration, and full legacy
-  markup/runtime import remain out of scope.
-- Semantic PPTX degradation and missing payloads are explicit; unsupported
-  content is never silently dropped.
+- The code contains GA-C-oriented runtime primitives, but the independent
+  audit found the product Host, full Portable editing, recovery, faithful
+  PDF/PNG/PPTX export, and complete review/patch workflow incomplete.
+- Video Widget, native PPTX Chart authoring, private Widget registries, CRDT,
+  real-time collaboration, and full legacy markup/runtime import remain out
+  of scope.
+- Capability/degradation behavior must be re-verified by the new black-box
+  gates before any release claim is restored.
 
 ## [0.3.0-rc.1] — 2026-09-03
 

@@ -9,6 +9,15 @@ safely around IME composition, constrain an Agent edit, materialize flat Group
 geometry, diff, commit, undo/redo, journal, checkpoint through CAS-backed
 assets, and reopen with the same canonical revision.
 
+## Current status
+
+This checkout is a **reference-core prototype**, not a completed GA-C product.
+The semantic core is usable at the library boundary, while the independent
+GA audit records missing or incorrect product behavior across Host editing,
+Portable files, recovery, export, and review/patch flows. The R0 black-box
+repair pipeline is in progress; the old Node acceptance commands are not
+substitutes for browser/file/Office/pixel acceptance.
+
 ## Quick start
 
 ```text
@@ -23,6 +32,9 @@ pnpm e2e:ga-a
 pnpm e2e:ga-b
 pnpm e2e:ga-c
 pnpm contract-deck
+
+# Known-red audit gate while the repair pipeline is in progress
+node scripts/blackbox-gates.mjs --report
 ```
 
 `contract-deck` writes a derived preview under `artifacts/`. The package format
@@ -77,7 +89,8 @@ replayed only when its document and base revision match.
   patch/Portable fault matrix and checkpoint injector.
 - `packages/performance-budget` — capacity counters, P95 budgets, bundle-size
   checks, and the deterministic GA-A benchmark helpers.
-- `apps/contract-deck` — the executable acceptance path.
+- `apps/contract-deck` — a historical reference-core/self-check harness, not
+  the end-user Host.
 - `schemas`, `examples`, `scripts/validate.py` — retained public contracts and
   validation fixtures, including the Compatibility Profile, error contract,
   and GA-A budget.
@@ -122,7 +135,7 @@ validated.
 Implementation choices not fixed by the specification are recorded in
 [`docs/DECISIONS.md`](docs/DECISIONS.md).
 
-## GA-A release surface
+## Recorded implementation boundaries (not independent GA acceptance)
 
 The native package profile is `ppte-2.0-ga-a.1` and is the exact combination
 of format `2`, schema `2.0.0`, operation protocol `1.0`, Slide IR `1.0`,
@@ -131,6 +144,8 @@ unset in this profile. Older supported semantic inputs migrate forward into
 a new document. Higher incompatible major versions are read-only; unknown
 or inconsistent profiles are rejected.
 
+The existing `pnpm e2e:*` commands exercise implementation self-checks. They
+do not establish the product status described by the audit. For example,
 `pnpm e2e:ga-a` builds the 30-slide / 900-element / 120-group / 50 MiB / 20
 font corpus and measures the published P95 budgets, including open, page
 switch, selection, human and text commit, journal append, undo/redo,
@@ -143,7 +158,7 @@ impact, content safety, whether saving is safe, retryability, and recovery
 action. Journal and checkpoint fault points are named and tested; the last
 complete checkpoint remains the recovery anchor unless replacement finished.
 
-## GA-B release surface
+## GA-B implementation history
 
 GA-B adds deterministic Bar, Line, and Pie Chart data/encoding/options/style
 operations, Fact/Source references with cross-slide consistency diagnostics,
@@ -156,14 +171,13 @@ backward compatibility; callers opt into the GA-B profile when required.
 GA-C checkpoints opt into `ppte-2.0-ga-c.1` when Area/Donut, Poster, or
 Widget content is present.
 
-## GA-C release surface
+## GA-C implementation history and open gaps
 
-GA-C publishes `ppte-2.0-ga-c.1` as a forward-only profile from GA-B. It adds
-deterministic Area and Donut charts, Poster artwork with safety metadata,
-host-owned Table/Code/Equation Widgets, and Portable Light Edit for Image
-Crop, Chart Data, and simple Move/Resize. `pnpm e2e:ga-c` exercises the same
-Session preview/commit/undo path, checkpoint round trip, offline audit, and
-semantic PPTX mapping compiler. Semantic PPTX preserves Text as editable text
-boxes and maps Image/Artwork to Pictures and Shape to native Shapes; static
-Chart SVG, Widget fallback, Poster artwork, missing payload, and degradation
-states remain explicit in the Capability Report.
+The repository contains a forward-only `ppte-2.0-ga-c.1` profile and related
+runtime primitives for Area/Donut charts, Poster metadata, controlled Widgets,
+Light Edit operations, and semantic PPTX mapping. These are implementation
+surfaces, not a claim that the GA-C product is complete. The audit specifically
+finds no usable end-user Host, no editable generated Portable HTML, incomplete
+recovery and review/patch lifecycle, and fidelity/reporting defects in export.
+The black-box gates must turn those findings into green behavior before this
+section can be described as a release surface again.
