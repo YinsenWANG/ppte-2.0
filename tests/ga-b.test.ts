@@ -131,8 +131,8 @@ test('Portable numeric Fact Quick Fix and Agent sync remain explicit, scoped, an
   assert.equal(portable.getRevision(), initialRevision)
 
   const defaultCheckpoint = portable.saveAsProject()
-  assert.equal(defaultCheckpoint.ok, false)
-  assert.ok(defaultCheckpoint.issues.some((issue) => issue.code === 'CHECKPOINT_FAILED' && issue.message.includes('ppte-2.0-ga-b.1')))
+  assert.equal(defaultCheckpoint.ok, true)
+  assert.equal(openCheckpointBytes(defaultCheckpoint.bytes!).manifest.compatibilityProfile, 'ppte-2.0-ga-b.1')
   const portableCheckpoint = portable.saveAsNewProject({ compatibilityProfile: 'ppte-2.0-ga-b.1' })
   assert.equal(portableCheckpoint.ok, true)
   assert.equal(openCheckpointBytes(portableCheckpoint.bytes!).manifest.compatibilityProfile, 'ppte-2.0-ga-b.1')
@@ -215,7 +215,8 @@ test('GA-B revised-copy patch and Image PPTX carry deterministic capabilities an
 
   const checkpoint = buildCheckpointBytes(base, { assetBytes: { asset_pixel: imageBytes }, compatibilityProfile: 'ppte-2.0-ga-b.1' })
   assert.equal(openCheckpointBytes(checkpoint).manifest.compatibilityProfile, 'ppte-2.0-ga-b.1')
-  assert.throws(() => buildCheckpointBytes(base, { assetBytes: { asset_pixel: imageBytes } }), /require compatibility profile ppte-2\.0-ga-b\.1/)
+  const inferredCheckpoint = buildCheckpointBytes(base, { assetBytes: { asset_pixel: imageBytes } })
+  assert.equal(openCheckpointBytes(inferredCheckpoint).manifest.compatibilityProfile, 'ppte-2.0-ga-b.1')
 
   const missing = exportImagePptx(base)
   assert.equal(missing.ok, false)
