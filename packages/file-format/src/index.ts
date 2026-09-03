@@ -2,10 +2,10 @@ import { existsSync, fsyncSync, mkdirSync, openSync, closeSync, readFileSync, re
 import { createHash } from 'node:crypto'
 import { dirname, basename, join } from 'node:path'
 import { canonicalHash, canonicalJsonString, canonicalRevision } from '../../canonical-json/src/index.js'
-import { checkCompatibility } from '../../compatibility/src/index.js'
+import { assertDocumentCompatibility, checkCompatibility, inferCompatibilityProfile, runtimeProfileForCompatibility } from '../../compatibility/src/index.js'
 import { validateRuntimeDocument, validateTransactionShape } from '../../validation/src/index.js'
-import { PPTE_COMPATIBILITY_PROFILE, PPTE_FORMAT, PPTE_FORMAT_VERSION, PPTE_GA_B_COMPATIBILITY_PROFILE, PPTE_GA_C_COMPATIBILITY_PROFILE, PPTE_OPERATION_PROTOCOL_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
-import type { PpteDocument, PpteManifest, PortableProfile, Revision, RuntimeProfile, Transaction, ValidationIssue } from '../../schema/src/index.js'
+import { PPTE_FORMAT, PPTE_FORMAT_VERSION, PPTE_OPERATION_PROTOCOL_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
+import type { PpteDocument, PpteManifest, PortableProfile, Revision, Transaction, ValidationIssue } from '../../schema/src/index.js'
 import { ContentAddressedStore } from './cas.js'
 import { buildPortable as buildPortableRuntime } from '../../portable-runtime/src/index.js'
 import type { PortableBuildOptions, PortableBuildResult } from '../../portable-runtime/src/index.js'
@@ -24,7 +24,7 @@ export interface CheckpointWriteOptions {
   faultInjector?: FaultInjector
   readyFile?: string
   pauseBeforeRenameMs?: number
-  /** Defaults to GA-A for backward-compatible Stable Core checkpoints. */
+  /** Defaults to the lowest profile inferred from the persisted document. */
   compatibilityProfile?: string
 }
 
@@ -75,7 +75,7 @@ export class PpteFileService {
 }
 
 export function writeCheckpoint(document: PpteDocument, target: string, options: CheckpointWriteOptions = {}): CheckpointResult {
-  const compatibilityProfile = options.compatibilityProfile ?? PPTE_COMPATIBILITY_PROFILE
+  const compatibilityProfile = options.compatibilityProfile ?? inferCompatibilityProfile(document)
   const issues = validateRuntimeDocument(document, { runtimeProfile: runtimeProfileForCompatibility(compatibilityProfile) }).filter((issue) => issue.severity === 'error')
   if (issues.length) throw new Error(issues.map((issue) => `${issue.code}: ${issue.message}`).join('\n'))
   const revision = canonicalRevision(document)
@@ -220,7 +220,7 @@ export function openCheckpointBytes(bytesOnDisk: Uint8Array): OpenCheckpointResu
 
 /** Serialize the exact stored ZIP used by writeCheckpoint without touching disk. */
 export function buildCheckpointBytes(document: PpteDocument, options: CheckpointWriteOptions = {}): Uint8Array {
-  const compatibilityProfile = options.compatibilityProfile ?? PPTE_COMPATIBILITY_PROFILE
+  const compatibilityProfile = options.compatibilityProfile ?? inferCompatibilityProfile(document)
   const issues = validateRuntimeDocument(document, { runtimeProfile: runtimeProfileForCompatibility(compatibilityProfile) }).filter((issue) => issue.severity === 'error')
   if (issues.length) throw new Error(issues.map((issue) => `${issue.code}: ${issue.message}`).join('\n'))
   const revision = canonicalRevision(document)
@@ -321,17 +321,6 @@ export function validateManifest(manifest: PpteManifest): void {
     if (!['standard', 'audit', 'clean'].includes(manifest.history.mode) || (manifest.history.snapshotRevision !== undefined && manifest.history.snapshotRevision !== manifest.contentRevision) || (manifest.history.recentTransactionCount !== undefined && (!Number.isInteger(manifest.history.recentTransactionCount) || manifest.history.recentTransactionCount < 0))) throw new Error('CHECKPOINT_FAILED: invalid manifest history descriptor')
     if (manifest.clean && manifest.history.mode !== 'clean') throw new Error('CHECKPOINT_FAILED: clean checkpoint has a non-clean history descriptor')
   }
-}
-
-function assertDocumentCompatibility(document: PpteDocument, compatibilityProfile: string): void {
-  const hasChart = Object.values(document.slides).some((slide) => Object.values(slide.elements).some((element) => element.type === 'chart'))
-  const requiresGaC = Object.values(document.slides).some((slide) => slide.visualStrategy === 'poster' || Object.values(slide.elements).some((element) => element.type === 'component' || element.type === 'chart' && (element.chartType === 'area' || element.chartType === 'donut')))
-  if (requiresGaC && compatibilityProfile !== PPTE_GA_C_COMPATIBILITY_PROFILE) throw new Error(`CHECKPOINT_FAILED: Poster, Widget, Area, and Donut documents require compatibility profile ${PPTE_GA_C_COMPATIBILITY_PROFILE}.`)
-  if (hasChart && compatibilityProfile !== PPTE_GA_B_COMPATIBILITY_PROFILE && compatibilityProfile !== PPTE_GA_C_COMPATIBILITY_PROFILE) throw new Error(`CHECKPOINT_FAILED: Chart documents require compatibility profile ${PPTE_GA_B_COMPATIBILITY_PROFILE} or ${PPTE_GA_C_COMPATIBILITY_PROFILE}.`)
-}
-
-function runtimeProfileForCompatibility(compatibilityProfile: string): RuntimeProfile {
-  return compatibilityProfile === PPTE_GA_C_COMPATIBILITY_PROFILE ? 'ga-c' : 'ga-b'
 }
 
 function readRecentTransactions(archive: Map<string, Uint8Array>, manifest: PpteManifest): Transaction[] {

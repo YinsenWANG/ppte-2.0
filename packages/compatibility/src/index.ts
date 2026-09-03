@@ -1,4 +1,5 @@
 import { PPTE_COMPATIBILITY_PROFILE, PPTE_FORMAT_VERSION, PPTE_GA_B_COMPATIBILITY_PROFILE, PPTE_GA_C_COMPATIBILITY_PROFILE, PPTE_OPERATION_PROTOCOL_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
+import type { PpteDocument, RuntimeProfile } from '../../schema/src/index.js'
 
 /** A release-tested combination of the independently versioned contracts. */
 export interface CompatibilityProfile {
@@ -149,4 +150,43 @@ export function checkCompatibility(input: { id?: unknown; formatVersion?: unknow
 
 export function profileDescriptor(id: string = PPTE_COMPATIBILITY_PROFILE): CompatibilityProfile {
   return assertSupportedCompatibilityProfile(id)
+}
+
+/**
+ * Return the lowest release-tested profile that can interpret a document.
+ * This is deliberately based on persisted semantic capabilities, not on the
+ * UI surface that happened to save the document.  Every checkpoint and every
+ * Portable save therefore makes the same compatibility decision.
+ */
+export function inferCompatibilityProfile(document: PpteDocument): string {
+  let requiresGaB = false
+  for (const slide of Object.values(document.slides ?? {})) {
+    if (slide.visualStrategy === 'poster' || slide.transition !== undefined) {
+      if (slide.visualStrategy === 'poster') return PPTE_GA_C_COMPATIBILITY_PROFILE
+      requiresGaB = true
+    }
+    for (const element of Object.values(slide.elements ?? {})) {
+      if (element.type === 'component') return PPTE_GA_C_COMPATIBILITY_PROFILE
+      if (element.type === 'chart') {
+        if (element.chartType === 'area' || element.chartType === 'donut') return PPTE_GA_C_COMPATIBILITY_PROFILE
+        requiresGaB = true
+      }
+      if (element.appearStep !== undefined || element.animation !== undefined) requiresGaB = true
+    }
+  }
+  return requiresGaB ? PPTE_GA_B_COMPATIBILITY_PROFILE : PPTE_COMPATIBILITY_PROFILE
+}
+
+/** Map a persisted profile to the runtime capability subset used for checks. */
+export function runtimeProfileForCompatibility(profileId: string): RuntimeProfile {
+  return profileId === PPTE_GA_C_COMPATIBILITY_PROFILE ? 'ga-c' : 'ga-b'
+}
+
+/** Validate the document/profile pair at every persistence boundary. */
+export function assertDocumentCompatibility(document: PpteDocument, profileId: string): void {
+  const minimum = inferCompatibilityProfile(document)
+  const rank = (id: string): number => id === PPTE_GA_C_COMPATIBILITY_PROFILE ? 3 : id === PPTE_GA_B_COMPATIBILITY_PROFILE ? 2 : id === PPTE_COMPATIBILITY_PROFILE ? 1 : 0
+  if (rank(profileId) < rank(minimum)) {
+    throw new Error(`CHECKPOINT_FAILED: document requires compatibility profile ${minimum}; received ${profileId}.`)
+  }
 }
