@@ -18,6 +18,10 @@ export interface RenderOptions {
   assetSources?: Record<string, string>
   includeDiagnostics?: boolean
   widgetRegistry?: WidgetRegistry
+  /** Mount text surfaces as editable controls for the Product Host. */
+  editable?: boolean
+  /** The document renderer defaults to a small, self-contained Host shell. */
+  includeHostControls?: boolean
 }
 
 export interface VisualDiffScope {
@@ -52,11 +56,19 @@ export function renderSlideHtml(document: PpteDocument, slideId: string, options
   const diagnostics = options.includeDiagnostics ? `<meta data-ppte-revision="${escapeAttr(JSON.stringify(document.schemaVersion))}">` : ''
   const strategy = slide.visualStrategy ?? 'structured'
   const strategyData = strategy === 'structured' ? '' : ` data-ppte-visual-strategy="${escapeAttr(strategy)}"`
-  return `<div class="ppte-slide" data-ppte-slide-id="${escapeAttr(slide.id)}" data-ppte-type="slide"${strategyData} style="position:relative;overflow:hidden;width:${number(document.canvas.width)}du;height:${number(document.canvas.height)}du;background:${background}">${diagnostics}${children}</div>`
+  const transitionData = slide.transition
+    ? ` data-ppte-transition="${escapeAttr(canonicalJsonString(slide.transition))}" data-ppte-transition-type="${escapeAttr(slide.transition.type)}" data-ppte-transition-duration-ms="${number(slide.transition.durationMs ?? 0)}"${slide.transition.direction ? ` data-ppte-transition-direction="${escapeAttr(slide.transition.direction)}"` : ''}`
+    : ''
+  return `<div class="ppte-slide" data-ppte-slide-id="${escapeAttr(slide.id)}" data-ppte-type="slide"${strategyData}${transitionData} style="position:relative;overflow:hidden;width:${cssLength(document.canvas.width)};height:${cssLength(document.canvas.height)};background:${background}">${diagnostics}${children}</div>`
 }
 
 export function renderDocumentHtml(document: PpteDocument, options: RenderOptions = {}): string {
-  return document.slideOrder.map((slideId) => renderSlideHtml(document, slideId, options)).join('\n')
+  const surfaceOptions = { ...options, editable: options.editable ?? true }
+  const slides = document.slideOrder.map((slideId) => renderSlideHtml(document, slideId, surfaceOptions)).join('\n')
+  if (options.includeHostControls === false) return slides
+  const thumbnails = document.slideOrder.map((slideId, index) => `<button type="button" class="ppte-thumbnail" data-ppte-slide-index="${index}" aria-label="Slide ${index + 1}"><span>${index + 1}</span></button>`).join('')
+  const documentJson = canonicalJsonString(document).replaceAll('<', '\\u003c').replaceAll('>', '\\u003e').replaceAll('&', '\\u0026')
+  return `<style data-ppte-host-style>.ppte-host{min-height:100vh;display:grid;grid-template-columns:9rem 1fr;grid-template-rows:auto 1fr auto;background:#111827;color:#f8fafc;font-family:system-ui,sans-serif}.ppte-host *{box-sizing:border-box}@keyframes ppte-enter-fade{from{opacity:0}to{opacity:1}}@keyframes ppte-enter-slide-up{from{opacity:0;transform:translateY(1rem)}to{opacity:1;transform:translateY(0)}}@keyframes ppte-enter-slide-left{from{opacity:0;transform:translateX(1rem)}to{opacity:1;transform:translateX(0)}}@keyframes ppte-enter-scale{from{opacity:0;scale:.96}to{opacity:1;scale:1}}@keyframes ppte-transition-fade{from{opacity:0}to{opacity:1}}@keyframes ppte-transition-slide{from{opacity:0;transform:translateX(2rem)}to{opacity:1;transform:translateX(0)}}@keyframes ppte-transition-push{from{opacity:0;transform:translateX(2rem)}to{opacity:1;transform:translateX(0)}}.ppte-host-toolbar{grid-column:1/-1;display:flex;gap:.5rem;align-items:center;padding:.65rem .8rem;background:#0f172a;position:sticky;top:0;z-index:4}.ppte-host-toolbar button,.ppte-host-toolbar label{border:1px solid #475569;border-radius:.35rem;background:#1e293b;color:#f8fafc;padding:.4rem .65rem;cursor:pointer;font-size:.85rem}.ppte-host-toolbar input[type=file]{display:none}.ppte-host-toolbar [data-ppte-status]{margin-left:auto;color:#cbd5e1;font-size:.8rem}.ppte-host-thumbnails{padding:.75rem;background:#0b1220;overflow:auto}.ppte-thumbnail{display:block;width:100%;min-height:4rem;margin:0 0 .55rem;border:1px solid #334155;border-radius:.35rem;background:#1e293b;color:#cbd5e1;cursor:pointer}.ppte-thumbnail[data-active=true]{border-color:#60a5fa;box-shadow:0 0 0 2px #2563eb66}.ppte-thumbnail span{display:block;padding:.25rem}.ppte-host-stage{display:grid;place-items:center;overflow:auto;padding:1rem}.ppte-host-stage .ppte-slide{display:none;box-shadow:0 1rem 3rem #0008;max-width:calc(100vw - 12rem);max-height:calc(100vh - 9rem)}.ppte-host-stage .ppte-slide[data-active=true]{display:block}.ppte-host-stage [data-ppte-animation-enter]{--ppte-animation-duration:0ms}.ppte-host-stage [contenteditable=true]{outline:1px dashed transparent}.ppte-host-stage [contenteditable=true]:hover,.ppte-host-stage [contenteditable=true]:focus{outline-color:#60a5fa;cursor:text}.ppte-host-notes{grid-column:1/-1;min-height:3rem;padding:.55rem .8rem;background:#0f172a}.ppte-host-notes textarea{width:100%;min-height:2.2rem;resize:vertical;background:#1e293b;color:#f8fafc;border:1px solid #475569;border-radius:.25rem;padding:.35rem}.ppte-host[data-ppte-presenting=true]{grid-template-columns:1fr}.ppte-host[data-ppte-presenting=true] .ppte-host-thumbnails,.ppte-host[data-ppte-presenting=true] .ppte-host-toolbar label,.ppte-host[data-ppte-presenting=true] .ppte-host-notes{display:none}.ppte-host[data-ppte-presenting=true] .ppte-host-stage .ppte-slide{max-width:calc(100vw - 2rem);max-height:calc(100vh - 5rem)}</style><div class="ppte-host" data-ppte-host data-ppte-canvas-unit="du"><header class="ppte-host-toolbar"><button type="button" data-ppte-action="new">New</button><label>Open<input type="file" accept=".ppte,.json,application/json" data-ppte-action="open"></label><button type="button" data-ppte-action="save">Save copy</button><button type="button" data-ppte-action="present">Present</button><span data-ppte-status>PPTe Host · local document</span></header><aside class="ppte-host-thumbnails" data-ppte-thumbnails>${thumbnails}</aside><main class="ppte-host-stage" data-ppte-stage>${slides}</main><section class="ppte-host-notes" data-ppte-notes-panel><label for="ppte-speaker-notes">Speaker notes</label><textarea id="ppte-speaker-notes" data-ppte-notes-input></textarea></section></div><script type="application/json" data-ppte-document>${documentJson}</script><script>${hostScript()}</script>`
 }
 
 /** A self-contained image surface for exporters. It remains derived from the semantic snapshot. */
@@ -111,14 +123,19 @@ export function renderTextPlain(element: TextElement): string {
 }
 
 function renderElement(document: PpteDocument, element: Element, options: RenderOptions): string {
-  const frame = `left:${number(element.frame.x)}du;top:${number(element.frame.y)}du;width:${number(element.frame.width)}du;height:${number(element.frame.height)}du;opacity:${number(element.opacity ?? 1)};transform:rotate(${number(element.rotationDeg ?? 0)}deg);transform-origin:center center;`
+  const frame = `left:${cssLength(element.frame.x)};top:${cssLength(element.frame.y)};width:${cssLength(element.frame.width)};height:${cssLength(element.frame.height)};opacity:${number(element.opacity ?? 1)};transform:rotate(${number(element.rotationDeg ?? 0)}deg);transform-origin:center center;`
   let rendered: string
-  if (element.type === 'text') rendered = renderText(document, element, frame)
+  if (element.type === 'text') rendered = renderText(document, element, frame, options)
   else if (element.type === 'image') rendered = renderImage(document, element, frame, options)
   else if (element.type === 'shape') rendered = renderShape(document, element, frame)
   else if (element.type === 'chart') rendered = renderChart(document, element, frame)
   else rendered = renderComponent(document, element, frame, options)
-  return element.appearStep === undefined ? rendered : rendered.replace(/^<(\w+)/, `<$1 data-ppte-appear-step="${number(element.appearStep)}"`)
+  const markers = [
+    element.appearStep === undefined ? '' : ` data-ppte-appear-step="${number(element.appearStep)}"`,
+    element.animation ? ` data-ppte-animation="${escapeAttr(canonicalJsonString(element.animation))}"` : '',
+    element.animation?.enter ? ` data-ppte-animation-enter="${escapeAttr(element.animation.enter.type)}" data-ppte-animation-duration-ms="${number(element.animation.enter.durationMs ?? 0)}" data-ppte-animation-delay-ms="${number(element.animation.enter.delayMs ?? 0)}" data-ppte-animation-easing="${escapeAttr(element.animation.enter.easing ?? 'ease')}"` : '',
+  ].join('')
+  return markers ? rendered.replace(/^(<[A-Za-z][\w:-]*)/, `$1${markers}`) : rendered
 }
 
 function visualUnits(document: PpteDocument, slideId: string): Map<string, { elementId: string; semanticKey?: string; html: string }> {
@@ -132,7 +149,7 @@ function visualUnits(document: PpteDocument, slideId: string): Map<string, { ele
   }))
 }
 
-function renderText(document: PpteDocument, element: TextElement, frame: string): string {
+function renderText(document: PpteDocument, element: TextElement, frame: string, options: RenderOptions): string {
   const preset = document.theme.presets.text[element.style.styleRef] ?? defaultTextStyle(document)
   const style = resolveStyle({ ...preset, ...element.style.overrides }, document) as TextStyle
   const padding = element.boxStyle?.padding
@@ -143,18 +160,18 @@ function renderText(document: PpteDocument, element: TextElement, frame: string)
   const box = [
     `position:absolute;${frame}`,
     `box-sizing:border-box;overflow:${overflow};${boxFill}${boxStroke}${boxShadow}`,
-    element.boxStyle?.radius !== undefined ? `border-radius:${number(element.boxStyle.radius)}du;` : '',
-    `font-family:${quoteCss(resolve(style.fontFamily, document, 'font.body'))};font-size:${number(style.fontSize)}du;font-weight:${number(style.fontWeight ?? 400)};`,
-    `color:${resolveColor(style.color, document, '#111827')};line-height:${number(style.lineHeight ?? 1.2)};letter-spacing:${number(style.letterSpacing ?? 0)}du;`,
+    element.boxStyle?.radius !== undefined ? `border-radius:${cssLength(element.boxStyle.radius)};` : '',
+    `font-family:${quoteCss(resolve(style.fontFamily, document, 'font.body'))};font-size:${cssLength(style.fontSize)};font-weight:${number(style.fontWeight ?? 400)};`,
+    `color:${resolveColor(style.color, document, '#111827')};line-height:${number(style.lineHeight ?? 1.2)};letter-spacing:${cssLength(style.letterSpacing ?? 0)};`,
     `text-align:${element.paragraphStyle?.align ?? 'left'};`,
-    padding ? `padding:${number(padding.top)}du ${number(padding.right)}du ${number(padding.bottom)}du ${number(padding.left)}du;` : '',
+    padding ? `padding:${cssLength(padding.top)} ${cssLength(padding.right)} ${cssLength(padding.bottom)} ${cssLength(padding.left)};` : '',
     `vertical-align:${style.verticalAlign ?? 'top'};direction:${style.direction ?? 'auto'};`,
   ].join('')
   const paragraphs = element.content.paragraphs.map((paragraph) => {
     const paragraphStyle = [
       paragraph.align ? `text-align:${paragraph.align};` : '',
-      paragraph.spaceBefore !== undefined ? `margin-top:${number(paragraph.spaceBefore)}du;` : '',
-      paragraph.spaceAfter !== undefined ? `margin-bottom:${number(paragraph.spaceAfter)}du;` : '',
+      paragraph.spaceBefore !== undefined ? `margin-top:${cssLength(paragraph.spaceBefore)};` : '',
+      paragraph.spaceAfter !== undefined ? `margin-bottom:${cssLength(paragraph.spaceAfter)};` : '',
     ].join('')
     const align = paragraphStyle ? ` style="${escapeAttr(paragraphStyle)}"` : ''
     const listPrefix = paragraph.list?.type === 'bullet' ? '• ' : paragraph.list?.type === 'number' ? '1. ' : ''
@@ -165,7 +182,8 @@ function renderText(document: PpteDocument, element: TextElement, frame: string)
       ? `<p data-ppte-paragraph-id="${escapeAttr(paragraph.id)}"${align}>${line}</p>`
       : `<${paragraphTag} data-ppte-paragraph-id="${escapeAttr(paragraph.id)}"${align}><li>${content}</li></${paragraphTag}>`
   }).join('')
-  return `<div data-ppte-element-id="${escapeAttr(element.id)}" data-ppte-type="text" data-ppte-semantic-key="${escapeAttr(element.semanticKey ?? '')}" style="${box}">${paragraphs}</div>`
+  const editable = options.editable === true ? ' contenteditable="true" spellcheck="false" tabindex="0"' : ''
+  return `<div data-ppte-element-id="${escapeAttr(element.id)}" data-ppte-type="text" data-ppte-semantic-key="${escapeAttr(element.semanticKey ?? '')}"${editable} style="${box}">${paragraphs}</div>`
 }
 
 function renderRun(document: PpteDocument, text: string, marks: TextElement['content']['paragraphs'][number]['runs'][number]['marks'], fallbackColor: ValueOrToken<`#${string}`>): string {
@@ -193,7 +211,7 @@ function renderImage(document: PpteDocument, element: ImageElement, frame: strin
     crop ? `transform:scale(${number(1 / crop.width)},${number(1 / crop.height)});transform-origin:${number((crop.x + crop.width / 2) * 100)}% ${number((crop.y + crop.height / 2) * 100)}%;` : '',
   ].join('')
   const wrapper = [
-    `position:absolute;${frame}overflow:hidden;border-radius:${number(asNumber(style.radius) ?? 0)}du;`,
+    `position:absolute;${frame}overflow:hidden;border-radius:${cssLength(asNumber(style.radius) ?? 0)};`,
     style.border ? strokeCss(style.border as Stroke, document, 'border') : '',
     style.shadow ? `box-shadow:${shadowCss(style.shadow as Shadow, document)};` : '',
   ].join('')
@@ -201,7 +219,7 @@ function renderImage(document: PpteDocument, element: ImageElement, frame: strin
   const cropData = crop ? ` data-ppte-crop="${escapeAttr([crop.x, crop.y, crop.width, crop.height].map(number).join(','))}"` : ''
   const artwork = element.role === 'artwork' ? asset.artwork : undefined
   const artworkData = artwork ? ` data-ppte-artwork="true" data-ppte-safe-text-regions="${escapeAttr(canonicalJsonString(artwork.safeTextRegions ?? []))}" data-ppte-avoid-text-regions="${escapeAttr(canonicalJsonString(artwork.avoidTextRegions ?? []))}" data-ppte-dominant-palette="${escapeAttr(canonicalJsonString(artwork.dominantPalette ?? []))}"${artwork.focalPoint ? ` data-ppte-focal-point="${escapeAttr(canonicalJsonString(artwork.focalPoint))}"` : ''}` : ''
-  return `<div data-ppte-element-id="${escapeAttr(element.id)}" data-ppte-type="image" data-ppte-semantic-key="${escapeAttr(element.semanticKey ?? '')}"${cropData}${artworkData} style="${wrapper}"><img src="${escapeAttr(source)}" alt="${escapeAttr(alt)}" draggable="false" style="${imageCss}"></div>`
+  return `<div data-ppte-element-id="${escapeAttr(element.id)}" data-ppte-type="image" data-ppte-asset-id="${escapeAttr(element.assetId)}" data-ppte-semantic-key="${escapeAttr(element.semanticKey ?? '')}"${cropData}${artworkData} style="${wrapper}"><img src="${escapeAttr(source)}" alt="${escapeAttr(alt)}" draggable="false" style="${imageCss}"></div>`
 }
 
 function renderShape(document: PpteDocument, element: ShapeElement, frame: string): string {
@@ -256,10 +274,10 @@ function renderComponent(document: PpteDocument, element: Extract<Element, { typ
   const fallbackAsset = element.fallback.kind === 'asset' && element.fallback.assetId ? document.assets[element.fallback.assetId] : undefined
   if (fallbackAsset) {
     const source = options.assetSources?.[fallbackAsset.id] ?? fallbackAsset.path
-    return `<div data-ppte-element-id="${escapeAttr(element.id)}" data-ppte-type="component" data-ppte-component-type="${escapeAttr(element.componentType)}" data-ppte-component-version="${escapeAttr(element.componentVersion)}" data-ppte-semantic-key="${escapeAttr(element.semanticKey ?? '')}" data-ppte-widget-fallback="asset" style="${frame}overflow:hidden;"><img src="${escapeAttr(source)}" alt="${escapeAttr(fallbackAsset.altText ?? element.fallback.label ?? element.componentType)}" style="width:100%;height:100%;object-fit:contain;"></div>`
+    return `<div data-ppte-element-id="${escapeAttr(element.id)}" data-ppte-type="component" data-ppte-component-type="${escapeAttr(element.componentType)}" data-ppte-component-version="${escapeAttr(element.componentVersion)}" data-ppte-semantic-key="${escapeAttr(element.semanticKey ?? '')}" data-ppte-widget-fallback="asset" style="position:absolute;${frame}overflow:hidden;"><img src="${escapeAttr(source)}" alt="${escapeAttr(fallbackAsset.altText ?? element.fallback.label ?? element.componentType)}" style="width:100%;height:100%;object-fit:contain;"></div>`
   }
   const widget = renderWidgetHtml(element, options.widgetRegistry ?? getBuiltinWidgetRegistry())
-  return `<div data-ppte-element-id="${escapeAttr(element.id)}" data-ppte-type="component" data-ppte-component-type="${escapeAttr(element.componentType)}" data-ppte-component-version="${escapeAttr(element.componentVersion)}" data-ppte-semantic-key="${escapeAttr(element.semanticKey ?? '')}" style="${frame}overflow:hidden;">${widget}</div>`
+  return `<div data-ppte-element-id="${escapeAttr(element.id)}" data-ppte-type="component" data-ppte-component-type="${escapeAttr(element.componentType)}" data-ppte-component-version="${escapeAttr(element.componentVersion)}" data-ppte-semantic-key="${escapeAttr(element.semanticKey ?? '')}" style="position:absolute;${frame}overflow:hidden;">${widget}</div>`
 }
 
 function renderElementSvg(document: PpteDocument, element: Element, options: RenderOptions, defs: string[]): string {
@@ -297,7 +315,7 @@ function renderTextSvg(document: PpteDocument, element: TextElement, defs: strin
       const color = marks?.color ? resolveColor(marks.color, document, resolveColor(style.color, document, '#111827')) : resolveColor(style.color, document, '#111827')
       return `<tspan fill="${escapeAttr(color)}"${marks?.bold ? ' font-weight="700"' : ''}${marks?.italic ? ' font-style="italic"' : ''}${marks?.underline ? ' text-decoration="underline"' : ''}${marks?.strike ? ' text-decoration="line-through"' : ''}>${escapeXml(run.text)}</tspan>`
     }).join('')
-    return `<text x="${number(x)}" y="${number(y)}" text-anchor="${anchor}" font-family="${escapeAttr(resolve(style.fontFamily, document, 'font.body') as string)}" font-size="${number(style.fontSize)}" font-weight="${number(style.fontWeight ?? 400)}" line-height="${number(style.lineHeight ?? 1.2)}"${style.direction && style.direction !== 'auto' ? ` direction="${style.direction}"` : ''}>${escapeXml(prefix)}${runs}</text>`
+    return `<text x="${number(x)}" y="${number(y)}" text-anchor="${anchor}" font-family="${escapeAttr(sanitizeFontFamily(resolve(style.fontFamily, document, 'font.body')))}" font-size="${number(style.fontSize)}" font-weight="${number(style.fontWeight ?? 400)}" line-height="${number(style.lineHeight ?? 1.2)}"${style.direction && style.direction !== 'auto' ? ` direction="${style.direction}"` : ''}>${escapeXml(prefix)}${runs}</text>`
   }).join('')
   const box = fill || stroke ? `<rect x="0" y="0" width="${number(element.frame.width)}" height="${number(element.frame.height)}"${fill ? ` fill="${escapeAttr(fill)}"` : ' fill="none"'}${stroke ? ` ${svgStroke(stroke, document)}` : ''}${element.boxStyle?.radius !== undefined ? ` rx="${number(element.boxStyle.radius)}"` : ''}/>` : ''
   return `${box}${overflow ? `<g clip-path="url(#${escapeAttr(clipId)})">${lines}</g>` : lines}`
@@ -395,10 +413,10 @@ function paintSvg(paint: Paint, document: PpteDocument, id: string, defs: string
 }
 function strokeCss(stroke: Stroke, document: PpteDocument, property = 'border'): string {
   const style = stroke.dash?.length ? 'dashed' : 'solid'
-  return `${property}:${number(stroke.width)}du ${style} ${resolveColor(stroke.color, document, 'transparent')};${stroke.opacity === undefined ? '' : `${property}-opacity:${number(stroke.opacity)};`}`
+  return `${property}:${cssLength(stroke.width)} ${style} ${resolveColor(stroke.color, document, 'transparent')};${stroke.opacity === undefined ? '' : `${property}-opacity:${number(stroke.opacity)};`}`
 }
 function shadowCss(shadow: Shadow, document: PpteDocument): string {
-  return `${number(shadow.offsetX)}du ${number(shadow.offsetY)}du ${number(shadow.blur)}du ${number(shadow.spread ?? 0)}du ${resolveColor(shadow.color, document, 'transparent')}`
+  return `${cssLength(shadow.offsetX)} ${cssLength(shadow.offsetY)} ${cssLength(shadow.blur)} ${cssLength(shadow.spread ?? 0)} ${resolveColor(shadow.color, document, 'transparent')}`
 }
 function svgShadow(shadow: Shadow, document: PpteDocument, id: string): string {
   return `<filter id="${escapeAttr(id)}" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="${number(shadow.offsetX)}" dy="${number(shadow.offsetY)}" stdDeviation="${number(shadow.blur / 2)}"${shadow.spread === undefined ? '' : ` flood-opacity="${number(shadow.opacity ?? 1)}"`} flood-color="${escapeAttr(resolveColor(shadow.color, document, '#000000'))}"${shadow.opacity === undefined || shadow.spread !== undefined ? '' : ` flood-opacity="${number(shadow.opacity)}"`}/></filter>`
@@ -417,11 +435,21 @@ function asNumber(value: unknown): number | undefined {
   return typeof value === 'number' && Number.isFinite(value) ? value : undefined
 }
 function safeId(value: string): string { return value.replace(/[^A-Za-z0-9_-]/g, '_') }
+function cssLength(value: number): string { return `${number(value)}px` }
 function number(value: number): string {
   if (!Number.isFinite(value)) throw new Error('RENDER_INVALID_NUMBER')
   return String(Math.round(value * 1000) / 1000)
 }
-function quoteCss(value: string): string { return `'${value.replace(/[^A-Za-z0-9 ,._-]/g, '')}'` }
+function quoteCss(value: unknown): string {
+  const families = sanitizeFontFamily(value).split(',').map((family) => family.trim()).filter(Boolean)
+  return families.length ? families.map((family) => `'${family}'`).join(',') : 'sans-serif'
+}
+function sanitizeFontFamily(value: unknown): string {
+  return String(value ?? '').split(',').map((family) => family.trim().replace(/[^\p{L}\p{N}\p{M}\p{Zs}._-]/gu, '')).filter(Boolean).join(',')
+}
+function hostScript(): string {
+  return `(()=>{const host=document.querySelector('[data-ppte-host]');if(!host)return;const documentNode=JSON.parse(document.querySelector('[data-ppte-document]').textContent||'{}');let index=0;let step=0;const slides=[...host.querySelectorAll('[data-ppte-slide-id]')];const status=host.querySelector('[data-ppte-status]');const notes=host.querySelector('[data-ppte-notes-input]');const current=()=>documentNode.slides&&documentNode.slides[documentNode.slideOrder[index]];const setStatus=(value)=>{if(status)status.textContent=value};const show=()=>{slides.forEach((slide,slideIndex)=>{slide.dataset.active=String(slideIndex===index);slide.querySelectorAll('[data-ppte-appear-step]').forEach((element)=>{element.style.visibility=Number(element.getAttribute('data-ppte-appear-step'))<=step?'visible':'hidden'})});const slide=current();if(notes)notes.value=slide&&slide.notes?slide.notes.speaker||'':'';host.querySelectorAll('[data-ppte-slide-index]').forEach((button)=>{button.dataset.active=String(Number(button.dataset.ppteSlideIndex||button.getAttribute('data-ppte-slide-index'))===index)});setStatus('PPTe Host · slide '+(index+1)+'/'+slides.length+(host.dataset.pptePresenting==='true'?' · presenting':''))};const next=()=>{const active=slides[index];const pending=[...(active?active.querySelectorAll('[data-ppte-appear-step]'):[])].map((element)=>Number(element.getAttribute('data-ppte-appear-step'))).filter((value)=>value>step).sort((a,b)=>a-b);if(pending.length)step=pending[0];else if(index<slides.length-1){index+=1;step=0}show()};const previous=()=>{if(step>0)step=Math.max(0,step-1);else if(index>0){index-=1;step=0}show()};const save=()=>{const blob=new Blob([JSON.stringify(documentNode,null,2)],{type:'application/vnd.ppte+json'});const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=((documentNode.metadata&&documentNode.metadata.title)||'presentation')+'.ppte.json';link.click();URL.revokeObjectURL(link.href);setStatus('PPTe Host · saved copy')};host.addEventListener('click',(event)=>{const target=event.target.closest('button');if(!target)return;const action=target.getAttribute('data-ppte-action');if(action==='next')next();else if(action==='previous')previous();else if(action==='save')save();else if(action==='present'){host.dataset.pptePresenting=host.dataset.pptePresenting==='true'?'false':'true';show()}else if(action==='new')setStatus('PPTe Host · new document requires a local semantic snapshot');else if(target.hasAttribute('data-ppte-slide-index')){index=Math.max(0,Math.min(slides.length-1,Number(target.getAttribute('data-ppte-slide-index'))||0));step=0;show()}});host.addEventListener('input',(event)=>{const target=event.target;if(target.matches('[contenteditable="true"]')){const element=target.closest('[data-ppte-element-id]');const slide=current();const model=slide&&element?slide.elements[element.getAttribute('data-ppte-element-id')]:null;if(model&&model.type==='text'&&model.content&&model.content.paragraphs&&model.content.paragraphs[0]&&model.content.paragraphs[0].runs&&model.content.paragraphs[0].runs[0])model.content.paragraphs[0].runs[0].text=target.innerText.replace(/\\n/g,'\\n')}});if(notes)notes.addEventListener('input',()=>{const slide=current();if(slide){slide.notes=slide.notes||{};slide.notes.speaker=notes.value}});const open=host.querySelector('input[type="file"]');if(open)open.addEventListener('change',()=>{const file=open.files&&open.files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const parsed=JSON.parse(String(reader.result||''));if(parsed&&parsed.schemaVersion){setStatus('PPTe Host · opened '+file.name+'; reload to remount the snapshot')}else throw new Error('not a document')}catch(error){setStatus('PPTe Host · open failed: '+error.message)}};reader.readAsText(file)});show()})()`
+}
 function escapeHtml(value: string): string { return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;') }
 function escapeXml(value: string): string { return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&apos;') }
 function escapeAttr(value: string): string { return escapeHtml(value) }
