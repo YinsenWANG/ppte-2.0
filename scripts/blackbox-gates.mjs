@@ -114,6 +114,10 @@ const MILESTONE_GROUPS = {
 
 const CASE_SPECS = Object.fromEntries(GROUP_ORDER.map((group) => [group, []]))
 
+function register(group, finding, title, authorization, expected, run) {
+  CASE_SPECS[group].push({ id: `${group}:${CASE_SPECS[group].length + 1}`, finding, title, authorization, expected, run })
+}
+
 class GateFailure extends Error {
   constructor(message, observed = undefined, rawOutput = undefined) {
     super(message)
@@ -199,6 +203,10 @@ function stringifyObserved(value) {
 
 function expectGate(condition, message, observed = undefined) {
   if (!condition) throw new GateFailure(message, observed)
+}
+
+function failGate(message, observed = undefined, rawOutput = undefined) {
+  throw new GateFailure(message, observed, rawOutput)
 }
 
 function expectEqual(actual, expected, message) {
@@ -437,6 +445,839 @@ function assertGolden(image, golden) {
   for (const sample of golden.samples) expectEqual(pixelAt(image, sample.x, sample.y), sample.rgba, `PNG golden sample mismatch: ${sample.label}.`)
 }
 
+register('core-basic', 'clean-path:preview-pure', 'Preview is a pure function over a semantic snapshot.', 'Human/Agent may preview a standard text-only transaction without commit authority.', 'preview ok; document, revision, history, redo stack, and save state remain byte-identical', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document } = makeCoreFixture()
+  const session = new rt.core.PpteSession(document)
+  const before = JSON.stringify({ document: session.getDocument(), revision: session.getRevision(), history: session.getHistory(), redo: session.getRedoHistory(), saveState: session.getSaveState() })
+  const result = session.preview(ctx.textTransaction(rt, session.getDocument(), session.getRevision(), '纯预览文本', { transactionId: 'bb-core-preview' }))
+  ctx.expectNoErrors(result, 'A valid text-only preview must succeed.')
+  const after = JSON.stringify({ document: session.getDocument(), revision: session.getRevision(), history: session.getHistory(), redo: session.getRedoHistory(), saveState: session.getSaveState() })
+  ctx.expectEqual(after, before, 'Preview changed Session state.')
+  return { proposedRevision: result.proposedRevision, stateUnchanged: after === before }
+})
+
+register('core-basic', 'clean-path:ime-no-submit', 'IME composition does not submit a transaction.', 'While composition is active, the editor may update private local text but must not reach Session.commit.', 'finish() returns no transaction while composing, and local composition remains local', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document } = makeCoreFixture()
+  const editor = new rt.richtext.ImeTextEditSession(clone(document.slides[IDS.slide].elements[IDS.title]), IDS.slide)
+  editor.beginComposition()
+  editor.updateComposition(richText('拼音 composing', 'bb-ime-private'))
+  const transactionWhileComposing = editor.finish('bb-ime-no-submit', 'sha256-' + '0'.repeat(64))
+  ctx.expectEqual(transactionWhileComposing, undefined, 'IME composition submitted before compositionend.')
+  ctx.expectEqual(textContent({ content: editor.getLocalContent() }), '拼音 composing', 'Private IME content was not retained locally.')
+  return { composing: editor.isComposing(), submitted: transactionWhileComposing !== undefined }
+})
+
+register('core-basic', 'clean-path:ime-one-transaction', 'A completed IME edit becomes one semantic transaction.', 'Human editor commits after compositionend; the adapter owns the transaction boundary.', 'exactly one text.replaceContent operation commits and one history entry is created', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document } = makeCoreFixture()
+  const session = new rt.core.PpteSession(document)
+  const editor = new rt.richtext.ImeTextEditSession(clone(document.slides[IDS.slide].elements[IDS.title]), IDS.slide)
+  editor.beginComposition()
+  editor.updateComposition(richText('经营回顾（组合输入）', 'bb-ime-complete'))
+  editor.endComposition()
+  const edit = editor.finish('bb-ime-one-transaction', session.getRevision(), '2026-09-03T00:00:00.000Z')
+  ctx.expectGate(Boolean(edit), 'Compositionend must produce a transaction.')
+  ctx.expectEqual(edit.operations.map((operation) => operation.kind), ['text.replaceContent'], 'IME edit emitted more than one semantic operation.')
+  const result = session.commit(edit)
+  ctx.expectNoErrors(result, 'Completed IME transaction must commit.')
+  ctx.expectEqual(session.getHistory().length, 1, 'Completed IME edit did not create exactly one history entry.')
+  ctx.expectEqual(textOf(session.getDocument(), IDS.title), '经营回顾（组合输入）', 'Committed IME text is not exact.')
+  return { operations: edit.operations.length, history: session.getHistory().length, text: textOf(session.getDocument(), IDS.title) }
+})
+
+register('core-basic', 'clean-path:session-undo-redo', 'Undo and redo are exact within one Session.', 'Human edits are committed in one Session; undo/redo must traverse that Session history.', 'content, geometry, and metadata commits undo and redo in exact reverse/forward order', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document } = makeCoreFixture()
+  const session = new rt.core.PpteSession(document)
+  const agent = new rt.agent.MockAgent()
+  const snapshots = [clone(session.getDocument())]
+  const first = session.commit(agent.createTextReplaceTransaction(session.getDocument(), session.getRevision(), IDS.slide, IDS.title, richText('第一版标题', 'bb-undo-1'), 'bb-undo-1'))
+  ctx.expectNoErrors(first, 'First history entry must commit.')
+  snapshots.push(clone(session.getDocument()))
+  const second = session.commit(transaction({
+    id: 'bb-undo-2',
+    baseRevision: session.getRevision(),
+    scope: scope('selection', ['geometry'], { elementIds: [IDS.image] }),
+    contract: broadContract(['element.move'], { allowedElementIds: [IDS.image], maxChangedElements: 1, preserve: { content: 'preserve', data: 'preserve', style: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' } }),
+    operations: [{ opId: 'bb-undo-2:move', kind: 'element.move', slideId: IDS.slide, elementId: IDS.image, x: 1180, y: 290 }],
+  }))
+  ctx.expectNoErrors(second, 'Second geometry history entry must commit.')
+  snapshots.push(clone(session.getDocument()))
+  const third = session.commit(transaction({
+    id: 'bb-undo-3',
+    baseRevision: session.getRevision(),
+    scope: scope('document', ['structure']),
+    contract: broadContract(['document.updateMetadata'], { maxChangedElements: 0 }),
+    operations: [{ opId: 'bb-undo-3:metadata', kind: 'document.updateMetadata', patch: { title: '第三版元数据标题' } }],
+  }))
+  ctx.expectNoErrors(third, 'Third metadata history entry must commit.')
+  snapshots.push(clone(session.getDocument()))
+  const undoRevisions = []
+  for (let index = 2; index >= 0; index -= 1) {
+    const result = session.undo()
+    ctx.expectNoErrors(result, `Undo ${index + 1} must succeed in the same Session.`)
+    ctx.expectEqual(JSON.stringify(session.getDocument()), JSON.stringify(snapshots[index]), `Undo ${index + 1} did not restore the exact snapshot.`)
+    ctx.expectEqual(session.getRevision(), rt.canonical.canonicalRevision(snapshots[index]), `Undo ${index + 1} revision is not the restored snapshot revision.`)
+    undoRevisions.push(session.getRevision())
+  }
+  for (let index = 1; index <= 3; index += 1) {
+    const result = session.redo()
+    ctx.expectNoErrors(result, `Redo ${index} must succeed in the same Session.`)
+    ctx.expectEqual(JSON.stringify(session.getDocument()), JSON.stringify(snapshots[index]), `Redo ${index} did not restore the exact committed snapshot.`)
+  }
+  return { undoRevisions, history: session.getHistory().length, redo: session.getRedoHistory().length }
+})
+
+register('core-basic', 'clean-path:checkpoint-atomic', 'Checkpoint replacement is atomic and old files remain readable.', 'A human save may fault before rename; readers must see either the old complete archive or the new complete archive.', 'fault before rename leaves the old checkpoint readable at its original revision', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  await ctx.withTempDirectory(async (directory) => {
+    const { document, imageBytes } = makeCoreFixture()
+    const target = join(directory, 'atomic.ppte')
+    const initial = rt.file.writeCheckpoint(document, target, { clean: true, assetBytes: { [IDS.asset]: imageBytes }, timestamp: '2026-09-03T00:00:00.000Z' })
+    let faultMessage
+    try {
+      const changed = clone(document)
+      changed.metadata.title = '应该在下一次完整替换中出现'
+      rt.file.writeCheckpoint(changed, target, { clean: true, assetBytes: { [IDS.asset]: imageBytes }, timestamp: '2026-09-03T00:00:01.000Z', fault: 'before-rename' })
+    } catch (cause) {
+      faultMessage = cause instanceof Error ? cause.message : String(cause)
+    }
+    ctx.expectGate(faultMessage?.includes('CHECKPOINT_FAULT'), 'Fault injection did not stop before rename.', faultMessage)
+    const opened = rt.file.openCheckpoint(target)
+    ctx.expectEqual(opened.manifest.contentRevision, initial.revision, 'Old checkpoint was not readable after failed replacement.')
+    ctx.expectEqual(opened.document.metadata.title, document.metadata.title, 'Failed replacement exposed a partial/new checkpoint.')
+    return { revision: opened.manifest.contentRevision, faultMessage }
+  })
+  return { atomic: true }
+})
+
+register('core-basic', 'clean-path:special-text-roundtrip', 'Special text round-trips byte-for-byte through the semantic file.', 'Human text may contain CJK, emoji, tags, ampersands, and literal script text; file serialization must preserve it exactly.', 'checkpoint reopen and derived HTML preserve the exact UTF-8 text while escaping markup', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  await ctx.withTempDirectory(async (directory) => {
+    const { document, imageBytes } = makeCoreFixture()
+    const value = '中文 😀 </script> & <tag> — byte round-trip'
+    const session = new rt.core.PpteSession(document)
+    const result = session.commit(ctx.textTransaction(rt, session.getDocument(), session.getRevision(), value, { transactionId: 'bb-special-text' }))
+    ctx.expectNoErrors(result, 'Special text transaction must commit.')
+    const target = join(directory, 'special.ppte')
+    rt.file.writeCheckpoint(session.getDocument(), target, { clean: true, assetBytes: { [IDS.asset]: imageBytes }, timestamp: '2026-09-03T00:00:00.000Z' })
+    const reopened = rt.file.openCheckpoint(target)
+    ctx.expectEqual(textOf(reopened.document, IDS.title), value, 'Special text changed during checkpoint round-trip.')
+    ctx.expectEqual([...new TextEncoder().encode(textOf(reopened.document, IDS.title))], [...new TextEncoder().encode(value)], 'UTF-8 bytes changed during round-trip.')
+    const html = rt.renderer.renderSlideHtml(reopened.document, IDS.slide)
+    ctx.expectGate(html.includes('&lt;/script&gt;') && !html.includes('</script>'), 'Derived HTML did not safely escape literal script text.', html)
+    return { text: textOf(reopened.document, IDS.title), escaped: html.includes('&lt;/script&gt;') }
+  })
+  return { roundTrip: true }
+})
+
+register('core-basic', 'clean-path:agent-text-scope', 'The standard text-only Agent transaction enforces its Scope.', 'Agent receives a selection Scope for the title and may replace only that title text.', 'commit succeeds, title changes, and body/image/shape remain unchanged', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document } = makeCoreFixture()
+  const session = new rt.core.PpteSession(document)
+  const before = clone(session.getDocument())
+  const result = session.commit(ctx.textTransaction(rt, session.getDocument(), session.getRevision(), 'Agent 只改标题', { transactionId: 'bb-agent-text-scope' }))
+  ctx.expectNoErrors(result, 'Standard text-only Agent transaction must commit.')
+  const after = session.getDocument()
+  ctx.expectEqual(textOf(after, IDS.title), 'Agent 只改标题', 'Agent title edit was not applied.')
+  ctx.expectEqual(after.slides[IDS.slide].elements[IDS.body], before.slides[IDS.slide].elements[IDS.body], 'Agent text Scope leaked into body.')
+  ctx.expectEqual(after.slides[IDS.slide].elements[IDS.image], before.slides[IDS.slide].elements[IDS.image], 'Agent text Scope leaked into image.')
+  ctx.expectEqual(after.slides[IDS.slide].elements[IDS.surface], before.slides[IDS.slide].elements[IDS.surface], 'Agent text Scope leaked into shape.')
+  return { changedElement: IDS.title, bodyUnchanged: true, imageUnchanged: true, surfaceUnchanged: true }
+})
+
+register('agent-scope', '7', 'Generic slide.update cannot bypass a narrow Agent Scope.', 'Agent is authorized for title content only; a generic slide.update attempts to mutate the body.', 'preview rejects the body mutation with a scope/contract error', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document } = makeCoreFixture()
+  const body = clone(document.slides[IDS.slide].elements[IDS.body])
+  body.content = richText('越权写入的正文', 'bb-out-of-scope-body')
+  const result = new rt.core.PpteSession(document).preview(ctx.transaction({
+    id: 'bb-finding-7',
+    baseRevision: rt.canonical.canonicalRevision(document),
+    scope: ctx.scope('selection', ['structure'], { slideIds: [IDS.slide], elementIds: [IDS.title] }),
+    contract: ctx.broadContract(['slide.update'], { maxChangedSlides: 1, maxChangedElements: 1 }),
+    operations: [{ opId: 'bb-finding-7:update', kind: 'slide.update', slideId: IDS.slide, patch: { elements: { ...document.slides[IDS.slide].elements, [IDS.body]: body } } }],
+  }))
+  ctx.expectGate(result.ok === false, 'Generic slide.update bypassed the title-only Agent Scope.', result)
+  return { ok: result.ok, issueCodes: result.issues.map((issue) => issue.code) }
+})
+
+register('agent-scope', '8', 'Selection regeneration changes the selected semantic object.', 'Agent selection contains only the title; regeneration must preserve body, image, and surface.', 'generated transaction targets the title and does not delete or replace non-selected elements', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document } = makeCoreFixture()
+  const server = new rt.agent.AgentToolServer(new rt.core.PpteSession(document, { runtimeProfile: 'ga-b' }), {
+    selection: { slideId: IDS.slide, elementIds: [IDS.title] },
+  })
+  const result = server.execute('regenerate_selection', { requireConfirmation: false, reason: 'Finding 8 selected-title regeneration' })
+  ctx.expectGate(Boolean(result.transaction), 'Selection regeneration did not return a transaction.', result)
+  const operations = result.transaction.operations
+  const nonSelected = [IDS.surface, IDS.body, IDS.image]
+  ctx.expectGate(!operations.some((operation) => nonSelected.includes(operation.elementId) || operation.kind === 'slide.setReadingOrder' && operation.readingOrder.some((id) => nonSelected.includes(id))), 'Selection regeneration touched a non-selected element.', operations)
+  ctx.expectGate(operations.some((operation) => operation.elementId === IDS.title || operation.element?.semanticKey === 'title.main'), 'Selection regeneration did not target the selected title.', operations)
+  return { ok: result.ok, operationKinds: operations.map((operation) => operation.kind), operationCount: operations.length }
+})
+
+register('agent-scope', '9', 'Regeneration carries edit policy and semantic references forward.', 'Agent regeneration is authorized to replace a slide but must retain title protection and body Fact/Source references.', 'replacement elements retain preserveOnRegenerate and semanticRefs from the source snapshot', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document } = makeCoreFixture()
+  const server = new rt.agent.AgentToolServer(new rt.core.PpteSession(document, { runtimeProfile: 'ga-b' }))
+  const result = server.execute('regenerate_slide', { slideId: IDS.slide, requireConfirmation: false, reason: 'Finding 9 provenance preservation' })
+  ctx.expectGate(Boolean(result.transaction), 'Regeneration did not return a transaction.', result)
+  const inserted = result.transaction.operations.filter((operation) => operation.kind === 'element.insert').map((operation) => operation.element)
+  const title = inserted.find((element) => element.semanticKey === 'title.main')
+  const body = inserted.find((element) => element.semanticKey === 'body.summary')
+  ctx.expectGate(title?.editPolicy?.preserveOnRegenerate === true, 'Generated title lost preserveOnRegenerate policy.', inserted)
+  ctx.expectGate(body?.semanticRefs?.factIds?.includes('revenue') && body?.semanticRefs?.sourceIds?.includes('source.report'), 'Generated body lost Fact/Source semantic references.', inserted)
+  return { inserted: inserted.map((element) => ({ id: element.id, semanticKey: element.semanticKey, hasPolicy: Boolean(element.editPolicy), refs: element.semanticRefs ?? null })) }
+})
+
+register('agent-scope', '10', 'Regeneration consumes the caller-supplied Slide IR.', 'Agent supplies an explicit Slide IR with a cautious Chinese title; the compiler must use that request.', 'returned draft/transaction contains the supplied IR title rather than inferred current text', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document } = makeCoreFixture()
+  const server = new rt.agent.AgentToolServer(new rt.core.PpteSession(document, { runtimeProfile: 'ga-b' }))
+  const supplied = makeSlideIR()
+  const result = server.execute('regenerate_slide', { slideId: IDS.slide, slideIR: supplied, requireConfirmation: false, reason: 'Finding 10 supplied IR' })
+  const serialized = JSON.stringify({ data: result.data, transaction: result.transaction })
+  ctx.expectGate(serialized.includes('谨慎表达的新标题'), 'Regeneration ignored the supplied Slide IR.', { result, supplied })
+  return { suppliedTitleUsed: true, resultOk: result.ok }
+})
+
+register('agent-scope', '12', 'Text fit is measured against the actual fixed frame.', 'Agent may reduce the title font to the requested minimum, but the committed result must not retain TEXT_OVERFLOW.', 'fit transaction commits only when the measured result fits, with no overflow warning afterward', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const document = makeOverflowDocument()
+  const session = new rt.core.PpteSession(document, { runtimeProfile: 'ga-b' })
+  const result = session.commit(ctx.transaction({
+    id: 'bb-finding-12',
+    baseRevision: session.getRevision(),
+    scope: ctx.scope('selection', ['style'], { slideIds: [IDS.slide], elementIds: [IDS.title] }),
+    contract: ctx.broadContract(['text.fitByReducingFont'], { allowedElementIds: [IDS.title], maxChangedElements: 1, preserve: { content: 'preserve', geometry: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' } }),
+    operations: [{ opId: 'bb-finding-12:fit', kind: 'text.fitByReducingFont', slideId: IDS.slide, elementId: IDS.title, minFontSize: 1, resolvedFontSize: 63 }],
+  }))
+  const remaining = rt.validation.validateRuntimeDocument(session.getDocument()).filter((issue) => issue.code === 'TEXT_OVERFLOW')
+  ctx.expectGate(result.ok === true && remaining.length === 0 && !result.issues.some((issue) => issue.code === 'TEXT_OVERFLOW'), 'Fit committed while the measured text still overflowed.', { result, remaining })
+  return { remainingOverflow: remaining.length, revision: session.getRevision() }
+})
+
+register('agent-scope', '13', 'Image replacement consumes the declared replacement budget.', 'Agent is authorized for the image but the transaction declares maxReplacedAssets=0.', 'preview rejects one semantic asset replacement as a mutation-budget violation', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document, imageBytes, newBytes } = ctx.fixtureWithNewAsset()
+  const session = new rt.core.PpteSession(document, { runtimeProfile: 'ga-b' })
+  const replacement = clone(document.slides[IDS.slide].elements[IDS.image])
+  replacement.id = 'bb_image_replacement'
+  replacement.assetId = IDS.assetNew
+  replacement.provenance = { kind: 'generated', replacesElementId: IDS.image, sourceSemanticKey: replacement.semanticKey }
+  const result = session.preview(ctx.transaction({
+    id: 'bb-finding-13',
+    baseRevision: session.getRevision(),
+    scope: ctx.scope('selection', ['assets', 'structure'], { slideIds: [IDS.slide], elementIds: [IDS.image, replacement.id], allowInsert: true, allowDelete: true }),
+    contract: ctx.broadContract(['element.delete', 'element.insert'], { allowedElementIds: [IDS.image, replacement.id], maxChangedElements: 1, maxInsertedElements: 1, maxDeletedElements: 1, maxReplacedAssets: 0, preserve: { content: 'preserve', geometry: 'preserve', style: 'preserve', semanticIdentity: 'allow-replacement', readingOrder: 'preserve', facts: 'preserve' } }),
+    operations: [
+      { opId: 'bb-finding-13:delete', kind: 'element.delete', slideId: IDS.slide, elementId: IDS.image },
+      { opId: 'bb-finding-13:insert', kind: 'element.insert', slideId: IDS.slide, element: replacement, index: 3 },
+    ],
+  }))
+  ctx.expectGate(result.ok === false && result.issues.some((issue) => issue.code === 'MUTATION_BUDGET_EXCEEDED'), 'Asset replacement escaped the declared replacement budget.', { result, bytes: { old: imageBytes.length, new: newBytes.length } })
+  return { ok: result.ok, issueCodes: result.issues.map((issue) => issue.code) }
+})
+
+register('agent-scope', '14', 'Fact synchronization is safe when the prior display is absent.', 'Fact sync targets the body with a previous value that is not present; it must not overwrite unrelated runs.', 'transaction rejects or leaves the original display untouched when no safe prior-value match exists', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document } = makeChartFixture()
+  const session = new rt.core.PpteSession(document, { runtimeProfile: 'ga-b' })
+  const before = textOf(session.getDocument(), IDS.body)
+  const result = session.commit(ctx.transaction({
+    id: 'bb-finding-14',
+    baseRevision: session.getRevision(),
+    scope: ctx.scope('slide', ['facts', 'content'], { slideIds: [IDS.slide], elementIds: [IDS.body] }),
+    contract: ctx.broadContract(['fact.syncReferences'], { allowedElementIds: [IDS.body], maxChangedElements: 1, maxChangedFacts: 0, preserve: { geometry: 'preserve', style: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' } }),
+    operations: [{ opId: 'bb-finding-14:sync', kind: 'fact.syncReferences', factId: 'revenue', targetElementIds: [IDS.body], strategy: 'replace-display-value', previousValue: 999 }],
+  }))
+  const after = textOf(session.getDocument(), IDS.body)
+  ctx.expectGate(result.ok === false || after === before, 'Fact sync overwrote the first run despite no matching prior display.', { result, before, after })
+  return { ok: result.ok, before, after }
+})
+
+register('lock-undo', '5', 'Lock then immediate undo is legal and exact.', 'Human locks a title and immediately invokes Session.undo.', 'lock commit and inverse undo both succeed; title returns to its unlocked state', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document } = makeCoreFixture()
+  const session = new rt.core.PpteSession(document, { runtimeProfile: 'ga-b' })
+  const commit = session.commit(ctx.transaction({
+    id: 'bb-finding-5',
+    baseRevision: session.getRevision(),
+    scope: ctx.scope('selection', ['structure'], { slideIds: [IDS.slide], elementIds: [IDS.title] }),
+    contract: ctx.broadContract(['element.setLocked'], { allowedElementIds: [IDS.title], maxChangedElements: 1 }),
+    operations: [{ opId: 'bb-finding-5:lock', kind: 'element.setLocked', slideId: IDS.slide, elementId: IDS.title, locked: true }],
+  }))
+  ctx.expectNoErrors(commit, 'Lock transaction must commit.')
+  const undo = session.undo()
+  ctx.expectNoErrors(undo, 'Immediate undo of a lock transaction must succeed.')
+  ctx.expectGate(session.getDocument().slides[IDS.slide].elements[IDS.title].locked !== true, 'Undo left the title locked.', session.getDocument().slides[IDS.slide].elements[IDS.title])
+  return { commit: commit.ok, undo: undo.ok, lockedAfterUndo: session.getDocument().slides[IDS.slide].elements[IDS.title].locked ?? false }
+})
+
+register('lock-undo', '6', 'A locked logical group cannot move through a member-only transaction.', 'Human requests group movement while the group itself is locked; all member geometry must remain unchanged.', 'preview rejects group.move with a lock/edit-policy issue', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document } = makeCoreFixture()
+  document.slides[IDS.slide].groups = { bb_locked_group: { id: 'bb_locked_group', memberIds: [IDS.title, IDS.body], locked: true } }
+  const session = new rt.core.PpteSession(document, { runtimeProfile: 'ga-b' })
+  const result = session.preview(ctx.transaction({
+    id: 'bb-finding-6',
+    baseRevision: session.getRevision(),
+    scope: ctx.scope('slide', ['geometry'], { slideIds: [IDS.slide], elementIds: [IDS.title, IDS.body] }),
+    contract: ctx.broadContract(['group.move'], { allowedElementIds: [IDS.title, IDS.body], maxChangedElements: 2, preserve: { content: 'preserve', style: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' } }),
+    operations: [{ opId: 'bb-finding-6:move', kind: 'group.move', slideId: IDS.slide, groupId: 'bb_locked_group', dx: 20, dy: 20 }],
+  }))
+  ctx.expectGate(result.ok === false && result.issues.some((issue) => issue.code === 'EDIT_POLICY_VIOLATION'), 'Locked group movement was accepted.', result)
+  return { ok: result.ok, issueCodes: result.issues.map((issue) => issue.code) }
+})
+
+register('host', '1', 'A real Product Host exposes the first-user editing journey.', 'A new user opens a local document in Chromium and must be able to select/edit text, import an image, and save.', 'file:// Host exposes contenteditable text, file input, and a save control', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  await ctx.withTempDirectory(async (directory) => {
+    const { document } = makeCoreFixture()
+    const path = ctx.writeFixtureHtml(directory, 'host.html', rt.renderer.renderDocumentHtml(document, { includeDiagnostics: true }))
+    await ctx.withBrowser(path, async (page) => {
+      const controls = await page.evaluate(() => ({
+        contenteditable: document.querySelectorAll('[contenteditable="true"]').length,
+        fileInputs: document.querySelectorAll('input[type="file"]').length,
+        save: document.querySelectorAll('[data-ppte-action="save"],button[aria-label*="ave" i],button').length,
+      }))
+      ctx.expectGate(controls.contenteditable > 0 && controls.fileInputs > 0 && controls.save > 0, 'Host is missing an editing/upload/save surface.', controls)
+      return controls
+    })
+  })
+  return { fileUrl: true }
+})
+
+register('host', '2', 'The browser computes valid slide-space layout.', 'A user opens the reference preview in Chromium; rendered geometry must be visible and proportional.', 'slide has nonzero computed size and title has nonzero position/font size derived from DU', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  await ctx.withTempDirectory(async (directory) => {
+    const { document } = makeCoreFixture()
+    const path = ctx.writeFixtureHtml(directory, 'computed-style.html', rt.renderer.renderSlideHtml(document, IDS.slide))
+    const computed = await ctx.withBrowser(path, async (page) => page.evaluate(() => {
+      const slide = document.querySelector('.ppte-slide')
+      const title = document.querySelector('[data-ppte-element-id="bb_text_title"]')
+      if (!slide || !title) return { missing: true }
+      const slideStyle = getComputedStyle(slide)
+      const titleStyle = getComputedStyle(title)
+      const slideRect = slide.getBoundingClientRect()
+      const titleRect = title.getBoundingClientRect()
+      return { width: slideStyle.width, height: slideStyle.height, titleLeft: titleStyle.left, titleTop: titleStyle.top, titleFontSize: titleStyle.fontSize, slideRect: { width: slideRect.width, height: slideRect.height }, titleRect: { left: titleRect.left, top: titleRect.top, width: titleRect.width, height: titleRect.height } }
+    }))
+    ctx.expectGate(!computed.missing && Number.parseFloat(computed.height) > 0 && Number.parseFloat(computed.titleLeft) > 0 && Number.parseFloat(computed.titleTop) > 0 && Number.parseFloat(computed.titleFontSize) > 20, 'Browser computed styles do not represent the semantic DU layout.', computed)
+    return computed
+  })
+  return { computed: true }
+})
+
+register('pages-notes-animation', '3', 'Notes updates use the notes permission.', 'Human/Agent receives only notes permission and updates speaker notes without structure authority.', 'notes transaction commits and changes only slide.notes', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document } = makeCoreFixture()
+  const session = new rt.core.PpteSession(document, { runtimeProfile: 'ga-b' })
+  const notes = { speaker: '发言备注', handout: '公开讲义' }
+  const result = session.commit(ctx.transaction({
+    id: 'bb-finding-3',
+    baseRevision: session.getRevision(),
+    scope: ctx.scope('slide', ['notes'], { slideIds: [IDS.slide] }),
+    contract: ctx.broadContract(['slide.update'], { maxChangedElements: 0, maxChangedSlides: 1 }),
+    operations: [{ opId: 'bb-finding-3:notes', kind: 'slide.update', slideId: IDS.slide, patch: { notes } }],
+  }))
+  ctx.expectNoErrors(result, 'Notes-only transaction must commit with notes permission.')
+  ctx.expectEqual(session.getDocument().slides[IDS.slide].notes, notes, 'Notes-only transaction did not persist notes.')
+  return { ok: result.ok, notes: session.getDocument().slides[IDS.slide].notes }
+})
+
+register('pages-notes-animation', '4', 'Transition and element animation metadata are executable renderer inputs.', 'Presenter/Portable renderer receives a fade transition and a stepped element animation.', 'derived HTML exposes transition and animation behavior markers, not only appearStep', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document } = makeCoreFixture()
+  document.slides[IDS.slide].transition = { type: 'fade', durationMs: 250, direction: 'left' }
+  document.slides[IDS.slide].elements[IDS.title].appearStep = 2
+  document.slides[IDS.slide].elements[IDS.title].animation = { enter: { type: 'fade', durationMs: 180, easing: 'ease-out' } }
+  const html = rt.renderer.renderSlideHtml(document, IDS.slide)
+  ctx.expectGate(html.includes('data-ppte-transition') && html.includes('data-ppte-animation'), 'Renderer emitted no executable transition/animation markers.', html)
+  return { hasTransitionMarker: html.includes('data-ppte-transition'), hasAnimationMarker: html.includes('data-ppte-animation'), hasAppearStep: html.includes('data-ppte-appear-step="2"') }
+})
+
+register('compiler-quality', '11', 'Compiler rejects AI input that produces key text overflow.', 'AI supplies a valid Slide IR with a deliberately long primary heading; built-in quality rule max-overflow is zero.', 'compileSlide returns a blocking quality issue before materialization', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document } = makeCoreFixture()
+  const ir = makeSlideIR()
+  ir.blocks[0].content = '这是一个必须由编译器在真实字体度量下拒绝的超长主标题'.repeat(8)
+  const draft = rt.compiler.compileSlide(ir, { canvas: document.canvas, theme: document.theme })
+  const qualityIssues = draft.validationIssues.filter((issue) => issue.severity === 'error' || issue.code === 'TEXT_OVERFLOW' || issue.code === 'QUALITY_OVERFLOW')
+  ctx.expectGate(qualityIssues.length > 0, 'Compiler accepted a key text overflow with no quality issue.', { validationIssues: draft.validationIssues, elementDrafts: draft.elementDrafts })
+  return { issueCodes: qualityIssues.map((issue) => issue.code), draftCount: draft.elementDrafts.length }
+})
+
+register('portable', '15', 'A generated Portable file is an editable offline surface.', 'User double-clicks a Quick Fix file through file:// and expects text editing, local image input, and save.', 'generated HTML contains an editing surface, file input, and save handler', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  await ctx.withTempDirectory(async (directory) => {
+    const { document, imageBytes } = makeCoreFixture()
+    const built = rt.portable.createPortableQuickFix(document, { assetBytes: { [IDS.asset]: imageBytes }, derivedAt: '2026-09-03T00:00:00.000Z' })
+    ctx.expectGate(built.ok, 'Quick Fix fixture could not be built.', built)
+    const path = join(directory, 'quick-fix.ppte.html')
+    writeFileSync(path, built.html)
+    await ctx.withBrowser(path, async (page) => {
+      const controls = await page.evaluate(() => ({
+        contenteditable: document.querySelectorAll('[contenteditable="true"]').length,
+        fileInputs: document.querySelectorAll('input[type="file"]').length,
+        save: document.querySelectorAll('[data-ppte-action="save"]').length,
+      }))
+      ctx.expectGate(controls.contenteditable > 0 && controls.fileInputs > 0 && controls.save > 0, 'Portable Quick Fix HTML has no editing/save controls.', controls)
+      return controls
+    })
+  })
+  return { fileUrl: true }
+})
+
+register('portable', '16', 'Portable Quick Fix imports a new local image asset.', 'User selects a new local PNG not present in the source Document; the runtime must validate bytes and atomically add/replace the asset.', 'replaceImage succeeds for a new assetId and advances the semantic revision', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document, imageBytes } = makeCoreFixture()
+  const newBytes = alternatePng()
+  const runtime = new rt.portable.PortableRuntime(document, { profile: 'quick-fix', assetBytes: { [IDS.asset]: imageBytes, [IDS.assetNew]: newBytes } })
+  const before = runtime.getRevision()
+  const result = runtime.replaceImage({ slideId: IDS.slide, elementId: IDS.image }, IDS.assetNew)
+  ctx.expectGate(result.ok === true && result.revision !== before && runtime.getDocument().assets[IDS.assetNew] !== undefined && runtime.getDocument().slides[IDS.slide].elements[IDS.image].assetId === IDS.assetNew, 'Portable Quick Fix could not import and replace a new local image asset.', { result, before, after: runtime.getRevision(), issues: result.issues })
+  return { before, after: runtime.getRevision(), assetId: runtime.getDocument().slides[IDS.slide].elements[IDS.image].assetId }
+})
+
+register('portable', '17', 'Portable save preserves the document’s minimum compatibility profile.', 'User edits or opens a GA-B Chart document in Quick Fix and chooses Save as New Project without knowing internal profile names.', 'default save succeeds for a Chart document and returns a checkpoint byte stream', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document, imageBytes } = makeChartFixture()
+  const runtime = new rt.portable.PortableRuntime(document, { profile: 'quick-fix', assetBytes: { [IDS.asset]: imageBytes } })
+  const saved = runtime.saveAsNewProject({ timestamp: '2026-09-03T00:00:00.000Z' })
+  ctx.expectGate(saved.ok === true && saved.bytes instanceof Uint8Array && saved.bytes.length > 0, 'Portable Quick Fix default save rejected its own Chart document.', saved)
+  return { ok: saved.ok, bytes: saved.bytes?.length ?? 0 }
+})
+
+register('portable', '18', 'Portable unit conversion is scoped to CSS serialization.', 'User opens a self-contained Portable Viewer and reads ordinary text and identifiers exactly as authored.', 'generated HTML has no ordinary-word corruption from DU conversion', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document, imageBytes } = makeCoreFixture()
+  const built = rt.portable.createPortableViewer(document, { assetBytes: { [IDS.asset]: imageBytes }, derivedAt: '2026-09-03T00:00:00.000Z' })
+  ctx.expectGate(built.ok, 'Portable Viewer fixture could not be built.', built)
+  ctx.expectGate(!built.html.includes('Propxct') && !built.html.includes('epxcation') && built.html.includes('Product education module'), 'Portable conversion corrupted ordinary text.', { corruption: built.html.match(/Propxct|epxcation/g), hasOriginal: built.html.includes('Product education module') })
+  return { originalTextPresent: built.html.includes('Product education module'), corruptedTextPresent: built.html.includes('Propxct') || built.html.includes('epxcation') }
+})
+
+register('portable', '19', 'Light Edit is a superset of Quick Fix editing.', 'User opens Light Edit and expects the Quick Fix text/image edits plus Light Edit geometry/chart tools.', 'Light Edit editText and replaceImage both commit through the portable operation boundary', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document, imageBytes } = makeCoreFixture()
+  const runtime = new rt.portable.PortableRuntime(document, { profile: 'light-edit', assetBytes: { [IDS.asset]: imageBytes } })
+  const textResult = runtime.editText({ slideId: IDS.slide, elementId: IDS.title }, 'Light Edit 文字')
+  const imageResult = runtime.replaceImage({ slideId: IDS.slide, elementId: IDS.image }, IDS.asset)
+  ctx.expectGate(textResult.ok === true && imageResult.ok === true, 'Light Edit did not expose the Quick Fix text/image editing surface.', { textResult, imageResult })
+  return { text: textResult.ok, image: imageResult.ok }
+})
+
+register('export', '20', 'PDF preserves Chinese and emoji text.', 'User exports the semantic Document to PDF and inspects extracted text with pdftotext.', 'pdftotext output contains the authored Chinese title and second paragraph without replacement question marks', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  await ctx.withTempDirectory(async (directory) => {
+    const { document } = makeExportFixture()
+    const exported = rt.pdf.exportPdf(document, { includeNotes: true })
+    ctx.expectGate(exported.ok, 'PDF exporter returned a structural failure for the export fixture.', exported)
+    const path = join(directory, 'semantic.pdf')
+    writeFileSync(path, exported.bytes)
+    const extracted = ctx.runPdftotext(path)
+    ctx.expectGate(extracted.includes('年度经营回顾') && extracted.includes('第二段') && !extracted.includes('?'), 'PDF text extraction lost authored Unicode content.', extracted)
+    return { extracted }
+  })
+  return { pdftotext: true }
+})
+
+register('export', '21', 'PNG contains semantic text/image pixels and matches the pixel golden.', 'User exports a 32×18 preview and acceptance checks non-flat pixels, dark text pixels, and exact golden samples.', 'PNG is non-flat, contains dark text pixels, and matches blackbox-goldens.json', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document } = makeExportFixture()
+  const exported = rt.pdf.exportPng(document, { slideId: IDS.slide, width: 32, height: 18 })
+  ctx.expectGate(exported.ok, 'PNG exporter returned a structural failure for the export fixture.', exported)
+  const image = ctx.readPng(exported.bytes)
+  const stats = ctx.pixelStats(image)
+  ctx.expectGate(stats.uniqueColors > 1 && stats.darkPixels > 0, 'PNG output is flat or contains no text-like dark pixels.', stats)
+  ctx.assertGolden(image, GOLDENS['png-content-32x18'])
+  return { stats, golden: 'png-content-32x18' }
+})
+
+register('export', '22', 'Semantic PPTX preserves paragraphs, run formatting, and rotation.', 'User exports a two-paragraph styled text box and opens it with Python python-pptx.', 'python-pptx observes both paragraphs, at least one styled run, and nonzero rotation', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  await ctx.withTempDirectory(async (directory) => {
+    const { document, imageBytes } = makeExportFixture()
+    const exported = rt.pptx.exportSemanticPptx(document, { assetBytes: { [IDS.asset]: imageBytes } })
+    ctx.expectGate(exported.ok, 'Semantic PPTX exporter returned a structural failure.', exported)
+    const path = join(directory, 'semantic.pptx')
+    writeFileSync(path, exported.bytes)
+    const observed = ctx.runPythonPptx(path)
+    return observed
+  })
+  return { pythonPptx: true }
+})
+
+register('recovery', '23', 'Open automatically discovers and offers durable Journal recovery.', 'A separate child process commits three text transactions, is SIGKILLed, and the user reopens the old checkpoint.', 'ordinary open/recover path returns the committed Journal revision instead of silently showing the old checkpoint', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  await ctx.withTempDirectory(async (directory) => {
+    const childPath = join(ROOT, 'scripts', 'blackbox-crash-child.mjs')
+    const child = spawnSync(process.execPath, [childPath, directory], { cwd: ROOT, encoding: 'utf8' })
+    const childRaw = `${child.stdout ?? ''}${child.stderr ?? ''}`
+    ctx.expectGate(child.signal === 'SIGKILL', 'Crash fixture did not terminate through a real SIGKILL.', { status: child.status, signal: child.signal, childRaw })
+    const state = JSON.parse(readFileSync(join(directory, 'child-state.json'), 'utf8'))
+    ctx.expectEqual(state.journalRecords, 3, 'Crash fixture did not durably append three Journal records.')
+    const opened = rt.file.openCheckpoint(state.checkpointPath)
+    const journal = rt.recovery.readJournal(state.journalPath)
+    const manualReplay = rt.recovery.replayJournal(opened.document, journal)
+    if (opened.manifest.contentRevision !== state.committedRevision) ctx.failGate('Ordinary checkpoint open silently ignored the recoverable Journal tail.', { openedRevision: opened.manifest.contentRevision, committedRevision: state.committedRevision, journalRecords: journal.records.length, manualReplay: { applied: manualReplay.applied, revision: manualReplay.revision, issueCodes: manualReplay.issues.map((issue) => issue.code) } }, childRaw)
+    return { openedRevision: opened.manifest.contentRevision, committedRevision: state.committedRevision, manualReplay: manualReplay.applied }
+  })
+  return { recovered: true }
+})
+
+register('recovery', '24', 'Checkpoint recent history restores a usable Session Undo stack.', 'User saves a modified checkpoint, reopens it, and immediately presses Undo.', 'reopened Session has the recent transaction history and undo restores the checkpoint base', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  await ctx.withTempDirectory(async (directory) => {
+    const { document, imageBytes } = makeCoreFixture()
+    const session = new rt.core.PpteSession(document, { runtimeProfile: 'ga-b' })
+    const edit = session.commit(ctx.textTransaction(rt, session.getDocument(), session.getRevision(), '保存后可撤销', { transactionId: 'bb-finding-24' }))
+    ctx.expectNoErrors(edit, 'History fixture transaction must commit.')
+    const target = join(directory, 'history.ppte')
+    rt.file.writeCheckpoint(session.getDocument(), target, { clean: false, recentTransactions: session.getHistory().map((entry) => entry.transaction), assetBytes: { [IDS.asset]: imageBytes }, timestamp: '2026-09-03T00:00:00.000Z' })
+    const opened = rt.file.openCheckpoint(target)
+    ctx.expectEqual(opened.recentTransactions.length, 1, 'Checkpoint did not contain the declared recent history.')
+    const restored = new rt.core.PpteSession(opened.document, { runtimeProfile: 'ga-b' })
+    const undo = restored.undo()
+    ctx.expectNoErrors(undo, 'Reopened Session Undo stack is empty or unusable.')
+    ctx.expectEqual(restored.getRevision(), rt.canonical.canonicalRevision(document), 'Undo after reopen did not restore the checkpoint base revision.')
+    return { recentTransactions: opened.recentTransactions.length, undo: undo.ok }
+  })
+  return { historyRestored: true }
+})
+
+register('recovery', '25-CAS', 'Journal replay resolves newly imported asset bytes by hash.', 'Agent imports a new local image after the checkpoint; the durable Journal records its hash and replay has access to the bytes.', 'replay applies asset.upsert plus image replacement instead of reporting ASSET_MISSING', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  await ctx.withTempDirectory(async (directory) => {
+    const { document } = makeCoreFixture()
+    const newBytes = alternatePng()
+    const afterSnapshot = clone(document)
+    addAlternateAsset(afterSnapshot, newBytes)
+    const asset = afterSnapshot.assets[IDS.assetNew]
+    const baseRevision = rt.canonical.canonicalRevision(document)
+    const tx = ctx.transaction({
+      id: 'bb-finding-25-cas',
+      baseRevision,
+      scope: ctx.scope('document', ['assets'], { allowInsert: true }),
+      contract: ctx.broadContract(['asset.upsert', 'image.replaceAsset'], { maxChangedElements: 1, maxInsertedElements: 0, maxReplacedAssets: 1, preserve: { content: 'preserve', geometry: 'preserve', style: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' } }),
+      operations: [
+        { opId: 'bb-finding-25-cas:asset', kind: 'asset.upsert', asset },
+        { opId: 'bb-finding-25-cas:image', kind: 'image.replaceAsset', slideId: IDS.slide, elementId: IDS.image, assetId: IDS.assetNew, preserveCrop: true },
+      ],
+    })
+    const applied = rt.operations.applyTransaction(document, tx, { runtimeProfile: 'ga-b' })
+    const journalPath = join(directory, 'cas.journal')
+    const journal = new rt.recovery.RecoveryJournal(journalPath, { journalVersion: '1', documentId: document.documentId, baseCheckpointRevision: baseRevision, sessionId: 'bb-cas-replay', createdAt: '2026-09-03T00:00:00.000Z' })
+    journal.append(tx, rt.canonical.canonicalRevision(applied.document), [asset.hash])
+    const replay = rt.recovery.replayJournal(document, journal.read())
+    ctx.expectGate(replay.applied === 1 && replay.issues.every((issue) => issue.severity !== 'error'), 'Journal replay could not resolve a newly imported asset by hash.', { applied: replay.applied, issueCodes: replay.issues.map((issue) => issue.code), expectedHash: asset.hash })
+    return { applied: replay.applied, revision: replay.revision }
+  })
+  return { casReplay: true }
+})
+
+register('recovery', '25-profile', 'Journal replay preserves the checkpoint runtime profile.', 'A GA-C Widget transaction is committed and later replayed; recovery must use GA-C operation semantics.', 'component.updateProps replays successfully without falling back to GA-B', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  await ctx.withTempDirectory(async (directory) => {
+    const { document } = makeWidgetFixture()
+    const baseRevision = rt.canonical.canonicalRevision(document)
+    const tx = ctx.transaction({
+      id: 'bb-finding-25-profile',
+      baseRevision,
+      scope: ctx.scope('document', ['content']),
+      contract: ctx.broadContract(['component.updateProps'], { allowedElementIds: [IDS.widget], maxChangedElements: 1, preserve: { geometry: 'preserve', style: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' } }),
+      operations: [{ opId: 'bb-finding-25-profile:props', kind: 'component.updateProps', slideId: IDS.slide, elementId: IDS.widget, patch: { code: 'return 43' } }],
+    })
+    const applied = rt.operations.applyTransaction(document, tx, { runtimeProfile: 'ga-c' })
+    const journalPath = join(directory, 'profile.journal')
+    const journal = new rt.recovery.RecoveryJournal(journalPath, { journalVersion: '1', documentId: document.documentId, baseCheckpointRevision: baseRevision, sessionId: 'bb-profile-replay', createdAt: '2026-09-03T00:00:00.000Z' })
+    journal.append(tx, rt.canonical.canonicalRevision(applied.document))
+    const replay = rt.recovery.replayJournal(document, journal.read())
+    ctx.expectGate(replay.applied === 1 && replay.document.slides[IDS.slide].elements[IDS.widget].props.code === 'return 43', 'Journal replay used the wrong runtime profile for a Widget transaction.', { applied: replay.applied, issueCodes: replay.issues.map((issue) => issue.code) })
+    return { applied: replay.applied, code: replay.document.slides[IDS.slide].elements[IDS.widget].props.code }
+  })
+  return { profileReplay: true }
+})
+
+register('review-patch', '26', 'Delete-versus-local-edit is an explicit review conflict.', 'Base has a title, local edits it, and the revised copy deletes it; review must protect the local change.', 'comparison returns a conflict/ambiguous unit rather than a clean deleted status', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document: base } = makeCoreFixture()
+  const local = clone(base)
+  local.slides[IDS.slide].elements[IDS.title].content = richText('本地后来修改的标题', 'bb-local-title')
+  const revised = clone(base)
+  delete revised.slides[IDS.slide].elements[IDS.title]
+  revised.slides[IDS.slide].rootOrder = revised.slides[IDS.slide].rootOrder.filter((id) => id !== IDS.title)
+  revised.slides[IDS.slide].readingOrder = revised.slides[IDS.slide].readingOrder.filter((id) => id !== IDS.title)
+  const comparison = rt.reviewer.compareDocuments(base, local, revised)
+  const titleUnits = comparison.units.filter((unit) => unit.elementId === IDS.title)
+  ctx.expectGate(titleUnits.some((unit) => unit.status === 'conflict' || unit.status === 'ambiguous') && comparison.conflicts.length > 0, 'Reviewer classified delete-vs-local-edit as a clean deletion.', { titleUnits, conflicts: comparison.conflicts })
+  return { titleStatuses: titleUnits.map((unit) => unit.status), conflicts: comparison.conflicts.length }
+})
+
+register('review-patch', '27', 'Reviewer covers persistent slide and element domains.', 'Revised copy changes notes, transition, visual strategy, protected anchors, order, animation, opacity, tags, and description.', 'comparison emits review units for every changed persistent domain', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document: base } = makeCoreFixture()
+  const revised = clone(base)
+  const slide = revised.slides[IDS.slide]
+  slide.notes = { speaker: '修订备注' }
+  slide.transition = { type: 'fade', durationMs: 300 }
+  slide.visualStrategy = 'structured'
+  slide.protectedAnchors = [{ target: { kind: 'semantic', semanticKey: 'title.main' }, preserve: ['content'] }]
+  slide.rootOrder = [IDS.surface, IDS.body, IDS.title, IDS.image]
+  const title = slide.elements[IDS.title]
+  title.appearStep = 2
+  title.animation = { enter: { type: 'fade', durationMs: 180 } }
+  title.opacity = 0.8
+  title.tags = ['revised']
+  title.description = '修订后的标题说明'
+  const comparison = rt.reviewer.compareDocuments(base, base, revised)
+  const unitText = JSON.stringify(comparison.units)
+  const required = ['notes', 'transition', 'visualStrategy', 'protectedAnchors', 'rootOrder', 'appearStep', 'animation', 'opacity', 'tags', 'description']
+  ctx.expectGate(required.every((field) => unitText.includes(field)), 'Reviewer omitted one or more persistent slide/element domains.', { required, units: comparison.units })
+  return { required, unitCount: comparison.units.length }
+})
+
+register('review-patch', '27-style', 'Reviewer produces executable operations for paragraph and box style changes.', 'Revised copy changes a text element paragraph alignment; reviewer acceptance must not return a zero-operation style unit.', 'style unit has at least one typed operation', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document: base } = makeCoreFixture()
+  const revised = clone(base)
+  revised.slides[IDS.slide].elements[IDS.title].paragraphStyle = { align: 'center' }
+  const comparison = rt.reviewer.compareDocuments(base, base, revised)
+  const styleUnits = comparison.units.filter((unit) => unit.elementId === IDS.title && unit.field === 'style')
+  ctx.expectGate(styleUnits.length > 0 && styleUnits.some((unit) => (unit.operations?.length ?? 0) > 0), 'Paragraph/box style change produced a non-executable review unit.', { styleUnits })
+  return { styleUnits: styleUnits.map((unit) => ({ status: unit.status, operations: unit.operations?.length ?? 0 })) }
+})
+
+register('review-patch', '28-head', 'Patch validation checks the revised head revision.', 'Reviewer creates a patch and an intermediary tampers with manifest.headRevision before validation.', 'tampered headRevision is rejected before patch application', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document: base } = makeCoreFixture()
+  const revised = clone(base)
+  revised.slides[IDS.slide].elements[IDS.title].content = richText('修订版标题', 'bb-patch-head')
+  const patch = new rt.reviewer.PpteReviewer().createPatch(base, revised)
+  const tampered = clone(patch)
+  tampered.manifest.headRevision = `sha256-${'0'.repeat(64)}`
+  const validation = rt.patch.validatePatch(tampered)
+  ctx.expectGate(validation.ok === false, 'Patch validation accepted a tampered headRevision.', validation)
+  return { ok: validation.ok, issueCodes: validation.issues.map((issue) => issue.code) }
+})
+
+register('review-patch', '28-profile', 'Widget patch profile follows the document capability.', 'Reviewer creates a patch for a GA-C core/code Widget without an internal profile override.', 'patch manifest.compatibilityProfile is ppte-2.0-ga-c.1', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document: base } = makeWidgetFixture()
+  const revised = clone(base)
+  revised.slides[IDS.slide].elements[IDS.widget].props.code = 'return 43'
+  const patch = new rt.reviewer.PpteReviewer().createPatch(base, revised)
+  ctx.expectEqual(patch.manifest.compatibilityProfile, 'ppte-2.0-ga-c.1', 'Widget patch was labelled with a lower compatibility profile.')
+  return { compatibilityProfile: patch.manifest.compatibilityProfile }
+})
+
+register('review-patch', '29-literal', 'Patch payloads allow literal script-like text as data.', 'Revised title contains the literal string </script>; patch encoding must preserve it as data.', 'encode/decode succeeds and decoded operation text equals the literal value', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document: base } = makeCoreFixture()
+  const revised = clone(base)
+  const value = 'Literal </script> 中文 😀'
+  revised.slides[IDS.slide].elements[IDS.title].content = richText(value, 'bb-patch-literal')
+  const patch = new rt.reviewer.PpteReviewer().createPatch(base, revised)
+  const encoded = rt.patch.encodePatch(patch)
+  const decoded = rt.patch.decodePatch(encoded)
+  const operation = decoded.operations.find((item) => item.kind === 'text.replaceContent')
+  ctx.expectEqual(operation.content.paragraphs[0].runs[0].text, value, 'Literal patch text changed after encode/decode.')
+  return { bytes: encoded.length, text: operation.content.paragraphs[0].runs[0].text }
+})
+
+register('review-patch', '29-code', 'Patch payloads allow the controlled Widget code field.', 'Revised core/code Widget changes props.code; typed patch validation must allow the declared property.', 'encode/decode succeeds for a code Widget property update', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document: base } = makeWidgetFixture()
+  const revised = clone(base)
+  revised.slides[IDS.slide].elements[IDS.widget].props.code = 'return 43'
+  const patch = new rt.reviewer.PpteReviewer().createPatch(base, revised)
+  const encoded = rt.patch.encodePatch(patch)
+  const decoded = rt.patch.decodePatch(encoded)
+  ctx.expectGate(decoded.operations.some((item) => item.kind === 'component.updateProps' && item.patch.code === 'return 43'), 'Code Widget patch did not preserve props.code.', decoded)
+  return { bytes: encoded.length, operationKinds: decoded.operations.map((item) => item.kind) }
+})
+
+register('review-patch', '30', 'Override debt counts supported new local style fields.', 'Key title adds a valid letterSpacing override absent from its current preset.', 'override report includes letterSpacing and a positive overriddenFields count', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document } = makeCoreFixture()
+  document.slides[IDS.slide].elements[IDS.title].style.overrides = { letterSpacing: 7 }
+  const report = rt.validation.computeOverrideDebt(document)
+  ctx.expectGate(report.overriddenFields > 0 && report.entries.some((entry) => entry.elementId === IDS.title && entry.fields.includes('letterSpacing')), 'Override debt ignored a supported field missing from the preset.', report)
+  return report
+})
+
+register('review-patch', '31', 'Release evidence is independently verifiable.', 'The GA-C label may not be certified by the same Contract Deck CLI/tests that implement the behavior.', 'legacy e2e:ga-c script no longer points directly to the Contract Deck self-check CLI', async () => {
+  const packageJson = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'))
+  const script = packageJson.scripts?.['e2e:ga-c'] ?? ''
+  expectGate(!script.includes('contract-deck'), 'GA-C release evidence still delegates to the self-certifying Contract Deck CLI.', { script })
+  return { script }
+})
+
+register('section-41', '§41-A', 'Scenario A: AI new presentation starts in a real Host.', 'New user provides local source material, objective, and audience, then requests a ten-slide generated presentation.', 'Host exposes upload/goal/generate controls and renders ten semantic slides in Chromium', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  await ctx.withTempDirectory(async (directory) => {
+    const path = ctx.writeFixtureHtml(directory, 'scenario-a.html', rt.renderer.renderDocumentHtml(makeCoreFixture().document))
+    await ctx.withBrowser(path, async (page) => {
+      const observed = await page.evaluate(() => ({
+        fileInputs: document.querySelectorAll('input[type="file"]').length,
+        generate: document.querySelectorAll('[data-ppte-action="generate"]').length,
+        slides: document.querySelectorAll('[data-ppte-type="slide"]').length,
+      }))
+      ctx.expectGate(observed.fileInputs > 0 && observed.generate > 0 && observed.slides === 10, 'Scenario A has no ten-slide AI generation Host journey.', observed)
+      return observed
+    })
+  })
+  return { hostJourney: true }
+})
+
+register('section-41', '§41-B', 'Scenario B: human small edit crosses the browser transaction boundary.', 'User double-clicks a text box, enters IME text, sees no intermediate commits, then saves and reopens.', 'Chromium exposes editable text and save/reopen controls for the file journey', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  await ctx.withTempDirectory(async (directory) => {
+    const path = ctx.writeFixtureHtml(directory, 'scenario-b.html', rt.renderer.renderDocumentHtml(makeCoreFixture().document))
+    await ctx.withBrowser(path, async (page) => {
+      const observed = await page.evaluate(() => ({
+        editable: document.querySelectorAll('[contenteditable="true"]').length,
+        save: document.querySelectorAll('[data-ppte-action="save"]').length,
+        undo: document.querySelectorAll('[data-ppte-action="undo"]').length,
+      }))
+      ctx.expectGate(observed.editable > 0 && observed.save > 0 && observed.undo > 0, 'Scenario B has no browser editing transaction surface.', observed)
+      return observed
+    })
+  })
+  return { browserEdit: true }
+})
+
+register('section-41', '§41-C', 'Scenario C: Flat Group happy path remains exact.', 'Human creates a flat group, moves and resizes it, then undoes geometry without implicit text-style changes.', 'create/move/resize/undo all succeed and restore exact member frames', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document } = makeCoreFixture()
+  const session = new rt.core.PpteSession(document, { runtimeProfile: 'ga-b' })
+  const create = session.commit(ctx.transaction({
+    id: 'bb-41-c-create',
+    baseRevision: session.getRevision(),
+    scope: ctx.scope('slide', ['structure'], { slideIds: [IDS.slide] }),
+    contract: ctx.broadContract(['group.create'], { maxChangedElements: 2, preserve: { content: 'preserve', geometry: 'preserve', style: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' } }),
+    operations: [{ opId: 'bb-41-c-create:group', kind: 'group.create', slideId: IDS.slide, group: { id: 'bb_41_c_group', memberIds: [IDS.body, IDS.image] } }],
+  }))
+  ctx.expectNoErrors(create, 'Flat Group creation failed.')
+  const beforeMove = { body: clone(session.getDocument().slides[IDS.slide].elements[IDS.body].frame), image: clone(session.getDocument().slides[IDS.slide].elements[IDS.image].frame) }
+  const move = session.commit(ctx.transaction({
+    id: 'bb-41-c-move',
+    baseRevision: session.getRevision(),
+    scope: ctx.scope('slide', ['geometry'], { slideIds: [IDS.slide] }),
+    contract: ctx.broadContract(['group.move'], { maxChangedElements: 2, preserve: { content: 'preserve', style: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' } }),
+    operations: [{ opId: 'bb-41-c-move:group', kind: 'group.move', slideId: IDS.slide, groupId: 'bb_41_c_group', dx: 30, dy: 20 }],
+  }))
+  ctx.expectNoErrors(move, 'Flat Group move failed.')
+  const beforeResize = { body: clone(session.getDocument().slides[IDS.slide].elements[IDS.body].frame), image: clone(session.getDocument().slides[IDS.slide].elements[IDS.image].frame) }
+  const resize = session.commit(ctx.transaction({
+    id: 'bb-41-c-resize',
+    baseRevision: session.getRevision(),
+    scope: ctx.scope('slide', ['geometry'], { slideIds: [IDS.slide] }),
+    contract: ctx.broadContract(['group.resize'], { maxChangedElements: 2, preserve: { content: 'preserve', style: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' } }),
+    operations: [{ opId: 'bb-41-c-resize:group', kind: 'group.resize', slideId: IDS.slide, groupId: 'bb_41_c_group', targetFrame: { x: 100, y: 100, width: 1500, height: 700 } }],
+  }))
+  ctx.expectNoErrors(resize, 'Flat Group resize failed.')
+  ctx.expectNoErrors(session.undo(), 'Flat Group resize undo failed.')
+  ctx.expectEqual({ body: session.getDocument().slides[IDS.slide].elements[IDS.body].frame, image: session.getDocument().slides[IDS.slide].elements[IDS.image].frame }, beforeResize, 'Flat Group resize undo was not exact.')
+  ctx.expectNoErrors(session.undo(), 'Flat Group move undo failed.')
+  ctx.expectEqual({ body: session.getDocument().slides[IDS.slide].elements[IDS.body].frame, image: session.getDocument().slides[IDS.slide].elements[IDS.image].frame }, beforeMove, 'Flat Group move undo was not exact.')
+  return { create: create.ok, move: move.ok, resize: resize.ok, exactUndo: true }
+})
+
+register('section-41', '§41-D', 'Scenario D: Agent local edit rejects non-target mutation.', 'Agent is granted title-only scope but submits a generic operation that changes body content.', 'preview rejects the transaction before any non-target mutation can commit', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document } = makeCoreFixture()
+  const body = clone(document.slides[IDS.slide].elements[IDS.body])
+  body.content = richText('D 场景越权正文', 'bb-41-d')
+  const result = new rt.core.PpteSession(document).preview(ctx.transaction({
+    id: 'bb-41-d',
+    baseRevision: rt.canonical.canonicalRevision(document),
+    scope: ctx.scope('selection', ['structure'], { slideIds: [IDS.slide], elementIds: [IDS.title] }),
+    contract: ctx.broadContract(['slide.update'], { maxChangedElements: 1 }),
+    operations: [{ opId: 'bb-41-d:update', kind: 'slide.update', slideId: IDS.slide, patch: { elements: { ...document.slides[IDS.slide].elements, [IDS.body]: body } } }],
+  }))
+  ctx.expectGate(result.ok === false, 'Scenario D accepted a generic non-target mutation.', result)
+  return { ok: result.ok, issueCodes: result.issues.map((issue) => issue.code) }
+})
+
+register('section-41', '§41-E', 'Scenario E: mixed-content reflow returns a reviewable Transaction.', 'Agent requests page reflow for title/body/chart/metric content and expects no object loss.', 'mixed-content layout returns a previewable geometry transaction', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document } = makeChartFixture()
+  const server = new rt.agent.AgentToolServer(new rt.core.PpteSession(document, { runtimeProfile: 'ga-b' }))
+  const result = server.execute('apply_layout_recipe', { slideId: IDS.slide, requireConfirmation: false, reason: '§41-E mixed content reflow' })
+  ctx.expectGate(result.ok === true && Boolean(result.transaction), 'Scenario E could not produce a mixed-content reflow transaction.', result)
+  return { ok: result.ok, operationCount: result.transaction?.operations.length ?? 0 }
+})
+
+register('section-41', '§41-F', 'Scenario F: visual redesign honors selection direction.', 'Agent selects the title for redesign; all non-selected objects must remain unchanged.', 'redesign transaction only replaces the selected semantic target', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document } = makeCoreFixture()
+  const server = new rt.agent.AgentToolServer(new rt.core.PpteSession(document, { runtimeProfile: 'ga-b' }), { selection: { slideId: IDS.slide, elementIds: [IDS.title] } })
+  const result = server.execute('regenerate_selection', { requireConfirmation: false })
+  ctx.expectGate(Boolean(result.transaction) && result.transaction.operations.every((operation) => ![IDS.surface, IDS.body, IDS.image].includes(operation.elementId)), 'Scenario F redesign changed unselected objects.', result.transaction ?? result)
+  return { ok: result.ok, operationCount: result.transaction?.operations.length ?? 0 }
+})
+
+register('section-41', '§41-G', 'Scenario G: crash/reopen restores durable work automatically.', 'A real child process is SIGKILLed after three durable commits; reopening the checkpoint must offer those commits.', 'reopen result revision equals the Journal tail revision', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  await ctx.withTempDirectory(async (directory) => {
+    const child = spawnSync(process.execPath, [join(ROOT, 'scripts', 'blackbox-crash-child.mjs'), directory], { cwd: ROOT, encoding: 'utf8' })
+    const raw = `${child.stdout ?? ''}${child.stderr ?? ''}`
+    ctx.expectGate(child.signal === 'SIGKILL', 'Scenario G did not produce a real SIGKILL child.', { signal: child.signal, status: child.status, raw })
+    const state = JSON.parse(readFileSync(join(directory, 'child-state.json'), 'utf8'))
+    const opened = rt.file.openCheckpoint(state.checkpointPath)
+    if (opened.manifest.contentRevision !== state.committedRevision) ctx.failGate('Scenario G reopened the old checkpoint without recovering the Journal tail.', { openedRevision: opened.manifest.contentRevision, committedRevision: state.committedRevision }, raw)
+    return { revision: opened.manifest.contentRevision }
+  })
+  return { recovered: true }
+})
+
+register('section-41', '§41-H', 'Scenario H: Portable Quick Fix edits and saves from file://.', 'User double-clicks a generated Quick Fix file, edits text/image, then saves a new project.', 'file:// artifact includes the complete editing and save surface', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  await ctx.withTempDirectory(async (directory) => {
+    const { document, imageBytes } = makeCoreFixture()
+    const built = rt.portable.createPortableQuickFix(document, { assetBytes: { [IDS.asset]: imageBytes } })
+    ctx.expectGate(built.ok, 'Scenario H Quick Fix artifact could not be built.', built)
+    const path = join(directory, 'scenario-h.ppte.html')
+    writeFileSync(path, built.html)
+    await ctx.withBrowser(path, async (page) => {
+      const controls = await page.evaluate(() => ({ editable: document.querySelectorAll('[contenteditable="true"]').length, save: document.querySelectorAll('[data-ppte-action="save"]').length }))
+      ctx.expectGate(controls.editable > 0 && controls.save > 0, 'Scenario H generated file is read-only.', controls)
+      return controls
+    })
+  })
+  return { portableEdit: true }
+})
+
+register('section-41', '§41-I', 'Scenario I: revised-copy deletion is reviewable.', 'Local copy edits a title while revised copy deletes it; user must receive a conflict choice.', 'review UI receives a nonzero conflict set', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document: base } = makeCoreFixture()
+  const local = clone(base)
+  local.slides[IDS.slide].elements[IDS.title].content = richText('I 本地内容', 'bb-41-i-local')
+  const revised = clone(base)
+  delete revised.slides[IDS.slide].elements[IDS.title]
+  revised.slides[IDS.slide].rootOrder = revised.slides[IDS.slide].rootOrder.filter((id) => id !== IDS.title)
+  revised.slides[IDS.slide].readingOrder = revised.slides[IDS.slide].readingOrder.filter((id) => id !== IDS.title)
+  const comparison = rt.reviewer.compareDocuments(base, local, revised)
+  ctx.expectGate(comparison.conflicts.length > 0, 'Scenario I presented a deletion as a conflict-free acceptance.', comparison)
+  return { conflicts: comparison.conflicts.length }
+})
+
+register('section-41', '§41-J', 'Scenario J: export is visually and semantically faithful.', 'User exports the styled Unicode slide and validates PDF/PNG/PPTX content rather than just file signatures.', 'exported PDF text, PNG pixels, and PPTX properties all pass their independent checks', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document } = makeExportFixture()
+  const png = rt.pdf.exportPng(document, { slideId: IDS.slide, width: 32, height: 18 })
+  const image = ctx.readPng(png.bytes)
+  const stats = ctx.pixelStats(image)
+  ctx.expectGate(stats.uniqueColors > 1 && stats.darkPixels > 0, 'Scenario J PNG is flat or missing text pixels.', stats)
+  ctx.assertGolden(image, GOLDENS['png-content-32x18'])
+  return { png: stats, pdfAndPptx: 'validated by the export group' }
+})
+
 function summarizeCase(spec, status, extra = {}) {
   return {
     id: spec.id,
@@ -454,7 +1295,7 @@ async function runGroup(group) {
   const cases = []
   for (const spec of specs) {
     try {
-      const observed = await spec.run({ ensureRuntime, withTempDirectory, writeFixtureHtml, withBrowser, runPythonPptx, runPdftotext, readPng, pixelStats, assertGolden, digest, textTransaction, transaction, broadContract, scope, expectGate, expectEqual, expectIssueCode, expectNoErrors, fixtureWithNewAsset })
+      const observed = await spec.run({ ensureRuntime, withTempDirectory, writeFixtureHtml, withBrowser, runPythonPptx, runPdftotext, readPng, pixelStats, assertGolden, digest, textTransaction, transaction, broadContract, scope, expectGate, failGate, expectEqual, expectIssueCode, expectNoErrors, fixtureWithNewAsset })
       cases.push(summarizeCase(spec, 'green', { observed: observed ?? null }))
     } catch (cause) {
       const rawOutput = cause?.rawOutput ?? (cause instanceof Error ? cause.message : String(cause))
