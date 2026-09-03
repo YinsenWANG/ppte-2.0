@@ -169,7 +169,10 @@ async function ensureRuntime() {
       load('dist/packages/patch-format/src/index.js'),
       load('dist/packages/validation/src/index.js'),
       load('dist/packages/facts/src/index.js'),
-    ]).then(([canonical, core, agent, change, operations, richtextAdapter, renderer, fileFormat, recovery, compiler, portable, pdf, pptx, reviewer, patch, validation, facts]) => ({
+      load('dist/packages/archive/src/index.js'),
+      load('dist/packages/widgets/src/index.js'),
+      load('dist/packages/importer-legacy/src/index.js'),
+    ]).then(([canonical, core, agent, change, operations, richtextAdapter, renderer, fileFormat, recovery, compiler, portable, pdf, pptx, reviewer, patch, validation, facts, archive, widgets, legacy]) => ({
       canonical,
       core,
       agent,
@@ -187,6 +190,9 @@ async function ensureRuntime() {
       patch,
       validation,
       facts,
+      archive,
+      widgets,
+      legacy,
     }))
   }
   return runtimePromise
@@ -496,6 +502,43 @@ function runPythonPptx(pptxPath) {
     try { return JSON.parse(line) } catch { return undefined }
   }).filter((value) => value && typeof value === 'object').at(-1)
   if (!evidence) throw new GateFailure('python-pptx did not return JSON evidence.', { raw })
+  return evidence
+}
+
+function runPythonNativeChart(pptxPath) {
+  const script = [
+    'import json, sys',
+    'from zipfile import ZipFile',
+    'from pptx import Presentation',
+    'prs = Presentation(sys.argv[1])',
+    'chart_shapes = []',
+    'categories = []',
+    'values = []',
+    'for slide in prs.slides:',
+    '    for shape in slide.shapes:',
+    '        if not getattr(shape, "has_chart", False):',
+    '            continue',
+    '        chart = shape.chart',
+    '        chart_shapes.append(str(chart.chart_type))',
+    '        for plot in chart.plots:',
+    '            try:',
+    '                categories.extend(str(category.label) for category in plot.categories)',
+    '            except (AttributeError, ValueError):',
+    '                pass',
+    '            for series in plot.series:',
+    '                values.extend(float(value) for value in series.values)',
+    'with ZipFile(sys.argv[1]) as archive:',
+    '    chart_parts = sorted(name for name in archive.namelist() if name.startswith("ppt/charts/chart") and name.endswith(".xml"))',
+    'observed = {"nativeChartShapes": len(chart_shapes), "chartTypes": chart_shapes, "chartParts": chart_parts, "categories": categories, "values": values}',
+    'print(json.dumps(observed, ensure_ascii=False))',
+    'if len(chart_shapes) < 3 or len(chart_parts) < 3 or not {"Q1", "Q2"}.issubset(set(categories)) or not {42.0, 38.0}.issubset(set(values)):',
+    '    raise SystemExit("PPTX_NATIVE_CHART_ASSERTION_FAILED: native chart parts/categories/values were not preserved")',
+  ].join('\n')
+  const { raw } = runExternal('uv', ['run', '--with', 'python-pptx', 'python', '-c', script, pptxPath])
+  const evidence = raw.split(/\r?\n/).map((item) => item.trim()).filter(Boolean).map((line) => {
+    try { return JSON.parse(line) } catch { return undefined }
+  }).filter((value) => value && typeof value === 'object').at(-1)
+  if (!evidence) throw new GateFailure('python-pptx native chart check did not return JSON evidence.', { raw })
   return evidence
 }
 
@@ -1448,7 +1491,7 @@ async function runGroup(group) {
   const cases = []
   for (const spec of specs) {
     try {
-      const observed = await spec.run({ ensureRuntime, withTempDirectory, writeFixtureHtml, withBrowser, runPythonPptx, runPdftotext, readPng, pixelStats, assertGolden, digest, textTransaction, transaction, broadContract, scope, expectGate, failGate, expectEqual, expectIssueCode, expectNoErrors, fixtureWithNewAsset })
+      const observed = await spec.run({ ensureRuntime, withTempDirectory, writeFixtureHtml, withBrowser, runPythonPptx, runPythonNativeChart, runPdftotext, readPng, pixelStats, assertGolden, digest, textTransaction, transaction, broadContract, scope, expectGate, failGate, expectEqual, expectIssueCode, expectNoErrors, fixtureWithNewAsset })
       cases.push(summarizeCase(spec, 'green', { observed: observed ?? null }))
     } catch (cause) {
       const rawOutput = cause?.rawOutput ?? (cause instanceof Error ? cause.message : String(cause))
@@ -1474,7 +1517,7 @@ function listOutput() {
   return {
     groups: GROUP_ORDER.map((group) => ({ group, ...GROUP_META[group], cases: CASE_SPECS[group].map(({ id, finding, title, authorization, expected }) => ({ id, finding, title, authorization, expected })) })),
     milestones: MILESTONE_GROUPS,
-    infrastructure: ['Playwright chromium headless + file:// + tmp', 'real child-process SIGKILL', 'uv run --with python-pptx', 'pdftotext Chinese assertion', 'PNG pixel statistics and golden samples'],
+    infrastructure: ['Playwright chromium headless + file:// + tmp', 'real child-process SIGKILL', 'uv run --with python-pptx', 'python-pptx native chart part/category/value assertion', 'pdftotext Chinese assertion', 'PNG pixel statistics and golden samples'],
   }
 }
 
