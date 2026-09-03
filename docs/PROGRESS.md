@@ -99,6 +99,9 @@ fallbacks. No remote was created and no changes were pushed.
 - `pnpm e2e:vertical-slice` — passed, including checkpoint round-trip and
   journal recovery.
 - `git diff --check` — passed.
+- `node scripts/blackbox-gates.mjs --report` — 40 green / 12 red overall;
+  the 12 red cases are outside R5 (`review-patch`: 9, `section-41`: 3) and
+  are not claimed as part of this milestone. Every selected R5 group is green.
 
 ### Boundary recorded honestly
 
