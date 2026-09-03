@@ -1,7 +1,7 @@
 import type { AssetId, DocumentId, FontId, JsonValue, PpteDocument, Revision, RuntimeProfile, TransactionId } from './document.js'
 import type { Actor, Operation, Transaction } from './operations.js'
 
-export type PortableProfile = 'viewer' | 'quick-fix' | 'light-edit'
+export type PortableProfile = 'viewer' | 'quick-fix' | 'light-edit' | 'full-portable'
 export interface FileEntry {
   path: string
   mediaType: string

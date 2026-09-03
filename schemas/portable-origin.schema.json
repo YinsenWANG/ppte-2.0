@@ -8,7 +8,7 @@
     "sourceDocumentId": { "type": "string", "minLength": 1 },
     "sourceRevision": { "type": "string", "minLength": 1 },
     "derivedAt": { "type": "string", "minLength": 1 },
-    "profile": { "enum": ["viewer", "quick-fix", "light-edit"] },
+    "profile": { "enum": ["viewer", "quick-fix", "light-edit", "full-portable"] },
     "runtimeVersion": { "type": "string", "minLength": 1 },
     "branchId": { "type": "string", "minLength": 1 }
   },

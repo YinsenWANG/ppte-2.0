@@ -66,7 +66,11 @@ export function chartDataOnlyContract(elementId: string, requireConfirmation = f
 }
 
 export function geometryOnlyContract(elementIds: string[], requireConfirmation = true): ChangeContract {
-  return { allowedOperationKinds: ['element.move', 'element.resize', 'layout.align', 'layout.distribute'], allowedElementIds: elementIds, ...zeroBudget(elementIds.length), preserve: { content: 'preserve', data: 'preserve', style: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' }, requireConfirmation, userIntentSummary: 'Change geometry while preserving semantic content and style.' }
+  return { allowedOperationKinds: ['element.move', 'element.resize', 'element.rotate', 'layout.align', 'layout.distribute'], allowedElementIds: elementIds, ...zeroBudget(elementIds.length), preserve: { content: 'preserve', data: 'preserve', style: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' }, requireConfirmation, userIntentSummary: 'Change geometry while preserving semantic content and style.' }
+}
+
+export function rotationOnlyContract(elementId: string, requireConfirmation = false): ChangeContract {
+  return { allowedOperationKinds: ['element.rotate'], allowedElementIds: [elementId], ...zeroBudget(1), preserve: { content: 'preserve', data: 'preserve', style: 'preserve', geometry: 'allow', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' }, requireConfirmation, userIntentSummary: 'Rotate the selected element while preserving semantic content and style.' }
 }
 
 export function styleOnlyContract(elementIds: string[], requireConfirmation = true): ChangeContract {

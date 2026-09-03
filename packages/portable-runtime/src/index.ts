@@ -2,7 +2,7 @@ import { canonicalJsonString, canonicalRevision, sha256HexBytes } from '../../ca
 import { createHash } from 'node:crypto'
 import { gzipSync } from 'node:zlib'
 import { PpteSession } from '../../core/src/index.js'
-import { contentOnlyContract, cropOnlyContract, chartDataOnlyContract, geometryOnlyContract, replaceAssetContract } from '../../change-contract/src/index.js'
+import { contentOnlyContract, cropOnlyContract, chartDataOnlyContract, geometryOnlyContract, replaceAssetContract, rotationOnlyContract } from '../../change-contract/src/index.js'
 import { readStoredZip, writeStoredZip } from '../../archive/src/index.js'
 import { renderDocumentHtml } from '../../renderer-react/src/index.js'
 import { checkGlyphCoverage, validateRuntimeDocument, validateTransactionShape } from '../../validation/src/index.js'
@@ -70,6 +70,12 @@ export interface QuickFixResult {
   issues: ValidationIssue[]
 }
 
+export interface PortableSelectionResult extends QuickFixResult {
+  selection?: Array<{ slideId: string; elementId: string }>
+}
+
+export type PortableElementTarget = { slideId?: string; elementId?: string; semanticKey?: string }
+
 export interface PortableImageImportOptions {
   assetId?: AssetId
   fileName?: string
@@ -89,7 +95,7 @@ export interface PresenterState {
 }
 
 export function buildPortable(document: PpteDocument, options: PortableBuildOptions): PortableBuildResult {
-  const runtimeProfile: RuntimeProfile = options.profile === 'light-edit'
+  const runtimeProfile: RuntimeProfile = options.profile === 'light-edit' || options.profile === 'full-portable'
     ? 'ga-c'
     : runtimeProfileForCompatibility(inferCompatibilityProfile(document))
   const issues = validateRuntimeDocument(document, { runtimeProfile }).filter((issue) => issue.severity === 'error' && !(options.profile === 'viewer' && issue.code === 'FONT_GLYPH_MISSING'))
@@ -104,7 +110,7 @@ export function buildPortable(document: PpteDocument, options: PortableBuildOpti
     runtimeVersion: options.runtimeVersion ?? 'portable-runtime-1',
     ...(options.branchId ? { branchId: options.branchId } : {}),
   }
-  const capabilityTarget = options.profile === 'quick-fix' ? 'portable-quick-fix' : options.profile === 'light-edit' ? 'portable-light-edit' : 'portable-viewer'
+  const capabilityTarget = options.profile === 'quick-fix' ? 'portable-quick-fix' : options.profile === 'light-edit' || options.profile === 'full-portable' ? 'portable-light-edit' : 'portable-viewer'
   const capabilityReport = buildCapabilityReport(document, capabilityTarget, { sourceRevision })
   const assets: Record<string, string> = {}
   // Binary resources live in the payload exactly once.  The browser runtime
@@ -127,7 +133,7 @@ export function buildPortable(document: PpteDocument, options: PortableBuildOpti
     else if (font.hash && normalizeHash(font.hash) !== sha256Binary(data)) issues.push(issue('FONT_HASH_MISMATCH', `Portable font ${font.id} failed hash verification.`, font.id, 'Use the bytes that belong to the declared font hash.'))
     else fonts[font.id] = base64(data)
   }
-  if (options.profile === 'quick-fix' || options.profile === 'light-edit') for (const slide of Object.values(document.slides)) for (const element of Object.values(slide.elements)) if (element.type === 'text') issues.push(...checkGlyphCoverage(document, element, undefined, { strict: true }))
+  if (options.profile === 'quick-fix' || options.profile === 'light-edit' || options.profile === 'full-portable') for (const slide of Object.values(document.slides)) for (const element of Object.values(slide.elements)) if (element.type === 'text') issues.push(...checkGlyphCoverage(document, element, undefined, { strict: true }))
   if (issues.some((item) => item.severity === 'error')) return { ok: false, html: '', origin, capabilityReport, issues: dedupe(issues), bytes: 0 }
   const payload: PortablePayload = { document, origin, minimumCompatibilityProfile: inferCompatibilityProfile(document), assets, fonts, capabilityReport }
   const html = assembleHtml(document, payload, assetSources)
@@ -157,6 +163,12 @@ export function createPortableLightEdit(document: PpteDocument, options: Omit<Po
   return buildPortable(document, { ...options, profile: 'light-edit' })
 }
 
+export function createPortableFullPortable(document: PpteDocument, options: Omit<PortableBuildOptions, 'profile'> = {}): PortableBuildResult {
+  return buildPortable(document, { ...options, profile: 'full-portable' })
+}
+
+export const createFullPortable = createPortableFullPortable
+
 export function decodePortable(html: string): PortablePayload {
   const match = /<script id="ppte-portable-payload" type="application\/json">([\s\S]*?)<\/script>/.exec(html)
   if (!match) throw new Error('PORTABLE_INVALID: missing embedded payload')
@@ -177,7 +189,7 @@ export function auditPortableBundle(html: string): PortableAuditResult {
   if (origin?.sourceRevision && canonicalRevision(payload.document) !== origin.sourceRevision) issues.push(issue('PORTABLE_ORIGIN_MISMATCH', 'Portable origin revision does not match the embedded document.'))
   if (payload.capabilityReport?.sourceDocumentId !== payload.document.documentId || payload.capabilityReport?.sourceRevision !== origin?.sourceRevision) issues.push(issue('PORTABLE_CAPABILITY_MISMATCH', 'Capability report does not describe the embedded source revision.'))
   if (payload.minimumCompatibilityProfile && payload.minimumCompatibilityProfile !== inferCompatibilityProfile(payload.document)) issues.push(issue('PORTABLE_CAPABILITY_MISMATCH', 'Portable minimum Compatibility Profile does not describe the embedded document.'))
-  if (origin?.profile !== 'viewer' && origin?.profile !== 'quick-fix' && origin?.profile !== 'light-edit') issues.push(issue('PORTABLE_PROFILE_UNSUPPORTED', 'Portable profile is not recognized by this runtime.'))
+  if (origin?.profile !== 'viewer' && origin?.profile !== 'quick-fix' && origin?.profile !== 'light-edit' && origin?.profile !== 'full-portable') issues.push(issue('PORTABLE_PROFILE_UNSUPPORTED', 'Portable profile is not recognized by this runtime.'))
   if (/<(?:script|link)[^>]+(?:src|href)\s*=\s*["'](?:https?:|\/\/|data:)/i.test(html) || /<img[^>]+src\s*=\s*["'](?!data:|blob:|["'])/i.test(html)) issues.push(issue('PORTABLE_NETWORK_DISABLED', 'Portable output may not load external runtime or asset resources.'))
   if (/\b(?:fetch|XMLHttpRequest|WebSocket|EventSource)\s*\(/.test(html)) issues.push(issue('PORTABLE_NETWORK_DISABLED', 'Portable runtime contains a network-capable API call.'))
   if (/\beval\s*\(|new\s+Function\s*\(/.test(html)) issues.push(issue('PORTABLE_PAYLOAD_UNSAFE', 'Portable runtime may not evaluate generated code.'))
@@ -192,10 +204,11 @@ export class PortableRuntime {
   private slideIndex = 0
   private step = 0
   private lastTransaction?: Transaction
+  private selection: Array<{ slideId: string; elementId: string }> = []
 
   constructor(document: PpteDocument, options: { profile?: PortableProfile; assetBytes?: Record<AssetId, Uint8Array>; fontBytes?: Record<FontId, Uint8Array> } = {}) {
     this.profile = options.profile ?? 'viewer'
-    const runtimeProfile = this.profile === 'light-edit' ? 'ga-c' : runtimeProfileForCompatibility(inferCompatibilityProfile(document))
+    const runtimeProfile = this.profile === 'light-edit' || this.profile === 'full-portable' ? 'ga-c' : runtimeProfileForCompatibility(inferCompatibilityProfile(document))
     this.session = new PpteSession(document, { runtimeProfile })
     this.assetBytes = cloneBytes(options.assetBytes)
     this.fontBytes = cloneBytes(options.fontBytes)
@@ -205,10 +218,30 @@ export class PortableRuntime {
 
   getDocument(): Readonly<PpteDocument> { return this.session.getDocument() }
   getRevision(): Revision { return this.session.getRevision() }
-  getCapabilityReport(): CapabilityReport { return buildCapabilityReport(this.session.getDocument(), this.profile === 'quick-fix' ? 'portable-quick-fix' : this.profile === 'light-edit' ? 'portable-light-edit' : 'portable-viewer', { sourceRevision: this.session.getRevision() }) }
+  getCapabilityReport(): CapabilityReport { return buildCapabilityReport(this.session.getDocument(), this.profile === 'quick-fix' ? 'portable-quick-fix' : this.profile === 'light-edit' || this.profile === 'full-portable' ? 'portable-light-edit' : 'portable-viewer', { sourceRevision: this.session.getRevision() }) }
   getAssetBytes(): Record<string, Uint8Array> { return cloneBytes(this.assetBytes) }
   getFontBytes(): Record<string, Uint8Array> { return cloneBytes(this.fontBytes) }
   getLastTransaction(): Readonly<Transaction> | undefined { return this.lastTransaction ? structuredClone(this.lastTransaction) : undefined }
+
+  select(target: PortableElementTarget | string): PortableSelectionResult {
+    const found = findElement(this.session.getDocument(), typeof target === 'string' ? { elementId: target } : target)
+    if (!found) return { ok: false, issues: [issue('PORTABLE_SELECTION_INVALID', 'Selection target cannot be resolved.')] }
+    this.selection = [{ slideId: found.slideId, elementId: found.element.id }]
+    return { ok: true, revision: this.session.getRevision(), selection: structuredClone(this.selection), issues: [] }
+  }
+
+  selectMany(targets: Array<PortableElementTarget | string>): PortableSelectionResult {
+    const selection: Array<{ slideId: string; elementId: string }> = []
+    for (const target of targets) {
+      const found = findElement(this.session.getDocument(), typeof target === 'string' ? { elementId: target } : target)
+      if (!found) return { ok: false, issues: [issue('PORTABLE_SELECTION_INVALID', 'One or more selection targets cannot be resolved.')] }
+      if (!selection.some((item) => item.slideId === found.slideId && item.elementId === found.element.id)) selection.push({ slideId: found.slideId, elementId: found.element.id })
+    }
+    this.selection = selection
+    return { ok: true, revision: this.session.getRevision(), selection: structuredClone(this.selection), issues: [] }
+  }
+
+  getSelection(): Array<{ slideId: string; elementId: string }> { return structuredClone(this.selection) }
 
   editText(target: { slideId?: string; elementId?: string; semanticKey?: string }, value: string): QuickFixResult {
     if (!quickFixEditingEnabled(this.profile)) return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Viewer profile does not allow edits.')] }
@@ -287,7 +320,7 @@ export class PortableRuntime {
   editFactValue(factId: string, value: number): QuickFixResult { return this.editFact(factId, value) }
 
   cropImage(target: { slideId?: string; elementId?: string; semanticKey?: string }, crop: NormalizedRect): QuickFixResult {
-    if (this.profile !== 'light-edit') return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Image crop is available in Light Edit profile only.')] }
+    if (!advancedEditingEnabled(this.profile)) return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Image crop is available in Light Edit and Full Portable profiles only.')] }
     const found = findElement(this.session.getDocument(), target)
     if (!found || found.element.type !== 'image') return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Light Edit crop requires a resolvable Image element.')] }
     const transaction: Transaction = {
@@ -308,7 +341,7 @@ export class PortableRuntime {
   editImageCrop(target: { slideId?: string; elementId?: string; semanticKey?: string }, crop: NormalizedRect): QuickFixResult { return this.cropImage(target, crop) }
 
   updateChartData(target: { slideId?: string; elementId?: string; semanticKey?: string }, data: ChartData): QuickFixResult {
-    if (this.profile !== 'light-edit') return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Chart data editing is available in Light Edit profile only.')] }
+    if (!advancedEditingEnabled(this.profile)) return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Chart data editing is available in Light Edit and Full Portable profiles only.')] }
     const found = findElement(this.session.getDocument(), target)
     if (!found || found.element.type !== 'chart') return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Light Edit chart editing requires a resolvable Chart element.')] }
     const transaction: Transaction = {
@@ -336,15 +369,41 @@ export class PortableRuntime {
     return this.geometryEdit(target, { kind: 'element.resize', frame })
   }
 
+  scaleElement(target: PortableElementTarget, factor: number): QuickFixResult {
+    if (!Number.isFinite(factor) || factor <= 0) return { ok: false, issues: [issue('GEOMETRY_INVALID', 'Scale factor must be finite and positive.')] }
+    const found = findElement(this.session.getDocument(), target)
+    if (!found) return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Scale requires a resolvable element.')] }
+    return this.geometryEdit(target, { kind: 'element.resize', frame: { ...found.element.frame, width: found.element.frame.width * factor, height: found.element.frame.height * factor } })
+  }
+
+  rotateElement(target: PortableElementTarget, rotationDeg: number): QuickFixResult {
+    if (!advancedEditingEnabled(this.profile)) return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Rotation is available in Light Edit and Full Portable profiles only.')] }
+    if (!Number.isFinite(rotationDeg)) return { ok: false, issues: [issue('GEOMETRY_INVALID', 'Rotation must be finite.')] }
+    const found = findElement(this.session.getDocument(), target)
+    if (!found) return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Rotation requires a resolvable element.')] }
+    const transaction: Transaction = {
+      transactionId: `portable:rotate:${found.element.id}:${this.session.getRevision().slice(-12)}`,
+      baseRevision: this.session.getRevision(),
+      actor: { type: 'human', id: 'portable-full' },
+      scope: { kind: 'selection', slideIds: [found.slideId], elementIds: [found.element.id], permissions: ['geometry'], allowInsert: false, allowDelete: false },
+      changeContract: rotationOnlyContract(found.element.id, false),
+      reason: 'Portable element rotation',
+      createdAt: '1970-01-01T00:00:00.000Z',
+      validationLevel: 'L2',
+      operations: [{ opId: `portable:rotate:${found.element.id}`, kind: 'element.rotate', slideId: found.slideId, elementId: found.element.id, rotationDeg }],
+    }
+    return this.commitPortableTransaction(transaction)
+  }
+
   undo(): QuickFixResult {
-    if (this.profile !== 'quick-fix' && this.profile !== 'light-edit') return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Viewer profile does not allow undo.')] }
+    if (!quickFixEditingEnabled(this.profile)) return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Viewer profile does not allow undo.')] }
     const result = this.session.undo()
     return { ok: result.ok, revision: result.afterRevision, issues: result.issues }
   }
 
   saveAsProject(options: { timestamp?: string; clean?: boolean; compatibilityProfile?: string } = {}): QuickFixResult {
     try {
-      const bytes = buildPortableCheckpointBytes(this.session.getDocument(), { timestamp: options.timestamp ?? '1970-01-01T00:00:00.000Z', clean: options.clean, compatibilityProfile: options.compatibilityProfile ?? inferCompatibilityProfile(this.session.getDocument()), runtimeProfile: this.profile === 'light-edit' ? 'ga-c' : runtimeProfileForCompatibility(inferCompatibilityProfile(this.session.getDocument())), recentTransactions: options.clean ? [] : this.session.getHistory().map((entry) => entry.transaction), assetBytes: this.assetBytes, fontBytes: this.fontBytes })
+      const bytes = buildPortableCheckpointBytes(this.session.getDocument(), { timestamp: options.timestamp ?? '1970-01-01T00:00:00.000Z', clean: options.clean, compatibilityProfile: options.compatibilityProfile ?? inferCompatibilityProfile(this.session.getDocument()), runtimeProfile: this.profile === 'light-edit' || this.profile === 'full-portable' ? 'ga-c' : runtimeProfileForCompatibility(inferCompatibilityProfile(this.session.getDocument())), recentTransactions: options.clean ? [] : this.session.getHistory().map((entry) => entry.transaction), assetBytes: this.assetBytes, fontBytes: this.fontBytes })
       return { ok: true, revision: this.session.getRevision(), bytes, issues: [] }
     } catch (cause) { return { ok: false, issues: [issue('CHECKPOINT_FAILED', cause instanceof Error ? cause.message : String(cause))] } }
   }
@@ -395,7 +454,7 @@ export class PortableRuntime {
   }
 
   private geometryEdit(target: { slideId?: string; elementId?: string; semanticKey?: string }, change: { kind: 'element.move'; point: { x: number; y: number } } | { kind: 'element.resize'; frame: Frame }): QuickFixResult {
-    if (this.profile !== 'light-edit') return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Move and resize are available in Light Edit profile only.')] }
+    if (!advancedEditingEnabled(this.profile)) return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Move and resize are available in Light Edit and Full Portable profiles only.')] }
     const found = findElement(this.session.getDocument(), target)
     if (!found) return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Light Edit geometry requires a resolvable element.')] }
     const operation = change.kind === 'element.move'
@@ -429,7 +488,7 @@ function assembleHtml(document: PpteDocument, payload: PortablePayload, assetSou
   const rendered = renderDocumentHtml(document, { assetSources: offlineAssetSources, editable, includeHostControls: false })
   const payloadJson = JSON.stringify(payload).replaceAll('<', '\\u003c').replaceAll('>', '\\u003e').replaceAll('&', '\\u0026')
   const editingControls = editable
-    ? `<button type="button" data-ppte-action="undo">Undo</button><button type="button" data-ppte-action="redo">Redo</button><label class="ppte-file-label">Replace image<input type="file" accept="image/*" data-ppte-action="import-image"></label><button type="button" data-ppte-action="save">Save project</button><button type="button" data-ppte-action="save-portable">Save HTML</button>${payload.origin.profile === 'light-edit' ? '<button type="button" data-ppte-action="crop">Crop</button><button type="button" data-ppte-action="chart-data">Chart data</button><button type="button" data-ppte-action="move-left">Move left</button><button type="button" data-ppte-action="move-right">Move right</button><button type="button" data-ppte-action="scale-up">Scale up</button><button type="button" data-ppte-action="scale-down">Scale down</button>' : ''}`
+    ? `<button type="button" data-ppte-action="undo">Undo</button><button type="button" data-ppte-action="redo">Redo</button><label class="ppte-file-label">Replace image<input type="file" accept="image/*" data-ppte-action="import-image"></label><button type="button" data-ppte-action="save">Save project</button><button type="button" data-ppte-action="save-portable">Save HTML</button>${payload.origin.profile === 'light-edit' || payload.origin.profile === 'full-portable' ? '<button type="button" data-ppte-action="crop">Crop</button><button type="button" data-ppte-action="chart-data">Chart data</button><button type="button" data-ppte-action="move-left">Move left</button><button type="button" data-ppte-action="move-right">Move right</button><button type="button" data-ppte-action="scale-up">Scale up</button><button type="button" data-ppte-action="scale-down">Scale down</button><button type="button" data-ppte-action="rotate">Rotate</button>' : ''}`
     : ''
   return `<!doctype html><html lang="${css(document.locale)}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="ppte-runtime-version" content="${css(payload.origin.runtimeVersion)}"><meta name="ppte-source-revision" content="${css(payload.origin.sourceRevision)}"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data: blob:; font-src data: blob:; script-src 'unsafe-inline';"><style>html,body{margin:0;min-height:100%;background:#111827;color:#f9fafb;font-family:system-ui,sans-serif}#ppte-shell{min-height:100vh;display:grid;grid-template-rows:auto 1fr auto}.ppte-toolbar{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;padding:.5rem;background:#0f172a;position:sticky;top:0;z-index:2}.ppte-toolbar button,.ppte-file-label{padding:.35rem .6rem;color:#f9fafb;background:#1e293b;border:1px solid #475569;border-radius:.25rem;cursor:pointer;font-size:.82rem}.ppte-file-label input{display:none}.ppte-status{margin-left:auto;font-size:.8rem;color:#cbd5e1}.ppte-stage{display:flex;align-items:center;justify-content:center;overflow:auto;padding:1rem;min-width:0;min-height:0}.ppte-canvas{position:relative;flex:none}.ppte-canvas>.ppte-slide{position:absolute;left:0;top:0;display:none;box-shadow:0 1rem 3rem #0008;transform-origin:top left;max-width:none;max-height:none}.ppte-${payload.origin.profile} [data-ppte-type="text"]{outline:1px dashed #60a5fa;cursor:text}.ppte-${payload.origin.profile} [data-ppte-selected="true"]{outline:2px solid #38bdf8!important;outline-offset:2px}.ppte-notes{min-height:1.5rem;padding:.5rem 1rem;background:#0f172a;color:#cbd5e1;font-size:.85rem;white-space:pre-wrap}@keyframes ppte-enter-fade{from{opacity:0}to{opacity:1}}@keyframes ppte-enter-slide-up{from{opacity:0;transform:translateY(1rem)}to{opacity:1;transform:translateY(0)}}@keyframes ppte-enter-slide-left{from{opacity:0;transform:translateX(1rem)}to{opacity:1;transform:translateX(0)}}@keyframes ppte-enter-scale{from{opacity:0;scale:.96}to{opacity:1;scale:1}}@keyframes ppte-transition-fade{from{opacity:0}to{opacity:1}}@keyframes ppte-transition-slide{from{opacity:0;transform:translateX(2rem)}to{opacity:1;transform:translateX(0)}}@keyframes ppte-transition-push{from{opacity:0}to{opacity:1}}</style></head><body><div id="ppte-shell" class="ppte-${payload.origin.profile}" data-ppte-profile="${payload.origin.profile}"><div class="ppte-toolbar"><button type="button" data-ppte-action="previous">Previous</button><button type="button" data-ppte-action="next">Next</button><button type="button" data-ppte-action="fullscreen">Fullscreen</button>${editingControls}<span class="ppte-status" data-ppte-status>Offline ${payload.origin.profile} · no sync</span></div><main class="ppte-stage" data-ppte-stage><div class="ppte-canvas" data-ppte-canvas style="width:${document.canvas.width}px;height:${document.canvas.height}px">${rendered}</div></main><div class="ppte-notes" data-ppte-notes aria-live="polite"></div></div><script id="ppte-portable-payload" type="application/json">${payloadJson}</script><script>${portableScript()}</script></body></html>`
 }
@@ -558,8 +617,8 @@ function portableScript(): string {
   const payload=JSON.parse(payloadNode.textContent||'{}');
   let documentNode=payload.document;
   const profile=payload.origin.profile;
-  const editable=profile==='quick-fix'||profile==='light-edit';
-  const lightEdit=profile==='light-edit';
+  const editable=profile==='quick-fix'||profile==='light-edit'||profile==='full-portable';
+  const lightEdit=profile==='light-edit'||profile==='full-portable';
   const root=document.getElementById('ppte-shell');
   const stage=document.querySelector('[data-ppte-stage]');
   const canvas=document.querySelector('[data-ppte-canvas]');
@@ -652,6 +711,7 @@ function portableScript(): string {
     if(operation.kind==='chart.replaceData'){if(!element||element.type!=='chart')throw new Error('OPERATION_TYPE_MISMATCH: chart.replaceData');element.data=clone(operation.data);return}
     if(operation.kind==='element.move'){if(!element)throw new Error('ELEMENT_MISSING: '+operation.elementId);element.frame.x=Number(operation.x);element.frame.y=Number(operation.y);return}
     if(operation.kind==='element.resize'){if(!element)throw new Error('ELEMENT_MISSING: '+operation.elementId);const frame=operation.frame;if(!frame||frame.width<=0||frame.height<=0)throw new Error('GEOMETRY_INVALID: resize frame');element.frame=clone(frame);return}
+    if(operation.kind==='element.rotate'){if(!element||!Number.isFinite(Number(operation.rotationDeg)))throw new Error('GEOMETRY_INVALID: rotation');element.rotationDeg=Number(operation.rotationDeg);return}
     throw new Error('UNSUPPORTED_OPERATION: '+operation.kind);
   };
   const syncTextNode=(node,element)=>{if(!node||!element||element.type!=='text')return;node.innerHTML=(element.content.paragraphs||[]).map(paragraph=>{const content=(paragraph.runs||[]).map(run=>{let value=escapeHtml(run.text||'');const marks=run.marks||{};if(marks.bold)value='<strong>'+value+'</strong>';if(marks.italic)value='<em>'+value+'</em>';if(marks.underline)value='<u>'+value+'</u>';if(marks.strike)value='<s>'+value+'</s>';return value}).join('');return '<p data-ppte-paragraph-id="'+escapeHtml(paragraph.id)+'">'+content+'</p>'}).join('')};
@@ -672,6 +732,7 @@ function portableScript(): string {
   const moveElement=(target,point)=>{if(!lightEdit)return issue('PORTABLE_EDIT_UNSUPPORTED','Geometry editing is available in Light Edit only.');const found=findElement(target);if(!found)return issue('PORTABLE_EDIT_UNSUPPORTED','Element target cannot be resolved.');return commitTransaction([{opId:operationId('element.move'),kind:'element.move',slideId:found.slideId,elementId:found.element.id,x:Number(point.x),y:Number(point.y)}],'move')};
   const resizeElement=(target,frame)=>{if(!lightEdit)return issue('PORTABLE_EDIT_UNSUPPORTED','Geometry editing is available in Light Edit only.');const found=findElement(target);if(!found)return issue('PORTABLE_EDIT_UNSUPPORTED','Element target cannot be resolved.');return commitTransaction([{opId:operationId('element.resize'),kind:'element.resize',slideId:found.slideId,elementId:found.element.id,frame:clone(frame)}],'resize')};
   const scaleElement=(target,factor)=>{const found=findElement(target);if(!found)return issue('PORTABLE_EDIT_UNSUPPORTED','Element target cannot be resolved.');return resizeElement(target,{...found.element.frame,width:found.element.frame.width*Number(factor),height:found.element.frame.height*Number(factor)})};
+  const rotateElement=(target,rotationDeg)=>{if(!lightEdit)return issue('PORTABLE_EDIT_UNSUPPORTED','Rotation is available in Light Edit and Full Portable profiles only.');const found=findElement(target);if(!found||!Number.isFinite(Number(rotationDeg)))return issue('GEOMETRY_INVALID','Rotation target or value is invalid.');return commitTransaction([{opId:operationId('element.rotate'),kind:'element.rotate',slideId:found.slideId,elementId:found.element.id,rotationDeg:Number(rotationDeg)}],'rotate')};
   const undo=()=>{if(!editable)return issue('PORTABLE_EDIT_UNSUPPORTED','Viewer profile does not allow undo.');flushTextDrafts();const entry=history.pop();if(!entry)return issue('UNDO_EMPTY','There is no committed transaction to undo.');redoHistory.push({before:clone(documentNode),after:entry.after,transaction:entry.transaction});documentNode=entry.before;payload.document=documentNode;updateOrigin();refresh();return {ok:true,revision:revision(),issues:[]}};
   const redo=()=>{if(!editable)return issue('PORTABLE_EDIT_UNSUPPORTED','Viewer profile does not allow redo.');const entry=redoHistory.pop();if(!entry)return issue('REDO_EMPTY','There is no transaction to redo.');const before=clone(documentNode);documentNode=entry.after;payload.document=documentNode;history.push({before,after:clone(documentNode),transaction:entry.transaction});updateOrigin();refresh();return {ok:true,revision:revision(),issues:[]}};
   const flushTextDrafts=()=>{for(const [elementId,value] of Array.from(drafts.entries()))if(!composing.has(elementId))commitText(elementId,value)};
@@ -684,18 +745,19 @@ function portableScript(): string {
   const checkpoint=()=>{flushTextDrafts();const entries=[{name:'mimetype',data:utf8('application/vnd.ppte+zip')},{name:'document.json',data:utf8(canonical(documentNode))},{name:'assets/index.json',data:utf8(canonical(documentNode.assets||{}))},{name:'fonts/index.json',data:utf8(canonical(documentNode.fonts||{}))},{name:'history/descriptor.json',data:utf8(canonical({mode:'standard',snapshotRevision:revision(),recentTransactionCount:history.length,deepHistoryExternal:true}))}];if(history.length)entries.push({name:'history/recent.jsonl',data:utf8(history.map(entry=>canonical(entry.transaction)).join(String.fromCharCode(10))+String.fromCharCode(10))});for(const asset of Object.values(documentNode.assets||{})){const encoded=payload.assets&&payload.assets[asset.id];if(!encoded)throw new Error('ASSET_MISSING: '+asset.id);const data=base64Bytes(encoded);if(data.length!==asset.byteLength||'sha256-'+sha256HexBytes(data)!==asset.hash)throw new Error('ASSET_HASH_MISMATCH: '+asset.id);entries.push({name:asset.path,data})}for(const font of Object.values(documentNode.fonts||{}))if(font.source==='embedded'){const encoded=payload.fonts&&payload.fonts[font.id];if(!encoded)throw new Error('FONT_MISSING: '+font.id);entries.push({name:font.path||'fonts/'+font.id+'.woff2',data:base64Bytes(encoded)})}const files=entries.filter(entry=>entry.name!=='mimetype').map(entry=>({path:entry.name,mediaType:entry.name.endsWith('.json')?'application/json':entry.name.endsWith('.jsonl')?'application/x-ndjson':entry.name.endsWith('.woff2')?'font/woff2':entry.name.endsWith('.png')?'image/png':entry.name.endsWith('.jpg')||entry.name.endsWith('.jpeg')?'image/jpeg':'application/octet-stream',byteLength:entry.data.length,sha256:sha256HexBytes(entry.data),required:entry.name==='document.json'}));const manifest={format:'ppte',formatVersion:'2',schemaVersion:'2.0.0',operationProtocolVersion:'1.0',compatibilityProfile:payload.minimumCompatibilityProfile||inferredProfile(),documentId:documentNode.documentId,contentRevision:revision(),title:documentNode.metadata.title,createdAt:documentNode.metadata.createdAt||new Date().toISOString(),updatedAt:new Date().toISOString(),requiredWidgets:documentNode.widgetRequirements||[],clean:false,files,history:{mode:'standard',snapshotRevision:revision(),recentTransactionCount:history.length,deepHistoryExternal:true}};entries.push({name:'manifest.json',data:utf8(canonical(manifest))});return writeZip(entries)};
   const saveAsProject=()=>{try{const data=checkpoint();download(data,safeFilename(documentNode.metadata&&documentNode.metadata.title)+'.ppte','application/vnd.ppte+zip');if(status)status.textContent='Offline '+profile+' · saved .ppte project';return {ok:true,revision:revision(),bytes:data,issues:[]}}catch(error){return issue('CHECKPOINT_FAILED',error instanceof Error?error.message:String(error))}};
   const saveAsPortable=()=>{try{flushTextDrafts();updateOrigin();const copy=document.documentElement.cloneNode(true);const embedded=copy.querySelector('#ppte-portable-payload');if(embedded)embedded.textContent=JSON.stringify(payload).replaceAll('<','\\u003c').replaceAll('>','\\u003e').replaceAll('&','\\u0026');copy.querySelectorAll('img').forEach(image=>image.setAttribute('src',''));const html='<!doctype html>'+copy.outerHTML;download(html,safeFilename(documentNode.metadata&&documentNode.metadata.title)+'.ppte.html','text/html');if(status)status.textContent='Offline '+profile+' · saved HTML copy';return {ok:true,revision:revision(),html,issues:[]}}catch(error){return issue('CHECKPOINT_FAILED',error instanceof Error?error.message:String(error))}};
-  const select=id=>{selectedElementId=id||'';for(const node of document.querySelectorAll('[data-ppte-element-id]'))node.setAttribute('data-ppte-selected',node.getAttribute('data-ppte-element-id')===selectedElementId?'true':'false');show()};
+  const select=id=>{const target=typeof id==='string'?{elementId:id}:id||{};const found=findElement(target);if(!found)return issue('PORTABLE_SELECTION_INVALID','Selection target cannot be resolved.');selectedElementId=found.element.id;for(const node of document.querySelectorAll('[data-ppte-element-id]'))node.setAttribute('data-ppte-selected',node.getAttribute('data-ppte-element-id')===selectedElementId?'true':'false');show();return {ok:true,revision:revision(),selection:[{slideId:found.slideId,elementId:found.element.id}],issues:[]}};
+  const selectMany=targets=>{const resolved=[];for(const target of Array.isArray(targets)?targets:[]){const found=findElement(target);if(!found)return issue('PORTABLE_SELECTION_INVALID','One or more selection targets cannot be resolved.');if(!resolved.some(item=>item.slideId===found.slideId&&item.elementId===found.element.id))resolved.push({slideId:found.slideId,elementId:found.element.id})}selectedElementId=resolved[0]?resolved[0].elementId:'';for(const node of document.querySelectorAll('[data-ppte-element-id]'))node.setAttribute('data-ppte-selected',resolved.some(item=>item.elementId===node.getAttribute('data-ppte-element-id'))?'true':'false');show();return {ok:true,revision:revision(),selection:resolved,issues:[]}};
   const next=()=>{const pending=slideSteps().filter(value=>value>step);if(pending.length)step=pending[0];else if(slideIndex<slides().length-1){slideIndex+=1;step=0}show()};
   const previous=()=>{const pending=slideSteps().filter(value=>value<step);if(pending.length)step=pending[pending.length-1];else if(slideIndex>0){slideIndex-=1;step=0}show()};
   const setSlide=index=>{slideIndex=Math.max(0,Math.min(slides().length-1,Number(index)||0));step=0;selectedElementId='';show()};
   const selectedTarget=()=>selectedElementId?{elementId:selectedElementId}:undefined;
-  const buttonAction=action=>{if(action==='next')next();else if(action==='previous')previous();else if(action==='undo')undo();else if(action==='redo')redo();else if(action==='save')saveAsProject();else if(action==='save-portable')saveAsPortable();else if(action==='fullscreen'){if(root&&root.requestFullscreen)root.requestFullscreen()}else if(action==='crop'){const found=findElement(selectedTarget());if(found&&found.element.type==='image')cropImage({elementId:found.element.id},{x:.05,y:.05,width:.9,height:.9})}else if(action==='chart-data'){const found=findElement(selectedTarget());if(found&&found.element.type==='chart'){const data=clone(found.element.data);const column=(data.columns||[]).find(item=>item.type==='number');if(column&&data.rows[0])data.rows[0].values[column.id]=Number(data.rows[0].values[column.id]||0)+1;updateChartData({elementId:found.element.id},data)}}else if(action==='move-left'||action==='move-right'){const found=findElement(selectedTarget());if(found)moveElement({elementId:found.element.id},{x:found.element.frame.x+(action==='move-left'?-20:20),y:found.element.frame.y})}else if(action==='scale-up'||action==='scale-down'){const found=findElement(selectedTarget());if(found)scaleElement({elementId:found.element.id},action==='scale-up'?1.1:.9)}};
+  const buttonAction=action=>{if(action==='next')next();else if(action==='previous')previous();else if(action==='undo')undo();else if(action==='redo')redo();else if(action==='save')saveAsProject();else if(action==='save-portable')saveAsPortable();else if(action==='fullscreen'){if(root&&root.requestFullscreen)root.requestFullscreen()}else if(action==='crop'){const found=findElement(selectedTarget());if(found&&found.element.type==='image')cropImage({elementId:found.element.id},{x:.05,y:.05,width:.9,height:.9})}else if(action==='chart-data'){const found=findElement(selectedTarget());if(found&&found.element.type==='chart'){const data=clone(found.element.data);const column=(data.columns||[]).find(item=>item.type==='number');if(column&&data.rows[0])data.rows[0].values[column.id]=Number(data.rows[0].values[column.id]||0)+1;updateChartData({elementId:found.element.id},data)}}else if(action==='move-left'||action==='move-right'){const found=findElement(selectedTarget());if(found)moveElement({elementId:found.element.id},{x:found.element.frame.x+(action==='move-left'?-20:20),y:found.element.frame.y})}else if(action==='scale-up'||action==='scale-down'){const found=findElement(selectedTarget());if(found)scaleElement({elementId:found.element.id},action==='scale-up'?1.1:.9)}else if(action==='rotate'){const found=findElement(selectedTarget());if(found)rotateElement({elementId:found.element.id},Number(found.element.rotationDeg||0)+90)}};
   document.querySelectorAll('[data-ppte-action]').forEach(button=>{if(button.tagName==='BUTTON')button.addEventListener('click',()=>buttonAction(button.getAttribute('data-ppte-action')||''))});
   document.querySelectorAll('[data-ppte-slide-index]').forEach(button=>button.addEventListener('click',()=>setSlide(button.getAttribute('data-ppte-slide-index'))));
   if(stage){stage.addEventListener('click',event=>{const target=event.target instanceof Element?event.target.closest('[data-ppte-element-id]'):null;if(target&&editable)select(target.getAttribute('data-ppte-element-id')||'')});stage.addEventListener('pointerdown',event=>{if(!lightEdit)return;const target=event.target instanceof Element?event.target.closest('[data-ppte-element-id]'):null;const id=target&&target.getAttribute('data-ppte-element-id');const found=id?findElement({elementId:id}):undefined;if(!found||found.element.locked===true)return;select(id);const rect=slides()[slideIndex].getBoundingClientRect();dragState.value={id,startX:event.clientX,startY:event.clientY,frame:clone(found.element.frame),rect};if(target&&target.setPointerCapture)target.setPointerCapture(event.pointerId)});stage.addEventListener('pointermove',event=>{const drag=dragState.value;if(!drag)return;const dx=(event.clientX-drag.startX)/scale;const dy=(event.clientY-drag.startY)/scale;const node=elementNode(drag.id);if(node){node.style.left=drag.frame.x+dx+'px';node.style.top=drag.frame.y+dy+'px'}});stage.addEventListener('pointerup',event=>{const drag=dragState.value;dragState.value=null;if(!drag)return;const dx=(event.clientX-drag.startX)/scale;const dy=(event.clientY-drag.startY)/scale;if(Math.abs(dx)+Math.abs(dy)>0.5)moveElement({elementId:drag.id},{x:drag.frame.x+dx,y:drag.frame.y+dy})})}
   if(editable){document.querySelectorAll('[contenteditable="true"]').forEach(node=>{const id=node.getAttribute('data-ppte-element-id');if(!id)return;const plainText=()=>node.innerText.replaceAll(String.fromCharCode(160),' ');node.addEventListener('compositionstart',()=>composing.add(id));node.addEventListener('compositionend',()=>{composing.delete(id);drafts.set(id,plainText());commitText(id,drafts.get(id))});node.addEventListener('input',()=>drafts.set(id,plainText()));node.addEventListener('blur',()=>{if(!composing.has(id))commitText(id,plainText())})});const input=document.querySelector('[data-ppte-action="import-image"]');if(input)input.addEventListener('change',()=>{const file=input.files&&input.files[0];if(file)void importImage(selectedTarget(),file,{fileName:file.name,mimeType:file.type,altText:file.name});input.value=''})}
   window.addEventListener('resize',fitViewport);
-  const api={origin:payload.origin,capabilityReport:payload.capabilityReport,getPayload:()=>payload,getDocument:()=>clone(documentNode),getRevision:()=>revision(),getHistory:()=>clone(history.map(entry=>entry.transaction)),select,editText,replaceImage,importImage,cropImage,updateChartData,moveElement,resizeElement,scaleElement,undo,redo,saveAsProject,saveAsNewProject:saveAsProject,saveAsPortable,next,previous,setSlide};
+  const api={origin:payload.origin,capabilityReport:payload.capabilityReport,getPayload:()=>payload,getDocument:()=>clone(documentNode),getRevision:()=>revision(),getHistory:()=>clone(history.map(entry=>entry.transaction)),select,selectMany,editText,replaceImage,importImage,cropImage,updateChartData,moveElement,resizeElement,scaleElement,rotateElement,undo,redo,saveAsProject,saveAsNewProject:saveAsProject,saveAsPortable,next,previous,setSlide};
   globalThis.PPTEPortable=api;
   for(const slide of Object.values(documentNode.slides||{}))for(const element of Object.values(slide.elements||{}))syncElement(slide.id,element);
   hydrateFonts();fitViewport();show();
@@ -717,7 +779,8 @@ function findElement(document: PpteDocument, target: { slideId?: string; element
   }
   return undefined
 }
-function quickFixEditingEnabled(profile: PortableProfile): boolean { return profile === 'quick-fix' || profile === 'light-edit' }
+function quickFixEditingEnabled(profile: PortableProfile): boolean { return profile === 'quick-fix' || profile === 'light-edit' || profile === 'full-portable' }
+function advancedEditingEnabled(profile: PortableProfile): boolean { return profile === 'light-edit' || profile === 'full-portable' }
 function importedAssetContract(elementId: string): Transaction['changeContract'] {
   return {
     allowedOperationKinds: ['asset.upsert', 'image.replaceAsset'],
