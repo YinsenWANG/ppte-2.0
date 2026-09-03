@@ -1,0 +1,12 @@
+{
+  "png-content-32x18": {
+    "width": 32,
+    "height": 18,
+    "samples": [
+      { "label": "slide background", "x": 0, "y": 0, "rgba": [248, 250, 252, 255] },
+      { "label": "surface fill", "x": 2, "y": 2, "rgba": [255, 255, 255, 255] },
+      { "label": "title ink", "x": 4, "y": 3, "rgba": [23, 32, 51, 255] },
+      { "label": "image region", "x": 22, "y": 5, "rgba": [255, 255, 255, 255] }
+    ]
+  }
+}
