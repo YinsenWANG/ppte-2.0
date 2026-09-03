@@ -114,16 +114,16 @@ interface MappedElement {
 }
 
 /**
- * Convert a JSON-compatible older semantic snapshot into a release-tested
- * target snapshot. The input is never mutated and no source markup or
- * executable payload is interpreted.
+ * Convert an older semantic snapshot, or a bounded legacy text source, into a
+ * release-tested target snapshot. The input is never mutated and no source
+ * markup or executable payload is interpreted.
  */
 export function migrateLegacyDocument(input: unknown, options: LegacyMigrationOptions = {}): MigrationResult {
   const requestedProfile = options.targetProfile ?? 'ppte-2.0-ga-a.1'
   const profile = getCompatibilityProfile(requestedProfile) ?? getCompatibilityProfile('ppte-2.0-ga-a.1')!
   let source: RecordLike
   try {
-    source = unwrapSource(input)
+    source = unwrapSource(input, options.sourceFormat)
   } catch (cause) {
     return failedMigration(profile, requestedProfile, options.targetDocumentId ?? 'doc_migration_failed', options.sourceFormat ?? 'unknown', cause instanceof Error ? cause.message : String(cause))
   }
@@ -147,6 +147,7 @@ export function migrateLegacyDocument(input: unknown, options: LegacyMigrationOp
     degradedElements: 0,
     issues: [],
   }
+  if (source.schemaVersion === 'legacy-text-1') addIssue(report, { code: 'MIGRATION_TEXT_SOURCE_PARSED', severity: 'info', message: `The ${sourceFormat} text source was parsed into typed slide and text elements; raw markup was not retained as document content.`, path: '/source', recovery: 'Review the generated semantic document and use a GA-C host for any unsupported visual details.' })
   const theme = normalizeTheme(source.theme, report)
   const context: MigrationContext = { options, source, profile, report, usedElementIds: new Set(), usedSlideIds: new Set(), usedGroupIds: new Set(), assetIds: new Set(), fontIds: new Set(), semanticKeysBySlide: new Map(), theme }
   const assets = normalizeAssets(source.assets, context)
@@ -790,7 +791,94 @@ function failedMigration(profile: CompatibilityProfile, requestedProfile: string
 }
 
 function addIssue(report: MigrationReport, issue: MigrationIssue) { report.issues.push(withErrorSemantics(issue)) }
-function unwrapSource(input: unknown): RecordLike { const record = asRecord(input); if (!record) throw new Error('MIGRATION_INPUT_INVALID: source must be a JSON object.'); const nested = asRecord(record.document); return nested ?? record }
+
+function unwrapSource(input: unknown, requestedFormat?: string): RecordLike {
+  const record = asRecord(input)
+  if (record) {
+    const nested = asRecord(record.document)
+    return nested ?? record
+  }
+  if (typeof input === 'string') return parseLegacyTextSource(input, requestedFormat)
+  throw new Error('MIGRATION_INPUT_INVALID: source must be a JSON object or a supported legacy text string.')
+}
+
+/**
+ * Parse only the small, deterministic text subset needed for legacy migration.
+ * This deliberately produces semantic Text elements and never stores the
+ * original markup, frontmatter, or an executable payload in the document.
+ */
+function parseLegacyTextSource(input: string, requestedFormat?: string): RecordLike {
+  const normalized = input.replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n')
+  if (!normalized.trim()) throw new Error('MIGRATION_INPUT_INVALID: legacy text source is empty.')
+  if (requestedFormat !== undefined && requestedFormat !== 'slidev' && requestedFormat !== 'markdown') throw new Error(`MIGRATION_INPUT_INVALID: unsupported legacy text format ${requestedFormat}.`)
+  const format = requestedFormat ?? (/^---\s*\n/.test(normalized) ? 'slidev' : 'markdown')
+  const frontmatterStart = /^---\s*\n/.test(normalized)
+  let body = normalized
+  let frontmatter: RecordLike = {}
+  if (frontmatterStart) {
+    const lines = normalized.split('\n')
+    const closingIndex = lines.slice(1).findIndex((line) => /^---\s*$/.test(line))
+    if (closingIndex < 0) throw new Error('MIGRATION_INPUT_INVALID: legacy frontmatter is not closed.')
+    const end = closingIndex + 1
+    frontmatter = parseLegacyFrontmatter(lines.slice(1, end))
+    body = lines.slice(end + 1).join('\n')
+  }
+  const pages = format === 'slidev' ? splitLegacySlides(body) : [body]
+  const fallbackTitle = stringValue(frontmatter.title) ?? 'Imported presentation'
+  const slides = pages.map((page, index) => legacyTextSlide(page, index, fallbackTitle)).filter((slide): slide is RecordLike => Boolean(slide))
+  if (slides.length === 0) slides.push(legacyTextSlide(fallbackTitle, 0, fallbackTitle)!)
+  return {
+    format,
+    sourceFormat: format,
+    schemaVersion: 'legacy-text-1',
+    documentId: `legacy_${format}`,
+    title: fallbackTitle,
+    locale: stringValue(frontmatter.lang) ?? stringValue(frontmatter.locale),
+    slides,
+  }
+}
+
+function parseLegacyFrontmatter(lines: string[]): RecordLike {
+  const result: RecordLike = {}
+  for (const line of lines) {
+    const match = /^\s*([A-Za-z][A-Za-z0-9_-]{0,63})\s*:\s*(.*?)\s*$/.exec(line)
+    if (!match) continue
+    const value = match[2]!.replace(/^(?:"([\s\S]*)"|'([\s\S]*)')$/, '$1$2').trim()
+    if (value) result[match[1]!] = stripLegacyMarkup(value)
+  }
+  return result
+}
+
+function splitLegacySlides(body: string): string[] {
+  const pages = body.split(/^---\s*$/m)
+  return pages.length ? pages : [body]
+}
+
+function legacyTextSlide(page: string, index: number, fallbackTitle: string): RecordLike | undefined {
+  const lines = page.split('\n')
+  const headingIndex = lines.findIndex((line) => /^\s{0,3}#{1,6}\s+\S/.test(line))
+  const heading = headingIndex >= 0 ? stripLegacyMarkup(lines[headingIndex]!.replace(/^\s{0,3}#{1,6}\s+/, '')) : index === 0 ? fallbackTitle : ''
+  const bodyLines = lines.filter((_, lineIndex) => lineIndex !== headingIndex)
+  const body = bodyLines.map((line) => stripLegacyMarkup(line)).join('\n').replace(/\n{3,}/g, '\n\n').trim()
+  const elements: RecordLike[] = []
+  if (heading) elements.push({ id: `legacy_slide_${index + 1}_title`, type: 'text', role: 'title', frame: { x: 96, y: 72, width: 1728, height: 160 }, text: heading })
+  if (body) elements.push({ id: `legacy_slide_${index + 1}_body`, type: 'text', role: 'body', frame: { x: 120, y: 270, width: 1680, height: 650 }, text: body })
+  if (elements.length === 0) return undefined
+  return { id: `legacy_slide_${index + 1}`, name: heading || `Slide ${index + 1}`, elements }
+}
+
+function stripLegacyMarkup(value: string): string {
+  return value
+    .replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/<[^>]*>/g, '')
+    .replace(/```+/g, '')
+    .replace(/~~|\*\*|__|`|\*|_/g, '')
+    .replace(/^\s{0,3}(?:[-*+]\s+|\d+[.)]\s+)/, '')
+    .replace(/\u0000/g, '')
+    .trim()
+}
+
 function collectionValues(value: unknown): RecordLike[] { return Array.isArray(value) ? value.map(asRecord).filter((item): item is RecordLike => Boolean(item)) : collectionEntries(value).map(([, item]) => asRecord(item)).filter((item): item is RecordLike => Boolean(item)) }
 function collectionEntries(value: unknown): Array<[string, unknown]> { if (Array.isArray(value)) return value.map((item, index) => [String(index), item]); if (isRecord(value)) return Object.entries(value); return [] }
 function asRecord(value: unknown): RecordLike | undefined { return isRecord(value) ? value : undefined }
