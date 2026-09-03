@@ -1,5 +1,59 @@
 # PPTe 2.0 Milestone Progress
 
+## 2026-09-04 — r0 baseline repair + five new red capability groups
+
+### Black-box self-assessment
+
+- The initial `node scripts/blackbox-gates.mjs --report` was run twice and
+  reproduced one `section-41` red in both runs: §41-A reported
+  `imageDragged:false`. Independent full-suite child-process reruns (6) and
+  focused `section-41` reruns (10) were all green; browser pointer events,
+  history depth 3→4, and the committed image frame change confirmed a cold
+  Chromium gesture/measurement race rather than a deterministic implementation
+  regression.
+- After the Host/gate stabilization, two complete baseline reports were 52
+  green / 0 red, including section-41 A–J. No existing assertion was deleted or
+  weakened.
+- With the five new probes registered, `node scripts/blackbox-gates.mjs
+  --report` exits 1 by design: 54 green / 8 red. The original 11 groups remain
+  52 green / 0 red; new results are `video-widget` 1/2, `pptx-chart` 0/2,
+  `full-portable` 0/2, `group-rotate` 0/1, and `legacy-import` 1/1
+  (green/red).
+- `node scripts/blackbox-gates.mjs --expect-red
+  video-widget,pptx-chart,full-portable,group-rotate,legacy-import` exits 0:
+  `core-basic` is 7/0 and every new group has at least one red assertion.
+  Cumulative `video-widget`, `pptx-chart`, `full-portable`, `group-rotate`,
+  `legacy-import`, and `final3` milestones are registered; they are not claimed
+  green until the corresponding product capabilities are implemented.
+
+### Completed this round
+
+- Stabilized the existing section-41 Host pointer boundary and documented the
+  flaky evidence in [`DECISIONS.md`](DECISIONS.md).
+- Added independent fixtures and red acceptance groups for Video Widget
+  registry/poster/checkpoint/Portable/export behavior, native PPTX Bar/Line/Pie
+  charts plus capability evidence, full Portable file:// editing, explicit
+  member-transform Group Rotate, and Slidev/Markdown plus legacy profile
+  migration boundaries.
+- Added public-boundary black-box adapters for archive, widgets, legacy import,
+  and an independent Python `python-pptx` native-chart part/category/value
+  check.
+- `npm run typecheck` — passed.
+- `npm test` — 85 tests passed, 0 failed, 0 skipped.
+- `npm run validate` — passed: 15 schemas/examples, semantic checks,
+  operation parity, markdown structure, and source guards.
+- Modular commits: `c6ec1d8` baseline repair, `355eee1` black-box adapters,
+  `6a370bc` new r0 assertion groups. No changes were pushed.
+
+### Not completed in r0 (intentionally red)
+
+The five product capabilities remain outside this baseline-only round: the
+controlled Video Widget implementation, native PPTX Chart authoring and
+capability flag, the full Portable editor, Group Rotate, and raw Slidev/
+Markdown-to-semantic migration. CRDT, multi-user real-time collaboration,
+nested Groups, Run-level font/size, and direct writes remain outside scope under
+the frozen ADRs. The red groups are the handoff gates for subsequent rounds.
+
 ## 2026-09-03 — R7 final / 0.5.0 bounded release
 
 R7 final has completed the independent release gates. The shipped surface is

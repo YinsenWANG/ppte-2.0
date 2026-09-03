@@ -9,6 +9,13 @@ milestones.
 - 随后以独立子进程复跑完整 `final` 6 次、section-41 10 次，均为全绿；浏览器事件探针也确认图片节点收到了 pointer down/move/up，事务 history 从 3 增至 4，位置从 `left:1120px;top:260px` 变为 `left:1179.178px;top:299.452px`。因此判定为冷启动下的浏览器测量/原生图片手势竞争造成的 flaky，而非稳定实现回归。
 - 修复边界保持在 Host 与第三方门禁的同步：图片拖拽开始/移动/结束时阻止原生默认手势，画布声明 `touch-action:none`；门禁在取样前等待导入事务深度为 3、有效渲染矩形，在释放后等待精确提交深度为 4。未删除或放宽任何既有断言。
 
+## 2026-09-04 — r0 新能力断言的保守边界
+
+- 本轮只建立新能力的第三方黑盒红断言，不把尚未实现的能力伪装成绿；原有 11 个组（含 section-41）的断言继续完整执行。
+- Group Rotate 的探针使用与单元素 `element.rotate` 一致的 `rotationDeg` 请求字段，但验收只约束行为：90° 后每个成员都有显式 Frame/rotation 变化、Undo 精确恢复，Group 不出现 `frame`、`rotationDeg`、`transform` 或坐标系字段。这样不为扁平 Group 引入持久坐标系。
+- `full-portable` 作为明确的 Portable profile 名称进入累计 milestone；其 file:// 断言覆盖多选、Move/Scale/Rotate、Crop、Chart Data、Undo/Redo、Save as New Project 的公开方法面。Video 与 PPTX Chart 的断言分别以 Host registry/static fallback 与 python-pptx 原生 chart part/category/value 为事实边界。
+- Slidev/Markdown 文本导入探针通过现有 legacy importer 的公开入口执行；当前 JSON-only 入口返回 `MIGRATION_INPUT_INVALID` 的红结果被原样保留，直到后续轮次实现受控解析与语义化迁移。
+
 ## 2026-09-03 — R7 Host browser boundary and final acceptance
 
 The browser Host uses a small browser-safe Session boundary around the same
