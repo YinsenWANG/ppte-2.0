@@ -401,3 +401,35 @@ report returned by the export API.
 The black-box PDF text helper has one infrastructure-only fallback for hosts
 without Poppler's `pdftotext`: PyMuPDF reads the generated PDF text map while
 the gate's Unicode assertions remain unchanged.
+
+## 2026-09-03 — R5 recovery, history, and compatibility closure
+
+`document.json` remains the only persisted content source. Checkpoint and
+Journal restore state is Host transport only: recent forward Transactions carry
+their generated inverse plus before/after revisions in `history/recent.jsonl`
+and Journal records, while the in-process restore context is non-enumerable and
+never contributes to the canonical document revision. Session restore validates
+both the inverse chain and the forward reproduction chain before exposing Undo;
+the default bounded surface is the existing 200-entry history policy. Missing
+or invalid inverse metadata fails closed rather than claiming Undo coverage.
+
+`PpteFileService.open()` and the explicit
+`openCheckpointWithRecovery()`/`recoverCheckpoint()` Host entry points discover
+adjacent `*.journal` candidates, then match `documentId` and
+`baseCheckpointRevision` before replay. Replay is performed into an isolated,
+validated draft. The Host exposes `prompt` (draft available), `recover`,
+`discard`, and `save-as`; a Journal is removed only after an explicit discard or
+after the recovered snapshot has been checkpointed successfully. A normal
+recovery open therefore remains recoverable until the caller completes its
+Session checkpoint.
+
+Journal replay accepts a verified hash-based CAS/blob resolver and carries the
+checkpoint compatibility profile through every operation and validation step.
+This is what permits checkpoint-after image imports and GA-C Widget operations
+to recover under their original runtime contract. When a standalone semantic
+replay has no resolver, an `asset.upsert` record may still reconstruct the
+declared document metadata; a subsequent checkpoint continues to require the
+verified bytes, so this fallback is not treated as payload availability.
+
+No new content source, Slidev path, arbitrary HTML source, CRDT, nested Group,
+or Run-level font styling is introduced by R5.

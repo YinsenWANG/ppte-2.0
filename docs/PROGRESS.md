@@ -70,6 +70,45 @@ browser/OS pixel-matrix validation remain outside the release-tested surface.
 Semantic PPTX Charts are static SVG Pictures and Widgets use explicit static
 fallbacks. No remote was created and no changes were pushed.
 
+## 2026-09-03 — R5 recovery / history closure（findings 23–25）
+
+### Completed this round
+
+- Added Host-level checkpoint open/recovery APIs with automatic adjacent
+  Journal discovery by `documentId + baseCheckpointRevision`, isolated draft
+  replay/validation, and explicit recover/discard/save-as outcomes.
+- Persisted checked inverse metadata with committed Journal/checkpoint history
+  tails. `PpteSession` now restores and bounds recent history, so normal reopen
+  and Journal recovery expose a usable Undo stack only after validating both
+  directions of the history chain.
+- Added hash-verified CAS/blob resolution during Journal replay. The replay
+  path now carries the checkpoint compatibility profile and runtime profile,
+  including GA-C Widget semantics; successful save-as/checkpoint paths clear
+  the Journal only after the new package is durable.
+- Kept `document.json` canonical and all changes on the existing typed
+  Operation/Session path; no new persistence source or red-line capability was
+  introduced.
+
+### Exit-condition evidence
+
+- `node scripts/blackbox-gates.mjs --milestone r5` — passed, 33/33 cases,
+  0 red; includes the real SIGKILL child, automatic discovery, checkpoint
+  history Undo, new-asset replay, and GA-C Widget replay.
+- `pnpm test` — passed, 78/78 tests, 0 failed, 0 skipped.
+- `pnpm typecheck` — passed.
+- `pnpm e2e:vertical-slice` — passed, including checkpoint round-trip and
+  journal recovery.
+- `git diff --check` — passed.
+
+### Boundary recorded honestly
+
+Recovering in memory keeps the matching Journal until a normal Session
+checkpoint finishes; `discard` and `save-as` are the explicit Host actions that
+complete and clear it immediately. A standalone replay without a blob resolver
+can use the new asset metadata to reconstruct the semantic snapshot, but
+checkpoint serialization still requires verified payload bytes. No remote was
+created and no changes were pushed.
+
 ## 2026-09-03 — GA-B Chart / Fact / Review / Patch / Image PPTX
 
 ### Completed this round
