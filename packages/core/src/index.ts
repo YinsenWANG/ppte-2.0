@@ -4,7 +4,7 @@ import { applyTransaction, OperationApplyError } from '../../operations/src/inde
 import { checkPreconditions, checkTransactionScope, enforceChangeContract } from '../../change-contract/src/index.js'
 import { validateRuntimeDocument, validateTransactionShape } from '../../validation/src/index.js'
 import { compareDocuments } from '../../reviewer/src/index.js'
-import { buildPatchTransaction, validatePatch } from '../../patch-format/src/index.js'
+import { applyPatchToDocument, buildPatchTransaction, validatePatch } from '../../patch-format/src/index.js'
 import { withErrorSemantics } from '../../schema/src/errors.js'
 import { getSessionRestoreContext, readPersistedHistoryMetadata, withPersistedHistoryMetadata } from '../../schema/src/file-format.js'
 import type {
@@ -71,6 +71,11 @@ export interface HistoryEntry {
 export interface PreviewOptions {
   /** Internal-only policy bypass for the inverse produced by this Session. */
   allowSystemInversePolicy?: boolean
+}
+
+export interface PatchApplyOptions {
+  /** The common base snapshot enables a stale Patch to enter semantic Compare. */
+  baseDocument?: PpteDocument
 }
 
 export interface SessionEvent {
@@ -225,20 +230,36 @@ export class PpteSession {
     return compareDocuments(base, this.document, revised)
   }
 
-  previewPatch(patch: PptePatch): PreviewResult {
+  previewPatch(patch: PptePatch, options: PatchApplyOptions = {}): PreviewResult {
     const patchValidation = validatePatch(patch)
     if (!patchValidation.ok) return { ok: false, baseRevision: this.revision, issues: patchValidation.issues }
     if (patch.manifest.documentId !== this.document.documentId) return { ok: false, baseRevision: this.revision, issues: [error('PATCH_BASE_MISMATCH', 'Patch documentId does not match the session document.')] }
-    if (patch.manifest.baseRevision !== this.revision) return { ok: false, baseRevision: this.revision, issues: [error('PATCH_BASE_MISMATCH', `Patch base ${patch.manifest.baseRevision} does not match current revision ${this.revision}.`)] }
-    return this.preview(buildPatchTransaction(patch))
+    if (patch.manifest.baseRevision !== this.revision) {
+      const stale = applyPatchToDocument(this.document, patch, { baseDocument: options.baseDocument })
+      return { ok: false, baseRevision: this.revision, compare: stale.compare, issues: stale.issues }
+    }
+    const preview = this.preview(buildPatchTransaction(patch))
+    if (preview.ok && patch.manifest.headRevision !== undefined && preview.proposedRevision !== patch.manifest.headRevision) {
+      return { ...preview, ok: false, issues: [error('PATCH_HEAD_REVISION_MISMATCH', `Preview produced ${preview.proposedRevision}, expected ${patch.manifest.headRevision}.`)] }
+    }
+    return preview
   }
 
-  applyPatch(patch: PptePatch): CommitResult {
+  applyPatch(patch: PptePatch, options: PatchApplyOptions = {}): CommitResult {
     const patchValidation = validatePatch(patch)
     if (!patchValidation.ok) return { ok: false, beforeRevision: this.revision, transactionId: `patch:${patch.manifest.patchId ?? 'unknown'}`, issues: patchValidation.issues }
     if (patch.manifest.documentId !== this.document.documentId) return failure('PATCH_BASE_MISMATCH', 'Patch documentId does not match the session document.', this.revision, `patch:${patch.manifest.patchId ?? 'unknown'}`)
-    if (patch.manifest.baseRevision !== this.revision) return failure('PATCH_BASE_MISMATCH', `Patch base ${patch.manifest.baseRevision} does not match current revision ${this.revision}.`, this.revision, `patch:${patch.manifest.patchId ?? 'unknown'}`)
-    return this.commit(buildPatchTransaction(patch))
+    if (patch.manifest.baseRevision !== this.revision) {
+      const stale = applyPatchToDocument(this.document, patch, { baseDocument: options.baseDocument })
+      return { ok: false, beforeRevision: this.revision, transactionId: `patch:${patch.manifest.patchId ?? 'unknown'}`, compare: stale.compare, issues: stale.issues }
+    }
+    const transaction = buildPatchTransaction(patch)
+    const preview = this.preview(transaction)
+    if (!preview.ok || preview.proposedRevision === undefined) return { ok: false, beforeRevision: this.revision, transactionId: transaction.transactionId, diff: preview.diff, issues: preview.issues }
+    if (patch.manifest.headRevision !== undefined && preview.proposedRevision !== patch.manifest.headRevision) return { ok: false, beforeRevision: this.revision, transactionId: transaction.transactionId, diff: preview.diff, issues: [error('PATCH_HEAD_REVISION_MISMATCH', `Preview produced ${preview.proposedRevision}, expected ${patch.manifest.headRevision}.`)] }
+    const committed = this.commit(transaction)
+    if (committed.ok && patch.manifest.headRevision !== undefined && committed.afterRevision !== patch.manifest.headRevision) return { ...committed, ok: false, issues: [error('PATCH_HEAD_REVISION_MISMATCH', `Applied patch produced ${committed.afterRevision}, expected ${patch.manifest.headRevision}.`)] }
+    return committed
   }
 
   subscribe(listener: (event: SessionEvent) => void): () => void {

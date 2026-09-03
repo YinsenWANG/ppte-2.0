@@ -144,6 +144,8 @@ export interface PatchManifest {
   documentId: DocumentId
   baseRevision: Revision
   headRevision?: Revision
+  /** Digest over the guarded operation list and both revisions. */
+  headRevisionProof?: string
   createdAt: string
   actor?: Actor
   operationProtocolVersion: string

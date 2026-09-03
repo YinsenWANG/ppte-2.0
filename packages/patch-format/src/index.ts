@@ -1,20 +1,23 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname } from 'node:path'
 import { canonicalHash, canonicalJsonString, canonicalRevision, sha256HexBytes } from '../../canonical-json/src/index.js'
-import { checkCompatibility } from '../../compatibility/src/index.js'
+import { assertDocumentCompatibility, checkCompatibility, runtimeProfileForCompatibility } from '../../compatibility/src/index.js'
 import { withErrorSemantics } from '../../schema/src/errors.js'
 import { applyTransaction } from '../../operations/src/index.js'
 import { computeStructuralDiff } from '../../diff/src/index.js'
 import { enforceChangeContract } from '../../change-contract/src/index.js'
 import { validateRuntimeDocument, validateTransactionShape } from '../../validation/src/index.js'
 import { readStoredZip, writeStoredZip } from '../../archive/src/index.js'
-import { PPTE_OPERATION_PROTOCOL_VERSION, type Actor, type FileEntry, type Operation, type PpteDocument, type PptePatch, type PatchManifest, type Transaction, type ValidationIssue } from '../../schema/src/index.js'
+import { PPTE_OPERATION_PROTOCOL_VERSION, type Actor, type CompareResult, type FileEntry, type Operation, type PpteDocument, type PptePatch, type PatchManifest, type Transaction, type ValidationIssue } from '../../schema/src/index.js'
+import { compareDocuments } from '../../reviewer/src/index.js'
 
 export interface PatchApplyResult {
   ok: boolean
   document?: PpteDocument
   revision?: string
   inverseOperations?: Operation[]
+  /** Present when a stale target was compared against the patch's base snapshot. */
+  compare?: CompareResult
   issues: ValidationIssue[]
 }
 
@@ -25,17 +28,21 @@ export interface PatchValidationResult {
 
 const PATCH_MIMETYPE = 'application/vnd.ppte.patch+zip'
 
+export function computePatchHeadRevisionProof(baseRevision: string, headRevision: string, operations: Operation[]): string {
+  return canonicalHash({ baseRevision, headRevision, operations: guardPatchOperations(operations, baseRevision) })
+}
+
 /** Encode a patch as the stored ZIP package defined by the PPTe review protocol. */
 export function encodePatch(patch: PptePatch): Uint8Array {
   const inputValidation = validatePatch(patch)
   if (!inputValidation.ok) throw new Error(inputValidation.issues.map((issue) => `${issue.code}: ${issue.message}`).join('\n'))
-  assertSafePatchValue(patch.metadata, '$.metadata')
-  assertSafePatchValue(patch.assetMetadata, '$.assetMetadata')
-  assertSafePatchValue(patch.fontMetadata, '$.fontMetadata')
+  assertPatchJsonValue(patch.metadata, '$.metadata')
+  assertPatchJsonValue(patch.assetMetadata, '$.assetMetadata')
+  assertPatchJsonValue(patch.fontMetadata, '$.fontMetadata')
   const entries: Array<{ name: string; data: Uint8Array }> = []
   add(entries, 'mimetype', text(PATCH_MIMETYPE))
   const operations = guardPatchOperations(patch.operations, patch.manifest.baseRevision).map((operation) => {
-    assertSafePatchValue(operation)
+    assertPatchJsonValue(operation)
     return canonicalJsonString(operation)
   }).join('\n') + (patch.operations.length ? '\n' : '')
   add(entries, 'operations.jsonl', text(operations))
@@ -106,18 +113,30 @@ export function validatePatch(patch: PptePatch): PatchValidationResult {
   if (!Array.isArray(patch.operations) || patch.operations.length === 0) issues.push(error('PATCH_INVALID', 'A patch must contain at least one operation.'))
   else {
     try {
-      const transaction = patchTransaction(patch.manifest.documentId, patch.manifest.baseRevision, patch.operations)
+      const transaction = patchTransaction(patch.manifest.documentId, patch.manifest.baseRevision, patch.operations, patch.manifest.actor, patch.manifest.compatibilityProfile)
       issues.push(...validateTransactionShape(transaction).filter((issue) => issue.severity === 'error'))
     } catch (cause) { issues.push(error('PATCH_INVALID', cause instanceof Error ? cause.message : String(cause))) }
     for (const operation of patch.operations) {
-      try { assertSafePatchValue(operation) } catch (cause) { issues.push(error('PATCH_PAYLOAD_UNSAFE', cause instanceof Error ? cause.message : String(cause))) }
+      try {
+        assertPatchJsonValue(operation, '$.operations')
+        validateTypedPatchOperation(operation)
+      } catch (cause) { issues.push(error('PATCH_PAYLOAD_INVALID', cause instanceof Error ? cause.message : String(cause))) }
     }
   }
   try {
-    assertSafePatchValue(patch.metadata, '$.metadata')
-    assertSafePatchValue(patch.assetMetadata, '$.assetMetadata')
-    assertSafePatchValue(patch.fontMetadata, '$.fontMetadata')
-  } catch (cause) { issues.push(error('PATCH_PAYLOAD_UNSAFE', cause instanceof Error ? cause.message : String(cause))) }
+    assertPatchJsonValue(patch.metadata, '$.metadata')
+    assertPatchJsonValue(patch.assetMetadata, '$.assetMetadata')
+    assertPatchJsonValue(patch.fontMetadata, '$.fontMetadata')
+  } catch (cause) { issues.push(error('PATCH_PAYLOAD_INVALID', cause instanceof Error ? cause.message : String(cause))) }
+  if (patch.manifest?.headRevision !== undefined) {
+    if (!patch.manifest.headRevisionProof) issues.push(error('PATCH_HEAD_REVISION_PROOF_MISSING', 'Patch headRevision must carry a proof over the guarded operations.'))
+    else {
+      try {
+        const expected = computePatchHeadRevisionProof(patch.manifest.baseRevision, patch.manifest.headRevision, patch.operations ?? [])
+        if (patch.manifest.headRevisionProof !== expected) issues.push(error('PATCH_HEAD_REVISION_MISMATCH', 'Patch headRevisionProof does not match headRevision and the guarded operation list.'))
+      } catch (cause) { issues.push(error('PATCH_HEAD_REVISION_MISMATCH', cause instanceof Error ? cause.message : String(cause))) }
+    }
+  }
   for (const [assetId, data] of Object.entries(patch.assets ?? {})) {
     const asset = patch.assetMetadata?.[assetId]
     if (!asset) issues.push(error('ASSET_METADATA_MISSING', `Patch asset ${assetId} has no metadata.`))
@@ -138,24 +157,47 @@ export function validatePatch(patch: PptePatch): PatchValidationResult {
 }
 
 /** Apply after a three-way review has selected operations. Base revision is mandatory. */
-export function applyPatchToDocument(document: PpteDocument, patch: PptePatch): PatchApplyResult {
+export function applyPatchToDocument(document: PpteDocument, patch: PptePatch, options: { baseDocument?: PpteDocument } = {}): PatchApplyResult {
   const validation = validatePatch(patch)
   if (!validation.ok) return { ok: false, issues: validation.issues }
   if (patch.manifest.documentId !== document.documentId) return { ok: false, issues: [error('PATCH_BASE_MISMATCH', 'Patch documentId does not match the target document.')] }
   const currentRevision = canonicalRevision(document)
-  if (patch.manifest.baseRevision !== currentRevision) return { ok: false, issues: [error('PATCH_BASE_MISMATCH', `Patch base ${patch.manifest.baseRevision} does not match target revision ${currentRevision}.`)] }
+  if (patch.manifest.baseRevision !== currentRevision) {
+    const comparison = options.baseDocument && patch.manifest.documentId === options.baseDocument.documentId && canonicalRevision(options.baseDocument) === patch.manifest.baseRevision
+      ? comparePatchAgainstBase(options.baseDocument, document, patch)
+      : undefined
+    return { ok: false, compare: comparison, issues: [error('PATCH_BASE_MISMATCH', `Patch base ${patch.manifest.baseRevision} does not match target revision ${currentRevision}.`)] }
+  }
+  return applyPatchAtMatchingBase(document, patch)
+}
+
+function comparePatchAgainstBase(baseDocument: PpteDocument, localDocument: PpteDocument, patch: PptePatch): CompareResult | undefined {
+  const applied = applyPatchAtMatchingBase(baseDocument, patch)
+  return applied.ok && applied.document ? compareDocuments(baseDocument, localDocument, applied.document) : undefined
+}
+
+function applyPatchAtMatchingBase(document: PpteDocument, patch: PptePatch): PatchApplyResult {
   const operations = patchOperations(patch)
-  const transaction = patchTransaction(document.documentId, currentRevision, operations, patch.manifest.actor)
+  const currentRevision = canonicalRevision(document)
+  const transaction = patchTransaction(document.documentId, currentRevision, operations, patch.manifest.actor, patch.manifest.compatibilityProfile)
   const shapeIssues = validateTransactionShape(transaction).filter((issue) => issue.severity === 'error')
   if (shapeIssues.length) return { ok: false, issues: shapeIssues }
   try {
-    const applied = applyTransaction(document, transaction)
+    const runtimeProfile = runtimeProfileForCompatibility(patch.manifest.compatibilityProfile)
+    const applied = applyTransaction(document, transaction, { runtimeProfile })
     const diff = computeStructuralDiff(document, applied.document)
     const contractIssues = enforceChangeContract(document, applied.document, transaction, diff)
-    const runtimeIssues = validateRuntimeDocument(applied.document).filter((issue) => issue.severity === 'error')
+    const runtimeIssues = validateRuntimeDocument(applied.document, { runtimeProfile }).filter((issue) => issue.severity === 'error')
     const issues = dedupe([...contractIssues, ...runtimeIssues])
     if (issues.some((issue) => issue.severity === 'error')) return { ok: false, issues }
-    return { ok: true, document: applied.document, revision: canonicalRevision(applied.document), inverseOperations: applied.inverseOperations, issues: [] }
+    const revision = canonicalRevision(applied.document)
+    if (patch.manifest.headRevision !== undefined && revision !== patch.manifest.headRevision) return { ok: false, revision, issues: [error('PATCH_HEAD_REVISION_MISMATCH', `Applied patch produced ${revision}, expected ${patch.manifest.headRevision}.`)] }
+    try {
+      assertDocumentCompatibility(applied.document, patch.manifest.compatibilityProfile)
+    } catch (cause) {
+      return { ok: false, revision, issues: [error('PATCH_PROFILE_MISMATCH', cause instanceof Error ? cause.message : String(cause))] }
+    }
+    return { ok: true, document: applied.document, revision, inverseOperations: applied.inverseOperations, issues: [] }
   } catch (cause) {
     return { ok: false, issues: [error('PATCH_APPLY_FAILED', cause instanceof Error ? cause.message : String(cause))] }
   }
@@ -174,7 +216,7 @@ export function patchOperations(patch: PptePatch): Operation[] {
 }
 
 export function buildPatchTransaction(patch: PptePatch, actor: Actor = patch.manifest.actor ?? { type: 'reviewer', id: 'three-way-review' }): Transaction {
-  return patchTransaction(patch.manifest.documentId, patch.manifest.baseRevision, patchOperations(patch), actor)
+  return patchTransaction(patch.manifest.documentId, patch.manifest.baseRevision, patchOperations(patch), actor, patch.manifest.compatibilityProfile)
 }
 
 export function writePatch(target: string, patch: PptePatch): { path: string; bytes: number } {
@@ -188,7 +230,7 @@ export function readPatch(target: string): PptePatch {
   return decodePatch(new Uint8Array(readFileSync(target)))
 }
 
-export function patchTransaction(documentId: string, baseRevision: string, operations: Operation[], actor: Actor = { type: 'reviewer', id: 'three-way-review' }): Transaction {
+export function patchTransaction(documentId: string, baseRevision: string, operations: Operation[], actor: Actor = { type: 'reviewer', id: 'three-way-review' }, compatibilityProfile?: string): Transaction {
   const guardedOperations = guardPatchOperations(operations, baseRevision)
   const allowedOperationKinds = [...new Set(guardedOperations.map((operation) => operation.kind))]
   return {
@@ -214,6 +256,7 @@ export function patchTransaction(documentId: string, baseRevision: string, opera
     createdAt: '1970-01-01T00:00:00.000Z',
     validationLevel: 'L2',
     operations: guardedOperations,
+    ...(compatibilityProfile === undefined ? {} : { metadata: { __ppteCompatibilityProfile: compatibilityProfile } }),
   }
 }
 
@@ -229,6 +272,7 @@ function guardPatchOperations(operations: Operation[], baseRevision: string): Op
 function validatePatchManifest(manifest: PatchManifest, requireFiles = true): void {
   if (!manifest || typeof manifest !== 'object' || manifest.patchVersion !== '1' || !manifest.documentId || !manifest.baseRevision || !manifest.createdAt || !manifest.compatibilityProfile || !Array.isArray(manifest.files)) throw new Error('PATCH_INVALID: incomplete patch manifest')
   if (manifest.operationProtocolVersion !== PPTE_OPERATION_PROTOCOL_VERSION) throw new Error(`PATCH_INVALID: unsupported operation protocol ${manifest.operationProtocolVersion}`)
+  if (manifest.headRevisionProof !== undefined && !/^[0-9a-f]{64}$/i.test(manifest.headRevisionProof)) throw new Error('PATCH_INVALID: headRevisionProof must be a SHA-256 digest.')
   const compatibility = checkCompatibility(manifest)
   if (!compatibility.ok || compatibility.disposition !== 'native') throw new Error(`PATCH_INVALID: ${compatibility.issues[0]?.code ?? 'COMPATIBILITY_PROFILE_UNSUPPORTED'}`)
   const paths = new Set<string>()
@@ -278,22 +322,53 @@ function parseJson<T>(archive: Map<string, Uint8Array>, path: string): T {
 function parseJsonValue(value: string): unknown {
   try { return JSON.parse(value) as unknown } catch (cause) { throw new Error(`PATCH_INVALID: invalid JSON: ${cause instanceof Error ? cause.message : String(cause)}`) }
 }
-function assertSafePatchValue(value: unknown, path = '$') {
+function assertPatchJsonValue(value: unknown, path = '$') {
   if (value === undefined) return
   if (value === null || typeof value === 'boolean') return
   if (typeof value === 'number') {
     if (!Number.isFinite(value)) throw new Error(`Non-finite number is not allowed at ${path}.`)
     return
   }
-  if (typeof value === 'string') {
-    if (/^javascript:/i.test(value) || /<\s*\/??script\b/i.test(value)) throw new Error(`Executable payload is not allowed at ${path}.`)
-    return
+  if (typeof value === 'string') return
+  if (Array.isArray(value)) { value.forEach((item, index) => assertPatchJsonValue(item, `${path}[${index}]`)); return }
+  if (typeof value === 'object') { for (const [key, child] of Object.entries(value)) assertPatchJsonValue(child, `${path}.${key}`); return }
+  throw new Error(`Non-JSON value is not allowed at ${path}.`)
+}
+
+function validateTypedPatchOperation(operation: Operation): void {
+  if (operation.kind === 'text.replaceContent') assertPatchRichText(operation.content)
+  if (operation.kind === 'component.updateProps') assertPatchJsonObject(operation.patch, 'component.updateProps.patch')
+  if (operation.kind === 'text.updateStyle') {
+    if (operation.paragraphStyle !== undefined) assertPatchJsonObject(operation.paragraphStyle, 'text.updateStyle.paragraphStyle')
+    if (operation.boxStyle !== undefined) assertPatchJsonObject(operation.boxStyle, 'text.updateStyle.boxStyle')
   }
-  if (Array.isArray(value)) { value.forEach((item, index) => assertSafePatchValue(item, `${path}[${index}]`)); return }
-  if (typeof value === 'object') for (const [key, child] of Object.entries(value)) {
-    if (['code', 'script', 'html', 'command', 'eval', '__proto__'].includes(key.toLowerCase())) throw new Error(`Executable field ${path}.${key} is not allowed.`)
-    assertSafePatchValue(child, `${path}.${key}`)
-  } else throw new Error(`Non-JSON value is not allowed at ${path}.`)
+}
+
+function assertPatchJsonObject(value: unknown, path: string): asserts value is Record<string, unknown> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error(`${path} must be a JSON object.`)
+  assertPatchJsonValue(value, path)
+}
+
+function assertPatchRichText(value: unknown): void {
+  if (!value || typeof value !== 'object' || Array.isArray(value) || !Array.isArray((value as { paragraphs?: unknown }).paragraphs)) throw new Error('text.replaceContent.content must contain paragraphs.')
+  const paragraphs = (value as { paragraphs: unknown[] }).paragraphs
+  const paragraphIds = new Set<string>()
+  for (const paragraph of paragraphs) {
+    if (!paragraph || typeof paragraph !== 'object' || Array.isArray(paragraph)) throw new Error('text.replaceContent paragraphs must be objects.')
+    const item = paragraph as Record<string, unknown>
+    if (typeof item.id !== 'string' || !item.id || paragraphIds.has(item.id) || !Array.isArray(item.runs)) throw new Error('text.replaceContent paragraphs require unique ids and runs.')
+    paragraphIds.add(item.id)
+    const runIds = new Set<string>()
+    for (const run of item.runs) {
+      if (!run || typeof run !== 'object' || Array.isArray(run)) throw new Error('text.replaceContent runs must be objects.')
+      const itemRun = run as Record<string, unknown>
+      if (typeof itemRun.id !== 'string' || !itemRun.id || runIds.has(itemRun.id) || typeof itemRun.text !== 'string') throw new Error('text.replaceContent runs require unique ids and string text.')
+      if (itemRun.text.includes('\u0000')) throw new Error('text.replaceContent text may not contain NUL.')
+      runIds.add(itemRun.id)
+      if (itemRun.marks !== undefined && (!itemRun.marks || typeof itemRun.marks !== 'object' || Array.isArray(itemRun.marks))) throw new Error('text.replaceContent run marks must be an object.')
+    }
+  }
+  assertPatchJsonValue(value, '$.content')
 }
 function safeDigest(value: string): string {
   const digest = normalizeHash(value)
