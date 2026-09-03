@@ -3233,6 +3233,12 @@ Base Checkpoint
 
 每次接受形成正常 Transaction，可 Undo。
 
+Review Unit 必须覆盖 Document、Slide、Element、Fact、Source 及资源元数据的
+持久化字段。现有运行时不支持的字段必须携带显式
+`REVIEW_CAPABILITY_GAP`，不能标记为 unchanged，也不能生成空接受项。
+删除与任意一侧对同一 Base 对象的修改一律形成冲突单元；只有明确的本地/修订
+方决策才可继续。
+
 ### 25.6 Patch 格式
 
 ```text
@@ -3250,6 +3256,7 @@ interface PatchManifest {
   documentId: DocumentId
   baseRevision: Revision
   headRevision?: Revision
+  headRevisionProof?: string
   createdAt: string
   actor?: Actor
   operationProtocolVersion: string
@@ -3263,9 +3270,11 @@ interface PatchManifest {
 - Operation 必须带 Base Revision/Precondition；
 - 仅包含实际需要的新 Asset/Font；
 - 应用前完整校验；
+- 若声明 `headRevision`，必须校验其对 guarded Operations 与 Base/Head revision
+  的 proof，并在完整应用后再次校验实际结果 revision；
 - 不执行代码；
 - 不能自动提升权限；
-- Base 不匹配时进入 Compare，不直接 Commit；
+- Base 不匹配时，在调用者提供共同 Base 快照时进入三方 Compare，不直接 Commit；
 - Patch 可以被拒绝、部分接受和整体 Undo。
 
 ### 25.8 UI

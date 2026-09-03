@@ -16,7 +16,7 @@
     "e2e:beta": "pnpm build && node dist/apps/contract-deck/index.js --beta",
     "e2e:ga-a": "pnpm build && node dist/apps/contract-deck/index.js --ga-a",
     "e2e:ga-b": "pnpm build && node dist/apps/contract-deck/index.js --ga-b",
-    "e2e:ga-c": "pnpm build && node dist/apps/contract-deck/index.js --ga-c",
+    "e2e:ga-c": "pnpm build && node scripts/blackbox-gates.mjs --milestone r6",
     "perf:ga-a": "pnpm build && node dist/apps/contract-deck/index.js --ga-a",
     "contract-deck": "pnpm build && node dist/apps/contract-deck/index.js"
   },

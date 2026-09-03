@@ -152,6 +152,7 @@
               "element.updateStyleOverrides",
               "element.clearStyleOverrides",
               "text.replaceContent",
+              "text.updateStyle",
               "text.setOverflowPolicy",
               "text.fitByReducingFont",
               "text.resizeBox",
@@ -17323,6 +17324,29 @@
             "oneOf": [
               { "required": ["semanticRefs"], "not": { "required": ["unset"] } },
               { "required": ["unset"], "not": { "required": ["semanticRefs"] } }
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": ["opId", "kind", "slideId", "elementId"],
+            "properties": {
+              "opId": { "type": "string", "minLength": 1, "maxLength": 256 },
+              "kind": { "const": "text.updateStyle" },
+              "preconditions": { "type": "array" },
+              "reason": { "type": "string" },
+              "slideId": { "type": "string", "minLength": 1, "maxLength": 256 },
+              "elementId": { "type": "string", "minLength": 1, "maxLength": 256 },
+              "paragraphStyle": { "type": "object", "additionalProperties": true },
+              "boxStyle": { "type": "object", "additionalProperties": true },
+              "unsetParagraphStyle": { "const": true },
+              "unsetBoxStyle": { "const": true }
+            },
+            "anyOf": [
+              { "required": ["paragraphStyle"] },
+              { "required": ["boxStyle"] },
+              { "required": ["unsetParagraphStyle"] },
+              { "required": ["unsetBoxStyle"] }
             ],
             "additionalProperties": false
           }

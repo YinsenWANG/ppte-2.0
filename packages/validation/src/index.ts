@@ -239,6 +239,16 @@ function validateOperationShape(operation: Record<string, unknown>, index: numbe
     case 'element.updateStyleOverrides': requireRecord('patch'); break
     case 'element.clearStyleOverrides': if (operation.paths !== undefined) { if (!Array.isArray(operation.paths)) issues.push(error('SCHEMA_INVALID', 'element.clearStyleOverrides.paths must be an array.', `${path}/paths`)); else checkUniqueStrings(operation.paths, `${path}/paths`, issues) } break
     case 'text.replaceContent': requireRecord('content'); break
+    case 'text.updateStyle': {
+      const fields = ['paragraphStyle', 'boxStyle', 'unsetParagraphStyle', 'unsetBoxStyle']
+      if (!fields.some((field) => Object.prototype.hasOwnProperty.call(operation, field))) issues.push(error('SCHEMA_INVALID', 'text.updateStyle must change paragraphStyle or boxStyle.', path))
+      if (operation.paragraphStyle !== undefined && !isRecord(operation.paragraphStyle)) issues.push(error('SCHEMA_INVALID', 'text.updateStyle.paragraphStyle must be an object.', `${path}/paragraphStyle`))
+      if (operation.boxStyle !== undefined && !isRecord(operation.boxStyle)) issues.push(error('SCHEMA_INVALID', 'text.updateStyle.boxStyle must be an object.', `${path}/boxStyle`))
+      for (const field of ['unsetParagraphStyle', 'unsetBoxStyle']) if (operation[field] !== undefined && typeof operation[field] !== 'boolean') issues.push(error('SCHEMA_INVALID', `text.updateStyle.${field} must be boolean.`, `${path}/${field}`))
+      if (operation.unsetParagraphStyle === true && operation.paragraphStyle !== undefined) issues.push(error('SCHEMA_INVALID', 'text.updateStyle cannot set and unset paragraphStyle together.', path))
+      if (operation.unsetBoxStyle === true && operation.boxStyle !== undefined) issues.push(error('SCHEMA_INVALID', 'text.updateStyle cannot set and unset boxStyle together.', path))
+      break
+    }
     case 'text.setOverflowPolicy': validateUnsetPair(operation, 'overflowPolicy', (value) => ['warn', 'clip', 'ellipsis'].includes(String(value)), path, issues); break
     case 'text.fitByReducingFont': requireFiniteNumber('minFontSize'); requireFiniteNumber('resolvedFontSize'); break
     case 'text.resizeBox': requireFrame('frame'); break
@@ -415,11 +425,10 @@ export function computeOverrideDebt(document: PpteDocument): OverrideDebtReport 
       if (!element || typeof element !== 'object') continue
       if (!KEY_ROLES.has(element.role ?? '') || !hasStyleBinding(element)) continue
       keyElementCount += 1
-      const preset = presetFor(document, element)
-      const presetFields = Object.keys(preset ?? {})
-      controllableFields += presetFields.length
+      const supportedFields = supportedStyleFields(element.type)
+      controllableFields += supportedFields.length
       const overrides = styleOverrides(element)
-      const fields = Object.keys(overrides).filter((field) => presetFields.includes(field) || presetFields.length === 0)
+      const fields = Object.keys(overrides).filter((field) => supportedFields.includes(field))
       overriddenFields += fields.length
       if (fields.length) entries.push({ slideId, elementId: element.id, semanticKey: element.semanticKey, fields: fields.sort() })
     }
@@ -546,6 +555,16 @@ function resolveToken<T>(value: ValueOrToken<T> | undefined, bucket: Record<stri
 
 function hasStyleBinding(element: Element): element is Extract<Element, { type: 'text' | 'shape' | 'image' | 'chart' }> {
   return element.type === 'text' || element.type === 'shape' || element.type === 'image' || element.type === 'chart'
+}
+
+/** The denominator is the complete typed style surface for the element type,
+ * independent of which subset its current preset happens to populate. */
+function supportedStyleFields(type: Element['type']): readonly string[] {
+  if (type === 'text') return TEXT_STYLE_FIELDS
+  if (type === 'shape') return SHAPE_STYLE_FIELDS
+  if (type === 'image') return IMAGE_STYLE_FIELDS
+  if (type === 'chart') return CHART_STYLE_FIELDS
+  return []
 }
 
 function styleOverrides(element: Element): Record<string, unknown> {

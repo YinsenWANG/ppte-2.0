@@ -112,6 +112,73 @@ can use the new asset metadata to reconstruct the semantic snapshot, but
 checkpoint serialization still requires verified payload bytes. No remote was
 created and no changes were pushed.
 
+## 2026-09-03 — R6 revised-copy review / Patch closure（findings 26–30）
+
+### Completed this round
+
+- Made delete-versus-any-modify a conflict unit, so a revised deletion cannot
+  silently discard a local edit; revised-side acceptance remains explicit.
+- Expanded Review Units across document, slide, element, Fact/Source, and
+  resource persistence fields. Unsupported changed fields now expose a typed
+  `REVIEW_CAPABILITY_GAP` and cannot fall through to a false `REVIEW_EMPTY`.
+- Added typed review coverage for slide order/metadata, notes, transition,
+  reading order, protected anchors, appear/animation state, text paragraph and
+  box styles, and overflow policy. The new `text.updateStyle` Operation has
+  schema, contract, validation, inverse, and runtime coverage.
+- Closed Patch base/head/profile checks: stale application can return a
+  three-way Compare when the matching common Base is supplied; guarded
+  operations prove the declared head revision; profile inference is shared by
+  Patch creation and application paths.
+- Replaced global Patch string/key rejection with JSON and field-type
+  validation, including literal `</script>`, Unicode, and controlled Widget
+  `props.code` data. Override Debt now divides by the complete supported style
+  surface for each element type.
+- Switched `e2e:ga-c` to the independent R6 black-box milestone command; the
+  black-box suite remains the acceptance authority.
+
+### Exit-condition evidence
+
+- `pnpm build` — passed.
+- `pnpm test` — passed with no regression: 84/84 tests passed.
+- `pnpm validate` — passed.
+- `node scripts/blackbox-gates.mjs --milestone r6` — passed all R6 groups:
+  42 green / 0 red.
+- `node scripts/blackbox-gates.mjs --report` — exit 1, 50 green / 2 red.
+  All groups except the pre-existing `section-41` product-entry group are
+  green; `review-patch` is 9 green / 0 red. The two failures are recorded
+  verbatim below rather than treated as R6 regressions:
+
+  `section-41:1` / finding `§41-A`:
+
+  ```text
+  {
+    "fileInputs": 1,
+    "generate": 0,
+    "slides": 1
+  }
+  ```
+
+  Failure message: `Scenario A has no ten-slide AI generation Host journey.`
+
+  `section-41:2` / finding `§41-B`:
+
+  ```text
+  {
+    "editable": 2,
+    "save": 1,
+    "undo": 0
+  }
+  ```
+
+  Failure message: `Scenario B has no browser editing transaction surface.`
+
+### Explicitly not done
+
+This round does not add automatic Patch merging without a supplied common Base,
+typed Operations for fields outside the existing runtime capability surface,
+or any new content source. No Slidev, arbitrary HTML source, CRDT, nested Group,
+Run-level font styling, remote, or push was introduced.
+
 ## 2026-09-03 — GA-B Chart / Fact / Review / Patch / Image PPTX
 
 ### Completed this round

@@ -30,6 +30,7 @@ export const STABLE_CORE_OPERATION_KINDS = [
 export const GA_B_OPERATION_KINDS = [
   ...STABLE_CORE_OPERATION_KINDS,
   'element.setSemanticRefs',
+  'text.updateStyle',
   'chart.replaceData', 'chart.updateEncoding', 'chart.updateOptions', 'chart.updateStyle',
 ] as const
 
@@ -325,6 +326,34 @@ export function applyOperation(document: PpteDocument, operation: Operation, opt
       assertRichText(operation.content)
       element.content = cloneJson(operation.content)
       return { document: next, inverse: [op(operation, 'text.replaceContent', { slideId: operation.slideId, elementId: operation.elementId, content: before })] }
+    }
+    case 'text.updateStyle': {
+      const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)
+      if (element.type !== 'text') throw error('OPERATION_TYPE_MISMATCH', 'text.updateStyle requires a Text element.')
+      const hasParagraphChange = operation.paragraphStyle !== undefined || operation.unsetParagraphStyle === true
+      const hasBoxChange = operation.boxStyle !== undefined || operation.unsetBoxStyle === true
+      if (!hasParagraphChange && !hasBoxChange) throw error('SCHEMA_INVALID', 'text.updateStyle requires paragraphStyle or boxStyle.')
+      const beforeParagraphStyle = cloneJson(element.paragraphStyle)
+      const beforeBoxStyle = cloneJson(element.boxStyle)
+      if (operation.unsetParagraphStyle) delete element.paragraphStyle
+      else if (operation.paragraphStyle !== undefined) {
+        assertParagraphStyle(operation.paragraphStyle)
+        element.paragraphStyle = cloneJson(operation.paragraphStyle)
+      }
+      if (operation.unsetBoxStyle) delete element.boxStyle
+      else if (operation.boxStyle !== undefined) {
+        assertBoxStyle(operation.boxStyle)
+        element.boxStyle = cloneJson(operation.boxStyle)
+      }
+      return {
+        document: next,
+        inverse: [op(operation, 'text.updateStyle', {
+          slideId: operation.slideId,
+          elementId: operation.elementId,
+          ...(hasParagraphChange ? (beforeParagraphStyle === undefined ? { unsetParagraphStyle: true } : { paragraphStyle: beforeParagraphStyle }) : {}),
+          ...(hasBoxChange ? (beforeBoxStyle === undefined ? { unsetBoxStyle: true } : { boxStyle: beforeBoxStyle }) : {}),
+        })],
+      }
     }
     case 'text.setOverflowPolicy': {
       const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)
@@ -857,6 +886,23 @@ function assertRichText(content: unknown): asserts content is TextElement['conte
       if (run.marks && Object.keys(run.marks).some((key) => !['bold', 'italic', 'underline', 'strike', 'color'].includes(key))) throw error('SCHEMA_INVALID', 'Unsupported run mark.')
     }
   }
+}
+
+function assertParagraphStyle(value: unknown): asserts value is NonNullable<TextElement['paragraphStyle']> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw error('SCHEMA_INVALID', 'Paragraph style must be an object.')
+  const record = value as Record<string, unknown>
+  const allowed = new Set(['align', 'lineHeight', 'paragraphSpacing', 'listIndent'])
+  for (const [field, fieldValue] of Object.entries(record)) {
+    if (!allowed.has(field)) throw error('SCHEMA_INVALID', `Unsupported paragraph style field ${field}.`)
+    if (field === 'align' && !['left', 'center', 'right'].includes(String(fieldValue))) throw error('SCHEMA_INVALID', 'Paragraph style align is invalid.')
+    if (field !== 'align' && (typeof fieldValue !== 'number' || !Number.isFinite(fieldValue) || fieldValue < 0)) throw error('SCHEMA_INVALID', `Paragraph style ${field} must be a non-negative finite number.`)
+  }
+}
+
+function assertBoxStyle(value: unknown): asserts value is NonNullable<TextElement['boxStyle']> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw error('SCHEMA_INVALID', 'Box style must be an object.')
+  const allowed = new Set(['padding', 'fill', 'stroke', 'radius', 'shadow'])
+  for (const field of Object.keys(value as Record<string, unknown>)) if (!allowed.has(field)) throw error('SCHEMA_INVALID', `Unsupported box style field ${field}.`)
 }
 
 function applyFactSyncReferences(document: PpteDocument, operation: Extract<import('../../schema/src/index.js').Operation, { kind: 'fact.syncReferences' }>, runtimeProfile: 'ga-a' | 'ga-b' | 'ga-c', strict = false): AppliedOperation {

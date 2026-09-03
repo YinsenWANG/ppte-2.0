@@ -226,6 +226,11 @@ export function analyzeOperation(document: PpteDocument, operation: Operation): 
       permissions.add('content')
       addElement(operation.slideId, operation.elementId, `/slides/${pointer(operation.slideId)}/elements/${pointer(operation.elementId)}/content`)
       break
+    case 'text.updateStyle':
+      permissions.add('style')
+      addElement(operation.slideId, operation.elementId, `/slides/${pointer(operation.slideId)}/elements/${pointer(operation.elementId)}/paragraphStyle`)
+      if (operation.boxStyle !== undefined || operation.unsetBoxStyle) paths.add(`/slides/${pointer(operation.slideId)}/elements/${pointer(operation.elementId)}/boxStyle`)
+      break
     case 'text.setOverflowPolicy':
       permissions.add('style')
       addElement(operation.slideId, operation.elementId, `/slides/${pointer(operation.slideId)}/elements/${pointer(operation.elementId)}/overflowPolicy`)
