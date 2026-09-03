@@ -3,6 +3,40 @@
 This file records conservative choices made while implementing the frozen
 milestones.
 
+## 2026-09-04 — r0 completion evidence and frozen boundaries
+
+- The final independent black-box report and cumulative `final3` milestone are
+  both green: 16 groups, 62 green / 0 red. The five new groups were kept as
+  behavior-first probes from their initial red run; no assertion was removed
+  or relaxed.
+- Video uses the controlled built-in `core/video@1.0.0` registry definition.
+  It accepts local source metadata and a poster reference, renders a bounded
+  video/fallback surface, and reports static downgrade/recovery evidence in
+  offline Light Edit. It does not add network playback or arbitrary document
+  code.
+- Native PPTX Chart authoring is limited to semantic Bar, Line, and Pie. The
+  exporter writes OOXML chart parts and a capability `nativeChart` flag while
+  retaining the deterministic static sidecar for compatibility checks. Area
+  and Donut remain the forward GA-C static/degraded boundary.
+- `full-portable` is a named profile, not a second document model. Its
+  selection, geometry, crop, Chart Data, undo/redo, and save-as-new-project
+  methods all route through the existing Session and typed Operations.
+- Group Rotate follows ADR-006/§20.5: it computes each member's new axis-aligned
+  Frame and `rotationDeg` explicitly and stores an inverse for each member.
+  The Group object remains flat and has no frame, transform, or group
+  coordinate system.
+- Legacy text support is deliberately bounded to the importer boundary. A
+  Slidev/Markdown string is parsed into semantic Text slides and reports
+  `MIGRATION_TEXT_SOURCE_PARSED`; raw markup is never retained as the
+  document source and is never reverse-parsed from the DOM. Semantic legacy
+  snapshots retain the existing GA-C Area/Donut, Poster, and Widget fallback
+  decisions, with GA-B downgrade issues.
+- The final npm verification was `npm run typecheck`, `npm test` (85/85), and
+  `npm run validate`; all passed. CRDT, multiplayer/realtime collaboration,
+  nested Groups, Run-level font/size, arbitrary/private Widget execution,
+  full legacy runtime/markup execution, and direct writes remain outside the
+  frozen scope.
+
 ## 2026-09-04 — r0 section-41 A 基线漂移判定与修复
 
 - 初始 `node scripts/blackbox-gates.mjs --report` 连续两次均为 51 个绿断言、section-41 A 的 1 个红断言；失败证据均为 `Pointer drag did not commit image geometry`，`imageDragged:false`。

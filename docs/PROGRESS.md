@@ -1,6 +1,56 @@
 # PPTe 2.0 Milestone Progress
 
+## 2026-09-04 — r0 completion / final3
+
+### Black-box self-assessment
+
+- The five new groups were first registered as red probes and preserved their
+  original “should happen” descriptions; no existing assertion was deleted or
+  weakened.
+- The final `node scripts/blackbox-gates.mjs --report` and cumulative
+  `node scripts/blackbox-gates.mjs --milestone final3` both passed: 16 groups,
+  62 green / 0 red. Section-41 is 10/0. The new groups are
+  `video-widget` 3/0, `pptx-chart` 2/0, `full-portable` 2/0,
+  `group-rotate` 1/0, and `legacy-import` 2/0.
+- The initial section-41 drift was reproduced and independently classified in
+  the baseline entry below; the stabilized Host boundary was then rerun as
+  green. The final report still exercises all original groups.
+
+### Completed in r0
+
+- Video Widget `core/video@1.0.0` is a controlled registry definition with
+  local poster/static fallback, checkpoint retention, Light Edit static
+  downgrade evidence, and honest PDF/PNG degraded results when no poster
+  raster path is available.
+- Bar/Line/Pie semantic Charts export as native PPTX chart parts with preserved
+  categories/values; the capability report marks `native-chart=true`. Area and
+  Donut remain the documented static/degraded boundary.
+- `full-portable` packages the self-contained file:// editor surface for
+  multi-selection, Move/Scale/Rotate, Crop, Chart Data, undo/redo, and Save as
+  New Project. Its public runtime uses the existing Session Operation Engine.
+- Group Rotate uses explicit member Frame/rotation operations and an exact
+  inverse. Groups remain flat and carry no frame, transform, or coordinate
+  system fields.
+- The legacy importer accepts bounded Slidev/Markdown text at the importer
+  boundary, emits semantic Text slides plus migration evidence, and retains
+  the GA-C Area/Donut, Poster, and Widget static-fallback profile rules. Raw
+  markup is not retained or interpreted as a runtime document source.
+
+### Final verification
+
+- `npm run typecheck` — passed.
+- `npm test` — 85 tests passed, 0 failed, 0 skipped.
+- `npm run validate` — passed: 15 schemas/examples, semantic checks,
+  operation parity, markdown structure, and source guards.
+- No changes were pushed. Modular r0 implementation commits are listed in the
+  handoff; the frozen ADR boundaries remain in force: no CRDT, multiplayer or
+  real-time collaboration, nested Group coordinate system, Run-level font/
+  size, arbitrary Widget execution, or direct writes outside Operations.
+
 ## 2026-09-04 — r0 baseline repair + five new red capability groups
+
+> Historical baseline snapshot. The completion evidence for this round is
+> recorded in the section above.
 
 ### Black-box self-assessment
 
