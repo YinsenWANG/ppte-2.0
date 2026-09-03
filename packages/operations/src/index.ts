@@ -22,7 +22,7 @@ export const STABLE_CORE_OPERATION_KINDS = [
   'element.insert', 'element.delete', 'element.duplicate', 'element.move', 'element.resize', 'element.rotate', 'element.reorder', 'element.setVisibility', 'element.setLocked', 'element.setEditPolicy', 'element.setSemanticKey', 'element.setStyleRef', 'element.updateStyleOverrides', 'element.clearStyleOverrides',
   'text.replaceContent', 'text.setOverflowPolicy', 'text.fitByReducingFont', 'text.resizeBox',
   'image.replaceAsset', 'image.setCrop', 'image.setFocalPoint', 'shape.updateStyle',
-  'group.create', 'group.delete', 'group.addMembers', 'group.removeMembers', 'group.move', 'group.resize',
+  'group.create', 'group.delete', 'group.addMembers', 'group.removeMembers', 'group.move', 'group.resize', 'group.rotate',
   'fact.upsert', 'fact.delete', 'fact.syncReferences', 'source.upsert', 'source.delete', 'layout.align', 'layout.distribute',
 ] as const
 
@@ -657,6 +657,40 @@ export function applyOperation(document: PpteDocument, operation: Operation, opt
       }
       const inverse: Operation[] = before.map((item) => op(operation, 'element.resize', { slideId: operation.slideId, elementId: item.elementId, frame: item.frame }))
       for (const item of beforeStyles) inverse.push(...restoreOverrides({ ...operation, elementId: item.elementId } as Operation, item.overrides))
+      return { document: next, inverse }
+    }
+    case 'group.rotate': {
+      const slide = requireSlide(next, operation.slideId)
+      const group = requireGroup(slide, operation.groupId)
+      assertFinite(operation.rotationDeg)
+      if (group.memberIds.length === 0) return { document: next, inverse: [] }
+      const members = group.memberIds.map((elementId) => requireElement(slide, elementId))
+      const bounds = boundingFrame(members.map((element) => element.frame))
+      const center = { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 }
+      const radians = operation.rotationDeg * Math.PI / 180
+      const cosine = Math.cos(radians)
+      const sine = Math.sin(radians)
+      const before = members.map((element) => ({ elementId: element.id, frame: cloneJson(element.frame), rotationDeg: element.rotationDeg }))
+      for (const element of members) {
+        const elementCenter = { x: element.frame.x + element.frame.width / 2, y: element.frame.y + element.frame.height / 2 }
+        const offsetX = elementCenter.x - center.x
+        const offsetY = elementCenter.y - center.y
+        const rotatedCenter = {
+          x: center.x + offsetX * cosine - offsetY * sine,
+          y: center.y + offsetX * sine + offsetY * cosine,
+        }
+        const width = Math.abs(element.frame.width * cosine) + Math.abs(element.frame.height * sine)
+        const height = Math.abs(element.frame.width * sine) + Math.abs(element.frame.height * cosine)
+        element.frame = { x: rotatedCenter.x - width / 2, y: rotatedCenter.y - height / 2, width, height }
+        element.rotationDeg = (element.rotationDeg ?? 0) + operation.rotationDeg
+      }
+      const inverse: Operation[] = []
+      for (const item of before) {
+        inverse.push(op(operation, 'element.resize', { slideId: operation.slideId, elementId: item.elementId, frame: item.frame }))
+        inverse.push(item.rotationDeg === undefined
+          ? op(operation, 'element.rotate', { slideId: operation.slideId, elementId: item.elementId, unset: true })
+          : op(operation, 'element.rotate', { slideId: operation.slideId, elementId: item.elementId, rotationDeg: item.rotationDeg }))
+      }
       return { document: next, inverse }
     }
     case 'fact.upsert': {

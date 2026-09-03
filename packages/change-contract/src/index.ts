@@ -349,6 +349,10 @@ export function analyzeOperation(document: PpteDocument, operation: Operation): 
         }
       }
       break
+    case 'group.rotate':
+      permissions.add('geometry')
+      addGroupMembers(operation.slideId, operation.groupId)
+      break
     case 'fact.upsert':
       permissions.add('facts')
       paths.add(`/facts/${pointer(operation.fact.id)}`)

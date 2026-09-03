@@ -170,6 +170,7 @@ export type Operation =
   | GroupRemoveMembersOperation
   | GroupMoveOperation
   | GroupResizeOperation
+  | GroupRotateOperation
   | FactUpsertOperation
   | FactDeleteOperation
   | FactSyncReferencesOperation
@@ -459,6 +460,12 @@ export interface GroupResizeOperation extends OperationBase<'group.resize'> {
   groupId: GroupId
   targetFrame: Frame
   scaleTextStyle?: boolean
+}
+/** Rotate a flat group by explicitly transforming each member around the group's bounds. */
+export interface GroupRotateOperation extends OperationBase<'group.rotate'> {
+  slideId: SlideId
+  groupId: GroupId
+  rotationDeg: number
 }
 export interface FactUpsertOperation extends OperationBase<'fact.upsert'> {
   fact: Fact

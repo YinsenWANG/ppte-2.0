@@ -199,6 +199,7 @@
               "group.removeMembers",
               "group.move",
               "group.resize",
+              "group.rotate",
               "fact.upsert",
               "fact.delete",
               "fact.syncReferences",
@@ -15787,6 +15788,46 @@
               },
               "scaleTextStyle": {
                 "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "opId",
+              "kind",
+              "slideId",
+              "groupId",
+              "rotationDeg"
+            ],
+            "properties": {
+              "opId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "kind": {
+                "const": "group.rotate"
+              },
+              "preconditions": {
+                "type": "array"
+              },
+              "reason": {
+                "type": "string"
+              },
+              "slideId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "groupId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "rotationDeg": {
+                "type": "number"
               }
             },
             "additionalProperties": false
