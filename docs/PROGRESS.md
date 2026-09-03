@@ -1,5 +1,39 @@
 # PPTe 2.0 Milestone Progress
 
+## 2026-09-03 — R7 final / 0.5.0 bounded release
+
+R7 final has completed the independent release gates. The shipped surface is
+the semantic reference core plus the file:// Product Host, offline Portable
+profiles, recovery/history, review/patch, and the explicitly bounded GA-C
+runtime surfaces. The annotated `v0.5.0` tag is local only; nothing was pushed.
+
+### Final evidence
+
+- `npm run typecheck` — passed.
+- `npm test` — 85 tests passed, 0 failed, 0 skipped.
+- `npm run validate` — 15 schemas/examples, semantic checks, operation parity,
+  markdown structure, and source guards passed.
+- `npm run blackbox:final` and `npm run blackbox:report` — 52 green / 0 red;
+  all 11 groups green, including independent §41 A–J browser/file checks.
+- The real Host journey covered New → Agent 10 pages → double-click text edit
+  → pointer image drag → Add page → Present/navigation → `.ppte` save/reopen
+  → restored Undo. §41-A recorded 11 reopened pages and history depth 5 before
+  Undo, then 10 pages and history depth 4 after Undo.
+- `npm run e2e:vertical-slice`, `e2e:milestone`, `e2e:beta`, `e2e:ga-a`,
+  `e2e:ga-b`, and `e2e:ga-c` — passed. GA-A capacity/performance passed at
+  30 slides, 900 elements, 120 groups, 50 MiB asset bytes, and 20 fonts; all
+  P95 and bundle limits passed.
+- `npm run perf:ga-a` — passed; detailed metrics are in
+  [`RELEASE_v0.5.0.md`](RELEASE_v0.5.0.md).
+
+### Still outside the 0.5.0 release
+
+Video Widget, native PPTX Chart authoring, a complete Portable editor, CRDT,
+multi-user/real-time collaboration, Slidev/Markdown/DOM reverse parsing,
+nested Groups, Group Rotate, Run-level font styling, full legacy markup
+runtime import, and direct writes outside the Operation Engine remain
+intentionally unimplemented.
+
 ## 2026-09-03 — R0 audit intake: reference-core prototype（修复流水线进行中）
 
 独立审计报告 [`REVIEW_v2.3_GA_AUDIT.md`](REVIEW_v2.3_GA_AUDIT.md) 已入库。

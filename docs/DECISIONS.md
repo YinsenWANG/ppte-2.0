@@ -3,6 +3,23 @@
 This file records conservative choices made while implementing the frozen
 milestones.
 
+## 2026-09-03 — R7 Host browser boundary and final acceptance
+
+The browser Host uses a small browser-safe Session boundary around the same
+typed `Operation`/inverse/revision protocol. The full Core entry point is not
+bundled into the `file://` Host because its Patch transport includes Node file
+system adapters; keeping that adapter out preserves the offline boundary. Host
+checkpoints persist the validated recent forward transactions and their
+inverse metadata, so reopening a downloaded `.ppte` restores an actionable
+Undo stack without making the DOM a content source.
+
+The Host Agent action is intentionally a deterministic local orchestrator: it
+requires a selected source file, objective, and audience, then creates ten
+pages through the canonical `slide.duplicate` Operation. No remote model,
+network asset, CRDT, or alternate document source is introduced. The final
+§41 A–J evidence is the independent black-box suite; presence-only DOM checks
+are not release evidence for the Host journey.
+
 ## 2026-09-03 — GA-C Poster, Widget, Light Edit, and Semantic PPTX boundary
 
 GA-C publishes the explicit `ppte-2.0-ga-c.1` Compatibility Profile. It is

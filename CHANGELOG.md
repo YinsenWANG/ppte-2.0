@@ -2,14 +2,39 @@
 
 All notable changes to the PPTe reference runtime are recorded here.
 
-## Audit status — 2026-09-03
+## [0.5.0] — 2026-09-03 (final bounded release)
 
-The independent GA audit reclassifies this checkout as a **reference-core
-prototype**. The entries below record implementation history and repository
-self-checks; they do not mean that the corresponding product journey is
-complete or GA-accepted. Product-surface gaps from the audit are being tracked
-by the R0 black-box gate repair pipeline. No GA-C-complete or all-milestones-
-complete claim is currently made.
+### Added and verified
+
+- Added the self-contained React/Vite Host. A real Playwright `file://`
+  journey covers New, Agent generation of 10 pages, double-click text editing,
+  pointer image drag, Add page, Present, `.ppte` download/reopen, and restored
+  Undo history.
+- Made Host text/image/page edits use typed semantic Operations with inverse
+  history; standard browser checkpoints retain the recent History tail so Undo
+  remains available after reopening.
+- Converted §41 scenarios A–J into independent black-box cases. Final evidence
+  is `52 green / 0 red` from `node scripts/blackbox-gates.mjs --milestone final`.
+- Updated Quick Start, final gate scripts, and the local release/tag workflow.
+
+### Still not implemented
+
+- Video Widget.
+- Native PPTX Chart authoring.
+- Complete Portable editor.
+- CRDT.
+- Multi-user / real-time collaboration.
+
+These are intentional 0.5.0 boundaries, not hidden capabilities. Slidev,
+Markdown-as-content, nested Groups, Group Rotate, Run-level font styling, and
+other frozen “明确不做” items remain out of scope as documented in the ADR and
+development checklist.
+
+## Historical audit status — 2026-09-03 (pre-0.5.0 baseline)
+
+The independent GA audit reclassified the pre-0.5.0 checkout as a
+**reference-core prototype**. The historical entries below record the baseline
+and its implementation history; final 0.5.0 acceptance is recorded above.
 
 ## [0.4.0-rc.1] — 2026-09-03 (reference-core prototype; audit reclassification)
 

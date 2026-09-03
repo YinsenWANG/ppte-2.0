@@ -11,37 +11,48 @@ assets, and reopen with the same canonical revision.
 
 ## Current status
 
-This checkout is a **reference-core prototype**, not a completed GA-C product.
-The semantic core is usable at the library boundary, while the independent
-GA audit records missing or incorrect product behavior across Host editing,
-Portable files, recovery, export, and review/patch flows. The R0 black-box
-repair pipeline is in progress; the old Node acceptance commands are not
-substitutes for browser/file/Office/pixel acceptance.
+`0.5.0` is the bounded PPTe release. It includes the semantic reference core,
+the file://-capable Host editing path, offline Portable editing profiles,
+recovery/history, review/patch, and independent GA black-box evidence. It is
+not a promise that every future editing or collaboration feature exists; the
+remaining boundaries are listed below and in `CHANGELOG.md`.
 
 ## Quick start
 
-```text
+```sh
 pnpm install --frozen-lockfile
 pnpm typecheck
 pnpm test
 pnpm validate
+pnpm host:build
+
+# Double-click this self-contained file:// Host in a desktop browser:
+# apps/host/dist/index.html
+
+# Generate the small derived CLI reference preview under artifacts/.
+pnpm contract-deck
+
+# Independent final acceptance and the complete JSON report.
+node scripts/blackbox-gates.mjs --milestone final
+node scripts/blackbox-gates.mjs --report
+
+# Six historical implementation E2E profiles and the GA-A performance budget.
 pnpm e2e:vertical-slice
 pnpm e2e:milestone
 pnpm e2e:beta
 pnpm e2e:ga-a
 pnpm e2e:ga-b
 pnpm e2e:ga-c
-pnpm contract-deck
-
-# Known-red audit gate while the repair pipeline is in progress
-node scripts/blackbox-gates.mjs --report
+pnpm perf:ga-a
 ```
 
-`contract-deck` writes a derived preview under `artifacts/`. The package format
-is a bounded stored ZIP checkpoint containing `document.json`, `manifest.json`,
-style-independent asset metadata, and a bounded recent History tail. Recovery
-Journal data stays outside the package in a host-private directory and is
-replayed only when its document and base revision match.
+`contract-deck` writes a derived preview under `artifacts/`; it is a CLI
+reference fixture, not the Host. `pnpm host:build` produces the self-contained
+double-click entry point. The package format is a bounded stored ZIP checkpoint
+containing `document.json`, `manifest.json`, style-independent asset metadata,
+and a bounded recent History tail. Recovery Journal data stays outside the
+package in a host-private directory and is replayed only when its document and
+base revision match.
 
 ## Repository layout
 
@@ -89,8 +100,11 @@ replayed only when its document and base revision match.
   patch/Portable fault matrix and checkpoint injector.
 - `packages/performance-budget` — capacity counters, P95 budgets, bundle-size
   checks, and the deterministic GA-A benchmark helpers.
-- `apps/contract-deck` — a historical reference-core/self-check harness, not
-  the end-user Host.
+- `apps/contract-deck` — a CLI reference fixture and historical self-check
+  harness.
+- `apps/host` — the self-contained React/Vite Product Host. Its generated
+  `dist/index.html` is usable from `file://` and keeps `document.json` as the
+  semantic source of truth.
 - `schemas`, `examples`, `scripts/validate.py` — retained public contracts and
   validation fixtures, including the Compatibility Profile, error contract,
   and GA-A budget.
@@ -99,14 +113,14 @@ replayed only when its document and base revision match.
 
 ## Scope
 
-The current release surface deliberately does not implement:
+The 0.5.0 release deliberately does not implement:
 
 - Slidev, Markdown as a content source, or DOM reverse parsing;
-- Video Widget, native PPTX Chart authoring, or a full Portable editor;
+- Video Widget, native PPTX Chart authoring, or a complete Portable editor;
 - nested Groups or Group Rotate;
 - Run-level font or font-size styling;
-- CRDT, real-time collaboration, full legacy markup import, or a browser/OS
-  pixel-matrix test lab;
+- CRDT, multi-user/real-time collaboration, full legacy markup import, or a
+  browser/OS pixel-matrix test lab;
 - direct writes that bypass the Operation Engine.
 
 GA-A does include a deliberately narrow legacy boundary: older JSON-compatible
@@ -135,7 +149,7 @@ validated.
 Implementation choices not fixed by the specification are recorded in
 [`docs/DECISIONS.md`](docs/DECISIONS.md).
 
-## Recorded implementation boundaries (not independent GA acceptance)
+## Recorded implementation boundaries
 
 The native package profile is `ppte-2.0-ga-a.1` and is the exact combination
 of format `2`, schema `2.0.0`, operation protocol `1.0`, Slide IR `1.0`,
@@ -144,11 +158,11 @@ unset in this profile. Older supported semantic inputs migrate forward into
 a new document. Higher incompatible major versions are read-only; unknown
 or inconsistent profiles are rejected.
 
-The existing `pnpm e2e:*` commands exercise implementation self-checks. They
-do not establish the product status described by the audit. For example,
-`pnpm e2e:ga-a` builds the 30-slide / 900-element / 120-group / 50 MiB / 20
-font corpus and measures the published P95 budgets, including open, page
-switch, selection, human and text commit, journal append, undo/redo,
+The six `pnpm e2e:*` commands exercise the historical implementation profiles;
+`pnpm e2e:ga-c` additionally runs the independent final black-box suite. The
+GA-A performance command builds the 30-slide / 900-element / 120-group /
+50 MiB-asset / 20-font corpus and measures the published P95 budgets, including
+open, page switch, selection, human and text commit, journal append, undo/redo,
 checkpoint, Portable first screen, and bundle size. A failed budget exits
 non-zero and prints the measured value and its limit.
 
@@ -174,10 +188,8 @@ Widget content is present.
 ## GA-C implementation history and open gaps
 
 The repository contains a forward-only `ppte-2.0-ga-c.1` profile and related
-runtime primitives for Area/Donut charts, Poster metadata, controlled Widgets,
-Light Edit operations, and semantic PPTX mapping. These are implementation
-surfaces, not a claim that the GA-C product is complete. The audit specifically
-finds no usable end-user Host, no editable generated Portable HTML, incomplete
-recovery and review/patch lifecycle, and fidelity/reporting defects in export.
-The black-box gates must turn those findings into green behavior before this
-section can be described as a release surface again.
+runtime surfaces for Area/Donut charts, Poster metadata, controlled Widgets,
+Light Edit operations, and semantic PPTX mapping. These are bounded release
+surfaces.
+Video Widget, native PPTX Chart authoring, a complete Portable editor, CRDT,
+and multi-user collaboration remain intentionally unimplemented.
