@@ -40,6 +40,8 @@ importers:
 
   apps/host: {}
 
+  apps/mcp: {}
+
   packages/agent-tools: {}
 
   packages/archive: {}
