@@ -7,6 +7,7 @@
  */
 
 import { createHash } from 'node:crypto'
+import { deflateSync } from 'node:zlib'
 
 export const IDS = Object.freeze({
   slide: 'bb_slide_main',
@@ -52,6 +53,119 @@ export function pixelPng() {
 
 export function alternatePng() {
   return Uint8Array.from([9, 8, 7, 6, 5, 4, 3, 2, 1])
+}
+
+/**
+ * Produce a valid, deliberately hard-to-compress RGBA PNG. The fixed seed is
+ * part of the black-box contract so attachment measurements are comparable
+ * across runs and cannot pass because an all-zero image gzips unusually well.
+ */
+export function deterministicPng(width = 512, height = 512, seed = 0x13579bdf) {
+  const raw = new Uint8Array(height * (width * 4 + 1))
+  let state = seed >>> 0
+  let offset = 0
+  for (let y = 0; y < height; y += 1) {
+    raw[offset++] = 0
+    for (let x = 0; x < width; x += 1) {
+      state ^= state << 13
+      state ^= state >>> 17
+      state ^= state << 5
+      raw[offset++] = state & 0xff
+      raw[offset++] = (state >>> 8) & 0xff
+      raw[offset++] = (state >>> 16) & 0xff
+      raw[offset++] = 0xff
+    }
+  }
+  const header = new Uint8Array(13)
+  const headerView = new DataView(header.buffer)
+  headerView.setUint32(0, width)
+  headerView.setUint32(4, height)
+  header[8] = 8
+  header[9] = 6
+  const compressed = new Uint8Array(deflateSync(raw, { level: 6 }))
+  return concatBytes(
+    Uint8Array.from([137, 80, 78, 71, 13, 10, 26, 10]),
+    pngChunk('IHDR', header),
+    pngChunk('IDAT', compressed),
+    pngChunk('IEND', new Uint8Array()),
+  )
+}
+
+export function makeDeliveryCorpusFixture({ width = 512, height = 512, pageCount = 10 } = {}) {
+  const template = baseDocument()
+  const templateSlide = template.slides[IDS.slide]
+  const templateAsset = template.assets[IDS.asset]
+  const document = clone(template)
+  document.metadata.title = 'Black-box delivery corpus'
+  document.slideOrder = []
+  document.slides = {}
+  document.assets = {}
+  const assetBytes = {}
+  for (let index = 0; index < pageCount; index += 1) {
+    const pageNumber = String(index + 1).padStart(2, '0')
+    const slideId = `bb_delivery_slide_${pageNumber}`
+    const titleId = `bb_delivery_title_${pageNumber}`
+    const bodyId = `bb_delivery_body_${pageNumber}`
+    const surfaceId = `bb_delivery_surface_${pageNumber}`
+    const imageId = `bb_delivery_image_${pageNumber}`
+    const assetId = `bb_delivery_asset_${pageNumber}`
+    const bytes = deterministicPng(width, height, 0x13579bdf + index)
+    const title = clone(templateSlide.elements[IDS.title])
+    title.id = titleId
+    title.content = richText(`交付测试页 ${index + 1}`, `bb-delivery-title-${pageNumber}`)
+    const body = clone(templateSlide.elements[IDS.body])
+    body.id = bodyId
+    body.content = richText(`固定种子含图 corpus page ${index + 1}`, `bb-delivery-body-${pageNumber}`)
+    const surface = clone(templateSlide.elements[IDS.surface])
+    surface.id = surfaceId
+    const image = clone(templateSlide.elements[IDS.image])
+    image.id = imageId
+    image.assetId = assetId
+    image.altText = `Delivery corpus image ${index + 1}`
+    const slide = clone(templateSlide)
+    slide.id = slideId
+    slide.name = `Delivery corpus ${index + 1}`
+    slide.rootOrder = [surfaceId, titleId, bodyId, imageId]
+    slide.readingOrder = [titleId, bodyId, imageId]
+    slide.elements = { [surfaceId]: surface, [titleId]: title, [bodyId]: body, [imageId]: image }
+    document.slideOrder.push(slideId)
+    document.slides[slideId] = slide
+    document.assets[assetId] = { ...templateAsset, id: assetId, hash: `sha256-${digest(bytes)}`, byteLength: bytes.length, path: `assets/delivery-${pageNumber}.png`, width, height, altText: `Delivery corpus image ${index + 1}` }
+    assetBytes[assetId] = bytes
+  }
+  return { document, assetBytes, resourceBytes: Object.values(assetBytes).reduce((sum, bytes) => sum + bytes.length, 0) }
+}
+
+function pngChunk(type, data) {
+  const typeBytes = new TextEncoder().encode(type)
+  const checksumInput = concatBytes(typeBytes, data)
+  const result = new Uint8Array(12 + data.length)
+  const view = new DataView(result.buffer)
+  view.setUint32(0, data.length)
+  result.set(typeBytes, 4)
+  result.set(data, 8)
+  view.setUint32(8 + data.length, crc32(checksumInput))
+  return result
+}
+
+function crc32(data) {
+  let crc = 0xffffffff
+  for (const byte of data) {
+    let value = (crc ^ byte) & 0xff
+    for (let bit = 0; bit < 8; bit += 1) value = (value >>> 1) ^ (value & 1 ? 0xedb88320 : 0)
+    crc = (crc >>> 8) ^ value
+  }
+  return (crc ^ 0xffffffff) >>> 0
+}
+
+function concatBytes(...parts) {
+  const result = new Uint8Array(parts.reduce((sum, part) => sum + part.length, 0))
+  let offset = 0
+  for (const part of parts) {
+    result.set(part, offset)
+    offset += part.length
+  }
+  return result
 }
 
 function baseDocument() {

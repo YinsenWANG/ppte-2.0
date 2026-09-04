@@ -27,6 +27,7 @@ import {
   addAlternateAsset,
   alternatePng,
   clone,
+  makeDeliveryCorpusFixture,
   makeChartFixture,
   makeChartVariantsFixture,
   makeCoreFixture,
@@ -58,7 +59,7 @@ const BASE_GROUP_ORDER = [
   'section-41',
 ]
 
-const NEW_GROUP_ORDER = ['video-widget', 'pptx-chart', 'full-portable', 'group-rotate', 'legacy-import', 'mcp']
+const NEW_GROUP_ORDER = ['video-widget', 'pptx-chart', 'full-portable', 'group-rotate', 'legacy-import', 'mcp', 'delivery']
 const GROUP_ORDER = [...BASE_GROUP_ORDER, ...NEW_GROUP_ORDER]
 
 const GROUP_META = {
@@ -130,6 +131,10 @@ const GROUP_META = {
     description: 'stdio MCP protocol, Agent tool exposure, readonly filtering, and checkpoint persistence.',
     findings: 'Cross-agent MCP skill',
   },
+  delivery: {
+    description: 'MCP-owned editable delivery, file:// save/reopen/present, preview separation, and artifact budgets.',
+    findings: 'Delivery layer P0/P1',
+  },
 }
 
 const MILESTONE_GROUPS = {
@@ -143,7 +148,8 @@ const MILESTONE_GROUPS = {
   'pptx-chart': [...BASE_GROUP_ORDER, 'video-widget', 'pptx-chart'],
   'full-portable': [...BASE_GROUP_ORDER, 'video-widget', 'pptx-chart', 'full-portable'],
   'group-rotate': [...BASE_GROUP_ORDER, 'video-widget', 'pptx-chart', 'full-portable', 'group-rotate'],
-  'legacy-import': [...GROUP_ORDER],
+  'legacy-import': GROUP_ORDER.filter((group) => group !== 'delivery'),
+  delivery: [...GROUP_ORDER],
   final: [...GROUP_ORDER],
   final3: [...GROUP_ORDER],
 }
@@ -199,6 +205,7 @@ async function ensureRuntime() {
       load('dist/packages/recovery-journal/src/index.js'),
       load('dist/packages/design-compiler/src/index.js'),
       load('dist/packages/portable-runtime/src/index.js'),
+      load('dist/apps/mcp/delivery.js'),
       load('dist/packages/exporter-pdf/src/index.js'),
       load('dist/packages/exporter-pptx/src/index.js'),
       load('dist/packages/reviewer/src/index.js'),
@@ -208,7 +215,7 @@ async function ensureRuntime() {
       load('dist/packages/archive/src/index.js'),
       load('dist/packages/widgets/src/index.js'),
       load('dist/packages/importer-legacy/src/index.js'),
-    ]).then(([canonical, core, agent, change, operations, richtextAdapter, renderer, fileFormat, recovery, compiler, portable, pdf, pptx, reviewer, patch, validation, facts, archive, widgets, legacy]) => ({
+    ]).then(([canonical, core, agent, change, operations, richtextAdapter, renderer, fileFormat, recovery, compiler, portable, delivery, pdf, pptx, reviewer, patch, validation, facts, archive, widgets, legacy]) => ({
       canonical,
       core,
       agent,
@@ -220,6 +227,7 @@ async function ensureRuntime() {
       recovery,
       compiler,
       portable,
+      delivery,
       pdf,
       pptx,
       reviewer,
@@ -1009,7 +1017,7 @@ register('host', '1', 'A real Product Host exposes the first-user editing journe
   const rt = await ctx.ensureRuntime()
   await ctx.withTempDirectory(async (directory) => {
     const { document } = makeCoreFixture()
-    const path = ctx.writeFixtureHtml(directory, 'host.html', rt.renderer.renderDocumentHtml(document, { includeDiagnostics: true }))
+    const path = ctx.writeFixtureHtml(directory, 'host.html', rt.renderer.renderReferenceHostHtml(document, { includeDiagnostics: true }))
     await ctx.withBrowser(path, async (page) => {
       const controls = await page.evaluate(() => ({
         contenteditable: document.querySelectorAll('[contenteditable="true"]').length,
@@ -1340,6 +1348,134 @@ register('mcp', 'readonly-persistence', 'Readonly MCP sessions hide mutations wh
     return { readonlyMutationAbsent: true, preview: preview.ok, commit: committed.ok, reopenedText: value }
   })
   return { persisted: true }
+})
+
+register('delivery', 'default-mcp-delivery', 'MCP exposes one explicit, default editable delivery contract.', 'A writable MCP client asks for delivery without a profile or output path; a readonly client asks for the same tool.', 'writable delivery returns editable HTML first plus the same-revision .ppte source, while readonly hides and rejects the file mutation', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  await ctx.withTempDirectory(async (directory) => {
+    const { document, imageBytes } = makeCoreFixture()
+    const target = join(directory, 'default-delivery.ppte')
+    rt.file.writeCheckpoint(document, target, { clean: true, assetBytes: { [IDS.asset]: imageBytes }, timestamp: '2026-09-04T00:00:00.000Z' })
+    const responses = runMcpBatch(target, [
+      { jsonrpc: '2.0', id: 1, method: 'initialize' },
+      { jsonrpc: '2.0', id: 2, method: 'tools/list' },
+      { jsonrpc: '2.0', id: 3, method: 'tools/call', params: { name: 'deliver_presentation', arguments: {} } },
+    ])
+    const tools = responses.find((item) => item.id === 2)?.result?.tools ?? []
+    const deliveryTool = tools.find((tool) => tool.name === 'deliver_presentation')
+    const delivered = mcpToolResult(responses, 3)
+    const htmlPath = delivered.artifacts?.[0]?.path
+    ctx.expectGate(deliveryTool && deliveryTool.inputSchema?.additionalProperties === false && !Object.prototype.hasOwnProperty.call(deliveryTool.inputSchema?.properties ?? {}, 'path'), 'MCP delivery schema exposed an arbitrary path or omitted the delivery tool.', { deliveryTool })
+    ctx.expectGate(delivered.ok && delivered.effectiveProfile === 'full-portable' && delivered.artifacts?.[0]?.role === 'editable-browser-copy' && delivered.artifacts?.[1]?.role === 'source-project' && delivered.sourceRevision === delivered.artifacts[1].sourceRevision && typeof htmlPath === 'string' && existsSync(htmlPath), 'Default MCP delivery did not return the complete artifact contract.', delivered)
+    const html = readFileSync(htmlPath, 'utf8')
+    ctx.expectGate(!JSON.stringify(delivered).includes('<!doctype html>') && rt.portable.auditPortableBundle(html).ok && html.includes('data-ppte-deliverable="true"'), 'MCP delivery returned HTML body text or an unauditable artifact.', { delivered, audit: rt.portable.auditPortableBundle(html) })
+
+    const readonly = runMcpBatch(target, [
+      { jsonrpc: '2.0', id: 1, method: 'tools/list' },
+      { jsonrpc: '2.0', id: 2, method: 'tools/call', params: { name: 'deliver_presentation', arguments: {} } },
+    ], ['--readonly'])
+    const readonlyTools = readonly.find((item) => item.id === 1)?.result?.tools ?? []
+    ctx.expectGate(!readonlyTools.some((tool) => tool.name === 'deliver_presentation') && readonly.find((item) => item.id === 2)?.error?.code === -32602, 'Readonly MCP exposed or accepted deliver_presentation.', { readonlyTools, response: readonly.find((item) => item.id === 2) })
+    return { effectiveProfile: delivered.effectiveProfile, artifacts: delivered.artifacts.map((artifact) => artifact.role), sourceRevision: delivered.sourceRevision, htmlBytes: delivered.metrics?.bytes }
+  })
+  return { default: true }
+})
+
+register('delivery', 'file-url-edit-save-reopen-present', 'The primary editable artifact closes the receiver file:// loop.', 'A receiver has only the delivered HTML: open it, edit visible text, save the primary button, reopen the downloaded sibling, and navigate presentation pages.', 'the saved HTML remains a full-portable editable artifact with the edited text and the next page visible after reopen', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  await ctx.withTempDirectory(async (directory) => {
+    const fixture = makeDeliveryCorpusFixture()
+    const built = rt.portable.buildPortable(fixture.document, { profile: 'full-portable', assetBytes: fixture.assetBytes, derivedAt: '2026-09-04T00:00:00.000Z' })
+    ctx.expectGate(built.ok, 'The deterministic delivery corpus could not build as full-portable.', built)
+    const sourcePath = join(directory, 'receiver.ppte.html')
+    const savedPath = join(directory, 'receiver.saved.editable.ppte.html')
+    writeFileSync(sourcePath, built.html)
+    const originalBytes = readFileSync(sourcePath)
+    let savedRevision
+    let savedFilename
+    await ctx.withBrowser(sourcePath, async (page) => {
+      const controls = await page.evaluate(() => ({
+        editable: window.document.querySelectorAll('[contenteditable="true"]').length,
+        primaryLabel: window.document.querySelector('button[data-ppte-action="save-portable"]')?.textContent,
+        fullscreenLabel: window.document.querySelector('button[data-ppte-action="fullscreen"]')?.textContent,
+      }))
+      ctx.expectGate(controls.editable > 0 && controls.primaryLabel === '保存可编辑副本 (.ppte.html)' && controls.fullscreenLabel === '开始演示（全屏）', 'Delivered HTML did not expose the visible editable/presentation surface.', controls)
+      const title = page.locator('[data-ppte-element-id^="bb_delivery_title_"]').first()
+      await title.fill('季度复盘')
+      await title.blur()
+      await page.waitForFunction(() => (globalThis).PPTEPortable.getDocument().slides.bb_delivery_slide_01.elements.bb_delivery_title_01.content.paragraphs[0].runs[0].text === '季度复盘')
+      savedRevision = await page.evaluate(() => (globalThis).PPTEPortable.getRevision())
+      const [download] = await Promise.all([
+        page.waitForEvent('download'),
+        page.locator('button[data-ppte-action="save-portable"]').click(),
+      ])
+      savedFilename = download.suggestedFilename()
+      await download.saveAs(savedPath)
+    })
+    ctx.expectGate(/\.editable\.ppte\.html$/.test(savedFilename ?? '') && JSON.stringify(readFileSync(sourcePath)) === JSON.stringify(originalBytes), 'Portable save did not produce a sibling editable filename or changed the original file.', { savedFilename, sourcePath })
+    const savedHtml = readFileSync(savedPath, 'utf8')
+    const savedPayload = rt.portable.decodePortable(savedHtml)
+    ctx.expectGate(rt.portable.auditPortableBundle(savedHtml).ok && savedPayload.origin.profile === 'full-portable' && savedPayload.origin.sourceRevision === savedRevision, 'Downloaded HTML did not retain the editable origin/revision contract.', { origin: savedPayload.origin, savedRevision, audit: rt.portable.auditPortableBundle(savedHtml) })
+    let reopenedState
+    await ctx.withBrowser(savedPath, async (page) => {
+      reopenedState = await page.evaluate(() => ({
+        text: (globalThis).PPTEPortable.getDocument().slides.bb_delivery_slide_01.elements.bb_delivery_title_01.content.paragraphs[0].runs[0].text,
+        editable: window.document.querySelector('[data-ppte-deliverable="true"]') !== null,
+      }))
+      await page.locator('button[data-ppte-action="next"]').click()
+      await page.waitForFunction(() => Array.from(window.document.querySelectorAll('[data-ppte-slide-id]')).some((slide) => (slide).style.display === 'block' && slide.getAttribute('data-ppte-slide-id') === 'bb_delivery_slide_02'))
+    })
+    ctx.expectEqual(reopenedState, { text: '季度复盘', editable: true }, 'Reopened editable delivery did not preserve the visible text/editability.', reopenedState)
+    return { sourceBytes: originalBytes.length, savedBytes: savedHtml.length, savedFilename, savedRevision, reopenedState, corpusResourceBytes: fixture.resourceBytes }
+  })
+  return { fileUrl: true }
+})
+
+register('delivery', 'preview-cannot-masquerade-as-delivery', 'Read-only previews carry no delivery authority.', 'A client requests render_slide and the renderer legacy wrapper; neither output may be mistaken for an editable delivery artifact.', 'render_slide has deliverable:false, renderer default is read-only, and neither output contains the Portable payload/positive delivery metadata', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { document } = makeCoreFixture()
+  const session = new rt.core.PpteSession(document)
+  const rendered = new rt.agent.AgentToolServer(session).execute('render_slide', { slideId: IDS.slide })
+  const fragment = rendered.data
+  const surface = rt.renderer.renderDocumentHtml(document)
+  const readonly = rt.renderer.renderReadOnlyPresentationHtml(document)
+  const reference = rt.renderer.renderReferenceHostHtml(document)
+  const observed = {
+    tool: { kind: fragment?.kind, deliverable: fragment?.deliverable, hasContenteditable: fragment?.html?.includes('contenteditable="true"') },
+    wrapper: { hasPayload: surface.includes('ppte-portable-payload'), hasContenteditable: surface.includes('contenteditable="true"'), hasPositiveDelivery: surface.includes('data-ppte-deliverable="true"') },
+    readonlyHasContenteditable: readonly.includes('contenteditable="true"'),
+    referenceHasHost: reference.includes('data-ppte-host'),
+  }
+  ctx.expectGate(rendered.ok && fragment?.kind === 'read-only-preview-fragment' && fragment?.deliverable === false && observed.tool.hasContenteditable === false && !observed.wrapper.hasPayload && !observed.wrapper.hasContenteditable && !observed.wrapper.hasPositiveDelivery && observed.readonlyHasContenteditable === false && observed.referenceHasHost, 'A preview output could still masquerade as a delivery artifact.', observed)
+  return observed
+})
+
+register('delivery', 'artifact-and-runtime-budget', 'Delivery reports measured artifact and runtime budgets with explicit large-file behavior.', 'A fixed-seed ten-page corpus uses ten different valid noisy PNGs; tests observe all four profiles, reject an oversized artifact/runtime, and retry only with an explicit large-file flag.', 'resource/raw/runtime metrics are recorded, standard full-portable fits 20 MiB, large artifacts fail without HTML, and allowLargePortable retains full profile with a warning', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  await ctx.withTempDirectory(async (directory) => {
+    const fixture = makeDeliveryCorpusFixture()
+    const profiles = ['viewer', 'quick-fix', 'light-edit', 'full-portable']
+    const measurements = profiles.map((profile) => {
+      const result = rt.portable.buildPortable(fixture.document, { profile, assetBytes: fixture.assetBytes, derivedAt: '2026-09-04T00:00:00.000Z' })
+      return { profile, ok: result.ok, bytes: result.bytes, runtimeBytes: result.runtimeBytes, runtimeGzipBytes: result.runtimeGzipBytes, resourceBytes: result.resourceBytes, budgetBytes: result.budgetBytes }
+    })
+    ctx.expectGate(measurements.every((item) => item.ok && item.resourceBytes === fixture.resourceBytes && item.runtimeGzipBytes <= item.budgetBytes) && measurements.find((item) => item.profile === 'full-portable').bytes <= 20_971_520, 'The fixed-seed delivery corpus did not meet its measured profile/runtime/raw contract.', { fixtureResourceBytes: fixture.resourceBytes, measurements })
+    const sourcePath = join(directory, 'budget.ppte')
+    rt.file.writeCheckpoint(fixture.document, sourcePath, { clean: true, assetBytes: fixture.assetBytes, timestamp: '2026-09-04T00:00:00.000Z' })
+    const checkpoint = {
+      write: (snapshot, target, _options, recentTransactions) => rt.file.writeCheckpoint(snapshot, target, { clean: false, assetBytes: fixture.assetBytes, recentTransactions: recentTransactions ?? [], timestamp: '2026-09-04T00:00:00.000Z' }),
+    }
+    const session = new rt.core.PpteSession(fixture.document, { checkpoint })
+    const baseBuild = (document, options) => rt.portable.buildPortable(document, options)
+    const large = rt.delivery.deliverPresentation(session, sourcePath, {}, { build: (document, options) => ({ ...baseBuild(document, options), bytes: 20_971_521 }) })
+    ctx.expectGate(!large.ok && large.issues.some((issue) => issue.code === 'DELIVERY_ARTIFACT_LARGE') && !existsSync(join(directory, 'budget.editable.ppte.html')), 'Oversized raw artifact was written or silently downgraded.', large)
+    const runtimeLarge = rt.delivery.deliverPresentation(session, sourcePath, {}, { build: (document, options) => ({ ...baseBuild(document, options), runtimeGzipBytes: 3_000_001 }) })
+    ctx.expectGate(!runtimeLarge.ok && runtimeLarge.issues.some((issue) => issue.code === 'PORTABLE_BUDGET_EXCEEDED') && !existsSync(join(directory, 'budget.editable.ppte.html')), 'Runtime budget overflow was not a hard delivery failure.', runtimeLarge)
+    const allowed = rt.delivery.deliverPresentation(session, sourcePath, { allowLargePortable: true }, { build: (document, options) => ({ ...baseBuild(document, options), bytes: 20_971_521 }) })
+    ctx.expectGate(allowed.ok && allowed.effectiveProfile === 'full-portable' && allowed.warnings.length > 0 && existsSync(join(directory, 'budget.editable.ppte.html')), 'allowLargePortable did not explicitly retain full-portable delivery with a warning.', allowed)
+    return { fixtureResourceBytes: fixture.resourceBytes, measurements, largeIssueCodes: large.issues.map((issue) => issue.code), runtimeIssueCodes: runtimeLarge.issues.map((issue) => issue.code), allowedWarning: allowed.warnings }
+  })
+  return { budget: true }
 })
 
 register('review-patch', '26', 'Delete-versus-local-edit is an explicit review conflict.', 'Base has a title, local edits it, and the revised copy deletes it; review must protect the local change.', 'comparison returns a conflict/ambiguous unit rather than a clean deleted status', async (ctx) => {
@@ -1780,7 +1916,7 @@ register('group-rotate', 'explicit-member-rotate', 'Group Rotate commits explici
   const exactUndo = undo.ok && JSON.stringify(session.getDocument()) === JSON.stringify(before)
   let hostMembers = []
   await ctx.withTempDirectory(async (directory) => {
-    const path = ctx.writeFixtureHtml(directory, 'group-rotate.html', rt.renderer.renderDocumentHtml(after))
+    const path = ctx.writeFixtureHtml(directory, 'group-rotate.html', rt.renderer.renderReadOnlyPresentationHtml(after))
     await ctx.withBrowser(path, async (page) => {
       hostMembers = await page.evaluate((ids) => ids.map((id) => {
         const node = document.querySelector(`[data-ppte-element-id="${id}"]`)

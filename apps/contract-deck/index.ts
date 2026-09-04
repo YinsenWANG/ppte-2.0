@@ -8,7 +8,7 @@ import { PpteSession } from '../../packages/core/src/index.js'
 import { AGENT_TOOL_NAMES, AgentToolServer, MockAgent } from '../../packages/agent-tools/src/index.js'
 import { ImeTextEditSession, beginDrag, endDrag, updateDrag } from '../../packages/editor-react/src/index.js'
 import { hitTest } from '../../packages/geometry/src/index.js'
-import { renderSlideHtml, renderTargetedVisualDiff } from '../../packages/renderer-react/src/index.js'
+import { renderReadOnlyPresentationHtml, renderSlideHtml, renderTargetedVisualDiff } from '../../packages/renderer-react/src/index.js'
 import { RecoveryJournal, readJournal, replayJournal } from '../../packages/recovery-journal/src/index.js'
 import { openCheckpoint, openCheckpointBytes, writeCheckpoint, type CheckpointWriteOptions } from '../../packages/file-format/src/index.js'
 import { buildReplacementElement } from '../../packages/semantic-identity/src/index.js'
@@ -831,8 +831,9 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
 } else if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const artifactDirectory = resolve('artifacts')
   mkdirSync(artifactDirectory, { recursive: true })
-  const artifact = join(artifactDirectory, 'contract-deck.html')
+  const artifact = join(artifactDirectory, 'contract-deck.preview.html')
   const { document } = makeContractDocument()
-  writeFileSync(artifact, `<!doctype html><meta charset="utf-8"><title>${document.metadata.title}</title>${renderSlideHtml(document, SLIDE_ID)}`)
+  const rendered = renderReadOnlyPresentationHtml(document)
+  writeFileSync(artifact, `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="ppte-deliverable" content="false"><meta name="ppte-deliverable-role" content="read-only-preview"><title>${document.metadata.title} · Read-only preview</title><style>html,body{margin:0;min-height:100%;background:#111827;color:#f8fafc;font-family:system-ui,sans-serif}.ppte-preview-banner{position:sticky;top:0;z-index:2;padding:.7rem 1rem;background:#7f1d1d;color:#fecaca;font-weight:700;text-align:center;letter-spacing:.02em}.ppte-preview-stage{display:grid;place-items:center;min-height:calc(100vh - 3rem);padding:1rem}.ppte-preview-stage .ppte-slide{box-shadow:0 1rem 3rem #0008}</style></head><body data-ppte-deliverable="false" data-ppte-deliverable-role="read-only-preview"><div class="ppte-preview-banner" data-ppte-readonly-watermark>只读参考预览 · 不可编辑交付</div><main class="ppte-preview-stage">${rendered}</main></body></html>`)
   process.stdout.write(`Contract Deck rendered Text/Image/Shape to ${artifact}\n`)
 }

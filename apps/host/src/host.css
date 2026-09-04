@@ -46,6 +46,7 @@ button, input, textarea { font: inherit; }
 .ppte-host-toolbar button:hover, .ppte-toolbar-label:hover { border-color: #93c5fd; background: #26364f; }
 .ppte-toolbar-label input[type="file"] { display: none; }
 .ppte-host-status { overflow: hidden; margin-left: auto; color: #cbd5e1; font-size: .78rem; text-overflow: ellipsis; white-space: nowrap; }
+.ppte-host-file-help { color: #94a3b8; font-size: .72rem; white-space: nowrap; }
 
 .ppte-host-sidebar { min-height: 0; overflow: auto; padding: .8rem .65rem; border-right: 1px solid #273449; background: #0b1220; }
 .ppte-sidebar-heading { display: flex; justify-content: space-between; margin: 0 .2rem .65rem; color: #cbd5e1; font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; }
@@ -89,6 +90,7 @@ button, input, textarea { font: inherit; }
   .ppte-host-toolbar { flex-wrap: wrap; }
   .ppte-brand { width: 100%; }
   .ppte-host-status { max-width: 40%; }
+  .ppte-host-file-help { width: 100%; }
   .ppte-host-sidebar { grid-row: 2; border-right: 0; border-bottom: 1px solid #273449; }
   .ppte-thumbnails { display: flex; overflow-x: auto; }
   .ppte-thumbnail { flex: 0 0 8rem; }
