@@ -113,21 +113,28 @@ base revision match.
 
 ## Scope
 
-The 0.5.0 release deliberately does not implement:
+The 0.6.0 release deliberately does not implement:
 
-- Slidev, Markdown as a content source, or DOM reverse parsing;
-- Video Widget, native PPTX Chart authoring, or a complete Portable editor;
-- nested Groups or Group Rotate;
+- Slidev or Markdown as a runtime content source, or DOM reverse parsing
+  (bounded text-only legacy import is supported; see below);
+- nested Groups;
 - Run-level font or font-size styling;
-- CRDT, multi-user/real-time collaboration, full legacy markup import, or a
-  browser/OS pixel-matrix test lab;
+- CRDT, multi-user/real-time collaboration, full legacy markup/runtime import,
+  or a browser/OS pixel-matrix test lab;
 - direct writes that bypass the Operation Engine.
 
-GA-A does include a deliberately narrow legacy boundary: older JSON-compatible
-semantic snapshots can be migrated forward through `packages/importer-legacy`.
-The source is never executed or overwritten. Unsupported markup/runtime
-formats remain rejected and must be retained by the host alongside the
-migration report.
+As of 0.6.0 the following are implemented as bounded capabilities: the
+controlled Video Widget (local source metadata with poster/static fallback,
+never network playback), native PPTX chart parts for Bar/Line/Pie (Area/Donut
+remain static), the `full-portable` self-contained editing profile, Group
+Rotate materialized as explicit member transforms (no group coordinate
+system), and a bounded Slidev/Markdown text importer.
+
+The legacy boundary stays deliberately narrow: older JSON-compatible semantic
+snapshots migrate forward through `packages/importer-legacy`, and supported
+Slidev/Markdown text is reduced to semantic Text elements. The source is never
+executed or retained as a runtime document source; unsupported markup/runtime
+formats remain rejected with an explicit migration report.
 
 The schema retains forward-compatible types for later releases. The GA-C
 runtime accepts Text, Image, Shape, Area/Donut and GA-B Chart types, controlled
@@ -191,5 +198,7 @@ The repository contains a forward-only `ppte-2.0-ga-c.1` profile and related
 runtime surfaces for Area/Donut charts, Poster metadata, controlled Widgets,
 Light Edit operations, and semantic PPTX mapping. These are bounded release
 surfaces.
-Video Widget, native PPTX Chart authoring, a complete Portable editor, CRDT,
-and multi-user collaboration remain intentionally unimplemented.
+As of 0.6.0, the controlled Video Widget, native PPTX Bar/Line/Pie chart parts,
+the `full-portable` editing profile, Group Rotate (explicit member transforms),
+and the bounded Slidev/Markdown text importer are implemented; CRDT and
+multi-user collaboration remain intentionally unimplemented.

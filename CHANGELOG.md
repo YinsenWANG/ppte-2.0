@@ -2,6 +2,54 @@
 
 All notable changes to the PPTe reference runtime are recorded here.
 
+## [0.6.0] — 2026-09-04 (bounded completion release)
+
+### Added and verified
+
+- Added the controlled Video Widget `core/video@1.0.0`. It accepts local
+  source metadata, keeps a local poster/fallback path in the semantic
+  document, survives checkpoint round-trips, and reports an actionable static
+  downgrade in offline Light Edit. PDF/PNG retain a non-empty fallback path
+  but return explicit element-scoped degradation; this is not native video
+  playback or network media support.
+- Added native semantic PPTX chart parts for Bar, Line, and Pie Charts. The
+  exporter preserves chart categories and numeric values and marks each
+  eligible Chart capability item with `nativeChart: true`. Area and Donut
+  remain static/degraded in PPTX.
+- Added the bounded `full-portable` self-contained `file://` profile. Its
+  public surface covers text/image editing, multi-selection, single-element
+  Move/Resize/Scale/Rotate, Image Crop, Chart Data, Undo/Redo, and Save as New
+  Project; all persistent edits use the existing Session Operation Engine.
+- Added Group Rotate for flat Groups. Rotation is materialized as explicit
+  member Frame and `rotationDeg` changes with an exact inverse; Groups do not
+  gain a frame, transform, or coordinate system.
+- Extended the legacy importer with a bounded Slidev/Markdown text parser and
+  JSON-compatible semantic snapshot migration. Supported text is reduced to
+  semantic heading/body Text elements (with a small deterministic markup
+  cleanup); GA-B/GA-C profile rules, migration evidence, and source-preserving
+  rejection/degradation remain explicit. Raw markup is never executed or
+  retained as a runtime document source.
+- Independent black-box acceptance now reports `16 groups, 62 green / 0 red`,
+  including §41 A–J and the five new capability groups.
+
+### Still not implemented
+
+- CRDT.
+- Multi-user / real-time collaboration.
+- Nested Groups or a Group coordinate system.
+- Run-level font or font-size styling.
+- Full legacy markup/runtime import, general Slidev/Markdown content-source
+  support, or DOM reverse parsing; the bounded importer above is the only
+  supported text-source path.
+- Network video playback, arbitrary/private Widget execution, and semantic
+  PPTX import.
+- Browser/OS pixel-matrix validation and direct writes that bypass the
+  Operation Engine.
+
+These are intentional 0.6.0 boundaries, not hidden capabilities. Capability
+Reports and migration/export diagnostics remain the source of truth when a
+target is static, degraded, unsupported, or requires a newer profile.
+
 ## [0.5.0] — 2026-09-03 (final bounded release)
 
 ### Added and verified

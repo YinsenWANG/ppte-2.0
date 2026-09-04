@@ -530,3 +530,16 @@ element type as its denominator, even when the current preset omits a field.
 
 No new content source, Slidev path, arbitrary HTML source, CRDT, nested Group,
 or Run-level font styling is introduced by R6.
+
+## 2026-09-04 — 0.6.0 completion boundaries (pipeline v3)
+
+CEO approved closing the entire 0.5.0 "still not implemented" list. Bounded
+interpretations adopted: Video = local metadata + poster fallback only (network
+and executable sources rejected at widget registration). PPTX native charts =
+Bar/Line/Pie only; Area/Donut stay static with honest capability reporting.
+Group Rotate = member transform materialization, never a group coordinate
+system (ADR-006 intact). Legacy import = text reduction to semantic elements;
+markup is never a runtime content source (ADR-001 intact). Full Portable
+reuses the Session Operation Engine (no second mutation path). CRDT /
+multi-user / nested Groups / Run-level fonts remain ADR-frozen and were NOT
+implemented.

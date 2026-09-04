@@ -622,3 +622,12 @@ content source, and DOM reverse parsing remain outside this milestone and are
 rejected or diagnosed at the runtime boundary. Full browser/OS matrix testing,
 screenshot artifact comparison, and migration/import pipelines remain
 follow-on work. No remote is created and no changes are pushed.
+
+## 0.6.0 — Bounded completion (2026-09-04)
+
+All five 0.5.0 open gaps closed: controlled Video Widget, native PPTX
+Bar/Line/Pie chart parts, `full-portable` editing profile, Group Rotate as
+explicit member transforms, bounded Slidev/Markdown text importer. Blackbox:
+16 groups, 62/0 green (final3 cumulative). Typecheck/test/validate pass.
+Frozen boundaries unchanged: no CRDT, no multi-user, no nested Groups, no
+Run-level font styling. See docs/RELEASE_v0.6.0.md.
