@@ -1,4 +1,3 @@
-import { readFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -12,7 +11,6 @@ import {
 } from '../../packages/agent-tools/src/index.js'
 import {
   openCheckpoint,
-  readStoredZip,
   writeCheckpoint,
   type CheckpointResult,
 } from '../../packages/file-format/src/index.js'
@@ -29,12 +27,17 @@ import {
   type JsonRpcResponse,
 } from './protocol.js'
 import { MCP_TOOL_INPUT_SCHEMAS, type JsonSchema } from './tool-schemas.js'
+import { deliverPresentation, readCheckpointResources, type DeliveryResult } from './delivery.js'
+import { isEditableDeliveryProfile } from '../../packages/portable-runtime/src/index.js'
 
 const SERVER_VERSION = '0.6.0'
 const MCP_PROTOCOL_VERSION = '2024-11-05'
+export const DELIVERY_TOOL_NAME = 'deliver_presentation' as const
+export type McpToolName = AgentToolName | typeof DELIVERY_TOOL_NAME
+export type McpToolResult = AgentToolResult | DeliveryResult
 
 export interface McpTool {
-  name: AgentToolName
+  name: McpToolName
   description: string
   inputSchema: JsonSchema
 }
@@ -64,16 +67,22 @@ export class PpteMcpRuntime implements JsonRpcHandler {
   }
 
   listTools(): McpTool[] {
-    return AGENT_TOOL_DEFINITIONS
+    const tools: McpTool[] = AGENT_TOOL_DEFINITIONS
       .filter((definition) => !this.readonlyMode || !definition.mutates)
       .map((definition) => ({
         name: definition.name,
         description: definition.description,
         inputSchema: MCP_TOOL_INPUT_SCHEMAS[definition.name],
       }))
+    if (!this.readonlyMode) tools.push({ name: DELIVERY_TOOL_NAME, description: 'Checkpoint the current revision and deliver an editable full-portable browser copy plus its PPTe Host source project.', inputSchema: MCP_TOOL_INPUT_SCHEMAS[DELIVERY_TOOL_NAME] })
+    return tools
   }
 
-  callTool(name: string, args: Record<string, unknown> = {}): AgentToolResult {
+  callTool(name: string, args: Record<string, unknown> = {}): McpToolResult {
+    if (name === DELIVERY_TOOL_NAME) {
+      if (this.readonlyMode) throw new McpProtocolError(-32602, `Unknown or unavailable tool: ${name}`)
+      return deliverPresentation(this.session, this.checkpointPath, parseDeliveryRequest(args))
+    }
     const definition = AGENT_TOOL_DEFINITIONS.find((candidate) => candidate.name === name)
     if (!definition || (this.readonlyMode && definition.mutates)) throw new McpProtocolError(-32602, `Unknown or unavailable tool: ${name}`)
     const result = this.agent.execute(definition.name, args)
@@ -184,7 +193,7 @@ function checkpointDocument(
   compatibilityProfile: string,
   recentTransactions?: ReadonlyArray<Transaction>,
 ): CheckpointResult {
-  const payload = readCheckpointPayload(target, document)
+  const payload = readCheckpointResources(target, document)
   return writeCheckpoint(document, target, {
     clean: false,
     timestamp: new Date().toISOString(),
@@ -195,22 +204,20 @@ function checkpointDocument(
   })
 }
 
-function readCheckpointPayload(target: string, document: PpteDocument): { assetBytes: Record<string, Uint8Array>; fontBytes: Record<string, Uint8Array> } {
-  const archive = readStoredZip(new Uint8Array(readFileSync(target)))
-  const assetBytes: Record<string, Uint8Array> = {}
-  for (const asset of Object.values(document.assets)) {
-    const data = archive.get(asset.path)
-    if (!data) throw new Error(`ASSET_MISSING: checkpoint does not contain ${asset.id}`)
-    assetBytes[asset.id] = data
+function parseDeliveryRequest(args: Record<string, unknown>): { profile?: 'quick-fix' | 'light-edit' | 'full-portable'; replaceExisting?: boolean; allowLargePortable?: boolean; confirmed?: boolean } {
+  const allowed = new Set(['profile', 'replaceExisting', 'allowLargePortable', 'confirmed'])
+  const unknown = Object.keys(args).find((key) => !allowed.has(key))
+  if (unknown) throw new McpProtocolError(-32602, `deliver_presentation does not accept ${unknown}; the output path is derived from the .ppte sibling.`)
+  const profile = args.profile
+  if (profile !== undefined && (typeof profile !== 'string' || !isEditableDeliveryProfile(profile))) throw new McpProtocolError(-32602, 'deliver_presentation profile must be quick-fix, light-edit, or full-portable.')
+  for (const key of ['replaceExisting', 'allowLargePortable', 'confirmed']) if (args[key] !== undefined && typeof args[key] !== 'boolean') throw new McpProtocolError(-32602, `deliver_presentation ${key} must be boolean.`)
+  if (args.replaceExisting === true && args.confirmed !== true) throw new McpProtocolError(-32602, 'replaceExisting requires confirmed:true.')
+  return {
+    ...(profile === undefined ? {} : { profile }),
+    ...(args.replaceExisting === undefined ? {} : { replaceExisting: args.replaceExisting as boolean }),
+    ...(args.allowLargePortable === undefined ? {} : { allowLargePortable: args.allowLargePortable as boolean }),
+    ...(args.confirmed === undefined ? {} : { confirmed: args.confirmed as boolean }),
   }
-  const fontBytes: Record<string, Uint8Array> = {}
-  for (const font of Object.values(document.fonts)) {
-    if (font.source !== 'embedded') continue
-    const data = archive.get(font.path ?? `fonts/${font.id}.woff2`)
-    if (!data) throw new Error(`FONT_MISSING: checkpoint does not contain ${font.id}`)
-    fontBytes[font.id] = data
-  }
-  return { assetBytes, fontBytes }
 }
 
 function newJournalHeader(document: PpteDocument, compatibilityProfile: string): RecoveryJournalHeader {

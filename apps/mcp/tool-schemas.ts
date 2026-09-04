@@ -69,8 +69,8 @@ const generatedProperties: Record<string, JsonSchema> = {
   requireConfirmation: booleanSchema,
 }
 
-/** Input schemas mirror the arguments accepted by AgentToolServer.execute. */
-export const MCP_TOOL_INPUT_SCHEMAS: Record<AgentToolName, JsonSchema> = {
+/** Agent schemas mirror AgentToolServer.execute; delivery is MCP-owned. */
+export const MCP_TOOL_INPUT_SCHEMAS: Record<AgentToolName | 'deliver_presentation', JsonSchema> = {
   inspect_document: object({}, [], false),
   list_slides: object({}, [], false),
   get_slide_summary: object({ slideId: slideIdSchema }),
@@ -102,4 +102,10 @@ export const MCP_TOOL_INPUT_SCHEMAS: Record<AgentToolName, JsonSchema> = {
   replace_artwork: object({ slideId: slideIdSchema, elementId: elementIdSchema, assetId: stringSchema, transactionId: stringSchema }, ['slideId', 'elementId', 'assetId']),
   sync_fact_references: object({ factId: stringSchema, targetElementIds: array(stringSchema), strategy: { type: 'string', enum: ['replace-display-value', 'update-chart-values'] }, transactionId: stringSchema, reason: stringSchema, createdAt: stringSchema, requireConfirmation: booleanSchema }, ['factId', 'targetElementIds']),
   compare_revised_copy: object({ revisedDocument: documentSchema, baseDocument: documentSchema }, ['revisedDocument']),
+  deliver_presentation: object({
+    profile: { type: 'string', enum: ['quick-fix', 'light-edit', 'full-portable'], description: 'Optional editable Portable profile; omitted uses the product default.' },
+    replaceExisting: { ...booleanSchema, description: 'Replace the derived sibling only when confirmed is also true.' },
+    allowLargePortable: { ...booleanSchema, description: 'Explicitly allow a complete artifact larger than the 20 MiB standard target.' },
+    confirmed: { ...booleanSchema, description: 'Required for replacing an existing sibling.' },
+  }, [], false),
 }

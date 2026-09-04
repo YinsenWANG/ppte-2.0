@@ -595,7 +595,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     <header className="ppte-host-toolbar">
       <div className="ppte-brand"><span className="ppte-brand-mark">P</span><span>PPTe Host</span></div>
       <button type="button" data-ppte-action="new" onClick={newDocument}>New</button>
-      <label className="ppte-toolbar-label">Open<input type="file" accept=".ppte,.json,application/json" data-ppte-action="open" onChange={openFile} /></label>
+      <label className="ppte-toolbar-label" title="先打开 PPTe Host，再选择 .ppte；系统双击关联尚未提供">打开 PPTe 项目 (.ppte)<input type="file" accept=".ppte,.json,application/json" data-ppte-action="open" onChange={openFile} /></label>
       <label className="ppte-toolbar-label">Agent source<input type="file" accept=".txt,.md,.pdf,.docx,application/octet-stream" data-ppte-action="agent-source" onChange={onAgentSource} /></label>
       <input className="ppte-agent-field" aria-label="Agent objective" data-ppte-agent-objective value={agentObjective} onChange={(event) => setAgentObjective(event.target.value)} placeholder="Objective" />
       <input className="ppte-agent-field" aria-label="Agent audience" data-ppte-agent-audience value={agentAudience} onChange={(event) => setAgentAudience(event.target.value)} placeholder="Audience" />
@@ -604,8 +604,9 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
       <button type="button" data-ppte-action="undo" onClick={undo} disabled={historyDepth === 0}>Undo</button>
       <button type="button" data-ppte-action="redo" onClick={redo} disabled={redoDepth === 0}>Redo</button>
       <label className="ppte-toolbar-label">Add image<input type="file" accept="image/*" data-ppte-action="import-image" onChange={importImage} /></label>
-      <button type="button" data-ppte-action="save" onClick={() => void saveCopy()}>Save copy</button>
+      <button type="button" data-ppte-action="save" onClick={() => void saveCopy()}>保存 PPTe 项目 (.ppte)</button>
       <button type="button" data-ppte-action="present" onClick={togglePresenter}>{presenting ? 'Exit' : 'Present'}</button>
+      <span className="ppte-host-file-help" title="PPTe 源项目需要由 PPTe Host 打开；浏览器可编辑副本请使用 Portable 交付">先打开 Host，再选 .ppte</span>
       <span className="ppte-host-status" data-ppte-status>{status}</span>
     </header>
     <aside className="ppte-host-sidebar" aria-label="Pages">
