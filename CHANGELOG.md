@@ -20,6 +20,7 @@ All notable changes to the PPTe reference runtime are recorded here.
   public surface covers text/image editing, multi-selection, single-element
   Move/Resize/Scale/Rotate, Image Crop, Chart Data, Undo/Redo, and Save as New
   Project; all persistent edits use the existing Session Operation Engine.
+- Added the stdio MCP server and shared PPTe skill for Claude Code, Codex CLI, pi agent, and Cherry Studio, including readonly tool filtering and atomic `.ppte` checkpoint persistence.
 - Added Group Rotate for flat Groups. Rotation is materialized as explicit
   member Frame and `rotationDeg` changes with an exact inverse; Groups do not
   gain a frame, transform, or coordinate system.

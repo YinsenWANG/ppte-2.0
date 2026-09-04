@@ -37,6 +37,17 @@ milestones.
   full legacy runtime/markup execution, and direct writes remain outside the
   frozen scope.
 
+## 2026-09-04 — Agent MCP transport boundary
+
+- PPTe exposes the existing `AgentToolServer` through a minimal MCP over stdio
+  entry point. Each process owns one opened `.ppte` document and its recovery
+  Journal; there is no multiplexing, HTTP/SSE transport, or authentication.
+- `commit_transaction` and `undo_transaction` continue to use the Session
+  Operation Engine, then atomically checkpoint the same `.ppte` path through
+  `writeCheckpoint`; readonly sessions omit those mutation tools from
+  `tools/list`. These transport and lifecycle limits are deliberate boundaries,
+  not deferred infrastructure.
+
 ## 2026-09-04 — r0 section-41 A 基线漂移判定与修复
 
 - 初始 `node scripts/blackbox-gates.mjs --report` 两次复跑一绿一红；红结果为 51 个绿断言、section-41 A 的 1 个红断言，失败证据为 `Pointer drag did not commit image geometry`，`imageDragged:false`。
