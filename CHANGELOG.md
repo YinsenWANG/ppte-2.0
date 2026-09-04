@@ -21,6 +21,14 @@ All notable changes to the PPTe reference runtime are recorded here.
   Move/Resize/Scale/Rotate, Image Crop, Chart Data, Undo/Redo, and Save as New
   Project; all persistent edits use the existing Session Operation Engine.
 - Added the stdio MCP server and shared PPTe skill for Claude Code, Codex CLI, pi agent, and Cherry Studio, including readonly tool filtering and atomic `.ppte` checkpoint persistence.
+- Added the MCP-owned `deliver_presentation` closeout step. It checkpoints one
+  revision, builds/audits the default editable `full-portable` artifact as
+  `<deck>.editable.ppte.html`, returns the `.ppte` source alongside it, and
+  uses sibling-only, no-clobber, confirmed replacement, and atomic publication
+  rules. A single-attachment channel should send the editable HTML.
+- Corrected Portable save controls, Unicode filenames, IME save guarding, and
+  hydrated-font de-duplication. Read-only renderer/preview outputs now carry
+  explicit non-delivery semantics.
 - Added Group Rotate for flat Groups. Rotation is materialized as explicit
   member Frame and `rotationDeg` changes with an exact inverse; Groups do not
   gain a frame, transform, or coordinate system.
@@ -30,8 +38,12 @@ All notable changes to the PPTe reference runtime are recorded here.
   cleanup); GA-B/GA-C profile rules, migration evidence, and source-preserving
   rejection/degradation remain explicit. Raw markup is never executed or
   retained as a runtime document source.
-- Independent black-box acceptance now reports `16 groups, 62 green / 0 red`,
-  including §41 A–J and the five new capability groups.
+- Independent black-box acceptance at the 0.6 release baseline was
+  `16 groups, 62 green / 0 red`. The delivery-repair source baseline contains
+  17 groups / 65 cases; this change adds the four-case `delivery` group, for an
+  18-group / 69-case final gate inventory. The 62/65/69 figures are separate
+  historical/current/after-change counts; no existing case is removed or
+  skipped.
 
 ### Still not implemented
 

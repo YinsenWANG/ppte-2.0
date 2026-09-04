@@ -12,7 +12,26 @@ pnpm build
 node /absolute/path/to/ppte/dist/apps/mcp/index.js /absolute/path/to/deck.ppte
 ```
 
-`--readonly` 会让 `commit_transaction` 和 `undo_transaction` 直接不出现在 `tools/list`；`--scope '<TransactionScope JSON>'` 可进一步限制 Agent scope。
+`--readonly` 会让 `commit_transaction`、`undo_transaction` 和文件交付工具直接不出现在 `tools/list`；`--scope '<TransactionScope JSON>'` 可进一步限制 Agent scope。
+
+## 完整成功闭环与交付文件
+
+Agent 的成功工作流是：`inspect_document` → 生成/接收 Transaction →
+`preview_transaction` → 审核 diff/issues → `commit_transaction` →
+`get_validation_issues` → `deliver_presentation`。最后一步省略 `profile`，
+由产品交付策略选择默认的 `full-portable`；不要把 `render_slide`、
+`renderDocumentHtml` 或手拼 HTML 当作交付物。
+
+| 文件角色 | 文件名 | 接收者如何打开 |
+| --- | --- | --- |
+| 主交付物 | `<deck>.editable.ppte.html` | 浏览器直接打开；可改字、另存可编辑副本、继续演示 |
+| 源项目 | `<deck>.ppte` | 先打开 PPTe Host，再在 Host 中选择 `.ppte`；系统双击关联尚未提供 |
+| 只读预览 | 按需的 `*.preview.html` | 仅用于展示/检查，不可当作编辑交付 |
+
+交付结果中的 HTML 是带 source revision 的本地可编辑派生副本，不会与
+`.ppte` 自动同步。若渠道只能发送一个附件，发送主交付物
+`<deck>.editable.ppte.html`；仍要在回复中说明 `.ppte` 源项目的位置和
+“需 PPTe Host 打开”。交付失败时不得把预览 HTML 冒充成功文件。
 
 ## Claude Code
 
@@ -122,4 +141,4 @@ pi -p "调用 ppte 的 inspect_document，只报告 deck 的页数，不修改�
 
 ## 边界
 
-这是单文档、单进程的 MCP over stdio server：一个 Agent 进程对应一个 `.ppte` 会话。它不做多路复用、不提供 HTTP/SSE transport，也不做鉴权；这些是明确的产品边界，不是遗漏。所有实际写入仍经过 PPTe Session Operation Engine，并由 `writeCheckpoint` 原子写回同一个 `.ppte` 文件。
+这是单文档、单进程的 MCP over stdio server：一个 Agent 进程对应一个 `.ppte` 会话。它不做多路复用、不提供 HTTP/SSE transport，也不做鉴权；这些是明确的产品边界，不是遗漏。语义编辑仍经过 PPTe Session Operation Engine 并由 `writeCheckpoint` 原子写回 `.ppte`；`deliver_presentation` 只从该 checkpoint 的同一 revision 生成 sibling 可编辑 HTML，并以原子方式发布。

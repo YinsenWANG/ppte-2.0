@@ -554,3 +554,19 @@ markup is never a runtime content source (ADR-001 intact). Full Portable
 reuses the Session Operation Engine (no second mutation path). CRDT /
 multi-user / nested Groups / Run-level fonts remain ADR-frozen and were NOT
 implemented.
+
+## 2026-09-04 — delivery-layer repair (P0/P1)
+
+The approved delivery decision is the two-artifact contract: the primary
+`<deck>.editable.ppte.html` is a self-contained `full-portable` browser copy;
+the `<deck>.ppte` file remains the semantic source and the PPTe Host entry
+point. `deliver_presentation` is MCP-owned and is the final workflow action
+after validation. It derives a sibling path, checkpoints and reads resources
+from the same revision, audits before publication, and uses no-clobber atomic
+write semantics. `replaceExisting:true` requires `confirmed:true`; a large
+raw artifact requires `allowLargePortable:true` and remains full-portable.
+
+The 0.6 release report's 16-group/62-case figure is historical. The repair
+inventory is 17 groups/65 cases before delivery and 18 groups/69 cases after
+the four delivery cases. This count correction does not change any frozen
+semantic or archive contract.
