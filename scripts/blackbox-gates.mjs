@@ -58,7 +58,7 @@ const BASE_GROUP_ORDER = [
   'section-41',
 ]
 
-const NEW_GROUP_ORDER = ['video-widget', 'pptx-chart', 'full-portable', 'group-rotate', 'legacy-import']
+const NEW_GROUP_ORDER = ['video-widget', 'pptx-chart', 'full-portable', 'group-rotate', 'legacy-import', 'mcp']
 const GROUP_ORDER = [...BASE_GROUP_ORDER, ...NEW_GROUP_ORDER]
 
 const GROUP_META = {
@@ -125,6 +125,10 @@ const GROUP_META = {
   'legacy-import': {
     description: 'Slidev/Markdown legacy migration and GA-A/GA-B/GA-C boundary coverage.',
     findings: 'Legacy Import',
+  },
+  mcp: {
+    description: 'stdio MCP protocol, Agent tool exposure, readonly filtering, and checkpoint persistence.',
+    findings: 'Cross-agent MCP skill',
   },
 }
 
@@ -511,6 +515,32 @@ function runExternal(command, args, options = {}) {
   const raw = `${result.stdout ?? ''}${result.stderr ?? ''}`
   if (result.error || result.status !== 0) throw new GateFailure(`${command} ${args.join(' ')} failed.`, { status: result.status, signal: result.signal }, raw || result.error?.message)
   return { result, raw }
+}
+
+function runMcpBatch(checkpointPath, requests, args = []) {
+  const result = spawnSync(process.execPath, [join(ROOT, 'dist', 'apps', 'mcp', 'index.js'), checkpointPath, ...args], {
+    cwd: ROOT,
+    input: `${requests.map((request) => JSON.stringify(request)).join('\n')}\n`,
+    encoding: 'utf8',
+    maxBuffer: 16 * 1024 * 1024,
+  })
+  const raw = `${result.stdout ?? ''}${result.stderr ?? ''}`
+  if (result.error || result.status !== 0) throw new GateFailure('PPTe MCP stdio server failed.', { status: result.status, signal: result.signal }, raw || result.error?.message)
+  const lines = (result.stdout ?? '').split(/\r?\n/).map((line) => line.trim()).filter(Boolean)
+  try {
+    return lines.map((line) => JSON.parse(line))
+  } catch (cause) {
+    throw new GateFailure('PPTe MCP stdio server emitted a non-JSON response.', { stdout: result.stdout, stderr: result.stderr }, cause instanceof Error ? cause.message : String(cause))
+  }
+}
+
+function mcpToolResult(responses, id) {
+  const response = responses.find((item) => item.id === id)
+  if (!response) throw new GateFailure(`PPTe MCP response ${id} was not returned.`, responses)
+  if (response.error) throw new GateFailure(`PPTe MCP JSON-RPC error: ${response.error.message}`, response)
+  const text = response.result?.content?.find((item) => item.type === 'text')?.text
+  if (typeof text !== 'string') throw new GateFailure('PPTe MCP tools/call returned no text content.', response)
+  return JSON.parse(text)
 }
 
 function runPythonPptx(pptxPath) {
@@ -1243,6 +1273,73 @@ register('recovery', '25-profile', 'Journal replay preserves the checkpoint runt
     return { applied: replay.applied, code: replay.document.slides[IDS.slide].elements[IDS.widget].props.code }
   })
   return { profileReplay: true }
+})
+
+register('mcp', 'stdio-smoke', 'The published MCP smoke journey uses a real child process.', 'A local GA-C example is checkpointed, opened through MCP, edited through preview→commit, and reopened.', 'scripts/mcp-smoke.mjs exits zero and reports protocol, readonly, and persistence evidence', async (ctx) => {
+  await ctx.ensureRuntime()
+  const { raw } = runExternal(process.execPath, [join(ROOT, 'scripts', 'mcp-smoke.mjs')])
+  ctx.expectGate(raw.includes('MCP smoke OK:'), 'The MCP smoke script did not report a complete green journey.', raw)
+  return { smoke: 'green' }
+})
+
+register('mcp', 'tools-list', 'MCP tools/list exposes the AgentToolServer contract with schemas.', 'A client initializes a PPTe server and asks for the tool catalog.', 'read tools, preview, commit, and every tool inputSchema are present', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  await ctx.withTempDirectory(async (directory) => {
+    const { document, imageBytes } = makeCoreFixture()
+    const target = join(directory, 'tools-list.ppte')
+    rt.file.writeCheckpoint(document, target, { clean: true, assetBytes: { [IDS.asset]: imageBytes }, timestamp: '2026-09-04T00:00:00.000Z' })
+    const responses = runMcpBatch(target, [
+      { jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2024-11-05', capabilities: {}, clientInfo: { name: 'blackbox', version: '1' } } },
+      { jsonrpc: '2.0', id: 2, method: 'tools/list' },
+    ])
+    const tools = responses.find((item) => item.id === 2)?.result?.tools ?? []
+    const names = new Set(tools.map((tool) => tool.name))
+    ctx.expectGate(names.has('inspect_document') && names.has('preview_transaction') && names.has('commit_transaction') && tools.every((tool) => tool.inputSchema?.type === 'object'), 'MCP tool catalog did not mirror the Agent contract or JSON Schema surface.', { names: [...names], tools })
+    return { toolCount: tools.length, hasPreview: names.has('preview_transaction'), hasCommit: names.has('commit_transaction') }
+  })
+  return { protocol: true }
+})
+
+register('mcp', 'readonly-persistence', 'Readonly MCP sessions hide mutations while writable sessions persist one Operation.', 'A readonly client must not advertise commit/undo; a writable client previews and commits text.replaceContent, then a fresh process reads the result.', 'mutation filtering and same-path checkpoint persistence are both observable over stdio', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  await ctx.withTempDirectory(async (directory) => {
+    const { document, imageBytes } = makeCoreFixture()
+    const target = join(directory, 'readonly-and-write.ppte')
+    rt.file.writeCheckpoint(document, target, { clean: true, assetBytes: { [IDS.asset]: imageBytes }, timestamp: '2026-09-04T00:00:00.000Z' })
+    const readonlyResponses = runMcpBatch(target, [
+      { jsonrpc: '2.0', id: 1, method: 'initialize' },
+      { jsonrpc: '2.0', id: 2, method: 'tools/list' },
+      { jsonrpc: '2.0', id: 3, method: 'tools/call', params: { name: 'commit_transaction', arguments: {} } },
+    ], ['--readonly'])
+    const readonlyTools = readonlyResponses.find((item) => item.id === 2)?.result?.tools ?? []
+    const readonlyNames = new Set(readonlyTools.map((tool) => tool.name))
+    ctx.expectGate(!readonlyNames.has('commit_transaction') && !readonlyNames.has('undo_transaction') && readonlyResponses.find((item) => item.id === 3)?.error?.code === -32602, 'Readonly MCP exposed or accepted a mutation tool.', { readonlyTools, readonlyResponse: readonlyResponses.find((item) => item.id === 3) })
+
+    const inspectionResponses = runMcpBatch(target, [
+      { jsonrpc: '2.0', id: 1, method: 'initialize' },
+      { jsonrpc: '2.0', id: 2, method: 'tools/call', params: { name: 'inspect_document', arguments: {} } },
+    ])
+    const inspected = mcpToolResult(inspectionResponses, 2)
+    const transaction = ctx.textTransaction(rt, document, inspected.data.revision, 'MCP black-box edited title', { transactionId: 'bb-mcp-text-replace' })
+    const writeResponses = runMcpBatch(target, [
+      { jsonrpc: '2.0', id: 1, method: 'initialize' },
+      { jsonrpc: '2.0', id: 2, method: 'tools/call', params: { name: 'preview_transaction', arguments: { transaction } } },
+      { jsonrpc: '2.0', id: 3, method: 'tools/call', params: { name: 'commit_transaction', arguments: { transaction, confirmed: true } } },
+    ])
+    const preview = mcpToolResult(writeResponses, 2)
+    const committed = mcpToolResult(writeResponses, 3)
+    ctx.expectGate(preview.ok && committed.ok, 'MCP preview→commit did not accept text.replaceContent.', { preview, committed })
+
+    const reopenedResponses = runMcpBatch(target, [
+      { jsonrpc: '2.0', id: 1, method: 'initialize' },
+      { jsonrpc: '2.0', id: 2, method: 'tools/call', params: { name: 'get_element', arguments: { slideId: IDS.slide, elementId: IDS.title } } },
+    ])
+    const reopened = mcpToolResult(reopenedResponses, 2)
+    const value = reopened.data?.content?.paragraphs?.[0]?.runs?.[0]?.text
+    ctx.expectEqual(value, 'MCP black-box edited title', 'A fresh MCP process did not observe the committed text.', reopened)
+    return { readonlyMutationAbsent: true, preview: preview.ok, commit: committed.ok, reopenedText: value }
+  })
+  return { persisted: true }
 })
 
 register('review-patch', '26', 'Delete-versus-local-edit is an explicit review conflict.', 'Base has a title, local edits it, and the revised copy deletes it; review must protect the local change.', 'comparison returns a conflict/ambiguous unit rather than a clean deleted status', async (ctx) => {
