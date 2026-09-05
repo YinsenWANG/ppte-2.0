@@ -1707,7 +1707,7 @@
       "milestone": "M2",
       "priority": "P0",
       "title": "配方参数 UI 与安全换主题/布局",
-      "status": "planned",
+      "status": "done",
       "effort": "L",
       "ownerRole": "编辑器 / 编译器",
       "dependsOn": [
@@ -1737,7 +1737,50 @@
         "A15"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        {
+          "commit": "cac6c3d13495d71c15af4ab6a7b6b9033eede386",
+          "tests": [
+            "tests/design-edit-protection.test.ts"
+          ],
+          "verification": "docs/evolution/quality/d05-verification.json",
+          "criteria": [
+            {
+              "criterion": 1,
+              "tests": [
+                "D05 criterion 1: Host, Portable and Skill share finite recipe controls; CSS, code and unknown paths rejected",
+                "D05 Portable browser: schema controls preview/cancel/accept through Core and survive undo and save/reopen",
+                "D05 Host browser: RecipeStudio shares columns, stages geometry and theme separately, and accepts reviewed edits"
+              ],
+              "result": "Finite shared recipe controls drive Host, Portable, and Skill; invalid CSS/code/paths, string or out-of-range columns rejected. Both browser panels exercise actual preview and acceptance."
+            },
+            {
+              "criterion": 2,
+              "tests": [
+                "D05 criteria 2/3: four columns to three keeps the fourth item, IDs, facts, reading order and current text; stale IR cannot overwrite",
+                "D05 criterion 2: bound reflow preserves manual additions, local formatting, crop/assets and authoritative locks",
+                "D05 criterion 2: invalid/missing binding identities and changed recipe digest never guess; explicit rebuild repairs metadata",
+                "D05 criteria 2/3: theme/font changes preserve edited text and local overrides; protected global theme is rejected",
+                "D05 dual entry protection sequence: preview is read-only, commits match, stale previews fail, undo/redo reopen without recipe pack",
+                "D05 Portable browser: schema controls preview/cancel/accept through Core and survive undo and save/reopen",
+                "D05 Host browser: RecipeStudio shares columns, stages geometry and theme separately, and accepts reviewed edits"
+              ],
+              "result": "Current document extraction; versioned optional identity binding and explicit stale/rebuild handling; manual shapes/images/crops, overrides, protected objects, facts, IDs and reading order retained; theme and layout preview/commit share Core and survive undo/reopen without the recipe package."
+            },
+            {
+              "criterion": 3,
+              "tests": [
+                "D05 criteria 2/3: four columns to three keeps the fourth item, IDs, facts, reading order and current text; stale IR cannot overwrite",
+                "D05 criterion 3: insufficient capacity returns a proposal and no transaction; geometry and theme never rewrite content",
+                "D05 dual entry protection sequence: preview is read-only, commits match, stale previews fail, undo/redo reopen without recipe pack",
+                "D05 Portable browser: schema controls preview/cancel/accept through Core and survive undo and save/reopen",
+                "D05 Host browser: RecipeStudio shares columns, stages geometry and theme separately, and accepts reviewed edits"
+              ],
+              "result": "Four items wrap into three columns without dropping content. Capacity failures return proposals without a transaction. Reflow emits geometry plus binding metadata; theme is a separate transaction and neither rewrites content."
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "D06",

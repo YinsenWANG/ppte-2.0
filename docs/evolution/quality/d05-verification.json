@@ -1,0 +1,80 @@
+{
+  "taskId": "D05",
+  "status": "pass",
+  "baselineCommit": "120bdc6de68c0a364baf3f75f06a85f8ea41ba23",
+  "implementationCommit": "cac6c3d13495d71c15af4ab6a7b6b9033eede386",
+  "testFiles": [
+    "tests/design-edit-protection.test.ts"
+  ],
+  "criteria": {
+    "1": {
+      "tests": [
+        "D05 criterion 1: Host, Portable and Skill share finite recipe controls; CSS, code and unknown paths rejected",
+        "D05 Portable browser: schema controls preview/cancel/accept through Core and survive undo and save/reopen",
+        "D05 Host browser: RecipeStudio shares columns, stages geometry and theme separately, and accepts reviewed edits"
+      ],
+      "result": "Finite shared recipe controls drive Host, Portable, and Skill; invalid CSS/code/paths, string or out-of-range columns rejected. Both browser panels exercise actual preview and acceptance."
+    },
+    "2": {
+      "tests": [
+        "D05 criteria 2/3: four columns to three keeps the fourth item, IDs, facts, reading order and current text; stale IR cannot overwrite",
+        "D05 criterion 2: bound reflow preserves manual additions, local formatting, crop/assets and authoritative locks",
+        "D05 criterion 2: invalid/missing binding identities and changed recipe digest never guess; explicit rebuild repairs metadata",
+        "D05 criteria 2/3: theme/font changes preserve edited text and local overrides; protected global theme is rejected",
+        "D05 dual entry protection sequence: preview is read-only, commits match, stale previews fail, undo/redo reopen without recipe pack",
+        "D05 Portable browser: schema controls preview/cancel/accept through Core and survive undo and save/reopen",
+        "D05 Host browser: RecipeStudio shares columns, stages geometry and theme separately, and accepts reviewed edits"
+      ],
+      "result": "Current document extraction; versioned optional identity binding and explicit stale/rebuild handling; manual shapes/images/crops, overrides, protected objects, facts, IDs and reading order retained; theme and layout preview/commit share Core and survive undo/reopen without the recipe package."
+    },
+    "3": {
+      "tests": [
+        "D05 criteria 2/3: four columns to three keeps the fourth item, IDs, facts, reading order and current text; stale IR cannot overwrite",
+        "D05 criterion 3: insufficient capacity returns a proposal and no transaction; geometry and theme never rewrite content",
+        "D05 dual entry protection sequence: preview is read-only, commits match, stale previews fail, undo/redo reopen without recipe pack",
+        "D05 Portable browser: schema controls preview/cancel/accept through Core and survive undo and save/reopen",
+        "D05 Host browser: RecipeStudio shares columns, stages geometry and theme separately, and accepts reviewed edits"
+      ],
+      "result": "Four items wrap into three columns without dropping content. Capacity failures return proposals without a transaction. Reflow emits geometry plus binding metadata; theme is a separate transaction and neither rewrites content."
+    }
+  },
+  "verification": {
+    "typecheck": "pass",
+    "build": "pass",
+    "test": {
+      "baseline": 288,
+      "final": 297,
+      "delta": 9,
+      "passed": 297,
+      "failed": 0,
+      "skipped": 0
+    },
+    "blackbox": {
+      "start": "docs/evolution/quality/d05-blackbox-start.json",
+      "final": "docs/evolution/quality/d05-blackbox-final.json",
+      "beforeGreen": 69,
+      "beforeRed": 0,
+      "green": 69,
+      "red": 0,
+      "newRed": [],
+      "exitCode": 0
+    }
+  },
+  "buildManifest": {
+    "applicationVersion": "0.9.0-next.0",
+    "runtimeBuildId": "4cb9820e51752a59d8f3e42fc4b7e60325d863cc318a65e1cc1d1a18449f37c0"
+  },
+  "baselineMethod": "Isolated git archive of the starting commit, separately built and tested; no implementation changes in that checkout.",
+  "logSha256": {
+    "typecheck": "a7149824f4d2e2b22a41ec34ca6b451f7ac9e9003b5167390eead15d29870e70",
+    "build": "60ca46444de45fc682ae3a482a3992ab8dd7a618503d54c03c79c3f44488bba4",
+    "tests": "2327a86a6766686e70e314d0d03f53cb0a9b8d5163aa2adc1ef0e3297a2d7c64",
+    "blackbox": "19460fa9321b8f7b82ef81d8318911f79e49eb7d4341b60ab907364292f2b77e"
+  },
+  "limitations": [
+    "Only executable declared column controls are exposed; no arbitrary CSS, scripts or JSON paths.",
+    "Global theme changes that affect protected styles or field locks are rejected.",
+    "Capacity failure proposes another recipe or explicit slide splitting; it never auto-inserts a slide.",
+    "Invalid bindings require explicit rebuildBinding through the shared agent planner."
+  ]
+}
