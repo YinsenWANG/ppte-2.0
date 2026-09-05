@@ -71,7 +71,7 @@
       "milestone": "M0",
       "priority": "P0",
       "title": "固化失败样本与真实基线",
-      "status": "in_progress",
+      "status": "done",
       "effort": "S",
       "ownerRole": "Core / 验收",
       "dependsOn": [],
@@ -103,7 +103,43 @@
         "A20"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        {
+          "commit": "20da0b03db264e79438627acb52461d665a0a817",
+          "tests": [
+            "tests/evolution-baseline.test.ts",
+            "tests/portable-presentation.test.ts"
+          ],
+          "criteria": {
+            "1": "First four C01 tests reproduce background inverse loss, legal 1.0 checkpoint, invalid history and identity-less HTML; current roundtrips and safe delivery pass.",
+            "2": "C01 provenance test verifies exact original/report SHA256, source, license, revisions, environment and observed results in tests/fixtures/evolution/manifest.json.",
+            "3": "C01 A20 test locks c01-m1-v1 budget, E02 reference and 12/30/100-page raw browser samples with recalculated p50/p95."
+          },
+          "verification": {
+            "typecheck": "pass",
+            "build": "pass",
+            "test": {
+              "before": 119,
+              "after": 125,
+              "delta": 6,
+              "passed": 125
+            },
+            "blackbox": {
+              "start": "docs/evolution/quality/c01-blackbox-start.json",
+              "final": "docs/evolution/quality/c01-blackbox-final.json",
+              "green": 67,
+              "red": 2,
+              "newRed": []
+            }
+          },
+          "report": "docs/evolution/quality/C01.md",
+          "remainingRisks": [
+            "Existing blackbox reds section-41:1 and delivery:2 remain.",
+            "Real Safari, low-performance physical device, Host startup and physical IME unverified; API-to-paint is not keyboard latency.",
+            "Synthetic equivalents only; no real user originals supplied."
+          ]
+        }
+      ]
     },
     {
       "id": "C02",
