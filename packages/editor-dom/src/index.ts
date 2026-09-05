@@ -50,3 +50,4 @@ export class DomResources {
     this.cleanups.clear()
   }
 }
+export * from './pointer.js'

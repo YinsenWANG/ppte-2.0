@@ -1,3 +1,4 @@
+import { boundingFrame } from '../../geometry/src/index.js'
 import { canonicalJsonString } from '../../canonical-json/src/index.js'
 import { createBasicObject, objectPropertyValues, type ObjectPropertyCommand } from '../../editor-controller/src/object-commands.js'
 import type { PpteDocument, ShapeKind } from '../../schema/src/index.js'
@@ -11,7 +12,7 @@ export function renderObjectProperties(root: HTMLElement, document: PpteDocument
   // Text draft flushes must not detach the property input receiving focus.
   // Content is deliberately absent: this panel edits whole-box properties.
   const signature = canonicalJsonString({slideId,ids,theme:document.theme,background:document.slides[slideId].background,
-    properties:ids.map(id=>{const e=document.slides[slideId].elements[id];return {id,type:e?.type,style:e&&'style' in e?e.style:undefined,shape:e?.type==='shape'?e.shape:undefined,paragraphStyle:e?.type==='text'?e.paragraphStyle:undefined}})})
+    groups:document.slides[slideId].groups,properties:ids.map(id=>{const e=document.slides[slideId].elements[id];return {id,type:e?.type,style:e&&'style' in e?e.style:undefined,shape:e?.type==='shape'?e.shape:undefined,frame:e?.frame,rotationDeg:e?.rotationDeg,paragraphStyle:e?.type==='text'?e.paragraphStyle:undefined}})})
   if (renderedProperties.get(root) === signature) return
   renderedProperties.set(root, signature)
   root.replaceChildren()
@@ -46,6 +47,23 @@ export function renderObjectProperties(root: HTMLElement, document: PpteDocument
     node.onchange=()=>{if(node.value===lastValue)return;lastValue=node.value;action(node.value)};wrap.append(node);root.append(wrap)
   }
   const elements=ids.map(id=>document.slides[slideId].elements[id])
+  if(elements.length) {
+    const bounds=boundingFrame(elements.map(e=>e.frame))
+    let range:'selection'|'canvas'='selection', preserve=elements.some(e=>e.type==='image')
+    const scope=dom.createElement('select');scope.setAttribute('aria-label','对齐范围')
+    for(const [value,label] of [['selection','选择包围盒'],['canvas','画布']]){const o=dom.createElement('option');o.value=value;o.textContent=label;scope.append(o)}
+    scope.onchange=()=>{range=scope.value as typeof range};root.append(scope)
+    const ratio=dom.createElement('input');ratio.type='checkbox';ratio.checked=preserve;ratio.setAttribute('aria-label','保持比例');ratio.onchange=()=>{preserve=ratio.checked};const label=dom.createElement('label');label.textContent='保持比例（图片默认开启）';label.append(ratio);root.append(label)
+    for(const axis of ['x','y'] as const)for(const edge of ['start','center','end'] as const)button(({x:{start:'对象左对齐',center:'对象水平居中',end:'对象右对齐'},y:{start:'对象顶对齐',center:'对象垂直居中',end:'对象底对齐'}})[axis][edge],()=>apply({kind:'transform',command:{kind:'align',axis,edge,range}}))
+    for(const axis of ['x','y'] as const)button(axis==='x'?'水平等距分布':'垂直等距分布',()=>apply({kind:'transform',command:{kind:'distribute',axis,range}}))
+    for(const direction of ['front','back','forward','backward'] as const)button(({front:'置于顶层',back:'置于底层',forward:'上移一层',backward:'下移一层'})[direction],()=>apply({kind:'transform',command:{kind:'layer',direction}}))
+    button('组合',()=>apply({kind:'transform',command:{kind:'group',groupId:`group_${crypto.randomUUID()}`}}))
+    const group=Object.values(document.slides[slideId].groups??{}).find(g=>g.memberIds.length===ids.length&&g.memberIds.every(id=>ids.includes(id)))
+    if(group)button('取消组合',()=>apply({kind:'transform',command:{kind:'ungroup',groupId:group.id}}))
+    for(const key of ['width','height'] as const){const label=dom.createElement('label');label.textContent=key==='width'?'对象宽度':'对象高度';const n=dom.createElement('input');n.type='number';n.value=String(bounds[key]);n.setAttribute('aria-label',label.textContent);n.onchange=()=>{const frame={...bounds,[key]:Number(n.value)};if(preserve&&key==='height')frame.width=frame.height*bounds.width/bounds.height;apply({kind:'transform',command:{kind:'resize',frame,preserveAspectRatio:preserve}})};label.append(n);root.append(label)}
+    button('旋转 +15°',()=>apply({kind:'transform',command:{kind:'rotate',degrees:15}}))
+    const hint=dom.createElement('p');hint.textContent='拖动移动；Ctrl/⌘ 拖动缩放；Ctrl/⌘+Alt 拖动旋转；Shift 缩放解锁比例；方向键微移，Shift 大步；Esc 取消';root.append(hint)
+  }
   if(elements.length&&elements.every(e=>e?.type==='shape')){
     const shape=dom.createElement('select');shape.setAttribute('aria-label','形状类型')
     for(const kind of ['','rectangle','rounded-rectangle','ellipse','line','arrow','triangle','diamond','chevron']){const option=dom.createElement('option');option.value=kind;option.textContent=kind||'混合值';shape.append(option)}

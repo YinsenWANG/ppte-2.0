@@ -1,9 +1,11 @@
+import { planTransform, type TransformCommand } from './transform-session.js'
 import { cloneJson, equalJson } from '../../canonical-json/src/index.js'
 import { resolveEffectiveStyle } from '../../validation/src/index.js'
 import type { Element, Operation, Paint, ParagraphStyle, PpteDocument, ShapeKind, ShapeStyle, Stroke, TextStyle, Transaction } from '../../schema/src/index.js'
 
 /** Object formatting is always whole-box; no Run font fields are introduced. */
 export type ObjectPropertyCommand =
+  | { kind: 'transform'; command: TransformCommand }
   | { kind: 'shape-stroke'; patch: Partial<Stroke> }
   | { kind: 'shape-kind'; shape: ShapeKind }
   | { kind: 'shape-style'; patch: Partial<ShapeStyle> }
@@ -33,6 +35,7 @@ export function objectPropertyValues(document: PpteDocument, slideId: string, id
 
 /** Plan the complete selection before emitting anything. Unsupported members are never skipped. */
 export function objectPropertyOperations(document: PpteDocument, slideId: string, ids: string[], command: ObjectPropertyCommand, opId: string): Operation[] {
+  if(command.kind === 'transform') throw Error('USE_TRANSFORM_PLANNER')
   const slide = document.slides[slideId]
   if (!slide) throw new Error(`SLIDE_MISSING: ${slideId}`)
   if (command.kind === 'background') return [{opId,kind:'slide.update',slideId,patch:command.paint === 'inherit' ? {} : {background:cloneJson(command.paint)},...(command.paint === 'inherit' ? {unset:['background'] as ['background']} : {})}]
@@ -62,6 +65,7 @@ export function objectPropertyOperations(document: PpteDocument, slideId: string
 }
 
 export function planObjectProperty(document: PpteDocument, input: {revision:string; slideId:string; ids:string[]; command:ObjectPropertyCommand; transactionId:string; createdAt:string}): Transaction {
+  if(input.command.kind === 'transform') { const tx=planTransform(document,{...input,command:input.command.command}); if(!tx)throw Error('TRANSFORM_NO_CHANGE'); return tx }
   const operations = objectPropertyOperations(document,input.slideId,input.ids,input.command,input.transactionId)
   const page = input.command.kind === 'background', insert = input.command.kind === 'insert'
   return {

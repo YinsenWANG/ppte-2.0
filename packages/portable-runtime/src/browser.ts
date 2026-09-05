@@ -1,3 +1,5 @@
+import { TransformSession, planTransform } from '../../editor-controller/src/transform-session.js';
+import { TransformPointer, screenToDu } from '../../editor-dom/src/pointer.js';
 import { renderObjectProperties } from '../../editor-dom/src/object-properties.js';
 import { planObjectProperty } from '../../editor-controller/src/object-commands.js';
 import { TextEditingSurface, reconcileTextSurface } from '../../editor-dom/src/text-selection.js';
@@ -15,7 +17,6 @@ import {
   type QuickFixResult,
 } from "./shared.js";
 import { renderDocumentSurfaceHtml } from "../../renderer-react/src/index.js";
-import { geometryOnlyContract } from "../../change-contract/src/index.js";
 import type { ChartData, Transaction } from "../../schema/src/index.js";
 
 function startPortable() {
@@ -66,8 +67,7 @@ let presenting = false;
 let pendingPresentation = false;
 let scale = 1;
 let sequence = 0;
-let drag:
-  { id: string; x: number; y: number; dx: number; dy: number } | undefined;
+let drag: TransformPointer | undefined;
 const error = (code: string, message: string): QuickFixResult => ({
   ok: false,
   issues: [{ code, message, severity: "error" }],
@@ -88,6 +88,7 @@ const nodeFor = (id: string) =>
   ).find((n) => n.dataset.ppteElementId === id);
 function show(result?: { ok: boolean; issues?: Array<{ message: string }> }) {
   const state = runtime.presenterState();
+  if(drag&&(drag.session.slideId!==state.slideId||drag.session.revision!==runtime.getRevision()))cancelTransform();
   propertiesPanel.hidden = runtime.profile !== "full-portable" || presenting;
   if (!propertiesPanel.hidden) renderObjectProperties(properties, runtime.getDocument(), state.slideId, runtime.getSelection().filter(t=>t.slideId===state.slideId).map(t=>t.elementId), command => {
     if (!flush().ok) return;
@@ -183,7 +184,7 @@ async function enterPresentation() {
   if (!pending.ok) { show(pending); return pending; }
   pendingPresentation = false;
   (document.activeElement as HTMLElement | null)?.blur();
-  drag = undefined;
+  cancelTransform();
   runtime.presentation.enter(() => ({ ok: true }));
   presenting = true;
   root.dataset.ppteMode = "present";
@@ -201,7 +202,7 @@ function leavePresentation() {
   runtime.presentation.leave();
   presenting = false;
   root.dataset.ppteMode = "edit";
-  drag = undefined;
+  cancelTransform();
   render();
   if (document.fullscreenElement === root) void document.exitFullscreen().catch(() => {});
   root.querySelector<HTMLButtonElement>('[data-ppte-action="fullscreen"]')?.focus();
@@ -273,41 +274,12 @@ function selectMany(targets: Array<PortableElementTarget | string>) {
   return r;
 }
 function moveSelection(dx: number, dy: number) {
-  const items = runtime.getSelection();
-  if (!items.length)
-    return error("PORTABLE_SELECTION_INVALID", "Select an object first.");
-  if (items.length === 1 || runtime.profile !== "full-portable") {
-    const t = items[0]!;
-    const f =
-      runtime.getDocument().slides[t.slideId]!.elements[t.elementId]!.frame;
-    return change(runtime.moveElement(t, { x: f.x + dx, y: f.y + dy }));
-  }
-  const doc = runtime.getDocument();
-  const ids = items.map((i) => i.elementId);
-  const transaction: Transaction = {
-    transactionId: `portable:move-selection:${++sequence}`,
-    baseRevision: runtime.getRevision(),
-    actor: { type: "human", id: "portable" },
-    scope: {
-      kind: "selection",
-      slideIds: [...new Set(items.map((i) => i.slideId))],
-      elementIds: ids,
-      permissions: ["geometry"],
-      allowInsert: false,
-      allowDelete: false,
-    },
-    changeContract: geometryOnlyContract(ids, false),
-    createdAt: new Date().toISOString(),
-    operations: items.map((t) => ({
-      opId: `move:${t.elementId}`,
-      kind: "element.move",
-      ...t,
-      x: doc.slides[t.slideId]!.elements[t.elementId]!.frame.x + dx,
-      y: doc.slides[t.slideId]!.elements[t.elementId]!.frame.y + dy,
-    })),
-  };
-  return change(runtime.commit(transaction));
+  if(!runtime.controller.flushSync().ok)return error('FLUSH_BLOCKED','Finish text input first.');
+  const items=runtime.getSelection();if(!items.length)return error('SELECTION_EMPTY','Select an object first.')
+  try {const tx=planTransform(runtime.getDocument(),{revision:runtime.getRevision(),slideId:items[0].slideId,ids:items.map(t=>t.elementId),command:{kind:'move',dx,dy},transactionId:`nudge:${++sequence}`,createdAt:new Date().toISOString()});return tx?change(runtime.controller.commit(tx)):{ok:true,issues:[]}}
+  catch(cause){return error('TRANSFORM_FAILED',String(cause))}
 }
+
 function dialogForm(
   title: string,
   fields: Array<{ label: string; value: string; type?: string }>,
@@ -494,38 +466,37 @@ dom.listen(stage, "click", (event) => {
         ? items.filter((i) => i.elementId !== n.dataset.ppteElementId)
         : [...items, { elementId: n.dataset.ppteElementId! }],
     );
-  } else select(n.dataset.ppteElementId!);
-});
-dom.listen(stage, "pointerdown", (event) => {
-  const n = elementTarget(event);
-  if (presenting || !advanced || !n || n.isContentEditable || event.shiftKey) return;
-  const id = n.dataset.ppteElementId!;
-  if (!runtime.getSelection().some((s) => s.elementId === id)) select(id);
-  drag = { id, x: event.clientX, y: event.clientY, dx: 0, dy: 0 };
-  n.setPointerCapture(event.pointerId);
-});
-dom.listen(stage, "pointermove", (event) => {
-  if (!drag) return;
-  drag.dx = (event.clientX - drag.x) / scale;
-  drag.dy = (event.clientY - drag.y) / scale;
-  for (const t of runtime.getSelection()) {
-    const e = runtime.getDocument().slides[t.slideId]!.elements[t.elementId]!;
-    const n = nodeFor(t.elementId);
-    if (n) {
-      n.style.left = `${e.frame.x + drag.dx}px`;
-      n.style.top = `${e.frame.y + drag.dy}px`;
-    }
+  } else {
+    const id=n.dataset.ppteElementId!,slideId=runtime.presenterState().slideId;
+    const group=!event.altKey?Object.values(runtime.getDocument().slides[slideId].groups??{}).find(g=>g.memberIds.includes(id)):undefined;
+    if(group&&runtime.profile==='full-portable')selectMany(group.memberIds.map(elementId=>({slideId,elementId})));
+    else if(!runtime.getSelection().some(t=>t.elementId===id))select(id);
   }
 });
-dom.listen(stage, "pointerup", () => {
-  if (!drag) return;
-  const { dx, dy } = drag;
-  drag = undefined;
-  if (Math.abs(dx) + Math.abs(dy) > 0.5) moveSelection(dx, dy);
-  else render();
+function cancelTransform(event?:{pointerId:number}){if(event&&drag?.pointerId!==event.pointerId)return;const gesture=drag;drag=undefined;gesture?.cancel()}
+dom.listen(stage, 'pointerdown', event=>{
+  const n=elementTarget(event);if(presenting||!advanced||!n||event.button!==0||(event.shiftKey&&!event.ctrlKey&&!event.metaKey)||(n.isContentEditable&&!event.ctrlKey&&!event.metaKey))return;
+  const id=n.dataset.ppteElementId!,state=runtime.presenterState(),doc=runtime.getDocument(),slideId=state.slideId;
+  const group=!event.altKey?Object.values(doc.slides[slideId].groups??{}).find(g=>g.memberIds.includes(id)):undefined;
+  if(!runtime.getSelection().some(t=>t.elementId===id))selectMany((group?.memberIds??[id]).map(elementId=>({slideId,elementId})));
+  if(!runtime.controller.flushSync().ok)return;
+  event.preventDefault();
+  try {
+    const convert=(e:{clientX:number;clientY:number})=>screenToDu(e,stage.querySelector<HTMLElement>(`[data-ppte-slide-id="${slideId}"]`)!.getBoundingClientRect(),doc.canvas);
+    const mode=event.ctrlKey||event.metaKey?event.altKey?'rotate':'resize':'move';
+    const session=new TransformSession(doc,runtime.getRevision(),slideId,runtime.getSelection().map(t=>t.elementId),convert(event),mode,event.shiftKey?false:undefined);
+    drag=new TransformPointer(session,event.pointerId,convert,geometry=>{for(const [id,g]of Object.entries(geometry)){const node=nodeFor(id);if(node){node.style.left=`${g.frame.x}px`;node.style.top=`${g.frame.y}px`;node.style.width=`${g.frame.width}px`;node.style.height=`${g.frame.height}px`;node.style.transform=`rotate(${g.rotationDeg??0}deg)`}}},tx=>change(runtime.controller.commit(tx)),()=>{drag=undefined;render()});
+    stage.setPointerCapture(event.pointerId);
+  }catch(cause){cancelTransform();show(error('TRANSFORM_FAILED',String(cause)))}
 });
+dom.listen(stage,'pointermove',event=>drag?.move(event,6/scale));
+dom.listen(stage,'pointerup',event=>{drag?.end(event,`transform:${++sequence}`);if(stage.hasPointerCapture(event.pointerId))stage.releasePointerCapture(event.pointerId)});
+dom.listen(stage,'pointercancel',cancelTransform);
+dom.listen(stage,'lostpointercapture',cancelTransform);
 dom.listen(window, "resize", fit);
 dom.listen(document, "keydown", (event) => {
+  if(event.key==='Escape')cancelTransform();
+  if(!presenting&&!event.isComposing&&![...textSurface.drafts.values()].some(b=>b.isComposing())&&runtime.getSelection().length>0&&!(event.target as HTMLElement).closest('input,textarea,select,[contenteditable="true"]')&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key)){event.preventDefault();const step=event.shiftKey?10:1;moveSelection(event.key==='ArrowLeft'?-step:event.key==='ArrowRight'?step:0,event.key==='ArrowUp'?-step:event.key==='ArrowDown'?step:0);return}
   if (event.isComposing || [...textSurface.drafts.values()].some(b=>b.isComposing())) return;
   if (presenting) {
     if (event.key !== "Escape" && (event.target as HTMLElement).closest("a,button,video,audio,input,textarea,select")) return;

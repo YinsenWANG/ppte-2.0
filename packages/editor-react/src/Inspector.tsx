@@ -1,3 +1,5 @@
+import { planTransform, type TransformCommand } from '../../editor-controller/src/transform-session.js'
+import { canonicalRevision } from '../../canonical-json/src/index.js'
 import { useEffect, useRef } from 'react'
 import { renderObjectProperties } from '../../editor-dom/src/object-properties.js'
 import { objectPropertyOperations, type ObjectPropertyCommand } from '../../editor-controller/src/object-commands.js'
@@ -32,18 +34,21 @@ export function Inspector({
     })
   }, [document, slide, ids, commit, commitProperty])
   const element = ids.length === 1 ? slide.elements[ids[0] ?? ""] : undefined;
-  const emit = (value: Record<string, unknown>) =>
-    commit(
-      [
-        {
-          opId: `inspector:${crypto.randomUUID()}`,
-          slideId: slide.id,
-          elementId: element?.id,
-          ...value,
-        } as Operation,
-      ],
-      "修改选中对象",
-    );
+  const emit = (value: Record<string, any>) => {
+    let command:TransformCommand|undefined
+    if(value.kind==='layout.align')command={kind:'align',axis:['left','right','center-x'].includes(value.alignment)?'x':'y',edge:['left','top'].includes(value.alignment)?'start':['right','bottom'].includes(value.alignment)?'end':'center',range:'selection'}
+    else if(value.kind==='layout.distribute')command={kind:'distribute',axis:value.axis==='horizontal'?'x':'y',range:'selection'}
+    else if(value.kind==='group.create')command={kind:'group',groupId:value.group.id}
+    else if(value.kind==='group.delete')command={kind:'ungroup',groupId:value.groupId}
+    else if(value.kind==='group.resize'||value.kind==='element.resize')command={kind:'resize',frame:value.targetFrame??value.frame}
+    else if(value.kind==='group.rotate'||value.kind==='element.rotate')command={kind:'rotate',degrees:value.rotationDeg-(value.kind==='element.rotate'?(element?.rotationDeg??0):0)}
+    if(command){
+      if(commitProperty)return commitProperty({kind:'transform',command})
+      const tx=planTransform(document,{revision:canonicalRevision(document),slideId:slide.id,ids,command,transactionId:`inspector:${crypto.randomUUID()}`,createdAt:new Date().toISOString()})
+      return tx?commit(tx.operations,'修改选中对象'):true
+    }
+    return commit([{opId:`inspector:${crypto.randomUUID()}`,slideId:slide.id,elementId:element?.id,...value} as Operation],'修改选中对象')
+  }
   const number = (label: string, value: number, save: (v: number) => void) => (
     <label key={label}>
       {label}
@@ -68,25 +73,8 @@ export function Inspector({
       <div ref={propertyRoot} data-ppte-object-properties />
       <strong>{ids.length ? `${ids.length} 个对象` : "选择对象后调整"}</strong>
       {ids.length>1&&<fieldset><legend>对齐与分布</legend>{(['left','center-x','right','top','center-y','bottom'] as const).map((alignment)=><button key={alignment} onClick={()=>emit({kind:'layout.align',elementIds:ids,alignment,reference:'selection'})}>{({left:'左对齐','center-x':'水平居中',right:'右对齐',top:'顶对齐','center-y':'垂直居中',bottom:'底对齐'})[alignment]}</button>)}{(['horizontal','vertical'] as const).map(axis=><button key={axis} onClick={()=>emit({kind:'layout.distribute',elementIds:ids,axis,mode:'gaps'})}>{axis==='horizontal'?'水平等距':'垂直等距'}</button>)}</fieldset>}
-      {ids.length > 1 && !group && (
-        <button
-          onClick={() =>
-            emit({
-              kind: "group.create",
-              group: { id: `group_${crypto.randomUUID()}`, memberIds: ids },
-            })
-          }
-        >
-          组合
-        </button>
-      )}
       {group && (
         <>
-          <button
-            onClick={() => emit({ kind: "group.delete", groupId: group.id })}
-          >
-            取消组合
-          </button>
           {(["x", "y", "width", "height"] as const).map(key => number(key, frame![key], value => emit({kind:'group.resize',groupId:group.id,targetFrame:{...frame,[key]:value}})))}
           {number("组旋转角度", 0, (v) =>
             emit({ kind: "group.rotate", groupId: group.id, rotationDeg: v }),

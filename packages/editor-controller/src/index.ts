@@ -154,3 +154,4 @@ export class EditorController {
 }
 
 export * from "./object-commands.js"
+export * from './transform-session.js'

@@ -1,3 +1,5 @@
+import { TransformSession, planTransform, type TransformGeometry } from '../../editor-controller/src/transform-session.js'
+import { TransformPointer, screenToDu } from '../../editor-dom/src/pointer.js'
 import { planObjectProperty } from '../../editor-controller/src/object-commands.js'
 import { TextEditingSurface, reconcileTextSurface, type TextSurfacePort } from '../../editor-dom/src/text-selection.js'
 import { EditorController } from '../../editor-controller/src/index.js'
@@ -26,7 +28,7 @@ import { validateRuntimeDocument } from '../../validation/src/index.js'
 import { advancePresenterState, retreatPresenterState, type PresenterAnimationState } from '../../portable-runtime/src/presenter-state.js'
 import { renderSlideHtml, type RenderOptions } from '../../renderer-react/src/index.js'
 import type { Asset, ImageElement, Operation, PpteDocument, TextElement, Transaction, ValidationIssue } from '../../schema/src/index.js'
-import { beginDrag, buildSelectionOverlay, endDrag, type DragTransient, updateDrag, type SelectionState } from './interaction.js'
+import { buildSelectionOverlay, type SelectionState } from './interaction.js'
 
 export interface HostAppProps {
   initialDocument?: PpteDocument
@@ -63,7 +65,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
   function setFontBytes(value:ResourceBytes|((current:ResourceBytes)=>ResourceBytes)){setFontPool(current=>poolBytes(typeof value==='function'?{...current,...value(resolveBytes(current,documentNode.fonts))}:value))}
   const [activeSlideIndex, setActiveSlideIndex] = useState(0)
   const [selection, setSelection] = useState<SelectionState>({ slideId: initialDocument.slideOrder[0] ?? '', elementIds: [] })
-  const [dragFrame, setDragFrame] = useState<DragTransient['currentFrame']>()
+  const [dragFrame, setDragFrame] = useState<Record<string,TransformGeometry>>()
   const [notesDraft, setNotesDraft] = useState('')
   const [status, setStatus] = useState('就绪 · 本地语义文档')
   const [presenting, setPresenting] = useState(false)
@@ -93,7 +95,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
   const [recoveryInspection,setRecoveryInspection] = useState<{file:File; diagnosis:CheckpointRecoveryAssessment}>()
   const [unsupported,setUnsupported]=useState<UnsupportedProjectError>()
   const [assetSources, setAssetSources] = useState<Record<string, string>>({})
-  const dragRef = useRef<DragTransient | undefined>(undefined)
+  const dragRef = useRef<TransformPointer | undefined>(undefined)
   const textSurface = useRef<TextEditingSurface | undefined>(undefined)
   const lastCommitIssues = useRef<import('../../schema/src/index.js').ValidationIssue[]>([])
   const textPort = useRef<TextSurfacePort | undefined>(undefined)
@@ -256,53 +258,36 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
   function pointerInDu(event: ReactPointerEvent<HTMLDivElement>): { x: number; y: number } {
     const slide = renderedRef.current?.querySelector<HTMLElement>('.ppte-slide')
     const rect = slide?.getBoundingClientRect()
-    if (!rect || rect.width === 0 || rect.height === 0) return { x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY }
-    return { x: (event.clientX - rect.left) * documentNode.canvas.width / rect.width, y: (event.clientY - rect.top) * documentNode.canvas.height / rect.height }
+    if (!rect) throw Error('INVALID_VIEWPORT')
+    return screenToDu(event,rect,documentNode.canvas)
   }
-
+  useEffect(()=>{const cancel=(event:globalThis.KeyboardEvent)=>{if(event.key==='Escape'&&dragRef.current){event.preventDefault();cancelTransform()}};window.addEventListener('keydown',cancel,true);return()=>{window.removeEventListener('keydown',cancel,true);dragRef.current?.session.cancel()}},[])
+  useEffect(()=>{cancelTransform()},[activeSlideId,documentNode])
+  function cancelTransform(event?:{pointerId:number}):void {if(event&&dragRef.current?.pointerId!==event.pointerId)return;const gesture=dragRef.current;dragRef.current=undefined;gesture?.cancel();setDragFrame(undefined)}
   function onPointerDown(event: ReactPointerEvent<HTMLDivElement>): void {
-    if (presenting) return
+    if (presenting || event.button!==0) return
     const target = event.target instanceof window.Element ? event.target.closest<HTMLElement>('[data-ppte-element-id]') : null
     const elementId = target?.dataset.ppteElementId
-    if (!elementId || !activeSlide?.elements[elementId]) {
-      if (!event.shiftKey && !event.metaKey && !event.ctrlKey) setSelection({ slideId: activeSlideId, elementIds: [] })
-      return
-    }
-    const group=!event.altKey ? Object.values(activeSlide.groups??{}).find(g=>g.memberIds.includes(elementId)) : undefined
-    const multi = event.metaKey || event.ctrlKey || event.shiftKey
-    const nextIds = multi
-      ? activeElementIds.includes(elementId) ? activeElementIds.filter((id) => id !== elementId) : [...activeElementIds, elementId]
-      : group ? group.memberIds : [elementId]
-    setSelection({ slideId: activeSlideId, elementIds: nextIds, primaryElementId: elementId,groupId:!multi?group?.id:undefined })
-    const element = activeSlide.elements[elementId]
-    if (!multi && (group || element.type !== 'text') && element.locked !== true) {
-      // The image wrapper is the semantic drag target. Prevent the browser's
-      // native image-selection/drag gesture so pointer capture remains owned
-      // by the Host until pointer-up commits the transient frame.
-      event.preventDefault()
-      dragRef.current = beginDrag(documentNode, canonicalRevision(documentNode), activeSlideId, elementId, pointerInDu(event), group?.id)
-      setDragFrame(dragRef.current.currentFrame)
+    if (!elementId || !activeSlide?.elements[elementId]) {if(!event.shiftKey)setSelection({slideId:activeSlideId,elementIds:[]});return}
+    const group=!event.altKey?Object.values(activeSlide.groups??{}).find(g=>g.memberIds.includes(elementId)):undefined
+    const nextIds=event.shiftKey&&!event.ctrlKey&&!event.metaKey ? activeElementIds.includes(elementId)?activeElementIds.filter(id=>id!==elementId):[...activeElementIds,...(group?.memberIds??[elementId])] : activeElementIds.includes(elementId)?activeElementIds:group?.memberIds??[elementId]
+    setSelection({slideId:activeSlideId,elementIds:nextIds,primaryElementId:elementId})
+    if(event.shiftKey&&!event.ctrlKey&&!event.metaKey)return
+    if(activeSlide.elements[elementId].type==='text'&&!event.ctrlKey&&!event.metaKey)return
+    if(!controller().flushSync().ok)return
+    event.preventDefault()
+    event.currentTarget.focus()
+    try {
+      const mode=event.ctrlKey||event.metaKey?event.altKey?'rotate':'resize':'move'
+      const session=new TransformSession(documentNode,canonicalRevision(documentNode),activeSlideId,nextIds,pointerInDu(event),mode,event.shiftKey?false:undefined)
+      dragRef.current=new TransformPointer(session,event.pointerId,e=>screenToDu(e,renderedRef.current!.querySelector<HTMLElement>('.ppte-slide')!.getBoundingClientRect(),documentNode.canvas),setDragFrame,tx=>commitTransaction(tx,'对象变换已提交'),()=>{dragRef.current=undefined;setDragFrame(undefined)})
       event.currentTarget.setPointerCapture(event.pointerId)
-    }
+    }catch(error){cancelTransform();setStatus(String(error))}
   }
-
-  function onPointerMove(event: ReactPointerEvent<HTMLDivElement>): void {
-    if (!dragRef.current) return
-    event.preventDefault()
-    const next = updateDrag(dragRef.current, pointerInDu(event))
-    dragRef.current = next
-    setDragFrame(next.currentFrame)
-  }
-
+  function onPointerMove(event: ReactPointerEvent<HTMLDivElement>): void {dragRef.current?.move(event,6/canvasScale)}
   function onPointerUp(event: ReactPointerEvent<HTMLDivElement>): void {
-    const transient = dragRef.current
-    dragRef.current = undefined
-    setDragFrame(undefined)
-    if (!transient) return
-    event.preventDefault()
-    const transaction = endDrag(transient, nextOperationId('drag'), now())
-    if (transaction) commitTransaction(transaction, '图片位置已提交')
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId)
+    dragRef.current?.end(event,nextOperationId('transform'))
+    if(event.currentTarget.hasPointerCapture(event.pointerId))event.currentTarget.releasePointerCapture(event.pointerId)
   }
 
   function updateNotes(): void {
@@ -656,7 +641,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     try {
       if (!presentation.enter(() => { flushHostEdits(); return { ok: true } })) return
       (document.activeElement as HTMLElement | null)?.blur();
-      dragRef.current = undefined; setDragFrame(undefined); setPendingEdit(undefined); setReviewing(false); setStudio(false)
+      cancelTransform(); setPendingEdit(undefined); setReviewing(false); setStudio(false)
       setPresenting(true)
       requestAnimationFrame(() => {
         if (!presentation.isPresenting) return
@@ -670,7 +655,8 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLDivElement>): void {
-    if (event.key === 'Escape') pendingPresentation.current = false
+    if (event.key === 'Escape') { pendingPresentation.current = false; cancelTransform() }
+    if(!presenting&&!event.nativeEvent.isComposing&&![...(textSurface.current?.drafts.values()??[])].some(b=>b.isComposing())&&!(event.target as HTMLElement).closest('input,textarea,select,[contenteditable="true"]')&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key)&&activeElementIds.length){event.preventDefault();try{if(!controller().flushSync().ok)return;const step=event.shiftKey?10:1;const tx=planTransform(documentNode,{revision:canonicalRevision(documentNode),slideId:activeSlideId,ids:activeElementIds,command:{kind:'move',dx:event.key==='ArrowLeft'?-step:event.key==='ArrowRight'?step:0,dy:event.key==='ArrowUp'?-step:event.key==='ArrowDown'?step:0},transactionId:nextOperationId('nudge'),createdAt:now()});if(tx)commitTransaction(tx,'对象已移动')}catch(error){setStatus(String(error))}return}
     if(event.nativeEvent.isComposing || [...(textSurface.current?.drafts.values()??[])].some(b=>b.isComposing()))return
     if(!presenting){if(event.key==='Escape'){const target=textTarget(event);if(target){textSurface.current?.discard(target.element.id);setRenderEpoch(n=>n+1);target.node.blur();event.preventDefault();setStatus('已取消本次文字编辑')}}if((event.metaKey||event.ctrlKey)&&event.key==='s'){event.preventDefault();void saveCopy()}return}
     if (event.key !== 'Escape' && (event.target as HTMLElement).closest('a,button,video,audio,input,textarea,select')) return
@@ -721,12 +707,11 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     </aside>}
     {presenting && <nav className="ppte-presenter-controls" aria-label="放映控制"><button onClick={previousPresenter} aria-label="上一页">←</button><span>{presenterState.slideIndex + 1} / {documentNode.slideOrder.length}</span><button onClick={nextPresenter} aria-label="下一页">→</button><button data-ppte-action="exit-present" onClick={togglePresenter}>退出放映</button></nav>}
     <main className="ppte-host-main" data-ppte-stage onPasteCapture={event => { if (!presentation.canMutate) event.preventDefault() }} onDropCapture={event => { if (!presentation.canMutate) event.preventDefault() }}>
-      <div className="ppte-canvas-wrap" style={{ aspectRatio: `${documentNode.canvas.width} / ${documentNode.canvas.height}`, ['--ppte-aspect' as string]: documentNode.canvas.width / documentNode.canvas.height }} ref={renderedRef} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp} onDoubleClick={(event) => { if (!presentation.canMutate) return; const target = textTarget(event); if (target) { setSelection({slideId:activeSlideId,elementIds:[target.element.id],primaryElementId:target.element.id}); target.node.focus(); setStatus('文字编辑中 · compositionend 后提交') } }} onBeforeInput={event => { if (!presentation.canMutate) event.preventDefault() }} onPaste={event => { if (!presentation.canMutate) event.preventDefault() }} onDrop={event => { if (!presentation.canMutate) event.preventDefault() }}>
+      <div className="ppte-canvas-wrap" tabIndex={-1} style={{ aspectRatio: `${documentNode.canvas.width} / ${documentNode.canvas.height}`, ['--ppte-aspect' as string]: documentNode.canvas.width / documentNode.canvas.height }} ref={renderedRef} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={cancelTransform} onLostPointerCapture={cancelTransform} onDoubleClick={(event) => { if (!presentation.canMutate) return; const target = textTarget(event); if (target) { setSelection({slideId:activeSlideId,elementIds:[target.element.id],primaryElementId:target.element.id}); target.node.focus(); setStatus('文字编辑中 · compositionend 后提交') } }} onBeforeInput={event => { if (!presentation.canMutate) event.preventDefault() }} onPaste={event => { if (!presentation.canMutate) event.preventDefault() }} onDrop={event => { if (!presentation.canMutate) event.preventDefault() }}>
         <div className="ppte-rendered-slide" data-ppte-canvas-scale={canvasScale} style={{ ['--ppte-scale' as string]: canvasScale }} />
         {!presenting && selectedOverlay.map((item) => {
-          const moving=dragRef.current
-          const frame = moving&&dragFrame&&moving.memberIds?.includes(item.elementId) ? {...item.frame,x:item.frame.x+dragFrame.x-moving.originalFrame.x,y:item.frame.y+dragFrame.y-moving.originalFrame.y} : item.elementId === moving?.elementId && dragFrame ? dragFrame : item.frame
-          return <div key={item.elementId} className={`ppte-selection-box${item.elementId === selection.primaryElementId ? ' is-primary' : ''}`} data-ppte-selection-id={item.elementId} style={{ left: frame.x * canvasScale, top: frame.y * canvasScale, width: frame.width * canvasScale, height: frame.height * canvasScale }} />
+          const frame = dragFrame?.[item.elementId]?.frame ?? item.frame
+          return <div key={item.elementId} className={`ppte-selection-box${item.elementId === selection.primaryElementId ? ' is-primary' : ''}`} data-ppte-selection-id={item.elementId} style={{ left: frame.x * canvasScale, top: frame.y * canvasScale, width: frame.width * canvasScale, height: frame.height * canvasScale, transform:`rotate(${dragFrame?.[item.elementId]?.rotationDeg ?? activeSlide.elements[item.elementId].rotationDeg ?? 0}deg)` }} />
         })}
       </div>
     </main>
