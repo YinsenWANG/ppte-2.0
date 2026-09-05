@@ -6,6 +6,7 @@ import {tmpdir} from 'node:os'
 import {join,resolve} from 'node:path'
 import {pathToFileURL} from 'node:url'
 import {chromium} from 'playwright'
+import {buildSync} from 'esbuild'
 import {createEmptyDocument} from '../packages/authoring/src/default-document.js'
 import {PpteSession} from '../packages/core/src/index.js'
 import {PortableRuntime,buildPortable} from '../packages/portable-runtime/src/index.js'
@@ -100,6 +101,37 @@ test('F02 A13 Portable profile permissions, locks, presentation guard, style ren
   const locked=structuredClone(document);locked.slides[slideId].elements.table.locked=true
   const runtime=new PortableRuntime(locked,{profile:'full-portable'})
   assert.equal(runtime.editTable(tableEditingOperations(element,slideId,selection,{kind:'value',value:'denied'},'locked',false)).ok,false);assert.equal(runtime.getHistory().length,0)
+})
+
+test('F02 A21 table rerenders retain keyboard focus, draft selection and navigation without stealing outside focus',async()=>{
+  const script=buildSync({entryPoints:['packages/editor-dom/src/table-selection.ts'],bundle:true,format:'iife',globalName:'TableEditor',write:false}).outputFiles[0].text
+  const browser=await chromium.launch({headless:true})
+  try{
+    const page=await browser.newPage()
+    await page.setContent('<button id="outside">Outside</button><div id="table"></div>')
+    await page.addScriptTag({content:script})
+    const {element,slideId}=fixture()
+    const result=await page.evaluate(serialized=>{
+      const {element,slideId}=JSON.parse(serialized)
+      const root=document.getElementById('table')!,editor=(window as any).TableEditor
+      const render=()=>editor.renderTableEditor(root,element,slideId,true,()=>true)
+      render()
+      const cell=()=>root.querySelector<HTMLButtonElement>('[data-table-cell="table:cell:0:0"]')!
+      const old=cell();old.focus();render()
+      const cellRetained=document.activeElement===cell()&&cell()!==old
+      let historyTarget=false
+      root.addEventListener('keydown',event=>{if(event.ctrlKey&&event.key==='z')historyTarget=(event.target as HTMLElement).dataset.tableCell==='table:cell:0:0'})
+      document.activeElement!.dispatchEvent(new KeyboardEvent('keydown',{key:'z',ctrlKey:true,bubbles:true}))
+      document.activeElement!.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}))
+      const navigated=(document.activeElement as HTMLElement).dataset.tableCell==='table:cell:0:1'
+      const value=()=>root.querySelector<HTMLTextAreaElement>('[aria-label="单元格值"]')!
+      value().focus();value().value='unfinished draft';value().dispatchEvent(new Event('input'));value().setSelectionRange(2,7);render()
+      const draft={focused:document.activeElement===value(),value:value().value,start:value().selectionStart,end:value().selectionEnd}
+      document.getElementById('outside')!.focus();render()
+      return {cellRetained,historyTarget,navigated,draft,outside:document.activeElement?.id}
+    },JSON.stringify({element,slideId}))
+    assert.deepEqual(result,{cellRetained:true,historyTarget:true,navigated:true,draft:{focused:true,value:'unfinished draft',start:2,end:7},outside:'outside'})
+  }finally{await browser.close()}
 })
 
 test('F02 A13/A21 real Host and file Portable table selection, paste, styles, structure, save/reopen/undo journey',async()=>{

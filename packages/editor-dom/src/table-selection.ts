@@ -103,6 +103,16 @@ export function rememberTableCell(target: EventTarget | null, extend=false): boo
 const states=new WeakMap<HTMLElement,{elementId:string;selection?:TableSelection;draft?:{value:string;type:string};paste?:string;error?:string}>()
 /** Accessible inspector grid shared by Host and generated file:// Portable. */
 export function renderTableEditor(root: HTMLElement, element: ComponentElement | undefined, slideId: string, structure: boolean, commit: (operations: Operation[])=>boolean): void {
+  // Host status/recovery updates can render the same inspector between keystrokes.
+  // Keep keyboard ownership on the replacement control, including text selection.
+  const active = root.ownerDocument.activeElement as HTMLElement | null
+  const focused = active && root.contains(active) && states.get(root)?.elementId === element?.id ? {
+    cellId: active.dataset.tableCell,
+    label: active.getAttribute('aria-label'),
+    tag: active.tagName,
+    text: active.textContent,
+    range: active.tagName === 'TEXTAREA' ? [(active as HTMLTextAreaElement).selectionStart, (active as HTMLTextAreaElement).selectionEnd] as const : undefined,
+  } : undefined
   root.replaceChildren()
   if(element?.componentType!=='core/table')return
   const doc=root.ownerDocument
@@ -163,4 +173,13 @@ export function renderTableEditor(root: HTMLElement, element: ComponentElement |
   }
   sync()
   if(s.draft){value.value=s.draft.value;type.value=s.draft.type}
+  if(focused){
+    const controls=Array.from(root.querySelectorAll<HTMLElement>('button,input,textarea,select'))
+    const replacement=controls.find(control=>focused.cellId
+      ? control.dataset.tableCell===focused.cellId
+      : control.tagName===focused.tag&&(focused.label?control.getAttribute('aria-label')===focused.label:control.textContent===focused.text))
+      ?? (focused.cellId?controls.find(control=>control.dataset.tableCell===s.selection?.focus):undefined)
+    replacement?.focus({preventScroll:true})
+    if(replacement&&focused.range)(replacement as HTMLTextAreaElement).setSelectionRange(...focused.range)
+  }
 }
