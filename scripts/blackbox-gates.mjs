@@ -1988,6 +1988,17 @@ register('legacy-import', 'legacy-profile-boundaries', 'Legacy migration preserv
   return observed
 })
 
+register('review-patch', 'D07-evidence', 'Missing authoring evidence cannot close G2.', 'The authoring benchmark has no completed human panel; M3 table editing is deferred at G2.', 'public reviewer returns blocked with zero human passes and a deferred table script; this is a gate-contract check, not G2 acceptance', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const manifest = JSON.parse(readFileSync(join(ROOT, 'tests/fixtures/evolution/authoring-benchmark.json'), 'utf8'))
+  const submission = { version: 'd07-evidence-v1', fixtureDigest: rt.canonical.canonicalHash(manifest), reviewers: [], runs: [], humanReviews: [] }
+  const result = rt.reviewer.evaluateAuthoringBenchmark(manifest, submission, 'M2')
+  ctx.expectEqual(result.status, 'blocked', 'Missing human evidence must block G2')
+  ctx.expectEqual(result.humanPassed, 0, 'Missing/deferred work cannot count as passed')
+  ctx.expectEqual(result.deferredScriptIds, ['table'], 'Only M3 table script is deferred')
+  return { contract: 'green', authoringGate: result.status, humanPassed: result.humanPassed, deferred: result.deferredScriptIds }
+})
+
 function summarizeCase(spec, status, extra = {}) {
   return {
     id: spec.id,

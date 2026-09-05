@@ -1861,7 +1861,7 @@
       "milestone": "M2",
       "priority": "P0",
       "title": "建立成稿质量基准与人工任务门禁",
-      "status": "planned",
+      "status": "partial",
       "effort": "M",
       "ownerRole": "验收 / 设计",
       "dependsOn": [
@@ -1897,7 +1897,12 @@
         "A21"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [],
+      "remainingGaps": [
+        "Forty retained same-Agent baseline/candidate generations have not been executed.",
+        "Project owner and at least two target users have not supplied timed review sessions, failure logs or repair comparisons.",
+        "Actual visual overlap/screenshot calibration and selected format/Office client evidence are outstanding; G2 remains blocked."
+      ]
     },
     {
       "id": "F01",

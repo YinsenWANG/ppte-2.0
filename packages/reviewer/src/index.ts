@@ -787,3 +787,5 @@ function pointer(value: string): string { return value.replaceAll('~', '~0').rep
 export function isDeckLayoutReportCurrent(report: import('../../design-compiler/src/deck-planning.js').DeckLayoutReport, identity: string): boolean {
   return report.version === '1' && report.identity === identity && report.status === 'complete'
 }
+
+export * from './authoring-benchmark.js'

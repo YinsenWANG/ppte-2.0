@@ -1,0 +1,143 @@
+{
+  "version": "d07-report-v1",
+  "taskStatus": "partial",
+  "provenance": {
+    "taskStartCommit": "08e47e54b2c1d628cc0e52638f802ae5df9b22da",
+    "buildManifest": {
+      "applicationVersion": "0.9.0-next.0",
+      "runtimeBuildId": "4468fbdb2cec913f9de87e8ebd8bb603fc83c6acba1e59a61ed9d83822efad50"
+    },
+    "environment": {
+      "node": "v22.23.2",
+      "platform": "darwin",
+      "arch": "arm64"
+    },
+    "executor": "Codex automated implementation; not a human reviewer",
+    "measurement": "Evidence contract only. No timed human sessions or paired Agent generations have been performed."
+  },
+  "submission": {
+    "version": "d07-evidence-v1",
+    "fixtureDigest": "154cfeed1f895b11b530016510ebc564f27c768ca453b67c8d76a7482c3d7ad0",
+    "reviewers": [],
+    "runs": [],
+    "humanReviews": []
+  },
+  "gate": {
+    "version": "d07-gate-v1",
+    "stage": "M2",
+    "fixtureDigest": "154cfeed1f895b11b530016510ebc564f27c768ca453b67c8d76a7482c3d7ad0",
+    "status": "blocked",
+    "blockers": [
+      "missing-human-panel",
+      "product-story-present:baseline:0:missing-or-duplicate",
+      "product-story-present:candidate:0:missing-or-duplicate",
+      "product-story-present:baseline:1:missing-or-duplicate",
+      "product-story-present:candidate:1:missing-or-duplicate",
+      "product-story-read:baseline:0:missing-or-duplicate",
+      "product-story-read:candidate:0:missing-or-duplicate",
+      "product-story-read:baseline:1:missing-or-duplicate",
+      "product-story-read:candidate:1:missing-or-duplicate",
+      "data-report-present:baseline:0:missing-or-duplicate",
+      "data-report-present:candidate:0:missing-or-duplicate",
+      "data-report-present:baseline:1:missing-or-duplicate",
+      "data-report-present:candidate:1:missing-or-duplicate",
+      "data-report-read:baseline:0:missing-or-duplicate",
+      "data-report-read:candidate:0:missing-or-duplicate",
+      "data-report-read:baseline:1:missing-or-duplicate",
+      "data-report-read:candidate:1:missing-or-duplicate",
+      "technical-explanation-present:baseline:0:missing-or-duplicate",
+      "technical-explanation-present:candidate:0:missing-or-duplicate",
+      "technical-explanation-present:baseline:1:missing-or-duplicate",
+      "technical-explanation-present:candidate:1:missing-or-duplicate",
+      "technical-explanation-read:baseline:0:missing-or-duplicate",
+      "technical-explanation-read:candidate:0:missing-or-duplicate",
+      "technical-explanation-read:baseline:1:missing-or-duplicate",
+      "technical-explanation-read:candidate:1:missing-or-duplicate",
+      "business-proposal-present:baseline:0:missing-or-duplicate",
+      "business-proposal-present:candidate:0:missing-or-duplicate",
+      "business-proposal-present:baseline:1:missing-or-duplicate",
+      "business-proposal-present:candidate:1:missing-or-duplicate",
+      "business-proposal-read:baseline:0:missing-or-duplicate",
+      "business-proposal-read:candidate:0:missing-or-duplicate",
+      "business-proposal-read:baseline:1:missing-or-duplicate",
+      "business-proposal-read:candidate:1:missing-or-duplicate",
+      "training-present:baseline:0:missing-or-duplicate",
+      "training-present:candidate:0:missing-or-duplicate",
+      "training-present:baseline:1:missing-or-duplicate",
+      "training-present:candidate:1:missing-or-duplicate",
+      "training-read:baseline:0:missing-or-duplicate",
+      "training-read:candidate:0:missing-or-duplicate",
+      "training-read:baseline:1:missing-or-duplicate",
+      "training-read:candidate:1:missing-or-duplicate",
+      "repair-improvement-not-demonstrated"
+    ],
+    "expectedRuns": 40,
+    "receivedRuns": 0,
+    "lines": {
+      "content": {
+        "passed": 0,
+        "failed": 0,
+        "unverified": 80
+      },
+      "editing": {
+        "passed": 0,
+        "failed": 0,
+        "unverified": 80
+      },
+      "rendering": {
+        "passed": 0,
+        "failed": 0,
+        "unverified": 120
+      },
+      "visual": {
+        "passed": 0,
+        "failed": 0,
+        "unverified": 200
+      }
+    },
+    "requiredScriptIds": [
+      "text",
+      "bold",
+      "font-size",
+      "replace-image",
+      "crop",
+      "align",
+      "protected-layout",
+      "reopen-undo",
+      "presentation"
+    ],
+    "deferredScriptIds": [
+      "table"
+    ],
+    "humanPassed": 0,
+    "repairComparisons": [],
+    "limitation": "Checks evidence completeness and retained bytes, not reviewer honesty. Human and Office execution cannot be replaced by synthetic tests."
+  },
+  "gaps": [
+    "Execute and retain 40 actual generations: baseline and candidate, ten tasks, two fixed seeds, same pinned Agent and budget.",
+    "Collect owner and at least two target-user sessions, real elapsed/help/repair measurements, failures, originals and repaired artifacts.",
+    "Calibrate visual hierarchy/density/composition/asset-purpose/rhythm with page/object PNG evidence and directional recipe overlap checks.",
+    "Bind actual HTML editing/presentation, PDF, image PPTX and semantic PPTX observations to each artifact identity; Office remains unverified until actually opened.",
+    "Demonstrate consistent paired human repair-time improvement without candidate task regressions; automated contract tests do not fulfill this evidence."
+  ],
+  "deferred": [
+    {
+      "id": "table",
+      "minStage": "M3",
+      "status": "deferred",
+      "countsAsPass": false,
+      "blocksG2": false
+    },
+    {
+      "id": "media-live-tools",
+      "minStage": "M3",
+      "status": "deferred",
+      "countsAsPass": false,
+      "blocksG2": false
+    }
+  ],
+  "automatedEvidence": [
+    "tests/authoring-benchmark.test.ts",
+    "scripts/blackbox-gates.mjs:review-patch:D07-evidence"
+  ]
+}

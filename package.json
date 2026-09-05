@@ -25,7 +25,8 @@
     "cli": "node dist/apps/cli/index.js",
     "package:stage": "pnpm build && pnpm host:build && node scripts/stage-package.mjs",
     "package:pack": "pnpm package:stage && npm pack ./artifacts/npm-package --pack-destination artifacts",
-    "experiment:text-kernel": "pnpm build && node scripts/text-kernel-poc.mjs"
+    "experiment:text-kernel": "pnpm build && node scripts/text-kernel-poc.mjs",
+    "benchmark:authoring": "node scripts/authoring-benchmark.mjs"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

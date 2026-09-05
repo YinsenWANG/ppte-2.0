@@ -1,0 +1,863 @@
+{
+  "version": "d07-authoring-v1",
+  "protocol": {
+    "repetitions": 2,
+    "seeds": [
+      1701,
+      1702
+    ],
+    "budget": {
+      "maxInputTokens": 16000,
+      "maxOutputTokens": 12000,
+      "maxToolCalls": 40,
+      "maxRepairRounds": 2
+    },
+    "generation": "Run baseline and candidate with the same pinned agent/model/prompt, material, seed and budget; retain first outputs even on failure. No generation has yet been recorded."
+  },
+  "assets": [
+    {
+      "id": "primary",
+      "path": "tests/fixtures/evolution/benchmark-primary.svg",
+      "sha256": "0b7bc887719aa120fa3b8e57e109843d8a301b4fffcd4922fbf277d3e06c94ca",
+      "license": "Apache-2.0",
+      "provenance": "Original synthetic geometric illustration; no external/private assets."
+    },
+    {
+      "id": "alternate",
+      "path": "tests/fixtures/evolution/benchmark-alternate.svg",
+      "sha256": "4e1ea1a9619f878ecf9ca2c6f836c7b02ae7046301be744aa084f0e608519a6c",
+      "license": "Apache-2.0",
+      "provenance": "Original synthetic geometric illustration; no external/private assets."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "product-story-present",
+      "category": "product-story",
+      "usage": "present",
+      "audience": "产品经理",
+      "title": "产品故事初稿",
+      "material": "离线批注工具 Maple 面向外勤团队。试点有 12 名用户，持续 4 周；访谈中 9 人要求离线查看。试点不等于全面发布。",
+      "source": {
+        "id": "product-story-brief",
+        "text": "离线批注工具 Maple 面向外勤团队。试点有 12 名用户，持续 4 周；访谈中 9 人要求离线查看。试点不等于全面发布。",
+        "license": "Apache-2.0",
+        "provenance": "Synthetic benchmark, not real customer data."
+      },
+      "answers": [
+        {
+          "id": "pilot-users",
+          "value": 12,
+          "unit": "人",
+          "sourceId": "product-story-brief"
+        },
+        {
+          "id": "pilot-weeks",
+          "value": 4,
+          "unit": "周",
+          "sourceId": "product-story-brief"
+        },
+        {
+          "id": "offline-requests",
+          "value": 9,
+          "unit": "人",
+          "sourceId": "product-story-brief"
+        }
+      ],
+      "requiredClaims": [
+        "试点不等于全面发布"
+      ],
+      "assetIds": [
+        "primary",
+        "alternate"
+      ],
+      "prompt": "依据给定材料制作产品故事，用途为现场演讲。包含封面、正文、数据代表页；保留全部事实和限制条件，不编造数字。",
+      "scriptIds": [
+        "text",
+        "bold",
+        "font-size",
+        "replace-image",
+        "crop",
+        "align",
+        "table",
+        "protected-layout",
+        "reopen-undo",
+        "presentation"
+      ]
+    },
+    {
+      "id": "product-story-read",
+      "category": "product-story",
+      "usage": "read",
+      "audience": "产品经理",
+      "title": "产品故事初稿",
+      "material": "离线批注工具 Maple 面向外勤团队。试点有 12 名用户，持续 4 周；访谈中 9 人要求离线查看。试点不等于全面发布。",
+      "source": {
+        "id": "product-story-brief",
+        "text": "离线批注工具 Maple 面向外勤团队。试点有 12 名用户，持续 4 周；访谈中 9 人要求离线查看。试点不等于全面发布。",
+        "license": "Apache-2.0",
+        "provenance": "Synthetic benchmark, not real customer data."
+      },
+      "answers": [
+        {
+          "id": "pilot-users",
+          "value": 12,
+          "unit": "人",
+          "sourceId": "product-story-brief"
+        },
+        {
+          "id": "pilot-weeks",
+          "value": 4,
+          "unit": "周",
+          "sourceId": "product-story-brief"
+        },
+        {
+          "id": "offline-requests",
+          "value": 9,
+          "unit": "人",
+          "sourceId": "product-story-brief"
+        }
+      ],
+      "requiredClaims": [
+        "试点不等于全面发布"
+      ],
+      "assetIds": [
+        "primary",
+        "alternate"
+      ],
+      "prompt": "依据给定材料制作产品故事，用途为独立阅读。包含封面、正文、数据代表页；保留全部事实和限制条件，不编造数字。",
+      "scriptIds": [
+        "text",
+        "bold",
+        "font-size",
+        "replace-image",
+        "crop",
+        "align",
+        "table",
+        "protected-layout",
+        "reopen-undo",
+        "presentation"
+      ]
+    },
+    {
+      "id": "data-report-present",
+      "category": "data-report",
+      "usage": "present",
+      "audience": "运营负责人",
+      "title": "数据汇报初稿",
+      "material": "合成门店第一季度订单 1200 单，第二季度 1500 单；同期退单分别为 24 单和 30 单。只比较这两个季度，不外推全年。",
+      "source": {
+        "id": "data-report-brief",
+        "text": "合成门店第一季度订单 1200 单，第二季度 1500 单；同期退单分别为 24 单和 30 单。只比较这两个季度，不外推全年。",
+        "license": "Apache-2.0",
+        "provenance": "Synthetic benchmark, not real customer data."
+      },
+      "answers": [
+        {
+          "id": "q1-orders",
+          "value": 1200,
+          "unit": "单",
+          "sourceId": "data-report-brief"
+        },
+        {
+          "id": "q2-orders",
+          "value": 1500,
+          "unit": "单",
+          "sourceId": "data-report-brief"
+        },
+        {
+          "id": "q1-returns",
+          "value": 24,
+          "unit": "单",
+          "sourceId": "data-report-brief"
+        },
+        {
+          "id": "q2-returns",
+          "value": 30,
+          "unit": "单",
+          "sourceId": "data-report-brief"
+        }
+      ],
+      "requiredClaims": [
+        "只比较这两个季度，不外推全年"
+      ],
+      "assetIds": [
+        "primary",
+        "alternate"
+      ],
+      "prompt": "依据给定材料制作数据汇报，用途为现场演讲。包含封面、正文、数据代表页；保留全部事实和限制条件，不编造数字。",
+      "scriptIds": [
+        "text",
+        "bold",
+        "font-size",
+        "replace-image",
+        "crop",
+        "align",
+        "table",
+        "protected-layout",
+        "reopen-undo",
+        "presentation"
+      ]
+    },
+    {
+      "id": "data-report-read",
+      "category": "data-report",
+      "usage": "read",
+      "audience": "运营负责人",
+      "title": "数据汇报初稿",
+      "material": "合成门店第一季度订单 1200 单，第二季度 1500 单；同期退单分别为 24 单和 30 单。只比较这两个季度，不外推全年。",
+      "source": {
+        "id": "data-report-brief",
+        "text": "合成门店第一季度订单 1200 单，第二季度 1500 单；同期退单分别为 24 单和 30 单。只比较这两个季度，不外推全年。",
+        "license": "Apache-2.0",
+        "provenance": "Synthetic benchmark, not real customer data."
+      },
+      "answers": [
+        {
+          "id": "q1-orders",
+          "value": 1200,
+          "unit": "单",
+          "sourceId": "data-report-brief"
+        },
+        {
+          "id": "q2-orders",
+          "value": 1500,
+          "unit": "单",
+          "sourceId": "data-report-brief"
+        },
+        {
+          "id": "q1-returns",
+          "value": 24,
+          "unit": "单",
+          "sourceId": "data-report-brief"
+        },
+        {
+          "id": "q2-returns",
+          "value": 30,
+          "unit": "单",
+          "sourceId": "data-report-brief"
+        }
+      ],
+      "requiredClaims": [
+        "只比较这两个季度，不外推全年"
+      ],
+      "assetIds": [
+        "primary",
+        "alternate"
+      ],
+      "prompt": "依据给定材料制作数据汇报，用途为独立阅读。包含封面、正文、数据代表页；保留全部事实和限制条件，不编造数字。",
+      "scriptIds": [
+        "text",
+        "bold",
+        "font-size",
+        "replace-image",
+        "crop",
+        "align",
+        "table",
+        "protected-layout",
+        "reopen-undo",
+        "presentation"
+      ]
+    },
+    {
+      "id": "technical-explanation-present",
+      "category": "technical-explanation",
+      "usage": "present",
+      "audience": "新入职工程师",
+      "title": "技术解释初稿",
+      "material": "示例服务依次执行校验、预览、提交3 个步骤。预览不写盘。一次事务最多修改 20 个对象；失败时整笔拒绝。",
+      "source": {
+        "id": "technical-explanation-brief",
+        "text": "示例服务依次执行校验、预览、提交3 个步骤。预览不写盘。一次事务最多修改 20 个对象；失败时整笔拒绝。",
+        "license": "Apache-2.0",
+        "provenance": "Synthetic benchmark, not real customer data."
+      },
+      "answers": [
+        {
+          "id": "steps",
+          "value": 3,
+          "unit": "步",
+          "sourceId": "technical-explanation-brief"
+        },
+        {
+          "id": "transaction-limit",
+          "value": 20,
+          "unit": "对象",
+          "sourceId": "technical-explanation-brief"
+        }
+      ],
+      "requiredClaims": [
+        "一次事务最多修改 20 个对象；失败时整笔拒绝"
+      ],
+      "assetIds": [
+        "primary",
+        "alternate"
+      ],
+      "prompt": "依据给定材料制作技术解释，用途为现场演讲。包含封面、正文、数据代表页；保留全部事实和限制条件，不编造数字。",
+      "scriptIds": [
+        "text",
+        "bold",
+        "font-size",
+        "replace-image",
+        "crop",
+        "align",
+        "table",
+        "protected-layout",
+        "reopen-undo",
+        "presentation"
+      ]
+    },
+    {
+      "id": "technical-explanation-read",
+      "category": "technical-explanation",
+      "usage": "read",
+      "audience": "新入职工程师",
+      "title": "技术解释初稿",
+      "material": "示例服务依次执行校验、预览、提交3 个步骤。预览不写盘。一次事务最多修改 20 个对象；失败时整笔拒绝。",
+      "source": {
+        "id": "technical-explanation-brief",
+        "text": "示例服务依次执行校验、预览、提交3 个步骤。预览不写盘。一次事务最多修改 20 个对象；失败时整笔拒绝。",
+        "license": "Apache-2.0",
+        "provenance": "Synthetic benchmark, not real customer data."
+      },
+      "answers": [
+        {
+          "id": "steps",
+          "value": 3,
+          "unit": "步",
+          "sourceId": "technical-explanation-brief"
+        },
+        {
+          "id": "transaction-limit",
+          "value": 20,
+          "unit": "对象",
+          "sourceId": "technical-explanation-brief"
+        }
+      ],
+      "requiredClaims": [
+        "一次事务最多修改 20 个对象；失败时整笔拒绝"
+      ],
+      "assetIds": [
+        "primary",
+        "alternate"
+      ],
+      "prompt": "依据给定材料制作技术解释，用途为独立阅读。包含封面、正文、数据代表页；保留全部事实和限制条件，不编造数字。",
+      "scriptIds": [
+        "text",
+        "bold",
+        "font-size",
+        "replace-image",
+        "crop",
+        "align",
+        "table",
+        "protected-layout",
+        "reopen-undo",
+        "presentation"
+      ]
+    },
+    {
+      "id": "business-proposal-present",
+      "category": "business-proposal",
+      "usage": "present",
+      "audience": "采购评审组",
+      "title": "业务提案初稿",
+      "material": "虚构试点预算为 8 万元，周期 6 周，分调研、实施、验收3 个阶段。扩容需要单独审批，节省金额尚未测量。",
+      "source": {
+        "id": "business-proposal-brief",
+        "text": "虚构试点预算为 8 万元，周期 6 周，分调研、实施、验收3 个阶段。扩容需要单独审批，节省金额尚未测量。",
+        "license": "Apache-2.0",
+        "provenance": "Synthetic benchmark, not real customer data."
+      },
+      "answers": [
+        {
+          "id": "budget",
+          "value": 8,
+          "unit": "万元",
+          "sourceId": "business-proposal-brief"
+        },
+        {
+          "id": "duration",
+          "value": 6,
+          "unit": "周",
+          "sourceId": "business-proposal-brief"
+        },
+        {
+          "id": "phases",
+          "value": 3,
+          "unit": "阶段",
+          "sourceId": "business-proposal-brief"
+        }
+      ],
+      "requiredClaims": [
+        "扩容需要单独审批，节省金额尚未测量"
+      ],
+      "assetIds": [
+        "primary",
+        "alternate"
+      ],
+      "prompt": "依据给定材料制作业务提案，用途为现场演讲。包含封面、正文、数据代表页；保留全部事实和限制条件，不编造数字。",
+      "scriptIds": [
+        "text",
+        "bold",
+        "font-size",
+        "replace-image",
+        "crop",
+        "align",
+        "table",
+        "protected-layout",
+        "reopen-undo",
+        "presentation"
+      ]
+    },
+    {
+      "id": "business-proposal-read",
+      "category": "business-proposal",
+      "usage": "read",
+      "audience": "采购评审组",
+      "title": "业务提案初稿",
+      "material": "虚构试点预算为 8 万元，周期 6 周，分调研、实施、验收3 个阶段。扩容需要单独审批，节省金额尚未测量。",
+      "source": {
+        "id": "business-proposal-brief",
+        "text": "虚构试点预算为 8 万元，周期 6 周，分调研、实施、验收3 个阶段。扩容需要单独审批，节省金额尚未测量。",
+        "license": "Apache-2.0",
+        "provenance": "Synthetic benchmark, not real customer data."
+      },
+      "answers": [
+        {
+          "id": "budget",
+          "value": 8,
+          "unit": "万元",
+          "sourceId": "business-proposal-brief"
+        },
+        {
+          "id": "duration",
+          "value": 6,
+          "unit": "周",
+          "sourceId": "business-proposal-brief"
+        },
+        {
+          "id": "phases",
+          "value": 3,
+          "unit": "阶段",
+          "sourceId": "business-proposal-brief"
+        }
+      ],
+      "requiredClaims": [
+        "扩容需要单独审批，节省金额尚未测量"
+      ],
+      "assetIds": [
+        "primary",
+        "alternate"
+      ],
+      "prompt": "依据给定材料制作业务提案，用途为独立阅读。包含封面、正文、数据代表页；保留全部事实和限制条件，不编造数字。",
+      "scriptIds": [
+        "text",
+        "bold",
+        "font-size",
+        "replace-image",
+        "crop",
+        "align",
+        "table",
+        "protected-layout",
+        "reopen-undo",
+        "presentation"
+      ]
+    },
+    {
+      "id": "training-present",
+      "category": "training",
+      "usage": "present",
+      "audience": "一线培训学员",
+      "title": "培训初稿",
+      "material": "模拟设备巡检分断电、检查、记录3 个步骤。每班检查 2 次。发现破损立即停用并报告；本材料仅用于虚构流程演练。",
+      "source": {
+        "id": "training-brief",
+        "text": "模拟设备巡检分断电、检查、记录3 个步骤。每班检查 2 次。发现破损立即停用并报告；本材料仅用于虚构流程演练。",
+        "license": "Apache-2.0",
+        "provenance": "Synthetic benchmark, not real customer data."
+      },
+      "answers": [
+        {
+          "id": "steps",
+          "value": 3,
+          "unit": "步",
+          "sourceId": "training-brief"
+        },
+        {
+          "id": "checks-per-shift",
+          "value": 2,
+          "unit": "次",
+          "sourceId": "training-brief"
+        }
+      ],
+      "requiredClaims": [
+        "发现破损立即停用并报告；本材料仅用于虚构流程演练"
+      ],
+      "assetIds": [
+        "primary",
+        "alternate"
+      ],
+      "prompt": "依据给定材料制作培训，用途为现场演讲。包含封面、正文、数据代表页；保留全部事实和限制条件，不编造数字。",
+      "scriptIds": [
+        "text",
+        "bold",
+        "font-size",
+        "replace-image",
+        "crop",
+        "align",
+        "table",
+        "protected-layout",
+        "reopen-undo",
+        "presentation"
+      ]
+    },
+    {
+      "id": "training-read",
+      "category": "training",
+      "usage": "read",
+      "audience": "一线培训学员",
+      "title": "培训初稿",
+      "material": "模拟设备巡检分断电、检查、记录3 个步骤。每班检查 2 次。发现破损立即停用并报告；本材料仅用于虚构流程演练。",
+      "source": {
+        "id": "training-brief",
+        "text": "模拟设备巡检分断电、检查、记录3 个步骤。每班检查 2 次。发现破损立即停用并报告；本材料仅用于虚构流程演练。",
+        "license": "Apache-2.0",
+        "provenance": "Synthetic benchmark, not real customer data."
+      },
+      "answers": [
+        {
+          "id": "steps",
+          "value": 3,
+          "unit": "步",
+          "sourceId": "training-brief"
+        },
+        {
+          "id": "checks-per-shift",
+          "value": 2,
+          "unit": "次",
+          "sourceId": "training-brief"
+        }
+      ],
+      "requiredClaims": [
+        "发现破损立即停用并报告；本材料仅用于虚构流程演练"
+      ],
+      "assetIds": [
+        "primary",
+        "alternate"
+      ],
+      "prompt": "依据给定材料制作培训，用途为独立阅读。包含封面、正文、数据代表页；保留全部事实和限制条件，不编造数字。",
+      "scriptIds": [
+        "text",
+        "bold",
+        "font-size",
+        "replace-image",
+        "crop",
+        "align",
+        "table",
+        "protected-layout",
+        "reopen-undo",
+        "presentation"
+      ]
+    }
+  ],
+  "scripts": [
+    {
+      "id": "text",
+      "version": 1,
+      "minStage": "M1",
+      "instruction": "将标题中的“初稿”改为“修订稿”；核对正文和事实数字未变。",
+      "journey": [
+        "generate",
+        "edit",
+        "undo",
+        "redo",
+        "save",
+        "reopen",
+        "present",
+        "export",
+        "inspect"
+      ],
+      "record": [
+        "success",
+        "elapsedMs",
+        "helpCount",
+        "repairMs",
+        "repairOperations",
+        "failures",
+        "evidence"
+      ]
+    },
+    {
+      "id": "bold",
+      "version": 1,
+      "minStage": "M1",
+      "instruction": "仅将首段一个词加粗；检查邻接文字格式未变。",
+      "journey": [
+        "generate",
+        "edit",
+        "undo",
+        "redo",
+        "save",
+        "reopen",
+        "present",
+        "export",
+        "inspect"
+      ],
+      "record": [
+        "success",
+        "elapsedMs",
+        "helpCount",
+        "repairMs",
+        "repairOperations",
+        "failures",
+        "evidence"
+      ]
+    },
+    {
+      "id": "font-size",
+      "version": 1,
+      "minStage": "M1",
+      "instruction": "将选中文字字号增大一级；检查其余 run 的字号未变。",
+      "journey": [
+        "generate",
+        "edit",
+        "undo",
+        "redo",
+        "save",
+        "reopen",
+        "present",
+        "export",
+        "inspect"
+      ],
+      "record": [
+        "success",
+        "elapsedMs",
+        "helpCount",
+        "repairMs",
+        "repairOperations",
+        "failures",
+        "evidence"
+      ]
+    },
+    {
+      "id": "replace-image",
+      "version": 1,
+      "minStage": "M1",
+      "instruction": "换入 manifest 中的备用 SVG；检查对象 ID 与锁定对象不变。",
+      "journey": [
+        "generate",
+        "edit",
+        "undo",
+        "redo",
+        "save",
+        "reopen",
+        "present",
+        "export",
+        "inspect"
+      ],
+      "record": [
+        "success",
+        "elapsedMs",
+        "helpCount",
+        "repairMs",
+        "repairOperations",
+        "failures",
+        "evidence"
+      ]
+    },
+    {
+      "id": "crop",
+      "version": 1,
+      "minStage": "M1",
+      "instruction": "调整图片裁剪并撤销、重做；检查资源字节不变。",
+      "journey": [
+        "generate",
+        "edit",
+        "undo",
+        "redo",
+        "save",
+        "reopen",
+        "present",
+        "export",
+        "inspect"
+      ],
+      "record": [
+        "success",
+        "elapsedMs",
+        "helpCount",
+        "repairMs",
+        "repairOperations",
+        "failures",
+        "evidence"
+      ]
+    },
+    {
+      "id": "align",
+      "version": 1,
+      "minStage": "M1",
+      "instruction": "选择两个未锁定对象左对齐；检查未选对象位置不变。",
+      "journey": [
+        "generate",
+        "edit",
+        "undo",
+        "redo",
+        "save",
+        "reopen",
+        "present",
+        "export",
+        "inspect"
+      ],
+      "record": [
+        "success",
+        "elapsedMs",
+        "helpCount",
+        "repairMs",
+        "repairOperations",
+        "failures",
+        "evidence"
+      ]
+    },
+    {
+      "id": "table",
+      "version": 1,
+      "minStage": "M3",
+      "instruction": "修改表格数值、插行并合并拆分；撤销后检查单元格 ID 和原值恢复。",
+      "journey": [
+        "generate",
+        "edit",
+        "undo",
+        "redo",
+        "save",
+        "reopen",
+        "present",
+        "export",
+        "inspect"
+      ],
+      "record": [
+        "success",
+        "elapsedMs",
+        "helpCount",
+        "repairMs",
+        "repairOperations",
+        "failures",
+        "evidence"
+      ]
+    },
+    {
+      "id": "protected-layout",
+      "version": 1,
+      "minStage": "M2",
+      "instruction": "锁定标题几何并修改正文后换布局；检查锁定、手工文字、裁剪和事实均保留。",
+      "journey": [
+        "generate",
+        "edit",
+        "undo",
+        "redo",
+        "save",
+        "reopen",
+        "present",
+        "export",
+        "inspect"
+      ],
+      "record": [
+        "success",
+        "elapsedMs",
+        "helpCount",
+        "repairMs",
+        "repairOperations",
+        "failures",
+        "evidence"
+      ]
+    },
+    {
+      "id": "reopen-undo",
+      "version": 1,
+      "minStage": "M1",
+      "instruction": "保存新副本，关闭并重开；撤销、重做并检查全部内容、资源、历史。",
+      "journey": [
+        "generate",
+        "edit",
+        "undo",
+        "redo",
+        "save",
+        "reopen",
+        "present",
+        "export",
+        "inspect"
+      ],
+      "record": [
+        "success",
+        "elapsedMs",
+        "helpCount",
+        "repairMs",
+        "repairOperations",
+        "failures",
+        "evidence"
+      ]
+    },
+    {
+      "id": "presentation",
+      "version": 1,
+      "minStage": "M1",
+      "instruction": "进入放映、翻页并退出；检查无编辑边框、菜单、焦点泄漏，导出并核对降级声明。",
+      "journey": [
+        "generate",
+        "edit",
+        "undo",
+        "redo",
+        "save",
+        "reopen",
+        "present",
+        "export",
+        "inspect"
+      ],
+      "record": [
+        "success",
+        "elapsedMs",
+        "helpCount",
+        "repairMs",
+        "repairOperations",
+        "failures",
+        "evidence"
+      ]
+    }
+  ],
+  "stageExtensions": [
+    {
+      "id": "media-live-tools",
+      "minStage": "M3",
+      "instruction": "实际播放视频，验证离页暂停、黑屏、激光笔及计时；保存并重开放映。"
+    }
+  ],
+  "qualityLines": {
+    "content": [
+      "facts",
+      "deletion"
+    ],
+    "editing": [
+      "locks",
+      "undo-reopen"
+    ],
+    "rendering": [
+      "presentation-leak",
+      "media",
+      "degradation"
+    ],
+    "visual": [
+      "hierarchy",
+      "density",
+      "composition",
+      "asset-purpose",
+      "rhythm"
+    ]
+  },
+  "allowedOverlaps": [
+    {
+      "recipeId": "benchmark-cover-v1",
+      "pageRole": "cover",
+      "back": "hero-image",
+      "front": "title",
+      "reason": "Title deliberately overlays the hero image; reviewer must verify legibility, clipping and contrast on a screenshot."
+    }
+  ]
+}
