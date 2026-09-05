@@ -1,0 +1,117 @@
+{
+  "taskId": "E05",
+  "acceptanceIds": [
+    "A11"
+  ],
+  "status": "passed",
+  "verifiedAt": "2026-09-05T19:03:19.197722+00:00",
+  "implementationCommit": "88904da60ad9a9d7540e7abbfa303b126bd1b218",
+  "baselineCommit": "1749adec806c6ab6bd1f3505797c15d42a37c2ce",
+  "verification": {
+    "commands": [
+      "pnpm typecheck",
+      "pnpm build",
+      "pnpm test",
+      "pnpm blackbox:final"
+    ],
+    "allExitCodes": 0,
+    "tests": {
+      "baseline": 193,
+      "final": 202,
+      "delta": 9,
+      "failed": 0
+    },
+    "blackbox": {
+      "baselineGreen": 69,
+      "baselineRed": 0,
+      "finalGreen": 69,
+      "finalRed": 0,
+      "newRed": 0
+    },
+    "environment": {
+      "node": "v22.23.2",
+      "platform": "darwin",
+      "arch": "arm64"
+    },
+    "buildManifest": {
+      "applicationVersion": "0.9.0-next.0",
+      "runtimeBuildId": "dde8bbe59f803fad4557101aade3a56fc2a0cb29a934f7a2a6ca228286ed8ed9"
+    }
+  },
+  "criteria": {
+    "1": {
+      "testFile": "tests/object-transform.test.ts",
+      "tests": [
+        "E05 A11 100 pointer moves commit once, every cancellation and zero displacement commit nothing",
+        "E05 A11 actual Host and file Portable pointer and keyboard journeys preserve one history boundary"
+      ],
+      "result": "100 preview updates leave Core untouched; one pointerup commits once. Repeated end, wrong pointer ID, zero movement, pointercancel, lostpointercapture and Escape never add unwanted history. Actual Host and generated file:// Portable exercise cancellation and 100-step move/resize/rotate."
+    },
+    "2": {
+      "testFile": "tests/object-transform.test.ts",
+      "tests": [
+        "E05 A11 screen conversion at 50/100/200 percent yields identical multi-selection move resize and rotation",
+        "E05 A11 resize keeps image aspect by default, explicit unlock and whole-box text styles stay intact",
+        "E05 A11 locked member, narrowed group scope, invalid geometry and stale session are atomic",
+        "E05 A11 rotated resize follows local axes and pins the opposite corner; zero rotation is a no-op",
+        "E05 A11 actual Host and file Portable pointer and keyboard journeys preserve one history boundary"
+      ],
+      "result": "screenToDu is shared by both surfaces. 50/100/200 percent conversion produces identical move/resize/rotation results. Image aspect defaults, explicit unlock, rotated local-axis resize with fixed opposite corner, unchanged text styles, multi-selection, locked members, narrowed scope, invalid geometry and stale revision are covered."
+    },
+    "3": {
+      "testFile": "tests/object-transform.test.ts",
+      "tests": [
+        "E05 A11 snap affects only targets, uses pixel threshold, and align/distribute expose canvas or selection",
+        "E05 A11 same planner across Host/Portable handles geometry, layers, flat groups and persisted undo redo",
+        "E05 A11 actual Host and file Portable pointer and keyboard journeys preserve one history boundary",
+        "E05 A11 layer steps preserve selected relative order and never reorder reading order"
+      ],
+      "result": "planTransform plans snapping, selection/canvas alignment and equal-gap distribution, all four layer directions, flat groups, pointer and keyboard geometry. Host and full Portable produce equal documents. Serialized checkpoint undo/redo restores exact before/after state. Layer changes preserve selected relative order, reading order and element content."
+    }
+  },
+  "filesAdded": [
+    "packages/editor-dom/src/pointer.ts",
+    "packages/editor-controller/src/transform-session.ts",
+    "tests/object-transform.test.ts",
+    "docs/evolution/E05_EVIDENCE.json"
+  ],
+  "artifacts": [
+    {
+      "path": "artifacts/evolution/E05/PPTEHost.png",
+      "sha256": "07d0d6ec868fcf78c47cb26f3a55ba1182e3e8d44de5eaa4b4f31cc2570c97eb"
+    },
+    {
+      "path": "artifacts/evolution/E05/PPTEHost.zip",
+      "sha256": "70a1619558b7f6132acd36b7bbd350f99aa24823079fa957928fd38dca3f2b2a"
+    },
+    {
+      "path": "artifacts/evolution/E05/PPTEPortable.png",
+      "sha256": "261b395f7924c0f3a5b21e358b670c121cd4d6c47b787be3fe194a7930aa8171"
+    },
+    {
+      "path": "artifacts/evolution/E05/PPTEPortable.zip",
+      "sha256": "d6abdf132e349a30e5694e58fc1a6d2180dea89845a97611c613558de6871dae"
+    },
+    {
+      "path": "artifacts/evolution/E05/baseline-blackbox.log",
+      "sha256": "c21513760ddc797bae0115ebd4aff9e2bc442d8c6c446d75cfc15e0f9f4af8f6"
+    },
+    {
+      "path": "artifacts/evolution/E05/baseline-tests.log",
+      "sha256": "f452df5f705174e912c23e76538b81204331e7663b559fb0fbce584da67b2897"
+    },
+    {
+      "path": "artifacts/evolution/E05/final-blackbox.log",
+      "sha256": "4885184502a55966abd441a1607017b81f30cc85c813a927e6f76e20c50229ad"
+    },
+    {
+      "path": "artifacts/evolution/E05/final-tests.log",
+      "sha256": "9f2fef6affcf1e0734874d965a7ff55dbd72d1931262b79594a327bd5245f77f"
+    }
+  ],
+  "interaction": "Drag moves; Ctrl/Command drag resizes; Ctrl/Command+Alt drag rotates; Shift resize explicitly unlocks image aspect. Arrow keys nudge 1 du; Shift nudges 10 du. Property controls use the same planner. Escape, capture loss, cancellation and document/slide replacement discard transient state.",
+  "remainingRisks": [
+    "Browser journeys ran in headless Chromium on macOS arm64. Safari, physical touch/stylus and human usability acceptance remain unverified.",
+    "Transforms retain the existing flat slide-coordinate model and never scale font sizes or introduce nested groups. Multi-selection resize preserves member rotations; it does not introduce shear."
+  ]
+}

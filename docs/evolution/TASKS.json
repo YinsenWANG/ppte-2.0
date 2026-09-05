@@ -902,7 +902,7 @@
       "milestone": "M1",
       "priority": "P1",
       "title": "直接变换、吸附、对齐和图层",
-      "status": "planned",
+      "status": "done",
       "effort": "L",
       "ownerRole": "几何 / 编辑器",
       "dependsOn": [
@@ -935,7 +935,77 @@
         "A11"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        {
+          "commit": "88904da60ad9a9d7540e7abbfa303b126bd1b218",
+          "report": "docs/evolution/E05_EVIDENCE.json",
+          "testFiles": [
+            "tests/object-transform.test.ts"
+          ],
+          "criteria": {
+            "1": {
+              "testFile": "tests/object-transform.test.ts",
+              "tests": [
+                "E05 A11 100 pointer moves commit once, every cancellation and zero displacement commit nothing",
+                "E05 A11 actual Host and file Portable pointer and keyboard journeys preserve one history boundary"
+              ],
+              "result": "100 preview updates leave Core untouched; one pointerup commits once. Repeated end, wrong pointer ID, zero movement, pointercancel, lostpointercapture and Escape never add unwanted history. Actual Host and generated file:// Portable exercise cancellation and 100-step move/resize/rotate."
+            },
+            "2": {
+              "testFile": "tests/object-transform.test.ts",
+              "tests": [
+                "E05 A11 screen conversion at 50/100/200 percent yields identical multi-selection move resize and rotation",
+                "E05 A11 resize keeps image aspect by default, explicit unlock and whole-box text styles stay intact",
+                "E05 A11 locked member, narrowed group scope, invalid geometry and stale session are atomic",
+                "E05 A11 rotated resize follows local axes and pins the opposite corner; zero rotation is a no-op",
+                "E05 A11 actual Host and file Portable pointer and keyboard journeys preserve one history boundary"
+              ],
+              "result": "screenToDu is shared by both surfaces. 50/100/200 percent conversion produces identical move/resize/rotation results. Image aspect defaults, explicit unlock, rotated local-axis resize with fixed opposite corner, unchanged text styles, multi-selection, locked members, narrowed scope, invalid geometry and stale revision are covered."
+            },
+            "3": {
+              "testFile": "tests/object-transform.test.ts",
+              "tests": [
+                "E05 A11 snap affects only targets, uses pixel threshold, and align/distribute expose canvas or selection",
+                "E05 A11 same planner across Host/Portable handles geometry, layers, flat groups and persisted undo redo",
+                "E05 A11 actual Host and file Portable pointer and keyboard journeys preserve one history boundary",
+                "E05 A11 layer steps preserve selected relative order and never reorder reading order"
+              ],
+              "result": "planTransform plans snapping, selection/canvas alignment and equal-gap distribution, all four layer directions, flat groups, pointer and keyboard geometry. Host and full Portable produce equal documents. Serialized checkpoint undo/redo restores exact before/after state. Layer changes preserve selected relative order, reading order and element content."
+            }
+          },
+          "verification": {
+            "commands": [
+              "pnpm typecheck",
+              "pnpm build",
+              "pnpm test",
+              "pnpm blackbox:final"
+            ],
+            "allExitCodes": 0,
+            "tests": {
+              "baseline": 193,
+              "final": 202,
+              "delta": 9,
+              "failed": 0
+            },
+            "blackbox": {
+              "baselineGreen": 69,
+              "baselineRed": 0,
+              "finalGreen": 69,
+              "finalRed": 0,
+              "newRed": 0
+            },
+            "environment": {
+              "node": "v22.23.2",
+              "platform": "darwin",
+              "arch": "arm64"
+            },
+            "buildManifest": {
+              "applicationVersion": "0.9.0-next.0",
+              "runtimeBuildId": "dde8bbe59f803fad4557101aade3a56fc2a0cb29a934f7a2a6ca228286ed8ed9"
+            }
+          }
+        }
+      ]
     },
     {
       "id": "E06",
