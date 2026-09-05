@@ -114,7 +114,9 @@ export function readPersistedHistoryMetadata(transaction: Transaction): Persiste
 }
 
 export interface RecoveryJournalHeader {
-  journalVersion: '1'
+  journalVersion: '1' | '2'
+  /** v2 prevents legacy readers from replaying protocol 1.1 as protocol 1.0. */
+  operationProtocolVersion?: '1.0' | '1.1'
   documentId: DocumentId
   baseCheckpointRevision: Revision
   sessionId: string

@@ -1,6 +1,6 @@
 {
   "planVersion": "1.0",
-  "status": "design-delivered-not-implemented",
+  "status": "implementation-in-progress",
   "date": "2026-09-05",
   "baselineCommit": "2005166d3c481b43c559e851b4ad90a53ecfac43",
   "principles": [
@@ -71,7 +71,7 @@
       "milestone": "M0",
       "priority": "P0",
       "title": "固化失败样本与真实基线",
-      "status": "planned",
+      "status": "in_progress",
       "effort": "S",
       "ownerRole": "Core / 验收",
       "dependsOn": [],
@@ -110,7 +110,7 @@
       "milestone": "M0",
       "priority": "P0",
       "title": "修复可选字段逆操作并升级操作兼容",
-      "status": "planned",
+      "status": "in_progress",
       "effort": "L",
       "ownerRole": "Core / 格式",
       "dependsOn": [
@@ -153,7 +153,10 @@
         "A03"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        "tests/history-inverse-roundtrip.test.ts",
+        "docs/evolution/PROGRESS.md"
+      ]
     },
     {
       "id": "C03",

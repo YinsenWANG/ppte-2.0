@@ -187,13 +187,20 @@ function applyToDraft(next: PpteDocument, operation: Operation, options: Operati
     }
     case 'slide.update': {
       const slide = requireSlide(next, operation.slideId)
+      const metadata = slide as unknown as Record<string, unknown>
       const before: Record<string, unknown> = {}
-      for (const [key, value] of Object.entries(operation.patch)) {
+      const absent: string[] = []
+      const removals = operation.unset ?? []
+      if (!Array.isArray(removals) || new Set(removals).size !== removals.length) throw error('SCHEMA_INVALID', 'slide.update.unset must contain unique metadata keys.')
+      for (const key of [...Object.keys(operation.patch), ...removals]) {
         if (!(SLIDE_UPDATE_METADATA_KEYS as readonly string[]).includes(key)) throw error('SLIDE_UPDATE_FIELD_NOT_ALLOWED', `slide.update may only change slide metadata; field ${key} has a dedicated operation or is not mutable.`)
-        before[key] = cloneJson((slide as unknown as Record<string, unknown>)[key])
-        ;(slide as unknown as Record<string, unknown>)[key] = cloneJson(value)
+        if (removals.includes(key) && Object.prototype.hasOwnProperty.call(operation.patch, key)) throw error('SCHEMA_INVALID', `slide.update cannot set and unset ${key}.`)
+        if (Object.prototype.hasOwnProperty.call(metadata, key)) before[key] = cloneJson(metadata[key])
+        else absent.push(key)
       }
-      return { document: next, inverse: [op(operation, 'slide.update', { slideId: operation.slideId, patch: before as never })] }
+      for (const [key, value] of Object.entries(operation.patch)) metadata[key] = cloneJson(value)
+      for (const key of removals) delete metadata[key]
+      return { document: next, inverse: [op(operation, 'slide.update', { slideId: operation.slideId, patch: before as never, ...(absent.length ? { unset: absent } : {}) })] }
     }
     case 'slide.setNotes': {
       const slide = requireSlide(next, operation.slideId)

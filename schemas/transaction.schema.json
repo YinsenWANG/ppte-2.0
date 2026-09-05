@@ -5580,6 +5580,11 @@
               },
               "patch": {
                 "type": "object"
+              },
+              "unset": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": { "type": "string", "enum": ["name", "hidden", "background", "notes", "transition", "semantic", "visualStrategy", "provenance", "extensions"] }
               }
             },
             "additionalProperties": false

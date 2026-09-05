@@ -49,6 +49,8 @@ export const ERROR_CATALOG: Readonly<Record<string, ErrorDescriptor>> = Object.f
   CHANGE_KIND_NOT_ALLOWED: { ...safeUnchanged },
   CHANGE_PATH_NOT_ALLOWED: { ...safeUnchanged },
   MUTATION_BUDGET_EXCEEDED: { ...safeUnchanged },
+  INVERSE_ROUNDTRIP_FAILED: { ...safeUnchanged, recovery: 'Keep the current snapshot; the operation was rejected because its persisted inverse could not restore it exactly.' },
+  HISTORY_RESTORE_FAILED: { ...readonlyPackage, impact: 'persistence', recovery: 'Inspect history and save a separate recovery copy while preserving the original package.' },
   CHANGE_INVARIANT_VIOLATION: { ...safeUnchanged },
   EDIT_POLICY_VIOLATION: { ...safeUnchanged },
   PROTECTED_ANCHOR_VIOLATION: { ...safeUnchanged },

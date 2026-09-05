@@ -1,4 +1,4 @@
-import { appendFileSync, closeSync, existsSync, fsyncSync, mkdirSync, openSync, readFileSync, unlinkSync } from 'node:fs'
+import { appendFileSync, closeSync, existsSync, fsyncSync, mkdirSync, openSync, readFileSync, renameSync, unlinkSync } from 'node:fs'
 import { dirname } from 'node:path'
 import { canonicalHash, canonicalJsonString, canonicalRevision } from '../../canonical-json/src/index.js'
 import { applyTransaction, OperationApplyError } from '../../operations/src/index.js'
@@ -6,7 +6,7 @@ import { computeStructuralDiff } from '../../diff/src/index.js'
 import { enforceChangeContract } from '../../change-contract/src/index.js'
 import { validateRuntimeDocument, validateTransactionShape } from '../../validation/src/index.js'
 import { withErrorSemantics } from '../../schema/src/errors.js'
-import { inferCompatibilityProfile, runtimeProfileForCompatibility } from '../../compatibility/src/index.js'
+import { inferCompatibilityProfile, requiresEditProtocol, runtimeProfileForCompatibility } from '../../compatibility/src/index.js'
 import { sha256HexBytes } from '../../canonical-json/src/index.js'
 import { withPersistedHistoryMetadata } from '../../schema/src/file-format.js'
 import { PPTE_GA_C_COMPATIBILITY_PROFILE } from '../../schema/src/index.js'
@@ -93,12 +93,32 @@ export class RecoveryJournal {
     }
     const record: RecoveryJournalRecord = { ...body, checksum: canonicalHash(body) }
     const line = `${canonicalJsonString(record)}\n`
-    const descriptor = openSync(this.path, 'a', 0o600)
-    try {
-      appendFileSync(descriptor, line, 'utf8')
-      fsyncSync(descriptor)
-    } finally {
+    if (this.header.journalVersion === '1' && requiresEditProtocol({ recentTransactions: [transaction] })) {
+      // Upgrade the header and append its first new-protocol record atomically.
+      // Legacy readers reject v2 instead of silently ignoring unset fields.
+      const previous = readFileSync(this.path, 'utf8')
+      const header: RecoveryJournalHeader = { ...this.header, journalVersion: '2', operationProtocolVersion: '1.1' }
+      const temporary = `${this.path}.upgrade-${crypto.randomUUID()}`
+      const descriptor = openSync(temporary, 'wx', 0o600)
+      try {
+        appendFileSync(descriptor, canonicalJsonString(header) + '\n' + previous.slice(previous.indexOf('\n') + 1) + line, 'utf8')
+        fsyncSync(descriptor)
+      } catch (cause) {
+        closeSync(descriptor)
+        unlinkSync(temporary)
+        throw cause
+      }
       closeSync(descriptor)
+      try { renameSync(temporary, this.path) } catch (cause) { unlinkSync(temporary); throw cause }
+      this.header = header
+    } else {
+      const descriptor = openSync(this.path, 'a', 0o600)
+      try {
+        appendFileSync(descriptor, line, 'utf8')
+        fsyncSync(descriptor)
+      } finally {
+        closeSync(descriptor)
+      }
     }
     this.header = { ...this.header, lastTransactionId: transaction.transactionId }
     this.lastRevision = resultRevision
@@ -129,7 +149,7 @@ export function readJournal(path: string): JournalReadResult {
   if (!meaningful[0]) return { records: [], issues: [error('JOURNAL_CORRUPT', 'Journal is empty.')], complete: false }
   let header: RecoveryJournalHeader
   try { header = JSON.parse(meaningful[0]) as RecoveryJournalHeader } catch (cause) { return { records: [], issues: [error('JOURNAL_CORRUPT', `Invalid journal header: ${cause instanceof Error ? cause.message : String(cause)}`)], complete: false } }
-  if (!isRecord(header) || header.journalVersion !== '1' || typeof header.documentId !== 'string' || !header.documentId || typeof header.baseCheckpointRevision !== 'string' || !isRevision(header.baseCheckpointRevision) || typeof header.sessionId !== 'string' || !header.sessionId || typeof header.createdAt !== 'string' || !header.createdAt || (header.compatibilityProfile !== undefined && (typeof header.compatibilityProfile !== 'string' || !header.compatibilityProfile))) issues.push(error('JOURNAL_CORRUPT', 'Journal header is invalid.'))
+  if (!isRecord(header) || !['1', '2'].includes(String(header.journalVersion)) || (header.journalVersion === '2' && header.operationProtocolVersion !== '1.1') || typeof header.documentId !== 'string' || !header.documentId || typeof header.baseCheckpointRevision !== 'string' || !isRevision(header.baseCheckpointRevision) || typeof header.sessionId !== 'string' || !header.sessionId || typeof header.createdAt !== 'string' || !header.createdAt || (header.compatibilityProfile !== undefined && (typeof header.compatibilityProfile !== 'string' || !header.compatibilityProfile))) return { records: [], issues: [error('JOURNAL_CORRUPT', 'Journal header is invalid.')], complete: false }
   const records: RecoveryJournalRecord[] = []
   let complete = issues.length === 0
   const headerBaseRevision = isRecord(header) ? header.baseCheckpointRevision : undefined
@@ -171,6 +191,10 @@ export function readJournal(path: string): JournalReadResult {
     }
     records.push(parsed)
     tailRevision = isRevision(parsed.resultRevision) ? parsed.resultRevision : undefined
+  }
+  if (header?.journalVersion === '1' && requiresEditProtocol({ recentTransactions: records.map(record => record.transaction) })) {
+    issues.push(error('JOURNAL_CORRUPT', 'Protocol 1.1 records require journal version 2.'))
+    return { header, records: [], issues, complete: false }
   }
   return { header, records, issues, complete }
 }

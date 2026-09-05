@@ -267,6 +267,7 @@ test("Browser portable enforces Core locks, edits arbitrary chart cells visibly,
     const beforeChart = await page
       .locator('[data-ppte-element-id="chart_revenue"] svg')
       .innerHTML();
+    await page.locator('.ppte-tools > summary').click();
     await page.locator('[data-ppte-action="chart-data"]').click();
     const numeric = page.locator('dialog input[type="number"]').first();
     await numeric.fill("87");

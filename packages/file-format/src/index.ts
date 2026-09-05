@@ -2,7 +2,7 @@ import { existsSync, fsyncSync, mkdirSync, openSync, closeSync, readFileSync, re
 import { createHash } from 'node:crypto'
 import { dirname, basename, join } from 'node:path'
 import { canonicalHash, canonicalJsonString, canonicalRevision } from '../../canonical-json/src/index.js'
-import { assertDocumentCompatibility, checkCompatibility, inferCompatibilityProfile, runtimeProfileForCompatibility } from '../../compatibility/src/index.js'
+import { assertDocumentCompatibility, profileDescriptor, checkCompatibility, inferCompatibilityProfile, runtimeProfileForCompatibility } from '../../compatibility/src/index.js'
 import { readJournal, replayJournal } from '../../recovery-journal/src/index.js'
 import type { BlobResolver } from '../../recovery-journal/src/index.js'
 import { validateRuntimeDocument, validateTransactionShape } from '../../validation/src/index.js'
@@ -124,12 +124,12 @@ export class PpteFileService {
 }
 
 export function writeCheckpoint(document: PpteDocument, target: string, options: CheckpointWriteOptions = {}): CheckpointResult {
-  const compatibilityProfile = options.compatibilityProfile ?? inferCompatibilityProfile(document)
+  const compatibilityProfile = options.compatibilityProfile ?? inferCompatibilityProfile(document, options.clean ? {} : options)
   const issues = validateRuntimeDocument(document, { runtimeProfile: runtimeProfileForCompatibility(compatibilityProfile) }).filter((issue) => issue.severity === 'error')
   if (issues.length) throw new Error(issues.map((issue) => `${issue.code}: ${issue.message}`).join('\n'))
   const revision = canonicalRevision(document)
   const timestamp = options.timestamp ?? new Date().toISOString()
-  assertDocumentCompatibility(document, compatibilityProfile)
+  assertDocumentCompatibility(document, compatibilityProfile, options.clean ? {} : options)
   const entries: ZipEntry[] = []
   addEntry(entries, 'mimetype', bytes('application/vnd.ppte+zip'))
   addEntry(entries, 'document.json', bytes(canonicalJsonString(document)))
@@ -176,7 +176,7 @@ export function writeCheckpoint(document: PpteDocument, target: string, options:
     format: 'ppte',
     formatVersion: '2',
     schemaVersion: '2.0.0',
-    operationProtocolVersion: '1.0',
+    operationProtocolVersion: profileDescriptor(compatibilityProfile).operationProtocolVersion,
     compatibilityProfile,
     documentId: document.documentId,
     contentRevision: revision,
@@ -282,12 +282,12 @@ export function openCheckpointBytes(bytesOnDisk: Uint8Array): OpenCheckpointResu
 
 /** Serialize the exact stored ZIP used by writeCheckpoint without touching disk. */
 export function buildCheckpointBytes(document: PpteDocument, options: CheckpointWriteOptions = {}): Uint8Array {
-  const compatibilityProfile = options.compatibilityProfile ?? inferCompatibilityProfile(document)
+  const compatibilityProfile = options.compatibilityProfile ?? inferCompatibilityProfile(document, options.clean ? {} : options)
   const issues = validateRuntimeDocument(document, { runtimeProfile: runtimeProfileForCompatibility(compatibilityProfile) }).filter((issue) => issue.severity === 'error')
   if (issues.length) throw new Error(issues.map((issue) => `${issue.code}: ${issue.message}`).join('\n'))
   const revision = canonicalRevision(document)
   const timestamp = options.timestamp ?? '1970-01-01T00:00:00.000Z'
-  assertDocumentCompatibility(document, compatibilityProfile)
+  assertDocumentCompatibility(document, compatibilityProfile, options.clean ? {} : options)
   const entries: ZipEntry[] = []
   addEntry(entries, 'mimetype', bytes('application/vnd.ppte+zip'))
   addEntry(entries, 'document.json', bytes(canonicalJsonString(document)))
@@ -334,7 +334,7 @@ export function buildCheckpointBytes(document: PpteDocument, options: Checkpoint
     format: 'ppte',
     formatVersion: '2',
     schemaVersion: '2.0.0',
-    operationProtocolVersion: '1.0',
+    operationProtocolVersion: profileDescriptor(compatibilityProfile).operationProtocolVersion,
     compatibilityProfile,
     documentId: document.documentId,
     contentRevision: revision,
@@ -407,6 +407,7 @@ function readRecentTransactions(archive: Map<string, Uint8Array>, manifest: Ppte
 }
 
 function attachCheckpointRestoreContext(document: PpteDocument, transactions: Transaction[], compatibilityProfile: string, redoHistoryEntries: SessionHistoryEntrySnapshot[] = []): void {
+  assertDocumentCompatibility(document, compatibilityProfile, { recentTransactions: transactions, redoHistory: redoHistoryEntries })
   const historyEntries = historyEntriesFromTransactions(transactions)
   if (!historyEntries?.length && !redoHistoryEntries.length) return
   attachSessionRestoreContext(document, {

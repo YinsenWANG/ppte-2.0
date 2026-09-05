@@ -1,14 +1,15 @@
 import { PPTE_COMPATIBILITY_PROFILE, PPTE_FORMAT_VERSION, PPTE_GA_B_COMPATIBILITY_PROFILE, PPTE_GA_C_COMPATIBILITY_PROFILE, PPTE_OPERATION_PROTOCOL_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
 import type { PpteDocument, RuntimeProfile } from '../../schema/src/index.js'
+import { PPTE_EDIT_COMPATIBILITY_PROFILE, readPersistedHistoryMetadata, type Operation, type Transaction, type SessionHistoryEntrySnapshot } from '../../schema/src/index.js'
 
 /** A release-tested combination of the independently versioned contracts. */
 export interface CompatibilityProfile {
   id: string
   formatVersion: '2'
   schemaVersion: '2.0.0'
-  operationProtocolVersion: '1.0'
+  operationProtocolVersion: '1.0' | '1.1'
   slideIrVersion: '1.0'
-  portableRuntimeVersion: '2.0.0'
+  portableRuntimeVersion: '2.0.0' | '2.1.0'
   layoutRecipeVersion: '1.0'
   widgetAbiVersion: string | null
   patchVersion: string | null
@@ -85,10 +86,19 @@ export const GA_C_PROFILE: CompatibilityProfile = {
   },
 }
 
+export const EDIT_PROFILE: CompatibilityProfile = {
+  ...GA_C_PROFILE,
+  id: PPTE_EDIT_COMPATIBILITY_PROFILE,
+  operationProtocolVersion: '1.1',
+  portableRuntimeVersion: '2.1.0',
+  migration: { from: [GA_A_PROFILE.id, GA_B_PROFILE.id, GA_C_PROFILE.id], direction: 'forward-only', preservesSource: true },
+}
+
 const PROFILES: Readonly<Record<string, CompatibilityProfile>> = {
   [GA_A_PROFILE.id]: GA_A_PROFILE,
   [GA_B_PROFILE.id]: GA_B_PROFILE,
   [GA_C_PROFILE.id]: GA_C_PROFILE,
+  [EDIT_PROFILE.id]: EDIT_PROFILE,
 }
 
 export const SUPPORTED_COMPATIBILITY_PROFILES = Object.freeze(Object.keys(PROFILES)) as readonly string[]
@@ -158,7 +168,20 @@ export function profileDescriptor(id: string = PPTE_COMPATIBILITY_PROFILE): Comp
  * UI surface that happened to save the document.  Every checkpoint and every
  * Portable save therefore makes the same compatibility decision.
  */
-export function inferCompatibilityProfile(document: PpteDocument): string {
+export interface PersistedCompatibilityInput {
+  recentTransactions?: ReadonlyArray<Transaction>
+  redoHistory?: ReadonlyArray<SessionHistoryEntrySnapshot>
+  operations?: ReadonlyArray<Operation>
+}
+
+export function requiresEditProtocol(input: PersistedCompatibilityInput): boolean {
+  const usesUnset = (operations: ReadonlyArray<Operation> = []) => operations.some(op => op.kind === 'slide.update' && op.unset !== undefined)
+  const transactionUsesUnset = (tx: Transaction) => usesUnset(tx.operations) || usesUnset(readPersistedHistoryMetadata(tx)?.inverse.operations)
+  return usesUnset(input.operations) || Boolean(input.recentTransactions?.some(transactionUsesUnset)) || Boolean(input.redoHistory?.some(entry => transactionUsesUnset(entry.transaction) || transactionUsesUnset(entry.inverse)))
+}
+
+export function inferCompatibilityProfile(document: PpteDocument, persisted: PersistedCompatibilityInput = {}): string {
+  if (requiresEditProtocol(persisted)) return PPTE_EDIT_COMPATIBILITY_PROFILE
   let requiresGaB = false
   for (const slide of Object.values(document.slides ?? {})) {
     if (slide.visualStrategy === 'poster' || slide.transition !== undefined) {
@@ -179,14 +202,20 @@ export function inferCompatibilityProfile(document: PpteDocument): string {
 
 /** Map a persisted profile to the runtime capability subset used for checks. */
 export function runtimeProfileForCompatibility(profileId: string): RuntimeProfile {
-  return profileId === PPTE_GA_C_COMPATIBILITY_PROFILE ? 'ga-c' : 'ga-b'
+  return profileId === PPTE_GA_C_COMPATIBILITY_PROFILE || profileId === PPTE_EDIT_COMPATIBILITY_PROFILE ? 'ga-c' : 'ga-b'
 }
 
 /** Validate the document/profile pair at every persistence boundary. */
-export function assertDocumentCompatibility(document: PpteDocument, profileId: string): void {
-  const minimum = inferCompatibilityProfile(document)
-  const rank = (id: string): number => id === PPTE_GA_C_COMPATIBILITY_PROFILE ? 3 : id === PPTE_GA_B_COMPATIBILITY_PROFILE ? 2 : id === PPTE_COMPATIBILITY_PROFILE ? 1 : 0
-  if (rank(profileId) < rank(minimum)) {
+export function assertDocumentCompatibility(document: PpteDocument, profileId: string, persisted: PersistedCompatibilityInput = {}): void {
+  assertSupportedCompatibilityProfile(profileId)
+  const minimum = inferCompatibilityProfile(document, persisted)
+  const supports: Record<string, readonly string[]> = {
+    [GA_A_PROFILE.id]: [GA_A_PROFILE.id],
+    [GA_B_PROFILE.id]: [GA_A_PROFILE.id, GA_B_PROFILE.id],
+    [GA_C_PROFILE.id]: [GA_A_PROFILE.id, GA_B_PROFILE.id, GA_C_PROFILE.id],
+    [EDIT_PROFILE.id]: [GA_A_PROFILE.id, GA_B_PROFILE.id, GA_C_PROFILE.id, EDIT_PROFILE.id],
+  }
+  if (!supports[profileId]?.includes(minimum)) {
     throw new Error(`CHECKPOINT_FAILED: document requires compatibility profile ${minimum}; received ${profileId}.`)
   }
 }

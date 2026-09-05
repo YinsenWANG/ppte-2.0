@@ -1,5 +1,5 @@
 import { canonicalHash, canonicalJsonString, canonicalRevision, sha256HexBytes } from '../../canonical-json/src/index.js'
-import { assertDocumentCompatibility, checkCompatibility, runtimeProfileForCompatibility } from '../../compatibility/src/index.js'
+import { assertDocumentCompatibility, requiresEditProtocol, checkCompatibility, runtimeProfileForCompatibility } from '../../compatibility/src/index.js'
 import { withErrorSemantics } from '../../schema/src/errors.js'
 import { applyTransaction } from '../../operations/src/index.js'
 import { computeStructuralDiff } from '../../diff/src/index.js'
@@ -107,6 +107,7 @@ export function decodePatch(data: Uint8Array): PptePatch {
 export function validatePatch(patch: PptePatch): PatchValidationResult {
   if (!patch || typeof patch !== 'object') return { ok: false, issues: [error('PATCH_INVALID', 'Patch must be an object.')] }
   const issues: ValidationIssue[] = []
+  if (Array.isArray(patch.operations) && requiresEditProtocol({ operations: patch.operations }) && patch.manifest?.operationProtocolVersion !== '1.1') issues.push(error('PATCH_INVALID', 'slide.update.unset requires operation protocol 1.1.'))
   try { validatePatchManifest(patch?.manifest, Array.isArray(patch?.manifest?.files) && patch.manifest.files.length > 0) } catch (cause) { issues.push(error('PATCH_INVALID', cause instanceof Error ? cause.message : String(cause))) }
   if (!Array.isArray(patch.operations) || patch.operations.length === 0) issues.push(error('PATCH_INVALID', 'A patch must contain at least one operation.'))
   else {
@@ -258,7 +259,7 @@ function guardPatchOperations(operations: Operation[], baseRevision: string): Op
 
 function validatePatchManifest(manifest: PatchManifest, requireFiles = true): void {
   if (!manifest || typeof manifest !== 'object' || manifest.patchVersion !== '1' || !manifest.documentId || !manifest.baseRevision || !manifest.createdAt || !manifest.compatibilityProfile || !Array.isArray(manifest.files)) throw new Error('PATCH_INVALID: incomplete patch manifest')
-  if (manifest.operationProtocolVersion !== PPTE_OPERATION_PROTOCOL_VERSION) throw new Error(`PATCH_INVALID: unsupported operation protocol ${manifest.operationProtocolVersion}`)
+  if (!['1.0', '1.1'].includes(manifest.operationProtocolVersion)) throw new Error(`PATCH_INVALID: unsupported operation protocol ${manifest.operationProtocolVersion}`)
   if (manifest.headRevisionProof !== undefined && !/^[0-9a-f]{64}$/i.test(manifest.headRevisionProof)) throw new Error('PATCH_INVALID: headRevisionProof must be a SHA-256 digest.')
   const compatibility = checkCompatibility(manifest)
   if (!compatibility.ok || compatibility.disposition !== 'native') throw new Error(`PATCH_INVALID: ${compatibility.issues[0]?.code ?? 'COMPATIBILITY_PROFILE_UNSUPPORTED'}`)

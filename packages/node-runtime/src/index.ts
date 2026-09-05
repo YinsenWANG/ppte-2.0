@@ -112,7 +112,7 @@ export function openFileSession(
           fontBytes:Object.fromEntries(Object.values(document.fonts).map(f=>[f.id,(f.hash?cas?.get(f.hash):undefined)??resources.fontBytes[f.id]])),
           redoHistory: [...session.getRedoHistory()],
           recentTransactions: recent ? [...recent] : [],
-          compatibilityProfile: inferCompatibilityProfile(document),
+          compatibilityProfile: inferCompatibilityProfile(document, { recentTransactions: recent, redoHistory: session.getRedoHistory() }),
           timestamp: new Date().toISOString(),
         }),
       clearRecovery: () => journal.clear(),

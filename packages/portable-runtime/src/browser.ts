@@ -25,6 +25,7 @@ const runtime = new PortableRuntime(payload.document, {
     Object.entries(payload.fonts).map(([k, v]) => [k, decode(v)]),
   ),
   recentTransactions: payload.recentTransactions,
+  redoHistory: payload.redoHistory,
 });
 const root = document.getElementById("ppte-shell")!;
 const canvas = document.querySelector<HTMLElement>("[data-ppte-canvas]")!;
@@ -565,6 +566,7 @@ const api = {
     ...payload,
     document: runtime.getDocument(),
     recentTransactions: runtime.getHistory(),
+    redoHistory: runtime.getRedoHistory(),
   }),
   getDocument: () => runtime.getDocument(),
   getRevision: () => runtime.getRevision(),

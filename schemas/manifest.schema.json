@@ -29,10 +29,18 @@
       "const": "2.0.0"
     },
     "operationProtocolVersion": {
-      "const": "1.0"
+      "enum": [
+        "1.0",
+        "1.1"
+      ]
     },
     "compatibilityProfile": {
-      "const": "ppte-2.0-ga-a.1"
+      "enum": [
+        "ppte-2.0-ga-a.1",
+        "ppte-2.0-ga-b.1",
+        "ppte-2.0-ga-c.1",
+        "ppte-2.0-edit.1"
+      ]
     },
     "documentId": {
       "type": "string",
@@ -144,5 +152,30 @@
       "additionalProperties": false
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "compatibilityProfile": {
+            "const": "ppte-2.0-edit.1"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "operationProtocolVersion": {
+            "const": "1.1"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "operationProtocolVersion": {
+            "const": "1.0"
+          }
+        }
+      }
+    }
+  ]
 }

@@ -220,6 +220,8 @@ export interface SlideMoveOperation extends OperationBase<'slide.move'> {
 export interface SlideUpdateOperation extends OperationBase<'slide.update'> {
   slideId: SlideId
   patch: Record<string, JsonValue>
+  /** Protocol 1.1: restore inheritance by removing optional metadata fields. */
+  unset?: string[]
 }
 export interface SlideSetNotesOperation extends OperationBase<'slide.setNotes'> {
   slideId: SlideId

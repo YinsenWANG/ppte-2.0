@@ -223,7 +223,15 @@ function validateOperationShape(operation: Record<string, unknown>, index: numbe
     }
     case 'slide.delete': case 'slide.move': requireString('slideId'); if (kind === 'slide.move') requireInteger('index'); break
     case 'slide.duplicate': requireString('sourceSlideId'); requireString('newSlideId'); if (operation.index !== undefined) requireInteger('index'); if (operation.offset !== undefined) requirePoint('offset'); break
-    case 'slide.update': requireRecord('patch'); break
+    case 'slide.update': {
+      const patch = requireRecord('patch')
+      const allowed = ['name', 'hidden', 'background', 'notes', 'transition', 'semantic', 'visualStrategy', 'provenance', 'extensions']
+      if (operation.unset !== undefined) {
+        if (!Array.isArray(operation.unset) || operation.unset.some(key => typeof key !== 'string' || !allowed.includes(key)) || new Set(operation.unset).size !== operation.unset.length) issues.push(error('SCHEMA_INVALID', 'slide.update.unset must contain unique optional metadata keys.', `${path}/unset`))
+        else if (patch && operation.unset.some(key => Object.prototype.hasOwnProperty.call(patch, key))) issues.push(error('SCHEMA_INVALID', 'slide.update cannot set and unset the same field.', `${path}/unset`))
+      }
+      break
+    }
     case 'slide.setNotes': validateUnsetPair(operation, 'notes', validSlideNotes, path, issues); break
     case 'slide.setTransition': validateUnsetPair(operation, 'transition', validTransition, path, issues); break
     case 'slide.setReadingOrder':

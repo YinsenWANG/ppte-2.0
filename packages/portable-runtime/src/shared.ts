@@ -14,8 +14,8 @@ import { checkGlyphCoverage, validateRuntimeDocument, validateTransactionShape }
 import { plainTextToRichText, editRichText } from '../../richtext-adapter/src/index.js'
 import { buildCapabilityReport, type CapabilityReport } from '../../capability/src/index.js'
 import { buildFactUpdateTransaction } from '../../facts/src/index.js'
-import { assertDocumentCompatibility, inferCompatibilityProfile, runtimeProfileForCompatibility } from '../../compatibility/src/index.js'
-import { PPTE_FORMAT, PPTE_FORMAT_VERSION, PPTE_OPERATION_PROTOCOL_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
+import { assertDocumentCompatibility, profileDescriptor, inferCompatibilityProfile, runtimeProfileForCompatibility } from '../../compatibility/src/index.js'
+import { PPTE_FORMAT, PPTE_FORMAT_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
 import { withErrorSemantics } from '../../schema/src/errors.js'
 import type { Asset, AssetId, ChartData, Element, FontId, Frame, NormalizedRect, PpteDocument, PpteManifest, PortableOrigin, PortableProfile, Revision, RuntimeProfile, Transaction, ValidationIssue } from '../../schema/src/index.js'
 import { advancePresenterState, animationSteps, normalizePresenterState, retreatPresenterState, type PresenterAnimationState } from './presenter-state.js'
@@ -39,6 +39,7 @@ export type { DeliveryArtifactAssessment, DeliveryArtifactRole, DeliveryMetrics,
 export interface PortableBuildOptions {
   profile: PortableProfile
   recentTransactions?: Transaction[]
+  redoHistory?: HistoryEntry[]
   assetBytes?: Record<AssetId, Uint8Array>
   fontBytes?: Record<FontId, Uint8Array>
   runtimeVersion?: string
@@ -53,6 +54,7 @@ export interface PortablePayload {
   origin: PortableOrigin
   /** The persisted minimum profile is shared by Portable and file-format saves. */
   recentTransactions?: Transaction[]
+  redoHistory?: HistoryEntry[]
   minimumCompatibilityProfile?: string
   assets: Record<AssetId, string>
   fonts: Record<FontId, string>
@@ -155,7 +157,7 @@ export function buildPortable(document: PpteDocument, options: PortableBuildOpti
   }
   if (options.profile === 'quick-fix' || options.profile === 'light-edit' || options.profile === 'full-portable') for (const slide of Object.values(document.slides)) for (const element of Object.values(slide.elements)) if (element.type === 'text') issues.push(...checkGlyphCoverage(document, element, undefined, { strict: true }))
   if (issues.some((item) => item.severity === 'error')) return { ok: false, html: '', origin, capabilityReport, issues: dedupe(issues), bytes: 0 }
-  const payload: PortablePayload = { document, origin, recentTransactions: options.recentTransactions ?? [], minimumCompatibilityProfile: inferCompatibilityProfile(document), assets, fonts, capabilityReport }
+  const payload: PortablePayload = { document, origin, recentTransactions: options.recentTransactions ?? [], redoHistory: options.redoHistory ?? [], minimumCompatibilityProfile: inferCompatibilityProfile(document, options), assets, fonts, capabilityReport }
   const html = assembleHtml(document, payload, assetSources)
   const runtimePayload: PortablePayload = { ...payload, assets: {}, fonts: {} }
   const runtimeHtml = assembleHtml(document, runtimePayload, {})
@@ -210,7 +212,7 @@ export function auditPortableBundle(html: string): PortableAuditResult {
   if (origin?.sourceDocumentId !== payload.document.documentId) issues.push(issue('PORTABLE_ORIGIN_MISMATCH', 'Portable origin does not identify the embedded document.'))
   if (origin?.sourceRevision && canonicalRevision(payload.document) !== origin.sourceRevision) issues.push(issue('PORTABLE_ORIGIN_MISMATCH', 'Portable origin revision does not match the embedded document.'))
   if (payload.capabilityReport?.sourceDocumentId !== payload.document.documentId || payload.capabilityReport?.sourceRevision !== origin?.sourceRevision) issues.push(issue('PORTABLE_CAPABILITY_MISMATCH', 'Capability report does not describe the embedded source revision.'))
-  if (payload.minimumCompatibilityProfile && payload.minimumCompatibilityProfile !== inferCompatibilityProfile(payload.document)) issues.push(issue('PORTABLE_CAPABILITY_MISMATCH', 'Portable minimum Compatibility Profile does not describe the embedded document.'))
+  if (payload.minimumCompatibilityProfile && payload.minimumCompatibilityProfile !== inferCompatibilityProfile(payload.document, { recentTransactions: payload.recentTransactions, redoHistory: payload.redoHistory })) issues.push(issue('PORTABLE_CAPABILITY_MISMATCH', 'Portable minimum Compatibility Profile does not describe the embedded document.'))
   if (origin?.profile !== 'viewer' && origin?.profile !== 'quick-fix' && origin?.profile !== 'light-edit' && origin?.profile !== 'full-portable') issues.push(issue('PORTABLE_PROFILE_UNSUPPORTED', 'Portable profile is not recognized by this runtime.'))
   if (/<(?:script|link)[^>]+(?:src|href)\s*=\s*["'](?:https?:|\/\/|data:)/i.test(markup) || /<img[^>]+src\s*=\s*["'](?!data:|blob:|["'])/i.test(markup)) issues.push(issue('PORTABLE_NETWORK_DISABLED', 'Portable output may not load external runtime or asset resources.'))
   if (/\b(?:fetch|XMLHttpRequest|WebSocket|EventSource)\s*\(/.test(executable)) issues.push(issue('PORTABLE_NETWORK_DISABLED', 'Portable runtime contains a network-capable API call.'))
@@ -228,10 +230,10 @@ export class PortableRuntime {
   private lastTransaction?: Transaction
   private selection: Array<{ slideId: string; elementId: string }> = []
 
-  constructor(document: PpteDocument, options: { profile?: PortableProfile; assetBytes?: Record<AssetId, Uint8Array>; fontBytes?: Record<FontId, Uint8Array>; recentTransactions?: Transaction[] } = {}) {
+  constructor(document: PpteDocument, options: { profile?: PortableProfile; assetBytes?: Record<AssetId, Uint8Array>; fontBytes?: Record<FontId, Uint8Array>; recentTransactions?: Transaction[]; redoHistory?: HistoryEntry[] } = {}) {
     this.profile = options.profile ?? 'viewer'
     const runtimeProfile = this.profile === 'light-edit' || this.profile === 'full-portable' ? 'ga-c' : runtimeProfileForCompatibility(inferCompatibilityProfile(document))
-    this.session = new PpteSession(document, { runtimeProfile, recentTransactions: options.recentTransactions })
+    this.session = new PpteSession(document, { runtimeProfile, recentTransactions: options.recentTransactions, redoHistory: options.redoHistory })
     this.assetBytes = cloneBytes(options.assetBytes)
     this.fontBytes = cloneBytes(options.fontBytes)
   }
@@ -244,6 +246,7 @@ export class PortableRuntime {
   getAssetBytes(): Record<string, Uint8Array> { return cloneBytes(this.assetBytes) }
   getFontBytes(): Record<string, Uint8Array> { return cloneBytes(this.fontBytes) }
   getHistory(): Transaction[] { return this.session.getHistory().map(entry => entry.transaction) }
+  getRedoHistory(): HistoryEntry[] { return [...this.session.getRedoHistory()] }
   preview(transaction: Transaction) { return this.session.preview(transaction) }
   commit(transaction: Transaction): QuickFixResult {
     if (this.profile !== "full-portable") return { ok: false, issues: [issue("PORTABLE_EDIT_UNSUPPORTED", "Arbitrary transactions require Full Portable.")] }
@@ -437,7 +440,7 @@ export class PortableRuntime {
 
   saveAsProject(options: { timestamp?: string; clean?: boolean; compatibilityProfile?: string } = {}): QuickFixResult {
     try {
-      const bytes = buildPortableCheckpointBytes(this.session.getDocument(), { timestamp: options.timestamp ?? '1970-01-01T00:00:00.000Z', clean: options.clean, compatibilityProfile: options.compatibilityProfile ?? inferCompatibilityProfile(this.session.getDocument()), runtimeProfile: this.profile === 'light-edit' || this.profile === 'full-portable' ? 'ga-c' : runtimeProfileForCompatibility(inferCompatibilityProfile(this.session.getDocument())), recentTransactions: options.clean ? [] : this.session.getHistory().map((entry) => entry.transaction), assetBytes: this.assetBytes, fontBytes: this.fontBytes })
+      const bytes = buildPortableCheckpointBytes(this.session.getDocument(), { timestamp: options.timestamp ?? '1970-01-01T00:00:00.000Z', clean: options.clean, compatibilityProfile: options.compatibilityProfile, redoHistory: options.clean ? [] : [...this.session.getRedoHistory()], runtimeProfile: this.profile === 'light-edit' || this.profile === 'full-portable' ? 'ga-c' : runtimeProfileForCompatibility(inferCompatibilityProfile(this.session.getDocument())), recentTransactions: options.clean ? [] : this.session.getHistory().map((entry) => entry.transaction), assetBytes: this.assetBytes, fontBytes: this.fontBytes })
       return { ok: true, revision: this.session.getRevision(), bytes, issues: [] }
     } catch (cause) { return { ok: false, issues: [issue('CHECKPOINT_FAILED', cause instanceof Error ? cause.message : String(cause))] } }
   }
@@ -445,7 +448,7 @@ export class PortableRuntime {
   saveAsNewProject(options: { timestamp?: string; compatibilityProfile?: string } = {}): QuickFixResult { return this.saveAsProject(options) }
 
   saveAsPortable(options: Omit<PortableBuildOptions, 'profile'> = {}): PortableBuildResult {
-    return buildPortable(this.session.getDocument(), { ...options, profile: this.profile, recentTransactions: this.getHistory(), sourceRevision: this.session.getRevision(), assetBytes: this.assetBytes, fontBytes: this.fontBytes })
+    return buildPortable(this.session.getDocument(), { ...options, profile: this.profile, recentTransactions: this.getHistory(), redoHistory: [...this.session.getRedoHistory()], sourceRevision: this.session.getRevision(), assetBytes: this.assetBytes, fontBytes: this.fontBytes })
   }
 
   /** Semantic alias for callers that want to make the browser-copy role explicit. */
@@ -544,8 +547,8 @@ export function buildPortableCheckpointBytes(document: PpteDocument, options: { 
   const issues = validateRuntimeDocument(document, { runtimeProfile: options.runtimeProfile ?? 'ga-b' }).filter((item) => item.severity === 'error')
   if (issues.length) throw new Error(issues.map((item) => `${item.code}: ${item.message}`).join('\n'))
   const snapshot = options.clean ? cleanPortableSnapshot(document) : document
-  const compatibilityProfile = options.compatibilityProfile ?? inferCompatibilityProfile(snapshot)
-  assertPortableDocumentCompatibility(snapshot, compatibilityProfile)
+  const compatibilityProfile = options.compatibilityProfile ?? inferCompatibilityProfile(snapshot, options.clean ? {} : options)
+  assertDocumentCompatibility(snapshot, compatibilityProfile, options.clean ? {} : options)
   const revision = canonicalRevision(snapshot)
   const recent = options.recentTransactions ?? []
   if (options.clean && recent.length) throw new Error('CHECKPOINT_FAILED: clean checkpoint cannot contain recent history')
@@ -591,7 +594,7 @@ export function buildPortableCheckpointBytes(document: PpteDocument, options: { 
     format: PPTE_FORMAT,
     formatVersion: PPTE_FORMAT_VERSION,
     schemaVersion: PPTE_SCHEMA_VERSION,
-    operationProtocolVersion: PPTE_OPERATION_PROTOCOL_VERSION,
+    operationProtocolVersion: profileDescriptor(compatibilityProfile).operationProtocolVersion,
     compatibilityProfile,
     documentId: snapshot.documentId,
     contentRevision: revision,
@@ -607,10 +610,6 @@ export function buildPortableCheckpointBytes(document: PpteDocument, options: { 
   const archive = writeStoredZip(entries)
   readStoredZip(archive)
   return archive
-}
-
-function assertPortableDocumentCompatibility(document: PpteDocument, compatibilityProfile: string): void {
-  assertDocumentCompatibility(document, compatibilityProfile)
 }
 
 function cleanPortableSnapshot(document: PpteDocument): PpteDocument {

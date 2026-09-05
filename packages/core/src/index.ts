@@ -183,6 +183,18 @@ export class PpteSession {
     const diff = computeStructuralDiff(this.document, applied.document)
     issues.push(...enforceChangeContract(this.document, applied.document, transaction, diff, { allowSystemInversePolicy: options.allowSystemInversePolicy === true && this.systemInversePreview }))
     issues.push(...validateRuntimeDocument(applied.document, { runtimeProfile }))
+    // Prove the durable inverse, not its in-memory representation: JSON drops
+    // undefined values that would otherwise appear to restore absent fields.
+    if (!issues.some(issue => issue.severity === 'error')) {
+      try {
+        const inverse = JSON.parse(JSON.stringify(applied.inverseOperations)) as Transaction['operations']
+        const restored = applyTransaction(applied.document, { ...transaction, operations: inverse }, { runtimeProfile, strictFactSync: true }).document
+        if (canonicalRevision(restored) !== this.revision) issues.push(error('INVERSE_ROUNDTRIP_FAILED', 'The serialized inverse does not restore the current revision.'))
+        else applied.inverseOperations = inverse
+      } catch (cause) {
+        issues.push(error('INVERSE_ROUNDTRIP_FAILED', `The serialized inverse cannot be applied: ${String(cause)}`))
+      }
+    }
     const ok = !issues.some((issue) => issue.severity === 'error')
     const proposedRevision = ok ? canonicalRevision(applied.document) : undefined
     const result: PreviewResult = {
@@ -200,7 +212,9 @@ export class PpteSession {
   }
 
   commit(transaction: Transaction): CommitResult {
-    return this.performCommit(transaction, true, true, 'committed')
+    // Preview listeners must not be able to alter the durable transaction
+    // after its effects and inverse have been checked.
+    return this.performCommit(cloneJson(transaction), true, true, 'committed')
   }
 
   undo(): CommitResult {

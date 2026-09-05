@@ -1,5 +1,5 @@
 import { canonicalHash, canonicalRevision, cloneJson } from '../../canonical-json/src/index.js'
-import { assertDocumentCompatibility, inferCompatibilityProfile } from '../../compatibility/src/index.js'
+import { assertDocumentCompatibility, profileDescriptor, inferCompatibilityProfile } from '../../compatibility/src/index.js'
 import { validateDocument } from '../../schema/src/index.js'
 import type { Asset, CompareResult, Element, Fact, FontAsset, Operation, PpteDocument, PptePatch, ReviewCapabilityGap, ReviewField, ReviewSelection, SemanticMatchMethod, SemanticReviewUnit, Source, Transaction, ValidationIssue } from '../../schema/src/index.js'
 import { computePatchHeadRevisionProof, encodePatch } from '../../patch-format/src/codec.js'
@@ -173,11 +173,11 @@ export function buildAcceptTransaction(result: CompareResult, selection: ReviewS
 export function createPatch(base: PpteDocument, revised: PpteDocument, options: PatchBuildOptions = {}): PptePatch {
   const comparison = compareDocuments(base, base, revised)
   if (comparison.issues.some((issue) => issue.severity === 'error')) throw new Error(comparison.issues.map((issue) => `${issue.code}: ${issue.message}`).join('\n'))
-  const inferredProfile = inferCompatibilityProfile(revised)
-  if (options.compatibilityProfile !== undefined && options.compatibilityProfile !== inferredProfile) throw new Error(`COMPATIBILITY_PROFILE_MISMATCH: inferred ${inferredProfile}, received ${options.compatibilityProfile}.`)
-  assertDocumentCompatibility(revised, inferredProfile)
   const transaction = buildAcceptTransaction(comparison, { includeAdded: true, includeDeleted: true }, options.actor ?? { type: 'reviewer', id: 'three-way-review' })
   const operations = transaction.operations.map((operation) => operation.preconditions?.some((precondition) => precondition.kind === 'revision-equals') ? operation : { ...operation, preconditions: [...(operation.preconditions ?? []), { kind: 'revision-equals', revision: comparison.baseRevision }] }) as Operation[]
+  const inferredProfile = inferCompatibilityProfile(revised, { operations })
+  if (options.compatibilityProfile !== undefined && options.compatibilityProfile !== inferredProfile) throw new Error(`COMPATIBILITY_PROFILE_MISMATCH: inferred ${inferredProfile}, received ${options.compatibilityProfile}.`)
+  assertDocumentCompatibility(revised, inferredProfile, { operations })
   const assetMetadata: PptePatch['assetMetadata'] = {}
   const assets: PptePatch['assets'] = {}
   for (const [assetId, asset] of Object.entries(revised.assets)) {
@@ -206,7 +206,7 @@ export function createPatch(base: PpteDocument, revised: PpteDocument, options: 
       headRevisionProof: computePatchHeadRevisionProof(comparison.baseRevision, comparison.revisedRevision, operations),
       createdAt: options.createdAt ?? '1970-01-01T00:00:00.000Z',
       actor: options.actor ?? { type: 'reviewer', id: 'three-way-review' },
-      operationProtocolVersion: '1.0',
+      operationProtocolVersion: profileDescriptor(inferredProfile).operationProtocolVersion,
       compatibilityProfile: inferredProfile,
       files: [],
     },
@@ -701,7 +701,7 @@ function operationsForSlideField(slideId: string, local: PpteDocument['slides'][
   const prefix = `review:${slideId}:slide:${field}`
   if (['name', 'hidden', 'background', 'semantic', 'visualStrategy', 'provenance', 'extensions'].includes(field)) {
     const value = revised[field as keyof typeof revised]
-    return value === undefined ? [] : [{ opId: prefix, kind: 'slide.update', slideId, patch: { [field]: cloneJson(value) } as Record<string, never> }]
+    return value === undefined ? [{ opId: prefix, kind: 'slide.update', slideId, patch: {}, unset: [field] }] : [{ opId: prefix, kind: 'slide.update', slideId, patch: { [field]: cloneJson(value) } as Record<string, never> }]
   }
   if (field === 'notes') return revised.notes === undefined ? [{ opId: prefix, kind: 'slide.setNotes', slideId, unset: true }] : [{ opId: prefix, kind: 'slide.setNotes', slideId, notes: cloneJson(revised.notes) }]
   if (field === 'transition') return revised.transition === undefined ? [{ opId: prefix, kind: 'slide.setTransition', slideId, unset: true }] : [{ opId: prefix, kind: 'slide.setTransition', slideId, transition: cloneJson(revised.transition) }]
