@@ -550,7 +550,7 @@
       "milestone": "M0",
       "priority": "P0",
       "title": "交付 M0 干净安装候选包",
-      "status": "planned",
+      "status": "done",
       "effort": "M",
       "ownerRole": "验收 / 发布",
       "dependsOn": [
@@ -586,7 +586,58 @@
         "A19"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        {
+          "commit": "76a5df4e88bf408b5eee014f8dd07107aeb6433a",
+          "tests": [
+            "tests/npm-native-skill.test.ts",
+            "tests/evolution-baseline.test.ts",
+            "tests/history-inverse-roundtrip.test.ts",
+            "tests/history-repair.test.ts",
+            "tests/artifact-identity.test.ts",
+            "tests/portable-presentation.test.ts",
+            "tests/presentation-controller.test.ts",
+            "tests/surface-mode-contract.test.ts",
+            "tests/product-workflows.test.ts"
+          ],
+          "criteria": {
+            "1": "Native tarball install in a fresh consumer/cache/HOME; installed Skill example compile/inspect/preview/commit/reopen/undo/redo/deliver with Node network APIs blocked, no keys, MCP or Playwright. Missing-renderer failure provides installation commands and preserves source.",
+            "2": "57 targeted M0 tests pass; fixture provenance digest, installed package file hashes, delivered ArtifactIdentity and runtimeBuildId recorded; blackbox report binds the same manifest. Public synthetic failure equivalents, not private user originals.",
+            "3": "Separate tested action records for Git push (not-run), candidate tarball (pass plus SHA256), npm publication (not-run), temporary Skill installation (pass); user Skill installation not-run, conflict overwrite rejected."
+          },
+          "verification": {
+            "typecheck": "pass",
+            "build": "pass",
+            "test": {
+              "before": 154,
+              "after": 157,
+              "delta": 3,
+              "passed": 157,
+              "failed": 0,
+              "skipped": 0
+            },
+            "testLogSha256": "641ee7d491a2d44279bd05f018973a5a14f04ff30d68a68a2acb5e9cba08fe45",
+            "blackbox": {
+              "start": "docs/evolution/quality/c06-blackbox-start.json",
+              "final": "docs/evolution/quality/c06-blackbox-final.json",
+              "beforeGreen": 69,
+              "beforeRed": 0,
+              "green": 69,
+              "red": 0,
+              "newRed": [],
+              "exitCode": 0
+            }
+          },
+          "report": "docs/evolution/quality/c06-candidate-report.json",
+          "releaseNotes": "skills/ppte/references/m0-migration.md",
+          "remainingRisks": [
+            "npm installation may fetch fflate; offline runtime verified by blocked Node network APIs, not an OS network namespace.",
+            "No Git push, npm publication or persistent user Skill installation performed.",
+            "Manual model-host evaluation, real Safari and physical-device performance unverified.",
+            "Public synthetic failure equivalents only; no private user originals supplied."
+          ]
+        }
+      ]
     },
     {
       "id": "E01",
