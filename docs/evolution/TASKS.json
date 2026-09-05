@@ -1787,7 +1787,7 @@
       "milestone": "M2",
       "priority": "P1",
       "title": "原生 Skill 的渐进设计工作流",
-      "status": "planned",
+      "status": "done",
       "effort": "M",
       "ownerRole": "CLI / Skill",
       "dependsOn": [
@@ -1820,7 +1820,41 @@
         "A19"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        {
+          "commit": "a5d8078c4cffc7b33f90ef7e7b277d0599dcf193",
+          "tests": [
+            "tests/skill-design-workflow.test.ts"
+          ],
+          "verification": "docs/evolution/quality/d06-verification.json",
+          "criteria": [
+            {
+              "criterion": 1,
+              "tests": [
+                "D06 A19 help and schema register all executable design commands and retain legacy tools"
+              ],
+              "result": "All six native design commands are registered in CLI help/schema and execute; legacy commands and tool schemas remain available."
+            },
+            {
+              "criterion": 2,
+              "tests": [
+                "D06 A15 fixed material: index → bounded candidates → selected recipes → representatives → full deck via Core",
+                "D06 A15 A17 two local repair rounds preserve preview semantics; third round and failed plans cannot apply"
+              ],
+              "result": "Lightweight index, at most three candidates, selected style rules/recipes, three real-material representatives with PNG export, full-deck proposals, read-only previews, Core commits, two actual local repairs and round-3 rejection. Existing content and infeasible plans cannot be replaced/applied."
+            },
+            {
+              "criterion": 3,
+              "tests": [
+                "D06 A15 fixed material: index → bounded candidates → selected recipes → representatives → full deck via Core",
+                "D06 A15 A17 two local repair rounds preserve preview semantics; third round and failed plans cannot apply",
+                "D06 A19 native subprocess runs offline without model/MCP and reports errors with nonzero exit"
+              ],
+              "result": "Same-authorized plan/preview/apply/deliver completes without extra confirmation or network/model credentials in a native subprocess. Unknown styles exit nonzero; infeasible plans have no transaction. Visual/Office remain unverified. Actual HTML ArtifactIdentity is audited and stale source/history reports are rejected."
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "D07",

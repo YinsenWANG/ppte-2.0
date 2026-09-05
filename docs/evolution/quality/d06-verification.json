@@ -1,0 +1,91 @@
+{
+  "taskId": "D06",
+  "status": "pass",
+  "baselineCommit": "d6e9c22818597231b19429d840ae88a97ec86f8e",
+  "implementationCommit": "a5d8078c4cffc7b33f90ef7e7b277d0599dcf193",
+  "testFiles": [
+    "tests/skill-design-workflow.test.ts"
+  ],
+  "criteria": [
+    {
+      "criterion": 1,
+      "tests": [
+        "D06 A19 help and schema register all executable design commands and retain legacy tools"
+      ],
+      "result": "All six native design commands are registered in CLI help/schema and execute; legacy commands and tool schemas remain available."
+    },
+    {
+      "criterion": 2,
+      "tests": [
+        "D06 A15 fixed material: index → bounded candidates → selected recipes → representatives → full deck via Core",
+        "D06 A15 A17 two local repair rounds preserve preview semantics; third round and failed plans cannot apply"
+      ],
+      "result": "Lightweight index, at most three candidates, selected style rules/recipes, three real-material representatives with PNG export, full-deck proposals, read-only previews, Core commits, two actual local repairs and round-3 rejection. Existing content and infeasible plans cannot be replaced/applied."
+    },
+    {
+      "criterion": 3,
+      "tests": [
+        "D06 A15 fixed material: index → bounded candidates → selected recipes → representatives → full deck via Core",
+        "D06 A15 A17 two local repair rounds preserve preview semantics; third round and failed plans cannot apply",
+        "D06 A19 native subprocess runs offline without model/MCP and reports errors with nonzero exit"
+      ],
+      "result": "Same-authorized plan/preview/apply/deliver completes without extra confirmation or network/model credentials in a native subprocess. Unknown styles exit nonzero; infeasible plans have no transaction. Visual/Office remain unverified. Actual HTML ArtifactIdentity is audited and stale source/history reports are rejected."
+    }
+  ],
+  "verification": {
+    "typecheck": {
+      "command": "pnpm typecheck",
+      "exitCode": 0
+    },
+    "build": {
+      "command": "pnpm build",
+      "exitCode": 0
+    },
+    "tests": {
+      "command": "pnpm test",
+      "exitCode": 0,
+      "baseline": 297,
+      "passed": 301,
+      "failed": 0,
+      "delta": 4
+    },
+    "blackbox": {
+      "command": "pnpm blackbox:final",
+      "exitCode": 0,
+      "baselineGreen": 69,
+      "baselineRed": 0,
+      "green": 69,
+      "red": 0,
+      "newRed": []
+    }
+  },
+  "buildManifest": {
+    "applicationVersion": "0.9.0-next.0",
+    "runtimeBuildId": "4cb9820e51752a59d8f3e42fc4b7e60325d863cc318a65e1cc1d1a18449f37c0"
+  },
+  "logSha256": {
+    "typecheck": "a7149824f4d2e2b22a41ec34ca6b451f7ac9e9003b5167390eead15d29870e70",
+    "build": "60ca46444de45fc682ae3a482a3992ab8dd7a618503d54c03c79c3f44488bba4",
+    "tests": "c2e6c582582db02c1bb061cd06d87b9c7c6eee4c8f745507ed96a1d5705298d6",
+    "blackbox": "19460fa9321b8f7b82ef81d8318911f79e49eb7d4341b60ab907364292f2b77e",
+    "baselineTests": "3a62cd891b4d368643dbb465b2f4d5feae771e06b386a7dee7a69df3ab940fda"
+  },
+  "addedFiles": [
+    "packages/agent-tools/src/design-workflow.ts",
+    "skills/ppte/references/design-workflow.md",
+    "tests/skill-design-workflow.test.ts",
+    "docs/evolution/quality/d06-blackbox-start.json",
+    "docs/evolution/quality/d06-blackbox-final.json",
+    "docs/evolution/quality/d06-verification.json"
+  ],
+  "limitations": [
+    "Visual aesthetic review and Office real-open/edit/resave are unverified; generating representative PNGs does not assert human visual approval.",
+    "New design planning accepts only pristine new projects; human-edited decks use existing scoped protected planners. Capacity failures remain explicit proposals, never automatic content deletion.",
+    "The host Agent owns the two-round workflow counter; CLI rejects round values beyond two and receipts record repair evidence. It is not a daemon or a second model.",
+    "D06 exercises the built native CLI in a credential-free, network-disabled subprocess; the existing C06 suite separately verifies actual tarball installation and legacy offline workflows."
+  ],
+  "publication": {
+    "gitPush": "not-run",
+    "npmPublish": "not-run"
+  }
+}
