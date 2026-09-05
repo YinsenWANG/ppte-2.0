@@ -1,3 +1,4 @@
+import { inferCompatibilityProfile } from '../../compatibility/src/index.js';
 import { STANDARD_EDITABLE_SUFFIX } from "./delivery-policy.js";
 import {
   PortableRuntime,
@@ -567,6 +568,12 @@ const api = {
   },
   getPayload: () => ({
     ...payload,
+    artifactIdentity: undefined,
+    origin: { ...payload.origin, sourceRevision: runtime.getRevision() },
+    minimumCompatibilityProfile: inferCompatibilityProfile(runtime.getDocument(), { recentTransactions: runtime.getHistory(), redoHistory: runtime.getRedoHistory() }),
+    capabilityReport: runtime.getCapabilityReport(),
+    assets: Object.fromEntries(Object.entries(runtime.getAssetBytes()).map(([id, bytes]) => [id, base64(bytes)])),
+    fonts: Object.fromEntries(Object.entries(runtime.getFontBytes()).map(([id, bytes]) => [id, base64(bytes)])),
     document: runtime.getDocument(),
     recentTransactions: runtime.getHistory(),
     redoHistory: runtime.getRedoHistory(),

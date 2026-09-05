@@ -35,6 +35,7 @@ import type {
 } from "../../schema/src/index.js";
 
 export interface DeliveryRequest {
+  collisionPolicy?: "error" | "versioned-copy" | "replace";
   profile?: EditableDeliveryProfile;
   replaceExisting?: boolean;
   allowLargePortable?: boolean;
@@ -157,7 +158,9 @@ export function deliverPresentation(
       "交付失败：只允许可编辑 Portable profile。",
     );
   }
-  if (request.replaceExisting === true && request.confirmed !== true) {
+  if ((request.collisionPolicy !== undefined && !['error', 'versioned-copy', 'replace'].includes(request.collisionPolicy)) || (request.replaceExisting === true && request.collisionPolicy !== undefined && request.collisionPolicy !== 'replace')) return failure(revision, requestedProfile, 'DELIVERY_POLICY_CONFLICT', 'Conflicting collision options.', [], policy.profile, '交付选项冲突，未覆盖现有副本。');
+  const replaceExisting = request.replaceExisting === true || request.collisionPolicy === 'replace';
+  if (replaceExisting && request.confirmed !== true) {
     return failure(
       revision,
       requestedProfile,
@@ -244,6 +247,8 @@ export function deliverPresentation(
     const build = (internal.build ?? buildPortable)(document, {
       profile: policy.profile,
       sourceRevision,
+      recentTransactions: session.getHistory().map(entry => entry.transaction),
+      redoHistory: [...session.getRedoHistory()],
       assetBytes: resources.assetBytes,
       fontBytes: resources.fontBytes,
     });
@@ -337,7 +342,18 @@ export function deliverPresentation(
 
     const htmlBytes = new TextEncoder().encode(build.html);
     const source = sourceArtifact(sourcePath, sourceRevision);
-    const existing = readExisting(target);
+    const originalTarget = target;
+    let copyIndex = 0;
+    const nextCopyPath = () => originalTarget.slice(0, -STANDARD_EDITABLE_SUFFIX.length) + '.' + (audit.artifactIdentity?.digest.replace(/^sha256[-:]/, '').slice(0, 12) ?? 'copy') + (copyIndex++ ? `-${copyIndex}` : '') + STANDARD_EDITABLE_SUFFIX;
+    let existing = readExisting(target);
+    if (request.collisionPolicy === 'versioned-copy') {
+      while (existsSync(target)) {
+        const existingIdentity = existing && auditPortableBundle(existing.text);
+        if (existingIdentity && existingIdentity.ok && audit.artifactIdentity?.digest && existingIdentity.artifactIdentity?.digest === audit.artifactIdentity.digest) break;
+        target = nextCopyPath();
+        existing = readExisting(target);
+      }
+    }
     if (existing) {
       const existingAudit = (internal.audit ?? auditPortableBundle)(
         existing.text,
@@ -345,7 +361,9 @@ export function deliverPresentation(
       const sameRevision =
         existingAudit.ok &&
         existingAudit.origin?.sourceRevision === sourceRevision &&
-        existingAudit.origin?.profile === policy.profile;
+        existingAudit.origin?.profile === policy.profile &&
+        Boolean(audit.artifactIdentity?.digest) &&
+        existingAudit.artifactIdentity?.digest === audit.artifactIdentity?.digest;
       if (sameRevision) {
         const existingMetrics = { ...metrics, bytes: existing.bytes.length };
         return success(
@@ -366,7 +384,7 @@ export function deliverPresentation(
           assessment.warning ? [assessment.warning] : [],
         );
       }
-      if (request.replaceExisting !== true) {
+      if (!replaceExisting) {
         return failure(
           session.getRevision(),
           requestedProfile,
@@ -389,7 +407,13 @@ export function deliverPresentation(
     }
 
     hitFault(internal, "before-rename");
-    writeAtomic(target, htmlBytes, request.replaceExisting === true);
+    for (;;) {
+      try { writeAtomic(target, htmlBytes, replaceExisting); break; }
+      catch (cause) {
+        if (request.collisionPolicy !== 'versioned-copy' || !existsSync(target)) throw cause;
+        target = nextCopyPath();
+      }
+    }
     const warnings = assessment.warning ? [assessment.warning] : [];
     return success(
       session.getRevision(),

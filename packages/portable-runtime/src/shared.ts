@@ -1,3 +1,6 @@
+import { computeArtifactIdentity, type ArtifactIdentity } from './artifact-identity.js'
+import { PPTE_APP_VERSION } from '../../schema/src/version.js'
+export { computeArtifactIdentity, type ArtifactIdentity } from './artifact-identity.js'
 import { PresentationController } from '../../editor-controller/src/presentation.js'
 import { canonicalJsonString, canonicalRevision, sha256HexBytes } from '../../canonical-json/src/index.js'
 import { gzipSync as portableGzip } from 'fflate'
@@ -51,6 +54,8 @@ export interface PortableBuildOptions {
 }
 
 export interface PortablePayload {
+  buildVersion?: string
+  artifactIdentity?: ArtifactIdentity
   document: PpteDocument
   origin: PortableOrigin
   /** The persisted minimum profile is shared by Portable and file-format saves. */
@@ -81,6 +86,7 @@ export interface PortableBuildResult {
 }
 
 export interface PortableAuditResult {
+  artifactIdentity?: ArtifactIdentity
   ok: boolean
   issues: ValidationIssue[]
   origin?: PortableOrigin
@@ -130,7 +136,7 @@ export function buildPortable(document: PpteDocument, options: PortableBuildOpti
     sourceRevision,
     derivedAt: options.derivedAt ?? '1970-01-01T00:00:00.000Z',
     profile: options.profile,
-    runtimeVersion: options.runtimeVersion ?? 'portable-runtime-1',
+    runtimeVersion: options.runtimeVersion ?? PPTE_APP_VERSION,
     ...(options.branchId ? { branchId: options.branchId } : {}),
   }
   const capabilityTarget = options.profile === 'quick-fix' ? 'portable-quick-fix' : options.profile === 'light-edit' || options.profile === 'full-portable' ? 'portable-light-edit' : 'portable-viewer'
@@ -158,8 +164,10 @@ export function buildPortable(document: PpteDocument, options: PortableBuildOpti
   }
   if (options.profile === 'quick-fix' || options.profile === 'light-edit' || options.profile === 'full-portable') for (const slide of Object.values(document.slides)) for (const element of Object.values(slide.elements)) if (element.type === 'text') issues.push(...checkGlyphCoverage(document, element, undefined, { strict: true }))
   if (issues.some((item) => item.severity === 'error')) return { ok: false, html: '', origin, capabilityReport, issues: dedupe(issues), bytes: 0 }
-  const payload: PortablePayload = { document, origin, recentTransactions: options.recentTransactions ?? [], redoHistory: options.redoHistory ?? [], minimumCompatibilityProfile: inferCompatibilityProfile(document, options), assets, fonts, capabilityReport }
-  const html = assembleHtml(document, payload, assetSources)
+  const payload: PortablePayload = { buildVersion: PPTE_APP_VERSION, document, origin, recentTransactions: options.recentTransactions ?? [], redoHistory: options.redoHistory ?? [], minimumCompatibilityProfile: inferCompatibilityProfile(document, options), assets, fonts, capabilityReport }
+  let html = assembleHtml(document, payload, assetSources)
+  payload.artifactIdentity = computeArtifactIdentity(payload, html)
+  html = assembleHtml(document, payload, assetSources)
   const runtimePayload: PortablePayload = { ...payload, assets: {}, fonts: {} }
   const runtimeHtml = assembleHtml(document, runtimePayload, {})
   const encoder = new TextEncoder()
@@ -219,7 +227,11 @@ export function auditPortableBundle(html: string): PortableAuditResult {
   if (/\b(?:fetch|XMLHttpRequest|WebSocket|EventSource)\s*\(/.test(executable)) issues.push(issue('PORTABLE_NETWORK_DISABLED', 'Portable runtime contains a network-capable API call.'))
   if (/\beval\s*\(|new\s+Function\s*\(/.test(markup)) issues.push(issue('PORTABLE_PAYLOAD_UNSAFE', 'Portable runtime may not evaluate generated code.'))
   if (/<script[^>]+src\s*=/i.test(markup) || /<link[^>]+href\s*=/i.test(markup)) issues.push(issue('PORTABLE_EXTERNAL_RUNTIME', 'Portable runtime must be self-contained.'))
-  return { ok: !issues.some((item) => item.severity === 'error'), issues, origin }
+  if (payload.artifactIdentity) {
+    try { if (canonicalJsonString(computeArtifactIdentity(payload, html)) !== canonicalJsonString(payload.artifactIdentity)) issues.push(issue('ARTIFACT_IDENTITY_MISMATCH', 'Artifact bytes or embedded state differ from the recorded identity.')) }
+    catch (cause) { issues.push(issue('ARTIFACT_IDENTITY_INVALID', String(cause))) }
+  }
+  return { ok: !issues.some((item) => item.severity === 'error'), issues, origin, artifactIdentity: payload.artifactIdentity }
 }
 
 export class PortableRuntime {

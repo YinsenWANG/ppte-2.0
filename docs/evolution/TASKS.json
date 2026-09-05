@@ -208,7 +208,7 @@
       "milestone": "M0",
       "priority": "P0",
       "title": "统一版本来源与交付物身份",
-      "status": "planned",
+      "status": "in_progress",
       "effort": "L",
       "ownerRole": "交付 / 打包",
       "dependsOn": [
@@ -246,7 +246,10 @@
         "A19"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        "tests/artifact-identity.test.ts",
+        "docs/evolution/PROGRESS.md"
+      ]
     },
     {
       "id": "C05",

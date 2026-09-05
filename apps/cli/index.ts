@@ -331,6 +331,7 @@ export function runCli(argv: string[]): any {
     if (command === "deliver")
       return deliverPresentation(session, absolute, {
         replaceExisting: flags["replace-existing"] === true,
+        collisionPolicy: flags["replace-existing"] === true ? "replace" : "versioned-copy",
         confirmed: flags.confirmed === true,
       });
     if (command === "export") {

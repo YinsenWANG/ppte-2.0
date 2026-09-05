@@ -1,5 +1,7 @@
 import { build } from "esbuild";
-import { writeFileSync } from "node:fs";
+import { writeFileSync, readFileSync } from "node:fs";
+const { version } = JSON.parse(readFileSync('package.json', 'utf8'));
+writeFileSync('packages/schema/src/version.ts', '// Generated from package.json by scripts/build-portable.mjs.\nexport const PPTE_APP_VERSION = ' + JSON.stringify(version) + ';\n');
 const result = await build({
   entryPoints: ["packages/portable-runtime/src/browser.ts"],
   bundle: true,
