@@ -1,0 +1,17 @@
+{
+  "version": "e02-v1",
+  "budgetVersion": "c01-m1-v1",
+  "initial": {"paragraphs":[{"id":"p1","runs":[{"id":"r1","text":"Cherry Studio 中文"}]},{"id":"p2","runs":[{"id":"r2","text":"第二段 é 👩‍💻","marks":{"italic":true}}]}]},
+  "cases": [
+    {"id":"chinese-composition","kind":"composition","anchor":7,"head":13,"text":"工作室","expected":"Cherry 工作室 中文\n第二段 é 👩‍💻"},
+    {"id":"unicode-insert","kind":"insert","anchor":0,"head":0,"text":"你好👩‍💻é ","expected":"你好👩‍💻é Cherry Studio 中文\n第二段 é 👩‍💻"},
+    {"id":"reverse-cross-paragraph","kind":"insert","anchor":19,"head":14,"text":"跨段","expected":"Cherry Studio 跨段段 é 👩‍💻"},
+    {"id":"plain-paste","kind":"insert","anchor":0,"head":0,"text":"甲\n乙\n","expected":"甲\n乙\nCherry Studio 中文\n第二段 é 👩‍💻"},
+    {"id":"selected-bold","kind":"bold","anchor":7,"head":13,"expectedBold":"Studio","nativeGap":"selection marks discarded by innerText boundary"},
+    {"id":"formatted-paste","kind":"paste","anchor":0,"head":0,"html":"<p><strong>粘贴</strong></p><p>第二行</p>","expectedBold":"粘贴","nativeGap":"paste marks discarded by innerText boundary"},
+    {"id":"unchanged-run-identity","kind":"identity","prosemirrorGap":"minimal PM mapping regenerates semantic run IDs"}
+  ],
+  "unverified": ["Real Chinese OS IME/candidate window", "Real Safari", "Lower-performance physical device"],
+  "productionChoice": "native",
+  "reason": "Retain the existing native production path: PM improves marks but its minimal mapping fails semantic run identity; neither experiment certifies E03/A08-A10. Implement the native range/paste boundary in E03 before claiming those acceptance items."
+}

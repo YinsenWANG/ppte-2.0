@@ -24,7 +24,8 @@
     "contract-deck": "pnpm build && node dist/apps/contract-deck/index.js",
     "cli": "node dist/apps/cli/index.js",
     "package:stage": "pnpm build && pnpm host:build && node scripts/stage-package.mjs",
-    "package:pack": "pnpm package:stage && npm pack ./artifacts/npm-package --pack-destination artifacts"
+    "package:pack": "pnpm package:stage && npm pack ./artifacts/npm-package --pack-destination artifacts",
+    "experiment:text-kernel": "pnpm build && node scripts/text-kernel-poc.mjs"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
@@ -34,6 +35,9 @@
     "esbuild": "^0.28.2",
     "fflate": "^0.8.3",
     "playwright": "^1.55.0",
+    "prosemirror-model": "1.25.11",
+    "prosemirror-state": "1.4.4",
+    "prosemirror-view": "1.42.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "typescript": "^5.7.0",
