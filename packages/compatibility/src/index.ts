@@ -1,7 +1,7 @@
 import { deepFreeze } from '../../canonical-json/src/index.js'
 import { PPTE_COMPATIBILITY_PROFILE, PPTE_FORMAT_VERSION, PPTE_GA_B_COMPATIBILITY_PROFILE, PPTE_GA_C_COMPATIBILITY_PROFILE, PPTE_OPERATION_PROTOCOL_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
 import type { PpteDocument, RuntimeProfile } from '../../schema/src/index.js'
-import { PPTE_TEXT_RUN_COMPATIBILITY_PROFILE, PPTE_EDIT_COMPATIBILITY_PROFILE, readPersistedHistoryMetadata, type Operation, type Transaction, type SessionHistoryEntrySnapshot } from '../../schema/src/index.js'
+import { PPTE_TABLE_COMPATIBILITY_PROFILE, PPTE_TEXT_RUN_COMPATIBILITY_PROFILE, PPTE_EDIT_COMPATIBILITY_PROFILE, readPersistedHistoryMetadata, type Operation, type Transaction, type SessionHistoryEntrySnapshot } from '../../schema/src/index.js'
 
 /** A release-tested combination of the independently versioned contracts. */
 export interface CompatibilityProfile {
@@ -104,12 +104,19 @@ export const TEXT_RUN_PROFILE: CompatibilityProfile = {
   migration: { from: [GA_A_PROFILE.id, GA_B_PROFILE.id, GA_C_PROFILE.id, EDIT_PROFILE.id], direction: 'forward-only', preservesSource: true },
 }
 
+export const TABLE_PROFILE: CompatibilityProfile = {
+  ...TEXT_RUN_PROFILE, id: PPTE_TABLE_COMPATIBILITY_PROFILE,
+  widgetAbiVersion: '2.0',
+  migration: { from: [GA_A_PROFILE.id, GA_B_PROFILE.id, GA_C_PROFILE.id, EDIT_PROFILE.id, TEXT_RUN_PROFILE.id], direction: 'forward-only', preservesSource: true },
+}
+
 const PROFILES: Readonly<Record<string, CompatibilityProfile>> = {
   [GA_A_PROFILE.id]: GA_A_PROFILE,
   [GA_B_PROFILE.id]: GA_B_PROFILE,
   [GA_C_PROFILE.id]: GA_C_PROFILE,
   [EDIT_PROFILE.id]: EDIT_PROFILE,
   [TEXT_RUN_PROFILE.id]: TEXT_RUN_PROFILE,
+  [TABLE_PROFILE.id]: TABLE_PROFILE,
 }
 
 deepFreeze(PROFILES)
@@ -120,6 +127,7 @@ export const PROFILE_CAPABILITIES = deepFreeze({
   [GA_B_PROFILE.id]: ['semantic-core', 'charts-animation', 'patch'],
   [GA_C_PROFILE.id]: ['semantic-core', 'charts-animation', 'patch', 'widgets-poster-extended-charts'],
   [EDIT_PROFILE.id]: ['semantic-core', 'charts-animation', 'patch', 'widgets-poster-extended-charts', 'slide-unset'],
+  [TABLE_PROFILE.id]: ['semantic-core', 'charts-animation', 'patch', 'widgets-poster-extended-charts', 'slide-unset', 'text-run-font', 'table-v2'],
   [TEXT_RUN_PROFILE.id]: ['semantic-core', 'charts-animation', 'patch', 'widgets-poster-extended-charts', 'slide-unset', 'text-run-font'],
 })
 
@@ -216,7 +224,19 @@ export function hasRunFontOverrides(value: unknown): boolean {
   return Boolean(typeof object.id === 'string' && typeof object.text === 'string' && marks && (marks.fontFamily !== undefined || marks.fontSize !== undefined)) || Object.entries(object).some(([key, child]) => key !== 'extensions' && hasRunFontOverrides(child))
 }
 
+/** Covers inserted components and raw props in inverse/redo/patch envelopes. */
+export function hasTableV2(value: unknown): boolean {
+  if (!value || typeof value !== 'object') return false
+  if (Array.isArray(value)) return value.some(hasTableV2)
+  const object = value as Record<string, unknown>
+  if (typeof object.kind === 'string' && object.kind.startsWith('table.')) return true
+  if (object.componentType === 'core/table' && object.componentVersion === '2.0.0') return true
+  if (object.version === 2 && object.cells !== undefined && object.rowOrder !== undefined && object.columnOrder !== undefined) return true
+  return Object.entries(object).some(([key, child]) => key !== 'extensions' && hasTableV2(child))
+}
+
 export function inferCompatibilityProfile(document: PpteDocument, persisted: PersistedCompatibilityInput = {}): string {
+  if (hasTableV2(document) || hasTableV2(persisted)) return PPTE_TABLE_COMPATIBILITY_PROFILE
   if (hasRunFontOverrides(document) || document.schemaVersion === '2.1.0' || hasRunFontOverrides(persisted)) return PPTE_TEXT_RUN_COMPATIBILITY_PROFILE
   if (requiresEditProtocol(persisted)) return PPTE_EDIT_COMPATIBILITY_PROFILE
   const required = new Set<string>(PROFILE_CAPABILITIES[GA_A_PROFILE.id])
@@ -251,7 +271,7 @@ export function inferCompatibilityProfile(document: PpteDocument, persisted: Per
 
 /** Map a persisted profile to the runtime capability subset used for checks. */
 export function runtimeProfileForCompatibility(profileId: string): RuntimeProfile {
-  return profileId === PPTE_TEXT_RUN_COMPATIBILITY_PROFILE || profileId === PPTE_GA_C_COMPATIBILITY_PROFILE || profileId === PPTE_EDIT_COMPATIBILITY_PROFILE ? 'ga-c' : 'ga-b'
+  return profileId === PPTE_TABLE_COMPATIBILITY_PROFILE || profileId === PPTE_TEXT_RUN_COMPATIBILITY_PROFILE || profileId === PPTE_GA_C_COMPATIBILITY_PROFILE || profileId === PPTE_EDIT_COMPATIBILITY_PROFILE ? 'ga-c' : 'ga-b'
 }
 
 /** Validate the document/profile pair at every persistence boundary. */

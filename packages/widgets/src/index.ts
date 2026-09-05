@@ -1,3 +1,5 @@
+import { assertTableComponent, assertTableModel, tableCellDisplay, type TableModel } from '../../schema/src/table.js'
+export * from './table-model.js'
 import type { ComponentElement, JsonValue } from '../../schema/src/index.js'
 
 export type WidgetExportPolicy = 'native' | 'static-fallback'
@@ -36,6 +38,9 @@ export class WidgetRegistry {
   }
 
   validate(element: ComponentElement): WidgetValidationResult {
+    if (element.componentType === 'core/table') {
+      try { assertTableComponent(element) } catch (cause) { return { ok: false, issues: [String(cause)] } }
+    }
     const definition = this.get(element.componentType, element.componentVersion)
     if (!definition) return { ok: false, issues: [`No host widget is registered for ${element.componentType}@${element.componentVersion}.`] }
     const issues = definition.validateProps(element.props)
@@ -49,7 +54,7 @@ let builtinRegistry: WidgetRegistry | undefined
 
 export function createBuiltinWidgetRegistry(): WidgetRegistry {
   const registry = new WidgetRegistry()
-  registry.register(tableWidget()).register(codeWidget()).register(equationWidget()).register(videoWidget())
+  registry.register(tableWidgetV2()).register(tableWidget()).register(codeWidget()).register(equationWidget()).register(videoWidget())
   return registry
 }
 
@@ -184,3 +189,26 @@ function scalarRows(value: JsonValue | undefined): JsonValue[][] { return Array.
 function num(value: number): string { if (!Number.isFinite(value)) throw new Error('WIDGET_INVALID_NUMBER'); return String(Math.round(value * 1000) / 1000) }
 function escapeHtml(value: string): string { return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;') }
 function escapeXml(value: string): string { return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&apos;') }
+
+function tableWidgetV2(): WidgetDefinition {
+  const cellLayout = (m: TableModel) => m.rowOrder.flatMap((rowId, r) => m.columnOrder.flatMap((columnId, c) => {
+    const cell = Object.values(m.cells).find(x=>x.rowId===rowId&&x.columnId===columnId)!
+    const merge = m.merges.find(x=>x.rowIds.includes(rowId)&&x.columnIds.includes(columnId))
+    return merge && merge.anchorCellId !== cell.id ? [] : [{cell,r,c,rowspan:merge?.rowIds.length??1,colspan:merge?.columnIds.length??1}]
+  }))
+  return {
+    componentType:'core/table', componentVersion:'2.0.0', exportPolicy:'static-fallback',
+    validateProps: props => {try {assertTableModel(props);return []} catch (e) {return [String(e)]}},
+    renderHtml: props => {
+      const m=props as unknown as TableModel, layout=cellLayout(m)
+      const header=m.columnOrder.some(id=>m.columns[id].label!==undefined)?`<thead><tr>${m.columnOrder.map(id=>`<th>${escapeHtml(m.columns[id].label??'')}</th>`).join('')}</tr></thead>`:''
+      return `<table data-ppte-widget="table"><caption>${escapeHtml(m.caption??'')}</caption>${header}<tbody>${m.rowOrder.map((id,r)=>`<tr data-row-id="${escapeHtml(id)}">${layout.filter(x=>x.r===r).map(x=>`<td data-cell-id="${escapeHtml(x.cell.id)}" rowspan="${x.rowspan}" colspan="${x.colspan}">${escapeHtml(tableCellDisplay(x.cell))}</td>`).join('')}</tr>`).join('')}</tbody></table>`
+    },
+    renderSvg: (props,width,height) => {
+      const m=props as unknown as TableModel
+      const cw=width/Math.max(1,m.columnOrder.length), hasHeader=m.columnOrder.some(id=>m.columns[id].label!==undefined), ch=height/Math.max(1,m.rowOrder.length+(hasHeader?1:0))
+      const draw=(text:string,x:number,y:number,w:number,h:number)=>`<rect x="${num(x)}" y="${num(y)}" width="${num(w)}" height="${num(h)}" fill="#ffffff" stroke="#94a3b8"/><text x="${num(x+6)}" y="${num(y+h/2)}" dominant-baseline="middle" font-size="${num(Math.max(9,Math.min(18,ch*.36)))}">${escapeXml(text)}</text>`
+      return (hasHeader?m.columnOrder.map((id,c)=>draw(m.columns[id].label??'',c*cw,0,cw,ch)).join(''):'')+cellLayout(m).map(x=>draw(tableCellDisplay(x.cell),x.c*cw,(x.r+(hasHeader?1:0))*ch,x.colspan*cw,x.rowspan*ch)).join('')
+    },
+  }
+}

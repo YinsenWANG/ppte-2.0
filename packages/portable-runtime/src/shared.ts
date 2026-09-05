@@ -618,7 +618,7 @@ ${editorShellCss}</style></head><body><div id="ppte-shell" class="ppte-${payload
  * become a dependency cycle through the Portable package.
  */
 export function buildPortableCheckpointBytes(document: PpteDocument, options: { timestamp?: string; clean?: boolean; compatibilityProfile?: string; runtimeProfile?: RuntimeProfile; redoHistory?: HistoryEntry[]; recentTransactions?: Transaction[]; assetBytes?: Record<string, Uint8Array>; fontBytes?: Record<string, Uint8Array> }): Uint8Array {
-  const issues = validateRuntimeDocument(document, { runtimeProfile: options.runtimeProfile ?? 'ga-b' }).filter((item) => item.severity === 'error')
+  const issues = validateRuntimeDocument(document, { runtimeProfile: options.runtimeProfile ?? runtimeProfileForCompatibility(inferCompatibilityProfile(document, options)) }).filter((item) => item.severity === 'error')
   if (issues.length) throw new Error(issues.map((item) => `${item.code}: ${item.message}`).join('\n'))
   const snapshot = options.clean ? cleanPortableSnapshot(document) : document
   const compatibilityProfile = options.compatibilityProfile ?? inferCompatibilityProfile(snapshot, options.clean ? {} : options)

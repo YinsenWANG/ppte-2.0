@@ -1,3 +1,5 @@
+import { TABLE_OPERATION_KINDS, assertTableComponent, assertTableModel } from '../../schema/src/table.js'
+import { applyTableEdit, migrateTableV1, tableProps } from '../../widgets/src/table-model.js'
 import { validTextMarks } from '../../schema/src/validation.js'
 import { cloneJson } from '../../canonical-json/src/index.js'
 import { syncChartFact, validateChartContract } from '../../charts/src/index.js'
@@ -41,7 +43,7 @@ export const GA_B_OPERATION_KINDS = [
 /** GA-C adds Area/Donut chart data paths and the controlled Widget props path. */
 export const GA_C_OPERATION_KINDS = [
   ...GA_B_OPERATION_KINDS,
-  'component.updateProps', 'shape.setKind',
+  'component.updateProps', 'shape.setKind', ...TABLE_OPERATION_KINDS,
 ] as const
 
 /** Backward-compatible name retained for the Week 1–2 operation matrix. */
@@ -154,6 +156,7 @@ function applyToDraft(next: PpteDocument, operation: Operation, options: Operati
       }
     }
     case 'slide.insert': {
+      for (const element of Object.values(operation.slide.elements)) if (element.type === 'component' && element.componentType === 'core/table') assertRuntimeElement(element, runtimeProfile)
       if (next.slides[operation.slide.id]) throw error('ID_CONFLICT', `Slide already exists: ${operation.slide.id}.`)
       next.slides[operation.slide.id] = cloneJson(operation.slide)
       next.slideOrder.splice(clampIndex(operation.index, next.slideOrder.length), 0, operation.slide.id)
@@ -748,6 +751,40 @@ function applyToDraft(next: PpteDocument, operation: Operation, options: Operati
       return applyLayoutAlign(next, operation)
     case 'layout.distribute':
       return applyLayoutDistribute(next, operation)
+    case 'table.migrate':
+    case 'table.restore':
+    case 'table.setCellValue':
+    case 'table.insertRows':
+    case 'table.deleteRows':
+    case 'table.moveRows':
+    case 'table.insertColumns':
+    case 'table.deleteColumns':
+    case 'table.moveColumns':
+    case 'table.resizeRows':
+    case 'table.resizeColumns':
+    case 'table.mergeCells':
+    case 'table.splitCell':
+    case 'table.setCellStyle': {
+      if (runtimeProfile !== 'ga-c') throw error('UNSUPPORTED_OPERATION', 'Table v2 requires GA-C runtime.')
+      const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)
+      if (element.type !== 'component' || element.componentType !== 'core/table') throw error('OPERATION_TYPE_MISMATCH', 'Table operation requires core/table.')
+      assertTableComponent(element)
+      const before = { componentVersion: element.componentVersion as '1.0.0' | '2.0.0', props: cloneJson(element.props) }
+      if (operation.kind === 'table.migrate') {
+        element.props = tableProps(migrateTableV1(element).model)
+        element.componentVersion = '2.0.0'
+      } else if (operation.kind === 'table.restore') {
+        element.componentVersion = operation.componentVersion
+        element.props = cloneJson(operation.props)
+      } else {
+        if (element.componentVersion !== '2.0.0') throw error('SCHEMA_INVALID', 'Explicit table.migrate required.')
+        assertTableModel(element.props)
+        element.props = tableProps(applyTableEdit(element.props, operation))
+      }
+      assertComponentProps(element.props)
+      assertTableComponent(element)
+      return { document: next, inverse: [op(operation, 'table.restore', { slideId: operation.slideId, elementId: operation.elementId, ...before })] }
+    }
     case 'component.updateProps': {
       if (runtimeProfile !== 'ga-c') throw error('UNSUPPORTED_OPERATION', `${operation.kind} is outside the ${runtimeProfile.toUpperCase()} runtime.`)
       const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)
@@ -755,6 +792,7 @@ function applyToDraft(next: PpteDocument, operation: Operation, options: Operati
       assertComponentProps(operation.patch)
       const before = cloneJson(element.props)
       element.props = operation.replace ? cloneJson(operation.patch) : { ...element.props, ...cloneJson(operation.patch) }
+      assertTableComponent(element)
       return { document: next, inverse: [op(operation, 'component.updateProps', { slideId: operation.slideId, elementId: operation.elementId, patch: before, replace: true })] }
     }
   }
@@ -823,6 +861,7 @@ function assertRuntimeElement(element: Element, runtimeProfile: 'ga-a' | 'ga-b' 
   if (element.type === 'component') {
     if (runtimeProfile !== 'ga-c') throw error('UNSUPPORTED_ELEMENT_TYPE', `${runtimeProfile.toUpperCase()} runtime does not implement component elements.`)
     assertComponentProps(element.props)
+    assertTableComponent(element)
   }
   if (element.type === 'chart') assertValidChart(element, runtimeProfile)
 }

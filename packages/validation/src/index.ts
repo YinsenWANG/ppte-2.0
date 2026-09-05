@@ -1,3 +1,4 @@
+import { TABLE_OPERATION_KINDS } from '../../schema/src/table.js'
 import { SLIDE_OPTIONAL_KEYS } from '../../schema/src/index.js'
 import { canonicalHash } from '../../canonical-json/src/index.js'
 import { validateDocument } from '../../schema/src/index.js'
@@ -32,7 +33,7 @@ const OPERATION_KINDS = new Set<OperationKind>([
   'element.insert', 'element.delete', 'element.duplicate', 'element.move', 'element.resize', 'element.rotate', 'element.reorder', 'element.setVisibility', 'element.setLocked', 'element.setAppearStep', 'element.setAnimation', 'element.setEditPolicy', 'element.setSemanticKey', 'element.setSemanticRefs', 'element.setStyleRef', 'element.updateStyleOverrides', 'element.clearStyleOverrides',
   'text.replaceContent', 'text.updateStyle', 'text.setOverflowPolicy', 'text.fitByReducingFont', 'text.resizeBox',
   'image.replaceAsset', 'image.setCrop', 'image.setFocalPoint', 'asset.upsert', 'font.upsert', 'shape.updateStyle', 'shape.setKind',
-  'chart.replaceData', 'chart.updateEncoding', 'chart.updateOptions', 'chart.updateStyle', 'component.updateProps',
+  'chart.replaceData', 'chart.updateEncoding', 'chart.updateOptions', 'chart.updateStyle', 'component.updateProps', ...TABLE_OPERATION_KINDS,
   'group.create', 'group.delete', 'group.addMembers', 'group.removeMembers', 'group.move', 'group.resize', 'group.rotate',
   'fact.upsert', 'fact.delete', 'fact.syncReferences', 'source.upsert', 'source.delete', 'layout.align', 'layout.distribute',
 ])
@@ -194,11 +195,32 @@ function validateOperationShape(operation: Record<string, unknown>, index: numbe
   }
   if (operation.preconditions !== undefined) validatePreconditions(operation.preconditions, path, issues)
 
-  const slideKinds = new Set(['slide.delete', 'slide.move', 'slide.update', 'slide.setNotes', 'slide.setTransition', 'slide.setReadingOrder', 'slide.setProtectedAnchors', 'element.insert', 'element.delete', 'element.duplicate', 'element.move', 'element.resize', 'element.rotate', 'element.reorder', 'element.setVisibility', 'element.setLocked', 'element.setAppearStep', 'element.setAnimation', 'element.setEditPolicy', 'element.setSemanticKey', 'element.setSemanticRefs', 'element.setStyleRef', 'element.updateStyleOverrides', 'element.clearStyleOverrides', 'text.replaceContent', 'text.updateStyle', 'text.setOverflowPolicy', 'text.fitByReducingFont', 'text.resizeBox', 'image.replaceAsset', 'image.setCrop', 'image.setFocalPoint', 'shape.updateStyle', 'shape.setKind', 'chart.replaceData', 'chart.updateEncoding', 'chart.updateOptions', 'chart.updateStyle', 'component.updateProps', 'group.create', 'group.delete', 'group.addMembers', 'group.removeMembers', 'group.move', 'group.resize', 'group.rotate', 'layout.align', 'layout.distribute'])
+  const slideKinds = new Set(['slide.delete', 'slide.move', 'slide.update', 'slide.setNotes', 'slide.setTransition', 'slide.setReadingOrder', 'slide.setProtectedAnchors', 'element.insert', 'element.delete', 'element.duplicate', 'element.move', 'element.resize', 'element.rotate', 'element.reorder', 'element.setVisibility', 'element.setLocked', 'element.setAppearStep', 'element.setAnimation', 'element.setEditPolicy', 'element.setSemanticKey', 'element.setSemanticRefs', 'element.setStyleRef', 'element.updateStyleOverrides', 'element.clearStyleOverrides', 'text.replaceContent', 'text.updateStyle', 'text.setOverflowPolicy', 'text.fitByReducingFont', 'text.resizeBox', 'image.replaceAsset', 'image.setCrop', 'image.setFocalPoint', 'shape.updateStyle', 'shape.setKind', 'chart.replaceData', 'chart.updateEncoding', 'chart.updateOptions', 'chart.updateStyle', 'component.updateProps', ...TABLE_OPERATION_KINDS, 'group.create', 'group.delete', 'group.addMembers', 'group.removeMembers', 'group.move', 'group.resize', 'group.rotate', 'layout.align', 'layout.distribute'])
   if (slideKinds.has(kind)) requireString('slideId')
   const elementKinds = new Set(['element.delete', 'element.move', 'element.resize', 'element.rotate', 'element.reorder', 'element.setVisibility', 'element.setLocked', 'element.setAppearStep', 'element.setAnimation', 'element.setEditPolicy', 'element.setSemanticKey', 'element.setSemanticRefs', 'element.setStyleRef', 'element.updateStyleOverrides', 'element.clearStyleOverrides', 'text.replaceContent', 'text.updateStyle', 'text.setOverflowPolicy', 'text.fitByReducingFont', 'text.resizeBox', 'image.replaceAsset', 'image.setCrop', 'image.setFocalPoint', 'shape.updateStyle', 'shape.setKind', 'chart.replaceData', 'chart.updateEncoding', 'chart.updateOptions', 'chart.updateStyle', 'component.updateProps'])
   if (elementKinds.has(kind)) requireString('elementId')
 
+  if ((TABLE_OPERATION_KINDS as readonly string[]).includes(kind)) {
+    requireString('slideId'); requireString('elementId')
+    const allowed: Record<string, string[]> = {
+      'table.migrate': [], 'table.restore': ['componentVersion','props'],
+      'table.setCellValue': ['cellId','value','displayFormat','richText'], 'table.setCellStyle': ['cellId','style'],
+      'table.mergeCells': ['merge'], 'table.splitCell': ['cellId'],
+      'table.insertRows': ['index','items','cells'], 'table.insertColumns': ['index','items','cells'],
+      'table.deleteRows': ['ids'], 'table.deleteColumns': ['ids'],
+      'table.moveRows': ['ids','index'], 'table.moveColumns': ['ids','index'],
+      'table.resizeRows': ['sizes'], 'table.resizeColumns': ['sizes'],
+    }
+    for (const field of Object.keys(operation)) if (!['opId','kind','slideId','elementId','reason','preconditions',...allowed[kind]].includes(field)) issues.push(error('SCHEMA_INVALID', `Unknown table operation field ${field}.`, path))
+    if (allowed[kind].includes('cellId')) requireString('cellId')
+    if (allowed[kind].includes('ids')) requireStringArray('ids',1)
+    if (allowed[kind].includes('index')) { requireInteger('index'); if (Number(operation.index)<0) issues.push(error('SCHEMA_INVALID','Negative table index.',path)) }
+    for (const field of ['props','style','merge','sizes']) if (allowed[kind].includes(field)) requireRecord(field)
+    for (const field of ['items','cells']) if (allowed[kind].includes(field) && !Array.isArray(operation[field])) issues.push(error('SCHEMA_INVALID', `Expected ${field} array.`,path))
+    if (kind === 'table.restore' && !['1.0.0','2.0.0'].includes(String(operation.componentVersion))) issues.push(error('SCHEMA_INVALID','Invalid table version.',path))
+    if (kind === 'table.setCellValue' && !(operation.value === null || typeof operation.value === 'string' || typeof operation.value === 'boolean' || finite(operation.value))) issues.push(error('SCHEMA_INVALID','Invalid table scalar.',path))
+    return
+  }
   switch (kind) {
     case 'document.updateMetadata': {
       requireRecord('patch')

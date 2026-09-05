@@ -605,3 +605,5 @@ export interface DocumentPolicies {
   maxHistoryBytes?: number
   defaultAgentScope?: 'selection' | 'slide' | 'document'
 }
+
+export const PPTE_TABLE_COMPATIBILITY_PROFILE = 'ppte-2.1-table.1' as const

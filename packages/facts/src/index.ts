@@ -1,7 +1,9 @@
+import { assertTableModel, tableCellDisplay, type TableModel } from '../../schema/src/table.js'
 import { canonicalRevision } from '../../canonical-json/src/index.js'
 import type { Element, Fact, FactId, Operation, PpteDocument, Source, SourceId, Transaction, ValidationIssue } from '../../schema/src/index.js'
 
 export interface FactReference {
+  cellId?: string
   slideId: string
   elementId: string
   elementType: Element['type']
@@ -9,6 +11,7 @@ export interface FactReference {
 }
 
 export interface SourceReference {
+  cellId?: string
   slideId: string
   elementId: string
   sourceId: SourceId
@@ -29,12 +32,24 @@ export function formatFactValue(fact: Fact): string {
 export function findFactReferences(document: PpteDocument, factId: FactId): FactReference[] {
   const references: FactReference[] = []
   for (const slideId of document.slideOrder ?? []) for (const element of Object.values(document.slides?.[slideId]?.elements ?? {})) if (element.semanticRefs?.factIds?.includes(factId)) references.push({ slideId, elementId: element.id, elementType: element.type, factId })
+  for (const slideId of document.slideOrder ?? []) for (const element of Object.values(document.slides[slideId].elements)) {
+    if (element.type === 'component' && element.componentType === 'core/table' && element.componentVersion === '2.0.0') {
+      try { assertTableModel(element.props) } catch { continue }
+      for (const cell of Object.values(element.props.cells)) if (cell.factIds?.includes(factId)) references.push({slideId,elementId:element.id,elementType:'component',factId,cellId:cell.id})
+    }
+  }
   return references
 }
 
 export function findSourceReferences(document: PpteDocument, sourceId: SourceId): SourceReference[] {
   const references: SourceReference[] = []
   for (const slideId of document.slideOrder ?? []) for (const element of Object.values(document.slides?.[slideId]?.elements ?? {})) if (element.semanticRefs?.sourceIds?.includes(sourceId)) references.push({ slideId, elementId: element.id, sourceId })
+  for (const slideId of document.slideOrder ?? []) for (const element of Object.values(document.slides[slideId].elements)) {
+    if (element.type === 'component' && element.componentType === 'core/table' && element.componentVersion === '2.0.0') {
+      try { assertTableModel(element.props) } catch { continue }
+      for (const cell of Object.values(element.props.cells)) if (cell.sourceIds?.includes(sourceId)) references.push({slideId,elementId:element.id,sourceId,cellId:cell.id})
+    }
+  }
   return references
 }
 
@@ -49,7 +64,11 @@ export function checkFactSourceConsistency(document: PpteDocument): FactConsiste
     for (const reference of references) {
       const element = document.slides[reference.slideId]?.elements[reference.elementId]
       if (!element) continue
-      if (element.type === 'text') {
+      if (element.type === 'component' && reference.cellId) {
+        const cell=(element.props as unknown as TableModel).cells[reference.cellId]
+        const value=tableCellDisplay(cell); displayValues.push(value)
+        if (cell.value !== fact.value || value !== display) issues.push(consistencyIssue('FACT_DISPLAY_INCONSISTENT', `Table cell ${reference.cellId} does not match Fact ${factId}.`,reference,factId))
+      } else if (element.type === 'text') {
         const text = plainText(element)
         const values = extractFactCandidates(text, fact)
         displayValues.push(...values)

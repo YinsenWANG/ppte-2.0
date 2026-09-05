@@ -165,6 +165,7 @@ export type Operation =
   | ChartUpdateEncodingOperation
   | ChartUpdateOptionsOperation
   | ChartUpdateStyleOperation
+  | TableOperation
   | ComponentUpdatePropsOperation
   | GroupCreateOperation
   | GroupDeleteOperation
@@ -598,4 +599,37 @@ export interface CommitResult {
   diff?: StructuralDiff
   compare?: CompareResult
   issues: ValidationIssue[]
+}
+
+interface TableTarget { slideId: SlideId; elementId: ElementId }
+export type TableOperation =
+  | (OperationBase<'table.migrate'> & TableTarget & TableOperationPayloads['table.migrate'])
+  | (OperationBase<'table.restore'> & TableTarget & TableOperationPayloads['table.restore'])
+  | (OperationBase<'table.setCellValue'> & TableTarget & TableOperationPayloads['table.setCellValue'])
+  | (OperationBase<'table.insertRows'> & TableTarget & TableOperationPayloads['table.insertRows'])
+  | (OperationBase<'table.deleteRows'> & TableTarget & TableOperationPayloads['table.deleteRows'])
+  | (OperationBase<'table.moveRows'> & TableTarget & TableOperationPayloads['table.moveRows'])
+  | (OperationBase<'table.insertColumns'> & TableTarget & TableOperationPayloads['table.insertColumns'])
+  | (OperationBase<'table.deleteColumns'> & TableTarget & TableOperationPayloads['table.deleteColumns'])
+  | (OperationBase<'table.moveColumns'> & TableTarget & TableOperationPayloads['table.moveColumns'])
+  | (OperationBase<'table.resizeRows'> & TableTarget & TableOperationPayloads['table.resizeRows'])
+  | (OperationBase<'table.resizeColumns'> & TableTarget & TableOperationPayloads['table.resizeColumns'])
+  | (OperationBase<'table.mergeCells'> & TableTarget & TableOperationPayloads['table.mergeCells'])
+  | (OperationBase<'table.splitCell'> & TableTarget & TableOperationPayloads['table.splitCell'])
+  | (OperationBase<'table.setCellStyle'> & TableTarget & TableOperationPayloads['table.setCellStyle'])
+interface TableOperationPayloads {
+  'table.migrate': {}
+  'table.restore': { componentVersion: '1.0.0' | '2.0.0'; props: Record<string, JsonValue> }
+  'table.setCellValue': { cellId: string; value: import('./table.js').TableScalar; displayFormat?: import('./table.js').TableCell['displayFormat']; richText?: import('./index.js').RichTextDocument }
+  'table.setCellStyle': { cellId: string; style: Record<string, JsonValue> }
+  'table.mergeCells': { merge: import('./table.js').TableMerge }
+  'table.splitCell': { cellId: string }
+  'table.insertRows': { index: number; items: import('./table.js').TableAxis[]; cells: import('./table.js').TableCell[] }
+  'table.insertColumns': TableOperationPayloads['table.insertRows']
+  'table.deleteRows': { ids: string[] }
+  'table.deleteColumns': TableOperationPayloads['table.deleteRows']
+  'table.moveRows': { ids: string[]; index: number }
+  'table.moveColumns': TableOperationPayloads['table.moveRows']
+  'table.resizeRows': { sizes: Record<string, number> }
+  'table.resizeColumns': TableOperationPayloads['table.resizeRows']
 }

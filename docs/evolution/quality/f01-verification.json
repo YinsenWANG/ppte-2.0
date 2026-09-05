@@ -1,0 +1,84 @@
+{
+  "task": "F01",
+  "baseCommit": "c0884f1c47ddcf2c82d863b2139cde6d3484f3a4",
+  "branch": "evolution",
+  "environment": {
+    "node": "v22.23.2",
+    "pnpm": "11.22.0"
+  },
+  "testFile": "tests/table-v2-contract.test.ts",
+  "fixture": "makeContractDocument plus a two-column table with string/number/boolean/null cells; fixed-seed sequence 0xf01",
+  "criteria": {
+    "1": {
+      "status": "pass",
+      "tests": [
+        "explicit v1 migration preserves scalar types, header/caption/element identity and source bytes",
+        "all typed operations preserve untouched IDs and serialized inverses restore exact revisions",
+        "typed display, text consistency and rectangular merges retain covered values in HTML/SVG",
+        "seeded generated value/axis sequences undo and redo without identity drift"
+      ]
+    },
+    "2": {
+      "status": "pass",
+      "tests": [
+        "malformed models cannot bypass validation through props, restore, element/slide insertion or checkpoint",
+        "complete registered descriptor and history/inverse/redo/patch minimum profile declarations",
+        "literal JSON Schema validates v2 document, typed transactions, manifest and descriptor",
+        "typed table patch codec preserves operations, declarations and replay"
+      ]
+    },
+    "3": {
+      "status": "pass",
+      "tests": [
+        "cell fact/source identities survive merge/move and every reference deletion requires impact review",
+        "Host and Portable checkpoints retain exact migration/merge/value history and redo-only tables",
+        "all typed operations preserve untouched IDs and serialized inverses restore exact revisions"
+      ]
+    }
+  },
+  "verification": {
+    "typecheck": "pass",
+    "build": "pass",
+    "schemaValidation": "pass",
+    "tests": {
+      "baseline": 311,
+      "final": 321,
+      "delta": 10,
+      "pass": 321,
+      "fail": 0,
+      "skipped": 0
+    },
+    "blackbox": {
+      "baselineGreen": 70,
+      "baselineRed": 0,
+      "finalGreen": 70,
+      "finalRed": 0,
+      "newRed": []
+    }
+  },
+  "remainingRisks": [
+    "F02/F03 UI, TSV workflows and native editable Office table export are not claimed by F01.",
+    "Structural edits that invalidate a merge require an explicit split first.",
+    "Migration rejects ragged input and unknown v1 props, retaining the source for explicit review."
+  ],
+  "artifacts": {
+    "docs/evolution/quality/f01-blackbox-final.json": {
+      "sha256": "c31e14ec2d4d9d909c75f1662d80e4bdf21335d42a9774dc3738f38fc92e7ae2"
+    },
+    "docs/evolution/quality/f01-blackbox-start.json": {
+      "sha256": "28a4023ef028f22f3db7962cc28d58197fe76e4c4a14fc05ccf97b07459c0db1"
+    },
+    "docs/evolution/quality/f01-build.txt": {
+      "sha256": "60ca46444de45fc682ae3a482a3992ab8dd7a618503d54c03c79c3f44488bba4"
+    },
+    "docs/evolution/quality/f01-schema-validation.txt": {
+      "sha256": "3563c762e2a36c2077fe967f4a614b1551522393653eba94ecc56d2ba89fe123"
+    },
+    "docs/evolution/quality/f01-tests.tap": {
+      "sha256": "2a233cb440b77a7b69ffd7edf9846f41ac918330264308da4bcb685af17c2c1e"
+    },
+    "docs/evolution/quality/f01-typecheck.txt": {
+      "sha256": "a7149824f4d2e2b22a41ec34ca6b451f7ac9e9003b5167390eead15d29870e70"
+    }
+  }
+}

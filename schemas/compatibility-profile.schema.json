@@ -23,7 +23,8 @@
         "ppte-2.0-ga-b.1",
         "ppte-2.0-ga-c.1",
         "ppte-2.0-edit.1",
-        "ppte-2.1-text-run.1"
+        "ppte-2.1-text-run.1",
+        "ppte-2.1-table.1"
       ]
     },
     "formatVersion": {
@@ -157,15 +158,52 @@
           }
         },
         "else": {
-          "properties": {
-            "schemaVersion": {
-              "const": "2.0.0"
-            },
-            "operationProtocolVersion": {
-              "const": "1.0"
-            },
-            "portableRuntimeVersion": {
-              "const": "2.0.0"
+          "if": {
+            "properties": {
+              "id": {
+                "const": "ppte-2.1-table.1"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "schemaVersion": {
+                "const": "2.1.0"
+              },
+              "operationProtocolVersion": {
+                "const": "1.1"
+              },
+              "portableRuntimeVersion": {
+                "const": "2.1.0"
+              },
+              "widgetAbiVersion": {
+                "const": "2.0"
+              },
+              "patchVersion": {
+                "const": "1"
+              },
+              "runtimeSubset": {
+                "const": "ga-c"
+              },
+              "slideIrVersion": {
+                "const": "1.0"
+              },
+              "layoutRecipeVersion": {
+                "const": "1.0"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "schemaVersion": {
+                "const": "2.0.0"
+              },
+              "operationProtocolVersion": {
+                "const": "1.0"
+              },
+              "portableRuntimeVersion": {
+                "const": "2.0.0"
+              }
             }
           }
         }

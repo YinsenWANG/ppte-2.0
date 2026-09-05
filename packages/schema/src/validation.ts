@@ -1,3 +1,4 @@
+import { assertTableComponent, assertTableModel } from './table.js'
 import type {
   ChartElement,
   Element,
@@ -80,6 +81,15 @@ export function validateDocument(document: PpteDocument, options: { runtimeSubse
       if (element.type === 'image' && !document.assets?.[element.assetId]) add('ASSET_MISSING', `Image references missing asset ${element.assetId}.`, { slideId, elementId })
       if (element.type === 'component' && element.fallback && element.fallback.kind === 'asset' && element.fallback.assetId && !document.assets?.[element.fallback.assetId]) add('ASSET_MISSING', `Component fallback references missing asset ${element.fallback.assetId}.`, { slideId, elementId })
       validateRefs(document, element, add, slideId)
+      if (element.type === 'component' && element.componentType === 'core/table' && element.componentVersion === '2.0.0') {
+        try {
+          assertTableModel(element.props)
+          for (const cell of Object.values(element.props.cells)) {
+            for (const id of cell.factIds ?? []) if (!document.facts?.[id]) add('FACT_REFERENCE_MISSING', `Cell ${cell.id} references missing Fact ${id}.`, {slideId,elementId})
+            for (const id of cell.sourceIds ?? []) if (!document.sources?.[id]) add('SOURCE_REFERENCE_MISSING', `Cell ${cell.id} references missing Source ${id}.`, {slideId,elementId})
+          }
+        } catch { /* validateComponent reports the model error. */ }
+      }
     }
     for (const elementId of rootOrder) if (!elements[elementId]) add('SCHEMA_INVALID', `rootOrder references missing element: ${elementId}`, { slideId, elementId })
     if (new Set(rootOrder).size !== rootOrder.length) add('SCHEMA_INVALID', 'rootOrder contains duplicate elements.', { slideId })
@@ -299,6 +309,7 @@ function validateChart(element: Extract<Element, { type: 'chart' }>, add: (code:
 function validateComponent(element: Extract<Element, { type: 'component' }>, add: (code: string, message: string, extra?: Partial<ValidationIssue>) => void, slideId: string, elementId: string) {
   if (typeof element.componentType !== 'string' || !element.componentType || typeof element.componentVersion !== 'string' || !element.componentVersion) add('SCHEMA_INVALID', 'Component requires non-empty type and version.', { slideId, elementId })
   if (!isPlainObject(element.props) || !isJsonValue(element.props)) add('SCHEMA_INVALID', 'Component props must be a JSON object.', { slideId, elementId })
+  try { assertTableComponent(element) } catch (cause) { add('SCHEMA_INVALID', String(cause), { slideId, elementId }) }
   const fallback = element.fallback as unknown as Record<string, unknown> | undefined
   if (!fallback || typeof fallback !== 'object' || Array.isArray(fallback) || !['asset', 'placeholder'].includes(String(fallback.kind))) add('SCHEMA_INVALID', 'Component fallback must be an asset or placeholder.', { slideId, elementId })
   else if (fallback.kind === 'asset' && (typeof fallback.assetId !== 'string' || !fallback.assetId)) add('SCHEMA_INVALID', 'Asset component fallback requires assetId.', { slideId, elementId })

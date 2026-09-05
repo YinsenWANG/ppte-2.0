@@ -1,3 +1,4 @@
+import { removedTableReferences } from '../../widgets/src/table-model.js'
 import { canonicalHash, equalJson } from '../../canonical-json/src/index.js'
 import { withErrorSemantics } from '../../schema/src/errors.js'
 import type {
@@ -319,6 +320,20 @@ export function analyzeOperation(document: PpteDocument, operation: Operation): 
       permissions.add('style')
       addElement(operation.slideId, operation.elementId, `/slides/${pointer(operation.slideId)}/elements/${pointer(operation.elementId)}/style/overrides`)
       break
+    case 'table.migrate':
+    case 'table.restore':
+    case 'table.setCellValue':
+    case 'table.insertRows':
+    case 'table.deleteRows':
+    case 'table.moveRows':
+    case 'table.insertColumns':
+    case 'table.deleteColumns':
+    case 'table.moveColumns':
+    case 'table.resizeRows':
+    case 'table.resizeColumns':
+    case 'table.mergeCells':
+    case 'table.splitCell':
+    case 'table.setCellStyle':
     case 'component.updateProps':
       permissions.add('content')
       addElement(operation.slideId, operation.elementId)
@@ -408,6 +423,13 @@ export function enforceChangeContract(
   options: ChangeContractEnforcementOptions = {},
 ): ValidationIssue[] {
   const issues: ValidationIssue[] = []
+  for (const [slideId, slide] of Object.entries(before.slides)) for (const element of Object.values(slide.elements)) {
+    if (element.type !== 'component') continue
+    const candidate = after.slides[slideId]?.elements[element.id]
+    const removed = removedTableReferences(element, candidate?.type === 'component' ? candidate : undefined)
+    if (removed.length && transaction.changeContract.preserve?.facts === 'preserve' && !options.allowSystemInversePolicy) issues.push(issue('CHANGE_CONTRACT_VIOLATION', 'Table reference removal violates preserved facts.'))
+    if (removed.length && transaction.changeContract.requireConfirmation !== true && !options.allowSystemInversePolicy) issues.push(issue('CHANGE_CONTRACT_VIOLATION', `Table reference removal requires impact review: ${removed.join(', ')}.`))
+  }
   const contract = transaction.changeContract
   const scope = transaction.scope
   const impacts = transaction.operations.map((operation) => analyzeOperation(before, operation))

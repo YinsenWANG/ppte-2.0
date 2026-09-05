@@ -2,6 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://ppte.dev/schemas/2.0/document.schema.json",
   "$defs": {
+    "tableModel": {"type":"object","required":["version","rowOrder","columnOrder","rows","columns","cells","merges","tableStyle"],"properties":{"version":{"const":2},"rowOrder":{"type":"array","items":{"type":"string","minLength":1},"uniqueItems":true},"columnOrder":{"type":"array","items":{"type":"string","minLength":1},"uniqueItems":true},"rows":{"type":"object","additionalProperties":{"type":"object","required":["id"],"properties":{"id":{"type":"string","minLength":1},"size":{"type":"number","exclusiveMinimum":0},"label":{"type":"string"}},"additionalProperties":false}},"columns":{"type":"object","additionalProperties":{"type":"object","required":["id"],"properties":{"id":{"type":"string","minLength":1},"size":{"type":"number","exclusiveMinimum":0},"label":{"type":"string"}},"additionalProperties":false}},"cells":{"type":"object","additionalProperties":{"type":"object","required":["id","rowId","columnId","value"],"properties":{"id":{"type":"string","minLength":1},"rowId":{"type":"string","minLength":1},"columnId":{"type":"string","minLength":1},"value":{"type":["string","number","boolean","null"]},"displayFormat":{"enum":["general","percent","fixed:2"]},"richText":{"type":"object"},"style":{"type":"object"},"factIds":{"type":"array","items":{"type":"string","minLength":1},"uniqueItems":true},"sourceIds":{"type":"array","items":{"type":"string","minLength":1},"uniqueItems":true}},"additionalProperties":false}},"merges":{"type":"array","items":{"type":"object","required":["anchorCellId","rowIds","columnIds"],"properties":{"anchorCellId":{"type":"string","minLength":1},"rowIds":{"type":"array","items":{"type":"string","minLength":1},"uniqueItems":true,"minItems":1},"columnIds":{"type":"array","items":{"type":"string","minLength":1},"uniqueItems":true,"minItems":1}},"additionalProperties":false}},"tableStyle":{"type":"object"},"caption":{"type":"string"}},"additionalProperties":false},
     "point": {
       "type": "object",
       "required": ["x", "y"],
@@ -3466,6 +3467,7 @@
                   "additionalProperties": false
                 },
                 {
+                  "allOf": [{"if":{"properties":{"componentType":{"const":"core/table"},"componentVersion":{"enum":["2.0.0"]}}},"then":{"properties":{"props":{"$ref":"#/$defs/tableModel"}}}}],
                   "type": "object",
                   "required": [
                     "id",
