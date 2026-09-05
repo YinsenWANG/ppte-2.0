@@ -1,0 +1,406 @@
+{
+  "contractVersion": "1",
+  "id": "swiss",
+  "version": "1.0.0",
+  "description": "瑞士分析：不对称网格、强字级、独立数字、硬边图像与纵向流程。",
+  "suitableFor": [
+    "中文演讲",
+    "信息叙事"
+  ],
+  "unsuitableFor": [
+    "超载内容自动压缩",
+    "未校验字体替换"
+  ],
+  "density": "medium",
+  "theme": {
+    "id": "theme.swiss",
+    "name": "swiss",
+    "tokens": {
+      "colors": {
+        "background": "#FFFFFF",
+        "ink": "#171717",
+        "accent": "#B72219"
+      },
+      "fontFamilies": {
+        "heading": "Noto Sans SC",
+        "body": "Noto Sans SC"
+      },
+      "fontSizes": {
+        "title": 62,
+        "body": 27
+      },
+      "spacing": {},
+      "radii": {},
+      "shadows": {}
+    },
+    "presets": {
+      "text": {
+        "text.title.primary": {
+          "fontFamily": {
+            "kind": "value",
+            "value": "Noto Sans SC"
+          },
+          "fontSize": 62,
+          "fontWeight": 800,
+          "lineHeight": 1.6,
+          "color": {
+            "kind": "value",
+            "value": "#171717"
+          }
+        },
+        "text.body": {
+          "fontFamily": {
+            "kind": "value",
+            "value": "Noto Sans SC"
+          },
+          "fontSize": 27,
+          "fontWeight": 400,
+          "lineHeight": 1.6,
+          "color": {
+            "kind": "value",
+            "value": "#171717"
+          }
+        },
+        "text.metric.value": {
+          "fontFamily": {
+            "kind": "value",
+            "value": "Noto Sans SC"
+          },
+          "fontSize": 38,
+          "fontWeight": 700,
+          "lineHeight": 1.6,
+          "color": {
+            "kind": "value",
+            "value": "#B72219"
+          }
+        },
+        "text.source": {
+          "fontFamily": {
+            "kind": "value",
+            "value": "Noto Sans SC"
+          },
+          "fontSize": 18,
+          "fontWeight": 400,
+          "lineHeight": 1.6,
+          "color": {
+            "kind": "value",
+            "value": "#171717"
+          }
+        }
+      },
+      "shape": {},
+      "image": {
+        "image.hero": {
+          "radius": 0,
+          "border": {
+            "color": {
+              "kind": "value",
+              "value": "#B72219"
+            },
+            "width": 0
+          }
+        }
+      },
+      "chart": {
+        "chart.default": {
+          "palette": [
+            {
+              "kind": "value",
+              "value": "#B72219"
+            },
+            {
+              "kind": "value",
+              "value": "#758398"
+            }
+          ],
+          "axisColor": {
+            "kind": "value",
+            "value": "#171717"
+          },
+          "labelColor": {
+            "kind": "value",
+            "value": "#171717"
+          },
+          "gridColor": {
+            "kind": "value",
+            "value": "#CDD1D7"
+          },
+          "lineWidth": 2,
+          "cornerRadius": 0
+        }
+      }
+    }
+  },
+  "rules": {
+    "image": [
+      "瑞士分析：不对称网格、强字级、独立数字、硬边图像与纵向流程。",
+      "图像为独立可替换对象；不把文字烘焙进图片"
+    ],
+    "line": [
+      "按角色切换构图；正文不自动缩字"
+    ],
+    "chart": [
+      "关键数值与分类保留为原生图表数据"
+    ]
+  },
+  "recipeRefs": [
+    {
+      "id": "swiss.cover",
+      "version": "1.0.0",
+      "digest": "sha256-cd1fdfc94adba1001e43d66bc6df883ed14f4647a53c868a7392dd5121fbce7f"
+    },
+    {
+      "id": "swiss.section",
+      "version": "1.0.0",
+      "digest": "sha256-808e010883e751973c0da256d66ad006716b94c4038cab134a1d765bdd7fba28"
+    },
+    {
+      "id": "swiss.statement",
+      "version": "1.0.0",
+      "digest": "sha256-65782f3d792bd886d4fabcd8db705235096fa852650624d86bd677d648adbd55"
+    },
+    {
+      "id": "swiss.metrics",
+      "version": "1.0.0",
+      "digest": "sha256-63766573ce38079dfea593b52021b2f9eefb0e7a6ba7ee3396c6c8fd8707ae23"
+    },
+    {
+      "id": "swiss.explanation",
+      "version": "1.0.0",
+      "digest": "sha256-4bff4e03001a1623771f3a099f4f636702816db1cf724276125c6070bcdeeacf"
+    },
+    {
+      "id": "swiss.comparison",
+      "version": "1.0.0",
+      "digest": "sha256-1d253705b8ddd047df6c02ec82e6227e5fb5b3414e5a40e234ca2740c8fe066d"
+    },
+    {
+      "id": "swiss.process",
+      "version": "1.0.0",
+      "digest": "sha256-4c87c330803749f3b33c52e682209d285d12b8ae79c4f83d1de6a4b751f25964"
+    },
+    {
+      "id": "swiss.closing",
+      "version": "1.0.0",
+      "digest": "sha256-c316089b20139672318c879fc68b193768d9a33636a13f603f0f2c55e02a15be"
+    }
+  ],
+  "previews": [
+    "design-packs/swiss/previews/cover-normal.png",
+    "design-packs/swiss/previews/cover-boundary.png",
+    "design-packs/swiss/previews/cover-overload.png",
+    "design-packs/swiss/previews/section-normal.png",
+    "design-packs/swiss/previews/section-boundary.png",
+    "design-packs/swiss/previews/section-overload.png",
+    "design-packs/swiss/previews/statement-normal.png",
+    "design-packs/swiss/previews/statement-boundary.png",
+    "design-packs/swiss/previews/statement-overload.png",
+    "design-packs/swiss/previews/metrics-normal.png",
+    "design-packs/swiss/previews/metrics-boundary.png",
+    "design-packs/swiss/previews/metrics-overload.png",
+    "design-packs/swiss/previews/explanation-normal.png",
+    "design-packs/swiss/previews/explanation-boundary.png",
+    "design-packs/swiss/previews/explanation-overload.png",
+    "design-packs/swiss/previews/comparison-normal.png",
+    "design-packs/swiss/previews/comparison-boundary.png",
+    "design-packs/swiss/previews/comparison-overload.png",
+    "design-packs/swiss/previews/process-normal.png",
+    "design-packs/swiss/previews/process-boundary.png",
+    "design-packs/swiss/previews/process-overload.png",
+    "design-packs/swiss/previews/closing-normal.png",
+    "design-packs/swiss/previews/closing-boundary.png",
+    "design-packs/swiss/previews/closing-overload.png"
+  ],
+  "licenses": [
+    {
+      "resource": "swiss",
+      "kind": "recipe",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "asset_design_visual",
+      "kind": "photo",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "Noto Sans SC",
+      "kind": "font",
+      "license": "OFL-1.1",
+      "source": "design-packs/assets/OFL.txt",
+      "notice": "Noto Sans SC, Google and Adobe; SIL Open Font License 1.1. Pinned sample subset; see assets/README.md."
+    },
+    {
+      "resource": "design-packs/swiss/previews/cover-normal.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/swiss/previews/cover-boundary.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/swiss/previews/cover-overload.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/swiss/previews/section-normal.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/swiss/previews/section-boundary.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/swiss/previews/section-overload.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/swiss/previews/statement-normal.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/swiss/previews/statement-boundary.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/swiss/previews/statement-overload.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/swiss/previews/metrics-normal.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/swiss/previews/metrics-boundary.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/swiss/previews/metrics-overload.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/swiss/previews/explanation-normal.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/swiss/previews/explanation-boundary.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/swiss/previews/explanation-overload.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/swiss/previews/comparison-normal.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/swiss/previews/comparison-boundary.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/swiss/previews/comparison-overload.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/swiss/previews/process-normal.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/swiss/previews/process-boundary.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/swiss/previews/process-overload.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/swiss/previews/closing-normal.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/swiss/previews/closing-boundary.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/swiss/previews/closing-overload.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    }
+  ],
+  "digest": "sha256-eea48401fbb112072c45ce07cf10446fae2a1c3f50840be69ccd65717d621436"
+}

@@ -1,0 +1,746 @@
+[
+  {
+    "id": "business.cover",
+    "version": "1.0.0",
+    "supports": [
+      "cover"
+    ],
+    "slots": [
+      {
+        "key": "title",
+        "accepts": [
+          "heading"
+        ],
+        "required": true,
+        "maxCount": 1,
+        "maxChars": 24,
+        "styleRef": "text.title.primary"
+      },
+      {
+        "key": "body",
+        "accepts": [
+          "paragraph"
+        ],
+        "required": true,
+        "maxCount": 2,
+        "maxChars": 90,
+        "styleRef": "text.body",
+        "repeat": {
+          "version": "1.0",
+          "maxCount": 2,
+          "columns": 1,
+          "gapX": 0.035,
+          "gapY": 0.04
+        }
+      },
+      {
+        "key": "support",
+        "accepts": [
+          "image"
+        ],
+        "required": true,
+        "maxCount": 1,
+        "maxChars": 48,
+        "styleRef": "image.hero"
+      }
+    ],
+    "zones": [
+      {
+        "id": "title",
+        "x": 0.07,
+        "y": 0.12,
+        "width": 0.49,
+        "height": 0.24
+      },
+      {
+        "id": "body",
+        "x": 0.07,
+        "y": 0.45,
+        "width": 0.45,
+        "height": 0.38
+      },
+      {
+        "id": "support",
+        "x": 0.61,
+        "y": 0.12,
+        "width": 0.32,
+        "height": 0.72
+      }
+    ],
+    "constraints": [
+      {
+        "kind": "safe-area",
+        "slotId": "*"
+      }
+    ],
+    "qualityRules": [
+      {
+        "kind": "max-elements",
+        "value": 4
+      },
+      {
+        "kind": "min-font-size",
+        "value": 16
+      },
+      {
+        "kind": "max-overflow",
+        "value": 0
+      },
+      {
+        "kind": "required-reading-order",
+        "value": true
+      }
+    ]
+  },
+  {
+    "id": "business.section",
+    "version": "1.0.0",
+    "supports": [
+      "section"
+    ],
+    "slots": [
+      {
+        "key": "title",
+        "accepts": [
+          "heading"
+        ],
+        "required": true,
+        "maxCount": 1,
+        "maxChars": 24,
+        "styleRef": "text.title.primary"
+      },
+      {
+        "key": "body",
+        "accepts": [
+          "paragraph"
+        ],
+        "required": true,
+        "maxCount": 2,
+        "maxChars": 90,
+        "styleRef": "text.body",
+        "repeat": {
+          "version": "1.0",
+          "maxCount": 2,
+          "columns": 1,
+          "gapX": 0.035,
+          "gapY": 0.04
+        }
+      },
+      {
+        "key": "support",
+        "accepts": [
+          "source"
+        ],
+        "required": true,
+        "maxCount": 1,
+        "maxChars": 48,
+        "styleRef": "text.source"
+      }
+    ],
+    "zones": [
+      {
+        "id": "title",
+        "x": 0.08,
+        "y": 0.25,
+        "width": 0.69,
+        "height": 0.22
+      },
+      {
+        "id": "body",
+        "x": 0.08,
+        "y": 0.53,
+        "width": 0.64,
+        "height": 0.28
+      },
+      {
+        "id": "support",
+        "x": 0.79,
+        "y": 0.26,
+        "width": 0.14,
+        "height": 0.46
+      }
+    ],
+    "constraints": [
+      {
+        "kind": "safe-area",
+        "slotId": "*"
+      }
+    ],
+    "qualityRules": [
+      {
+        "kind": "max-elements",
+        "value": 4
+      },
+      {
+        "kind": "min-font-size",
+        "value": 16
+      },
+      {
+        "kind": "max-overflow",
+        "value": 0
+      },
+      {
+        "kind": "required-reading-order",
+        "value": true
+      }
+    ]
+  },
+  {
+    "id": "business.statement",
+    "version": "1.0.0",
+    "supports": [
+      "statement"
+    ],
+    "slots": [
+      {
+        "key": "title",
+        "accepts": [
+          "heading"
+        ],
+        "required": true,
+        "maxCount": 1,
+        "maxChars": 24,
+        "styleRef": "text.title.primary"
+      },
+      {
+        "key": "body",
+        "accepts": [
+          "quote"
+        ],
+        "required": true,
+        "maxCount": 2,
+        "maxChars": 90,
+        "styleRef": "text.body",
+        "repeat": {
+          "version": "1.0",
+          "maxCount": 2,
+          "columns": 1,
+          "gapX": 0.035,
+          "gapY": 0.04
+        }
+      },
+      {
+        "key": "support",
+        "accepts": [
+          "metric"
+        ],
+        "required": true,
+        "maxCount": 1,
+        "maxChars": 48,
+        "styleRef": "text.metric.value"
+      }
+    ],
+    "zones": [
+      {
+        "id": "title",
+        "x": 0.08,
+        "y": 0.08,
+        "width": 0.84,
+        "height": 0.2
+      },
+      {
+        "id": "body",
+        "x": 0.08,
+        "y": 0.36,
+        "width": 0.57,
+        "height": 0.48
+      },
+      {
+        "id": "support",
+        "x": 0.71,
+        "y": 0.38,
+        "width": 0.21,
+        "height": 0.4
+      }
+    ],
+    "constraints": [
+      {
+        "kind": "safe-area",
+        "slotId": "*"
+      }
+    ],
+    "qualityRules": [
+      {
+        "kind": "max-elements",
+        "value": 4
+      },
+      {
+        "kind": "min-font-size",
+        "value": 16
+      },
+      {
+        "kind": "max-overflow",
+        "value": 0
+      },
+      {
+        "kind": "required-reading-order",
+        "value": true
+      }
+    ]
+  },
+  {
+    "id": "business.metrics",
+    "version": "1.0.0",
+    "supports": [
+      "metrics"
+    ],
+    "slots": [
+      {
+        "key": "title",
+        "accepts": [
+          "heading"
+        ],
+        "required": true,
+        "maxCount": 1,
+        "maxChars": 24,
+        "styleRef": "text.title.primary"
+      },
+      {
+        "key": "body",
+        "accepts": [
+          "metric"
+        ],
+        "required": true,
+        "maxCount": 2,
+        "maxChars": 20,
+        "styleRef": "text.metric.value",
+        "repeat": {
+          "version": "1.0",
+          "maxCount": 2,
+          "columns": 2,
+          "gapX": 0.035,
+          "gapY": 0.04
+        }
+      },
+      {
+        "key": "support",
+        "accepts": [
+          "metric"
+        ],
+        "required": true,
+        "maxCount": 1,
+        "maxChars": 48,
+        "styleRef": "text.metric.value"
+      }
+    ],
+    "zones": [
+      {
+        "id": "title",
+        "x": 0.08,
+        "y": 0.08,
+        "width": 0.84,
+        "height": 0.19
+      },
+      {
+        "id": "body",
+        "x": 0.08,
+        "y": 0.35,
+        "width": 0.55,
+        "height": 0.48
+      },
+      {
+        "id": "support",
+        "x": 0.7,
+        "y": 0.35,
+        "width": 0.22,
+        "height": 0.48
+      }
+    ],
+    "constraints": [
+      {
+        "kind": "safe-area",
+        "slotId": "*"
+      }
+    ],
+    "qualityRules": [
+      {
+        "kind": "max-elements",
+        "value": 4
+      },
+      {
+        "kind": "min-font-size",
+        "value": 16
+      },
+      {
+        "kind": "max-overflow",
+        "value": 0
+      },
+      {
+        "kind": "required-reading-order",
+        "value": true
+      }
+    ]
+  },
+  {
+    "id": "business.explanation",
+    "version": "1.0.0",
+    "supports": [
+      "explanation"
+    ],
+    "slots": [
+      {
+        "key": "title",
+        "accepts": [
+          "heading"
+        ],
+        "required": true,
+        "maxCount": 1,
+        "maxChars": 24,
+        "styleRef": "text.title.primary"
+      },
+      {
+        "key": "body",
+        "accepts": [
+          "paragraph"
+        ],
+        "required": true,
+        "maxCount": 2,
+        "maxChars": 90,
+        "styleRef": "text.body",
+        "repeat": {
+          "version": "1.0",
+          "maxCount": 2,
+          "columns": 1,
+          "gapX": 0.035,
+          "gapY": 0.04
+        }
+      },
+      {
+        "key": "support",
+        "accepts": [
+          "image"
+        ],
+        "required": true,
+        "maxCount": 1,
+        "maxChars": 48,
+        "styleRef": "image.hero"
+      }
+    ],
+    "zones": [
+      {
+        "id": "title",
+        "x": 0.07,
+        "y": 0.08,
+        "width": 0.86,
+        "height": 0.2
+      },
+      {
+        "id": "body",
+        "x": 0.07,
+        "y": 0.37,
+        "width": 0.43,
+        "height": 0.49
+      },
+      {
+        "id": "support",
+        "x": 0.56,
+        "y": 0.34,
+        "width": 0.37,
+        "height": 0.52
+      }
+    ],
+    "constraints": [
+      {
+        "kind": "safe-area",
+        "slotId": "*"
+      }
+    ],
+    "qualityRules": [
+      {
+        "kind": "max-elements",
+        "value": 4
+      },
+      {
+        "kind": "min-font-size",
+        "value": 16
+      },
+      {
+        "kind": "max-overflow",
+        "value": 0
+      },
+      {
+        "kind": "required-reading-order",
+        "value": true
+      }
+    ]
+  },
+  {
+    "id": "business.comparison",
+    "version": "1.0.0",
+    "supports": [
+      "comparison"
+    ],
+    "slots": [
+      {
+        "key": "title",
+        "accepts": [
+          "heading"
+        ],
+        "required": true,
+        "maxCount": 1,
+        "maxChars": 24,
+        "styleRef": "text.title.primary"
+      },
+      {
+        "key": "body",
+        "accepts": [
+          "comparison"
+        ],
+        "required": true,
+        "maxCount": 2,
+        "maxChars": 90,
+        "styleRef": "text.body",
+        "repeat": {
+          "version": "1.0",
+          "maxCount": 2,
+          "columns": 2,
+          "gapX": 0.035,
+          "gapY": 0.04
+        }
+      },
+      {
+        "key": "support",
+        "accepts": [
+          "source"
+        ],
+        "required": true,
+        "maxCount": 1,
+        "maxChars": 48,
+        "styleRef": "text.source"
+      }
+    ],
+    "zones": [
+      {
+        "id": "title",
+        "x": 0.07,
+        "y": 0.08,
+        "width": 0.86,
+        "height": 0.2
+      },
+      {
+        "id": "body",
+        "x": 0.07,
+        "y": 0.36,
+        "width": 0.86,
+        "height": 0.37
+      },
+      {
+        "id": "support",
+        "x": 0.07,
+        "y": 0.79,
+        "width": 0.86,
+        "height": 0.13
+      }
+    ],
+    "constraints": [
+      {
+        "kind": "safe-area",
+        "slotId": "*"
+      }
+    ],
+    "qualityRules": [
+      {
+        "kind": "max-elements",
+        "value": 4
+      },
+      {
+        "kind": "min-font-size",
+        "value": 16
+      },
+      {
+        "kind": "max-overflow",
+        "value": 0
+      },
+      {
+        "kind": "required-reading-order",
+        "value": true
+      }
+    ]
+  },
+  {
+    "id": "business.process",
+    "version": "1.0.0",
+    "supports": [
+      "process"
+    ],
+    "slots": [
+      {
+        "key": "title",
+        "accepts": [
+          "heading"
+        ],
+        "required": true,
+        "maxCount": 1,
+        "maxChars": 24,
+        "styleRef": "text.title.primary"
+      },
+      {
+        "key": "body",
+        "accepts": [
+          "process"
+        ],
+        "required": true,
+        "maxCount": 2,
+        "maxChars": 90,
+        "styleRef": "text.body",
+        "repeat": {
+          "version": "1.0",
+          "maxCount": 2,
+          "columns": 2,
+          "gapX": 0.035,
+          "gapY": 0.04
+        }
+      },
+      {
+        "key": "support",
+        "accepts": [
+          "source"
+        ],
+        "required": true,
+        "maxCount": 1,
+        "maxChars": 48,
+        "styleRef": "text.source"
+      }
+    ],
+    "zones": [
+      {
+        "id": "title",
+        "x": 0.07,
+        "y": 0.08,
+        "width": 0.86,
+        "height": 0.2
+      },
+      {
+        "id": "body",
+        "x": 0.07,
+        "y": 0.35,
+        "width": 0.86,
+        "height": 0.38
+      },
+      {
+        "id": "support",
+        "x": 0.07,
+        "y": 0.79,
+        "width": 0.86,
+        "height": 0.13
+      }
+    ],
+    "constraints": [
+      {
+        "kind": "safe-area",
+        "slotId": "*"
+      }
+    ],
+    "qualityRules": [
+      {
+        "kind": "max-elements",
+        "value": 4
+      },
+      {
+        "kind": "min-font-size",
+        "value": 16
+      },
+      {
+        "kind": "max-overflow",
+        "value": 0
+      },
+      {
+        "kind": "required-reading-order",
+        "value": true
+      }
+    ]
+  },
+  {
+    "id": "business.closing",
+    "version": "1.0.0",
+    "supports": [
+      "closing"
+    ],
+    "slots": [
+      {
+        "key": "title",
+        "accepts": [
+          "heading"
+        ],
+        "required": true,
+        "maxCount": 1,
+        "maxChars": 24,
+        "styleRef": "text.title.primary"
+      },
+      {
+        "key": "body",
+        "accepts": [
+          "paragraph"
+        ],
+        "required": true,
+        "maxCount": 2,
+        "maxChars": 90,
+        "styleRef": "text.body",
+        "repeat": {
+          "version": "1.0",
+          "maxCount": 2,
+          "columns": 1,
+          "gapX": 0.035,
+          "gapY": 0.04
+        }
+      },
+      {
+        "key": "support",
+        "accepts": [
+          "cta"
+        ],
+        "required": true,
+        "maxCount": 1,
+        "maxChars": 48,
+        "styleRef": "text.source"
+      }
+    ],
+    "zones": [
+      {
+        "id": "title",
+        "x": 0.1,
+        "y": 0.14,
+        "width": 0.8,
+        "height": 0.2
+      },
+      {
+        "id": "body",
+        "x": 0.1,
+        "y": 0.44,
+        "width": 0.52,
+        "height": 0.42
+      },
+      {
+        "id": "support",
+        "x": 0.69,
+        "y": 0.47,
+        "width": 0.23,
+        "height": 0.32
+      }
+    ],
+    "constraints": [
+      {
+        "kind": "safe-area",
+        "slotId": "*"
+      }
+    ],
+    "qualityRules": [
+      {
+        "kind": "max-elements",
+        "value": 4
+      },
+      {
+        "kind": "min-font-size",
+        "value": 16
+      },
+      {
+        "kind": "max-overflow",
+        "value": 0
+      },
+      {
+        "kind": "required-reading-order",
+        "value": true
+      }
+    ]
+  }
+]

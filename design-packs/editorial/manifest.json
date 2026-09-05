@@ -1,0 +1,406 @@
+{
+  "contractVersion": "1",
+  "id": "editorial",
+  "version": "1.0.0",
+  "description": "杂志叙事：窄栏与跨栏交替、通高图像、缩进引语和安静章节。",
+  "suitableFor": [
+    "中文演讲",
+    "信息叙事"
+  ],
+  "unsuitableFor": [
+    "超载内容自动压缩",
+    "未校验字体替换"
+  ],
+  "density": "medium",
+  "theme": {
+    "id": "theme.editorial",
+    "name": "editorial",
+    "tokens": {
+      "colors": {
+        "background": "#FAF4E9",
+        "ink": "#302820",
+        "accent": "#8B422E"
+      },
+      "fontFamilies": {
+        "heading": "Noto Sans SC",
+        "body": "Noto Sans SC"
+      },
+      "fontSizes": {
+        "title": 50,
+        "body": 28
+      },
+      "spacing": {},
+      "radii": {},
+      "shadows": {}
+    },
+    "presets": {
+      "text": {
+        "text.title.primary": {
+          "fontFamily": {
+            "kind": "value",
+            "value": "Noto Sans SC"
+          },
+          "fontSize": 50,
+          "fontWeight": 400,
+          "lineHeight": 1.6,
+          "color": {
+            "kind": "value",
+            "value": "#302820"
+          }
+        },
+        "text.body": {
+          "fontFamily": {
+            "kind": "value",
+            "value": "Noto Sans SC"
+          },
+          "fontSize": 28,
+          "fontWeight": 400,
+          "lineHeight": 1.6,
+          "color": {
+            "kind": "value",
+            "value": "#302820"
+          }
+        },
+        "text.metric.value": {
+          "fontFamily": {
+            "kind": "value",
+            "value": "Noto Sans SC"
+          },
+          "fontSize": 38,
+          "fontWeight": 700,
+          "lineHeight": 1.6,
+          "color": {
+            "kind": "value",
+            "value": "#8B422E"
+          }
+        },
+        "text.source": {
+          "fontFamily": {
+            "kind": "value",
+            "value": "Noto Sans SC"
+          },
+          "fontSize": 18,
+          "fontWeight": 400,
+          "lineHeight": 1.6,
+          "color": {
+            "kind": "value",
+            "value": "#302820"
+          }
+        }
+      },
+      "shape": {},
+      "image": {
+        "image.hero": {
+          "radius": 0,
+          "border": {
+            "color": {
+              "kind": "value",
+              "value": "#8B422E"
+            },
+            "width": 0
+          }
+        }
+      },
+      "chart": {
+        "chart.default": {
+          "palette": [
+            {
+              "kind": "value",
+              "value": "#8B422E"
+            },
+            {
+              "kind": "value",
+              "value": "#758398"
+            }
+          ],
+          "axisColor": {
+            "kind": "value",
+            "value": "#302820"
+          },
+          "labelColor": {
+            "kind": "value",
+            "value": "#302820"
+          },
+          "gridColor": {
+            "kind": "value",
+            "value": "#CDD1D7"
+          },
+          "lineWidth": 2,
+          "cornerRadius": 0
+        }
+      }
+    }
+  },
+  "rules": {
+    "image": [
+      "杂志叙事：窄栏与跨栏交替、通高图像、缩进引语和安静章节。",
+      "图像为独立可替换对象；不把文字烘焙进图片"
+    ],
+    "line": [
+      "按角色切换构图；正文不自动缩字"
+    ],
+    "chart": [
+      "关键数值与分类保留为原生图表数据"
+    ]
+  },
+  "recipeRefs": [
+    {
+      "id": "editorial.cover",
+      "version": "1.0.0",
+      "digest": "sha256-218676a7e14a4fd4b0508bd863cdf547acec9e4a8ad5e9ace6e6b4a559e2f4bd"
+    },
+    {
+      "id": "editorial.section",
+      "version": "1.0.0",
+      "digest": "sha256-abbc572b024015a188f1d505f44f87e154fd011843a181191e584756dbf7c21a"
+    },
+    {
+      "id": "editorial.statement",
+      "version": "1.0.0",
+      "digest": "sha256-dce584570fde827f597cbbecd656e5064498631b3c390c40e154df47c641d7b5"
+    },
+    {
+      "id": "editorial.metrics",
+      "version": "1.0.0",
+      "digest": "sha256-6eaead2f2d4a752d755b3308905354e89114a7b880d73c12389b8cbff69fbabf"
+    },
+    {
+      "id": "editorial.explanation",
+      "version": "1.0.0",
+      "digest": "sha256-45ca19c2e172bedff5afb7eee70efcdb4f52804312d65d1f57ddeee38b24da37"
+    },
+    {
+      "id": "editorial.comparison",
+      "version": "1.0.0",
+      "digest": "sha256-4ad665b00bb12f7cadd7e64f382ff21ef9b2a98982dffcea85493e99b914b548"
+    },
+    {
+      "id": "editorial.process",
+      "version": "1.0.0",
+      "digest": "sha256-31fad1a6a86dc4c61b10dcb2c81cd6617880c971aad87008653709f754a2a709"
+    },
+    {
+      "id": "editorial.closing",
+      "version": "1.0.0",
+      "digest": "sha256-ebe09804e61a75d9111a757a830eb7bb9c38fb15710aaf2ff1147a4655de18b1"
+    }
+  ],
+  "previews": [
+    "design-packs/editorial/previews/cover-normal.png",
+    "design-packs/editorial/previews/cover-boundary.png",
+    "design-packs/editorial/previews/cover-overload.png",
+    "design-packs/editorial/previews/section-normal.png",
+    "design-packs/editorial/previews/section-boundary.png",
+    "design-packs/editorial/previews/section-overload.png",
+    "design-packs/editorial/previews/statement-normal.png",
+    "design-packs/editorial/previews/statement-boundary.png",
+    "design-packs/editorial/previews/statement-overload.png",
+    "design-packs/editorial/previews/metrics-normal.png",
+    "design-packs/editorial/previews/metrics-boundary.png",
+    "design-packs/editorial/previews/metrics-overload.png",
+    "design-packs/editorial/previews/explanation-normal.png",
+    "design-packs/editorial/previews/explanation-boundary.png",
+    "design-packs/editorial/previews/explanation-overload.png",
+    "design-packs/editorial/previews/comparison-normal.png",
+    "design-packs/editorial/previews/comparison-boundary.png",
+    "design-packs/editorial/previews/comparison-overload.png",
+    "design-packs/editorial/previews/process-normal.png",
+    "design-packs/editorial/previews/process-boundary.png",
+    "design-packs/editorial/previews/process-overload.png",
+    "design-packs/editorial/previews/closing-normal.png",
+    "design-packs/editorial/previews/closing-boundary.png",
+    "design-packs/editorial/previews/closing-overload.png"
+  ],
+  "licenses": [
+    {
+      "resource": "editorial",
+      "kind": "recipe",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "asset_design_visual",
+      "kind": "photo",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "Noto Sans SC",
+      "kind": "font",
+      "license": "OFL-1.1",
+      "source": "design-packs/assets/OFL.txt",
+      "notice": "Noto Sans SC, Google and Adobe; SIL Open Font License 1.1. Pinned sample subset; see assets/README.md."
+    },
+    {
+      "resource": "design-packs/editorial/previews/cover-normal.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/editorial/previews/cover-boundary.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/editorial/previews/cover-overload.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/editorial/previews/section-normal.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/editorial/previews/section-boundary.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/editorial/previews/section-overload.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/editorial/previews/statement-normal.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/editorial/previews/statement-boundary.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/editorial/previews/statement-overload.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/editorial/previews/metrics-normal.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/editorial/previews/metrics-boundary.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/editorial/previews/metrics-overload.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/editorial/previews/explanation-normal.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/editorial/previews/explanation-boundary.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/editorial/previews/explanation-overload.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/editorial/previews/comparison-normal.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/editorial/previews/comparison-boundary.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/editorial/previews/comparison-overload.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/editorial/previews/process-normal.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/editorial/previews/process-boundary.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/editorial/previews/process-overload.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/editorial/previews/closing-normal.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/editorial/previews/closing-boundary.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    },
+    {
+      "resource": "design-packs/editorial/previews/closing-overload.png",
+      "kind": "preview",
+      "license": "Apache-2.0",
+      "source": "PPTe repository authored",
+      "notice": "Copyright PPTe contributors. Synthetic illustration and fictional data; no third-party brand or photography."
+    }
+  ],
+  "digest": "sha256-52ec60f63f52df193d96392ab1a5d7676687e70641c9b0de0a238e9807008b8f"
+}

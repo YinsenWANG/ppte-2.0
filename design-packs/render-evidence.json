@@ -1,0 +1,2891 @@
+{
+  "version": "1.0.0",
+  "buildDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+  "harnessDigest": "53c507d5446aca9ee3e4e7340cff5052668215b3b86417a1d29d3bd304458b69",
+  "fixtureDigest": "08b8dc5be15708b24846b45f0d6908799b28eeb54eae6a9220fe230c2131f359",
+  "fontDigest": "sha256-6d3ceafe90dafe95a6c6dd8260ef951c49f85d33bde36bc72d54118956d2f9fd",
+  "resourceDigest": "sha256-73e8c4c1581ab3e0ca46c9c67e1d476a8d69a9cc3d9f5d540f360c2c1c7aeb30",
+  "browser": "151.0.7922.34",
+  "environment": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v22.23.2"
+  },
+  "measurements": [
+    {
+      "id": "business.cover.normal",
+      "fixtureDigest": "1b77e04ba80ea58a0e297afdd18899e3aad2478e3f14e029efca1d02616007e6",
+      "preview": "design-packs/business/previews/cover-normal.png",
+      "draftDigest": "a923220b0c6fce231a8911c1bf3b8067e8b7d023a1b5535eff8ff0be965cb436",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:business~2e~cover~2e~normal:title",
+          "overflow": false,
+          "font": "600 48px / 76.8px \"Noto Sans SC\"",
+          "width": 627.1875,
+          "height": 172.796875
+        },
+        {
+          "id": "draft:business~2e~cover~2e~normal:body1",
+          "overflow": false,
+          "font": "26px / 41.6px \"Noto Sans SC\"",
+          "width": 576,
+          "height": 273.59375
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "5c27433c36e087126b315241a4282c5b93d6268caf16b49df529fd4fa419314e"
+    },
+    {
+      "id": "business.cover.boundary",
+      "fixtureDigest": "2b3aa3c749415def1de7b1679bc3e6e1ecb7efca422b2a0c3e467b316cac10a2",
+      "preview": "design-packs/business/previews/cover-boundary.png",
+      "draftDigest": "d62ad41c570356235214cb5942c961460c3ddca14b42242c1f48a780961ba8c9",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:business~2e~cover~2e~boundary:title",
+          "overflow": false,
+          "font": "600 48px / 76.8px \"Noto Sans SC\"",
+          "width": 627.1875,
+          "height": 172.796875
+        },
+        {
+          "id": "draft:business~2e~cover~2e~boundary:body1",
+          "overflow": false,
+          "font": "26px / 41.6px \"Noto Sans SC\"",
+          "width": 576,
+          "height": 122.390625
+        },
+        {
+          "id": "draft:business~2e~cover~2e~boundary:body2",
+          "overflow": false,
+          "font": "26px / 41.6px \"Noto Sans SC\"",
+          "width": 576,
+          "height": 122.390625
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "8ca09b3cdc1a962fa67d776a59cc8f0cf7943117019e3c58a10c14efdd3b9814"
+    },
+    {
+      "id": "business.cover.overload",
+      "status": "rejected",
+      "fixtureDigest": "44b1cb44f4a0aecb4e76028a972ea829b84a3aef432554c6f323a5eef42b08e0",
+      "draftDigest": "55b69c3e3868f8d89da7c46e16c37637818301e84af122048b9640b81dd6c148",
+      "preview": "design-packs/business/previews/cover-overload.png",
+      "screenshotDigest": "sha256-1d5b6b5c7ec8307f006fef7670ebde41e57ab83288c0daf9d8fac57fed01d43b"
+    },
+    {
+      "id": "business.section.normal",
+      "fixtureDigest": "7f80a28f506867676cac0d36026cc65ff6aa324bc5a05c2dd6ce5a32a736594d",
+      "preview": "design-packs/business/previews/section-normal.png",
+      "draftDigest": "95a7697a7b6322c3e37b8c3f2f07221e9b279b94c0fa0fdf9f9774b20b4cd444",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:business~2e~section~2e~normal:title",
+          "overflow": false,
+          "font": "600 48px / 76.8px \"Noto Sans SC\"",
+          "width": 883.1875,
+          "height": 158.390625
+        },
+        {
+          "id": "draft:business~2e~section~2e~normal:body1",
+          "overflow": false,
+          "font": "26px / 41.6px \"Noto Sans SC\"",
+          "width": 819.1875,
+          "height": 201.59375
+        },
+        {
+          "id": "draft:business~2e~section~2e~normal:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 179.1875,
+          "height": 331.1875
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "0d61a9569118818891932dd6c73cc12d8c34b5dba0ce21f92b102d85d4687257"
+    },
+    {
+      "id": "business.section.boundary",
+      "fixtureDigest": "50116bbe8f3b521c1073cc2b3a311a48b3f416a7c86065dcaf57d0fb7ea8c480",
+      "preview": "design-packs/business/previews/section-boundary.png",
+      "draftDigest": "9a989ab0f5266e7d9946b5b0537b52fc2ec2c85816aef536fcdae5cab41d2ee9",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:business~2e~section~2e~boundary:title",
+          "overflow": false,
+          "font": "600 48px / 76.8px \"Noto Sans SC\"",
+          "width": 883.1875,
+          "height": 158.390625
+        },
+        {
+          "id": "draft:business~2e~section~2e~boundary:body1",
+          "overflow": false,
+          "font": "26px / 41.6px \"Noto Sans SC\"",
+          "width": 819.1875,
+          "height": 86.390625
+        },
+        {
+          "id": "draft:business~2e~section~2e~boundary:body2",
+          "overflow": false,
+          "font": "26px / 41.6px \"Noto Sans SC\"",
+          "width": 819.1875,
+          "height": 86.390625
+        },
+        {
+          "id": "draft:business~2e~section~2e~boundary:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 179.1875,
+          "height": 331.1875
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "5ebefe8415264c6c6824d17610fb33e63ddf01bcdd7c16273c96701b47694d0a"
+    },
+    {
+      "id": "business.section.overload",
+      "status": "rejected",
+      "fixtureDigest": "e00e36c0f8fb326a8aa643eca4599d376a985c35070477c4ad343fe0bde89bf9",
+      "draftDigest": "1ca425de931dab0442ade0b0eccc6c2f7823fccc716dbbbc404fe10ceba44147",
+      "preview": "design-packs/business/previews/section-overload.png",
+      "screenshotDigest": "sha256-6622fc648eda0d2122e9d2f9269fcac8cf1a99d3348cd1c5e084a121a7dcbc6f"
+    },
+    {
+      "id": "business.statement.normal",
+      "fixtureDigest": "ce78fd42faa01cc0983a54fae879e1f9c34c296bc85011a76a4fc2aba6de015b",
+      "preview": "design-packs/business/previews/statement-normal.png",
+      "draftDigest": "52e579b69b50773c0f420b90491dd676f18a42126664e1d0df7709ca74e13dae",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:business~2e~statement~2e~normal:title",
+          "overflow": false,
+          "font": "600 48px / 76.8px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 144
+        },
+        {
+          "id": "draft:business~2e~statement~2e~normal:body1",
+          "overflow": false,
+          "font": "26px / 41.6px \"Noto Sans SC\"",
+          "width": 729.59375,
+          "height": 345.59375
+        },
+        {
+          "id": "draft:business~2e~statement~2e~normal:support",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 268.796875,
+          "height": 288
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "0c172795ab2993a38be9e3f076d5152f0fa281e8a623d9c5ff08e1f4aea74e8e"
+    },
+    {
+      "id": "business.statement.boundary",
+      "fixtureDigest": "77cdb2177fc67fa440292b480bfcadd0b8560fd208b273fedb36fb1f7c85b4a4",
+      "preview": "design-packs/business/previews/statement-boundary.png",
+      "draftDigest": "f86d378134558bece556d33c2a3b57fb7678ccf68309cff2201969b05d27dd12",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:business~2e~statement~2e~boundary:title",
+          "overflow": false,
+          "font": "600 48px / 76.8px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 144
+        },
+        {
+          "id": "draft:business~2e~statement~2e~boundary:body1",
+          "overflow": false,
+          "font": "26px / 41.6px \"Noto Sans SC\"",
+          "width": 729.59375,
+          "height": 158.390625
+        },
+        {
+          "id": "draft:business~2e~statement~2e~boundary:body2",
+          "overflow": false,
+          "font": "26px / 41.6px \"Noto Sans SC\"",
+          "width": 729.59375,
+          "height": 158.390625
+        },
+        {
+          "id": "draft:business~2e~statement~2e~boundary:support",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 268.796875,
+          "height": 288
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "dd58b35733825f2361527e4ac8cd9e117585e313de0fbd2bab9227ab5e09ddb1"
+    },
+    {
+      "id": "business.statement.overload",
+      "status": "rejected",
+      "fixtureDigest": "cdea44384cc4da5fc43e423014c6c89b778d9300fd7c2cde22747dbbcdd024c6",
+      "draftDigest": "5e47b57a1f16ed94d0b1ca7d3b4dbb0702f06f7e949bcc1a0bc32e26ec1a41f0",
+      "preview": "design-packs/business/previews/statement-overload.png",
+      "screenshotDigest": "sha256-dc5e0d85d6191410d151785c3c2343e401d97aafc7a98d63a7844195e9fc7702"
+    },
+    {
+      "id": "business.metrics.normal",
+      "fixtureDigest": "15b2583ddfeebe8b91fef74b35bcd3c5614b827d8966268f8e8bf4e786ac4aa8",
+      "preview": "design-packs/business/previews/metrics-normal.png",
+      "draftDigest": "c888aff3c2473f16fb148768ca839d32eb4c658b8f7a4bdd804e982ddb53a622",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:business~2e~metrics~2e~normal:title",
+          "overflow": false,
+          "font": "600 48px / 76.8px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 136.796875
+        },
+        {
+          "id": "draft:business~2e~metrics~2e~normal:body1",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 704,
+          "height": 345.59375
+        },
+        {
+          "id": "draft:business~2e~metrics~2e~normal:support",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 281.59375,
+          "height": 345.59375
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "ba724fbf4f84eb956b5a8649b53d19f18e8decf2548d05c848f1e064c664e4d0"
+    },
+    {
+      "id": "business.metrics.boundary",
+      "fixtureDigest": "04e251a6b112652dbaa5bb2c239132d0c009b64afffc478c16ced516157cc682",
+      "preview": "design-packs/business/previews/metrics-boundary.png",
+      "draftDigest": "e1a4c17054df0e2bf514d8fbe8e91ff1ee09a61fc50c528465b5cd852afbe15e",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:business~2e~metrics~2e~boundary:title",
+          "overflow": false,
+          "font": "600 48px / 76.8px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 136.796875
+        },
+        {
+          "id": "draft:business~2e~metrics~2e~boundary:body1",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 329.59375,
+          "height": 345.59375
+        },
+        {
+          "id": "draft:business~2e~metrics~2e~boundary:body2",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 329.59375,
+          "height": 345.59375
+        },
+        {
+          "id": "draft:business~2e~metrics~2e~boundary:support",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 281.59375,
+          "height": 345.59375
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "020a5c6e652491da055f98ecf4449a92b88db6dfe1abf6a0f879e15d74b2ba45"
+    },
+    {
+      "id": "business.metrics.overload",
+      "status": "rejected",
+      "fixtureDigest": "4516e9fee7ee5826772a79db98a6508c72b53fbdf5e878ed1db21de649ce2381",
+      "draftDigest": "abc2c64c4117ef26aac41bb964f8a7fd9ad36595b37d2d8616fd5767117eafe1",
+      "preview": "design-packs/business/previews/metrics-overload.png",
+      "screenshotDigest": "sha256-46f820e8a1a291c8fe04cec9f68c32d4099c57eeb182a44f165edc16c6bc8cdb"
+    },
+    {
+      "id": "business.explanation.normal",
+      "fixtureDigest": "b9da4809a3b33dd3e320354b994a2c1638828b91847f18f6f5afdf64bc2c5494",
+      "preview": "design-packs/business/previews/explanation-normal.png",
+      "draftDigest": "a48924376c9a13572f05a3f6c7191d238cd66ebcb20c0add143df28059a52f83",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:business~2e~explanation~2e~normal:title",
+          "overflow": false,
+          "font": "600 48px / 76.8px \"Noto Sans SC\"",
+          "width": 1100.796875,
+          "height": 144
+        },
+        {
+          "id": "draft:business~2e~explanation~2e~normal:body1",
+          "overflow": false,
+          "font": "26px / 41.6px \"Noto Sans SC\"",
+          "width": 550.390625,
+          "height": 352.796875
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "0f18df7322ed3056852a188801a6b86b0dd7de02e1ce1a92ead42a76751d397f"
+    },
+    {
+      "id": "business.explanation.boundary",
+      "fixtureDigest": "d60d735f9044e8d4ca5e549af52ef08739dcd203ea830d2060901025b5e92ebe",
+      "preview": "design-packs/business/previews/explanation-boundary.png",
+      "draftDigest": "bb5e01e2e31ddd2cb933b4c54692bf3a4ea900a79a6542598112ed44fae6edca",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:business~2e~explanation~2e~boundary:title",
+          "overflow": false,
+          "font": "600 48px / 76.8px \"Noto Sans SC\"",
+          "width": 1100.796875,
+          "height": 144
+        },
+        {
+          "id": "draft:business~2e~explanation~2e~boundary:body1",
+          "overflow": false,
+          "font": "26px / 41.6px \"Noto Sans SC\"",
+          "width": 550.390625,
+          "height": 162
+        },
+        {
+          "id": "draft:business~2e~explanation~2e~boundary:body2",
+          "overflow": false,
+          "font": "26px / 41.6px \"Noto Sans SC\"",
+          "width": 550.390625,
+          "height": 162
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "11468bbd29fb3cc38de93e736e873ed76a8bfc11e7601a9ed3673b8b3bc0a7a1"
+    },
+    {
+      "id": "business.explanation.overload",
+      "status": "rejected",
+      "fixtureDigest": "9b84fe921c08fb13a1046907e6e7b2570eef7a31f55c9d0684b4682674a6ed03",
+      "draftDigest": "2aba7b6cca890d5d96d02060c610076bf96f4b4a187a68b407c2be1ab42502af",
+      "preview": "design-packs/business/previews/explanation-overload.png",
+      "screenshotDigest": "sha256-7cb2e962a614c4bde02ba7305ba27b93dcda4befc11ffa32105759884854b3c0"
+    },
+    {
+      "id": "business.comparison.normal",
+      "fixtureDigest": "06a58c3e37411e6add11fc8eec2390252175278bfe1a6e413e02758c4e92438f",
+      "preview": "design-packs/business/previews/comparison-normal.png",
+      "draftDigest": "05ccdd51e4b9de2fe1ce3eafd165ff7fb504bcbdce67c581248c6c02cbfdc590",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:business~2e~comparison~2e~normal:title",
+          "overflow": false,
+          "font": "600 48px / 76.8px \"Noto Sans SC\"",
+          "width": 1100.796875,
+          "height": 144
+        },
+        {
+          "id": "draft:business~2e~comparison~2e~normal:body1",
+          "overflow": false,
+          "font": "26px / 41.6px \"Noto Sans SC\"",
+          "width": 1100.796875,
+          "height": 266.390625
+        },
+        {
+          "id": "draft:business~2e~comparison~2e~normal:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 1100.796875,
+          "height": 93.59375
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "14c8516c2d69f8eab02584c398373cfe0c70eb1f5b5731c85bee046bd9438771"
+    },
+    {
+      "id": "business.comparison.boundary",
+      "fixtureDigest": "0916e97847a4c48c3b9a95ce9326afeea8580ccd936765ce4ed52e39208e65e8",
+      "preview": "design-packs/business/previews/comparison-boundary.png",
+      "draftDigest": "6460ec0cb309de2cb45dcc84da2eba851316b1a880fa356bf510e57f928126da",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:business~2e~comparison~2e~boundary:title",
+          "overflow": false,
+          "font": "600 48px / 76.8px \"Noto Sans SC\"",
+          "width": 1100.796875,
+          "height": 144
+        },
+        {
+          "id": "draft:business~2e~comparison~2e~boundary:body1",
+          "overflow": false,
+          "font": "26px / 41.6px \"Noto Sans SC\"",
+          "width": 528,
+          "height": 266.390625
+        },
+        {
+          "id": "draft:business~2e~comparison~2e~boundary:body2",
+          "overflow": false,
+          "font": "26px / 41.6px \"Noto Sans SC\"",
+          "width": 528,
+          "height": 266.390625
+        },
+        {
+          "id": "draft:business~2e~comparison~2e~boundary:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 1100.796875,
+          "height": 93.59375
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "7c3acc1878d834feaa297c95e41c61eb96be5452fe2663dbd7a3c9991150d499"
+    },
+    {
+      "id": "business.comparison.overload",
+      "status": "rejected",
+      "fixtureDigest": "7ee13f13dc183bfbf515bc787110e771a269d3c0e6cd7513d2334fe3c462edab",
+      "draftDigest": "e195e776bbbc20295f90120639c185549f972feba00b95204e7fd47c1375b4ee",
+      "preview": "design-packs/business/previews/comparison-overload.png",
+      "screenshotDigest": "sha256-163b240acdcf028c6f60e5266aec8a2b91e8e3c5ee8d052c1897076cf56fa071"
+    },
+    {
+      "id": "business.process.normal",
+      "fixtureDigest": "b196551206a0a228ffb9ca6ade0704b7b40f1afc483a285a27724faad97bbdc0",
+      "preview": "design-packs/business/previews/process-normal.png",
+      "draftDigest": "3b14e51b732ad918642366d99659df39f9e0bdfa841227c7d9b5d76d68f44eff",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:business~2e~process~2e~normal:title",
+          "overflow": false,
+          "font": "600 48px / 76.8px \"Noto Sans SC\"",
+          "width": 1100.796875,
+          "height": 144
+        },
+        {
+          "id": "draft:business~2e~process~2e~normal:body1",
+          "overflow": false,
+          "font": "26px / 41.6px \"Noto Sans SC\"",
+          "width": 1100.796875,
+          "height": 273.59375
+        },
+        {
+          "id": "draft:business~2e~process~2e~normal:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 1100.796875,
+          "height": 93.59375
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "da33bd8c06d5b7031ce3bafa261b7fb3710352f0446b0c4065bb7cbb0a48696d"
+    },
+    {
+      "id": "business.process.boundary",
+      "fixtureDigest": "1af21f961a90636cd74e4f08d707711e80d90fbdf9c2cbabebb364d1cd3dd85b",
+      "preview": "design-packs/business/previews/process-boundary.png",
+      "draftDigest": "86fef07b1748de0407390af1eb5133c361ad77f8b55b30fd5a318dd64f0e4581",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:business~2e~process~2e~boundary:title",
+          "overflow": false,
+          "font": "600 48px / 76.8px \"Noto Sans SC\"",
+          "width": 1100.796875,
+          "height": 144
+        },
+        {
+          "id": "draft:business~2e~process~2e~boundary:body1",
+          "overflow": false,
+          "font": "26px / 41.6px \"Noto Sans SC\"",
+          "width": 528,
+          "height": 273.59375
+        },
+        {
+          "id": "draft:business~2e~process~2e~boundary:body2",
+          "overflow": false,
+          "font": "26px / 41.6px \"Noto Sans SC\"",
+          "width": 528,
+          "height": 273.59375
+        },
+        {
+          "id": "draft:business~2e~process~2e~boundary:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 1100.796875,
+          "height": 93.59375
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "92bd4801d70a752bd001e33858f69d6bb793b5929e72278afc03ca827e92405d"
+    },
+    {
+      "id": "business.process.overload",
+      "status": "rejected",
+      "fixtureDigest": "d23cb47255468fedb3986276c2d550e9a4d608b7f7009c63394125541e38ef89",
+      "draftDigest": "9a72818e71afaaa53c6ee5acd8e4d290b3d6020d6de8b1a3f802ea7c6986c212",
+      "preview": "design-packs/business/previews/process-overload.png",
+      "screenshotDigest": "sha256-1278257cd439b8eeb5ca85d49de3c69351fcc86fc9044d1a8a492c741878092e"
+    },
+    {
+      "id": "business.closing.normal",
+      "fixtureDigest": "91760bf83f85453ed43e2e42fed009561a928a14429e0363bc173394109ff497",
+      "preview": "design-packs/business/previews/closing-normal.png",
+      "draftDigest": "f93534e3b3b9902520210b99432c2129c41af9b5a54cd8329376ea1dd83aae2b",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:business~2e~closing~2e~normal:title",
+          "overflow": false,
+          "font": "600 48px / 76.8px \"Noto Sans SC\"",
+          "width": 1024,
+          "height": 144
+        },
+        {
+          "id": "draft:business~2e~closing~2e~normal:body1",
+          "overflow": false,
+          "font": "26px / 41.6px \"Noto Sans SC\"",
+          "width": 665.59375,
+          "height": 302.390625
+        },
+        {
+          "id": "draft:business~2e~closing~2e~normal:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 294.390625,
+          "height": 230.390625
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "d9454d54ba39fb9c19d236f85d183645737a0bd75bda39b7674ac4939c871b15"
+    },
+    {
+      "id": "business.closing.boundary",
+      "fixtureDigest": "5bb2c2363086e02bda785f2442986c97444534931c465c72faf49599b58aae86",
+      "preview": "design-packs/business/previews/closing-boundary.png",
+      "draftDigest": "4bf23523aa78f7ce75eaab20e7d00a420313cd034cb97cc7653d82a37596902b",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:business~2e~closing~2e~boundary:title",
+          "overflow": false,
+          "font": "600 48px / 76.8px \"Noto Sans SC\"",
+          "width": 1024,
+          "height": 144
+        },
+        {
+          "id": "draft:business~2e~closing~2e~boundary:body1",
+          "overflow": false,
+          "font": "26px / 41.6px \"Noto Sans SC\"",
+          "width": 665.59375,
+          "height": 136.796875
+        },
+        {
+          "id": "draft:business~2e~closing~2e~boundary:body2",
+          "overflow": false,
+          "font": "26px / 41.6px \"Noto Sans SC\"",
+          "width": 665.59375,
+          "height": 136.796875
+        },
+        {
+          "id": "draft:business~2e~closing~2e~boundary:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 294.390625,
+          "height": 230.390625
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "3775db4953e74213e44d4f15dfea200e9a9c19bdfa86c4479a6ceedc1938d22e"
+    },
+    {
+      "id": "business.closing.overload",
+      "status": "rejected",
+      "fixtureDigest": "33fadef00cfa425e2ccaabf0e62fb64c71e09ee4e6e36e2a78f52c08b391eda7",
+      "draftDigest": "3244dcca791abf2a0597df9186aa1d20edc69dd46e3d2d7fbf90a562dfd4de95",
+      "preview": "design-packs/business/previews/closing-overload.png",
+      "screenshotDigest": "sha256-84dc8e809504cac7d8f0785535a67accb7fabf1cdf19e492cc1eb43e881e5746"
+    },
+    {
+      "id": "swiss.cover.normal",
+      "fixtureDigest": "74981073100203abea08484d5a986070796e70e7261ba52c73aa662e7de5c606",
+      "preview": "design-packs/swiss/previews/cover-normal.png",
+      "draftDigest": "eb868fbf493cf5d0d3905e3fa0e4917c39a43550828293aa873e92e75793bfbf",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:swiss~2e~cover~2e~normal:title",
+          "overflow": false,
+          "font": "800 62px / 99.2px \"Noto Sans SC\"",
+          "width": 1126.390625,
+          "height": 165.59375
+        },
+        {
+          "id": "draft:swiss~2e~cover~2e~normal:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 524.796875,
+          "height": 345.59375
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "c367c0052cdebda3c453b81c194e03a6816b6ae882be4eb9427ad6006958b8bd"
+    },
+    {
+      "id": "swiss.cover.boundary",
+      "fixtureDigest": "03da3fa9ef416e419dfb2888f50138fa984e4a214600d264e16acd5ef2dff5aa",
+      "preview": "design-packs/swiss/previews/cover-boundary.png",
+      "draftDigest": "d63e2a3595148a85ce0630e5becaab1f2c7192259da4c3ed390d98230a7e1c8b",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:swiss~2e~cover~2e~boundary:title",
+          "overflow": false,
+          "font": "800 62px / 99.2px \"Noto Sans SC\"",
+          "width": 1126.390625,
+          "height": 165.59375
+        },
+        {
+          "id": "draft:swiss~2e~cover~2e~boundary:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 524.796875,
+          "height": 158.390625
+        },
+        {
+          "id": "draft:swiss~2e~cover~2e~boundary:body2",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 524.796875,
+          "height": 158.390625
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "485081f167acda14628420c3a45de44721e2c3dbbbbdc9eabac0e22795d8625b"
+    },
+    {
+      "id": "swiss.cover.overload",
+      "status": "rejected",
+      "fixtureDigest": "043cd2c1f46d9ba73e6417a86cbcd7ab2bc8ad473ca7b7a364ca4b9eb2fa6e46",
+      "draftDigest": "1e5bb3eb4f685adabe6f1a002e857286a0af2f7f25bf6f869031bf17faffabde",
+      "preview": "design-packs/swiss/previews/cover-overload.png",
+      "screenshotDigest": "sha256-c8cc5429499de7aacaa1bd7f56687a8ce85d09d7e5d9528ef35b2b1f6deb63a3"
+    },
+    {
+      "id": "swiss.section.normal",
+      "fixtureDigest": "a24230ec17450edb714e9cd5293132d0da116df4ab05a78b6c3004c105e6de47",
+      "preview": "design-packs/swiss/previews/section-normal.png",
+      "draftDigest": "3b91fccbdb8380a95701aac60ec5cf70d539af572fea199751e0e4b0917b6d21",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:swiss~2e~section~2e~normal:title",
+          "overflow": false,
+          "font": "800 62px / 99.2px \"Noto Sans SC\"",
+          "width": 704,
+          "height": 244.796875
+        },
+        {
+          "id": "draft:swiss~2e~section~2e~normal:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 742.390625,
+          "height": 266.390625
+        },
+        {
+          "id": "draft:swiss~2e~section~2e~normal:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 332.796875,
+          "height": 208.796875
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "e4a8a2337dfdf3263052a0e70973852dc8f4e7d2ac96fadefacd61e1d9655abb"
+    },
+    {
+      "id": "swiss.section.boundary",
+      "fixtureDigest": "2c5f2955f7a2e16a59c3fe12712c627e6c583604168e8798ce49485f1a8a5614",
+      "preview": "design-packs/swiss/previews/section-boundary.png",
+      "draftDigest": "8cf01319a57ac2300eb8be5ec7eeea442770f413d95f7163c9abd300ef007fa0",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:swiss~2e~section~2e~boundary:title",
+          "overflow": false,
+          "font": "800 62px / 99.2px \"Noto Sans SC\"",
+          "width": 704,
+          "height": 244.796875
+        },
+        {
+          "id": "draft:swiss~2e~section~2e~boundary:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 742.390625,
+          "height": 118.796875
+        },
+        {
+          "id": "draft:swiss~2e~section~2e~boundary:body2",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 742.390625,
+          "height": 118.796875
+        },
+        {
+          "id": "draft:swiss~2e~section~2e~boundary:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 332.796875,
+          "height": 208.796875
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "8646ae4b94dd737cc00f83ab764d492685795f15251771c604df2659b50f141f"
+    },
+    {
+      "id": "swiss.section.overload",
+      "status": "rejected",
+      "fixtureDigest": "f8837395e7a520c8e31c36d636f14061c5ca7454c17357ef27f12de4e443e9e0",
+      "draftDigest": "a0daff952c1e2059fd21b9c9b12aabcfc56ad0744258c5fca38012bfff5d1f02",
+      "preview": "design-packs/swiss/previews/section-overload.png",
+      "screenshotDigest": "sha256-c2f7b740aed7c4b6b193804e51985118277a9e5fdf8942c3e10de93cd37c9e61"
+    },
+    {
+      "id": "swiss.statement.normal",
+      "fixtureDigest": "01b3871505858a1eff570753798625df89e74e56d51b6e81a6b332ec2a41eaa6",
+      "preview": "design-packs/swiss/previews/statement-normal.png",
+      "draftDigest": "b89ec2afd05fc8e72a96abb7aa555906c0ffc02e07623a85f395585c28691916",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:swiss~2e~statement~2e~normal:title",
+          "overflow": false,
+          "font": "800 62px / 99.2px \"Noto Sans SC\"",
+          "width": 678.390625,
+          "height": 259.1875
+        },
+        {
+          "id": "draft:swiss~2e~statement~2e~normal:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 768,
+          "height": 252
+        },
+        {
+          "id": "draft:swiss~2e~statement~2e~normal:support",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 332.796875,
+          "height": 230.390625
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "e92e306b75ebb7662bc2df506b6d31fd03fc37fb97434c090671bead551caa75"
+    },
+    {
+      "id": "swiss.statement.boundary",
+      "fixtureDigest": "e3d8bf1416881d40084fc02aebfa5f7ace1c374ca2fc8319adedcf3d7e7d2838",
+      "preview": "design-packs/swiss/previews/statement-boundary.png",
+      "draftDigest": "a31396c5d661b66f3341dd8e7c10f3291a359db259b90b5dc0375a2daa460859",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:swiss~2e~statement~2e~boundary:title",
+          "overflow": false,
+          "font": "800 62px / 99.2px \"Noto Sans SC\"",
+          "width": 678.390625,
+          "height": 259.1875
+        },
+        {
+          "id": "draft:swiss~2e~statement~2e~boundary:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 768,
+          "height": 111.59375
+        },
+        {
+          "id": "draft:swiss~2e~statement~2e~boundary:body2",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 768,
+          "height": 111.59375
+        },
+        {
+          "id": "draft:swiss~2e~statement~2e~boundary:support",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 332.796875,
+          "height": 230.390625
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "75694b42d93bbc41e7cfc02814ad94658112969305c9fcc3c4e6e44d20474180"
+    },
+    {
+      "id": "swiss.statement.overload",
+      "status": "rejected",
+      "fixtureDigest": "6b2367a01d05a58b5b10bfd83a5378b833937cde865571bbe03749f1fdde1b9c",
+      "draftDigest": "adc4928a275bcfc9f48a836f884c4700fec597217f78459bc3eff13a033b0748",
+      "preview": "design-packs/swiss/previews/statement-overload.png",
+      "screenshotDigest": "sha256-648151d6039575b569fe32899f18a28f0fa6de29e81494069083388a33c2e7ec"
+    },
+    {
+      "id": "swiss.metrics.normal",
+      "fixtureDigest": "6cd3f2460a88756fae13d91b9c2587a5800f0aa70ee61d834b87ecff2ee9f241",
+      "preview": "design-packs/swiss/previews/metrics-normal.png",
+      "draftDigest": "4dde84c1c9761bcc3ab0b17585c46faea3fbfa135817f23753c7d6aeb417622f",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:swiss~2e~metrics~2e~normal:title",
+          "overflow": false,
+          "font": "800 62px / 99.2px \"Noto Sans SC\"",
+          "width": 512,
+          "height": 216
+        },
+        {
+          "id": "draft:swiss~2e~metrics~2e~normal:body1",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 1126.390625,
+          "height": 309.59375
+        },
+        {
+          "id": "draft:swiss~2e~metrics~2e~normal:support",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 499.1875,
+          "height": 194.390625
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "49a3e85b9a8db6ff8ec1a4ad8cd6b108f788be7900946b7bb629973e67e014e2"
+    },
+    {
+      "id": "swiss.metrics.boundary",
+      "fixtureDigest": "05dd6a5b59bed0dd9b4fda4e409e71706dea5fff672bcbe783c39cf922d6d202",
+      "preview": "design-packs/swiss/previews/metrics-boundary.png",
+      "draftDigest": "17f23281c973236d160955b76a1e877e2d13e9d0f9626ec7b7b8d845333a4eb5",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:swiss~2e~metrics~2e~boundary:title",
+          "overflow": false,
+          "font": "800 62px / 99.2px \"Noto Sans SC\"",
+          "width": 512,
+          "height": 216
+        },
+        {
+          "id": "draft:swiss~2e~metrics~2e~boundary:body1",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 540.796875,
+          "height": 309.59375
+        },
+        {
+          "id": "draft:swiss~2e~metrics~2e~boundary:body2",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 540.796875,
+          "height": 309.59375
+        },
+        {
+          "id": "draft:swiss~2e~metrics~2e~boundary:support",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 499.1875,
+          "height": 194.390625
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "452070166e9edf138842b578130a04e161f2c8de3791904a924fec037823cfca"
+    },
+    {
+      "id": "swiss.metrics.overload",
+      "status": "rejected",
+      "fixtureDigest": "00dcba6efdb5221c86b9bdacb875f687eb884b52346c55ffd401ef608949645f",
+      "draftDigest": "646650126bb3a29a471379e76d0851c23bb1408aa326f18bb69212a48a3e5c2f",
+      "preview": "design-packs/swiss/previews/metrics-overload.png",
+      "screenshotDigest": "sha256-23842508ff70cc89813844a8182cd3b7538a1d5c2d5957ef9c5ab2b08944d39c"
+    },
+    {
+      "id": "swiss.explanation.normal",
+      "fixtureDigest": "0e08ce373b1ae8f44597228e38c92e39db9b50dee5120415cb219e3520ca0a1a",
+      "preview": "design-packs/swiss/previews/explanation-normal.png",
+      "draftDigest": "f86a00711efc833e3e8f32d52e73f0abfbb628e3fabaeba36434684ec37bd5a0",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:swiss~2e~explanation~2e~normal:title",
+          "overflow": false,
+          "font": "800 62px / 99.2px \"Noto Sans SC\"",
+          "width": 537.59375,
+          "height": 208.796875
+        },
+        {
+          "id": "draft:swiss~2e~explanation~2e~normal:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 537.59375,
+          "height": 309.59375
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "2f8c23f6820f0f40e823822e4281905dc3303649163b46f7ba9f7b32f1ceff58"
+    },
+    {
+      "id": "swiss.explanation.boundary",
+      "fixtureDigest": "63ed7c04d827df5c11df8ed3e0ea9d74a398cdda8260ecabfc2ece68e2e0f45d",
+      "preview": "design-packs/swiss/previews/explanation-boundary.png",
+      "draftDigest": "d7392970c4c89b7c5383dd64623d4d79fc813a659c06d045683d4de0530828ad",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:swiss~2e~explanation~2e~boundary:title",
+          "overflow": false,
+          "font": "800 62px / 99.2px \"Noto Sans SC\"",
+          "width": 537.59375,
+          "height": 208.796875
+        },
+        {
+          "id": "draft:swiss~2e~explanation~2e~boundary:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 537.59375,
+          "height": 140.390625
+        },
+        {
+          "id": "draft:swiss~2e~explanation~2e~boundary:body2",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 537.59375,
+          "height": 140.390625
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "b091dfd0dd4abcbb0d1f93757b4817c3287cd0bf47ef90c0b9bea2a99afdb1f7"
+    },
+    {
+      "id": "swiss.explanation.overload",
+      "status": "rejected",
+      "fixtureDigest": "cbf3fc0b8a1c145ac8b15e10578d3f3240c03e0b37ccefb690cfac5f15865dad",
+      "draftDigest": "fcd7adc4868999f411a9ae5c4166d9835d91ea5829dc81d471692df60e15b5cf",
+      "preview": "design-packs/swiss/previews/explanation-overload.png",
+      "screenshotDigest": "sha256-3b7a747ae2b1b281edd2e26462000db78f1f109d8ecc3804e032e34e4fd80651"
+    },
+    {
+      "id": "swiss.comparison.normal",
+      "fixtureDigest": "bc4380aa8dacb5a269981bd7af057542d2e6bf6e5b2de0053ec3e02e761c9a80",
+      "preview": "design-packs/swiss/previews/comparison-normal.png",
+      "draftDigest": "a810f92b61ed003c5fd00abc910ca7229cc70c3bca305aa3de57535593ce4c79",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:swiss~2e~comparison~2e~normal:title",
+          "overflow": false,
+          "font": "800 62px / 99.2px \"Noto Sans SC\"",
+          "width": 409.59375,
+          "height": 374.390625
+        },
+        {
+          "id": "draft:swiss~2e~comparison~2e~normal:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 652.796875,
+          "height": 468
+        },
+        {
+          "id": "draft:swiss~2e~comparison~2e~normal:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 1126.390625,
+          "height": 86.390625
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "9e5a319ef6b7bdc876be951e2f36330a5ed0c7bd212031fa26cb6c8172eadbab"
+    },
+    {
+      "id": "swiss.comparison.boundary",
+      "fixtureDigest": "dba4ee1dd870151d3b76e7463ece8fa98196b14ccbe172e0b3f906282524371e",
+      "preview": "design-packs/swiss/previews/comparison-boundary.png",
+      "draftDigest": "367e82e8a86e1960d45e5fa54c6282fd8e941c6127bf6dc57f598bda33333b57",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:swiss~2e~comparison~2e~boundary:title",
+          "overflow": false,
+          "font": "800 62px / 99.2px \"Noto Sans SC\"",
+          "width": 409.59375,
+          "height": 374.390625
+        },
+        {
+          "id": "draft:swiss~2e~comparison~2e~boundary:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 652.796875,
+          "height": 219.59375
+        },
+        {
+          "id": "draft:swiss~2e~comparison~2e~boundary:body2",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 652.796875,
+          "height": 219.59375
+        },
+        {
+          "id": "draft:swiss~2e~comparison~2e~boundary:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 1126.390625,
+          "height": 86.390625
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "d4fda6474be405de673d1d340555ab103dc8625f5bd5bc04724a7b7e3591cbbb"
+    },
+    {
+      "id": "swiss.comparison.overload",
+      "status": "rejected",
+      "fixtureDigest": "fa3a37fbd2100c690aa2061c2f05af39469df34d0510dc70e35eeccc13e567f5",
+      "draftDigest": "a42ca4820a068d46643b754db52186b685767d66449e7ba360d358783a0ccd3e",
+      "preview": "design-packs/swiss/previews/comparison-overload.png",
+      "screenshotDigest": "sha256-408aceb3295dbd2d5a474b0026e45c354429bd51719bd0cb705c65e5f5eee74d"
+    },
+    {
+      "id": "swiss.process.normal",
+      "fixtureDigest": "0ce7b7b9db2ba479b8209cd4f2bf9d06ff04fc4a533b3fc1b749d4b593e9eee3",
+      "preview": "design-packs/swiss/previews/process-normal.png",
+      "draftDigest": "cead45a5652b890389567c7ab2378ee356085a8f32986de38fbb2c41b4100774",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:swiss~2e~process~2e~normal:title",
+          "overflow": false,
+          "font": "800 62px / 99.2px \"Noto Sans SC\"",
+          "width": 422.390625,
+          "height": 208.796875
+        },
+        {
+          "id": "draft:swiss~2e~process~2e~normal:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 614.390625,
+          "height": 468
+        },
+        {
+          "id": "draft:swiss~2e~process~2e~normal:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 1126.390625,
+          "height": 86.390625
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "0b330f52e9e173a9277d670837b74d52b4a23906a5911f8655b996f70192c1b8"
+    },
+    {
+      "id": "swiss.process.boundary",
+      "fixtureDigest": "98450dee25822fd34482dbde27dcd4132dd31782a91393631ff16e8e0fd78145",
+      "preview": "design-packs/swiss/previews/process-boundary.png",
+      "draftDigest": "061902248f6c399b91674491f6eaf045be42f3ca5c349440b2e7cc0f1f582253",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:swiss~2e~process~2e~boundary:title",
+          "overflow": false,
+          "font": "800 62px / 99.2px \"Noto Sans SC\"",
+          "width": 422.390625,
+          "height": 208.796875
+        },
+        {
+          "id": "draft:swiss~2e~process~2e~boundary:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 614.390625,
+          "height": 219.59375
+        },
+        {
+          "id": "draft:swiss~2e~process~2e~boundary:body2",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 614.390625,
+          "height": 219.59375
+        },
+        {
+          "id": "draft:swiss~2e~process~2e~boundary:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 1126.390625,
+          "height": 86.390625
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "46c1375453e98c5752e5c02ba332ad15fefc65757b9d3226c82c47240fee82bc"
+    },
+    {
+      "id": "swiss.process.overload",
+      "status": "rejected",
+      "fixtureDigest": "7b8a62621666328e12afb33caeb931923e767fd00f5d2603fba77e2f19397b19",
+      "draftDigest": "089b8557d2b1452f1b946b05dbb23feb330e5634cd841b666cc97020e5226900",
+      "preview": "design-packs/swiss/previews/process-overload.png",
+      "screenshotDigest": "sha256-45bbc90702221790e7f9e186ad1d0dadd02d6185623f75535e677a01a6be0c14"
+    },
+    {
+      "id": "swiss.closing.normal",
+      "fixtureDigest": "4688887afcd16e849b75784fa450a0266487459ee4bff55abbfad39e9a04b0c2",
+      "preview": "design-packs/swiss/previews/closing-normal.png",
+      "draftDigest": "63bffedb8cf1fe60ba20875333e7f16634b3eca3570ab96b2c1869c18d5b6c83",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:swiss~2e~closing~2e~normal:title",
+          "overflow": false,
+          "font": "800 62px / 99.2px \"Noto Sans SC\"",
+          "width": 1126.390625,
+          "height": 172.796875
+        },
+        {
+          "id": "draft:swiss~2e~closing~2e~normal:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 1126.390625,
+          "height": 201.59375
+        },
+        {
+          "id": "draft:swiss~2e~closing~2e~normal:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 1126.390625,
+          "height": 93.59375
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "5fee614675b5d234465a726f801bead61f31279f02a3f22afb68d8d0c8a7d9cf"
+    },
+    {
+      "id": "swiss.closing.boundary",
+      "fixtureDigest": "63340c9e022a9ba4a973b2b1eaad0e8c6df768127090140413bd16b83b3de43a",
+      "preview": "design-packs/swiss/previews/closing-boundary.png",
+      "draftDigest": "1c6d054fa4f3c7b767dd2607c9b5689fde09cbc1e60064ee3377f759d0b12396",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:swiss~2e~closing~2e~boundary:title",
+          "overflow": false,
+          "font": "800 62px / 99.2px \"Noto Sans SC\"",
+          "width": 1126.390625,
+          "height": 172.796875
+        },
+        {
+          "id": "draft:swiss~2e~closing~2e~boundary:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 1126.390625,
+          "height": 86.390625
+        },
+        {
+          "id": "draft:swiss~2e~closing~2e~boundary:body2",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 1126.390625,
+          "height": 86.390625
+        },
+        {
+          "id": "draft:swiss~2e~closing~2e~boundary:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 1126.390625,
+          "height": 93.59375
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "91db314acd71489a1ebc1449f30acbee7d9dda185f5d8b7f44fd95a66ae461c3"
+    },
+    {
+      "id": "swiss.closing.overload",
+      "status": "rejected",
+      "fixtureDigest": "9f1289fc5f83b26b525e7c3c2f23b93abc6ea46d161c740873d8b42afdbd244d",
+      "draftDigest": "f5cb9a019f813287c34686640f623038eebf6bb8072928bff98b9ddbd096c9c9",
+      "preview": "design-packs/swiss/previews/closing-overload.png",
+      "screenshotDigest": "sha256-5ce1a6eb1d6a8b58481703a84cb136aa639e6f3993b45961735505517c45966f"
+    },
+    {
+      "id": "editorial.cover.normal",
+      "fixtureDigest": "6ef770719dcc07ef5e2df18a77315caa38fc2e6f0ab9f35939c14459ee391d4d",
+      "preview": "design-packs/editorial/previews/cover-normal.png",
+      "draftDigest": "46e4090d85ad66529c9d8e23ddde70e7887ed44a83227ae808ce84589228c09f",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:editorial~2e~cover~2e~normal:title",
+          "overflow": false,
+          "font": "50px / 80px \"Noto Sans SC\"",
+          "width": 537.59375,
+          "height": 194.390625
+        },
+        {
+          "id": "draft:editorial~2e~cover~2e~normal:body1",
+          "overflow": false,
+          "font": "28px / 44.8px \"Noto Sans SC\"",
+          "width": 512,
+          "height": 309.59375
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "fe2733a4d3432500eb3e4e3800c2b5309529603efa3e7fa7492d7f48d5dc7ac4"
+    },
+    {
+      "id": "editorial.cover.boundary",
+      "fixtureDigest": "b8c9d7770552be06abe5794585342586504a928994dd7610fdd59230c66a2277",
+      "preview": "design-packs/editorial/previews/cover-boundary.png",
+      "draftDigest": "888dd29fcfa12f6144a8d5e67a668afa2fa65ac53aae69775df8d75239f304f0",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:editorial~2e~cover~2e~boundary:title",
+          "overflow": false,
+          "font": "50px / 80px \"Noto Sans SC\"",
+          "width": 537.59375,
+          "height": 194.390625
+        },
+        {
+          "id": "draft:editorial~2e~cover~2e~boundary:body1",
+          "overflow": false,
+          "font": "28px / 44.8px \"Noto Sans SC\"",
+          "width": 512,
+          "height": 140.390625
+        },
+        {
+          "id": "draft:editorial~2e~cover~2e~boundary:body2",
+          "overflow": false,
+          "font": "28px / 44.8px \"Noto Sans SC\"",
+          "width": 512,
+          "height": 140.390625
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "84c9b585e7db7ba4e89c553ee0dad7c234b01c00faf5aa8518fc335dfcf2befe"
+    },
+    {
+      "id": "editorial.cover.overload",
+      "status": "rejected",
+      "fixtureDigest": "de9774ad542ad6be2204629b7d46b69dab771fcc527facc007d19ba5353c2d2f",
+      "draftDigest": "c3634c3e9840df2500107882b86fc2386624f825c72654d34dadaafcb1bd9733",
+      "preview": "design-packs/editorial/previews/cover-overload.png",
+      "screenshotDigest": "sha256-e9b8036fb2f2affa6c6110f98f89ae5aaeb6276dc9528dea01a56676237377a6"
+    },
+    {
+      "id": "editorial.section.normal",
+      "fixtureDigest": "ebe23a2d7abc06c65394b74c82efc8be141ee81ea5a56bed045d7e8053022b61",
+      "preview": "design-packs/editorial/previews/section-normal.png",
+      "draftDigest": "a6d37088702e5028c1e5f9ae104300727c49d8740a5a69e7d6ebfbc8e62aa6c3",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:editorial~2e~section~2e~normal:title",
+          "overflow": false,
+          "font": "50px / 80px \"Noto Sans SC\"",
+          "width": 793.59375,
+          "height": 201.59375
+        },
+        {
+          "id": "draft:editorial~2e~section~2e~normal:body1",
+          "overflow": false,
+          "font": "28px / 44.8px \"Noto Sans SC\"",
+          "width": 793.59375,
+          "height": 259.1875
+        },
+        {
+          "id": "draft:editorial~2e~section~2e~normal:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 192,
+          "height": 475.1875
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "fd090e9cb1a6aea0ac1cbda1d3e9360dbaab6b3b878a5c7e039db8d316f712c7"
+    },
+    {
+      "id": "editorial.section.boundary",
+      "fixtureDigest": "ab50fbe89d7e23eefb2eb8c5adae8b10d7664731c56195b660c59af648cc1773",
+      "preview": "design-packs/editorial/previews/section-boundary.png",
+      "draftDigest": "b8c55f4d59ffa724331d5ab891683912123f265cbd7cae5775147af7ea6ac39a",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:editorial~2e~section~2e~boundary:title",
+          "overflow": false,
+          "font": "50px / 80px \"Noto Sans SC\"",
+          "width": 793.59375,
+          "height": 201.59375
+        },
+        {
+          "id": "draft:editorial~2e~section~2e~boundary:body1",
+          "overflow": false,
+          "font": "28px / 44.8px \"Noto Sans SC\"",
+          "width": 793.59375,
+          "height": 115.1875
+        },
+        {
+          "id": "draft:editorial~2e~section~2e~boundary:body2",
+          "overflow": false,
+          "font": "28px / 44.8px \"Noto Sans SC\"",
+          "width": 793.59375,
+          "height": 115.1875
+        },
+        {
+          "id": "draft:editorial~2e~section~2e~boundary:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 192,
+          "height": 475.1875
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "0f29e12cd0490994af16ca65ba961e59b46fee2d91a5500c87ea3e5463bb71b9"
+    },
+    {
+      "id": "editorial.section.overload",
+      "status": "rejected",
+      "fixtureDigest": "b768c3a7b58f5ba19bbfa61e5b6e485b645a974d2af16042b14d0845b5e4ff79",
+      "draftDigest": "1204b928e43fed901ef95ce2df2b3c53cb76b7a152d41d19225b2378320f32d1",
+      "preview": "design-packs/editorial/previews/section-overload.png",
+      "screenshotDigest": "sha256-699b7ffdb8248e40b204f3b4caedbf3044f5f8ac41699b60befe802c2ef78a29"
+    },
+    {
+      "id": "editorial.statement.normal",
+      "fixtureDigest": "7a92e478c12414957e847f5e5a00e60eff5987f9f1d41d4ae3386476ce1706a1",
+      "preview": "design-packs/editorial/previews/statement-normal.png",
+      "draftDigest": "5634ce9cf380db9e98f733c1c77a6bfba27a0ab58296fbc06769a42538bc2adc",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:editorial~2e~statement~2e~normal:title",
+          "overflow": false,
+          "font": "50px / 80px \"Noto Sans SC\"",
+          "width": 972.796875,
+          "height": 165.59375
+        },
+        {
+          "id": "draft:editorial~2e~statement~2e~normal:body1",
+          "overflow": false,
+          "font": "28px / 44.8px \"Noto Sans SC\"",
+          "width": 870.390625,
+          "height": 331.1875
+        },
+        {
+          "id": "draft:editorial~2e~statement~2e~normal:support",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 153.59375,
+          "height": 259.1875
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "65ce103f1e01cf402e5b79b20e6886a9621e489978604f56714603355b1f1c8b"
+    },
+    {
+      "id": "editorial.statement.boundary",
+      "fixtureDigest": "2ab976083d558f83afcead9814be16be9752457dda829dbfe99dc05ce36ffd8c",
+      "preview": "design-packs/editorial/previews/statement-boundary.png",
+      "draftDigest": "b885b412a5079d8b6316356c26e78ef817d814bcd749d673c8ef59f0db31a7a6",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:editorial~2e~statement~2e~boundary:title",
+          "overflow": false,
+          "font": "50px / 80px \"Noto Sans SC\"",
+          "width": 972.796875,
+          "height": 165.59375
+        },
+        {
+          "id": "draft:editorial~2e~statement~2e~boundary:body1",
+          "overflow": false,
+          "font": "28px / 44.8px \"Noto Sans SC\"",
+          "width": 870.390625,
+          "height": 151.1875
+        },
+        {
+          "id": "draft:editorial~2e~statement~2e~boundary:body2",
+          "overflow": false,
+          "font": "28px / 44.8px \"Noto Sans SC\"",
+          "width": 870.390625,
+          "height": 151.1875
+        },
+        {
+          "id": "draft:editorial~2e~statement~2e~boundary:support",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 153.59375,
+          "height": 259.1875
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "fa7dc26bb8e02cfd042c9e21128ab9633de4867d48fa95cdd500d2b1ec60616b"
+    },
+    {
+      "id": "editorial.statement.overload",
+      "status": "rejected",
+      "fixtureDigest": "9d337772ed4d58b103730d498b634bbe20818a3e9f0abbc7ad4e8be034d2bc71",
+      "draftDigest": "79f3976c8c487a2540c8674dfd38fda0f990ca14d25255ec9ee1fd9550d789b4",
+      "preview": "design-packs/editorial/previews/statement-overload.png",
+      "screenshotDigest": "sha256-ec8d428aa2605aefe4cd7d750482e3b853767e29ba504650db7c691e1a2716d6"
+    },
+    {
+      "id": "editorial.metrics.normal",
+      "fixtureDigest": "51b2218ad538f04a7a9fd2de7c6489aa12725286f5184a4e25c33054e4902674",
+      "preview": "design-packs/editorial/previews/metrics-normal.png",
+      "draftDigest": "e15c20aded1c0f6926e26db86f82c26c58b1f100d413076247210d31b503ab8c",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:editorial~2e~metrics~2e~normal:title",
+          "overflow": false,
+          "font": "50px / 80px \"Noto Sans SC\"",
+          "width": 409.59375,
+          "height": 223.1875
+        },
+        {
+          "id": "draft:editorial~2e~metrics~2e~normal:body1",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 601.59375,
+          "height": 417.59375
+        },
+        {
+          "id": "draft:editorial~2e~metrics~2e~normal:support",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 409.59375,
+          "height": 252
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "4be5e4037e9ff91234aac19033e7a4161609bdb4321937613023f75d7d51825a"
+    },
+    {
+      "id": "editorial.metrics.boundary",
+      "fixtureDigest": "3bbdf97f1d47bccf25d0032f2d571ed1261d10d75bf00bdd14334ed32c7d45d8",
+      "preview": "design-packs/editorial/previews/metrics-boundary.png",
+      "draftDigest": "3066e0ac99dffa9dc6b03c319691ab09ded2a3de00b8b7effc7fefb427eebd3c",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:editorial~2e~metrics~2e~boundary:title",
+          "overflow": false,
+          "font": "50px / 80px \"Noto Sans SC\"",
+          "width": 409.59375,
+          "height": 223.1875
+        },
+        {
+          "id": "draft:editorial~2e~metrics~2e~boundary:body1",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 601.59375,
+          "height": 194.390625
+        },
+        {
+          "id": "draft:editorial~2e~metrics~2e~boundary:body2",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 601.59375,
+          "height": 194.390625
+        },
+        {
+          "id": "draft:editorial~2e~metrics~2e~boundary:support",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 409.59375,
+          "height": 252
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "bbfe9c3e1d923bd31553d693ca14922edbc1c793a9afc92409f4d58a4164ec0e"
+    },
+    {
+      "id": "editorial.metrics.overload",
+      "status": "rejected",
+      "fixtureDigest": "7e6f670bef63be32e944bcca60cbc8ec81a308f4b819bb4308caba3b91aa2454",
+      "draftDigest": "dd2e01d37055aa4f3913a72f5423d3b157bcc2b85712e761651565272ee8a642",
+      "preview": "design-packs/editorial/previews/metrics-overload.png",
+      "screenshotDigest": "sha256-a3106c63b855b362cc16c5cde822243ec9c02929b6e56abea4bede1d96d22918"
+    },
+    {
+      "id": "editorial.explanation.normal",
+      "fixtureDigest": "33b9d84f43230a0bb24dbdc5f017650c908e3e15926a7d17ea262e86bf13bc5b",
+      "preview": "design-packs/editorial/previews/explanation-normal.png",
+      "draftDigest": "3f2d69971a11460fa8b2e9cad028e0fc13ff79c68e010bfc42b8d23fdfd7694c",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:editorial~2e~explanation~2e~normal:title",
+          "overflow": false,
+          "font": "50px / 80px \"Noto Sans SC\"",
+          "width": 550.390625,
+          "height": 194.390625
+        },
+        {
+          "id": "draft:editorial~2e~explanation~2e~normal:body1",
+          "overflow": false,
+          "font": "28px / 44.8px \"Noto Sans SC\"",
+          "width": 550.390625,
+          "height": 316.796875
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "f059350c4fcf060fc8c6110c0fdbc7628551b1fffc20601462c404ad052833bf"
+    },
+    {
+      "id": "editorial.explanation.boundary",
+      "fixtureDigest": "7de637a43646533a916f50bd0781ad47d17b68e73e710f8a770b7da65b1d42b7",
+      "preview": "design-packs/editorial/previews/explanation-boundary.png",
+      "draftDigest": "19ebda9ccbf59c01a5e21fb4f2e7de5b0800323113bad7526a042ad7543b0cde",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:editorial~2e~explanation~2e~boundary:title",
+          "overflow": false,
+          "font": "50px / 80px \"Noto Sans SC\"",
+          "width": 550.390625,
+          "height": 194.390625
+        },
+        {
+          "id": "draft:editorial~2e~explanation~2e~boundary:body1",
+          "overflow": false,
+          "font": "28px / 44.8px \"Noto Sans SC\"",
+          "width": 550.390625,
+          "height": 144
+        },
+        {
+          "id": "draft:editorial~2e~explanation~2e~boundary:body2",
+          "overflow": false,
+          "font": "28px / 44.8px \"Noto Sans SC\"",
+          "width": 550.390625,
+          "height": 144
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "75c2e04a7f1f892ebc4baeff7c7f7cbbe427ac3cd9dc8c9804971417bcc05090"
+    },
+    {
+      "id": "editorial.explanation.overload",
+      "status": "rejected",
+      "fixtureDigest": "b0feba8c991277fccf152f1857466ac8ecdcf6ab54a38c1872da058ceb1bcd50",
+      "draftDigest": "29280ede1c99da21fde6aac7d79ee8d6c0395baadec1f08a2b89454e3ef8eb1d",
+      "preview": "design-packs/editorial/previews/explanation-overload.png",
+      "screenshotDigest": "sha256-eb1c8855f09824bde5401af4c5de2748df7a25fd27291110e891b28b0dc1db13"
+    },
+    {
+      "id": "editorial.comparison.normal",
+      "fixtureDigest": "9908c83f33028d17577f98d1027f6be56129f3cc116d98f76f2f0b186f98c926",
+      "preview": "design-packs/editorial/previews/comparison-normal.png",
+      "draftDigest": "647b19bc3a71b64313540177ae06731b8d60af5d7fe37e39ab0a46799364b514",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:editorial~2e~comparison~2e~normal:title",
+          "overflow": false,
+          "font": "50px / 80px \"Noto Sans SC\"",
+          "width": 998.390625,
+          "height": 158.390625
+        },
+        {
+          "id": "draft:editorial~2e~comparison~2e~normal:body1",
+          "overflow": false,
+          "font": "28px / 44.8px \"Noto Sans SC\"",
+          "width": 998.390625,
+          "height": 360
+        },
+        {
+          "id": "draft:editorial~2e~comparison~2e~normal:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 614.390625,
+          "height": 50.390625
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "1f7ca3c941e457afe833bbe96b20d8553ca1a4177908b311f19a27181225a69b"
+    },
+    {
+      "id": "editorial.comparison.boundary",
+      "fixtureDigest": "ee8cd799310a4aea59ca535706bcf227d82897d059b529927641dc77fea9930e",
+      "preview": "design-packs/editorial/previews/comparison-boundary.png",
+      "draftDigest": "866fc983d9947b27d46076876236d0eadb9aa6b9c3768837cf6192ced7f363c0",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:editorial~2e~comparison~2e~boundary:title",
+          "overflow": false,
+          "font": "50px / 80px \"Noto Sans SC\"",
+          "width": 998.390625,
+          "height": 158.390625
+        },
+        {
+          "id": "draft:editorial~2e~comparison~2e~boundary:body1",
+          "overflow": false,
+          "font": "28px / 44.8px \"Noto Sans SC\"",
+          "width": 998.390625,
+          "height": 165.59375
+        },
+        {
+          "id": "draft:editorial~2e~comparison~2e~boundary:body2",
+          "overflow": false,
+          "font": "28px / 44.8px \"Noto Sans SC\"",
+          "width": 998.390625,
+          "height": 165.59375
+        },
+        {
+          "id": "draft:editorial~2e~comparison~2e~boundary:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 614.390625,
+          "height": 50.390625
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "497be76018b3dc98a94ba7c3b22df3faf1e753416ff48d2f50181c2a2d84ce6b"
+    },
+    {
+      "id": "editorial.comparison.overload",
+      "status": "rejected",
+      "fixtureDigest": "f860a5b783ddf592e5d70b69d2f9430ffd7506c96085c160491459a737033f52",
+      "draftDigest": "4fc5c4c534ff88561ed51e1d250ea65f84f0f71d9fa4a4d2c2125b9c087dfe35",
+      "preview": "design-packs/editorial/previews/comparison-overload.png",
+      "screenshotDigest": "sha256-27ed14e6c87f3c92e94f88125e05b5852c72b6ccbd7d864fe72aceebe6fa3706"
+    },
+    {
+      "id": "editorial.process.normal",
+      "fixtureDigest": "0c003715a88ebf04e53830d5216f439262738882834751ea2a463b74ef4ba764",
+      "preview": "design-packs/editorial/previews/process-normal.png",
+      "draftDigest": "467a116f7d04879eeeaed96f989feb288abc6c710c023760bd880577f34e82ae",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:editorial~2e~process~2e~normal:title",
+          "overflow": false,
+          "font": "50px / 80px \"Noto Sans SC\"",
+          "width": 524.796875,
+          "height": 172.796875
+        },
+        {
+          "id": "draft:editorial~2e~process~2e~normal:body1",
+          "overflow": false,
+          "font": "28px / 44.8px \"Noto Sans SC\"",
+          "width": 486.390625,
+          "height": 518.390625
+        },
+        {
+          "id": "draft:editorial~2e~process~2e~normal:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 524.796875,
+          "height": 244.796875
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "964ce5a5a3d457e19210a1e82390c476fdeb6399919beb9791a6175ba7fb89ff"
+    },
+    {
+      "id": "editorial.process.boundary",
+      "fixtureDigest": "5fb2c214d12144aabb55e5f5e26f87d4942e760a1c0be78a62ad233ca1e63d76",
+      "preview": "design-packs/editorial/previews/process-boundary.png",
+      "draftDigest": "79e31433596dcc7ab101be4e39c94038bb7ab4edfd0e7035787a7c5c406300c3",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:editorial~2e~process~2e~boundary:title",
+          "overflow": false,
+          "font": "50px / 80px \"Noto Sans SC\"",
+          "width": 524.796875,
+          "height": 172.796875
+        },
+        {
+          "id": "draft:editorial~2e~process~2e~boundary:body1",
+          "overflow": false,
+          "font": "28px / 44.8px \"Noto Sans SC\"",
+          "width": 486.390625,
+          "height": 244.796875
+        },
+        {
+          "id": "draft:editorial~2e~process~2e~boundary:body2",
+          "overflow": false,
+          "font": "28px / 44.8px \"Noto Sans SC\"",
+          "width": 486.390625,
+          "height": 244.796875
+        },
+        {
+          "id": "draft:editorial~2e~process~2e~boundary:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 524.796875,
+          "height": 244.796875
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "169e8cb64b7b7959f7c02c9fa39ace31b7a0277a4e5cda123c261ee21f41ad19"
+    },
+    {
+      "id": "editorial.process.overload",
+      "status": "rejected",
+      "fixtureDigest": "5160d57f97a6639e1c96bf19920089562840f8ecbde132556d8c214bbe12e46e",
+      "draftDigest": "5772b51a868f0f7451cd45078d854515df8db598cd8eb5512b157aaf1675b21b",
+      "preview": "design-packs/editorial/previews/process-overload.png",
+      "screenshotDigest": "sha256-8b2f43f785c659968a3247a5c02b0aa373cb7b862a6f0c2a01552853fff80c93"
+    },
+    {
+      "id": "editorial.closing.normal",
+      "fixtureDigest": "f3b340f131312fc6a10ce2e55689d2a33f4e5d43a867c1286fbe1879aa679f75",
+      "preview": "design-packs/editorial/previews/closing-normal.png",
+      "draftDigest": "81e389a1e448f2960eeadc24ec2c73b74619a137cac4492597c5c7ae48281d54",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:editorial~2e~closing~2e~normal:title",
+          "overflow": false,
+          "font": "50px / 80px \"Noto Sans SC\"",
+          "width": 870.390625,
+          "height": 187.1875
+        },
+        {
+          "id": "draft:editorial~2e~closing~2e~normal:body1",
+          "overflow": false,
+          "font": "28px / 44.8px \"Noto Sans SC\"",
+          "width": 870.390625,
+          "height": 201.59375
+        },
+        {
+          "id": "draft:editorial~2e~closing~2e~normal:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 563.1875,
+          "height": 86.390625
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "05f4d1fd7188f7e841bb47b110b0bddf42ac969be97f085d6336e4e33ef69d96"
+    },
+    {
+      "id": "editorial.closing.boundary",
+      "fixtureDigest": "63308ad0d9535b78c514e958122ec8715b54706c9c0c78e4b5a808950af4ad21",
+      "preview": "design-packs/editorial/previews/closing-boundary.png",
+      "draftDigest": "a8bb2e0e8ca0f74c6fb1e5c49f2bed4cf8f79f132ae0a4b303c85a1c6c9c247b",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:editorial~2e~closing~2e~boundary:title",
+          "overflow": false,
+          "font": "50px / 80px \"Noto Sans SC\"",
+          "width": 870.390625,
+          "height": 187.1875
+        },
+        {
+          "id": "draft:editorial~2e~closing~2e~boundary:body1",
+          "overflow": false,
+          "font": "28px / 44.8px \"Noto Sans SC\"",
+          "width": 870.390625,
+          "height": 86.390625
+        },
+        {
+          "id": "draft:editorial~2e~closing~2e~boundary:body2",
+          "overflow": false,
+          "font": "28px / 44.8px \"Noto Sans SC\"",
+          "width": 870.390625,
+          "height": 86.390625
+        },
+        {
+          "id": "draft:editorial~2e~closing~2e~boundary:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 563.1875,
+          "height": 86.390625
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "76a2d1db7f34ded79278d774066f98bb1d0283112be3f477014b4f680e1f6309"
+    },
+    {
+      "id": "editorial.closing.overload",
+      "status": "rejected",
+      "fixtureDigest": "4306ae19643b0603595e4ef2cc66756d1bb2d7eef92045b0d08c96c9ca50bbb3",
+      "draftDigest": "7a87d93dbfa719cbef9f2463b3ebf4699b0a4a8ddb5b1a86359734b97762321e",
+      "preview": "design-packs/editorial/previews/closing-overload.png",
+      "screenshotDigest": "sha256-5ff608b8637fa9853322bd2ce3d754ab67c5110eb58cb4c2458f6d0819cd2f65"
+    },
+    {
+      "id": "launch.cover.normal",
+      "fixtureDigest": "efefe7913287ffddcf8492fe7968909bafe61b122ff67e5fe2800f9ecb181aa4",
+      "preview": "design-packs/launch/previews/cover-normal.png",
+      "draftDigest": "581205c6054b0000b65c1f7eff5a883f44bf8bb967677edec7eedb0ee432a814",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:launch~2e~cover~2e~normal:title",
+          "overflow": false,
+          "font": "700 56px / 89.6px \"Noto Sans SC\"",
+          "width": 921.59375,
+          "height": 165.59375
+        },
+        {
+          "id": "draft:launch~2e~cover~2e~normal:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 422.390625,
+          "height": 316.796875
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "6c74498142e26f55e6a4486a979e5e75be753b3a68128fd201f76b70dc7edb81"
+    },
+    {
+      "id": "launch.cover.boundary",
+      "fixtureDigest": "f0dd5f73065492c3a7f466b9bc72fc4b3209df8f6da10ad8e5fb2160f27130b0",
+      "preview": "design-packs/launch/previews/cover-boundary.png",
+      "draftDigest": "f58dd4fa94c60d748741e8bdb139d85823dc0770af2b611554b4445aea4e8530",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:launch~2e~cover~2e~boundary:title",
+          "overflow": false,
+          "font": "700 56px / 89.6px \"Noto Sans SC\"",
+          "width": 921.59375,
+          "height": 165.59375
+        },
+        {
+          "id": "draft:launch~2e~cover~2e~boundary:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 422.390625,
+          "height": 144
+        },
+        {
+          "id": "draft:launch~2e~cover~2e~boundary:body2",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 422.390625,
+          "height": 144
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "b66ee58750775feaeb13347f2b8397691a255d52acdfa8be9bca531cf4856e42"
+    },
+    {
+      "id": "launch.cover.overload",
+      "status": "rejected",
+      "fixtureDigest": "97bff458b26c34c5b0556f16f0d87d69cb2dc71de12c8fa1a562cd547ab230ed",
+      "draftDigest": "853aea543ead0acbdd94c89be75e7aca3170f6aed56f499e8eb727922bc1d782",
+      "preview": "design-packs/launch/previews/cover-overload.png",
+      "screenshotDigest": "sha256-33916e84500fe4cd23564c4ce8dc3a2218b51a73984ab82d2162ad5218e4a9fa"
+    },
+    {
+      "id": "launch.section.normal",
+      "fixtureDigest": "5e1cfd54527b1aa10fb8ccbdc81ba38f714561477e18929d73ff7daf6cfcbc35",
+      "preview": "design-packs/launch/previews/section-normal.png",
+      "draftDigest": "951d72c9377876987704093ad6969366f2c231f4c6aee0e7c5046ff9bd50f757",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:launch~2e~section~2e~normal:title",
+          "overflow": false,
+          "font": "700 56px / 89.6px \"Noto Sans SC\"",
+          "width": 870.390625,
+          "height": 194.390625
+        },
+        {
+          "id": "draft:launch~2e~section~2e~normal:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 216
+        },
+        {
+          "id": "draft:launch~2e~section~2e~normal:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 870.390625,
+          "height": 64.796875
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "49a65ef5c5de8a1b8c17f6240c83a93c26e035b50facdcef1c6d65402ab2a811"
+    },
+    {
+      "id": "launch.section.boundary",
+      "fixtureDigest": "9ba8e9ed214e05a4ad574d1322aeb7c1a6dbd8e0d2aeb2942f62189775b35af5",
+      "preview": "design-packs/launch/previews/section-boundary.png",
+      "draftDigest": "1f1f023781d4636459211e59640c80eb6621c5799f18300c6c7d00035f45ad67",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:launch~2e~section~2e~boundary:title",
+          "overflow": false,
+          "font": "700 56px / 89.6px \"Noto Sans SC\"",
+          "width": 870.390625,
+          "height": 194.390625
+        },
+        {
+          "id": "draft:launch~2e~section~2e~boundary:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 93.59375
+        },
+        {
+          "id": "draft:launch~2e~section~2e~boundary:body2",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 93.59375
+        },
+        {
+          "id": "draft:launch~2e~section~2e~boundary:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 870.390625,
+          "height": 64.796875
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "d3b3368664b7aac1f27b8b05785cbd39f5b1c3d742b7af6b239ad406a991b9b3"
+    },
+    {
+      "id": "launch.section.overload",
+      "status": "rejected",
+      "fixtureDigest": "cf280e25b09b31799cefb05dd7a40b328f75c2af416eb72606a2f9288c6bc900",
+      "draftDigest": "324aa8b6f7886c9a2b335d92a04eb39cc983264b1d6a4d8cbda31ca3ba59a75b",
+      "preview": "design-packs/launch/previews/section-overload.png",
+      "screenshotDigest": "sha256-ffa986e3bf6d11baf1086805847569ab56d72c6516c9145769a395c8840e74dd"
+    },
+    {
+      "id": "launch.statement.normal",
+      "fixtureDigest": "9dccb84154b16212e7b05e4a7d8e7b560383fdd76ee0df13ff05efe3328ad652",
+      "preview": "design-packs/launch/previews/statement-normal.png",
+      "draftDigest": "79d2003da3cf4202ad09f1e884c00072521ee66635f0bdce167396d92627a4d5",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:launch~2e~statement~2e~normal:title",
+          "overflow": false,
+          "font": "700 56px / 89.6px \"Noto Sans SC\"",
+          "width": 972.796875,
+          "height": 172.796875
+        },
+        {
+          "id": "draft:launch~2e~statement~2e~normal:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 652.796875,
+          "height": 331.1875
+        },
+        {
+          "id": "draft:launch~2e~statement~2e~normal:support",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 256,
+          "height": 288
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "7196349a25178a38e9cd200841a563216a11a082c49637e361f0ab3c3d77b1be"
+    },
+    {
+      "id": "launch.statement.boundary",
+      "fixtureDigest": "16cab996d6c18a6e24dbd66af9a76f8e4855d0e21eb5ad7805e8d6fc84bc786d",
+      "preview": "design-packs/launch/previews/statement-boundary.png",
+      "draftDigest": "113d45ccbf06312311a0312d96b7012c6ff881b403062edcd54e904e89c4d744",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:launch~2e~statement~2e~boundary:title",
+          "overflow": false,
+          "font": "700 56px / 89.6px \"Noto Sans SC\"",
+          "width": 972.796875,
+          "height": 172.796875
+        },
+        {
+          "id": "draft:launch~2e~statement~2e~boundary:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 652.796875,
+          "height": 151.1875
+        },
+        {
+          "id": "draft:launch~2e~statement~2e~boundary:body2",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 652.796875,
+          "height": 151.1875
+        },
+        {
+          "id": "draft:launch~2e~statement~2e~boundary:support",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 256,
+          "height": 288
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "db560ae67351eb6abdd0d1160328f7a8e439c34c8c4f4564992af895d64729ac"
+    },
+    {
+      "id": "launch.statement.overload",
+      "status": "rejected",
+      "fixtureDigest": "db14576e8a4700df40b9e6904ae436900d71fe06e11fd8573ac18dd34ec41a29",
+      "draftDigest": "b3c2c44147820003f9df94f63605cf6daeb829b67130f54f17667c65964cfcf5",
+      "preview": "design-packs/launch/previews/statement-overload.png",
+      "screenshotDigest": "sha256-26701181a10f1037966ef8c6e8c2d3f76c19c7e5ef9eb9be8c7b87f47b5eec65"
+    },
+    {
+      "id": "launch.metrics.normal",
+      "fixtureDigest": "6e2b3cc795b988a47c5d1bf51ea8dcf360ef2cd550c862398268cabd86750fcf",
+      "preview": "design-packs/launch/previews/metrics-normal.png",
+      "draftDigest": "cfe9b39c927212c621d93819940a080ce456b14118fbfa88dce7964cc80ee811",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:launch~2e~metrics~2e~normal:title",
+          "overflow": false,
+          "font": "700 56px / 89.6px \"Noto Sans SC\"",
+          "width": 819.1875,
+          "height": 158.390625
+        },
+        {
+          "id": "draft:launch~2e~metrics~2e~normal:body1",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 678.390625,
+          "height": 345.59375
+        },
+        {
+          "id": "draft:launch~2e~metrics~2e~normal:support",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 281.59375,
+          "height": 352.796875
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "d96ca817e6933958e205743a312120fd70c982ad0a7f19fa956e7c2d9f71171e"
+    },
+    {
+      "id": "launch.metrics.boundary",
+      "fixtureDigest": "80006ce953cfd3b786d9e04d12b9b68f634e328a0c91a8a6b775077170ec423f",
+      "preview": "design-packs/launch/previews/metrics-boundary.png",
+      "draftDigest": "d159f70d6f9ce8d4b9fde3b9aa998dd7731b314071898b45bdb16e8550000898",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:launch~2e~metrics~2e~boundary:title",
+          "overflow": false,
+          "font": "700 56px / 89.6px \"Noto Sans SC\"",
+          "width": 819.1875,
+          "height": 158.390625
+        },
+        {
+          "id": "draft:launch~2e~metrics~2e~boundary:body1",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 316.796875,
+          "height": 345.59375
+        },
+        {
+          "id": "draft:launch~2e~metrics~2e~boundary:body2",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 316.796875,
+          "height": 345.59375
+        },
+        {
+          "id": "draft:launch~2e~metrics~2e~boundary:support",
+          "overflow": false,
+          "font": "700 38px / 60.8px \"Noto Sans SC\"",
+          "width": 281.59375,
+          "height": 352.796875
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "88aa07a48e07297a927c817e15d8e82dbc889fb5db8b900cdcc224659e1ac072"
+    },
+    {
+      "id": "launch.metrics.overload",
+      "status": "rejected",
+      "fixtureDigest": "432d96212669bc0dd55f4d4ab034b0b053fcdf2259858018196bc25400c2b33a",
+      "draftDigest": "646650f3ea422b91013f5df41b251d2d201c23f638a2c7c20adf29eeef93b8cf",
+      "preview": "design-packs/launch/previews/metrics-overload.png",
+      "screenshotDigest": "sha256-649022eed4928a2387044eda5d11c874dd577463ce3d8b9aaff7c0dc63473755"
+    },
+    {
+      "id": "launch.explanation.normal",
+      "fixtureDigest": "4e625af79fbf4d081974c9f20c276123fe17e06f3ee10c885cfe1290d4b2c68e",
+      "preview": "design-packs/launch/previews/explanation-normal.png",
+      "draftDigest": "05d853fbc352a623d8d2773d57521a0382f09dca4687f3e651bf89e258af372d",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:launch~2e~explanation~2e~normal:title",
+          "overflow": false,
+          "font": "700 56px / 89.6px \"Noto Sans SC\"",
+          "width": 1024,
+          "height": 165.59375
+        },
+        {
+          "id": "draft:launch~2e~explanation~2e~normal:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 384,
+          "height": 360
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "45fab1aad17388ef226fa0967572086cf4bbc000c226f1cf30bd51beda6e3336"
+    },
+    {
+      "id": "launch.explanation.boundary",
+      "fixtureDigest": "10f3391a29e85f33197b640e08320c7424fd51582b1ef09f6e59039a198a0779",
+      "preview": "design-packs/launch/previews/explanation-boundary.png",
+      "draftDigest": "14d44fd359bbaef1268557dac1579cc96620ac1541b68e6e5647f8caf4a966ad",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:launch~2e~explanation~2e~boundary:title",
+          "overflow": false,
+          "font": "700 56px / 89.6px \"Noto Sans SC\"",
+          "width": 1024,
+          "height": 165.59375
+        },
+        {
+          "id": "draft:launch~2e~explanation~2e~boundary:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 384,
+          "height": 165.59375
+        },
+        {
+          "id": "draft:launch~2e~explanation~2e~boundary:body2",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 384,
+          "height": 165.59375
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "38e2959b0f25f2575ce06364cafa7f31c8ef7ab487eb874f667cc81dc319fa55"
+    },
+    {
+      "id": "launch.explanation.overload",
+      "status": "rejected",
+      "fixtureDigest": "3d2d09e07f3f3aa7ac5c9bf542a2aad4ebf1fc4e31b1c444f1312c69be5bde30",
+      "draftDigest": "c7e95fbc7c2c48b2dec05bafda95972f05e973aa5dbb3dbb5a3f282b3c8b7697",
+      "preview": "design-packs/launch/previews/explanation-overload.png",
+      "screenshotDigest": "sha256-41ae7d7e0bfe54942b5062b3dabe58ad5ef00358154c75cfabb86cd78cc4e184"
+    },
+    {
+      "id": "launch.comparison.normal",
+      "fixtureDigest": "533e1ccebd223cc6f7f2f922767903e88ac4cf2279f0a4fd01489a7f8350d0bd",
+      "preview": "design-packs/launch/previews/comparison-normal.png",
+      "draftDigest": "1aebfd1c1beb80c20518b82d65cdfdfd5b8f158c9c9c5eb43179842039ad80e3",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:launch~2e~comparison~2e~normal:title",
+          "overflow": false,
+          "font": "700 56px / 89.6px \"Noto Sans SC\"",
+          "width": 819.1875,
+          "height": 165.59375
+        },
+        {
+          "id": "draft:launch~2e~comparison~2e~normal:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 237.59375
+        },
+        {
+          "id": "draft:launch~2e~comparison~2e~normal:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 563.1875,
+          "height": 72
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "1eda0c13ad1b4773d987e6ade965de88a808aa45e610fa2faf69e5219b6aed17"
+    },
+    {
+      "id": "launch.comparison.boundary",
+      "fixtureDigest": "b3e9e2c2872ce021b78a1ed156767a6e9bfd5a29f2a10b034f276ca6ee72fe62",
+      "preview": "design-packs/launch/previews/comparison-boundary.png",
+      "draftDigest": "62f1ff4af0f2ebe38fee2eaf18e8c75f65572e1ca91b2efd66bd554e1fb01d7d",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:launch~2e~comparison~2e~boundary:title",
+          "overflow": false,
+          "font": "700 56px / 89.6px \"Noto Sans SC\"",
+          "width": 819.1875,
+          "height": 165.59375
+        },
+        {
+          "id": "draft:launch~2e~comparison~2e~boundary:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 515.1875,
+          "height": 237.59375
+        },
+        {
+          "id": "draft:launch~2e~comparison~2e~boundary:body2",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 515.1875,
+          "height": 237.59375
+        },
+        {
+          "id": "draft:launch~2e~comparison~2e~boundary:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 563.1875,
+          "height": 72
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "ae8f85f54a6e149f42ea2e334cc306bf158fb843ac6de2f556ce7bc900201ce7"
+    },
+    {
+      "id": "launch.comparison.overload",
+      "status": "rejected",
+      "fixtureDigest": "5447c217bd1af701d36c0145df4a6e0ea549829879abf9c8a4196b2895f5e3d9",
+      "draftDigest": "dced8a8d77f36be621f56dd1bd4e242cb224660d248d9f8355a0025df0c1c901",
+      "preview": "design-packs/launch/previews/comparison-overload.png",
+      "screenshotDigest": "sha256-2f80dc58a56e344bfc1f3f7071ac6a48bbba8bf37298e93c837a25ac0bb6a6e0"
+    },
+    {
+      "id": "launch.process.normal",
+      "fixtureDigest": "42e18d6967cfe96482ea6e8ad54625e834a4a65c27eb8e9f38b49e0044de4409",
+      "preview": "design-packs/launch/previews/process-normal.png",
+      "draftDigest": "6a1537ab3012c3f5840e3782d1510c240d66ff06074511d7578b8e13b9fc8f40",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:launch~2e~process~2e~normal:title",
+          "overflow": false,
+          "font": "700 56px / 89.6px \"Noto Sans SC\"",
+          "width": 844.796875,
+          "height": 165.59375
+        },
+        {
+          "id": "draft:launch~2e~process~2e~normal:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 223.1875
+        },
+        {
+          "id": "draft:launch~2e~process~2e~normal:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 844.796875,
+          "height": 86.390625
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "77a3c048d3846a0344f916ec97b5c7f05dcece937f2d075ae889365a94ab8df4"
+    },
+    {
+      "id": "launch.process.boundary",
+      "fixtureDigest": "a1e044150f655b0bc387392a90c4a634a4226b4f9170482b736dc40c17f724b5",
+      "preview": "design-packs/launch/previews/process-boundary.png",
+      "draftDigest": "6a4ac239fdec7044b46963c53183fa6b28b2da46e7c0e77d794e94810989d2f8",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:launch~2e~process~2e~boundary:title",
+          "overflow": false,
+          "font": "700 56px / 89.6px \"Noto Sans SC\"",
+          "width": 844.796875,
+          "height": 165.59375
+        },
+        {
+          "id": "draft:launch~2e~process~2e~boundary:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 515.1875,
+          "height": 223.1875
+        },
+        {
+          "id": "draft:launch~2e~process~2e~boundary:body2",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 515.1875,
+          "height": 223.1875
+        },
+        {
+          "id": "draft:launch~2e~process~2e~boundary:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 844.796875,
+          "height": 86.390625
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "a9f1755942ee1050df27f4645e576ad79bc0f63f74aa0a9071cfa3f6a6ccd9d7"
+    },
+    {
+      "id": "launch.process.overload",
+      "status": "rejected",
+      "fixtureDigest": "b7a9a7711464073bd2482bb110b1d85305dc4b319e5624efb1b9f5c07fe0bd1b",
+      "draftDigest": "58237b88a5d85f575fd1aec3fa145afb48747ca999e57a81341aae6bfe640ee3",
+      "preview": "design-packs/launch/previews/process-overload.png",
+      "screenshotDigest": "sha256-d218270c19e3352d9ec7c47a8ae510ce2e158141c88b92665e732040ffc46b89"
+    },
+    {
+      "id": "launch.closing.normal",
+      "fixtureDigest": "f7ffd1699293ed3e40f2e7b340dacb80fbf62e597a7086c4fffa51cc97f18a4b",
+      "preview": "design-packs/launch/previews/closing-normal.png",
+      "draftDigest": "0b447a96eac1c3bd6c71194f5187e696ce54dd539e527b273e0ce5a90ca1c5fd",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:launch~2e~closing~2e~normal:title",
+          "overflow": false,
+          "font": "700 56px / 89.6px \"Noto Sans SC\"",
+          "width": 844.796875,
+          "height": 180
+        },
+        {
+          "id": "draft:launch~2e~closing~2e~normal:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 716.796875,
+          "height": 201.59375
+        },
+        {
+          "id": "draft:launch~2e~closing~2e~normal:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 512,
+          "height": 86.390625
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "fe11a6ebd37075e4f421819e2e96fbcb7eb2dd53b66ee75dff8310a812eb90a7"
+    },
+    {
+      "id": "launch.closing.boundary",
+      "fixtureDigest": "9edaf03632513651d9d06807bee4753eb88898de10d85ba81c56258ed8b00c17",
+      "preview": "design-packs/launch/previews/closing-boundary.png",
+      "draftDigest": "7ecdd662bd0ce6c002e73df375225c6f1948fc2baac5ce1f227d212d1030b9ca",
+      "fontDigest": "918d0738fc81494a38562e49b8aedf10c5d6b7abdb29a399e256d36f0b14555f",
+      "resourceDigest": "5236136070209f1d848b44113c9b7b043cc80fcfd0a47b6670a41f662884f86c",
+      "rendererDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+      "status": "pass",
+      "elements": [
+        {
+          "id": "draft:launch~2e~closing~2e~boundary:title",
+          "overflow": false,
+          "font": "700 56px / 89.6px \"Noto Sans SC\"",
+          "width": 844.796875,
+          "height": 180
+        },
+        {
+          "id": "draft:launch~2e~closing~2e~boundary:body1",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 716.796875,
+          "height": 86.390625
+        },
+        {
+          "id": "draft:launch~2e~closing~2e~boundary:body2",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 716.796875,
+          "height": 86.390625
+        },
+        {
+          "id": "draft:launch~2e~closing~2e~boundary:support",
+          "overflow": false,
+          "font": "18px / 28.8px \"Noto Sans SC\"",
+          "width": 512,
+          "height": 86.390625
+        }
+      ],
+      "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "screenshotDigest": "ff3537df39e53a8e9073e8bdf3ae1f4db41e21a8e418180c5ca1ce96145d4f7d"
+    },
+    {
+      "id": "launch.closing.overload",
+      "status": "rejected",
+      "fixtureDigest": "1c7d13c1b559c7627d0939316e117e540a5e70c6067777a8e6ea5eb00ddd5e5b",
+      "draftDigest": "971535218f3265bcc36bb441310ffb303f8238c199c416a6e0bdd731b341cd40",
+      "preview": "design-packs/launch/previews/closing-overload.png",
+      "screenshotDigest": "sha256-96571429f04972d8bc06942397002ec28cbeb9f9f9324691a8a77ab4f24431a8"
+    },
+    {
+      "id": "business.stress.chinese",
+      "status": "pass",
+      "documentDigest": "d5f0fe6c96bd10f62ab1026e6b3e3728e5f1e4d2be20a75a29b50e919434e3a3",
+      "fixtureDigest": "16d1bf9d83dcb23adf7884b04f8ad9bb5887c4c38bee209d03d01bc766bb082b",
+      "preview": "design-packs/business/previews/stress-chinese.png",
+      "screenshotDigest": "sha256-3945ea958776459e7ce3cac02b9b4c71aad67c9b16f8c1dd5c90539bf8b391eb",
+      "elements": [
+        {
+          "id": "draft:business~2e~stress~2e~chinese:title",
+          "overflow": false,
+          "font": "600 48px / 76.8px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 144
+        },
+        {
+          "id": "draft:business~2e~stress~2e~chinese:body",
+          "overflow": false,
+          "font": "26px / 41.6px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 410.390625
+        }
+      ]
+    },
+    {
+      "id": "business.stress.chart",
+      "status": "pass",
+      "documentDigest": "793c6762a918abba079513363a89e8efd9cde620f72d3a97eeac41d7ab33ae63",
+      "fixtureDigest": "3ac71abc9c6d3fd6b0fd1bc355eb1591139125800449140613d2140aafe71938",
+      "preview": "design-packs/business/previews/stress-chart.png",
+      "screenshotDigest": "sha256-bf8cfd598e96a6a59b8b8b90e31dd73744db463343d9bfc73c42c521e3c4f633",
+      "elements": [
+        {
+          "id": "draft:business~2e~stress~2e~chart:title",
+          "overflow": false,
+          "font": "600 48px / 76.8px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 144
+        }
+      ]
+    },
+    {
+      "id": "business.stress.table",
+      "status": "pass",
+      "documentDigest": "f326abd337d2f5ca3431d4e8e0d29418521804cd4d1323f34d6120930f1c70b6",
+      "fixtureDigest": "5182734f4868e111f53de1611357333b571600b67da0c5c1461220f20cae439c",
+      "preview": "design-packs/business/previews/stress-table.png",
+      "screenshotDigest": "sha256-bc988f8960a8e3a8cfd768ce5f97b8aea65379aa4d0d54210d56a67669051b0f",
+      "elements": [
+        {
+          "id": "draft:business~2e~stress~2e~table:title",
+          "overflow": false,
+          "font": "600 48px / 76.8px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 144
+        },
+        {
+          "id": "draft:business~2e~stress~2e~table:body",
+          "overflow": false,
+          "font": "26px / 41.6px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 65
+        }
+      ]
+    },
+    {
+      "id": "swiss.stress.chinese",
+      "status": "pass",
+      "documentDigest": "871deb541bdb24b394064afb77b51d943d7e64f88adf4c502859133d6aea04b3",
+      "fixtureDigest": "69340b411543047d8e39e59e68a86523da706830fc7f9a994f220cc5b96ffd7b",
+      "preview": "design-packs/swiss/previews/stress-chinese.png",
+      "screenshotDigest": "sha256-e418895362dc0408b7ed01b823c091cf3d99e42fc6546c86b0baa4cc7acd75cc",
+      "elements": [
+        {
+          "id": "draft:swiss~2e~stress~2e~chinese:title",
+          "overflow": false,
+          "font": "800 62px / 99.2px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 144
+        },
+        {
+          "id": "draft:swiss~2e~stress~2e~chinese:body",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 410.390625
+        }
+      ]
+    },
+    {
+      "id": "swiss.stress.chart",
+      "status": "pass",
+      "documentDigest": "d9ccf21fc7fdef5af81916923e9de9b7e716afd842296542e36ecab23f7ebf80",
+      "fixtureDigest": "36c69dec16af3e3add784f39cb6bd18d85446ef8a562414084a2504ce0ebf210",
+      "preview": "design-packs/swiss/previews/stress-chart.png",
+      "screenshotDigest": "sha256-80fb0b03610b9d5102a479a0e2b54d5125c81ab7f5244767b44af687e2c80193",
+      "elements": [
+        {
+          "id": "draft:swiss~2e~stress~2e~chart:title",
+          "overflow": false,
+          "font": "800 62px / 99.2px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 144
+        }
+      ]
+    },
+    {
+      "id": "swiss.stress.table",
+      "status": "pass",
+      "documentDigest": "6e672bfcfa25164619038f5a8aff6276b016c67903ec4197b7862c3a3e73272c",
+      "fixtureDigest": "8f2c9e93d31d3883ec9684a7bc9e568e532f5281e63a9f35e383b1bc2f4c0b7e",
+      "preview": "design-packs/swiss/previews/stress-table.png",
+      "screenshotDigest": "sha256-01db5ba35e26ed00aa9357444d5fe6dd01545aa122d9ae08348b1b833eeb44e1",
+      "elements": [
+        {
+          "id": "draft:swiss~2e~stress~2e~table:title",
+          "overflow": false,
+          "font": "800 62px / 99.2px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 144
+        },
+        {
+          "id": "draft:swiss~2e~stress~2e~table:body",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 65
+        }
+      ]
+    },
+    {
+      "id": "editorial.stress.chinese",
+      "status": "pass",
+      "documentDigest": "47105c454035b6c3394d8380ddc5d757bb1ae964c83047b1e00354c78183a9ef",
+      "fixtureDigest": "3d7e59753ef51e447524b985e99cbc7b1a722ffe83e3212c8e0f8db3d0d8675e",
+      "preview": "design-packs/editorial/previews/stress-chinese.png",
+      "screenshotDigest": "sha256-04fcf18f9d1c438e33ac3ca2c9a97b999def5b33a9ab71cdd803c2fdbc0a03c3",
+      "elements": [
+        {
+          "id": "draft:editorial~2e~stress~2e~chinese:title",
+          "overflow": false,
+          "font": "50px / 80px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 144
+        },
+        {
+          "id": "draft:editorial~2e~stress~2e~chinese:body",
+          "overflow": false,
+          "font": "28px / 44.8px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 410.390625
+        }
+      ]
+    },
+    {
+      "id": "editorial.stress.chart",
+      "status": "pass",
+      "documentDigest": "c07a9021e284c4e94720bbe6f2c3b94091803835ff4364a2b4fabacaa7483e87",
+      "fixtureDigest": "ccc2ac5bbe41374fcc8f33f80b28827df9a6a96cbf44ecf6a6075b9aeb5f73a4",
+      "preview": "design-packs/editorial/previews/stress-chart.png",
+      "screenshotDigest": "sha256-ce8f1003328ac8217f08ffff396d047e8ddfadb21d15dbfc91883d8a4b27f568",
+      "elements": [
+        {
+          "id": "draft:editorial~2e~stress~2e~chart:title",
+          "overflow": false,
+          "font": "50px / 80px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 144
+        }
+      ]
+    },
+    {
+      "id": "editorial.stress.table",
+      "status": "pass",
+      "documentDigest": "7715d1e0391edbce3efa7c6daf968548d29652399cf8cd428939bf8ff271d758",
+      "fixtureDigest": "d858068c1907b522ec4d3e05268cd3f1b773fd67bb8c4001f544e633b0b806ca",
+      "preview": "design-packs/editorial/previews/stress-table.png",
+      "screenshotDigest": "sha256-6cc63c4b84860936b76ab93b491f9fcbbd0ff3bfbb95d30208f4556731c002ce",
+      "elements": [
+        {
+          "id": "draft:editorial~2e~stress~2e~table:title",
+          "overflow": false,
+          "font": "50px / 80px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 144
+        },
+        {
+          "id": "draft:editorial~2e~stress~2e~table:body",
+          "overflow": false,
+          "font": "28px / 44.8px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 65
+        }
+      ]
+    },
+    {
+      "id": "launch.stress.chinese",
+      "status": "pass",
+      "documentDigest": "2939af9b47139a23cc1237ad3bf965a15e3b64420139f96f625a6b5085ebb70e",
+      "fixtureDigest": "eb4fc9661a65341dedabe85bf623b15c089296be9ee1b3fba26c0e37e68bf66f",
+      "preview": "design-packs/launch/previews/stress-chinese.png",
+      "screenshotDigest": "sha256-d314b6cb83bc2aaf4d63bb45576a63825dad22e13c05171400918a40ccff6b50",
+      "elements": [
+        {
+          "id": "draft:launch~2e~stress~2e~chinese:title",
+          "overflow": false,
+          "font": "700 56px / 89.6px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 144
+        },
+        {
+          "id": "draft:launch~2e~stress~2e~chinese:body",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 410.390625
+        }
+      ]
+    },
+    {
+      "id": "launch.stress.chart",
+      "status": "pass",
+      "documentDigest": "9dac2dcfa015f3568add61588d19f4437454a98bd4a733481f2b86d1ca47dcca",
+      "fixtureDigest": "b5575ff8eaf3a30971c607453a0d0df7b8cd37d1fd22db462d962a2bc1f1ed1f",
+      "preview": "design-packs/launch/previews/stress-chart.png",
+      "screenshotDigest": "sha256-7eb9ee55db1c5679b98d2f53b4d25d1db38bec67308a391fb4b0e2f0c0ead7cd",
+      "elements": [
+        {
+          "id": "draft:launch~2e~stress~2e~chart:title",
+          "overflow": false,
+          "font": "700 56px / 89.6px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 144
+        }
+      ]
+    },
+    {
+      "id": "launch.stress.table",
+      "status": "pass",
+      "documentDigest": "b7cf4c21e86aaf170393315f1246101a6091cc45092fcb559b39384ae69637e0",
+      "fixtureDigest": "6365c34813356dd7aeb5ce1223d8f41c7ca0585e01b2ba13726489950b77db4d",
+      "preview": "design-packs/launch/previews/stress-table.png",
+      "screenshotDigest": "sha256-ab3a05e8f69d91506c3ab90f6792c1eecf3651d6e55ca1053246e0a45321f05e",
+      "elements": [
+        {
+          "id": "draft:launch~2e~stress~2e~table:title",
+          "overflow": false,
+          "font": "700 56px / 89.6px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 144
+        },
+        {
+          "id": "draft:launch~2e~stress~2e~table:body",
+          "overflow": false,
+          "font": "27px / 43.2px \"Noto Sans SC\"",
+          "width": 1075.1875,
+          "height": 65
+        }
+      ]
+    }
+  ],
+  "unverified": [
+    "Office client visual fidelity",
+    "Safari",
+    "Human G2 editing study",
+    "Glyph coverage outside the declared sample subset",
+    "Table v2 and native table export"
+  ]
+}

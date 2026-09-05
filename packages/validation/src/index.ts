@@ -476,7 +476,8 @@ export function inspectGlyphCoverage(document: PpteDocument, element: TextElemen
   const style = effectiveTextStyle(document, element)
   const candidate = fonts.find((font) => font.family === style.fontFamily)
   if (!candidate) return { elementId: element.id, fontFamily: style.fontFamily, covered: !options.strict, missingCodePoints: [], source: 'unresolved' }
-  const codePoints = [...new Set([...text].map((character) => character.codePointAt(0) ?? 0))]
+  // Tabs and line breaks are layout controls, not font glyphs. All visible code points still require coverage.
+  const codePoints = [...new Set([...text].filter(character => !/[\t\r\n]/.test(character)).map((character) => character.codePointAt(0) ?? 0))]
   if (!Array.isArray(candidate.glyphCoverage) || candidate.glyphCoverage.length === 0) {
     const systemSafe = candidate.source === 'system' && candidate.editableSafe === true
     return { elementId: element.id, fontFamily: candidate.family, fontId: candidate.id, covered: systemSafe || !options.strict, missingCodePoints: systemSafe || !options.strict ? [] : codePoints, source: systemSafe ? 'system-safe' : 'unsafe' }

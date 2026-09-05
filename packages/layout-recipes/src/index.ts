@@ -280,3 +280,6 @@ export function applyRecipeVariant(recipe: RecipeSpec, ir: SlideIR, variantId?: 
   result.zones.forEach(assertFeasibleZone)
   return result
 }
+
+export { DESIGN_PACK_VERSION, DESIGN_STYLES, DESIGN_ROLES, designPackRecipeSpecs, designPackTheme, designPackSample, designPackManifest, designPackCoverage } from './design-packs.js'
+export type { DesignStyle, DesignRole, SampleKind } from './design-packs.js'

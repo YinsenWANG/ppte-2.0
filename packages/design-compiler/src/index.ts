@@ -7,6 +7,7 @@ import { measureTextLayout, type ResolvedTextStyle } from '../../validation/src/
 import type {
   Asset,
   CanvasSpec,
+  ChartOptions,
   CompiledSlideDraft,
   Element,
   ElementDraft,
@@ -502,7 +503,7 @@ function materializeElementDraft(draft: ElementDraft, compiled: CompiledSlideDra
     return { ...base, type: 'image', assetId, fit: data.fit === 'contain' || data.fit === 'fill' ? data.fit : 'cover', altText: typeof data.altText === 'string' ? data.altText : '', style: { styleRef: styleRef(data, 'image.hero') } }
   }
   if (draft.kind === 'shape') return { ...base, type: 'shape', shape: shapeKind(data.shape), style: { styleRef: styleRef(data, 'shape.card') } }
-  if (draft.kind === 'chart') return { ...base, type: 'chart', chartType: chartType(data.chartType), data: chartData(data.data), encoding: chartEncoding(data.encoding), style: { styleRef: styleRef(data, 'chart.default') } }
+  if (draft.kind === 'chart') return { ...base, type: 'chart', chartType: chartType(data.chartType), data: chartData(data.data), encoding: chartEncoding(data.encoding), ...(isRecord(data.options) ? { options: cloneJson(data.options) as ChartOptions } : {}), ...(typeof data.altText === 'string' ? { altText: data.altText } : {}), style: { styleRef: styleRef(data, 'chart.default') } }
   return { ...base, type: 'component', componentType: typeof data.componentType === 'string' ? data.componentType : 'core/placeholder', componentVersion: typeof data.componentVersion === 'string' ? data.componentVersion : '1.0.0', props: isRecord(data.props) ? cloneJson(data.props) as Record<string, import('../../schema/src/index.js').JsonValue> : {}, fallback: { kind: 'placeholder', label: typeof data.label === 'string' ? data.label : draft.draftId } }
 }
 
