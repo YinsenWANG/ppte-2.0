@@ -18,6 +18,27 @@ evidence. It is not a promise that every future editing or collaboration
 feature exists; the remaining boundaries are listed below and in
 `CHANGELOG.md`.
 
+### Native Agent integration (0.7 candidate)
+
+The recommended authoring path is now **native Skill + npm CLI**. The host
+Agent reads source material and authors Presentation IR; PPTe compiles it
+through the shared Core and delivers an editable browser copy. MCP is an
+optional transport adapter, not a prerequisite. See [installation and
+workflow](README-AGENT.md) and the [repair/verification record](docs/PRODUCT_COMPLETION_2026-09-05.md).
+
+```sh
+pnpm package:pack
+npm install -g ./artifacts/ppte-cli-0.7.0.tgz
+ppte skill-install --out ~/.codex/skills/ppte
+ppte compile examples/quarterly-design.json --out quarterly.ppte
+ppte deliver quarterly.ppte
+```
+
+This is a locally installable candidate, not an npm registry publication.
+The Host imports real Agent-authored JSON; it does not claim to turn an
+uploaded filename into an AI-generated presentation. Both the Host and saved
+HTML now use the same `PpteSession` as the CLI for persistent mutations.
+
 ### 该发哪个文件
 
 | 文件角色 | 文件名 | 打开方式与用途 |

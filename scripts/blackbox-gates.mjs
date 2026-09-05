@@ -427,20 +427,20 @@ async function runHostJourney(ctx, options = {}) {
     await page.locator('[data-ppte-action="new"]').click()
     evidence.created = await page.locator('[data-ppte-host]').getAttribute('data-ppte-slide-count')
 
-    await page.locator('input[data-ppte-action="agent-source"]').setInputFiles({ name: 'brief.txt', mimeType: 'text/plain', buffer: Buffer.from('季度经营回顾\n目标：统一团队叙事\n受众：管理层') })
-    await page.locator('[data-ppte-agent-objective]').fill('季度经营回顾')
-    await page.locator('[data-ppte-agent-audience]').fill('管理层')
+    await page.locator('input[data-ppte-action="agent-source"]').setInputFiles({ name: 'quarterly-design.json', mimeType: 'application/json', buffer: readFileSync(join(ROOT, 'examples', 'quarterly-design.json')) })
     await page.locator('[data-ppte-action="generate"]').click()
     await page.waitForFunction(() => document.querySelector('[data-ppte-host]')?.getAttribute('data-ppte-slide-count') === '10')
     evidence.generatedSlides = Number(await page.locator('[data-ppte-host]').getAttribute('data-ppte-slide-count'))
     evidence.agentGenerated = await page.locator('[data-ppte-host]').getAttribute('data-ppte-agent-generated')
 
-    const title = page.locator('[data-ppte-element-id="text_title"]').first()
+    const generatedTexts = await page.locator('[data-ppte-thumbnails] .ppte-thumbnail-surface').allTextContents()
+    ctx.expectGate(generatedTexts.some(text => text.includes('128')) && generatedTexts.some(text => text.includes('99.95%')) && generatedTexts.some(text => text.includes('负责人')), 'Generated content must retain distinct source facts and action items, not duplicate the first slide.', { generatedTexts })
+    const title = page.locator('[data-ppte-semantic-key="quarter-1.title"]').first()
     await title.dblclick()
     await title.fill('R7 真人路径标题')
     await title.blur()
     await page.waitForFunction(() => Number(document.querySelector('[data-ppte-host]')?.getAttribute('data-ppte-history-depth') ?? 0) >= 2)
-    evidence.editedText = await page.locator('[data-ppte-element-id="text_title"]').first().innerText()
+    evidence.editedText = await page.locator('[data-ppte-semantic-key="quarter-1.title"]').first().innerText()
 
     await page.locator('input[data-ppte-action="import-image"]').setInputFiles({ name: 'hero.png', mimeType: 'image/png', buffer: Buffer.from(pixelPng()) })
     const image = page.locator('[data-ppte-element-id^="image_host_"]').first()
@@ -1038,7 +1038,7 @@ register('host', '2', 'The browser computes valid slide-space layout.', 'A user 
     const path = ctx.writeFixtureHtml(directory, 'computed-style.html', rt.renderer.renderSlideHtml(document, IDS.slide))
     const computed = await ctx.withBrowser(path, async (page) => page.evaluate(() => {
       const slide = document.querySelector('.ppte-slide')
-      const title = document.querySelector('[data-ppte-element-id="bb_text_title"]')
+    const title = document.querySelector('[data-ppte-element-id="bb_text_title"]')
       if (!slide || !title) return { missing: true }
       const slideStyle = getComputedStyle(slide)
       const titleStyle = getComputedStyle(title)
@@ -1160,7 +1160,10 @@ register('export', '20', 'PDF preserves Chinese and emoji text.', 'User exports 
     const path = join(directory, 'semantic.pdf')
     writeFileSync(path, exported.bytes)
     const extracted = ctx.runPdftotext(path)
-    ctx.expectGate(extracted.includes('年度经营回顾') && extracted.includes('第二段') && !extracted.includes('?'), 'PDF text extraction lost authored Unicode content.', extracted)
+    // pdftotext may segment a rotated baseline into multiple layout lines.
+    // Ignore layout whitespace, but still require every authored code point in order.
+    const normalized = extracted.replace(/\s+/gu, '')
+    ctx.expectGate(normalized.includes('年度经营回顾') && normalized.includes('第二段：😀') && !normalized.includes('?'), 'PDF text extraction lost authored Unicode content.', { extracted, normalized })
     return { extracted }
   })
   return { pdftotext: true }
@@ -1400,7 +1403,7 @@ register('delivery', 'file-url-edit-save-reopen-present', 'The primary editable 
         fullscreenLabel: window.document.querySelector('button[data-ppte-action="fullscreen"]')?.textContent,
       }))
       ctx.expectGate(controls.editable > 0 && controls.primaryLabel === '保存可编辑副本 (.ppte.html)' && controls.fullscreenLabel === '开始演示（全屏）', 'Delivered HTML did not expose the visible editable/presentation surface.', controls)
-      const title = page.locator('[data-ppte-element-id^="bb_delivery_title_"]').first()
+    const title = page.locator('[data-ppte-element-id^="bb_delivery_title_"]').first()
       await title.fill('季度复盘')
       await title.blur()
       await page.waitForFunction(() => (globalThis).PPTEPortable.getDocument().slides.bb_delivery_slide_01.elements.bb_delivery_title_01.content.paragraphs[0].runs[0].text === '季度复盘')
@@ -1592,7 +1595,7 @@ register('review-patch', '31', 'Release evidence is independently verifiable.', 
   return { script }
 })
 
-register('section-41', '§41-A', 'Scenario A: AI new presentation starts in a real Host.', 'New user provides local source material, objective, and audience, then requests a ten-slide generated presentation.', 'Host exposes upload/goal/generate controls and renders ten semantic slides in Chromium', async (ctx) => {
+register('section-41', '§41-A', 'Scenario A: AI new presentation starts in a real Host.', 'The existing Agent turns a source brief into Presentation IR; Host compiles that design into ten distinct editable slides retaining source facts.', 'Host imports genuine Agent-authored IR and renders ten distinct semantic slides retaining source facts in Chromium', async (ctx) => {
   return runHostJourney(ctx)
 })
 

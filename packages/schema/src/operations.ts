@@ -471,6 +471,8 @@ export interface FactUpsertOperation extends OperationBase<'fact.upsert'> {
   fact: Fact
 }
 export interface FactDeleteOperation extends OperationBase<'fact.delete'> {
+  /** Inverse-only restoration of an originally absent optional collection. */
+  removeEmptyCollection?: boolean
   factId: FactId
 }
 export interface FactSyncReferencesOperation extends OperationBase<'fact.syncReferences'> {
@@ -484,6 +486,8 @@ export interface SourceUpsertOperation extends OperationBase<'source.upsert'> {
   source: Source
 }
 export interface SourceDeleteOperation extends OperationBase<'source.delete'> {
+  /** Inverse-only restoration of an originally absent optional collection. */
+  removeEmptyCollection?: boolean
   sourceId: SourceId
 }
 export interface LayoutAlignOperation extends OperationBase<'layout.align'> {

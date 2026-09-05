@@ -2,7 +2,7 @@ import { canonicalHash, canonicalRevision, cloneJson } from '../../canonical-jso
 import { assertDocumentCompatibility, inferCompatibilityProfile } from '../../compatibility/src/index.js'
 import { validateDocument } from '../../schema/src/index.js'
 import type { Asset, CompareResult, Element, Fact, FontAsset, Operation, PpteDocument, PptePatch, ReviewCapabilityGap, ReviewField, ReviewSelection, SemanticMatchMethod, SemanticReviewUnit, Source, Transaction, ValidationIssue } from '../../schema/src/index.js'
-import { computePatchHeadRevisionProof, encodePatch } from '../../patch-format/src/index.js'
+import { computePatchHeadRevisionProof, encodePatch } from '../../patch-format/src/codec.js'
 
 export interface PatchBuildOptions {
   assetBytes?: Record<string, Uint8Array>

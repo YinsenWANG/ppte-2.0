@@ -1,21 +1,18 @@
-import { dirname, join, resolve } from 'node:path'
+#!/usr/bin/env node
+import { realpathSync } from 'node:fs'
+import { openFileSession, withProjectLock } from '../../packages/node-runtime/src/index.js'
 import { fileURLToPath } from 'node:url'
 
 import { canonicalRevision } from '../../packages/canonical-json/src/index.js'
-import { PpteSession, type CheckpointAdapter } from '../../packages/core/src/index.js'
+import { PpteSession } from '../../packages/core/src/index.js'
 import {
   AGENT_TOOL_DEFINITIONS,
   AgentToolServer,
   type AgentToolName,
   type AgentToolResult,
 } from '../../packages/agent-tools/src/index.js'
-import {
-  openCheckpoint,
-  writeCheckpoint,
-  type CheckpointResult,
-} from '../../packages/file-format/src/index.js'
-import { RecoveryJournal, readJournal } from '../../packages/recovery-journal/src/index.js'
-import type { PpteDocument, RecoveryJournalHeader, Transaction, TransactionScope } from '../../packages/schema/src/index.js'
+import { openCheckpoint } from '../../packages/file-format/src/index.js'
+import type { TransactionScope } from '../../packages/schema/src/index.js'
 
 import {
   errorResponse,
@@ -27,7 +24,7 @@ import {
   type JsonRpcResponse,
 } from './protocol.js'
 import { MCP_TOOL_INPUT_SCHEMAS, type JsonSchema } from './tool-schemas.js'
-import { deliverPresentation, readCheckpointResources, type DeliveryResult } from './delivery.js'
+import { deliverPresentation, type DeliveryResult } from './delivery.js'
 import { isEditableDeliveryProfile } from '../../packages/portable-runtime/src/index.js'
 
 const SERVER_VERSION = '0.6.0'
@@ -79,6 +76,16 @@ export class PpteMcpRuntime implements JsonRpcHandler {
   }
 
   callTool(name: string, args: Record<string, unknown> = {}): McpToolResult {
+    const mutates = this.mutatingTools.has(name as AgentToolName) || name === DELIVERY_TOOL_NAME
+    if (!mutates) return this.callToolUnlocked(name,args)
+    return withProjectLock(this.checkpointPath,()=>{
+      const disk=openCheckpoint(this.checkpointPath,{recovery:'ignore'})
+      if(canonicalRevision(disk.document)!==this.session.getRevision()) throw new McpProtocolError(-32602,'REVISION_CONFLICT: another client changed this file. Reopen the MCP session before editing.')
+      return this.callToolUnlocked(name,args)
+    })
+  }
+
+  private callToolUnlocked(name:string,args:Record<string,unknown>):McpToolResult {
     if (name === DELIVERY_TOOL_NAME) {
       if (this.readonlyMode) throw new McpProtocolError(-32602, `Unknown or unavailable tool: ${name}`)
       return deliverPresentation(this.session, this.checkpointPath, parseDeliveryRequest(args))
@@ -135,28 +142,8 @@ export class PpteMcpRuntime implements JsonRpcHandler {
 }
 
 export function createMcpRuntime(checkpointPath: string, options: McpRuntimeOptions = {}): PpteMcpRuntime {
-  const absolutePath = resolve(checkpointPath)
-  const opened = openCheckpoint(absolutePath, { recovery: 'recover', discoverAllJournals: true })
-  if (opened.recovery?.status === 'ambiguous' || opened.recovery?.status === 'rejected') {
-    const message = opened.recovery.issues.map((issue) => `${issue.code}: ${issue.message}`).join('\n') || 'Checkpoint recovery was rejected.'
-    throw new Error(message)
-  }
-
-  if (options.readonly) {
-    const session = new PpteSession(opened.document)
-    return new PpteMcpRuntime(session, new AgentToolServer(session, { grantedScope: options.grantedScope }), absolutePath, true)
-  }
-
-  const journalPath = opened.recovery?.journalPath ?? join(dirname(absolutePath), 'recovery.journal')
-  const journalState = readJournal(journalPath)
-  const header = journalState.header ?? newJournalHeader(opened.document, opened.manifest.compatibilityProfile)
-  const journal = new RecoveryJournal(journalPath, header)
-  const checkpoint: CheckpointAdapter<string, undefined> = {
-    write: (document, target, _options, recentTransactions) => checkpointDocument(document, target, opened.manifest.compatibilityProfile, recentTransactions),
-    clearRecovery: () => journal.clear(),
-  }
-  const session = new PpteSession(opened.document, { journal, checkpoint })
-  return new PpteMcpRuntime(session, new AgentToolServer(session, { grantedScope: options.grantedScope }), absolutePath, false)
+  const workspace=openFileSession(checkpointPath,{readonly:options.readonly,scope:options.grantedScope})
+  return new PpteMcpRuntime(workspace.session,workspace.agent,workspace.path,options.readonly??false)
 }
 
 export function parseMcpCliArgs(argv: string[]): McpCliOptions {
@@ -187,23 +174,6 @@ export async function runMcpCli(argv = process.argv.slice(2)): Promise<void> {
   await serveStdio(runtime)
 }
 
-function checkpointDocument(
-  document: PpteDocument,
-  target: string,
-  compatibilityProfile: string,
-  recentTransactions?: ReadonlyArray<Transaction>,
-): CheckpointResult {
-  const payload = readCheckpointResources(target, document)
-  return writeCheckpoint(document, target, {
-    clean: false,
-    timestamp: new Date().toISOString(),
-    compatibilityProfile,
-    recentTransactions: recentTransactions?.length ? [...recentTransactions] : [],
-    assetBytes: payload.assetBytes,
-    fontBytes: payload.fontBytes,
-  })
-}
-
 function parseDeliveryRequest(args: Record<string, unknown>): { profile?: 'quick-fix' | 'light-edit' | 'full-portable'; replaceExisting?: boolean; allowLargePortable?: boolean; confirmed?: boolean } {
   const allowed = new Set(['profile', 'replaceExisting', 'allowLargePortable', 'confirmed'])
   const unknown = Object.keys(args).find((key) => !allowed.has(key))
@@ -217,17 +187,6 @@ function parseDeliveryRequest(args: Record<string, unknown>): { profile?: 'quick
     ...(args.replaceExisting === undefined ? {} : { replaceExisting: args.replaceExisting as boolean }),
     ...(args.allowLargePortable === undefined ? {} : { allowLargePortable: args.allowLargePortable as boolean }),
     ...(args.confirmed === undefined ? {} : { confirmed: args.confirmed as boolean }),
-  }
-}
-
-function newJournalHeader(document: PpteDocument, compatibilityProfile: string): RecoveryJournalHeader {
-  return {
-    journalVersion: '1',
-    documentId: document.documentId,
-    baseCheckpointRevision: canonicalRevision(document),
-    sessionId: `mcp-${process.pid}-${Date.now()}`,
-    createdAt: new Date().toISOString(),
-    compatibilityProfile,
   }
 }
 
@@ -247,7 +206,7 @@ function isRecord(value: unknown): value is Record<string, any> {
 }
 
 const entryPath = process.argv[1]
-if (entryPath && resolve(entryPath) === fileURLToPath(import.meta.url)) {
+if (entryPath && realpathSync(entryPath) === fileURLToPath(import.meta.url)) {
   runMcpCli().catch((cause) => {
     process.stderr.write(`ppte-mcp: ${cause instanceof Error ? cause.message : String(cause)}\n`)
     process.exitCode = 1

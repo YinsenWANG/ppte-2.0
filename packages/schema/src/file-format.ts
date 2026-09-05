@@ -48,6 +48,7 @@ export interface SessionHistoryEntrySnapshot {
 }
 
 export interface SessionRestoreContext {
+  redoHistoryEntries?: SessionHistoryEntrySnapshot[]
   historyEntries: SessionHistoryEntrySnapshot[]
   runtimeProfile?: RuntimeProfile
   compatibilityProfile?: string

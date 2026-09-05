@@ -1,14 +1,22 @@
+import { Inspector } from './Inspector.js'
+import { buildPortable, buildPortableCheckpointBytes, configurePortableScript } from '../../portable-runtime/src/shared.js'
+import { portableBrowserScript } from '../../portable-runtime/src/browser-bundle.js'
+import { authoringProject } from '../../authoring/src/index.js'
+import { AgentToolServer } from '../../agent-tools/src/index.js'
+configurePortableScript(portableBrowserScript)
+import { createEmptyDocument } from '../../authoring/src/default-document.js'
+export { createEmptyDocument } from '../../authoring/src/default-document.js'
+import { buildAuthoringTransaction, type AuthoringInput } from '../../authoring/src/index.js'
+import { PpteSession } from '../../core/src/index.js'
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type CompositionEvent, type FocusEvent, type FormEvent, type KeyboardEvent, type PointerEvent as ReactPointerEvent, type ReactElement } from 'react'
 import { canonicalJsonString, canonicalRevision, sha256HexBytes } from '../../canonical-json/src/index.js'
-import { readStoredZip, writeStoredZip, type StoredZipEntry } from '../../archive/src/index.js'
-import { applyTransaction, buildDuplicateSlideOperation } from '../../operations/src/index.js'
+import { readStoredZip } from '../../archive/src/index.js'
+import { buildDuplicateSlideOperation } from '../../operations/src/index.js'
 import { plainTextToRichText, ImeTextEditSession } from '../../richtext-adapter/src/index.js'
-import { validateRuntimeDocument, validateTransactionShape } from '../../validation/src/index.js'
+import { validateRuntimeDocument } from '../../validation/src/index.js'
 import { advancePresenterState, retreatPresenterState, type PresenterAnimationState } from '../../portable-runtime/src/presenter-state.js'
 import { renderSlideHtml, type RenderOptions } from '../../renderer-react/src/index.js'
-import { PPTE_COMPATIBILITY_PROFILE, PPTE_GA_B_COMPATIBILITY_PROFILE, PPTE_GA_C_COMPATIBILITY_PROFILE } from '../../schema/src/index.js'
-import { readPersistedHistoryMetadata, withPersistedHistoryMetadata } from '../../schema/src/file-format.js'
-import type { Asset, ImageElement, Operation, PpteDocument, PpteManifest, TextElement, ThemeDefinition, Transaction, ValidationIssue } from '../../schema/src/index.js'
+import type { Asset, ImageElement, Operation, PpteDocument, PpteManifest, TextElement, Transaction, ValidationIssue } from '../../schema/src/index.js'
 import { beginDrag, buildSelectionOverlay, endDrag, type DragTransient, updateDrag, type SelectionState } from './interaction.js'
 
 export interface HostAppProps {
@@ -24,162 +32,11 @@ interface BrowserProject {
   recentTransactions: Transaction[]
 }
 
-interface BrowserHistoryEntry {
-  transaction: Transaction
-  inverse: Transaction
-  beforeRevision: string
-  afterRevision: string
-}
-
-interface BrowserCommitResult {
-  ok: boolean
-  beforeRevision: string
-  afterRevision?: string
-  issues: ValidationIssue[]
-}
-
-/** Browser-safe Session subset. Core's Node-only Patch adapter is deliberately
- * not bundled into the Host; this keeps the Host offline while retaining the
- * same typed Operation, inverse, revision, and persisted-history boundary. */
-class BrowserSession {
-  private document: PpteDocument
-  private revision: string
-  private history: BrowserHistoryEntry[] = []
-  private redoHistory: BrowserHistoryEntry[] = []
-
-  constructor(document: PpteDocument, recentTransactions: ReadonlyArray<Transaction> = []) {
-    const documentIssues = validateRuntimeDocument(document, { runtimeProfile: 'ga-c' }).filter((issue) => issue.severity === 'error')
-    if (documentIssues.length) throw new Error(documentIssues.map((issue) => `${issue.code}: ${issue.message}`).join('\n'))
-    this.document = structuredClone(document)
-    this.revision = canonicalRevision(this.document)
-    for (const transaction of recentTransactions) {
-      const transactionIssues = validateTransactionShape(transaction).filter((issue) => issue.severity === 'error')
-      if (transactionIssues.length) throw new Error(transactionIssues.map((issue) => `${issue.code}: ${issue.message}`).join('\n'))
-      const metadata = readPersistedHistoryMetadata(transaction)
-      if (!metadata) throw new Error(`HISTORY_RESTORE_FAILED: transaction ${transaction.transactionId} has no persisted inverse.`)
-      this.history.push({ transaction: structuredClone(transaction), inverse: structuredClone(metadata.inverse), beforeRevision: metadata.beforeRevision, afterRevision: metadata.afterRevision })
-    }
-    const tail = this.history.at(-1)
-    if (tail && tail.afterRevision !== this.revision) throw new Error('HISTORY_RESTORE_FAILED: recent history does not terminate at the opened document revision.')
-  }
-
-  getDocument(): PpteDocument { return structuredClone(this.document) }
-  getRevision(): string { return this.revision }
-  getHistory(): ReadonlyArray<BrowserHistoryEntry> { return structuredClone(this.history) }
-  getRedoHistory(): ReadonlyArray<BrowserHistoryEntry> { return structuredClone(this.redoHistory) }
-
-  commit(transaction: Transaction): BrowserCommitResult {
-    const beforeRevision = this.revision
-    if (transaction.baseRevision !== beforeRevision) return { ok: false, beforeRevision, issues: [{ code: 'REVISION_CONFLICT', severity: 'error', message: 'Transaction base revision does not match the current document.' }] }
-    try {
-      const transactionIssues = validateTransactionShape(transaction).filter((issue) => issue.severity === 'error')
-      if (transactionIssues.length) return { ok: false, beforeRevision, issues: transactionIssues }
-      const applied = applyTransaction(this.document, transaction, { runtimeProfile: 'ga-c', strictFactSync: true })
-      const afterRevision = canonicalRevision(applied.document)
-      const documentIssues = validateRuntimeDocument(applied.document, { runtimeProfile: 'ga-c' }).filter((issue) => issue.severity === 'error')
-      if (documentIssues.length) return { ok: false, beforeRevision, issues: documentIssues }
-      const inverse: Transaction = {
-        transactionId: `${transaction.transactionId}:inverse`,
-        baseRevision: afterRevision,
-        actor: { type: 'system', id: 'undo' },
-        scope: { kind: 'document', permissions: ['content', 'geometry', 'structure', 'assets', 'notes', 'animation'], allowInsert: true, allowDelete: true },
-        changeContract: { allowedOperationKinds: [...new Set(applied.inverseOperations.map((operation) => operation.kind))], maxChangedSlides: Number.MAX_SAFE_INTEGER, maxChangedElements: Number.MAX_SAFE_INTEGER, maxInsertedElements: Number.MAX_SAFE_INTEGER, maxDeletedElements: Number.MAX_SAFE_INTEGER, maxReplacedAssets: Number.MAX_SAFE_INTEGER, maxChangedFacts: Number.MAX_SAFE_INTEGER, maxChangedSources: Number.MAX_SAFE_INTEGER, maxChangedThemeTokens: Number.MAX_SAFE_INTEGER, maxChangedStylePresets: Number.MAX_SAFE_INTEGER },
-        reason: `Inverse of ${transaction.transactionId}`,
-        createdAt: now(),
-        operations: applied.inverseOperations,
-      }
-      const durableTransaction = withPersistedHistoryMetadata(transaction, { beforeRevision, afterRevision, inverse, runtimeProfile: 'ga-c' })
-      this.document = applied.document
-      this.revision = afterRevision
-      this.history.push({ transaction: durableTransaction, inverse, beforeRevision, afterRevision })
-      this.redoHistory = []
-      return { ok: true, beforeRevision, afterRevision, issues: [] }
-    } catch (cause) {
-      return { ok: false, beforeRevision, issues: [{ code: 'OPERATION_APPLY_FAILED', severity: 'error', message: cause instanceof Error ? cause.message : String(cause) }] }
-    }
-  }
-
-  undo(): BrowserCommitResult {
-    const entry = this.history.at(-1)
-    if (!entry) return { ok: false, beforeRevision: this.revision, issues: [{ code: 'UNDO_EMPTY', severity: 'error', message: 'There is no committed transaction to undo.' }] }
-    const result = this.applyHistoryTransaction(entry.inverse, 'undone')
-    if (result.ok) {
-      this.history.pop()
-      this.redoHistory.push(entry)
-    }
-    return result
-  }
-
-  redo(): BrowserCommitResult {
-    const entry = this.redoHistory.at(-1)
-    if (!entry) return { ok: false, beforeRevision: this.revision, issues: [{ code: 'REDO_EMPTY', severity: 'error', message: 'There is no transaction to redo.' }] }
-    const transaction = { ...structuredClone(entry.transaction), baseRevision: this.revision }
-    const result = this.applyHistoryTransaction(transaction, 'redone')
-    if (result.ok) {
-      this.redoHistory.pop()
-      this.history.push({ ...entry, transaction: withPersistedHistoryMetadata(transaction, { beforeRevision: result.beforeRevision, afterRevision: result.afterRevision!, inverse: entry.inverse, runtimeProfile: 'ga-c' }), beforeRevision: result.beforeRevision, afterRevision: result.afterRevision! })
-    }
-    return result
-  }
-
-  private applyHistoryTransaction(transaction: Transaction, _event: 'undone' | 'redone'): BrowserCommitResult {
-    const beforeRevision = this.revision
-    try {
-      const applied = applyTransaction(this.document, { ...transaction, baseRevision: beforeRevision }, { runtimeProfile: 'ga-c', strictFactSync: true })
-      this.document = applied.document
-      this.revision = canonicalRevision(this.document)
-      return { ok: true, beforeRevision, afterRevision: this.revision, issues: [] }
-    } catch (cause) {
-      return { ok: false, beforeRevision, issues: [{ code: 'OPERATION_APPLY_FAILED', severity: 'error', message: cause instanceof Error ? cause.message : String(cause) }] }
-    }
-  }
-}
-
 const now = () => new Date().toISOString()
 
-/** The smallest valid semantic document used by the New action. */
-export function createEmptyDocument(presentationTitle = 'Untitled presentation'): PpteDocument {
-  const theme: ThemeDefinition = {
-    id: 'host-theme',
-    name: 'PPTe Host Theme',
-    tokens: {
-      colors: { 'color.background': '#F8FAFC', 'color.text.primary': '#172033', 'color.text.muted': '#475569', 'color.surface': '#FFFFFF', 'color.accent': '#2563EB' },
-      fontFamilies: { 'font.heading': 'Inter', 'font.body': 'Inter' },
-      fontSizes: { 'fontSize.title': 64, 'fontSize.body': 28 },
-      spacing: {},
-      radii: {},
-      shadows: {},
-    },
-    presets: {
-      text: {
-        'text.title': { fontFamily: { kind: 'token', token: 'font.heading' }, fontSize: 64, fontWeight: 700, color: { kind: 'token', token: 'color.text.primary' }, lineHeight: 1.15 },
-        'text.body': { fontFamily: { kind: 'token', token: 'font.body' }, fontSize: 28, fontWeight: 400, color: { kind: 'token', token: 'color.text.muted' }, lineHeight: 1.35 },
-      },
-      shape: { 'shape.surface': { fill: { kind: 'solid', color: { kind: 'token', token: 'color.surface' } }, stroke: { color: { kind: 'token', token: 'color.accent' }, width: 2, opacity: 0.4 }, radius: 24 } },
-      image: { 'image.hero': { border: { color: { kind: 'token', token: 'color.accent' }, width: 2, opacity: 0.6 }, radius: 16 } },
-      chart: { 'chart.default': { palette: [{ kind: 'value', value: '#2563EB' }, { kind: 'value', value: '#14B8A6' }], axisColor: { kind: 'value', value: '#64748B' }, labelColor: { kind: 'value', value: '#334155' }, gridColor: { kind: 'value', value: '#CBD5E1' }, lineWidth: 2, cornerRadius: 3 } },
-    },
-  }
-  const titleElement: TextElement = { id: 'text_title', type: 'text', semanticKey: 'title.main', role: 'title', frame: { x: 160, y: 120, width: 1500, height: 130 }, content: plainTextToRichText(presentationTitle, 'host-title'), style: { styleRef: 'text.title' }, overflowPolicy: 'warn' }
-  const body: TextElement = { id: 'text_body', type: 'text', semanticKey: 'body.summary', role: 'body', frame: { x: 160, y: 330, width: 1260, height: 260 }, content: plainTextToRichText('双击文字开始编辑。所有编辑都会回写为 PPTe 语义操作。', 'host-body'), style: { styleRef: 'text.body' }, overflowPolicy: 'warn' }
-  const slideId = 'slide_1'
-  return {
-    schemaVersion: '2.0.0',
-    documentId: 'host_document',
-    locale: 'zh-CN',
-    metadata: { title: presentationTitle, source: 'native', createdAt: now() },
-    canvas: { width: 1920, height: 1080, unit: 'du', aspectRatio: '16:9', defaultBackground: { kind: 'solid', color: { kind: 'value', value: '#F8FAFC' } } },
-    theme,
-    slideOrder: [slideId],
-    slides: { [slideId]: { id: slideId, name: 'Slide 1', rootOrder: [titleElement.id, body.id], readingOrder: [titleElement.id, body.id], elements: { [titleElement.id]: titleElement, [body.id]: body }, groups: {} } },
-    assets: {},
-    fonts: {},
-  }
-}
-
 export function HostApp({ initialDocument = createEmptyDocument(), initialAssetBytes = {}, initialFontBytes = {} }: HostAppProps): ReactElement {
-  const sessionRef = useRef<BrowserSession | undefined>(undefined)
-  if (!sessionRef.current) sessionRef.current = new BrowserSession(initialDocument)
+  const sessionRef = useRef<PpteSession | undefined>(undefined)
+  if (!sessionRef.current) sessionRef.current = new PpteSession(initialDocument)
   const [documentNode, setDocumentNode] = useState<PpteDocument>(() => structuredClone(initialDocument))
   const [assetBytes, setAssetBytes] = useState<Record<string, Uint8Array>>(() => cloneBytes(initialAssetBytes))
   const [fontBytes, setFontBytes] = useState<Record<string, Uint8Array>>(() => cloneBytes(initialFontBytes))
@@ -192,9 +49,9 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
   const [presenterState, setPresenterState] = useState<PresenterAnimationState>({ slideIndex: 0, step: 0 })
   const [historyDepth, setHistoryDepth] = useState(() => sessionRef.current?.getHistory().length ?? 0)
   const [redoDepth, setRedoDepth] = useState(() => sessionRef.current?.getRedoHistory().length ?? 0)
+  const [agentInput, setAgentInput] = useState<AuthoringInput | undefined>()
   const [agentSourceName, setAgentSourceName] = useState('')
-  const [agentObjective, setAgentObjective] = useState('')
-  const [agentAudience, setAgentAudience] = useState('')
+  const [pendingEdit, setPendingEdit] = useState<{transaction:Transaction; summary:string}>()
   const [assetSources, setAssetSources] = useState<Record<string, string>>({})
   const dragRef = useRef<DragTransient | undefined>(undefined)
   const editSessions = useRef(new Map<string, ImeTextEditSession>())
@@ -353,19 +210,19 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
 
   function onPointerDown(event: ReactPointerEvent<HTMLDivElement>): void {
     if (presenting) return
-    const target = event.target instanceof HTMLElement ? event.target.closest<HTMLElement>('[data-ppte-element-id]') : null
+    const target = event.target instanceof window.Element ? event.target.closest<HTMLElement>('[data-ppte-element-id]') : null
     const elementId = target?.dataset.ppteElementId
     if (!elementId || !activeSlide?.elements[elementId]) {
       if (!event.shiftKey && !event.metaKey && !event.ctrlKey) setSelection({ slideId: activeSlideId, elementIds: [] })
       return
     }
-    const multi = event.metaKey || event.ctrlKey
+    const multi = event.metaKey || event.ctrlKey || event.shiftKey
     const nextIds = multi
       ? activeElementIds.includes(elementId) ? activeElementIds.filter((id) => id !== elementId) : [...activeElementIds, elementId]
       : [elementId]
     setSelection({ slideId: activeSlideId, elementIds: nextIds, primaryElementId: elementId })
     const element = activeSlide.elements[elementId]
-    if (element.type === 'image' && element.locked !== true) {
+    if (!multi && element.type !== 'text' && element.locked !== true) {
       // The image wrapper is the semantic drag target. Prevent the browser's
       // native image-selection/drag gesture so pointer capture remains owned
       // by the Host until pointer-up commits the transient frame.
@@ -417,7 +274,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
 
   function newDocument(): void {
     const fresh = createEmptyDocument()
-    sessionRef.current = new BrowserSession(fresh)
+    sessionRef.current = new PpteSession(fresh)
     setDocumentNode(fresh)
     setAssetBytes({})
     setFontBytes({})
@@ -426,42 +283,44 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     setPresenterState({ slideIndex: 0, step: 0 })
     setHistoryDepth(0)
     setRedoDepth(0)
+    setAgentInput(undefined)
     setAgentSourceName('')
-    setAgentObjective('')
-    setAgentAudience('')
     setStatus('已创建新的本地语义文档')
   }
 
-  function onAgentSource(event: ChangeEvent<HTMLInputElement>): void {
+  async function onAgentSource(event: ChangeEvent<HTMLInputElement>): Promise<void> {
     const file = event.target.files?.[0]
-    setAgentSourceName(file?.name ?? '')
-    if (file) setStatus(`已载入 Agent 素材 · ${file.name}`)
     event.target.value = ''
+    setAgentInput(undefined)
+    if (!file) return
+    try {
+      const input = JSON.parse(await file.text()) as AuthoringInput
+      setAgentInput(input)
+      setAgentSourceName(file.name)
+      setStatus(`已读取 Agent 设计 · ${file.name} · 导入前将校验全部页面`)
+    } catch { setStatus('请选择由 PPTe Skill 生成的 Presentation IR JSON；原始资料请交给宿主 Agent 读取。') }
   }
 
   function generateAgentDeck(): void {
-    if (!agentSourceName || !agentObjective.trim() || !agentAudience.trim()) {
-      setStatus('生成失败 · 请先提供素材、目标和受众')
-      return
-    }
     const session = sessionRef.current
-    if (!session) return
-    const sourceSlideId = session.getDocument().slideOrder[0]
-    if (!sourceSlideId) return
-    const operations: Operation[] = [
-      { opId: nextOperationId('agent-metadata'), kind: 'document.updateMetadata', patch: { title: `${agentObjective.trim()} · PPTe 演示`, source: 'generated', subject: agentAudience.trim() } },
-    ]
-    for (let index = 1; index < 10; index += 1) {
-      const slideId = `agent_slide_${index + 1}`
-      operations.push(buildDuplicateSlideOperation(session.getDocument(), sourceSlideId, slideId, { opId: nextOperationId('agent-page'), index }))
-      operations.push({ opId: nextOperationId('agent-page-name'), kind: 'slide.update', slideId, patch: { name: `Agent · ${index + 1} · ${agentAudience.trim()}` } })
-    }
-    const transaction = buildHostTransaction(session.getRevision(), operations, `Agent generated ten slides from ${agentSourceName}`, { type: 'agent', id: 'host-agent' })
-    if (commitTransaction(transaction, 'Agent 已生成 10 页演示')) {
-      setActiveSlideIndex(0)
-      setSelection({ slideId: sourceSlideId, elementIds: [] })
-      setPresenterState({ slideIndex: 0, step: 0 })
-    }
+    if (!session || !agentInput) return
+    try {
+      const transaction = buildAuthoringTransaction(session.getDocument(), agentInput)
+      const project = authoringProject(agentInput)
+      const decode = (value:string) => Uint8Array.from(atob(value),c=>c.charCodeAt(0))
+      const nextAssets = {...assetBytes,...Object.fromEntries(Object.entries(project.assetBytes??{}).map(([id,value])=>[id,decode(value)]))}
+      const nextFonts = {...fontBytes,...Object.fromEntries(Object.entries(project.fontBytes??{}).map(([id,value])=>[id,decode(value)]))}
+      const preview = session.preview(transaction)
+      if (!preview.ok || !preview.document) throw new Error(preview.issues.map(i=>i.message).join('; '))
+      buildPortableCheckpointBytes(preview.document,{runtimeProfile:'ga-c',assetBytes:nextAssets,fontBytes:nextFonts})
+      if (commitTransaction(transaction, '已编译并导入 Agent 设计')) {
+        setAssetBytes(nextAssets)
+        setFontBytes(nextFonts)
+        setActiveSlideIndex(0)
+        setSelection({ slideId: session.getDocument().slideOrder[0], elementIds: [] })
+        setPresenterState({ slideIndex: 0, step: 0 })
+      }
+    } catch (cause) { setStatus(`设计未导入 · ${cause instanceof Error ? cause.message : String(cause)}`) }
   }
 
   function addPage(): void {
@@ -501,7 +360,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     if (!file) return
     try {
       const project = await readBrowserProject(file)
-      sessionRef.current = new BrowserSession(project.document, project.recentTransactions)
+      sessionRef.current = new PpteSession(project.document, { recentTransactions: project.recentTransactions })
       setDocumentNode(project.document)
       setAssetBytes(project.assetBytes)
       setFontBytes(project.fontBytes)
@@ -510,9 +369,8 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
       setPresenterState({ slideIndex: 0, step: 0 })
       setHistoryDepth(sessionRef.current.getHistory().length)
       setRedoDepth(sessionRef.current.getRedoHistory().length)
-      setAgentSourceName('')
-      setAgentObjective('')
-      setAgentAudience('')
+      setAgentInput(undefined)
+    setAgentSourceName('')
       setStatus(`已打开 ${file.name}`)
     } catch (cause) {
       setStatus(`打开失败 · ${cause instanceof Error ? cause.message : String(cause)}`)
@@ -551,8 +409,9 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
 
   async function saveCopy(): Promise<void> {
     try {
+      flushHostEdits()
       const recentTransactions = sessionRef.current?.getHistory().map((entry) => entry.transaction) ?? []
-      const bytes = await buildBrowserCheckpoint(documentNode, assetBytes, fontBytes, recentTransactions)
+      const bytes = await buildBrowserCheckpoint(sessionRef.current!.getDocument(), assetBytes, fontBytes, recentTransactions)
       const filename = `${safeFilename(documentNode.metadata.title || 'presentation')}.ppte`
       const picker = (window as unknown as { showSaveFilePicker?: (options: unknown) => Promise<{ createWritable: () => Promise<{ write: (data: Uint8Array) => Promise<void>; close: () => Promise<void> }> }> }).showSaveFilePicker
       if (picker && window.isSecureContext && !navigator.webdriver) {
@@ -579,6 +438,35 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     }
   }
 
+  function flushHostEdits():void {
+    for (const session of editSessions.current.values()) if(session.isComposing()) throw new Error('请先完成当前输入法组合，再保存。')
+    for (const [id,editor] of editSessions.current) {
+      const tx=editor.finish(nextOperationId('save-text'),sessionRef.current!.getRevision(),now())
+      if(tx&&!commitTransaction(tx))throw new Error('文字保存未通过校验。')
+      editSessions.current.delete(id)
+    }
+  }
+  function saveEditable():void {
+    try {
+      flushHostEdits()
+      const session=sessionRef.current!
+      const result=buildPortable(session.getDocument(),{profile:'full-portable',assetBytes,fontBytes,recentTransactions:session.getHistory().map(h=>h.transaction)})
+      if(!result.ok)throw new Error(result.issues.map(i=>i.message).join('; '))
+      const url=URL.createObjectURL(new Blob([result.html],{type:'text/html'}));const a=document.createElement('a');a.href=url;a.download=`${safeFilename(session.getDocument().metadata.title)}.editable.ppte.html`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)
+      setStatus('已保存可直接打开、编辑的 HTML 副本')
+    } catch(error) {setStatus(`保存失败 · ${String(error)}`)}
+  }
+  async function previewAgentEdit(event:ChangeEvent<HTMLInputElement>):Promise<void> {
+    const file=event.target.files?.[0];event.target.value='';if(!file)return
+    try {
+      const transaction=JSON.parse(await file.text()) as Transaction
+      const agent=new AgentToolServer(sessionRef.current!,{grantedScope:activeElementIds.length?{kind:'selection',slideIds:[activeSlideId],elementIds:activeElementIds,permissions:['content','geometry','style','assets'],allowInsert:false,allowDelete:false}:undefined})
+      const result=agent.execute('preview_transaction',{transaction})
+      if(!result.ok)throw new Error(result.issues.map(i=>i.message).join('; '))
+      setPendingEdit({transaction,summary:JSON.stringify({changes:result.diff?.changedPaths,warnings:result.issues.map(i=>i.message)},null,2)})
+    }catch(error){setPendingEdit(undefined);setStatus(`修改未通过预览 · ${String(error)}`)}
+  }
+
   function togglePresenter(): void {
     setPresenting((current) => !current)
     setStatus(presenting ? '已退出演示模式' : '演示模式 · 点击 Next 或使用方向键')
@@ -596,15 +484,15 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
       <div className="ppte-brand"><span className="ppte-brand-mark">P</span><span>PPTe Host</span></div>
       <button type="button" data-ppte-action="new" onClick={newDocument}>New</button>
       <label className="ppte-toolbar-label" title="先打开 PPTe Host，再选择 .ppte；系统双击关联尚未提供">打开 PPTe 项目 (.ppte)<input type="file" accept=".ppte,.json,application/json" data-ppte-action="open" onChange={openFile} /></label>
-      <label className="ppte-toolbar-label">Agent source<input type="file" accept=".txt,.md,.pdf,.docx,application/octet-stream" data-ppte-action="agent-source" onChange={onAgentSource} /></label>
-      <input className="ppte-agent-field" aria-label="Agent objective" data-ppte-agent-objective value={agentObjective} onChange={(event) => setAgentObjective(event.target.value)} placeholder="Objective" />
-      <input className="ppte-agent-field" aria-label="Agent audience" data-ppte-agent-audience value={agentAudience} onChange={(event) => setAgentAudience(event.target.value)} placeholder="Audience" />
-      <button type="button" data-ppte-action="generate" onClick={generateAgentDeck} disabled={!agentSourceName || !agentObjective.trim() || !agentAudience.trim()}>Agent generate 10 pages</button>
+      <label className="ppte-toolbar-label">Agent 设计<input type="file" accept=".json,application/json" data-ppte-action="agent-source" onChange={onAgentSource} /></label>
+      <button type="button" data-ppte-action="generate" onClick={generateAgentDeck} disabled={!agentInput}>导入 Agent 设计</button>
       <button type="button" data-ppte-action="add-page" onClick={addPage}>Add page</button>
       <button type="button" data-ppte-action="undo" onClick={undo} disabled={historyDepth === 0}>Undo</button>
       <button type="button" data-ppte-action="redo" onClick={redo} disabled={redoDepth === 0}>Redo</button>
       <label className="ppte-toolbar-label">Add image<input type="file" accept="image/*" data-ppte-action="import-image" onChange={importImage} /></label>
       <button type="button" data-ppte-action="save" onClick={() => void saveCopy()}>保存 PPTe 项目 (.ppte)</button>
+      <button type="button" data-ppte-action="save-editable" onClick={saveEditable}>保存可编辑 HTML</button>
+      <label className="ppte-toolbar-label">预览 Agent 修改<input type="file" accept=".json" onChange={previewAgentEdit}/></label>
       <button type="button" data-ppte-action="present" onClick={togglePresenter}>{presenting ? 'Exit' : 'Present'}</button>
       <span className="ppte-host-file-help" title="PPTe 源项目需要由 PPTe Host 打开；浏览器可编辑副本请使用 Portable 交付">先打开 Host，再选 .ppte</span>
       <span className="ppte-host-status" data-ppte-status>{status}</span>
@@ -626,6 +514,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
         })}
       </div>
     </main>
+    {!presenting&&<aside className="ppte-host-inspector"><Inspector key={`${activeSlideId}:${activeElementIds.join(',')}:${sessionRef.current!.getRevision()}`} document={documentNode} slide={activeSlide} ids={activeElementIds} commit={commitOperations}/>{pendingEdit&&<section><h3>Agent 修改预览</h3><pre>{pendingEdit.summary}</pre><button onClick={()=>{if(commitTransaction(pendingEdit.transaction,'已接受 Agent 修改'))setPendingEdit(undefined)}}>接受修改</button><button onClick={()=>setPendingEdit(undefined)}>取消</button></section>}</aside>}
     <section className="ppte-host-notes" data-ppte-notes-panel>
       <div className="ppte-notes-heading"><span>Speaker notes</span><span className="ppte-notes-hint">Changes save on blur</span></div>
       <textarea id="ppte-speaker-notes" data-ppte-notes-input value={notesDraft} onChange={(event) => setNotesDraft(event.target.value)} onBlur={updateNotes} placeholder="Add notes for this slide…" />
@@ -642,6 +531,12 @@ async function readBrowserProject(file: File): Promise<BrowserProject> {
   if (first !== '{') entries = readStoredZip(bytes)
   const documentNode = entries ? JSON.parse(new TextDecoder().decode(entries.get('document.json') ?? new Uint8Array())) as PpteDocument : JSON.parse(text) as PpteDocument
   if (!documentNode || documentNode.schemaVersion !== '2.0.0' || !documentNode.slides || !Array.isArray(documentNode.slideOrder)) throw new Error('文件不是 PPTe 2.0 semantic document')
+  if (entries) {
+    const raw=entries.get('manifest.json');if(!raw)throw new Error('缺少项目清单')
+    const manifest=JSON.parse(new TextDecoder().decode(raw)) as PpteManifest
+    if(manifest.contentRevision!==canonicalRevision(documentNode)||manifest.documentId!==documentNode.documentId)throw new Error('项目内容与清单不一致')
+    for(const file of manifest.files){const data=entries.get(file.path);if(!data||data.length!==file.byteLength||sha256HexBytes(data)!==file.sha256.replace(/^sha256-/,''))throw new Error(`文件校验失败: ${file.path}`)}
+  }
   const recentTransactions = entries?.get('history/recent.jsonl')
     ? new TextDecoder().decode(entries.get('history/recent.jsonl')).split('\n').map((line) => line.trim()).filter(Boolean).map((line) => JSON.parse(line) as Transaction)
     : []
@@ -656,50 +551,12 @@ async function readBrowserProject(file: File): Promise<BrowserProject> {
     const data = entries?.get(font.path)
     if (data) fontBytes[font.id] = data
   }
+  buildPortableCheckpointBytes(documentNode,{runtimeProfile:'ga-c',assetBytes,fontBytes,recentTransactions})
   return { document: documentNode, assetBytes, fontBytes, recentTransactions }
 }
 
-async function buildBrowserCheckpoint(documentNode: PpteDocument, assetBytes: Record<string, Uint8Array>, fontBytes: Record<string, Uint8Array>, recentTransactions: ReadonlyArray<Transaction> = []): Promise<Uint8Array> {
-  const historyMode = recentTransactions.length ? 'standard' : 'clean'
-  const snapshotRevision = canonicalRevision(documentNode)
-  const entries: StoredZipEntry[] = [
-    { name: 'mimetype', data: utf8('application/vnd.ppte+zip') },
-    { name: 'document.json', data: utf8(canonicalJsonString(documentNode)) },
-    { name: 'assets/index.json', data: utf8(canonicalJsonString(documentNode.assets)) },
-    { name: 'fonts/index.json', data: utf8(canonicalJsonString(documentNode.fonts)) },
-    { name: 'history/descriptor.json', data: utf8(canonicalJsonString({ mode: historyMode, snapshotRevision, recentTransactionCount: recentTransactions.length, deepHistoryExternal: historyMode === 'standard' })) },
-  ]
-  if (recentTransactions.length) entries.push({ name: 'history/recent.jsonl', data: utf8(recentTransactions.map((transaction) => canonicalJsonString(transaction)).join('\n') + '\n') })
-  for (const asset of Object.values(documentNode.assets)) {
-    const data = assetBytes[asset.id]
-    if (!data) throw new Error(`缺少资产字节: ${asset.id}`)
-    entries.push({ name: asset.path, data })
-  }
-  for (const font of Object.values(documentNode.fonts)) {
-    if (font.source !== 'embedded') continue
-    const data = fontBytes[font.id]
-    if (!data || !font.path) throw new Error(`缺少嵌入字体字节: ${font.id}`)
-    entries.push({ name: font.path, data })
-  }
-  const files = entries.filter((entry) => entry.name !== 'mimetype').map((entry) => ({ path: entry.name, mediaType: mediaType(entry.name), byteLength: entry.data.length, sha256: sha256HexBytes(entry.data), required: entry.name === 'document.json' }))
-  const manifest: PpteManifest = {
-    format: 'ppte',
-    formatVersion: '2',
-    schemaVersion: '2.0.0',
-    operationProtocolVersion: '1.0',
-    compatibilityProfile: browserCompatibilityProfile(documentNode),
-    documentId: documentNode.documentId,
-    contentRevision: snapshotRevision,
-    title: documentNode.metadata.title,
-    createdAt: documentNode.metadata.createdAt ?? now(),
-    updatedAt: now(),
-    requiredWidgets: documentNode.widgetRequirements ?? [],
-    clean: historyMode === 'clean',
-    files,
-    history: { mode: historyMode, snapshotRevision, recentTransactionCount: recentTransactions.length, deepHistoryExternal: historyMode === 'standard' },
-  }
-  entries.push({ name: 'manifest.json', data: utf8(canonicalJsonString(manifest)) })
-  return writeStoredZip(entries)
+async function buildBrowserCheckpoint(documentNode:PpteDocument,assetBytes:Record<string,Uint8Array>,fontBytes:Record<string,Uint8Array>,recentTransactions:ReadonlyArray<Transaction>=[]):Promise<Uint8Array> {
+  return buildPortableCheckpointBytes(documentNode,{runtimeProfile:'ga-c',assetBytes,fontBytes,recentTransactions:[...recentTransactions]})
 }
 
 function buildHostTransaction(baseRevision: string, operations: Operation[], reason: string, actor: Transaction['actor']): Transaction {
@@ -710,7 +567,7 @@ function buildHostTransaction(baseRevision: string, operations: Operation[], rea
     actor,
     scope: {
       kind: 'document',
-      permissions: ['content', 'geometry', 'structure', 'assets', 'notes', 'animation'],
+      permissions: ['content', 'geometry', 'style', 'structure', 'assets', 'notes', 'animation'],
       allowInsert: true,
       allowDelete: true,
     },
@@ -737,25 +594,8 @@ function buildHostTransaction(baseRevision: string, operations: Operation[], rea
 
 function cloneBytes(value: Record<string, Uint8Array>): Record<string, Uint8Array> { return Object.fromEntries(Object.entries(value).map(([key, bytes]) => [key, new Uint8Array(bytes)])) }
 function blobBytes(value: Uint8Array): ArrayBuffer { return value.buffer.slice(value.byteOffset, value.byteOffset + value.byteLength) as ArrayBuffer }
-function utf8(value: string): Uint8Array { return new TextEncoder().encode(value) }
-function mediaType(path: string): string { if (path.endsWith('.json')) return 'application/json'; if (path.endsWith('.woff2')) return 'font/woff2'; if (path.endsWith('.png')) return 'image/png'; if (path.endsWith('.jpg') || path.endsWith('.jpeg')) return 'image/jpeg'; if (path.endsWith('.webp')) return 'image/webp'; return 'application/octet-stream' }
 function extensionForMime(mime: string): string { if (mime === 'image/jpeg') return 'jpg'; if (mime === 'image/svg+xml') return 'svg'; if (mime === 'image/webp') return 'webp'; return 'png' }
 function safeFilename(value: string): string { return value.replace(/[^\p{L}\p{N}._-]+/gu, '_').replace(/^\.+|\.+$/g, '') || 'presentation' }
 function renderThumbnailHtml(document: PpteDocument, slideId: string, assetSources: Record<string, string>): string {
   return renderSlideHtml(document, slideId, { editable: false, assetSources }).replace(/\sdata-ppte-[a-z0-9-]+="[^"]*"/gi, '')
-}
-
-function browserCompatibilityProfile(document: PpteDocument): string {
-  if (document.widgetRequirements?.length) return PPTE_GA_C_COMPATIBILITY_PROFILE
-  let profile: string = PPTE_COMPATIBILITY_PROFILE
-  for (const slide of Object.values(document.slides)) {
-    if (slide.visualStrategy === 'poster') return PPTE_GA_C_COMPATIBILITY_PROFILE
-    if (slide.transition !== undefined) profile = PPTE_GA_B_COMPATIBILITY_PROFILE
-    for (const element of Object.values(slide.elements)) {
-      if (element.appearStep !== undefined || element.animation !== undefined) profile = PPTE_GA_B_COMPATIBILITY_PROFILE
-      if (element.type === 'component' || element.type === 'chart' && (element.chartType === 'area' || element.chartType === 'donut')) return PPTE_GA_C_COMPATIBILITY_PROFILE
-      if (element.type === 'chart') profile = PPTE_GA_B_COMPATIBILITY_PROFILE
-    }
-  }
-  return profile
 }

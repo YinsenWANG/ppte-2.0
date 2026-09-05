@@ -1,4 +1,4 @@
-import { canonicalHash } from '../../canonical-json/src/index.js'
+import { canonicalHash, equalJson } from '../../canonical-json/src/index.js'
 import { withErrorSemantics } from '../../schema/src/errors.js'
 import type {
   ChangeContract,
@@ -582,16 +582,16 @@ function checkInvariants(before: PpteDocument, after: PpteDocument, contract: Ch
       if (preserve.content === 'preserve' || preserve.data === 'preserve' || preserve.geometry === 'preserve' || preserve.style === 'preserve' || preserve.asset === 'preserve' || preserve.semanticIdentity === 'preserve' || preserve.semanticIdentity === 'allow-replacement') issues.push(issue('CHANGE_INVARIANT_VIOLATION', `Element ${key} was removed while an invariant is preserved.`, { elementId: key }))
       continue
     }
-    if (preserve.content === 'preserve' && canonicalHash(contentProjection(beforeElement)) !== canonicalHash(contentProjection(afterElement))) issues.push(issue('CHANGE_INVARIANT_VIOLATION', `Content changed for ${key}.`, { elementId: key }))
-    if (preserve.data === 'preserve' && canonicalHash(dataProjection(beforeElement)) !== canonicalHash(dataProjection(afterElement))) issues.push(issue('CHANGE_INVARIANT_VIOLATION', `Data changed for ${key}.`, { elementId: key }))
-    if (preserve.style === 'preserve' && canonicalHash(styleProjection(beforeElement)) !== canonicalHash(styleProjection(afterElement))) issues.push(issue('CHANGE_INVARIANT_VIOLATION', `Style changed for ${key}.`, { elementId: key }))
-    if (preserve.geometry === 'preserve' && canonicalHash(geometryProjection(beforeElement)) !== canonicalHash(geometryProjection(afterElement))) issues.push(issue('CHANGE_INVARIANT_VIOLATION', `Geometry changed for ${key}.`, { elementId: key }))
-    if (preserve.asset === 'preserve' && canonicalHash(assetProjection(beforeElement)) !== canonicalHash(assetProjection(afterElement))) issues.push(issue('CHANGE_INVARIANT_VIOLATION', `Asset changed for ${key}.`, { elementId: key }))
+    if (preserve.content === 'preserve' && !equalJson(contentProjection(beforeElement), contentProjection(afterElement))) issues.push(issue('CHANGE_INVARIANT_VIOLATION', `Content changed for ${key}.`, { elementId: key }))
+    if (preserve.data === 'preserve' && !equalJson(dataProjection(beforeElement), dataProjection(afterElement))) issues.push(issue('CHANGE_INVARIANT_VIOLATION', `Data changed for ${key}.`, { elementId: key }))
+    if (preserve.style === 'preserve' && !equalJson(styleProjection(beforeElement), styleProjection(afterElement))) issues.push(issue('CHANGE_INVARIANT_VIOLATION', `Style changed for ${key}.`, { elementId: key }))
+    if (preserve.geometry === 'preserve' && !equalJson(geometryProjection(beforeElement), geometryProjection(afterElement))) issues.push(issue('CHANGE_INVARIANT_VIOLATION', `Geometry changed for ${key}.`, { elementId: key }))
+    if (preserve.asset === 'preserve' && !equalJson(assetProjection(beforeElement), assetProjection(afterElement))) issues.push(issue('CHANGE_INVARIANT_VIOLATION', `Asset changed for ${key}.`, { elementId: key }))
     if (preserve.semanticIdentity === 'preserve' && (beforeElement.id !== afterElement.id || beforeElement.semanticKey !== afterElement.semanticKey)) issues.push(issue('CHANGE_INVARIANT_VIOLATION', `Semantic identity changed for ${key}.`, { elementId: key }))
     if (preserve.semanticIdentity === 'allow-replacement' && afterElement.id !== beforeElement.id && !isLineageReplacement(beforeElement, afterElement)) issues.push(issue('CHANGE_INVARIANT_VIOLATION', `Replacement for ${key} does not carry explicit lineage.`, { elementId: key }))
   }
-  if (preserve.readingOrder === 'preserve' && canonicalHash(readingOrderProjection(before)) !== canonicalHash(readingOrderProjection(after))) issues.push(issue('CHANGE_INVARIANT_VIOLATION', 'Reading order changed while it is preserved.', { path: '/slides' }))
-  if (preserve.facts === 'preserve' && canonicalHash(before.facts ?? {}) !== canonicalHash(after.facts ?? {})) issues.push(issue('CHANGE_INVARIANT_VIOLATION', 'Facts changed while they are preserved.', { path: '/facts' }))
+  if (preserve.readingOrder === 'preserve' && !equalJson(readingOrderProjection(before), readingOrderProjection(after))) issues.push(issue('CHANGE_INVARIANT_VIOLATION', 'Reading order changed while it is preserved.', { path: '/slides' }))
+  if (preserve.facts === 'preserve' && !equalJson(before.facts ?? {}, after.facts ?? {})) issues.push(issue('CHANGE_INVARIANT_VIOLATION', 'Facts changed while they are preserved.', { path: '/facts' }))
   return issues
 }
 
@@ -609,7 +609,7 @@ function checkProtectedAnchors(before: PpteDocument, after: PpteDocument, contra
       for (const field of anchor.preserve) {
         const beforeValue = fieldProjection(beforeElement, field)
         const afterValue = fieldProjection(afterElement, field)
-        if (canonicalHash(beforeValue) !== canonicalHash(afterValue)) issues.push(issue('PROTECTED_ANCHOR_VIOLATION', `Protected anchor field ${field} changed.`, { slideId, elementId: afterElement.id, semanticKey: afterElement.semanticKey }))
+        if (!equalJson(beforeValue, afterValue)) issues.push(issue('PROTECTED_ANCHOR_VIOLATION', `Protected anchor field ${field} changed.`, { slideId, elementId: afterElement.id, semanticKey: afterElement.semanticKey }))
       }
     }
   }

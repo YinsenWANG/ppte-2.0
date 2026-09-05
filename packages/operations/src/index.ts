@@ -116,7 +116,10 @@ export interface OperationApplyOptions {
 
 /** Apply one typed operation to a cloned snapshot. The input is never mutated. */
 export function applyOperation(document: PpteDocument, operation: Operation, options: OperationApplyOptions = {}): AppliedOperation {
-  const next = cloneJson(document)
+  return applyToDraft(cloneJson(document), operation, options)
+}
+
+function applyToDraft(next: PpteDocument, operation: Operation, options: OperationApplyOptions): AppliedOperation {
   const runtimeProfile = options.runtimeProfile ?? 'ga-b'
   switch (operation.kind) {
     case 'document.updateMetadata': {
@@ -695,29 +698,33 @@ export function applyOperation(document: PpteDocument, operation: Operation, opt
       return { document: next, inverse }
     }
     case 'fact.upsert': {
+      const collectionAbsent = next.facts === undefined
       const before = cloneJson(next.facts?.[operation.fact.id])
       next.facts ??= {}
       next.facts[operation.fact.id] = cloneJson(operation.fact)
-      return { document: next, inverse: before ? [op(operation, 'fact.upsert', { fact: before })] : [op(operation, 'fact.delete', { factId: operation.fact.id })] }
+      return { document: next, inverse: before ? [op(operation, 'fact.upsert', { fact: before })] : [op(operation, 'fact.delete', { factId: operation.fact.id, ...(collectionAbsent ? { removeEmptyCollection: true } : {}) })] }
     }
     case 'fact.delete': {
       const before = next.facts?.[operation.factId]
       if (!before) throw error('FACT_REFERENCE_MISSING', `Fact does not exist: ${operation.factId}.`)
       delete next.facts?.[operation.factId]
+      if (operation.removeEmptyCollection && Object.keys(next.facts ?? {}).length === 0) delete next.facts
       return { document: next, inverse: [op(operation, 'fact.upsert', { fact: cloneJson(before) })] }
     }
     case 'fact.syncReferences':
       return applyFactSyncReferences(next, operation, runtimeProfile, options.strictFactSync === true)
     case 'source.upsert': {
+      const collectionAbsent = next.sources === undefined
       const before = cloneJson(next.sources?.[operation.source.id])
       next.sources ??= {}
       next.sources[operation.source.id] = cloneJson(operation.source)
-      return { document: next, inverse: before ? [op(operation, 'source.upsert', { source: before })] : [op(operation, 'source.delete', { sourceId: operation.source.id })] }
+      return { document: next, inverse: before ? [op(operation, 'source.upsert', { source: before })] : [op(operation, 'source.delete', { sourceId: operation.source.id, ...(collectionAbsent ? { removeEmptyCollection: true } : {}) })] }
     }
     case 'source.delete': {
       const before = next.sources?.[operation.sourceId]
       if (!before) throw error('SOURCE_REFERENCE_MISSING', `Source does not exist: ${operation.sourceId}.`)
       delete next.sources?.[operation.sourceId]
+      if (operation.removeEmptyCollection && Object.keys(next.sources ?? {}).length === 0) delete next.sources
       return { document: next, inverse: [op(operation, 'source.upsert', { source: cloneJson(before) })] }
     }
     case 'layout.align':
@@ -740,7 +747,7 @@ export function applyTransaction(document: PpteDocument, transaction: Transactio
   let current = cloneJson(document)
   const inverseOperations: Operation[] = []
   for (const operation of transaction.operations) {
-    const result = applyOperation(current, operation, options)
+    const result = applyToDraft(current, operation, options)
     current = result.document
     inverseOperations.unshift(...result.inverse)
   }

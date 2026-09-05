@@ -1,10 +1,10 @@
-import { canonicalHash } from '../../canonical-json/src/index.js'
+import { canonicalHash, equalJson } from '../../canonical-json/src/index.js'
 import type { Element, PpteDocument, StructuralDiff, MutationSummary } from '../../schema/src/index.js'
 
 export function computeStructuralDiff(before: PpteDocument, after: PpteDocument): StructuralDiff {
   const addedSlides = after.slideOrder.filter((slideId) => !before.slides[slideId])
   const removedSlides = before.slideOrder.filter((slideId) => !after.slides[slideId])
-  const changedSlides = after.slideOrder.filter((slideId) => before.slides[slideId] && hashPresent(before.slides[slideId]) !== hashPresent(after.slides[slideId]))
+  const changedSlides = after.slideOrder.filter((slideId) => before.slides[slideId] && !equalJson(before.slides[slideId], after.slides[slideId]))
   const addedElements: StructuralDiff['addedElements'] = []
   const removedElements: StructuralDiff['removedElements'] = []
   const changedElementIds = new Set<string>()
@@ -15,7 +15,7 @@ export function computeStructuralDiff(before: PpteDocument, after: PpteDocument)
     const afterElements = after.slides[slideId]?.elements ?? {}
     for (const elementId of Object.keys(afterElements)) {
       if (!beforeElements[elementId]) addedElements.push({ slideId, elementId })
-      else if (hashPresent(beforeElements[elementId]) !== hashPresent(afterElements[elementId])) changedElementIds.add(elementId)
+      else if (!equalJson(beforeElements[elementId], afterElements[elementId])) changedElementIds.add(elementId)
     }
     for (const elementId of Object.keys(beforeElements)) if (!afterElements[elementId]) removedElements.push({ slideId, elementId })
 
@@ -71,7 +71,7 @@ export function elementFieldHash(element: Element, field: 'content' | 'style' | 
 }
 
 function walk(before: unknown, after: unknown, path: string, paths: string[]) {
-  if (hashPresent(before) === hashPresent(after)) return
+  if (before === after) return
   if (isRecord(before) && isRecord(after)) {
     const keys = new Set([...Object.keys(before), ...Object.keys(after)])
     for (const key of [...keys].sort()) walk(before[key], after[key], `${path}/${escapePointer(key)}`, paths)
@@ -106,7 +106,7 @@ function matchingImageReplacement(oldElement: Extract<Element, { type: 'image' }
   return Object.values(afterElements).find((candidate): candidate is Extract<Element, { type: 'image' }> => candidate.type === 'image' && (candidate.provenance?.replacesElementId === oldElement.id || candidate.semanticKey === oldElement.semanticKey && candidate.provenance?.sourceSemanticKey === oldElement.semanticKey))
 }
 function changedMapKeys(before: Record<string, unknown>, after: Record<string, unknown>): number {
-  return [...new Set([...Object.keys(before), ...Object.keys(after)])].filter((key) => hashPresent(before[key]) !== hashPresent(after[key])).length
+  return [...new Set([...Object.keys(before), ...Object.keys(after)])].filter((key) => !equalJson(before[key], after[key])).length
 }
 function changedThemeTokens(before: PpteDocument, after: PpteDocument): number {
   return changedMapKeys(before.theme.tokens.colors, after.theme.tokens.colors) + changedMapKeys(before.theme.tokens.fontFamilies, after.theme.tokens.fontFamilies) + changedMapKeys(before.theme.tokens.fontSizes, after.theme.tokens.fontSizes) + changedMapKeys(before.theme.tokens.spacing, after.theme.tokens.spacing) + changedMapKeys(before.theme.tokens.radii, after.theme.tokens.radii) + changedMapKeys(before.theme.tokens.shadows, after.theme.tokens.shadows)

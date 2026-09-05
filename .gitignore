@@ -10,3 +10,5 @@ coverage/
 .env
 .env.*
 artifacts/
+
+packages/portable-runtime/src/browser-bundle.ts

@@ -7,9 +7,9 @@
   "type": "module",
   "packageManager": "pnpm@11.22.0",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "node scripts/build-portable.mjs && tsc -p tsconfig.build.json",
     "host:build": "pnpm --dir apps/host build",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "node scripts/build-portable.mjs && tsc --noEmit",
     "test": "pnpm build && node --test dist/tests/*.test.js",
     "validate": "python scripts/validate.py && bash scripts/ci-guards.sh",
     "e2e:vertical-slice": "pnpm build && node dist/apps/contract-deck/index.js --e2e",
@@ -21,13 +21,18 @@
     "blackbox:final": "node scripts/blackbox-gates.mjs --milestone final",
     "blackbox:report": "node scripts/blackbox-gates.mjs --report",
     "perf:ga-a": "pnpm build && node dist/apps/contract-deck/index.js --ga-a",
-    "contract-deck": "pnpm build && node dist/apps/contract-deck/index.js"
+    "contract-deck": "pnpm build && node dist/apps/contract-deck/index.js",
+    "cli": "node dist/apps/cli/index.js",
+    "package:stage": "pnpm build && pnpm host:build && node scripts/stage-package.mjs",
+    "package:pack": "pnpm package:stage && npm pack ./artifacts/npm-package --pack-destination artifacts"
   },
   "devDependencies": {
+    "@types/node": "^22.0.0",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
-    "@types/node": "^22.0.0",
     "@vitejs/plugin-react": "^5.0.2",
+    "esbuild": "^0.28.2",
+    "fflate": "^0.8.3",
     "playwright": "^1.55.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",

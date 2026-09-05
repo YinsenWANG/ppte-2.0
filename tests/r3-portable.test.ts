@@ -177,7 +177,7 @@ test('R3 full Portable file:// editing, save/reopen, presentation, IME guard, an
     assert.equal(savedPayload.origin.profile, 'full-portable')
     assert.equal(savedPayload.origin.sourceRevision, editedRevision)
     assert.equal(auditPortableBundle(savedHtml).ok, true)
-    assert.equal(savedHtml.includes('id="ppte-portable-fonts"'), false)
+    assert.doesNotMatch(savedHtml.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ''), /<style[^>]*id="ppte-portable-fonts"/)
     const fontToken = Buffer.from(fontBytes).toString('base64')
     assert.equal(savedHtml.split(fontToken).length - 1, 1)
 
@@ -214,7 +214,7 @@ test('R3 full Portable file:// editing, save/reopen, presentation, IME guard, an
     ])
     await secondDownload.saveAs(secondSavedPath)
     const secondHtml = readFileSync(secondSavedPath, 'utf8')
-    assert.equal(secondHtml.includes('id="ppte-portable-fonts"'), false)
+    assert.doesNotMatch(secondHtml.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ''), /<style[^>]*id="ppte-portable-fonts"/)
     assert.equal(secondHtml.split(fontToken).length - 1, 1)
     await reopened.close()
   } finally {
