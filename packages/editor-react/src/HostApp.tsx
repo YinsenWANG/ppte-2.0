@@ -1,3 +1,4 @@
+import { TextEditingSurface, reconcileTextSurface, type TextSurfacePort } from '../../editor-dom/src/text-selection.js'
 import { EditorController } from '../../editor-controller/src/index.js'
 import { PresentationController } from '../../editor-controller/src/presentation.js'
 import {actualTextOverflow,fittedBrowserFont} from './text-measurement.js'
@@ -17,10 +18,9 @@ import { createEmptyDocument } from '../../authoring/src/default-document.js'
 export { createEmptyDocument } from '../../authoring/src/default-document.js'
 import { buildAuthoringTransaction, type AuthoringInput } from '../../authoring/src/index.js'
 import { PpteSession, type HistoryEntry } from '../../core/src/index.js'
-import { useLayoutEffect, useEffect, useMemo, useRef, useState, type ChangeEvent, type CompositionEvent, type FocusEvent, type FormEvent, type KeyboardEvent, type PointerEvent as ReactPointerEvent, type ReactElement } from 'react'
+import { useLayoutEffect, useEffect, useMemo, useRef, useState, type ChangeEvent, type KeyboardEvent, type PointerEvent as ReactPointerEvent, type ReactElement } from 'react'
 import { canonicalJsonString, canonicalRevision, sha256HexBytes } from '../../canonical-json/src/index.js'
 import { buildDuplicateSlideOperation } from '../../operations/src/index.js'
-import { editRichText, ImeTextEditSession } from '../../richtext-adapter/src/index.js'
 import { validateRuntimeDocument } from '../../validation/src/index.js'
 import { advancePresenterState, retreatPresenterState, type PresenterAnimationState } from '../../portable-runtime/src/presenter-state.js'
 import { renderSlideHtml, type RenderOptions } from '../../renderer-react/src/index.js'
@@ -74,9 +74,8 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
       controllerRef.current?.dispose()
       controllerRef.current = new EditorController(sessionRef.current!, 'host', presentation, action => { recoveryRef.current!.action = action })
       controllerRef.current.subscribe(event => { if (event.type !== 'previewed') syncSessionState() })
-      controllerRef.current.own(() => { for (const edit of editSessions.current.values()) edit.cancel(); editSessions.current.clear() })
     }
-    controllerRef.current!.setFlushHandler(() => { flushHostDrafts(); return { ok: true } })
+    controllerRef.current!.setFlushHandler(() => textSurface.current?.flush() ?? { ok: true })
     return controllerRef.current!
   }
   useEffect(() => () => controllerRef.current?.dispose(), [])
@@ -94,7 +93,9 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
   const [unsupported,setUnsupported]=useState<UnsupportedProjectError>()
   const [assetSources, setAssetSources] = useState<Record<string, string>>({})
   const dragRef = useRef<DragTransient | undefined>(undefined)
-  const editSessions = useRef(new Map<string, ImeTextEditSession>())
+  const textSurface = useRef<TextEditingSurface | undefined>(undefined)
+  const lastCommitIssues = useRef<import('../../schema/src/index.js').ValidationIssue[]>([])
+  const textPort = useRef<TextSurfacePort | undefined>(undefined)
   const operationNumber = useRef(0)
   const renderedRef = useRef<HTMLDivElement>(null)
   const [canvasScale, setCanvasScale] = useState(1)
@@ -158,7 +159,28 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     return () => observer.disconnect()
   }, [documentNode.canvas.width])
 
-  // React can replace innerHTML on any shell rerender; apply steps before paint.
+  const renderOptions: RenderOptions = useMemo(() => ({ editable: storageReady && !presenting, assetSources }), [assetSources,storageReady,presenting])
+  const slideHtml = useMemo(() => activeSlideId ? renderSlideHtml(documentNode, activeSlideId, renderOptions) : '', [activeSlideId, documentNode, renderOptions])
+  textPort.current = {
+    colors:()=>sessionRef.current!.getDocument().theme.tokens.colors,
+    revision: () => sessionRef.current!.getRevision(),
+    target: (id: string) => { const d=sessionRef.current!.getDocument(); for(const slideId of d.slideOrder){const element=d.slides[slideId].elements[id];if(element?.type==='text')return {element,slideId}} },
+    commit: (tx: Transaction) => {const ok=commitTransaction(tx, undefined, true);return {ok,issues:lastCommitIssues.current}},
+    history: (redo: boolean) => { const r=redo?controller().redo():controller().undo(); if(!r.ok)setStatus(r.issues.map(i=>i.message).join('; ')) },
+    changed: (r: {ok:boolean;issues?:Array<{message:string}>}) => {if(!r.ok){setStatus(r.issues?.map(i=>i.message).join('; ')??'文字草稿已保留');if(r.issues?.some(i=>i.message.includes('Another editor')))for(const b of textSurface.current?.drafts.values()??[])textSurface.current?.showCanonical(b.elementId)}else if(pendingPresentation.current)togglePresenter()},
+    canEdit: () => storageReady && presentation.canMutate,
+  }
+  useLayoutEffect(() => {
+    const root=renderedRef.current!
+    if(!textSurface.current)textSurface.current=new TextEditingSurface(root, {
+      colors:()=>textPort.current!.colors!(),revision:()=>textPort.current!.revision(),target:id=>textPort.current!.target(id),commit:tx=>textPort.current!.commit(tx),history:redo=>textPort.current!.history(redo),changed:r=>textPort.current!.changed(r),canEdit:()=>textPort.current!.canEdit(),
+    })
+    textSurface.current.refresh()
+    const surface=root.querySelector<HTMLElement>('.ppte-rendered-slide')!
+    reconcileTextSurface(surface,slideHtml,textSurface.current.protect)
+  }, [slideHtml,renderEpoch])
+  useEffect(()=>()=>textSurface.current?.dispose(),[])
+  // Apply transient presentation steps after semantic DOM reconciliation.
   useLayoutEffect(() => {
     const surface = renderedRef.current
     if (!surface) return
@@ -181,9 +203,6 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     } else if (slide) slide.style.animationName = 'none'
   })
 
-  const renderOptions: RenderOptions = useMemo(() => ({ editable: storageReady && !presenting, assetSources }), [assetSources,storageReady,presenting])
-  const slideHtml = useMemo(() => activeSlideId ? renderSlideHtml(documentNode, activeSlideId, renderOptions) : '', [activeSlideId, documentNode, renderOptions])
-  const slideMarkup = useMemo(() => ({ __html: slideHtml }), [slideHtml])
   const thumbnails = useMemo(() => documentNode.slideOrder.map((slideId) => ({ slideId, html: renderThumbnailHtml(documentNode, slideId, assetSources) })), [assetSources, documentNode])
   const selectedOverlay = useMemo(() => buildSelectionOverlay(documentNode, { slideId: activeSlideId, elementIds: activeElementIds }), [activeElementIds, activeSlideId, documentNode])
 
@@ -197,11 +216,13 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
 
   function commitTransaction(transaction: Transaction, successMessage?: string, preserveDraft = false): boolean {
     if (!presentation.canMutate) return false
+    lastCommitIssues.current=[]
     try {
       if(!storageReady)throw new Error('本地保护未就绪，暂不能修改')
       recoveryRef.current!.action='commit'
       const result = controller().commit(transaction)
       if (!result?.ok) {
+        lastCommitIssues.current=result.issues
         if (!preserveDraft) setRenderEpoch(n=>n+1)
         setStatus(`操作未提交 · ${result?.issues.map((issue) => issue.message).join('; ') ?? '未知错误'}`)
         return false
@@ -211,6 +232,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
       setStatus(result.issues.length ? result.issues.map(i=>i.message).join('; ') : (successMessage ?? '修改已本地保护'))
       return true
     } catch (cause) {
+      lastCommitIssues.current=[{code:'TEXT_COMMIT_FAILED',message:String(cause),severity:'error'}]
       if (!preserveDraft) setRenderEpoch(n=>n+1)
       setStatus(`操作未提交 · ${cause instanceof Error ? cause.message : String(cause)}`)
       return false
@@ -218,20 +240,9 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
   }
 
   function commitOperations(operations: Operation[], reason = 'Host semantic edit', actor: Transaction['actor'] = { type: 'human', id: 'host' }): boolean {
-    if (operations.length === 0) return false
+    if (operations.length === 0 || !controller().flushSync().ok) return false
     const transaction = buildHostTransaction(sessionRef.current?.getRevision() ?? canonicalRevision(documentNode), operations, reason, actor)
     return commitTransaction(transaction)
-  }
-
-  function commitText(elementId: string, value: string): void {
-    const slide = documentNode.slides[activeSlideId]
-    const element = slide?.elements[elementId]
-    if (!slide || !element || element.type !== 'text') return
-    const session = editSessions.current.get(elementId) ?? new ImeTextEditSession(element, activeSlideId, sessionRef.current!.getRevision())
-    session.input(editRichText(element.content, value))
-    const transaction = session.finish(nextOperationId('text'), canonicalRevision(documentNode), now())
-    if (transaction && !commitTransaction(transaction, '文字已本地保护，尚未写入项目文件')) { session.retryAfterRejectedCommit(); editSessions.current.set(elementId, session); return }
-    editSessions.current.delete(elementId)
   }
 
   function textTarget(event: { target: EventTarget | null }): { node: HTMLElement; element: TextElement } | undefined {
@@ -239,46 +250,6 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     const elementId = target?.dataset.ppteElementId
     const element = elementId ? activeSlide?.elements[elementId] : undefined
     return target && element?.type === 'text' ? { node: target, element } : undefined
-  }
-
-  function onCompositionStart(event: CompositionEvent<HTMLDivElement>): void {
-    if (!presentation.canMutate) return
-    const target = textTarget(event)
-    if (!target) return
-    const session = new ImeTextEditSession(target.element, activeSlideId, sessionRef.current!.getRevision())
-    session.beginComposition()
-    editSessions.current.set(target.element.id, session)
-  }
-
-  function onInput(event: FormEvent<HTMLDivElement>): void {
-    if (!presentation.canMutate) return
-    const target = textTarget(event)
-    if (!target) return
-    const session = editSessions.current.get(target.element.id) ?? new ImeTextEditSession(target.element, activeSlideId, sessionRef.current!.getRevision())
-    session[session.isComposing() ? 'updateComposition' : 'input'](editRichText(target.element.content, target.node.innerText.replaceAll('\u00a0', ' ')))
-    editSessions.current.set(target.element.id, session)
-  }
-
-  function onCompositionEnd(event: CompositionEvent<HTMLDivElement>): void {
-    if (!presentation.canMutate) return
-    const target = textTarget(event)
-    if (!target) return
-    const session = editSessions.current.get(target.element.id)
-    if (!session) return
-    session.endComposition(editRichText(target.element.content, target.node.innerText.replaceAll('\u00a0', ' ')))
-    const transaction = session.finish(nextOperationId('text-ime'), canonicalRevision(documentNode), now())
-    if (transaction && !commitTransaction(transaction, '输入法编辑已作为一个语义操作提交', true)) { session.retryAfterRejectedCommit(); return }
-    editSessions.current.delete(target.element.id)
-    if (pendingPresentation.current) togglePresenter()
-  }
-
-  function onBlur(event: FocusEvent<HTMLDivElement>): void {
-    if (!presentation.canMutate) return
-    const target = textTarget(event)
-    if (!target) return
-    const session = editSessions.current.get(target.element.id)
-    if (!session || session.isComposing()) return
-    commitText(target.element.id, target.node.innerText.replaceAll('\u00a0', ' '))
   }
 
   function pointerInDu(event: ReactPointerEvent<HTMLDivElement>): { x: number; y: number } {
@@ -472,7 +443,9 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     try {
       const project = await readBrowserProject(file)
       const opened=new PpteSession(project.document,{recentTransactions:project.recentTransactions,redoHistory:project.redoHistory})
+      flushHostEdits()
       sessionRef.current = await recoveryRef.current!.replace({...project,history:[...opened.getHistory()],redo:[...opened.getRedoHistory()]})
+      textSurface.current?.reset()
       setDocumentNode(project.document)
       setAssetBytes(project.assetBytes)
       setFontBytes(project.fontBytes)
@@ -567,14 +540,6 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     const result = controller().flushSync()
     if (!result.ok) throw new Error(result.issues.map(issue => issue.message).join('; '))
   }
-  function flushHostDrafts():void {
-    for (const session of editSessions.current.values()) if(session.isComposing()) throw new Error('请先完成当前输入法组合，再保存。')
-    for (const [id,editor] of editSessions.current) {
-      const tx=editor.finish(nextOperationId('save-text'),sessionRef.current!.getRevision(),now())
-      if(tx&&!commitTransaction(tx, undefined, true)){editor.retryAfterRejectedCommit();throw new Error('文字保存未通过校验，草稿已保留。')}
-      editSessions.current.delete(id)
-    }
-  }
   function saveEditable():void {
     try {
       flushHostEdits()
@@ -666,6 +631,9 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
   // The browser API uses the same guarded command boundary as the UI.
   useEffect(() => {
     const api = {
+      setTextMarks: (patch: Parameters<TextEditingSurface["format"]>[0]) => textSurface.current?.format(patch),
+      getTextMarks: () => textSurface.current?.marks(),
+      getDocument: () => structuredClone(sessionRef.current!.getDocument()),
       getMode: () => presentation.isPresenting ? 'present' : 'edit',
       getRevision: () => sessionRef.current!.getRevision(),
       getHistory: () => structuredClone(sessionRef.current!.getHistory()),
@@ -682,10 +650,11 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
 
   function togglePresenter(): void {
     if (presentation.isPresenting) { leavePresenter(); return }
-    pendingPresentation.current = [...editSessions.current.values()].some(session => session.isComposing())
+    pendingPresentation.current = [...(textSurface.current?.drafts.values()??[])].some(session => session.isComposing())
     if (pendingPresentation.current) return
     try {
       if (!presentation.enter(() => { flushHostEdits(); return { ok: true } })) return
+      (document.activeElement as HTMLElement | null)?.blur();
       dragRef.current = undefined; setDragFrame(undefined); setPendingEdit(undefined); setReviewing(false); setStudio(false)
       setPresenting(true)
       requestAnimationFrame(() => {
@@ -701,7 +670,8 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
 
   function onKeyDown(event: KeyboardEvent<HTMLDivElement>): void {
     if (event.key === 'Escape') pendingPresentation.current = false
-    if(!presenting){if(event.key==='Escape'){const target=textTarget(event);if(target){editSessions.current.get(target.element.id)?.cancel();editSessions.current.delete(target.element.id);setRenderEpoch(n=>n+1);target.node.blur();event.preventDefault();setStatus('已取消本次文字编辑')}}if((event.metaKey||event.ctrlKey)&&event.key==='s'){event.preventDefault();void saveCopy()}return}
+    if(event.nativeEvent.isComposing || [...(textSurface.current?.drafts.values()??[])].some(b=>b.isComposing()))return
+    if(!presenting){if(event.key==='Escape'){const target=textTarget(event);if(target){textSurface.current?.discard(target.element.id);setRenderEpoch(n=>n+1);target.node.blur();event.preventDefault();setStatus('已取消本次文字编辑')}}if((event.metaKey||event.ctrlKey)&&event.key==='s'){event.preventDefault();void saveCopy()}return}
     if (event.key !== 'Escape' && (event.target as HTMLElement).closest('a,button,video,audio,input,textarea,select')) return
     if (event.key === 'ArrowRight' || event.key === ' ') { event.preventDefault(); nextPresenter() }
     else if (event.key === 'ArrowLeft') { event.preventDefault(); previousPresenter() }
@@ -750,8 +720,8 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     </aside>}
     {presenting && <nav className="ppte-presenter-controls" aria-label="放映控制"><button onClick={previousPresenter} aria-label="上一页">←</button><span>{presenterState.slideIndex + 1} / {documentNode.slideOrder.length}</span><button onClick={nextPresenter} aria-label="下一页">→</button><button data-ppte-action="exit-present" onClick={togglePresenter}>退出放映</button></nav>}
     <main className="ppte-host-main" data-ppte-stage onPasteCapture={event => { if (!presentation.canMutate) event.preventDefault() }} onDropCapture={event => { if (!presentation.canMutate) event.preventDefault() }}>
-      <div className="ppte-canvas-wrap" style={{ aspectRatio: `${documentNode.canvas.width} / ${documentNode.canvas.height}`, ['--ppte-aspect' as string]: documentNode.canvas.width / documentNode.canvas.height }} ref={renderedRef} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp} onDoubleClick={(event) => { if (!presentation.canMutate) return; const target = textTarget(event); if (target) { setSelection({slideId:activeSlideId,elementIds:[target.element.id],primaryElementId:target.element.id}); target.node.focus(); setStatus('文字编辑中 · compositionend 后提交') } }} onBeforeInput={event => { if (!presentation.canMutate) event.preventDefault() }} onPaste={event => { if (!presentation.canMutate) event.preventDefault() }} onDrop={event => { if (!presentation.canMutate) event.preventDefault() }} onCompositionStart={onCompositionStart} onCompositionEnd={onCompositionEnd} onInput={onInput} onBlur={onBlur}>
-        <div key={renderEpoch} className="ppte-rendered-slide" data-ppte-canvas-scale={canvasScale} style={{ ['--ppte-scale' as string]: canvasScale }} dangerouslySetInnerHTML={slideMarkup} />
+      <div className="ppte-canvas-wrap" style={{ aspectRatio: `${documentNode.canvas.width} / ${documentNode.canvas.height}`, ['--ppte-aspect' as string]: documentNode.canvas.width / documentNode.canvas.height }} ref={renderedRef} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp} onDoubleClick={(event) => { if (!presentation.canMutate) return; const target = textTarget(event); if (target) { setSelection({slideId:activeSlideId,elementIds:[target.element.id],primaryElementId:target.element.id}); target.node.focus(); setStatus('文字编辑中 · compositionend 后提交') } }} onBeforeInput={event => { if (!presentation.canMutate) event.preventDefault() }} onPaste={event => { if (!presentation.canMutate) event.preventDefault() }} onDrop={event => { if (!presentation.canMutate) event.preventDefault() }}>
+        <div className="ppte-rendered-slide" data-ppte-canvas-scale={canvasScale} style={{ ['--ppte-scale' as string]: canvasScale }} />
         {!presenting && selectedOverlay.map((item) => {
           const moving=dragRef.current
           const frame = moving&&dragFrame&&moving.memberIds?.includes(item.elementId) ? {...item.frame,x:item.frame.x+dragFrame.x-moving.originalFrame.x,y:item.frame.y+dragFrame.y-moving.originalFrame.y} : item.elementId === moving?.elementId && dragFrame ? dragFrame : item.frame
@@ -759,7 +729,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
         })}
       </div>
     </main>
-    {!presenting&&<aside className="ppte-host-inspector"><Inspector key={`${activeSlideId}:${activeElementIds.join(',')}:${sessionRef.current!.getRevision()}`} document={documentNode} slide={activeSlide} ids={activeElementIds} commit={commitOperations}/><section>{actualOverflow.length>0&&<section data-ppte-actual-overflow><h3>实际渲染溢出</h3><p>已等待字体就绪；请检查以下文字框。</p>{actualOverflow.map(id=><div key={id}><button onClick={()=>setSelection({slideId:activeSlideId,elementIds:[id]})}>{activeSlide.elements[id]?.semanticKey??id}</button><button onClick={()=>void fitActual(id)}>按实际字体适配</button></div>)}</section>}<h3>页面设计</h3><button onClick={()=>setStudio(true)}>布局工作室</button><select aria-label="布局" value={recipeId} onChange={e=>setRecipeId(e.target.value)}><option value="">自动匹配</option>{builtInRecipeSpecs().map(r=><option key={r.id}>{r.id}</option>)}</select><button onClick={()=>design('layout')}>保留内容重排</button><label>新页面设计（可选）<input type="file" accept=".json" onChange={async e=>{try{const f=e.target.files?.[0];if(f)setDesignIR(JSON.parse(await f.text()))}catch(e){setStatus(String(e))}}}/></label><p>选中对象将在重设计时受到保护。</p><button onClick={()=>design('redesign')}>预览重设计</button></section>{recoveryInspection&&<section data-ppte-recovery-inspection><h3>只读恢复诊断</h3><p>快照：{recoveryInspection.diagnosis.snapshotStatus} · 历史：{recoveryInspection.diagnosis.history.status}。原文件与恢复记录已保留。</p><pre>{JSON.stringify({issues:recoveryInspection.diagnosis.issues,history:recoveryInspection.diagnosis.history,snapshot:recoveryInspection.diagnosis.snapshot},null,2)}</pre><button onClick={()=>downloadRecovery('report')}>下载诊断报告</button>{recoveryInspection.diagnosis.snapshotStatus==='valid'&&recoveryInspection.diagnosis.history.status!=='unsupported'&&<button onClick={()=>downloadRecovery('copy')}>另存恢复副本（保留已验证历史）</button>}<button onClick={()=>setRecoveryInspection(undefined)}>关闭诊断</button></section>}{unsupported&&<section className="ppte-review-panel" data-ppte-unsupported><h3>不支持的项目版本 · 只读检查</h3><p>原文件和当前编辑项目均未改写。可查看原始结构，或使用支持该版本的编辑器；这里不会尝试降级保存。</p><pre>{JSON.stringify(unsupported.snapshot,null,2)}</pre><button onClick={()=>{const a=document.createElement('a');const u=URL.createObjectURL(unsupported.file);a.href=u;a.download=unsupported.file.name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}}>下载原文件</button><button onClick={()=>setUnsupported(undefined)}>关闭只读检查</button></section>}{studio&&<RecipeStudio documentNode={documentNode} slideId={activeSlideId} assetSources={assetSources} onClose={()=>setStudio(false)} onApply={spec=>{try{const server=new AgentToolServer(sessionRef.current!,{recipes:new RecipeRegistry([spec])});const r=server.execute('apply_layout_recipe',{slideId:activeSlideId,recipeId:spec.id,recipeVersion:spec.version,requireConfirmation:true});if(!r.ok||!r.transaction)throw new Error(r.issues.map(i=>i.message).join('; '));stagePreview(r.transaction,undefined,`${spec.id}@${spec.version}`);setStudio(false)}catch(e){setStatus(String(e))}}}/>}{reviewing&&<ReviewPanel local={documentNode} resources={{assetBytes,fontBytes}} read={readBrowserProject} onPreview={stagePreview} onClose={()=>setReviewing(false)}/>}{pendingEdit&&<section data-ppte-preview><h3>修改预览</h3><pre>{pendingEdit.summary}</pre><div className="ppte-preview-surface" dangerouslySetInnerHTML={{__html:renderSlideHtml(pendingEdit.document,pendingEdit.document.slides[activeSlideId]?activeSlideId:pendingEdit.document.slideOrder[0],{assetSources:{...assetSources,...Object.fromEntries(Object.entries(pendingEdit.resources?.assetBytes??{}).map(([id,bytes])=>[id,`data:${pendingEdit.document.assets[id]?.mimeType};base64,${base64(bytes)}`]))}})}}/><button onClick={()=>void acceptPreview()}>接受修改</button><button onClick={()=>setPendingEdit(undefined)}>取消</button></section>}</aside>}
+    {!presenting&&<aside className="ppte-host-inspector"><section aria-label="选区格式" onPointerDown={()=>textSurface.current?.remember()}><p>选区格式 · 字号在下方调整整框</p>{textSurface.current?.retainedDrafts().map(d=><div key={d.id}><p>{d.error} · 草稿仍保留</p><textarea aria-label="保留的文字草稿" readOnly value={d.text}/></div>)}{(['bold','italic','underline','strike'] as const).map(mark=><button key={mark} data-ppte-text-mark={mark} onMouseDown={e=>e.preventDefault()} onClick={()=>textSurface.current?.format({[mark]:true})}>{mark}</button>)}<button onMouseDown={e=>e.preventDefault()} onClick={()=>textSurface.current?.format({bold:null,italic:null,underline:null,strike:null,color:null})}>清除选区格式</button><input type="color" aria-label="选区颜色" onChange={e=>textSurface.current?.format({color:{kind:'value',value:e.target.value as `#${string}`}})}/><button onClick={()=>{textSurface.current?.discardActive();setRenderEpoch(n=>n+1);setStatus('已放弃文字草稿')}}>放弃文字草稿</button></section><Inspector key={`${activeSlideId}:${activeElementIds.join(',')}`} document={documentNode} slide={activeSlide} ids={activeElementIds} commit={commitOperations}/><section>{actualOverflow.length>0&&<section data-ppte-actual-overflow><h3>实际渲染溢出</h3><p>已等待字体就绪；请检查以下文字框。</p>{actualOverflow.map(id=><div key={id}><button onClick={()=>setSelection({slideId:activeSlideId,elementIds:[id]})}>{activeSlide.elements[id]?.semanticKey??id}</button><button onClick={()=>void fitActual(id)}>按实际字体适配</button></div>)}</section>}<h3>页面设计</h3><button onClick={()=>setStudio(true)}>布局工作室</button><select aria-label="布局" value={recipeId} onChange={e=>setRecipeId(e.target.value)}><option value="">自动匹配</option>{builtInRecipeSpecs().map(r=><option key={r.id}>{r.id}</option>)}</select><button onClick={()=>design('layout')}>保留内容重排</button><label>新页面设计（可选）<input type="file" accept=".json" onChange={async e=>{try{const f=e.target.files?.[0];if(f)setDesignIR(JSON.parse(await f.text()))}catch(e){setStatus(String(e))}}}/></label><p>选中对象将在重设计时受到保护。</p><button onClick={()=>design('redesign')}>预览重设计</button></section>{recoveryInspection&&<section data-ppte-recovery-inspection><h3>只读恢复诊断</h3><p>快照：{recoveryInspection.diagnosis.snapshotStatus} · 历史：{recoveryInspection.diagnosis.history.status}。原文件与恢复记录已保留。</p><pre>{JSON.stringify({issues:recoveryInspection.diagnosis.issues,history:recoveryInspection.diagnosis.history,snapshot:recoveryInspection.diagnosis.snapshot},null,2)}</pre><button onClick={()=>downloadRecovery('report')}>下载诊断报告</button>{recoveryInspection.diagnosis.snapshotStatus==='valid'&&recoveryInspection.diagnosis.history.status!=='unsupported'&&<button onClick={()=>downloadRecovery('copy')}>另存恢复副本（保留已验证历史）</button>}<button onClick={()=>setRecoveryInspection(undefined)}>关闭诊断</button></section>}{unsupported&&<section className="ppte-review-panel" data-ppte-unsupported><h3>不支持的项目版本 · 只读检查</h3><p>原文件和当前编辑项目均未改写。可查看原始结构，或使用支持该版本的编辑器；这里不会尝试降级保存。</p><pre>{JSON.stringify(unsupported.snapshot,null,2)}</pre><button onClick={()=>{const a=document.createElement('a');const u=URL.createObjectURL(unsupported.file);a.href=u;a.download=unsupported.file.name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}}>下载原文件</button><button onClick={()=>setUnsupported(undefined)}>关闭只读检查</button></section>}{studio&&<RecipeStudio documentNode={documentNode} slideId={activeSlideId} assetSources={assetSources} onClose={()=>setStudio(false)} onApply={spec=>{try{const server=new AgentToolServer(sessionRef.current!,{recipes:new RecipeRegistry([spec])});const r=server.execute('apply_layout_recipe',{slideId:activeSlideId,recipeId:spec.id,recipeVersion:spec.version,requireConfirmation:true});if(!r.ok||!r.transaction)throw new Error(r.issues.map(i=>i.message).join('; '));stagePreview(r.transaction,undefined,`${spec.id}@${spec.version}`);setStudio(false)}catch(e){setStatus(String(e))}}}/>}{reviewing&&<ReviewPanel local={documentNode} resources={{assetBytes,fontBytes}} read={readBrowserProject} onPreview={stagePreview} onClose={()=>setReviewing(false)}/>}{pendingEdit&&<section data-ppte-preview><h3>修改预览</h3><pre>{pendingEdit.summary}</pre><div className="ppte-preview-surface" dangerouslySetInnerHTML={{__html:renderSlideHtml(pendingEdit.document,pendingEdit.document.slides[activeSlideId]?activeSlideId:pendingEdit.document.slideOrder[0],{assetSources:{...assetSources,...Object.fromEntries(Object.entries(pendingEdit.resources?.assetBytes??{}).map(([id,bytes])=>[id,`data:${pendingEdit.document.assets[id]?.mimeType};base64,${base64(bytes)}`]))}})}}/><button onClick={()=>void acceptPreview()}>接受修改</button><button onClick={()=>setPendingEdit(undefined)}>取消</button></section>}</aside>}
     {!presenting && <section className="ppte-host-notes" data-ppte-notes-panel>
       <div className="ppte-notes-heading"><span>Speaker notes</span><span className="ppte-notes-hint">Changes save on blur</span></div>
       <textarea id="ppte-speaker-notes" data-ppte-notes-input value={notesDraft} onChange={(event) => setNotesDraft(event.target.value)} onBlur={updateNotes} placeholder="Add notes for this slide…" />

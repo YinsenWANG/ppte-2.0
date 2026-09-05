@@ -1,3 +1,7 @@
+import { boundaries } from './ranges.js'
+export * from './ranges.js'
+export * from './transforms.js'
+export * from './edit-buffer.js'
 import { planTextReplacement } from '../../editor-controller/src/commands.js'
 import { canonicalHash } from '../../canonical-json/src/index.js'
 import type { RichTextDocument, TextElement, Transaction } from '../../schema/src/index.js'
@@ -60,16 +64,21 @@ export function editRichText(original: RichTextDocument, value: string): RichTex
   while(left<tokens.length&&left<chars.length&&tokens[left].char===chars[left])left++
   if(left===tokens.length&&left===chars.length)return cloneRichText(original)
   while(right<tokens.length-left&&right<chars.length-left&&tokens[tokens.length-1-right].char===chars[chars.length-1-right])right++
+  // Expand the diff to complete graphemes on both sides of the edit.
+  const oldText=tokens.map(t=>t.char).join(''), oldBoundaries=boundaries(oldText), newBoundaries=boundaries(value)
+  while(left>0&&(!oldBoundaries.includes(tokens.slice(0,left).map(t=>t.char).join('').length)||!newBoundaries.includes(chars.slice(0,left).join('').length)))left--
+  while(right>0&&(!oldBoundaries.includes(oldText.length-tokens.slice(tokens.length-right).map(t=>t.char).join('').length)||!newBoundaries.includes(value.length-chars.slice(chars.length-right).join('').length)))right--
   const p=original.paragraphs[0]??{id:'p',runs:[{id:'r',text:''}]}
   const anchor=tokens[Math.max(0,left-1)]??{p,r:p.runs[0],char:''}
   const next=[...tokens.slice(0,left),...chars.slice(left,chars.length-right).map(char=>({...anchor,char})),...tokens.slice(tokens.length-right)]
   const lines: typeof next[]=[[]]
   for(const token of next) {if(token.char==='\n')lines.push([]);else lines.at(-1)!.push(token)}
   const used=new Set<string>()
+  const reserved=new Set(original.paragraphs.map(p=>p.id))
   const result:RichTextDocument={paragraphs:lines.map((line,i)=>{
     const source=line[0]?.p??original.paragraphs[i]??anchor.p
     let id=source.id
-    if(used.has(id))id=`${id}:edit:${i}`
+    if(used.has(id)){let suffix=i;while(reserved.has(`${id}:edit:${suffix}`)||used.has(`${id}:edit:${suffix}`))suffix++;id=`${id}:edit:${suffix}`}
     used.add(id)
     const runs:RichTextDocument['paragraphs'][number]['runs']=[]
     const runIds=new Set<string>()
@@ -79,7 +88,7 @@ export function editRichText(original: RichTextDocument, value: string): RichTex
       if(previous&&previousSource===token.r)previous.text+=token.char
       else {
         let rid=token.r?.id??`${id}:run`
-        if(runIds.has(rid))rid=`${rid}:edit:${runs.length}`
+        if(runIds.has(rid)){let suffix=runs.length;while(runIds.has(`${rid}:edit:${suffix}`)||source.runs.some(r=>r.id===`${rid}:edit:${suffix}`))suffix++;rid=`${rid}:edit:${suffix}`}
         runIds.add(rid)
         runs.push({id:rid,text:token.char,...(token.r?.marks?{marks:{...token.r.marks}}:{})})
         previousSource=token.r
@@ -113,6 +122,11 @@ export function assertSafeRichText(value: RichTextDocument): void {
       if (!run || !run.id || runIds.has(run.id) || typeof run.text !== 'string' || run.text.includes('\u0000')) throw new Error('Rich text runs require unique ids and NUL-free text.')
       runIds.add(run.id)
       if (Object.keys(run as unknown as Record<string, unknown>).some((key) => !['id', 'text', 'marks'].includes(key))) throw new Error('Run-level font and font-size fields are not supported.')
+      if(run.marks){
+        for(const key of ['bold','italic','underline','strike'] as const)if(run.marks[key]!==undefined&&typeof run.marks[key]!=='boolean')throw new Error('Boolean mark required')
+        const color=run.marks.color
+        if(color&&!(color.kind==='value'&&/^#[0-9a-f]{6}([0-9a-f]{2})?$/i.test(color.value))&&!(color.kind==='token'&&typeof color.token==='string'))throw new Error('Invalid color mark')
+      }
       if (run.marks && Object.keys(run.marks).some((key) => !['bold', 'italic', 'underline', 'strike', 'color'].includes(key))) throw new Error('Unsupported run mark.')
     }
   }

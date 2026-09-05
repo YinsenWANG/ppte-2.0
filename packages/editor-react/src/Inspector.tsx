@@ -39,6 +39,7 @@ export function Inspector({
         type="number"
         aria-label={label}
         defaultValue={Number(value.toFixed(3))}
+        ref={node=>{if(node&&node.ownerDocument.activeElement!==node)node.value=String(Number(value.toFixed(3)))}}
         onBlur={(event) => {
           const n = Number(event.target.value);
           if (Number.isFinite(n) && n !== value) save(n);
@@ -107,6 +108,7 @@ export function Inspector({
                 文字
                 <textarea
                   aria-label="文字"
+                  ref={node=>{if(node&&node.ownerDocument.activeElement!==node)node.value=element.content.paragraphs.map(p=>p.runs.map(r=>r.text).join('')).join('\n')}}
                   defaultValue={element.content.paragraphs
                     .map((p) => p.runs.map((r) => r.text).join(""))
                     .join("\n")}
@@ -123,7 +125,7 @@ export function Inspector({
                   }}
                 />
               </label>
-              <fieldset><legend>强调格式</legend>{(['bold','italic','underline','strike'] as const).map(mark=><button key={mark} onClick={()=>{const content=structuredClone(element.content);const enabled=content.paragraphs.every(p=>p.runs.every(r=>r.marks?.[mark]));for(const p of content.paragraphs)for(const r of p.runs)r.marks={...r.marks,[mark]:!enabled};emit({kind:'text.replaceContent',content})}}>{({bold:'粗体',italic:'斜体',underline:'下划线',strike:'删除线'})[mark]}</button>)}</fieldset>
+              <fieldset><legend>整框强调格式</legend>{(['bold','italic','underline','strike'] as const).map(mark=><button key={mark} onClick={()=>{const content=structuredClone(element.content);const enabled=content.paragraphs.every(p=>p.runs.every(r=>r.marks?.[mark]));for(const p of content.paragraphs)for(const r of p.runs)r.marks={...r.marks,[mark]:!enabled};emit({kind:'text.replaceContent',content})}}>{({bold:'粗体',italic:'斜体',underline:'下划线',strike:'删除线'})[mark]}</button>)}</fieldset>
               <label>文字颜色<input type="color" defaultValue="#172033" onChange={e=>emit({kind:'element.updateStyleOverrides',patch:{color:{kind:'value',value:e.target.value}}})}/></label>
               <label>对齐<select aria-label="文字对齐" value={element.paragraphStyle?.align??'left'} onChange={e=>emit({kind:'text.updateStyle',paragraphStyle:{...element.paragraphStyle,align:e.target.value}})}><option value="left">左对齐</option><option value="center">居中</option><option value="right">右对齐</option></select></label>
               {validateTextOverflow(document,slide.id,element).length>0&&<p role="status">文字溢出：可缩短内容、扩大文本框，或显式适配字号。</p>}

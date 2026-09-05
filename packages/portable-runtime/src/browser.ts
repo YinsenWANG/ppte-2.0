@@ -1,3 +1,4 @@
+import { TextEditingSurface, reconcileTextSurface } from '../../editor-dom/src/text-selection.js';
 import { DomResources } from '../../editor-dom/src/index.js';
 import { inferCompatibilityProfile } from '../../compatibility/src/index.js';
 import { STANDARD_EDITABLE_SUFFIX } from "./delivery-policy.js";
@@ -12,7 +13,7 @@ import {
   type QuickFixResult,
 } from "./shared.js";
 import { renderDocumentSurfaceHtml } from "../../renderer-react/src/index.js";
-import { geometryOnlyContract } from "../../change-contract/src/index.js";
+import { geometryOnlyContract, styleOnlyContract } from "../../change-contract/src/index.js";
 import type { ChartData, Transaction } from "../../schema/src/index.js";
 
 function startPortable() {
@@ -48,12 +49,16 @@ const status = document.querySelector<HTMLElement>("[data-ppte-status]")!;
 const editable = runtime.profile !== "viewer";
 const advanced =
   runtime.profile === "light-edit" || runtime.profile === "full-portable";
-const composing = new Set<string>();
-const drafts = new Map<string, { value: string; baseRevision: string }>();
-function recordDraft(id: string, value: string) {
-  drafts.set(id, {value, baseRevision:drafts.get(id)?.baseRevision ?? runtime.getRevision()});
-}
-runtime.controller.own(() => { composing.clear(); drafts.clear(); drag = undefined; pendingPresentation = false });
+const textSurface = new TextEditingSurface(stage, {
+  colors:()=>runtime.getDocument().theme.tokens.colors,
+  revision:()=>runtime.getRevision(),
+  target:id=>{const d=runtime.getDocument();for(const slideId of d.slideOrder){const element=d.slides[slideId].elements[id];if(element?.type==='text')return {element,slideId}}},
+  commit:tx=>runtime.controller.commit(tx),
+  history:redo=>change(redo?runtime.redo():runtime.undo()),
+  changed:r=>{change(r);if(r.ok&&pendingPresentation)void enterPresentation()},
+  canEdit:()=>editable&&!presenting,
+});
+runtime.controller.own(()=>textSurface.dispose());
 dom.listen(window, 'pagehide', () => runtime.dispose(), { once: true });
 let presenting = false;
 let pendingPresentation = false;
@@ -133,7 +138,8 @@ function fit() {
 function render() {
   const doc = runtime.getDocument();
   const assets = runtime.getAssetBytes();
-  canvas.innerHTML = renderDocumentSurfaceHtml(doc, {
+  textSurface.refresh();
+  reconcileTextSurface(canvas, renderDocumentSurfaceHtml(doc, {
     editable: editable && !presenting,
     assetSources: Object.fromEntries(
       Object.entries(assets).map(([id, data]) => [
@@ -141,7 +147,7 @@ function render() {
         `data:${doc.assets[id]?.mimeType};base64,${base64(data)}`,
       ]),
     ),
-  });
+  }), textSurface.protect);
   document.getElementById("ppte-portable-fonts")?.remove();
   const fontStyle = document.createElement("style");
   fontStyle.id = "ppte-portable-fonts";
@@ -156,7 +162,7 @@ function render() {
 }
 async function enterPresentation() {
   if (presenting) return { ok: true, issues: [] };
-  pendingPresentation = composing.size > 0;
+  pendingPresentation = [...textSurface.drafts.values()].some(b=>b.isComposing());
   const pending = flush();
   if (!pending.ok) { show(pending); return pending; }
   pendingPresentation = false;
@@ -199,20 +205,7 @@ function editText(target: PortableElementTarget, value: string) {
   return change(runtime.editText(target, value));
 }
 function flush(): QuickFixResult { return runtime.controller.flushSync() }
-runtime.controller.setFlushHandler(flushDrafts);
-function flushDrafts(): QuickFixResult {
-  if (composing.size)
-    return error(
-      "PORTABLE_COMPOSITION_ACTIVE",
-      "Finish the current input composition before saving.",
-    );
-  for (const [id, text] of [...drafts]) {
-    const r = runtime.editText({ elementId: id }, text.value, text.baseRevision);
-    if (!r.ok) return r;
-    drafts.delete(id);
-  }
-  return { ok: true, issues: [] };
-}
+runtime.controller.setFlushHandler(()=>{const r=textSurface.flush();return {...r,issues:r.issues?.map(i=>i.code==='COMPOSITION_ACTIVE'?{...i,code:'PORTABLE_COMPOSITION_ACTIVE'}:i)}});
 function download(value: Uint8Array | string, name: string, type: string) {
   const blob = new Blob(
     [typeof value === "string" ? value : new Uint8Array(value).buffer],
@@ -487,45 +480,6 @@ dom.listen(stage, "click", (event) => {
     );
   } else select(n.dataset.ppteElementId!);
 });
-dom.listen(stage, "compositionstart", (event) => {
-  if (presenting) return;
-  const n = elementTarget(event);
-  if (n) composing.add(n.dataset.ppteElementId!);
-});
-dom.listen(stage, "input", (event) => {
-  if (presenting) return;
-  const n = elementTarget(event);
-  if (n)
-    recordDraft(n.dataset.ppteElementId!, n.innerText.replaceAll("\u00a0", " "));
-});
-dom.listen(stage, "compositionend", (event) => {
-  if (presenting) return;
-  const n = elementTarget(event);
-  if (n) {
-    const id = n.dataset.ppteElementId!;
-    composing.delete(id);
-    const text = n.innerText.replaceAll("\u00a0", " ");
-    recordDraft(id, text);
-    const draft = drafts.get(id)!;
-    const result = runtime.editText({ elementId: id }, draft.value, draft.baseRevision);
-    if (result.ok) drafts.delete(id);
-    change(result);
-    if (result.ok && pendingPresentation && !composing.size) void enterPresentation();
-  }
-});
-dom.listen(stage, "focusout", (event) => {
-  if (presenting) return;
-  const n = elementTarget(event);
-  if (n && !composing.has(n.dataset.ppteElementId!)) {
-    const id = n.dataset.ppteElementId!;
-    if (drafts.has(id)) {
-      const text = drafts.get(id)!;
-      const result = runtime.editText({ elementId: id }, text.value, text.baseRevision);
-      if (result.ok) drafts.delete(id);
-      change(result);
-    }
-  }
-});
 dom.listen(stage, "pointerdown", (event) => {
   const n = elementTarget(event);
   if (presenting || !advanced || !n || n.isContentEditable || event.shiftKey) return;
@@ -556,7 +510,7 @@ dom.listen(stage, "pointerup", () => {
 });
 dom.listen(window, "resize", fit);
 dom.listen(document, "keydown", (event) => {
-  if (event.isComposing) return;
+  if (event.isComposing || [...textSurface.drafts.values()].some(b=>b.isComposing())) return;
   if (presenting) {
     if (event.key !== "Escape" && (event.target as HTMLElement).closest("a,button,video,audio,input,textarea,select")) return;
     if (event.key === "Escape") { event.preventDefault(); leavePresentation(); }
@@ -587,7 +541,25 @@ for (const type of ["beforeinput", "paste", "drop"] as const) {
   dom.listen(stage, type, event => { if (!runtime.presentation.canMutate) event.preventDefault(); }, true);
 }
 dom.listen(document, "keydown", event => { if (event.key === "Escape") pendingPresentation = false; }, true);
+if(editable){
+  const toolbar=document.createElement('div');toolbar.setAttribute('aria-label','选区格式');
+  for(const mark of ['bold','italic','underline','strike','clear'] as const){const button=document.createElement('button');button.textContent=mark;button.dataset.ppteTextMark=mark;button.onmousedown=e=>{textSurface.remember();e.preventDefault()};button.onclick=()=>textSurface.format(mark==='clear'?{bold:null,italic:null,underline:null,strike:null,color:null}:{[mark]:true});toolbar.append(button)}
+  const color=document.createElement('input');color.type='color';color.setAttribute('aria-label','选区颜色');color.onpointerdown=()=>textSurface.remember();color.onchange=()=>textSurface.format({color:{kind:'value',value:color.value as `#${string}`}});toolbar.append(color);
+  const discard=document.createElement('button');discard.textContent='放弃文字草稿';discard.onclick=()=>{textSurface.discardActive();render()};toolbar.append(discard);
+  if(runtime.profile==='full-portable'){
+    const size=document.createElement('input');size.type='number';size.min='1';size.max='512';size.setAttribute('aria-label','整框字号');size.placeholder='整框字号';size.onchange=()=>{
+      const pending=flush();if(!pending.ok){show(pending);return}
+      const t=selected(),fontSize=Number(size.value);if(!t||!Number.isFinite(fontSize)||fontSize<1||fontSize>512)return;
+      const element=runtime.getDocument().slides[t.slideId].elements[t.elementId];if(element.type!=='text'||element.style.overrides?.fontSize===fontSize)return;
+      const transactionId=`box-size-${++sequence}`;
+      change(runtime.controller.commit({transactionId,baseRevision:runtime.getRevision(),createdAt:new Date().toISOString(),actor:{type:'human',id:'portable'},scope:{kind:'selection',slideIds:[t.slideId],elementIds:[t.elementId],permissions:['style'],allowInsert:false,allowDelete:false},changeContract:styleOnlyContract([t.elementId],false),operations:[{opId:transactionId,kind:'element.updateStyleOverrides',slideId:t.slideId,elementId:t.elementId,patch:{fontSize}}]}));
+    };toolbar.append(size);
+  }
+  const tools=root.querySelector('[data-ppte-toolbar]')??root.querySelector('header');(tools??root).append(toolbar);
+}
 const api = {
+  setTextMarks: (patch: Parameters<TextEditingSurface["format"]>[0]) => textSurface.format(patch),
+  getTextMarks: () => textSurface.marks(),
   enterPresentation,
   leavePresentation,
   getMode: () => presenting ? "present" : "edit",
