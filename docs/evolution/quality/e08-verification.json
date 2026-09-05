@@ -1,0 +1,125 @@
+{
+  "taskId": "E08",
+  "status": "pass",
+  "baselineCommit": "4eb6dd9770b1d4ca1349cce2f412a3a1fc00d21b",
+  "implementationCommit": "166628c49d809e1cfde6f98df54a50f6e1cbc26b",
+  "testFiles": [
+    "tests/text-run-style-profile.test.ts"
+  ],
+  "criteria": {
+    "1": {
+      "tests": [
+        "E08 A08 inheritance, explicit mixed values, clear, reverse/cross-paragraph/caret ranges and stable IDs",
+        "E08 A03 registered complete profile, all literal mark readers and schema sites reject malformed overrides",
+        "E08 A03/A13 literal JSON Schema readers validate new document/transaction/profile/report and frozen old readers reject new properties"
+      ],
+      "result": "Validated Run marks, null clear semantics, mixed explicit/inherited state, pending caret marks, frozen edit.1 plus complete 2.1 profile, literal current and archived legacy readers, both property surfaces."
+    },
+    "2": {
+      "tests": [
+        "E08 A08/A17 the shared resolver drives per-run coverage, reference measurement, HTML, SVG and native PPTX properties",
+        "E08 A08/A17 Host browser range font controls, mixed/clear, caret, save/reopen and measured pixels",
+        "E08 A08/A17 Portable browser range font controls, mixed/clear, caret, save/reopen and measured pixels",
+        "E08 A17 real browser PDF/PNG paths render run font overrides and preserve report identity"
+      ],
+      "result": "Shared font token/size resolver used for coverage, reference measurement, HTML/SVG/live DOM and PPTX. Browser glyph rectangles, readable control contrast, native sz/latin/ea/cs attributes, PNG changes and PDF/report identity verified; source font substitution remains reported."
+    },
+    "3": {
+      "tests": [
+        "E08 A03/A08 both checkpoint writers retain marks and exact undo/redo, including redo-only and inverse-only profile requirements",
+        "E08 A03 patch inference, serialized roundtrip and old target rejection preserve source identity",
+        "E08 A03 legacy documents retain their layout, schema/profile and source bytes on save",
+        "E08 A03 schema verification retains all existing operation kinds and the complete legacy profile example"
+      ],
+      "result": "Old layout/measurement and PPTX inherited typeface mapping retained. New marks survive Core commit, inverse, redo, both checkpoint writers and patch archives. Explicit old targets reject rather than drop new attributes. Frozen old manifest and marks schemas reject the extension."
+    }
+  },
+  "verification": {
+    "typecheck": "pass",
+    "build": "pass",
+    "test": {
+      "baseline": 212,
+      "final": 223,
+      "delta": 11,
+      "passed": 223,
+      "failed": 0,
+      "skipped": 0
+    },
+    "validate": "pass",
+    "blackbox": {
+      "start": "docs/evolution/quality/e08-blackbox-start.json",
+      "final": "docs/evolution/quality/e08-blackbox-final.json",
+      "beforeGreen": 69,
+      "beforeRed": 0,
+      "green": 69,
+      "red": 0,
+      "newRed": [],
+      "exitCode": 0
+    }
+  },
+  "buildManifest": {
+    "applicationVersion": "0.9.0-next.0",
+    "runtimeBuildId": "613cf808be741a49f72a4d5c4254ca7b04b9a6174bf79b7c2770f85b93455c7c"
+  },
+  "environment": {
+    "node": "v22.23.2",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "browser": {
+    "engine": "Playwright Chromium",
+    "viewport": {
+      "width": 1600,
+      "height": 1100
+    },
+    "entryPoints": [
+      "Host file:// application opening checkpoint",
+      "Generated Portable file:// HTML"
+    ],
+    "artifacts": [
+      {
+        "path": "artifacts/e08/host-run-fonts.png",
+        "sha256": "1bf882489b0bff278a9991b5c51f4256a17a50d21598b0a9146c7ff898c6ea2d",
+        "byteLength": 196326
+      },
+      {
+        "path": "artifacts/e08/host-run-fonts.zip",
+        "sha256": "98ce553a62732485b7c2ddd23d9cba21ee5900f97dc8bb67bfeabe17c885428c",
+        "byteLength": 1448897
+      },
+      {
+        "path": "artifacts/e08/portable-run-fonts.png",
+        "sha256": "c68694956f6b32e37ce894ad6192260b3d0253817bc9c66bcf665f3b72cd10b5",
+        "byteLength": 97138
+      },
+      {
+        "path": "artifacts/e08/portable-run-fonts.zip",
+        "sha256": "f5f344cc17e52568902dbd48e2d510850193c50cc42d2ad27e431ff97eae8509",
+        "byteLength": 774183
+      }
+    ]
+  },
+  "sourceSha256": {
+    "tests/text-run-style-profile.test.ts": "1a9145d23a283111f60da9ecb9f77f22e2dfec91459fc6aeb77fba03cdc693ac",
+    "tests/fixtures/evolution/text-run-legacy-reader.json": "72d3144f853803aad3ddd4b025cb7b57aaba6d7526730f8f12d3188bdb3f647d",
+    "packages/compatibility/src/index.ts": "adcc539bfce7cab2975ac774c03ae93acb84797ef4895cd79f5c1a65baae0d5b",
+    "packages/schema/src/validation.ts": "0338592fd7744e421c196e2a33bbf74f7840296743d559ffe05a228e3fb6560c",
+    "packages/validation/src/index.ts": "b0fbda913591d37d3ff4cc519058bbe39fe7486b053344efe5ffa14ed748aa2b",
+    "packages/renderer-react/src/index.ts": "f9f4972f772a19ae315d6c69308b5dfc1c58e23b6661490339bdd6ebd59fee23",
+    "packages/exporter-pptx/src/index.ts": "a51a01c67823d1732b900b85532ecfac269a0b0b4e12065ae573efe987ddc51d",
+    "packages/editor-dom/src/text-selection.ts": "2c6b41c1ea3df031eb68a3b7108690e6c232526f513e199c9d4f84302e77ce4b"
+  },
+  "additionalValidationRepairs": [
+    "Task-start pnpm validate failure reproduced from an isolated export of the baseline: legacy compatibility example omitted runtimeSubset; shape.setKind had no JSON Schema operation branch. Both were filled without weakening assertions."
+  ],
+  "remainingRisks": [
+    "PowerPoint, Keynote and LibreOffice open/edit/re-save fidelity unverified; semantic PPTX reports font substitution and does not embed source font payloads.",
+    "Deterministic glyph advances and SVG paragraph layout remain reference diagnostics, not browser shaping or an Office fidelity guarantee.",
+    "Real Safari, physical IME and low-performance physical hardware unverified."
+  ],
+  "publication": {
+    "pushed": false,
+    "branch": "evolution",
+    "signed": true
+  }
+}

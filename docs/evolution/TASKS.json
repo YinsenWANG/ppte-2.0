@@ -1226,7 +1226,7 @@
       "milestone": "M1",
       "priority": "P1",
       "title": "Run 字体字号的格式与导出扩展",
-      "status": "planned",
+      "status": "done",
       "effort": "L",
       "ownerRole": "格式 / 文字 / 导出",
       "dependsOn": [
@@ -1265,7 +1265,72 @@
         "A17"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        {
+          "commit": "166628c49d809e1cfde6f98df54a50f6e1cbc26b",
+          "tests": [
+            "tests/text-run-style-profile.test.ts"
+          ],
+          "criteria": {
+            "1": {
+              "tests": [
+                "E08 A08 inheritance, explicit mixed values, clear, reverse/cross-paragraph/caret ranges and stable IDs",
+                "E08 A03 registered complete profile, all literal mark readers and schema sites reject malformed overrides",
+                "E08 A03/A13 literal JSON Schema readers validate new document/transaction/profile/report and frozen old readers reject new properties"
+              ],
+              "result": "Validated Run marks, null clear semantics, mixed explicit/inherited state, pending caret marks, frozen edit.1 plus complete 2.1 profile, literal current and archived legacy readers, both property surfaces."
+            },
+            "2": {
+              "tests": [
+                "E08 A08/A17 the shared resolver drives per-run coverage, reference measurement, HTML, SVG and native PPTX properties",
+                "E08 A08/A17 Host browser range font controls, mixed/clear, caret, save/reopen and measured pixels",
+                "E08 A08/A17 Portable browser range font controls, mixed/clear, caret, save/reopen and measured pixels",
+                "E08 A17 real browser PDF/PNG paths render run font overrides and preserve report identity"
+              ],
+              "result": "Shared font token/size resolver used for coverage, reference measurement, HTML/SVG/live DOM and PPTX. Browser glyph rectangles, readable control contrast, native sz/latin/ea/cs attributes, PNG changes and PDF/report identity verified; source font substitution remains reported."
+            },
+            "3": {
+              "tests": [
+                "E08 A03/A08 both checkpoint writers retain marks and exact undo/redo, including redo-only and inverse-only profile requirements",
+                "E08 A03 patch inference, serialized roundtrip and old target rejection preserve source identity",
+                "E08 A03 legacy documents retain their layout, schema/profile and source bytes on save",
+                "E08 A03 schema verification retains all existing operation kinds and the complete legacy profile example"
+              ],
+              "result": "Old layout/measurement and PPTX inherited typeface mapping retained. New marks survive Core commit, inverse, redo, both checkpoint writers and patch archives. Explicit old targets reject rather than drop new attributes. Frozen old manifest and marks schemas reject the extension."
+            }
+          },
+          "verification": {
+            "typecheck": "pass",
+            "build": "pass",
+            "test": {
+              "baseline": 212,
+              "final": 223,
+              "delta": 11,
+              "passed": 223,
+              "failed": 0,
+              "skipped": 0
+            },
+            "validate": "pass",
+            "blackbox": {
+              "start": "docs/evolution/quality/e08-blackbox-start.json",
+              "final": "docs/evolution/quality/e08-blackbox-final.json",
+              "beforeGreen": 69,
+              "beforeRed": 0,
+              "green": 69,
+              "red": 0,
+              "newRed": [],
+              "exitCode": 0
+            }
+          },
+          "report": "docs/evolution/quality/e08-verification.json",
+          "contract": "docs/evolution/E08_RUN_FONTS.md",
+          "remainingRisks": [
+            "PowerPoint, Keynote and LibreOffice open/edit/re-save fidelity unverified; semantic PPTX reports font substitution and does not embed source font payloads.",
+            "Deterministic glyph advances and SVG paragraph layout remain reference diagnostics, not browser shaping or an Office fidelity guarantee.",
+            "Real Safari, physical IME and low-performance physical hardware unverified."
+          ]
+        }
+      ]
     },
     {
       "id": "D01",
