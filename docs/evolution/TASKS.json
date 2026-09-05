@@ -395,7 +395,7 @@
       "milestone": "M0",
       "priority": "P0",
       "title": "统一 Host 与 Portable 放映合同",
-      "status": "in_progress",
+      "status": "done",
       "effort": "L",
       "ownerRole": "编辑器 / 放映",
       "dependsOn": [
@@ -430,10 +430,47 @@
       ],
       "releaseRequired": true,
       "evidence": [
-        "tests/presentation-controller.test.ts",
-        "tests/portable-presentation.test.ts",
-        "tests/host-completion.test.ts",
-        "docs/evolution/PROGRESS.md"
+        {
+          "commit": "edaa15d647385184b51ca58ef05818ad44e06310",
+          "baselineCommit": "a822a1e790280f0b40a8be8ccc393ead233e7eda",
+          "tests": [
+            "tests/surface-mode-contract.test.ts",
+            "tests/presentation-controller.test.ts",
+            "tests/portable-presentation.test.ts",
+            "tests/host-completion.test.ts"
+          ],
+          "criteria": {
+            "1": "tests/surface-mode-contract.test.ts: identical generated file:// Portable and built Host journeys verify hidden editor surfaces, no editable focus, beforeinput/paste/drop cancellation, API commit/undo/redo rejection and unchanged revision/history. tests/portable-presentation.test.ts and tests/host-completion.test.ts retain existing edit/exit/save regressions.",
+            "2": "tests/surface-mode-contract.test.ts: active IME delays entry, composition commits exactly once, cancellation prevents late entry, invalid Portable text and Host storage rejection retain DOM drafts/revision, fullscreen denial remains clean, late completion cannot revive edit mode, real fullscreen/system exit and keyboard exit work.",
+            "3": "tests/surface-mode-contract.test.ts: edit reveals all appear steps, presentation reveals/retracts positive steps, first positive step returns to same-page zero, backward from zero reaches previous-page final step; landscape/portrait slide bounds remain inside viewport. tests/presentation-controller.test.ts preserves the original step-zero assertion."
+          },
+          "verification": {
+            "typecheck": "pass",
+            "build": "pass",
+            "test": {
+              "before": 125,
+              "after": 129,
+              "delta": 4,
+              "passed": 129,
+              "failed": 0
+            },
+            "blackbox": {
+              "start": "docs/evolution/quality/c05-blackbox-start.json",
+              "final": "docs/evolution/quality/c05-blackbox-final.json",
+              "beforeGreen": 69,
+              "beforeRed": 0,
+              "green": 69,
+              "red": 0,
+              "newRed": [],
+              "exitCode": 0
+            }
+          },
+          "report": "docs/evolution/quality/C05.md",
+          "remainingRisks": [
+            "Browser coverage is headless Chromium; physical IME, real Safari and other physical browsers remain unverified.",
+            "Expanded browse/edit defaults, media lifecycle and presenter tools remain scoped to E01/F04/F05/F06."
+          ]
+        }
       ]
     },
     {
