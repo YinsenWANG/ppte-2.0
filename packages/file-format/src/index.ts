@@ -17,6 +17,7 @@ import type { FaultInjector, FaultPoint } from '../../fault-injection/src/index.
 export { ContentAddressedStore } from './cas.js'
 
 export interface CheckpointWriteOptions {
+  redoHistory?: SessionHistoryEntrySnapshot[]
   timestamp?: string
   clean?: boolean
   recentTransactions?: Transaction[]
@@ -169,6 +170,7 @@ export function writeCheckpoint(document: PpteDocument, target: string, options:
     if (font.hash && normalizeHash(font.hash) !== sha256Binary(data)) throw new Error(`FONT_HASH_MISMATCH: ${font.id}`)
     if (!options.fontBytes?.[font.id]) addEntry(entries, safePackagePath(font.path ?? `fonts/${font.id}.woff2`, `fonts/${font.id}.woff2`, 'fonts/'), data)
   }
+  if (!options.clean && options.redoHistory?.length) addEntry(entries, 'history/redo.json', bytes(canonicalJsonString(options.redoHistory)))
   const files = entries.filter((entry) => entry.name !== 'mimetype').map((entry) => ({ path: entry.name, mediaType: mediaTypeFor(entry.name), byteLength: entry.data.length, sha256: sha256Binary(entry.data), required: entry.name === 'document.json' }))
   const manifest: PpteManifest = {
     format: 'ppte',
@@ -274,7 +276,7 @@ export function openCheckpointBytes(bytesOnDisk: Uint8Array): OpenCheckpointResu
   const history = manifest.history
   if (!history || descriptor.mode !== history.mode || descriptor.snapshotRevision !== history.snapshotRevision || descriptor.recentTransactionCount !== history.recentTransactionCount || descriptor.deepHistoryExternal !== history.deepHistoryExternal) throw new Error('CHECKPOINT_FAILED: history descriptor does not match manifest')
   const recentTransactions = readRecentTransactions(archive, manifest)
-  attachCheckpointRestoreContext(document, recentTransactions, manifest.compatibilityProfile)
+  attachCheckpointRestoreContext(document, recentTransactions, manifest.compatibilityProfile, archive.has('history/redo.json') ? parseJson<SessionHistoryEntrySnapshot[]>(archive, 'history/redo.json') : [])
   return { document, manifest, recentTransactions }
 }
 
@@ -326,6 +328,7 @@ export function buildCheckpointBytes(document: PpteDocument, options: Checkpoint
     if (font.hash && normalizeHash(font.hash) !== sha256Binary(data)) throw new Error(`FONT_HASH_MISMATCH: ${font.id}`)
     if (!options.fontBytes?.[font.id]) addEntry(entries, safePackagePath(font.path ?? `fonts/${font.id}.woff2`, `fonts/${font.id}.woff2`, 'fonts/'), data)
   }
+  if (!options.clean && options.redoHistory?.length) addEntry(entries, 'history/redo.json', bytes(canonicalJsonString(options.redoHistory)))
   const files = entries.filter((entry) => entry.name !== 'mimetype').map((entry) => ({ path: entry.name, mediaType: mediaTypeFor(entry.name), byteLength: entry.data.length, sha256: sha256Binary(entry.data), required: entry.name === 'document.json' }))
   const manifest: PpteManifest = {
     format: 'ppte',
@@ -403,11 +406,12 @@ function readRecentTransactions(archive: Map<string, Uint8Array>, manifest: Ppte
   return transactions
 }
 
-function attachCheckpointRestoreContext(document: PpteDocument, transactions: Transaction[], compatibilityProfile: string): void {
+function attachCheckpointRestoreContext(document: PpteDocument, transactions: Transaction[], compatibilityProfile: string, redoHistoryEntries: SessionHistoryEntrySnapshot[] = []): void {
   const historyEntries = historyEntriesFromTransactions(transactions)
-  if (!historyEntries?.length) return
+  if (!historyEntries?.length && !redoHistoryEntries.length) return
   attachSessionRestoreContext(document, {
-    historyEntries,
+    historyEntries: historyEntries ?? [],
+    redoHistoryEntries,
     runtimeProfile: runtimeProfileForCompatibility(compatibilityProfile),
     compatibilityProfile,
     source: 'checkpoint',
@@ -484,7 +488,8 @@ function resolveCheckpointRecovery(opened: OpenCheckpointResult, checkpointPath:
   const historyEntries = [...checkpointHistory, ...replay.history].slice(-MAX_RECENT_HISTORY_ENTRIES)
   const recoveredTransactions = historyEntries.map((entry) => entry.transaction)
   attachSessionRestoreContext(replay.document, {
-    historyEntries,
+    historyEntries: historyEntries ?? [],
+    redoHistoryEntries: [],
     runtimeProfile: runtimeProfileForCompatibility(opened.manifest.compatibilityProfile),
     compatibilityProfile: opened.manifest.compatibilityProfile,
     source: 'recovery',

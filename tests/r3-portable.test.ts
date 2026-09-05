@@ -1,13 +1,14 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { createHash } from 'node:crypto'
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { chromium } from 'playwright'
 import { makeContractDocument, makeGABContractDocument } from '../apps/contract-deck/index.js'
 import { buildCheckpointBytes, openCheckpointBytes } from '../packages/file-format/src/index.js'
-import { auditPortableBundle, createPortableLightEdit, createPortableQuickFix, decodePortable, PortableRuntime } from '../packages/portable-runtime/src/index.js'
+import { auditPortableBundle, createPortableFullPortable, createPortableLightEdit, createPortableQuickFix, decodePortable, PortableRuntime } from '../packages/portable-runtime/src/index.js'
 import type { ImageElement, TextElement } from '../packages/schema/src/index.js'
 
 test('R3 infers one minimum profile for file-format and Portable checkpoints', () => {
@@ -116,6 +117,106 @@ test('R3 file:// Light Edit commits crop, Chart Data, and geometry operations', 
       return { text: text.ok, crop: crop.ok, chart: chartResult.ok, move: move.ok, resize: resize.ok, cropData: state.slides.slide_main.elements.image_hero.crop, chartValue: state.slides.slide_main.elements.chart_revenue.data.rows[0].values.revenue, frame: state.slides.slide_main.elements.image_hero.frame }
     })
     assert.deepEqual(observed, { text: true, crop: true, chart: true, move: true, resize: true, cropData: { x: 0.1, y: 0.1, width: 0.8, height: 0.8 }, chartValue: 66, frame: { x: 300, y: 200, width: 400, height: 300 } })
+  } finally {
+    await browser.close()
+    rmSync(directory, { recursive: true, force: true })
+  }
+})
+
+test('R3 full Portable file:// editing, save/reopen, presentation, IME guard, and font dedupe', async () => {
+  const { document, imageBytes } = makeGABContractDocument()
+  document.metadata.title = '季度/总结: Q4 😀'
+  document.theme.tokens.fontFamilies['font.heading'] = 'Embedded Inter'
+  document.theme.tokens.fontFamilies['font.body'] = 'Embedded Inter'
+  const fontBytes = Uint8Array.from([0, 1, 2, 3])
+  document.fonts = {
+    font_embedded_inter: {
+      id: 'font_embedded_inter',
+      family: 'Embedded Inter',
+      style: 'normal',
+      weight: 400,
+      source: 'embedded',
+      path: 'fonts/embedded-inter.woff2',
+      hash: 'sha256-0000000000000000000000000000000000000000000000000000000000000000',
+      editableSafe: true,
+      glyphCoverage: [{ start: 0, end: 0x10ffff }],
+    },
+  }
+  document.fonts.font_embedded_inter.hash = `sha256-${createHash('sha256').update(fontBytes).digest('hex')}`
+  const built = createPortableFullPortable(document, { assetBytes: { asset_pixel: imageBytes }, fontBytes: { font_embedded_inter: fontBytes }, derivedAt: '2026-09-04T00:00:00.000Z' })
+  assert.equal(built.ok, true)
+  assert.equal(auditPortableBundle(built.html).ok, true)
+  const directory = mkdtempSync(join(tmpdir(), 'ppte-r3-full-portable-'))
+  const sourcePath = join(directory, '季度-summary.source.html')
+  const savedPath = join(directory, '季度-summary.saved.html')
+  const secondSavedPath = join(directory, '季度-summary.saved-again.html')
+  writeFileSync(sourcePath, built.html)
+  const browser = await chromium.launch({ headless: true })
+  try {
+    const page = await browser.newPage({ viewport: { width: 1000, height: 760 } })
+    await page.goto(pathToFileURL(sourcePath).href)
+    await page.waitForFunction(() => Boolean((globalThis as any).PPTEPortable?.getDocument))
+    assert.equal(await page.locator('[data-ppte-deliverable="true"]').count(), 1)
+    assert.equal(await page.locator('button[data-ppte-action="save-portable"]').innerText(), '保存可编辑副本 (.ppte.html)')
+    assert.equal(await page.locator('button[data-ppte-action="fullscreen"]').innerText(), '开始演示（全屏）')
+    assert.equal(await page.locator('[contenteditable="true"]').count() > 0, true)
+
+    const title = page.locator('[data-ppte-element-id="text_title"]')
+    await title.fill('季度复盘')
+    await title.blur()
+    await page.waitForFunction(() => (globalThis as any).PPTEPortable.getDocument().slides.slide_main.elements.text_title.content.paragraphs[0].runs[0].text === '季度复盘')
+    const editedRevision = await page.evaluate(() => (globalThis as any).PPTEPortable.getRevision())
+    const [download] = await Promise.all([
+      page.waitForEvent('download'),
+      page.locator('button[data-ppte-action="save-portable"]').click(),
+    ])
+    assert.match(download.suggestedFilename(), /季度_总结.*\.editable\.ppte\.html$/)
+    await download.saveAs(savedPath)
+    const savedHtml = readFileSync(savedPath, 'utf8')
+    const savedPayload = decodePortable(savedHtml)
+    assert.equal(savedPayload.origin.profile, 'full-portable')
+    assert.equal(savedPayload.origin.sourceRevision, editedRevision)
+    assert.equal(auditPortableBundle(savedHtml).ok, true)
+    assert.doesNotMatch(savedHtml.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ''), /<style[^>]*id="ppte-portable-fonts"/)
+    const fontToken = Buffer.from(fontBytes).toString('base64')
+    assert.equal(savedHtml.split(fontToken).length - 1, 1)
+
+    const blocked = await page.evaluate(() => {
+      const node = window.document.querySelector('[data-ppte-element-id="text_title"]') as HTMLElement
+      node.focus()
+      node.dispatchEvent(new CompositionEvent('compositionstart', { bubbles: true }))
+      node.textContent = '组合中的标题'
+      node.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText', data: '组合中的标题' }))
+      return (globalThis as any).PPTEPortable.saveAsEditableCopy()
+    })
+    assert.equal(blocked.ok, false)
+    assert.equal(blocked.issues[0].code, 'PORTABLE_COMPOSITION_ACTIVE')
+    await page.evaluate(() => window.document.querySelector('[data-ppte-element-id="text_title"]')?.dispatchEvent(new CompositionEvent('compositionend', { bubbles: true })))
+    await page.waitForFunction(() => (globalThis as any).PPTEPortable.getDocument().slides.slide_main.elements.text_title.content.paragraphs[0].runs[0].text === '组合中的标题')
+
+    const reopened = await browser.newPage({ viewport: { width: 1000, height: 760 } })
+    await reopened.goto(pathToFileURL(savedPath).href)
+    await reopened.waitForFunction(() => Boolean((globalThis as any).PPTEPortable?.getDocument))
+    const reopenedState = await reopened.evaluate(() => {
+      const api = (globalThis as any).PPTEPortable
+      return {
+        text: api.getDocument().slides.slide_main.elements.text_title.content.paragraphs[0].runs[0].text,
+        revision: api.getRevision(),
+        editable: window.document.querySelector('[data-ppte-deliverable="true"]') !== null,
+      }
+    })
+    assert.deepEqual(reopenedState, { text: '季度复盘', revision: editedRevision, editable: true })
+    await reopened.locator('button[data-ppte-action="next"]').click()
+    await reopened.waitForFunction(() => Array.from(window.document.querySelectorAll('[data-ppte-slide-id]')).some((slide) => (slide as HTMLElement).style.display === 'block' && slide.getAttribute('data-ppte-slide-id') === 'slide_metrics'))
+    const [secondDownload] = await Promise.all([
+      reopened.waitForEvent('download'),
+      reopened.locator('button[data-ppte-action="save-portable"]').click(),
+    ])
+    await secondDownload.saveAs(secondSavedPath)
+    const secondHtml = readFileSync(secondSavedPath, 'utf8')
+    assert.doesNotMatch(secondHtml.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ''), /<style[^>]*id="ppte-portable-fonts"/)
+    assert.equal(secondHtml.split(fontToken).length - 1, 1)
+    await reopened.close()
   } finally {
     await browser.close()
     rmSync(directory, { recursive: true, force: true })

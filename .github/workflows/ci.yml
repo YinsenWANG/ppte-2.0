@@ -16,7 +16,13 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: sudo apt-get update && sudo apt-get install --yes ripgrep
+      - run: python -m pip install --disable-pip-version-check jsonschema python-pptx
       - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm typecheck
       - run: pnpm -r typecheck
       - run: pnpm test
@@ -24,4 +30,49 @@ jobs:
       - run: pnpm e2e:vertical-slice
       - run: pnpm e2e:milestone
       - run: pnpm e2e:beta
-      - run: pnpm e2e:ga-a
+      - name: Original GA-A performance budgets, standard Node runtime
+        run: node dist/apps/contract-deck/index.js --ga-a
+      - run: pnpm package:pack
+      - name: Install and exercise the packaged CLI without optional browser dependencies
+        run: |
+          npm install --prefix "$RUNNER_TEMP/ppte-installed" --omit=optional ./artifacts/ppte-cli-0.8.0.tgz
+          export PATH="$RUNNER_TEMP/ppte-installed/node_modules/.bin:$PATH"
+          ppte compile examples/quarterly-design.json --out "$RUNNER_TEMP/quarterly.ppte"
+          ppte deliver "$RUNNER_TEMP/quarterly.ppte"
+          ppte skill-install --out "$RUNNER_TEMP/ppte-skill"
+          ppte host --out "$RUNNER_TEMP/editor.html"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ppte-cli-candidate
+          path: artifacts/ppte-cli-0.8.0.tgz
+
+  blackbox:
+    name: Full black-box acceptance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.22.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: astral-sh/setup-uv@v5
+        with:
+          version: 0.8.14
+      - run: sudo apt-get update && sudo apt-get install --yes poppler-utils fonts-noto-cjk fonts-noto-color-emoji
+      - run: pnpm install --frozen-lockfile
+      - name: Require working black-box infrastructure
+        run: |
+          pnpm exec playwright install --with-deps chromium
+          command -v uv
+          command -v pdftotext
+          uv run --with python-pptx python -c 'import pptx; print("python-pptx OK")'
+      - name: Run every black-box group; missing infrastructure fails the gate
+        run: pnpm blackbox:report > blackbox-report.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: blackbox-report
+          path: blackbox-report.json

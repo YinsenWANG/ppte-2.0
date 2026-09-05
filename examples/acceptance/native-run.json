@@ -1,0 +1,45 @@
+{
+  "host": "Codex desktop, current user-authorized implementation task",
+  "integration": "installed npm CLI + repository native Skill",
+  "version": "0.8.0",
+  "optionalDependenciesInstalled": false,
+  "authoringInput": "examples/acceptance/project-design.json",
+  "source": "examples/acceptance/project-brief.md",
+  "mcpStarted": false,
+  "records": [
+    {
+      "command": "compile",
+      "ok": true,
+      "status": 0,
+      "revision": "sha256-bc0c09ba52112cbadd04ba118b7ed6fc49466bc6eb45289e9fcdfebfa56bed2e",
+      "slides": 10
+    },
+    {
+      "command": "validate",
+      "ok": true,
+      "status": 0
+    },
+    {
+      "command": "inspect",
+      "ok": true,
+      "status": 0,
+      "revision": "sha256-bc0c09ba52112cbadd04ba118b7ed6fc49466bc6eb45289e9fcdfebfa56bed2e"
+    },
+    {
+      "command": "deliver",
+      "ok": true,
+      "status": 0,
+      "revision": "sha256-bc0c09ba52112cbadd04ba118b7ed6fc49466bc6eb45289e9fcdfebfa56bed2e"
+    },
+    {
+      "command": "skill-install",
+      "ok": true,
+      "status": 0
+    },
+    {
+      "command": "host",
+      "ok": true,
+      "status": 0
+    }
+  ]
+}

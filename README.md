@@ -11,11 +11,45 @@ assets, and reopen with the same canonical revision.
 
 ## Current status
 
-`0.5.0` is the bounded PPTe release. It includes the semantic reference core,
+`0.6.0` is the bounded PPTe release. It includes the semantic reference core,
 the file://-capable Host editing path, offline Portable editing profiles,
-recovery/history, review/patch, and independent GA black-box evidence. It is
-not a promise that every future editing or collaboration feature exists; the
-remaining boundaries are listed below and in `CHANGELOG.md`.
+recovery/history, review/patch, MCP delivery, and independent GA black-box
+evidence. It is not a promise that every future editing or collaboration
+feature exists; the remaining boundaries are listed below and in
+`CHANGELOG.md`.
+
+### Native Agent integration (0.7 candidate)
+
+The recommended authoring path is now **native Skill + npm CLI**. The host
+Agent reads source material and authors Presentation IR; PPTe compiles it
+through the shared Core and delivers an editable browser copy. MCP is an
+optional transport adapter, not a prerequisite. See [installation and
+workflow](README-AGENT.md) and the [repair/verification record](docs/PRODUCT_COMPLETION_2026-09-05.md).
+
+```sh
+pnpm package:pack
+npm install -g ./artifacts/ppte-cli-0.7.0.tgz
+ppte skill-install --out ~/.codex/skills/ppte
+ppte compile examples/quarterly-design.json --out quarterly.ppte
+ppte deliver quarterly.ppte
+```
+
+This is a locally installable candidate, not an npm registry publication.
+The Host imports real Agent-authored JSON; it does not claim to turn an
+uploaded filename into an AI-generated presentation. Both the Host and saved
+HTML now use the same `PpteSession` as the CLI for persistent mutations.
+
+### 该发哪个文件
+
+| 文件角色 | 文件名 | 打开方式与用途 |
+| --- | --- | --- |
+| 主交付物 | `<deck>.editable.ppte.html` | 浏览器直接打开；可编辑、另存可编辑副本、继续演示 |
+| 源项目 | `<deck>.ppte` | 先打开 PPTe Host，再选择项目；用于深度编辑和语义源保存 |
+| 只读预览 | `*.preview.html` | 仅按需展示/检查；不可作为可编辑交付物 |
+
+如果渠道只能发送一个附件，发送 `.editable.ppte.html`。`.ppte` 仍是
+source of truth，并在交付结果中单独说明“需 PPTe Host 打开”；两者不会
+自动双向同步。
 
 ## Quick start
 
@@ -29,7 +63,7 @@ pnpm host:build
 # Double-click this self-contained file:// Host in a desktop browser:
 # apps/host/dist/index.html
 
-# Generate the small derived CLI reference preview under artifacts/.
+# Generate the small derived CLI read-only reference preview under artifacts/.
 pnpm contract-deck
 
 # Independent final acceptance and the complete JSON report.
@@ -82,9 +116,11 @@ base revision match.
   packages.
 - `packages/capability` — explicit per-target capability and degradation
   reports.
-- `packages/portable-runtime` — offline Viewer, Quick Fix, and Light Edit
-  profiles, origin metadata, glyph preflight, presenter controls, and Save as
-  New Project.
+- `packages/portable-runtime` — offline Viewer, Quick Fix, Light Edit, and
+  full-portable profiles, origin metadata, glyph preflight, presenter
+  controls, and browser Save as New Project.
+- `apps/mcp/delivery.ts` — same-revision editable HTML + `.ppte` delivery
+  adapter with audit, sibling-only paths, no-clobber, and atomic publication.
 - `packages/reviewer` and `packages/patch-format` — three-way semantic review
   and data-only `.ppte.patch` transport with safe resource import.
 - `packages/exporter-pdf` — deterministic PDF/PNG baseline exporters with

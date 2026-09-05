@@ -1,0 +1,315 @@
+{
+  "presentation": {
+    "irVersion": "1.0",
+    "title": "季度经营复盘（示例）",
+    "audience": "管理层",
+    "objective": "核对业绩与下季度行动",
+    "narrative": [
+      {
+        "key": "review",
+        "title": "经营复盘",
+        "slideKeys": [
+          "quarter-1",
+          "quarter-2",
+          "quarter-3",
+          "quarter-4",
+          "quarter-5",
+          "quarter-6",
+          "quarter-7",
+          "quarter-8",
+          "quarter-9",
+          "quarter-10"
+        ]
+      }
+    ],
+    "slides": [
+      {
+        "irVersion": "1.0",
+        "slideKey": "quarter-1",
+        "purpose": "explanation",
+        "message": "经营概览",
+        "visualStrategy": "structured",
+        "density": "low",
+        "blocks": [
+          {
+            "key": "title",
+            "kind": "heading",
+            "content": "经营概览",
+            "importance": "primary"
+          },
+          {
+            "key": "body",
+            "kind": "paragraph",
+            "content": "本季度收入 128 万元，同比增长 18%。本报告用于管理层经营复盘。",
+            "importance": "secondary",
+            "sourceIds": [
+              "quarterly-brief"
+            ]
+          }
+        ],
+        "sourceIds": [
+          "quarterly-brief"
+        ]
+      },
+      {
+        "irVersion": "1.0",
+        "slideKey": "quarter-2",
+        "purpose": "explanation",
+        "message": "收入结构",
+        "visualStrategy": "structured",
+        "density": "low",
+        "blocks": [
+          {
+            "key": "title",
+            "kind": "heading",
+            "content": "收入结构",
+            "importance": "primary"
+          },
+          {
+            "key": "body",
+            "kind": "paragraph",
+            "content": "企业业务收入 96 万元，个人业务收入 32 万元。",
+            "importance": "secondary",
+            "sourceIds": [
+              "quarterly-brief"
+            ]
+          }
+        ],
+        "sourceIds": [
+          "quarterly-brief"
+        ]
+      },
+      {
+        "irVersion": "1.0",
+        "slideKey": "quarter-3",
+        "purpose": "explanation",
+        "message": "客户进展",
+        "visualStrategy": "structured",
+        "density": "low",
+        "blocks": [
+          {
+            "key": "title",
+            "kind": "heading",
+            "content": "客户进展",
+            "importance": "primary"
+          },
+          {
+            "key": "body",
+            "kind": "paragraph",
+            "content": "企业付费客户 24 家，本季度新增 6 家。",
+            "importance": "secondary",
+            "sourceIds": [
+              "quarterly-brief"
+            ]
+          }
+        ],
+        "sourceIds": [
+          "quarterly-brief"
+        ]
+      },
+      {
+        "irVersion": "1.0",
+        "slideKey": "quarter-4",
+        "purpose": "explanation",
+        "message": "产品交付",
+        "visualStrategy": "structured",
+        "density": "low",
+        "blocks": [
+          {
+            "key": "title",
+            "kind": "heading",
+            "content": "产品交付",
+            "importance": "primary"
+          },
+          {
+            "key": "body",
+            "kind": "paragraph",
+            "content": "交付 3 个企业项目，完成 2 次产品版本发布。",
+            "importance": "secondary",
+            "sourceIds": [
+              "quarterly-brief"
+            ]
+          }
+        ],
+        "sourceIds": [
+          "quarterly-brief"
+        ]
+      },
+      {
+        "irVersion": "1.0",
+        "slideKey": "quarter-5",
+        "purpose": "explanation",
+        "message": "服务质量",
+        "visualStrategy": "structured",
+        "density": "low",
+        "blocks": [
+          {
+            "key": "title",
+            "kind": "heading",
+            "content": "服务质量",
+            "importance": "primary"
+          },
+          {
+            "key": "body",
+            "kind": "paragraph",
+            "content": "本季度服务可用率为 99.95%，需要继续改善异常恢复。",
+            "importance": "secondary",
+            "sourceIds": [
+              "quarterly-brief"
+            ]
+          }
+        ],
+        "sourceIds": [
+          "quarterly-brief"
+        ]
+      },
+      {
+        "irVersion": "1.0",
+        "slideKey": "quarter-6",
+        "purpose": "explanation",
+        "message": "成本结构",
+        "visualStrategy": "structured",
+        "density": "low",
+        "blocks": [
+          {
+            "key": "title",
+            "kind": "heading",
+            "content": "成本结构",
+            "importance": "primary"
+          },
+          {
+            "key": "body",
+            "kind": "paragraph",
+            "content": "本季度成本 89 万元，其中人员成本 60 万元。",
+            "importance": "secondary",
+            "sourceIds": [
+              "quarterly-brief"
+            ]
+          }
+        ],
+        "sourceIds": [
+          "quarterly-brief"
+        ]
+      },
+      {
+        "irVersion": "1.0",
+        "slideKey": "quarter-7",
+        "purpose": "explanation",
+        "message": "利润情况",
+        "visualStrategy": "structured",
+        "density": "low",
+        "blocks": [
+          {
+            "key": "title",
+            "kind": "heading",
+            "content": "利润情况",
+            "importance": "primary"
+          },
+          {
+            "key": "body",
+            "kind": "paragraph",
+            "content": "收入 128 万元，成本 89 万元，经营结余 39 万元。",
+            "importance": "secondary",
+            "sourceIds": [
+              "quarterly-brief"
+            ]
+          }
+        ],
+        "sourceIds": [
+          "quarterly-brief"
+        ]
+      },
+      {
+        "irVersion": "1.0",
+        "slideKey": "quarter-8",
+        "purpose": "explanation",
+        "message": "主要风险",
+        "visualStrategy": "structured",
+        "density": "low",
+        "blocks": [
+          {
+            "key": "title",
+            "kind": "heading",
+            "content": "主要风险",
+            "importance": "primary"
+          },
+          {
+            "key": "body",
+            "kind": "paragraph",
+            "content": "两个项目存在验收延期风险，需要逐项确认客户反馈。",
+            "importance": "secondary",
+            "sourceIds": [
+              "quarterly-brief"
+            ]
+          }
+        ],
+        "sourceIds": [
+          "quarterly-brief"
+        ]
+      },
+      {
+        "irVersion": "1.0",
+        "slideKey": "quarter-9",
+        "purpose": "explanation",
+        "message": "下季度计划",
+        "visualStrategy": "structured",
+        "density": "low",
+        "blocks": [
+          {
+            "key": "title",
+            "kind": "heading",
+            "content": "下季度计划",
+            "importance": "primary"
+          },
+          {
+            "key": "body",
+            "kind": "paragraph",
+            "content": "优先改善交付质量，推进现有客户续约，并完善产品文档。",
+            "importance": "secondary",
+            "sourceIds": [
+              "quarterly-brief"
+            ]
+          }
+        ],
+        "sourceIds": [
+          "quarterly-brief"
+        ]
+      },
+      {
+        "irVersion": "1.0",
+        "slideKey": "quarter-10",
+        "purpose": "explanation",
+        "message": "需要的决策",
+        "visualStrategy": "structured",
+        "density": "low",
+        "blocks": [
+          {
+            "key": "title",
+            "kind": "heading",
+            "content": "需要的决策",
+            "importance": "primary"
+          },
+          {
+            "key": "body",
+            "kind": "paragraph",
+            "content": "确认续约和交付事项的负责人，在下次经营会复查进度。",
+            "importance": "secondary",
+            "sourceIds": [
+              "quarterly-brief"
+            ]
+          }
+        ],
+        "sourceIds": [
+          "quarterly-brief"
+        ]
+      }
+    ]
+  },
+  "sources": {
+    "quarterly-brief": {
+      "id": "quarterly-brief",
+      "title": "示例季度经营资料",
+      "citation": "examples/quarterly-brief.txt（测试用虚构数据）"
+    }
+  }
+}

@@ -16148,6 +16148,7 @@
               "kind": {
                 "const": "fact.delete"
               },
+              "removeEmptyCollection": { "type": "boolean" },
               "preconditions": {
                 "type": "array",
                 "items": {
@@ -16747,6 +16748,7 @@
               "kind": {
                 "const": "source.delete"
               },
+              "removeEmptyCollection": { "type": "boolean" },
               "preconditions": {
                 "type": "array",
                 "items": {

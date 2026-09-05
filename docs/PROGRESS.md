@@ -1,5 +1,34 @@
 # PPTe 2.0 Milestone Progress
 
+## 2026-09-04 — delivery-layer P0/P1 implementation
+
+The approved delivery plan is implemented in the working tree without changes
+to Schema, `.ppte` archive contract, canonical revision, Session/Operation
+Engine, inverse/history/journal semantics, or the frozen out-of-scope list.
+The product default is resolved only by `delivery-policy.ts`: an editable
+`full-portable` sibling `<deck>.editable.ppte.html` plus the same-revision
+`<deck>.ppte` source. Preview surfaces are explicitly read-only.
+
+### Black-box inventory correction
+
+- `62` is the historical 0.6 release baseline: 16 groups, 62 green / 0 red.
+- The source baseline for this repair is 17 groups / 65 cases.
+- The new four-case `delivery` group brings the implementation inventory to
+  18 groups / 69 cases. Existing cases remain present; none is deleted, skipped,
+  or weakened to reach the count.
+
+### Delivery-layer coverage
+
+- Portable UI now prioritizes editable HTML, keeps `.ppte` as the Host source,
+  removes hydrated font CSS before serialization, preserves Unicode filenames,
+  and refuses saves during IME composition.
+- MCP delivery checkpoints once, reads resources from that checkpoint, audits
+  the generated artifact, and publishes only its derived sibling atomically.
+  The adapter exposes no arbitrary output path and defaults to no-clobber.
+- Renderer entry points distinguish surface, read-only presentation, and the
+  reference Host shell. `render_slide` and `contract-deck.preview.html` carry
+  explicit non-delivery semantics.
+
 ## 2026-09-04 — r0 completion / final3
 
 ### Black-box self-assessment
@@ -7,9 +36,9 @@
 - The five new groups were first registered as red probes and preserved their
   original “should happen” descriptions; no existing assertion was deleted or
   weakened.
-- The final `node scripts/blackbox-gates.mjs --report` and cumulative
-  `node scripts/blackbox-gates.mjs --milestone final3` both passed: 16 groups,
-  62 green / 0 red. Section-41 is 10/0. The new groups are
+- The historical final `node scripts/blackbox-gates.mjs --report` and
+  cumulative `node scripts/blackbox-gates.mjs --milestone final3` passed:
+  16 groups, 62 green / 0 red. Section-41 is 10/0. The new groups are
   `video-widget` 3/0, `pptx-chart` 2/0, `full-portable` 2/0,
   `group-rotate` 1/0, and `legacy-import` 2/0.
 - The initial section-41 drift was reproduced and independently classified in
@@ -627,7 +656,10 @@ follow-on work. No remote is created and no changes are pushed.
 
 All five 0.5.0 open gaps closed: controlled Video Widget, native PPTX
 Bar/Line/Pie chart parts, `full-portable` editing profile, Group Rotate as
-explicit member transforms, bounded Slidev/Markdown text importer. Blackbox:
-16 groups, 62/0 green (final3 cumulative). Typecheck/test/validate pass.
+explicit member transforms, bounded Slidev/Markdown text importer. Historical
+0.6 release evidence: 16 groups, 62/0 green (final3 cumulative). The
+delivery-layer implementation inventory is 18 groups / 69 cases and must be
+reported from its fresh verification run; typecheck/test/validate claims in
+this paragraph refer to the historical release baseline.
 Frozen boundaries unchanged: no CRDT, no multi-user, no nested Groups, no
 Run-level font styling. See docs/RELEASE_v0.6.0.md.

@@ -150,7 +150,7 @@ export const AGENT_TOOL_DEFINITIONS: readonly AgentToolDefinition[] = AGENT_TOOL
   name,
   mutates: ['commit_transaction', 'undo_transaction'].includes(name),
   requiresConfirmation: ['commit_transaction', 'undo_transaction', 'regenerate_selection', 'redesign_others', 'regenerate_slide', 'apply_layout_recipe', 'replace_artwork', 'sync_fact_references'].includes(name),
-  description: name === 'commit_transaction' ? 'Commit a validated Transaction through the Session.' : name === 'preview_transaction' ? 'Preview a Transaction and return actual Diff and Issues.' : `Execute the ${name} Agent tool within the granted Scope.`,
+  description: name === 'render_slide' ? 'Return a read-only single-slide preview fragment for inspection; it is not an independent delivery file.' : name === 'commit_transaction' ? 'Commit a validated Transaction through the Session.' : name === 'preview_transaction' ? 'Preview a Transaction and return actual Diff and Issues.' : `Execute the ${name} Agent tool within the granted Scope.`,
 }))
 
 /**
@@ -344,13 +344,13 @@ export class AgentToolServer {
     return success('get_editability_report', this.revision(), { elements, overrideDebtIssues: diagnoseOverrideDebt(this.document()) })
   }
 
-  private renderSlide(slideId: string): AgentToolResult<{ html: string }> {
+  private renderSlide(slideId: string): AgentToolResult<{ html: string; kind: 'read-only-preview-fragment'; deliverable: false }> {
     if (!this.canReadSlide(slideId)) return failure('render_slide', 'SCOPE_VIOLATION', this.revision(), `Slide ${slideId} is outside the granted scope.`)
     const document = this.document()
     const slide = document.slides[slideId]
     const readable = this.readableElements(slide)
     const scoped = Object.keys(readable).length === Object.keys(slide.elements).length ? document : { ...document, slides: { ...document.slides, [slideId]: { ...slide, elements: readable, rootOrder: slide.rootOrder.filter((id) => Boolean(readable[id])), readingOrder: slide.readingOrder?.filter((id) => Boolean(readable[id])) } } }
-    return success('render_slide', this.revision(), { html: renderSlideHtml(scoped, slideId) })
+    return success('render_slide', this.revision(), { html: renderSlideHtml(scoped, slideId, { editable: false }), kind: 'read-only-preview-fragment', deliverable: false })
   }
 
   private searchText(query?: string): AgentToolResult<Array<{ slideId: string; elementId: string; semanticKey?: string; text: string }>> {
@@ -639,7 +639,7 @@ function replaceArtworkTransaction(revision: Revision, slideId: string, elementI
   }
 }
 
-function inferSlideIR(document: PpteDocument, slideId: string): SlideIR {
+export function inferSlideIR(document: PpteDocument, slideId: string): SlideIR {
   const slide = document.slides[slideId]
   if (!slide) throw new Error(`SLIDE_MISSING: ${slideId}`)
   const blocks = slide.rootOrder.map((elementId) => slide.elements[elementId]).filter((element): element is Element => Boolean(element)).filter((element) => element.role !== 'decorative' && element.role !== 'background').map(elementToBlock)

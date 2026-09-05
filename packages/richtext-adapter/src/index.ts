@@ -61,6 +61,51 @@ export function plainTextToRichText(value: string, paragraphPrefix = 'p'): RichT
   return { paragraphs: value.split('\n').map((line, index) => ({ id: `${paragraphPrefix}-${index + 1}`, runs: [{ id: `${paragraphPrefix}-${index + 1}-run`, text: line }] })) }
 }
 
+/** Apply a plain-text edit while retaining the semantic runs outside the
+ * changed range. Newly typed characters inherit the adjacent run's marks. */
+export function editRichText(original: RichTextDocument, value: string): RichTextDocument {
+  if (value.includes('\u0000')) throw new Error('Text input may not contain NUL characters.')
+  const tokens = original.paragraphs.flatMap((p, index) => [
+    ...(index ? [{char:'\n',p,r:p.runs[0]}] : []),
+    ...p.runs.flatMap(r => Array.from(r.text).map(char=>({char,p,r}))),
+  ])
+  const chars=Array.from(value)
+  let left=0,right=0
+  while(left<tokens.length&&left<chars.length&&tokens[left].char===chars[left])left++
+  if(left===tokens.length&&left===chars.length)return cloneRichText(original)
+  while(right<tokens.length-left&&right<chars.length-left&&tokens[tokens.length-1-right].char===chars[chars.length-1-right])right++
+  const p=original.paragraphs[0]??{id:'p',runs:[{id:'r',text:''}]}
+  const anchor=tokens[Math.max(0,left-1)]??{p,r:p.runs[0],char:''}
+  const next=[...tokens.slice(0,left),...chars.slice(left,chars.length-right).map(char=>({...anchor,char})),...tokens.slice(tokens.length-right)]
+  const lines: typeof next[]=[[]]
+  for(const token of next) {if(token.char==='\n')lines.push([]);else lines.at(-1)!.push(token)}
+  const used=new Set<string>()
+  const result:RichTextDocument={paragraphs:lines.map((line,i)=>{
+    const source=line[0]?.p??original.paragraphs[i]??anchor.p
+    let id=source.id
+    if(used.has(id))id=`${id}:edit:${i}`
+    used.add(id)
+    const runs:RichTextDocument['paragraphs'][number]['runs']=[]
+    const runIds=new Set<string>()
+    let previousSource:typeof line[number]['r']|undefined=undefined
+    for(const token of line){
+      const previous=runs.at(-1)
+      if(previous&&previousSource===token.r)previous.text+=token.char
+      else {
+        let rid=token.r?.id??`${id}:run`
+        if(runIds.has(rid))rid=`${rid}:edit:${runs.length}`
+        runIds.add(rid)
+        runs.push({id:rid,text:token.char,...(token.r?.marks?{marks:{...token.r.marks}}:{})})
+        previousSource=token.r
+      }
+    }
+    if(!runs.length)runs.push({id:`${id}:empty`,text:'',...(anchor.r?.marks?{marks:{...anchor.r.marks}}:{})})
+    return {...source,id,runs}
+  })}
+  assertSafeRichText(result)
+  return result
+}
+
 export function cloneRichText(value: RichTextDocument): RichTextDocument {
   return {
     paragraphs: value.paragraphs.map((paragraph) => ({

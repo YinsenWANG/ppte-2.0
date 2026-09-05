@@ -1,0 +1,332 @@
+{
+  "baseline": "7fcf43a",
+  "candidate": "ppte-cli@0.8.0",
+  "tests": {
+    "passed": 100,
+    "failed": 0
+  },
+  "blackbox": {
+    "green": 69,
+    "red": 0,
+    "ok": true
+  },
+  "groups": [
+    {
+      "group": "core-basic",
+      "green": 7,
+      "red": 0
+    },
+    {
+      "group": "agent-scope",
+      "green": 7,
+      "red": 0
+    },
+    {
+      "group": "lock-undo",
+      "green": 2,
+      "red": 0
+    },
+    {
+      "group": "host",
+      "green": 2,
+      "red": 0
+    },
+    {
+      "group": "pages-notes-animation",
+      "green": 2,
+      "red": 0
+    },
+    {
+      "group": "compiler-quality",
+      "green": 1,
+      "red": 0
+    },
+    {
+      "group": "portable",
+      "green": 5,
+      "red": 0
+    },
+    {
+      "group": "export",
+      "green": 3,
+      "red": 0
+    },
+    {
+      "group": "recovery",
+      "green": 4,
+      "red": 0
+    },
+    {
+      "group": "review-patch",
+      "green": 9,
+      "red": 0
+    },
+    {
+      "group": "section-41",
+      "green": 10,
+      "red": 0
+    },
+    {
+      "group": "video-widget",
+      "green": 3,
+      "red": 0
+    },
+    {
+      "group": "pptx-chart",
+      "green": 2,
+      "red": 0
+    },
+    {
+      "group": "full-portable",
+      "green": 2,
+      "red": 0
+    },
+    {
+      "group": "group-rotate",
+      "green": 1,
+      "red": 0
+    },
+    {
+      "group": "legacy-import",
+      "green": 2,
+      "red": 0
+    },
+    {
+      "group": "mcp",
+      "green": 3,
+      "red": 0
+    },
+    {
+      "group": "delivery",
+      "green": 4,
+      "red": 0
+    }
+  ],
+  "performance": {
+    "status": "ok",
+    "capacity": {
+      "slides": 30,
+      "elements": 900,
+      "groups": 120,
+      "assetBytes": 52428800,
+      "fonts": 20
+    },
+    "budgets": {
+      "capacity": {
+        "maxSlides": 30,
+        "maxElements": 900,
+        "maxGroups": 120,
+        "maxAssetBytes": 52428800,
+        "maxFonts": 20
+      },
+      "performance": {
+        "openToInteractiveMs": 2000,
+        "pageSwitchMs": 100,
+        "selectionMs": 50,
+        "humanCommitMs": 100,
+        "textCommitMs": 150,
+        "journalAppendMs": 100,
+        "undoRedoMs": 100,
+        "checkpoint50MbMs": 3000,
+        "portableViewerFirstScreenMs": 2000,
+        "portableQuickFixFirstScreenMs": 2500,
+        "viewerBundleGzipBytes": 1200000,
+        "quickFixBundleGzipBytes": 2000000
+      }
+    },
+    "metrics": [
+      {
+        "name": "open-to-interactive",
+        "samplesMs": [
+          6.738833000000113,
+          6.437666000000036,
+          6.739791999999852,
+          6.664250000000038,
+          6.517291999999998
+        ],
+        "p95Ms": 6.739600199999904,
+        "budgetMs": 2000,
+        "passed": true
+      },
+      {
+        "name": "page-switch",
+        "samplesMs": [
+          1.6997499999999945,
+          0.1590000000001055,
+          0.12066600000002836,
+          0.1113749999999527,
+          0.10091599999987011
+        ],
+        "p95Ms": 1.3916000000000164,
+        "budgetMs": 100,
+        "passed": true
+      },
+      {
+        "name": "selection",
+        "samplesMs": [
+          0.03512499999987995,
+          0.0032919999998739513,
+          0.0014590000000680448,
+          0.001040999999986525,
+          0.0009999999999763531
+        ],
+        "p95Ms": 0.028758399999878743,
+        "budgetMs": 50,
+        "passed": true
+      },
+      {
+        "name": "human-commit",
+        "samplesMs": [
+          12.990167000000156,
+          11.685167000000092,
+          11.82162500000004,
+          11.649124999999913,
+          11.579500000000053
+        ],
+        "p95Ms": 12.756458600000133,
+        "budgetMs": 100,
+        "passed": true
+      },
+      {
+        "name": "text-commit",
+        "samplesMs": [
+          11.849874999999884,
+          17.626374999999825,
+          12.385666999999785,
+          11.941291999999976,
+          11.842582999999877
+        ],
+        "p95Ms": 16.578233399999817,
+        "budgetMs": 150,
+        "passed": true
+      },
+      {
+        "name": "journal-append",
+        "samplesMs": [
+          14.996041999999989,
+          11.183541000000105,
+          11.810083000000077,
+          10.88912500000015,
+          12.086374999999862
+        ],
+        "p95Ms": 14.414108599999963,
+        "budgetMs": 100,
+        "passed": true
+      },
+      {
+        "name": "undo",
+        "samplesMs": [
+          12.356457999999975,
+          11.79404199999999,
+          11.15625,
+          11.49087499999996,
+          11.614874999999984
+        ],
+        "p95Ms": 12.243974799999979,
+        "budgetMs": 100,
+        "passed": true
+      },
+      {
+        "name": "redo",
+        "samplesMs": [
+          11.35895800000003,
+          11.375374999999849,
+          11.468166999999994,
+          11.471917000000076,
+          11.462166999999909
+        ],
+        "p95Ms": 11.47116700000006,
+        "budgetMs": 100,
+        "passed": true
+      },
+      {
+        "name": "checkpoint-50mb",
+        "samplesMs": [
+          582.3650420000001,
+          485.89266599999974,
+          472.8220000000001
+        ],
+        "p95Ms": 572.7178044000001,
+        "budgetMs": 3000,
+        "passed": true
+      },
+      {
+        "name": "portable-viewer-first-screen",
+        "samplesMs": [
+          255.58775000000014
+        ],
+        "p95Ms": 255.58775000000014,
+        "budgetMs": 2000,
+        "passed": true
+      },
+      {
+        "name": "portable-quick-fix-first-screen",
+        "samplesMs": [
+          251.45604200000025
+        ],
+        "p95Ms": 251.45604200000025,
+        "budgetMs": 2500,
+        "passed": true
+      }
+    ],
+    "bundles": [
+      {
+        "name": "viewer-bundle-gzip",
+        "bytes": 193097,
+        "budgetBytes": 1200000,
+        "passed": true
+      },
+      {
+        "name": "quick-fix-bundle-gzip",
+        "bytes": 192488,
+        "budgetBytes": 2000000,
+        "passed": true
+      }
+    ]
+  },
+  "native": {
+    "host": "Codex desktop, current user-authorized implementation task",
+    "integration": "installed npm CLI + repository native Skill",
+    "version": "0.8.0",
+    "optionalDependenciesInstalled": false,
+    "authoringInput": "examples/acceptance/project-design.json",
+    "source": "examples/acceptance/project-brief.md",
+    "mcpStarted": false,
+    "records": [
+      {
+        "command": "compile",
+        "ok": true,
+        "status": 0,
+        "revision": "sha256-bc0c09ba52112cbadd04ba118b7ed6fc49466bc6eb45289e9fcdfebfa56bed2e",
+        "slides": 10
+      },
+      {
+        "command": "validate",
+        "ok": true,
+        "status": 0
+      },
+      {
+        "command": "inspect",
+        "ok": true,
+        "status": 0,
+        "revision": "sha256-bc0c09ba52112cbadd04ba118b7ed6fc49466bc6eb45289e9fcdfebfa56bed2e"
+      },
+      {
+        "command": "deliver",
+        "ok": true,
+        "status": 0,
+        "revision": "sha256-bc0c09ba52112cbadd04ba118b7ed6fc49466bc6eb45289e9fcdfebfa56bed2e"
+      },
+      {
+        "command": "skill-install",
+        "ok": true,
+        "status": 0
+      },
+      {
+        "command": "host",
+        "ok": true,
+        "status": 0
+      }
+    ]
+  }
+}

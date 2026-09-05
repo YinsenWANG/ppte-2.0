@@ -35,5 +35,5 @@ test('reference renderer output is deterministic for the contract deck golden', 
   const first = renderSlideHtml(document, 'slide_main')
   const second = renderSlideHtml(structuredClone(document) as PpteDocument, 'slide_main')
   assert.equal(first, second)
-  assert.equal(canonicalHash(first), '3fed0c663894aa86e813d9f67922cf65f08a0357731dbe80387c018be8dbe810')
+  assert.equal(canonicalHash(first), '8b75f4d74264d24bee34bdfeff09fac7cd0c62757e9eedba5d372b3d82e759d3')
 })

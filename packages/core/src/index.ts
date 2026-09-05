@@ -4,7 +4,7 @@ import { applyTransaction, OperationApplyError } from '../../operations/src/inde
 import { checkPreconditions, checkTransactionScope, enforceChangeContract } from '../../change-contract/src/index.js'
 import { validateRuntimeDocument, validateTransactionShape } from '../../validation/src/index.js'
 import { compareDocuments } from '../../reviewer/src/index.js'
-import { applyPatchToDocument, buildPatchTransaction, validatePatch } from '../../patch-format/src/index.js'
+import { applyPatchToDocument, buildPatchTransaction, validatePatch } from '../../patch-format/src/codec.js'
 import { withErrorSemantics } from '../../schema/src/errors.js'
 import { getSessionRestoreContext, readPersistedHistoryMetadata, withPersistedHistoryMetadata } from '../../schema/src/file-format.js'
 import type {
@@ -38,6 +38,7 @@ export interface CheckpointAdapter<TTarget = unknown, TOptions = unknown> {
 }
 
 export interface SessionOptions {
+  redoHistory?: ReadonlyArray<HistoryEntry>
   journal?: JournalSink
   checkpoint?: CheckpointAdapter
   initialSaveState?: SaveState
@@ -86,6 +87,8 @@ export interface SessionEvent {
 
 export class PpteSession {
   private document: PpteDocument
+  private snapshot?: Readonly<PpteDocument>
+  private readonly verifiedApplies = new WeakMap<PreviewResult, ReturnType<typeof applyTransaction>>()
   private revision: Revision
   private readonly journal?: JournalSink
   private readonly checkpointAdapter?: CheckpointAdapter
@@ -118,6 +121,16 @@ export class PpteSession {
     this.indexes = buildDerivedIndexes(this.document)
     const history = options.history ?? restoreContext?.historyEntries ?? historyEntriesFromTransactions(options.recentTransactions)
     if (history?.length) this.restoreHistory(history)
+    const redo = options.redoHistory ?? restoreContext?.redoHistoryEntries ?? []
+    let redoDocument = this.document
+    for (const entry of [...redo].reverse()) {
+      if (canonicalRevision(redoDocument) !== entry.beforeRevision) throw new Error('HISTORY_RESTORE_FAILED: redo base revision mismatch.')
+      if (validateTransactionShape(entry.transaction).some(issue => issue.severity === 'error') || validateTransactionShape(entry.inverse).some(issue => issue.severity === 'error')) throw new Error('HISTORY_RESTORE_FAILED: malformed redo transaction.')
+      const next = applyTransaction(redoDocument, rebaseForRedo(entry.transaction, entry.beforeRevision, entry.transaction.transactionId), { runtimeProfile: this.runtimeProfile, strictFactSync: true }).document
+      if (canonicalRevision(next) !== entry.afterRevision || canonicalRevision(applyTransaction(next, entry.inverse, { runtimeProfile: this.runtimeProfile, strictFactSync: true }).document) !== entry.beforeRevision) throw new Error('HISTORY_RESTORE_FAILED: redo inverse does not round-trip.')
+      redoDocument = next
+    }
+    this.redoStack.push(...cloneJson(redo))
   }
 
   /** Construct a Session from a Host-opened checkpoint/recovery draft. */
@@ -126,7 +139,7 @@ export class PpteSession {
   }
 
   getDocument(): Readonly<PpteDocument> {
-    return deepFreeze(cloneJson(this.document))
+    return this.snapshot ??= deepFreeze(cloneJson(this.document))
   }
 
   getRevision(): Revision {
@@ -181,6 +194,7 @@ export class PpteSession {
       issues: dedupe(issues),
       requiresConfirmation: transaction.changeContract.requireConfirmation === true,
     }
+    if (ok) this.verifiedApplies.set(result, applied)
     this.notify({ type: 'previewed', revision: this.revision, diff })
     return result
   }
@@ -268,6 +282,7 @@ export class PpteSession {
   }
 
   private performCommit(transaction: Transaction, recordHistory: boolean, clearRedo: boolean, eventType: SessionEvent['type'], allowSystemInversePolicy = false): CommitResult {
+    transaction = cloneJson(transaction)
     const beforeRevision = this.revision
     const runtimeProfile = this.runtimeProfileForTransaction(transaction)
     const priorInverseState = this.systemInversePreview
@@ -279,13 +294,11 @@ export class PpteSession {
       this.systemInversePreview = priorInverseState
     }
     if (!preview.ok || !preview.document || !preview.diff) return { ok: false, beforeRevision, transactionId: transaction.transactionId, diff: preview.diff, issues: preview.issues }
-    let applied: ReturnType<typeof applyTransaction>
-    try {
-      applied = applyTransaction(this.document, transaction, { runtimeProfile, strictFactSync: true })
-    } catch (cause) {
-      return { ok: false, beforeRevision, transactionId: transaction.transactionId, issues: [error('OPERATION_APPLY_FAILED', cause instanceof Error ? cause.message : String(cause))] }
-    }
-    const afterRevision = canonicalRevision(applied.document)
+    if (this.revision !== beforeRevision) return failure('REVISION_CONFLICT', 'The document changed while preview listeners were running.', this.revision, transaction.transactionId)
+    // Consume the result already checked by preview; do not apply and hash twice.
+    const applied = this.verifiedApplies.get(preview)!
+    this.verifiedApplies.delete(preview)
+    const afterRevision = preview.proposedRevision!
     const inverse: Transaction = {
       transactionId: `${transaction.transactionId}:inverse`,
       baseRevision: afterRevision,
@@ -319,6 +332,7 @@ export class PpteSession {
         }
       }
     }
+    this.snapshot = undefined
     this.document = applied.document
     this.revision = afterRevision
     this.indexes.slideByElement.clear()
@@ -331,7 +345,7 @@ export class PpteSession {
     rebuildIndexes(this.document, this.indexes)
     if (recordHistory) {
       this.history.push({ transaction: cloneJson(durableTransaction), inverse, beforeRevision, afterRevision })
-      while (this.history.length > this.historyLimit || (this.history.length > 0 && historyBytes(this.history) > this.historyBytesLimit)) this.history.shift()
+      while (this.history.length > this.historyLimit || (this.historyBytesLimit !== Number.MAX_SAFE_INTEGER && this.history.length > 0 && historyBytes(this.history) > this.historyBytesLimit)) this.history.shift()
     }
     if (clearRedo) this.redoStack.length = 0
     const issues: ValidationIssue[] = preview.issues.filter((issue) => issue.severity !== 'error')
@@ -370,7 +384,7 @@ export class PpteSession {
       if (restoredIssues.length) throw new Error(`HISTORY_RESTORE_FAILED: inverse ${entry.transaction.transactionId} produced an invalid snapshot.`)
       let replayed: ReturnType<typeof applyTransaction>
       try {
-        replayed = applyTransaction(cursor, { ...entry.transaction, baseRevision: restoredRevision }, { runtimeProfile: this.runtimeProfile, strictFactSync: true })
+        replayed = applyTransaction(applied.document, { ...entry.transaction, baseRevision: restoredRevision }, { runtimeProfile: this.runtimeProfile, strictFactSync: true })
       } catch (cause) {
         throw new Error(`HISTORY_RESTORE_FAILED: transaction ${entry.transaction.transactionId} could not be replayed: ${cause instanceof Error ? cause.message : String(cause)}`)
       }
@@ -380,7 +394,7 @@ export class PpteSession {
     }
     for (const entry of candidate) {
       this.history.push(entry)
-      while (this.history.length > this.historyLimit || (this.history.length > 0 && historyBytes(this.history) > this.historyBytesLimit)) this.history.shift()
+      while (this.history.length > this.historyLimit || (this.historyBytesLimit !== Number.MAX_SAFE_INTEGER && this.history.length > 0 && historyBytes(this.history) > this.historyBytesLimit)) this.history.shift()
     }
   }
 

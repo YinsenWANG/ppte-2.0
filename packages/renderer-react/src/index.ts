@@ -20,7 +20,7 @@ export interface RenderOptions {
   widgetRegistry?: WidgetRegistry
   /** Mount text surfaces as editable controls for the Product Host. */
   editable?: boolean
-  /** The document renderer defaults to a small, self-contained Host shell. */
+  /** Legacy wrapper-only opt-in for the derived reference Host shell. */
   includeHostControls?: boolean
 }
 
@@ -62,13 +62,37 @@ export function renderSlideHtml(document: PpteDocument, slideId: string, options
   return `<div class="ppte-slide" data-ppte-slide-id="${escapeAttr(slide.id)}" data-ppte-type="slide"${strategyData}${transitionData} style="position:relative;overflow:hidden;width:${cssLength(document.canvas.width)};height:${cssLength(document.canvas.height)};background:${background}">${diagnostics}${children}</div>`
 }
 
-export function renderDocumentHtml(document: PpteDocument, options: RenderOptions = {}): string {
-  const surfaceOptions = { ...options, editable: options.editable ?? true }
+/** Render only the semantic slide surface; no Host controls are mounted. */
+export function renderDocumentSurfaceHtml(document: PpteDocument, options: RenderOptions = {}): string {
+  const surfaceOptions = { ...options, editable: options.editable ?? false, includeHostControls: false }
+  return document.slideOrder.map((slideId) => renderSlideHtml(document, slideId, surfaceOptions)).join('\n')
+}
+
+/** Render a presentation surface that is explicitly read-only. */
+export function renderReadOnlyPresentationHtml(document: PpteDocument, options: RenderOptions = {}): string {
+  return renderDocumentSurfaceHtml(document, { ...options, editable: false, includeHostControls: false })
+}
+
+/**
+ * Render the small reference Host shell used by examples and tests. This is a
+ * derived fixture, not a document editor or a persistence boundary.
+ */
+export function renderReferenceHostHtml(document: PpteDocument, options: RenderOptions = {}): string {
+  const surfaceOptions = { ...options, editable: options.editable ?? true, includeHostControls: false }
   const slides = document.slideOrder.map((slideId) => renderSlideHtml(document, slideId, surfaceOptions)).join('\n')
-  if (options.includeHostControls === false) return slides
   const thumbnails = document.slideOrder.map((slideId, index) => `<button type="button" class="ppte-thumbnail" data-ppte-slide-index="${index}" aria-label="Slide ${index + 1}"><span>${index + 1}</span></button>`).join('')
   const documentJson = canonicalJsonString(document).replaceAll('<', '\\u003c').replaceAll('>', '\\u003e').replaceAll('&', '\\u0026')
   return `<style data-ppte-host-style>.ppte-host{min-height:100vh;display:grid;grid-template-columns:9rem 1fr;grid-template-rows:auto 1fr auto;background:#111827;color:#f8fafc;font-family:system-ui,sans-serif}.ppte-host *{box-sizing:border-box}@keyframes ppte-enter-fade{from{opacity:0}to{opacity:1}}@keyframes ppte-enter-slide-up{from{opacity:0;transform:translateY(1rem)}to{opacity:1;transform:translateY(0)}}@keyframes ppte-enter-slide-left{from{opacity:0;transform:translateX(1rem)}to{opacity:1;transform:translateX(0)}}@keyframes ppte-enter-scale{from{opacity:0;scale:.96}to{opacity:1;scale:1}}@keyframes ppte-transition-fade{from{opacity:0}to{opacity:1}}@keyframes ppte-transition-slide{from{opacity:0;transform:translateX(2rem)}to{opacity:1;transform:translateX(0)}}@keyframes ppte-transition-push{from{opacity:0;transform:translateX(2rem)}to{opacity:1;transform:translateX(0)}}.ppte-host-toolbar{grid-column:1/-1;display:flex;gap:.5rem;align-items:center;padding:.65rem .8rem;background:#0f172a;position:sticky;top:0;z-index:4}.ppte-host-toolbar button,.ppte-host-toolbar label{border:1px solid #475569;border-radius:.35rem;background:#1e293b;color:#f8fafc;padding:.4rem .65rem;cursor:pointer;font-size:.85rem}.ppte-host-toolbar input[type=file]{display:none}.ppte-host-toolbar [data-ppte-status]{margin-left:auto;color:#cbd5e1;font-size:.8rem}.ppte-host-thumbnails{padding:.75rem;background:#0b1220;overflow:auto}.ppte-thumbnail{display:block;width:100%;min-height:4rem;margin:0 0 .55rem;border:1px solid #334155;border-radius:.35rem;background:#1e293b;color:#cbd5e1;cursor:pointer}.ppte-thumbnail[data-active=true]{border-color:#60a5fa;box-shadow:0 0 0 2px #2563eb66}.ppte-thumbnail span{display:block;padding:.25rem}.ppte-host-stage{display:grid;place-items:center;overflow:auto;padding:1rem}.ppte-host-stage .ppte-slide{display:none;box-shadow:0 1rem 3rem #0008;max-width:calc(100vw - 12rem);max-height:calc(100vh - 9rem)}.ppte-host-stage .ppte-slide[data-active=true]{display:block}.ppte-host-stage [data-ppte-animation-enter]{--ppte-animation-duration:0ms}.ppte-host-stage [contenteditable=true]{outline:1px dashed transparent}.ppte-host-stage [contenteditable=true]:hover,.ppte-host-stage [contenteditable=true]:focus{outline-color:#60a5fa;cursor:text}.ppte-host-notes{grid-column:1/-1;min-height:3rem;padding:.55rem .8rem;background:#0f172a}.ppte-host-notes textarea{width:100%;min-height:2.2rem;resize:vertical;background:#1e293b;color:#f8fafc;border:1px solid #475569;border-radius:.25rem;padding:.35rem}.ppte-host[data-ppte-presenting=true]{grid-template-columns:1fr}.ppte-host[data-ppte-presenting=true] .ppte-host-thumbnails,.ppte-host[data-ppte-presenting=true] .ppte-host-toolbar label,.ppte-host[data-ppte-presenting=true] .ppte-host-notes{display:none}.ppte-host[data-ppte-presenting=true] .ppte-host-stage .ppte-slide{max-width:calc(100vw - 2rem);max-height:calc(100vh - 5rem)}</style><div class="ppte-host" data-ppte-host data-ppte-canvas-unit="du"><header class="ppte-host-toolbar"><button type="button" data-ppte-action="new">New</button><label>Open<input type="file" accept=".ppte,.json,application/json" data-ppte-action="open"></label><button type="button" data-ppte-action="save">Save copy</button><button type="button" data-ppte-action="present">Present</button><span data-ppte-status>PPTe Host · local document</span></header><aside class="ppte-host-thumbnails" data-ppte-thumbnails>${thumbnails}</aside><main class="ppte-host-stage" data-ppte-stage>${slides}</main><section class="ppte-host-notes" data-ppte-notes-panel><label for="ppte-speaker-notes">Speaker notes</label><textarea id="ppte-speaker-notes" data-ppte-notes-input></textarea></section></div><script type="application/json" data-ppte-document>${documentJson}</script><script>${hostScript()}</script>`
+}
+
+/**
+ * @deprecated Use renderDocumentSurfaceHtml, renderReadOnlyPresentationHtml,
+ * or renderReferenceHostHtml so the output role is explicit. The legacy
+ * wrapper is read-only by default and is never a delivery API.
+ */
+export function renderDocumentHtml(document: PpteDocument, options: RenderOptions = {}): string {
+  if (options.includeHostControls === true) return renderReferenceHostHtml(document, options)
+  return renderDocumentSurfaceHtml(document, options)
 }
 
 /** A self-contained image surface for exporters. It remains derived from the semantic snapshot. */
@@ -170,8 +194,8 @@ function renderText(document: PpteDocument, element: TextElement, frame: string,
   const paragraphs = element.content.paragraphs.map((paragraph) => {
     const paragraphStyle = [
       paragraph.align ? `text-align:${paragraph.align};` : '',
-      paragraph.spaceBefore !== undefined ? `margin-top:${cssLength(paragraph.spaceBefore)};` : '',
-      paragraph.spaceAfter !== undefined ? `margin-bottom:${cssLength(paragraph.spaceAfter)};` : '',
+      `margin-top:${cssLength(paragraph.spaceBefore ?? 0)};`,
+      `margin-bottom:${cssLength(paragraph.spaceAfter ?? 0)};`,
     ].join('')
     const align = paragraphStyle ? ` style="${escapeAttr(paragraphStyle)}"` : ''
     const listPrefix = paragraph.list?.type === 'bullet' ? '• ' : paragraph.list?.type === 'number' ? '1. ' : ''

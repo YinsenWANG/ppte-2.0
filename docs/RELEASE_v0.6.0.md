@@ -13,19 +13,26 @@ ADR decisions, not gaps.
 | Controlled Video Widget (`core/video@1.0.0`) | Local source metadata + poster/static fallback in the semantic document; checkpoint round-trip preserved | Network/data/javascript sources rejected at registration; offline surfaces degrade to poster with explicit element-scoped report — not native playback |
 | Native PPTX charts | Bar/Line/Pie exported as real PowerPoint chart parts (categories + numeric values round-trip via python-pptx); capability items marked `nativeChart: true` | Area/Donut remain static/degraded (reported as such) |
 | `full-portable` profile | Self-contained `file://` editor: multi-selection, single-element Move/Resize/Scale/Rotate, Crop, Chart Data, Undo/Redo, Save-as-new-project | All persistent edits go through the existing Session Operation Engine; no second mutation path |
+| Delivery layer | MCP `deliver_presentation` produces `<deck>.editable.ppte.html` first and the same-revision `<deck>.ppte` source; Portable save/reopen uses the editable suffix, Unicode filenames, IME guard, and one hydrated-font copy | Default is `full-portable`; sibling-only/no-clobber/confirmed replacement/atomic publication; a read-only preview is never the default delivery |
 | Group Rotate | Explicit per-member frame + `rotationDeg` materialization with exact inverse | No group frame/transform/coordinate system introduced (ADR-006 preserved) |
 | Bounded legacy import | Slidev/Markdown **text** → semantic heading/body Text (deterministic markup cleanup); JSON-compatible semantic snapshot migration | Raw markup is never executed or retained as a runtime document source; unsupported formats rejected with explicit migration report |
 
 ## Gate evidence (re-run at release time)
 
-- `node scripts/blackbox-gates.mjs --report`: **16 groups, 62 green / 0 red**
-  (11 previous groups + video-widget, pptx-chart, full-portable, group-rotate,
-  legacy-import; section-41 A–J included)
-- `npm run typecheck` / `npm test` / `npm run validate`: pass
-- Independent verification by the orchestrator (not the implementation agent):
-  cumulative milestone `legacy-import` green 62/0; capability claims spot-
-  checked against source (video source rejection, rotate inverse, native chart
-  part assertion).
+- The release-time historical baseline was **16 groups, 62 green / 0 red**.
+  The delivery-repair source baseline has 17 groups / 65 cases (the six
+  capability/MCP groups had already been added); the four-case `delivery`
+  group makes the post-change inventory 18 groups / 69 cases. No prior case is
+  deleted or skipped.
+- The implementation gate is `node scripts/blackbox-gates.mjs --report` with
+  the 18-group / 69-case inventory; its fresh-run result belongs to the
+  environment-specific handoff and must not be inferred from the historical
+  62-green release report.
+- The release-time `npm run typecheck` / `npm test` / `npm run validate` and
+  cumulative `legacy-import` evidence were green for the historical 16/62
+  baseline. The delivery-layer repair must be verified with the 18/69 gate
+  inventory separately; this document does not convert the historical result
+  into a fresh-run claim.
 
 ## Still not implemented (unchanged frozen boundaries)
 
