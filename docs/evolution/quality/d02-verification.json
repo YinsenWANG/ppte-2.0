@@ -1,0 +1,82 @@
+{
+  "taskId": "D02",
+  "acceptanceId": "A14",
+  "status": "pass",
+  "scope": "D02 declarative execution subset; whole A14/G2 not asserted",
+  "baselineCommit": "2237cd529dfc5b08352f9a54fae995336cafae5e",
+  "environment": {
+    "node": "v22.23.2",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "compilerVersion": "design-compiler-1.1.0",
+  "fixtureSha256": "6d9ce91d50926e5c56f6377483d233ece6f5d14a8f7194556a5f02afff23a127",
+  "sourceSha256": {
+    "tests/recipe-execution-contract.test.ts": "3390213b677dcb09eced05e626632fa87d43d46a193a1ac2407239ca7f2eaa01",
+    "tests/fixtures/evolution/d02-legacy-compile.json": "6d9ce91d50926e5c56f6377483d233ece6f5d14a8f7194556a5f02afff23a127",
+    "packages/design-compiler/src/index.ts": "e1f7fedf992e8728ba45051bec05b0a142e772d2f24acc75edee898ee1fbbe4f",
+    "packages/layout-recipes/src/index.ts": "b7632ce8fb50f3a0bbdc31db7719612a9a72c497482ec8162ab951e59583597a",
+    "packages/schema/src/slide-ir.ts": "ca65e1cb5d3acf938ca9fd179022252f58b1eca6a927945ef1a248d504252e3d",
+    "packages/schema/src/slide-ir-validation.ts": "bfd498583b230ca530d68e63cb16d748307db0d756a0deb3f94d83218f03843c",
+    "schemas/recipe.schema.json": "6863342be190296ad0dbea32796239930669b8ec54f58cc74ec50de789d03b2e",
+    "packages/editor-react/src/RecipeStudio.tsx": "38b9705cc59e8aee92bd3e1f0a51ed5724337e76aa94542ee7cf8727d48df79b"
+  },
+  "verification": {
+    "typecheck": "pass",
+    "build": "pass",
+    "test": {
+      "before": 233,
+      "after": 243,
+      "delta": 10,
+      "passed": 243,
+      "failed": 0,
+      "skipped": 0
+    },
+    "blackbox": {
+      "start": "docs/evolution/quality/d02-blackbox-start.json",
+      "final": "docs/evolution/quality/d02-blackbox-final.json",
+      "beforeGreen": 69,
+      "beforeRed": 0,
+      "green": 69,
+      "red": 0,
+      "newRed": [],
+      "exitCode": 0
+    }
+  },
+  "criteria": {
+    "1": {
+      "tests": [
+        "variants apply equality predicates",
+        "all quality rules execute",
+        "constraints reject impossible final geometry",
+        "alignment, stack, gap and grid execute"
+      ],
+      "result": "Every constraint and quality kind executes or rejects explicitly; baseline unsupported; variants use a validated equality vocabulary."
+    },
+    "2": {
+      "tests": [
+        "matching reserves restricted slots",
+        "keepTogetherWith is a capacity relation",
+        "constraints reject impossible final geometry",
+        "Host persists edits/undo/redo, rejects stale tabs, retains marks, moves groups, and reviews conflicts"
+      ],
+      "result": "Lower/upper bounds, relationships, content capacity, final geometry and failed-draft materialization checked; Host preserves all 17 batch diagnostics."
+    },
+    "3": {
+      "tests": [
+        "legacy cover golden remains identical",
+        "versioned repeat uses declared columns",
+        "search and registry have deterministic hard budgets",
+        "registry snapshots cannot mutate execution"
+      ],
+      "result": "Versioned bounded repeat and content-key IDs; deterministic output and explicit search limit; legacy cover geometry/content golden retained."
+    }
+  },
+  "report": "docs/evolution/quality/D02.md",
+  "remainingRisks": [
+    "Reference text metrics are estimates; font-ready browser screenshots and full A14/G2 style-role coverage remain later tasks.",
+    "Baseline explicitly unsupported. Corrected built-in recipe references require version 1.1.0 or registration of original 1.0.0 specs.",
+    "Existing trusted controlled-handler API is host code, not sandboxed declarative execution."
+  ],
+  "implementationCommit": "6ab15e5abcd45b80771bc71504e9181f27ee3ce3"
+}

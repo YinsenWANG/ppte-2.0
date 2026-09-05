@@ -1402,7 +1402,7 @@
       "milestone": "M2",
       "priority": "P0",
       "title": "让配方约束、参数与容量真正执行",
-      "status": "planned",
+      "status": "done",
       "effort": "L",
       "ownerRole": "编译器 / 布局",
       "dependsOn": [
@@ -1434,7 +1434,74 @@
         "A14"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        {
+          "commit": "6ab15e5abcd45b80771bc71504e9181f27ee3ce3",
+          "tests": [
+            "tests/recipe-execution-contract.test.ts",
+            "tests/host-completion.test.ts",
+            "tests/week7-13-contract.test.ts"
+          ],
+          "criteria": {
+            "1": {
+              "tests": [
+                "variants apply equality predicates",
+                "all quality rules execute",
+                "constraints reject impossible final geometry",
+                "alignment, stack, gap and grid execute"
+              ],
+              "result": "Every constraint and quality kind executes or rejects explicitly; baseline unsupported; variants use a validated equality vocabulary."
+            },
+            "2": {
+              "tests": [
+                "matching reserves restricted slots",
+                "keepTogetherWith is a capacity relation",
+                "constraints reject impossible final geometry",
+                "Host persists edits/undo/redo, rejects stale tabs, retains marks, moves groups, and reviews conflicts"
+              ],
+              "result": "Lower/upper bounds, relationships, content capacity, final geometry and failed-draft materialization checked; Host preserves all 17 batch diagnostics."
+            },
+            "3": {
+              "tests": [
+                "legacy cover golden remains identical",
+                "versioned repeat uses declared columns",
+                "search and registry have deterministic hard budgets",
+                "registry snapshots cannot mutate execution"
+              ],
+              "result": "Versioned bounded repeat and content-key IDs; deterministic output and explicit search limit; legacy cover geometry/content golden retained."
+            }
+          },
+          "verification": {
+            "typecheck": "pass",
+            "build": "pass",
+            "test": {
+              "before": 233,
+              "after": 243,
+              "delta": 10,
+              "passed": 243,
+              "failed": 0,
+              "skipped": 0
+            },
+            "blackbox": {
+              "start": "docs/evolution/quality/d02-blackbox-start.json",
+              "final": "docs/evolution/quality/d02-blackbox-final.json",
+              "beforeGreen": 69,
+              "beforeRed": 0,
+              "green": 69,
+              "red": 0,
+              "newRed": [],
+              "exitCode": 0
+            }
+          },
+          "report": "docs/evolution/quality/D02.md",
+          "verificationReport": "docs/evolution/quality/d02-verification.json",
+          "remainingRisks": [
+            "Reference text metrics are estimates; font-ready browser screenshots and full A14/G2 style-role coverage remain later tasks.",
+            "Baseline explicitly unsupported. Corrected built-in recipe references require version 1.1.0 or registration of original 1.0.0 specs.",
+            "Existing trusted controlled-handler API is host code, not sandboxed declarative execution."
+          ]
+        }
+      ]
     },
     {
       "id": "D03",
