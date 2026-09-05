@@ -20,6 +20,11 @@ test('portable slideshow separates editing, supports fullscreen refusal and exit
     const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, acceptDownloads: true })
     await page.goto(pathToFileURL(file).href)
     await page.waitForFunction(() => Boolean((globalThis as any).PPTEPortable))
+    // The receiver must be able to distinguish editable HTML from source export.
+    const saveCopy = page.getByRole('button', { name: '保存可编辑副本 (.ppte.html)', exact: true })
+    const present = page.getByRole('button', { name: '开始演示（全屏）', exact: true })
+    assert.equal(await saveCopy.isVisible(), true)
+    assert.equal(await present.isVisible(), true)
     const text = page.locator('[data-ppte-element-id="text_body"]')
     await text.fill('Draft before slideshow')
     // Refusal must still enter a clean slideshow, committing the focused draft.
@@ -49,6 +54,8 @@ test('portable slideshow separates editing, supports fullscreen refusal and exit
     await page.goto(pathToFileURL(saved).href)
     await page.waitForFunction(() => Boolean((globalThis as any).PPTEPortable))
     assert.equal(await text.innerText(), 'Editable after exit')
+    assert.equal(await saveCopy.isVisible(), true)
+    assert.equal(await present.isVisible(), true)
     await page.locator('[data-ppte-action="fullscreen"]').click()
     await page.waitForFunction(() => document.fullscreenElement !== null)
     await page.evaluate(() => document.exitFullscreen())

@@ -138,6 +138,61 @@
             "Real Safari, low-performance physical device, Host startup and physical IME unverified; API-to-paint is not keyboard latency.",
             "Synthetic equivalents only; no real user originals supplied."
           ]
+        },
+        {
+          "kind": "fix-round-verification",
+          "baselineCommit": "210c55620eecdfef751eef9895a4d6ca48c457d8",
+          "implementationCommitForFrozenCriteria": "20da0b03db264e79438627acb52461d665a0a817",
+          "sourceSha256": {
+            "packages/portable-runtime/src/shared.ts": "82bae694c0aec29b0585f192f4ca18ede184ca9fb50d2366b80125d48f9a7386",
+            "tests/delivery.test.ts": "1b649e3cd36ea0290164350260778bd99ba39230c7e0491669cffa5de8b4cb7b",
+            "tests/r3-portable.test.ts": "a99683bd3628fc24ae45ee3fc1c41d67fff0acae625bf45388a650da4d03305a",
+            "tests/portable-presentation.test.ts": "08c9fb352f7af2bdeb0bfef29130b3a70ae0cb27fec41bde721293b4ea45fcc3",
+            "tests/evolution-baseline.test.ts": "1066bc26073d28fc34bd3ebb88773bf891f30be381085e506c8a02014beee96a"
+          },
+          "tests": [
+            "tests/delivery.test.ts",
+            "tests/r3-portable.test.ts",
+            "tests/portable-presentation.test.ts",
+            "tests/evolution-baseline.test.ts"
+          ],
+          "criteria": {
+            "1": "tests/evolution-baseline.test.ts: four independent frozen background, legacy profile, invalid history and legacy HTML identity cases pass.",
+            "2": "tests/evolution-baseline.test.ts: provenance test verifies immutable fixture/report hashes, public source/license, environment and expected/observed revisions.",
+            "3": "tests/evolution-baseline.test.ts: A20 test verifies frozen c01-m1-v1 limits, raw browser sample counts/percentiles and E02 version reference."
+          },
+          "verification": {
+            "typecheck": "pass",
+            "build": "pass",
+            "test": {
+              "before": 125,
+              "after": 125,
+              "delta": 0,
+              "passed": 125,
+              "failed": 0
+            },
+            "blackbox": {
+              "start": "docs/evolution/quality/c01-fix-blackbox-start.json",
+              "final": "docs/evolution/quality/c01-fix-blackbox-final.json",
+              "beforeGreen": 67,
+              "beforeRed": 2,
+              "green": 68,
+              "red": 1,
+              "newRed": [],
+              "resolved": [
+                "delivery:2"
+              ],
+              "remaining": [
+                "section-41:1"
+              ]
+            }
+          },
+          "report": "docs/evolution/quality/C01.md",
+          "remainingRisks": [
+            "Existing section-41:1 Host download timeout remains; blackbox:final exits 1, while the no-new-red task gate passes.",
+            "Frozen browser performance measurements describe their original build; real Safari, lower-performance physical devices, physical IME and Host startup remain unverified.",
+            "Only public synthetic equivalents are included."
+          ]
         }
       ]
     },
