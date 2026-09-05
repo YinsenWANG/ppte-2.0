@@ -1,3 +1,4 @@
+import { mountEditorShell } from '../../editor-dom/src/editor-shell.js'
 import { mountImageCrop } from '../../editor-dom/src/image-crop.js'
 import { prepareImage, decodeBrowserImage } from '../../editor-controller/src/resource-port.js'
 import { TransformSession, planTransform } from '../../editor-controller/src/transform-session.js';
@@ -48,6 +49,7 @@ const runtime = new PortableRuntime(payload.document, {
 const dom = new DomResources();
 runtime.controller.own(() => dom.dispose());
 const root = document.getElementById("ppte-shell")!;
+dom.own(mountEditorShell(root));
 const canvas = document.querySelector<HTMLElement>("[data-ppte-canvas]")!;
 const stage = document.querySelector<HTMLElement>("[data-ppte-stage]")!;
 const status = document.querySelector<HTMLElement>("[data-ppte-status]")!;
@@ -83,6 +85,13 @@ const propertiesTitle = document.createElement('summary');
 propertiesTitle.textContent = '对象属性';
 propertiesPanel.append(propertiesTitle, properties);
 root.append(propertiesPanel);
+const pagesPanel = document.createElement('details');
+pagesPanel.dataset.pptePagesPanel = ''; pagesPanel.open = true;
+const pagesTitle = document.createElement('summary'); pagesTitle.textContent = '页面';
+const thumbnails = document.createElement('div'); thumbnails.dataset.ppteThumbnails = '';
+pagesPanel.append(pagesTitle, thumbnails); root.append(pagesPanel);
+let thumbnailRevision = '';
+
 const selected = () => runtime.getSelection()[0];
 const nodeFor = (id: string) =>
   Array.from(
@@ -91,8 +100,31 @@ const nodeFor = (id: string) =>
 function show(result?: { ok: boolean; issues?: Array<{ message: string }> }) {
   const state = runtime.presenterState();
   if(drag&&(drag.session.slideId!==state.slideId||drag.session.revision!==runtime.getRevision()))cancelTransform();
-  propertiesPanel.hidden = runtime.profile !== "full-portable" || presenting;
-  if (!propertiesPanel.hidden) renderObjectProperties(properties, runtime.getDocument(), state.slideId, runtime.getSelection().filter(t=>t.slideId===state.slideId).map(t=>t.elementId), command => {
+  pagesPanel.hidden = presenting;
+  if (thumbnailRevision !== runtime.getRevision()) {
+    thumbnailRevision = runtime.getRevision();
+    thumbnails.replaceChildren();
+    runtime.getDocument().slideOrder.forEach((id, index) => {
+      const button = document.createElement('button'); button.type = 'button';
+      button.dataset.ppteSlideIndex = String(index); button.setAttribute('aria-label', `Slide ${index + 1}`);
+      const preview = canvas.querySelector<HTMLElement>(`[data-ppte-slide-id="${id}"]`)?.cloneNode(true) as HTMLElement | undefined;
+      if (preview) {
+        preview.removeAttribute('data-ppte-slide-id'); preview.inert = true;
+        preview.querySelectorAll('[contenteditable]').forEach(n => n.removeAttribute('contenteditable'));
+        preview.querySelectorAll('[data-ppte-element-id]').forEach(n => n.removeAttribute('data-ppte-element-id'));
+        preview.style.cssText = `position:absolute;left:0;top:0;display:block;transform:scale(${140/runtime.getDocument().canvas.width});transform-origin:top left;pointer-events:none`;
+        const surface = document.createElement('span'); surface.style.cssText = `display:block;position:relative;width:140px;height:${140*runtime.getDocument().canvas.height/runtime.getDocument().canvas.width}px;overflow:hidden`;
+        surface.append(preview); button.append(surface);
+      }
+      button.append(`${index + 1} · ${runtime.getDocument().slides[id].name ?? 'Untitled'}`);
+      button.onclick = () => { runtime.setSlide(index); show(); };
+      thumbnails.append(button);
+    });
+  }
+  thumbnails.querySelectorAll('button').forEach((b,index)=>b.setAttribute('aria-current',String(index===state.slideIndex)));
+  propertiesPanel.hidden = !editable || presenting;
+  properties.hidden = runtime.profile !== "full-portable";
+  if (!propertiesPanel.hidden && !properties.hidden) renderObjectProperties(properties, runtime.getDocument(), state.slideId, runtime.getSelection().filter(t=>t.slideId===state.slideId).map(t=>t.elementId), command => {
     if (!flush().ok) return;
     change(runtime.controller.commit(planObjectProperty(runtime.getDocument(), {revision:runtime.getRevision(),slideId:state.slideId,ids:runtime.getSelection().filter(t=>t.slideId===state.slideId).map(t=>t.elementId),command,transactionId:`properties:${++sequence}`,createdAt:new Date().toISOString()})));
   });
@@ -532,9 +564,11 @@ if(editable){
   for(const mark of ['bold','italic','underline','strike','clear'] as const){const button=document.createElement('button');button.textContent=mark;button.dataset.ppteTextMark=mark;button.onmousedown=e=>{textSurface.remember();e.preventDefault()};button.onclick=()=>textSurface.format(mark==='clear'?{bold:null,italic:null,underline:null,strike:null,color:null}:{[mark]:true});toolbar.append(button)}
   const color=document.createElement('input');color.type='color';color.setAttribute('aria-label','选区颜色');color.onpointerdown=()=>textSurface.remember();color.onchange=()=>textSurface.format({color:{kind:'value',value:color.value as `#${string}`}});toolbar.append(color);
   const discard=document.createElement('button');discard.textContent='放弃文字草稿';discard.onclick=()=>{textSurface.discardActive();render()};toolbar.append(discard);
-  const tools=root.querySelector('[data-ppte-toolbar]')??root.querySelector('header');(tools??root).append(toolbar);
+  propertiesPanel.insertBefore(toolbar, properties);
 }
 const api = {
+  /** Call before editing; viewer capability is never elevated. */
+  enterEdit: () => { if (!editable) return error("PORTABLE_EDIT_UNSUPPORTED", "Viewer profile does not allow edits."); leavePresentation(); return {ok:true,issues:[]}; },
   setTextMarks: (patch: Parameters<TextEditingSurface["format"]>[0]) => textSurface.format(patch),
   getTextMarks: () => textSurface.marks(),
   enterPresentation,

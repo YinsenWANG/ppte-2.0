@@ -35,6 +35,12 @@ export function Inspector({
   }, [document, slide, ids, commit, commitProperty])
   const element = ids.length === 1 ? slide.elements[ids[0] ?? ""] : undefined;
   const emit = (value: Record<string, any>) => {
+    // Legacy controls delegate migrated properties to the same planner as the shared panel.
+    if (commitProperty) {
+      if (value.kind==='element.updateStyleOverrides' && element?.type==='text') return commitProperty({kind:'text-style',patch:value.patch})
+      if (value.kind==='text.updateStyle') return commitProperty({kind:'paragraph',patch:value.paragraphStyle})
+      if (value.kind==='shape.updateStyle') return commitProperty({kind:'shape-style',patch:value.patch})
+    }
     let command:TransformCommand|undefined
     if(value.kind==='layout.align')command={kind:'align',axis:['left','right','center-x'].includes(value.alignment)?'x':'y',edge:['left','top'].includes(value.alignment)?'start':['right','bottom'].includes(value.alignment)?'end':'center',range:'selection'}
     else if(value.kind==='layout.distribute')command={kind:'distribute',axis:value.axis==='horizontal'?'x':'y',range:'selection'}

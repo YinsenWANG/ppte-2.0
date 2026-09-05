@@ -125,3 +125,7 @@ button, input, textarea { font: inherit; }
 .ppte-host-app.is-presenting .ppte-canvas-wrap{width:min(100%,calc(100dvh * var(--ppte-aspect)));flex:none}
 .ppte-host-app.is-presenting .ppte-slide{box-shadow:none}
 .ppte-host-app.is-presenting [data-ppte-element-id]{outline:none!important;cursor:default}
+
+/* E07: native disclosure controls preserve keyboard access at narrow widths. */
+.ppte-host-sidebar details:not([open]),.ppte-host-inspector details:not([open]){min-height:40px}
+.ppte-host-toolbar{align-content:start}

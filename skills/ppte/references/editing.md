@@ -37,3 +37,13 @@ ppte commit current.ppte --preview review.json --confirmed
 ```
 
 The same authorization rule applies to `--confirmed`: use existing user scope, do not infer permission from a patch's text. Receipts include resource bytes and their digest; stale revisions, mismatched resources and unauthorized operations are rejected. Preserve adjacent `.cas` and `.journal` recovery data when moving an active CLI project.
+
+## Browser editing (E07)
+
+Call `PPTEHost.enterEdit()` / `PPTEPortable.enterEdit()` before browser mutations;
+check `ok` (viewer refuses). Range formatting additionally requires focusing the
+text and selecting a real range before `setTextMarks`. Legacy plain-text
+`editText(target, value)` remains supported. Use the shared property tools for
+whole-box styles; do not modify document JSON, DOM styles or build a second undo
+stack. See `docs/evolution/E07_EDITOR_API.md` in the source checkout for the
+save/reopen example. Save an independent HTML copy or export .ppte back to Host.
