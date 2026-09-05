@@ -1,0 +1,47 @@
+{
+  "task": "E07",
+  "implementationCommit": "d23a19aa5f2e7562d1f2b05e48a0a74dd2249994",
+  "baselineCommit": "7c8b8e8",
+  "typecheck": "pass",
+  "build": "pass",
+  "test": {
+    "before": 209,
+    "after": 212,
+    "delta": 3,
+    "passed": 212,
+    "failed": 0,
+    "skipped": 0
+  },
+  "blackbox": {
+    "start": "docs/evolution/quality/e07-blackbox-start.json",
+    "final": "docs/evolution/quality/e07-blackbox-final.json",
+    "beforeGreen": 69,
+    "beforeRed": 0,
+    "green": 69,
+    "red": 0,
+    "newRed": []
+  },
+  "artifactsSha256": {
+    "artifacts/e07/host-1600.png": "6f8d6f29e4962dfa23d86216100b310a326276b7b6cfa986208443b8e8cc96de",
+    "artifacts/e07/host-700.png": "a0884f5557344afc1e49fefd87fcc637a12f99eeb175303692907666fadf30d4",
+    "artifacts/e07/host.zip": "31904261ca4c6c55e8ce54e66a21e917315fd11929f6bffd1035b0623fff2f42",
+    "artifacts/e07/portable-1600.png": "3c288806c28cb91d87fd75d513410356ba8faaffa5144db7f458c39dcf74e9d5",
+    "artifacts/e07/portable-700.png": "4499f1618ca9b72bafdc5e1f471b19becf5b97746f5cc8300642d835912b475b",
+    "artifacts/e07/portable.zip": "efaf8b1df02672cf1372905350434e160d874426b51479dd263c507277440a50"
+  },
+  "environment": {
+    "node": "v22.23.2",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "buildManifest": {
+    "applicationVersion": "0.9.0-next.0",
+    "runtimeBuildId": "7af41d37cadeb85d499859e09d7c317ccb0cf6c438420371d6c3546dc039de0f"
+  },
+  "remainingRisks": [
+    "Physical IME, Safari and low-performance physical devices unverified.",
+    "A21 product-owner and two-target-user timed usability sessions unverified.",
+    "Portable fresh document creation uses Host/CLI generation; recipient copies have no New/project picker.",
+    "Journey exports semantic .ppte and editable HTML; real Office fidelity unverified."
+  ]
+}

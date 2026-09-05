@@ -1155,7 +1155,7 @@
       "milestone": "M1",
       "priority": "P0",
       "title": "统一编辑外壳并完成双端旅程",
-      "status": "planned",
+      "status": "done",
       "effort": "M",
       "ownerRole": "编辑器 / 验收",
       "dependsOn": [
@@ -1195,7 +1195,31 @@
         "A21"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        {
+          "commit": "d23a19aa5f2e7562d1f2b05e48a0a74dd2249994",
+          "tests": [
+            "tests/editor-parity-journey.test.ts",
+            "tests/host-completion.test.ts",
+            "tests/text-range-editing.test.ts",
+            "tests/object-transform.test.ts",
+            "tests/image-editing-journey.test.ts"
+          ],
+          "criteria": {
+            "1": "Shared Host/Portable keyboard journey checks pages/properties disclosure, thumbnails and focusable file controls at 1600/700 px; presentation hides editing tools.",
+            "2": "Legacy text API tests preserve optional revision and marks with Core undo; browser enterEdit rejects viewer elevation and formatting requires text session. Migration test covers example/Skill and shared property delegation.",
+            "3": "Same blank-document edit, range-bold, font, undo/redo, save HTML, reopen, present and export .ppte journey on both entries; Host additionally reopens native .ppte and preserves undo."
+          },
+          "verification": "docs/evolution/quality/e07-verification.json",
+          "report": "docs/evolution/quality/E07.md",
+          "remainingRisks": [
+            "Physical IME, Safari and low-performance physical devices unverified.",
+            "A21 product-owner and two-target-user timed usability sessions unverified.",
+            "Portable fresh document creation uses Host/CLI generation; recipient copies have no New/project picker.",
+            "Journey exports semantic .ppte and editable HTML; real Office fidelity unverified."
+          ]
+        }
+      ]
     },
     {
       "id": "E08",
