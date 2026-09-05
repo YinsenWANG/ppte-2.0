@@ -1,0 +1,1450 @@
+{
+  "planVersion": "1.0",
+  "status": "design-delivered-not-implemented",
+  "date": "2026-09-05",
+  "baselineCommit": "2005166d3c481b43c559e851b4ad90a53ecfac43",
+  "principles": [
+    "npm CLI + native Skill",
+    "MCP stdio is optional",
+    "document.json is the only semantic source of truth",
+    "Core owns durable transactions and undo",
+    "No default QuickJS or collaboration service"
+  ],
+  "effortScale": {
+    "S": "局部变更",
+    "M": "跨模块实现",
+    "L": "必须按 slices 切分的高风险工作；不是日历估算"
+  },
+  "releaseGates": {
+    "G0": [
+      "C01",
+      "C02",
+      "C03",
+      "C04",
+      "C05",
+      "C06"
+    ],
+    "G1": [
+      "E01",
+      "E02",
+      "E03",
+      "E04",
+      "E05",
+      "E06",
+      "E07",
+      "E08"
+    ],
+    "G2": [
+      "D01",
+      "D02",
+      "D03",
+      "D04",
+      "D05",
+      "D06",
+      "D07"
+    ],
+    "G3": [
+      "F01",
+      "F02",
+      "F03",
+      "F04",
+      "F05",
+      "F06"
+    ],
+    "G4": [
+      "P01",
+      "P02",
+      "P03",
+      "Q01",
+      "Q02"
+    ]
+  },
+  "notes": [
+    "阶段是发布组织，允许依赖满足后的原型并行；G1 发布先通过 G0，依次类推。",
+    "目标 existingFiles 为基线已有路径；newFiles 为拟新增路径；不表示这些新文件已实现。",
+    "任务状态 planned 不等于已可发布；依赖与验收完成后才能标 done。",
+    "X01/X02 为条件探索，非任何发布门禁。"
+  ],
+  "tasks": [
+    {
+      "id": "C01",
+      "milestone": "M0",
+      "priority": "P0",
+      "title": "固化失败样本与真实基线",
+      "status": "planned",
+      "effort": "S",
+      "ownerRole": "Core / 验收",
+      "dependsOn": [],
+      "existingFiles": [
+        "tests/persistence.test.ts",
+        "tests/portable-presentation.test.ts",
+        "tests/delivery.test.ts",
+        "scripts/blackbox-fixtures.mjs"
+      ],
+      "newFiles": [
+        "tests/fixtures/evolution/manifest.json",
+        "tests/fixtures/evolution/history-background.json",
+        "docs/evolution/quality/m1-dependency-budget.json"
+      ],
+      "slices": [
+        "先加入不依赖真实用户文件的最小 fixture",
+        "经核验再加入真实案例或脱敏等价样本"
+      ],
+      "doneCriteria": [
+        "背景最小失败、合法旧 profile、错误历史、旧 HTML 身份样本可独立复现",
+        "记录原件 hash、期望 revision、环境与当前失败结果；正式测试材料可公开且有来源",
+        "前置冻结浏览器测量协议与 M1 编辑依赖包体/启动增量预算，E02 引用版本化结果"
+      ],
+      "acceptanceIds": [
+        "A01",
+        "A03",
+        "A05",
+        "A06",
+        "A20"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "C02",
+      "milestone": "M0",
+      "priority": "P0",
+      "title": "修复可选字段逆操作并升级操作兼容",
+      "status": "planned",
+      "effort": "L",
+      "ownerRole": "Core / 格式",
+      "dependsOn": [
+        "C01"
+      ],
+      "existingFiles": [
+        "packages/schema/src/operations.ts",
+        "packages/schema/src/document.ts",
+        "packages/schema/src/file-format.ts",
+        "packages/operations/src/index.ts",
+        "packages/core/src/index.ts",
+        "packages/compatibility/src/index.ts",
+        "packages/change-contract/src/index.ts",
+        "packages/file-format/src/index.ts",
+        "packages/portable-runtime/src/shared.ts",
+        "packages/patch-format/src/codec.ts",
+        "schemas/transaction.schema.json",
+        "schemas/manifest.schema.json",
+        "schemas/compatibility-profile.schema.json",
+        "schemas/patch-manifest.schema.json",
+        "packages/validation/src/index.ts"
+      ],
+      "newFiles": [
+        "tests/history-inverse-roundtrip.test.ts"
+      ],
+      "slices": [
+        "存在性审计与新协议/schema",
+        "serialized inverse proof 和原子拒绝",
+        "全持久化边界与历史/patch 兼容"
+      ],
+      "doneCriteria": [
+        "patch/unset 白名单与不存在字段的 inverse 可序列化",
+        "提交前 inverse proof 拒绝不可逆变更，失败不写恢复日志",
+        "兼容推断覆盖 document/history/redo/patch；旧 1.0 读写语义保留",
+        "冻结完整 edit.1 descriptor 与能力包含关系；推断含 inverse，proof 绑定解释器版本"
+      ],
+      "acceptanceIds": [
+        "A01",
+        "A02",
+        "A03"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "C03",
+      "milestone": "M0",
+      "priority": "P0",
+      "title": "分层诊断与保全式历史恢复",
+      "status": "planned",
+      "effort": "L",
+      "ownerRole": "Core / 文件",
+      "dependsOn": [
+        "C02"
+      ],
+      "existingFiles": [
+        "packages/core/src/index.ts",
+        "packages/file-format/src/index.ts",
+        "packages/recovery-journal/src/index.ts",
+        "packages/node-runtime/src/index.ts",
+        "packages/editor-react/src/recovery.ts",
+        "apps/cli/index.ts",
+        "packages/portable-runtime/src/shared.ts",
+        "packages/portable-runtime/src/browser.ts"
+      ],
+      "newFiles": [
+        "tests/history-repair.test.ts"
+      ],
+      "slices": [
+        "提取历史 validator 与只读 assessment",
+        "可信后缀/精确基准重建",
+        "CLI/Host 另存恢复和故障测试"
+      ],
+      "doneCriteria": [
+        "有效快照可只读查看；历史状态 valid/absent/invalid/unsupported 明确",
+        "保留连续可验证后缀；全量重建仅允许精确 checkpoint 基准",
+        "另存副本与报告；失败和崩溃不改变原件/sidecar",
+        "浏览器 recoverySessionId 隔离原 tail/base；快照或资源不完整仅给只读诊断，不自动拼成完整项目"
+      ],
+      "acceptanceIds": [
+        "A03",
+        "A04"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "C04",
+      "milestone": "M0",
+      "priority": "P0",
+      "title": "统一版本来源与交付物身份",
+      "status": "planned",
+      "effort": "L",
+      "ownerRole": "交付 / 打包",
+      "dependsOn": [
+        "C01",
+        "C02"
+      ],
+      "existingFiles": [
+        "package.json",
+        "scripts/build-portable.mjs",
+        "scripts/stage-package.mjs",
+        "packages/schema/src/file-format.ts",
+        "packages/portable-runtime/src/shared.ts",
+        "packages/portable-runtime/src/delivery-policy.ts",
+        "packages/node-runtime/src/delivery.ts",
+        "apps/cli/index.ts",
+        "schemas/portable-origin.schema.json",
+        "tests/delivery.test.ts",
+        "tests/delivery-policy.test.ts"
+      ],
+      "newFiles": [
+        "tests/artifact-identity.test.ts"
+      ],
+      "slices": [
+        "应用版本及构建 manifest",
+        "身份计算与 audit",
+        "新副本命名/覆盖原子性/旧 API 合同"
+      ],
+      "doneCriteria": [
+        "ArtifactIdentity 包含实际 runtime/renderer/shell/resource/font/history/capability/config/兼容 descriptor 摘要",
+        "collisionPolicy 旧 API 缺省 error，新流程显式 versioned-copy；参数冲突拒绝，短摘要碰撞原子创建新路径",
+        "应用版本单源，旧 profile 保留；审计实际字节与声明一致"
+      ],
+      "acceptanceIds": [
+        "A05",
+        "A19"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "C05",
+      "milestone": "M0",
+      "priority": "P0",
+      "title": "统一 Host 与 Portable 放映合同",
+      "status": "planned",
+      "effort": "L",
+      "ownerRole": "编辑器 / 放映",
+      "dependsOn": [
+        "C01"
+      ],
+      "existingFiles": [
+        "packages/editor-react/src/HostApp.tsx",
+        "apps/host/src/host.css",
+        "packages/portable-runtime/src/browser.ts",
+        "packages/portable-runtime/src/shared.ts",
+        "packages/portable-runtime/src/presenter-state.ts",
+        "tests/portable-presentation.test.ts"
+      ],
+      "newFiles": [
+        "packages/editor-controller/src/presentation.ts",
+        "tests/surface-mode-contract.test.ts"
+      ],
+      "slices": [
+        "纯模式和步骤函数",
+        "两端守卫与输入收口",
+        "生成后的 file:// 与 Host 浏览器回归"
+      ],
+      "doneCriteria": [
+        "两个入口放映无编辑 UI/可编辑焦点，UI 与 API 内容命令均拒绝",
+        "flush 失败保留草稿；全屏拒绝仍干净放映；迟到事件不逆转模式",
+        "编辑显示全部；previousStep 的当前页 0 边界修正"
+      ],
+      "acceptanceIds": [
+        "A06",
+        "A07",
+        "A16"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "C06",
+      "milestone": "M0",
+      "priority": "P0",
+      "title": "交付 M0 干净安装候选包",
+      "status": "planned",
+      "effort": "M",
+      "ownerRole": "验收 / 发布",
+      "dependsOn": [
+        "C02",
+        "C03",
+        "C04",
+        "C05"
+      ],
+      "existingFiles": [
+        "scripts/stage-package.mjs",
+        "scripts/blackbox-gates.mjs",
+        "skills/ppte/SKILL.md",
+        "tests/product-workflows.test.ts"
+      ],
+      "newFiles": [
+        "tests/npm-native-skill.test.ts"
+      ],
+      "slices": [
+        "构建候选与原生 Skill 旅程",
+        "核验报告和迁移说明"
+      ],
+      "doneCriteria": [
+        "干净临时安装后无需 MCP/模型密钥可 compile/edit/deliver",
+        "M0 真实失败用例和兼容回归通过，报告绑定 buildId",
+        "分别记录 Git 推送、候选 tarball、npm 发布、Skill 安装状态，不混报"
+      ],
+      "acceptanceIds": [
+        "A01",
+        "A03",
+        "A04",
+        "A05",
+        "A06",
+        "A19"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "E01",
+      "milestone": "M1",
+      "priority": "P0",
+      "title": "共享 Controller 与纯命令规划",
+      "status": "planned",
+      "effort": "L",
+      "ownerRole": "编辑器 / Core",
+      "dependsOn": [
+        "C02",
+        "C05"
+      ],
+      "existingFiles": [
+        "packages/editor-react/src/HostApp.tsx",
+        "packages/editor-react/src/interaction.ts",
+        "packages/portable-runtime/src/browser.ts",
+        "packages/capability/src/index.ts",
+        "packages/core/src/index.ts"
+      ],
+      "newFiles": [
+        "packages/editor-controller/src/index.ts",
+        "packages/editor-controller/src/commands.ts",
+        "packages/editor-controller/src/selection.ts",
+        "packages/editor-controller/src/policy.ts",
+        "packages/editor-dom/src/index.ts"
+      ],
+      "slices": [
+        "SessionPort/Selection/CommandResult 契约",
+        "命令注册/事务 planner 与 capability",
+        "先迁放映再迁文字/对象，清除重复写入"
+      ],
+      "doneCriteria": [
+        "Controller 不依赖 React/DOM/文件系统，CLI 可复用纯 planner",
+        "所有入口共用能力、范围、锁定、revision 守卫及 Core 历史",
+        "保留旧公开 API facade，订阅与暂态可完整释放",
+        "单命令队列、draft epoch 和 in-flight flush 去重；失败不得继续依赖命令"
+      ],
+      "acceptanceIds": [
+        "A06",
+        "A08",
+        "A11"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "E02",
+      "milestone": "M1",
+      "priority": "P1",
+      "title": "活动文本内核的受控选型实验",
+      "status": "planned",
+      "effort": "M",
+      "ownerRole": "文字 / 验收",
+      "dependsOn": [
+        "C01"
+      ],
+      "existingFiles": [
+        "packages/richtext-adapter/src/index.ts",
+        "packages/editor-react/src/text-measurement.ts",
+        "scripts/build-portable.mjs"
+      ],
+      "newFiles": [
+        "docs/evolution/decisions/text-kernel.md",
+        "tests/fixtures/evolution/text-poc.json"
+      ],
+      "slices": [
+        "实现最小适配实验",
+        "依据相同用例写 ADR；选中一条生产路径"
+      ],
+      "doneCriteria": [
+        "原生适配与 ProseMirror 同一组中文/选区/粘贴/历史用例比较",
+        "记录 bundle/启动代价、故障、维护差异和明确选择",
+        "不用全画布新模型，不启用第二历史，不要求云服务"
+      ],
+      "acceptanceIds": [
+        "A08",
+        "A09",
+        "A10",
+        "A20"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "E03",
+      "milestone": "M1",
+      "priority": "P0",
+      "title": "精确选区格式、IME 与草稿保护",
+      "status": "planned",
+      "effort": "L",
+      "ownerRole": "文字 / 编辑器",
+      "dependsOn": [
+        "E01",
+        "E02"
+      ],
+      "existingFiles": [
+        "packages/richtext-adapter/src/index.ts",
+        "packages/editor-react/src/HostApp.tsx",
+        "packages/portable-runtime/src/browser.ts"
+      ],
+      "newFiles": [
+        "packages/richtext-adapter/src/ranges.ts",
+        "packages/richtext-adapter/src/transforms.ts",
+        "packages/richtext-adapter/src/edit-buffer.ts",
+        "packages/editor-dom/src/text-selection.ts",
+        "tests/text-range-editing.test.ts"
+      ],
+      "slices": [
+        "纯范围变换及混合格式",
+        "输入组/IME/flush/冲突",
+        "双端活动文本适配与浏览器旅程"
+      ],
+      "doneCriteria": [
+        "选区基础 marks 精确变换，UTF-16/grapheme/ID 与光标映射正确",
+        "composition 去重、flush 失败和冲突保留草稿，只有 Core 撤销",
+        "活动 DOM 保留，不等 M4 才修 IME 焦点正确性",
+        "连点保存/compositionend/blur 并发只提交一次；flush 失败后 undo 不执行"
+      ],
+      "acceptanceIds": [
+        "A08",
+        "A09",
+        "A10",
+        "A18"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "E04",
+      "milestone": "M1",
+      "priority": "P1",
+      "title": "统一属性面板与插入命令",
+      "status": "planned",
+      "effort": "L",
+      "ownerRole": "编辑器 / 设计",
+      "dependsOn": [
+        "E01"
+      ],
+      "existingFiles": [
+        "packages/editor-react/src/Inspector.tsx",
+        "packages/portable-runtime/src/shared.ts",
+        "packages/portable-runtime/src/browser.ts",
+        "packages/schema/src/operations.ts",
+        "packages/operations/src/index.ts"
+      ],
+      "newFiles": [
+        "packages/editor-controller/src/object-commands.ts",
+        "tests/object-properties.test.ts"
+      ],
+      "slices": [
+        "属性 schema 与命令",
+        "Host/Portable 面板与快捷键",
+        "背景和主题范围合同"
+      ],
+      "doneCriteria": [
+        "形状类型/填充/描边、整框文字与段落、背景继承均有常用入口",
+        "多选混合值及作用范围清晰；无权限时整组拒绝",
+        "属性变化走已有 typed 操作，新属性通过全链路支持检查"
+      ],
+      "acceptanceIds": [
+        "A08",
+        "A11",
+        "A12"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "E05",
+      "milestone": "M1",
+      "priority": "P1",
+      "title": "直接变换、吸附、对齐和图层",
+      "status": "planned",
+      "effort": "L",
+      "ownerRole": "几何 / 编辑器",
+      "dependsOn": [
+        "E01",
+        "E04"
+      ],
+      "existingFiles": [
+        "packages/editor-react/src/interaction.ts",
+        "packages/geometry/src/index.ts",
+        "packages/operations/src/index.ts",
+        "packages/editor-react/src/HostApp.tsx",
+        "packages/portable-runtime/src/browser.ts"
+      ],
+      "newFiles": [
+        "packages/editor-dom/src/pointer.ts",
+        "packages/editor-controller/src/transform-session.ts",
+        "tests/object-transform.test.ts"
+      ],
+      "slices": [
+        "TransformSession 与坐标/取消合同",
+        "缩放旋转/吸附/对齐",
+        "双端操作与键盘旅程"
+      ],
+      "doneCriteria": [
+        "100 次 pointermove 最多一笔最终事务；取消/丢捕获零事务",
+        "屏幕坐标到 du 一处转换，比例/旋转/多选/锁定一致",
+        "吸附、对齐/分布、图层、组合使用同 planner"
+      ],
+      "acceptanceIds": [
+        "A11"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "E06",
+      "milestone": "M1",
+      "priority": "P1",
+      "title": "图片资源导入、替换与直接裁剪",
+      "status": "planned",
+      "effort": "L",
+      "ownerRole": "资源 / 编辑器",
+      "dependsOn": [
+        "E01",
+        "E05"
+      ],
+      "existingFiles": [
+        "packages/file-format/src/cas.ts",
+        "packages/editor-react/src/resource-pool.ts",
+        "packages/editor-react/src/HostApp.tsx",
+        "packages/portable-runtime/src/browser.ts",
+        "packages/renderer-react/src/index.ts"
+      ],
+      "newFiles": [
+        "packages/editor-controller/src/resource-port.ts",
+        "tests/image-editing-journey.test.ts"
+      ],
+      "slices": [
+        "准备资源与取消",
+        "裁剪/替换和引用回收",
+        "双端导入保存重开"
+      ],
+      "doneCriteria": [
+        "拖入/粘贴/文件选择统一 CAS 校验与原子提交",
+        "裁剪手柄与替换保持对象身份；引用共用资源安全撤销",
+        "解码/配额/取消失败不留下半个对象，离线重开完整",
+        "资源保留集合含 undo/redo/journal/draft/jobs；插图撤销保存重开后重做完整"
+      ],
+      "acceptanceIds": [
+        "A12",
+        "A04"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "E07",
+      "milestone": "M1",
+      "priority": "P0",
+      "title": "统一编辑外壳并完成双端旅程",
+      "status": "planned",
+      "effort": "M",
+      "ownerRole": "编辑器 / 验收",
+      "dependsOn": [
+        "C06",
+        "E03",
+        "E04",
+        "E05",
+        "E06"
+      ],
+      "existingFiles": [
+        "packages/editor-react/src/HostApp.tsx",
+        "packages/editor-react/src/Inspector.tsx",
+        "apps/host/src/host.css",
+        "packages/portable-runtime/src/shared.ts",
+        "packages/portable-runtime/src/browser.ts",
+        "tests/host-completion.test.ts"
+      ],
+      "newFiles": [
+        "tests/editor-parity-journey.test.ts"
+      ],
+      "slices": [
+        "界面组件与工具可达性",
+        "跨入口脚本和重复代码清理"
+      ],
+      "doneCriteria": [
+        "顶部/缩略图/舞台/属性与折叠面板一致，按钮可键盘使用",
+        "旧 plain-text/API 方法签名兼容，新 API 声明 enterEdit 前提；示例与 Skill 迁移，已迁命令无第二写入路径",
+        "新建→编辑→撤销→保存→重开→放映→导出两端通过"
+      ],
+      "acceptanceIds": [
+        "A06",
+        "A08",
+        "A09",
+        "A10",
+        "A11",
+        "A12",
+        "A21"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "E08",
+      "milestone": "M1",
+      "priority": "P1",
+      "title": "Run 字体字号的格式与导出扩展",
+      "status": "planned",
+      "effort": "L",
+      "ownerRole": "格式 / 文字 / 导出",
+      "dependsOn": [
+        "C02",
+        "E03"
+      ],
+      "existingFiles": [
+        "packages/schema/src/document.ts",
+        "packages/schema/src/validation.ts",
+        "packages/richtext-adapter/src/index.ts",
+        "packages/validation/src/index.ts",
+        "packages/renderer-react/src/index.ts",
+        "packages/exporter-pptx/src/index.ts",
+        "packages/compatibility/src/index.ts",
+        "packages/file-format/src/index.ts",
+        "packages/capability/src/index.ts",
+        "schemas/document.schema.json"
+      ],
+      "newFiles": [
+        "tests/text-run-style-profile.test.ts"
+      ],
+      "slices": [
+        "字段/版本及继承契约",
+        "渲染/测量/导出全链路",
+        "新旧读取器和双端属性 UI"
+      ],
+      "doneCriteria": [
+        "新 marks 继承/清除/混合值定义明确，schema/profile/字面量读取器全覆盖",
+        "同 font resolver 用于 coverage/测量/HTML/SVG/PPTX",
+        "旧文件不改版式，旧 target 不静默丢新属性"
+      ],
+      "acceptanceIds": [
+        "A03",
+        "A08",
+        "A13",
+        "A17"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "D01",
+      "milestone": "M2",
+      "priority": "P1",
+      "title": "品牌、风格、配方包的可验证合同",
+      "status": "planned",
+      "effort": "M",
+      "ownerRole": "设计系统 / 格式",
+      "dependsOn": [
+        "C01"
+      ],
+      "existingFiles": [
+        "packages/schema/src/slide-ir.ts",
+        "packages/layout-recipes/src/index.ts",
+        "packages/design-compiler/src/index.ts",
+        "schemas/recipe.schema.json"
+      ],
+      "newFiles": [
+        "packages/design-system/src/index.ts",
+        "schemas/style-pack.schema.json",
+        "schemas/recipe-manifest.schema.json"
+      ],
+      "slices": [
+        "资源包/参数 schema 与示例",
+        "版本解析及信任/许可清单"
+      ],
+      "doneCriteria": [
+        "复用 PresentationIR/RecipeSpec/ThemeDefinition，不建第二内容树",
+        "品牌强约束/配方强约束/审美建议可区分",
+        "包摘要、参数白名单、许可、中文压力输入和旧版本处理明确",
+        "RecipeManifest 只引用 slotRefs，不双写槽位；保护来自当前对象/页面，IR 只追加保护"
+      ],
+      "acceptanceIds": [
+        "A14",
+        "A17"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "D02",
+      "milestone": "M2",
+      "priority": "P0",
+      "title": "让配方约束、参数与容量真正执行",
+      "status": "planned",
+      "effort": "L",
+      "ownerRole": "编译器 / 布局",
+      "dependsOn": [
+        "C02",
+        "D01"
+      ],
+      "existingFiles": [
+        "packages/layout-recipes/src/index.ts",
+        "packages/design-compiler/src/index.ts",
+        "packages/schema/src/slide-ir.ts",
+        "packages/schema/src/slide-ir-validation.ts",
+        "packages/validation/src/index.ts",
+        "schemas/recipe.schema.json"
+      ],
+      "newFiles": [
+        "tests/recipe-execution-contract.test.ts"
+      ],
+      "slices": [
+        "声明执行登记与旧 golden",
+        "槽位匹配/variant/约束",
+        "有限构成与容量失败合同"
+      ],
+      "doneCriteria": [
+        "variants/constraints/qualityRules 均有执行或明确拒绝",
+        "槽位数量、关系、超容量与可行性正确，无静默 clamp/丢内容",
+        "有界、确定性编译；repeat/新增构成使用版本化语法和内容 key"
+      ],
+      "acceptanceIds": [
+        "A14"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "D03",
+      "milestone": "M2",
+      "priority": "P1",
+      "title": "整套选型、真实测量与编排报告",
+      "status": "planned",
+      "effort": "L",
+      "ownerRole": "编译器 / 设计",
+      "dependsOn": [
+        "D02"
+      ],
+      "existingFiles": [
+        "packages/design-compiler/src/index.ts",
+        "packages/layout-recipes/src/index.ts",
+        "packages/editor-react/src/text-measurement.ts",
+        "packages/reviewer/src/index.ts"
+      ],
+      "newFiles": [
+        "tests/deck-layout-planning.test.ts"
+      ],
+      "slices": [
+        "候选和容量筛选",
+        "整套有界选择",
+        "实际渲染测量与报告"
+      ],
+      "doneCriteria": [
+        "硬约束先于审美评分，有限候选与确定性 seed",
+        "实际字体测量和浏览器复核；无浏览器标 unverified",
+        "选择理由、拆页提案、超预算停止有结构化报告"
+      ],
+      "acceptanceIds": [
+        "A14",
+        "A17",
+        "A20"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "D04",
+      "milestone": "M2",
+      "priority": "P1",
+      "title": "四套风格与 32 个角色覆盖格",
+      "status": "planned",
+      "effort": "L",
+      "ownerRole": "视觉设计 / 配方",
+      "dependsOn": [
+        "D02",
+        "D03"
+      ],
+      "existingFiles": [
+        "packages/layout-recipes/src/index.ts"
+      ],
+      "newFiles": [
+        "design-packs/business/manifest.json",
+        "design-packs/swiss/manifest.json",
+        "design-packs/editorial/manifest.json",
+        "design-packs/launch/manifest.json",
+        "tests/fixtures/evolution/design-pack-manifest.json"
+      ],
+      "slices": [
+        "先商务/瑞士代表页",
+        "杂志/发布代表页",
+        "覆盖格、压力样例和版本化素材"
+      ],
+      "doneCriteria": [
+        "四套×八角色具真实构图差异；可复用底层配方",
+        "每格有正常/边界/超载样例及 preview，外加中文/图表/表格压力页",
+        "字号/容量/关键数据和语义可编辑性通过；无包仍能打开成稿",
+        "G2 成熟样例必须实际渲染通过；现有表格呈现与保留压力页不要求 Table v2"
+      ],
+      "acceptanceIds": [
+        "A14",
+        "A15",
+        "A17"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "D05",
+      "milestone": "M2",
+      "priority": "P0",
+      "title": "配方参数 UI 与安全换主题/布局",
+      "status": "planned",
+      "effort": "L",
+      "ownerRole": "编辑器 / 编译器",
+      "dependsOn": [
+        "E01",
+        "D03"
+      ],
+      "existingFiles": [
+        "packages/editor-react/src/RecipeStudio.tsx",
+        "packages/design-compiler/src/index.ts",
+        "packages/agent-tools/src/index.ts",
+        "packages/portable-runtime/src/browser.ts"
+      ],
+      "newFiles": [
+        "tests/design-edit-protection.test.ts"
+      ],
+      "slices": [
+        "DesignBinding 及失效处理",
+        "统一参数/换主题/重排 planners",
+        "双端预览与保护序列"
+      ],
+      "doneCriteria": [
+        "参数面板与 Skill 同一 schema，不接受任意 CSS/代码",
+        "当前 Document 为输入；保留人工新增/局部 overrides/锁定/facts/IDs",
+        "列数减少不丢内容；几何重排与重写内容分开"
+      ],
+      "acceptanceIds": [
+        "A15"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "D06",
+      "milestone": "M2",
+      "priority": "P1",
+      "title": "原生 Skill 的渐进设计工作流",
+      "status": "planned",
+      "effort": "M",
+      "ownerRole": "CLI / Skill",
+      "dependsOn": [
+        "D03",
+        "D05"
+      ],
+      "existingFiles": [
+        "apps/cli/index.ts",
+        "packages/agent-tools/src/index.ts",
+        "packages/agent-tools/src/tool-schemas.ts",
+        "skills/ppte/SKILL.md",
+        "skills/ppte/references/authoring.md"
+      ],
+      "newFiles": [
+        "tests/skill-design-workflow.test.ts"
+      ],
+      "slices": [
+        "命令与 JSON 合同",
+        "Skill 分层参考",
+        "固定材料全流程验证"
+      ],
+      "doneCriteria": [
+        "CLI help/schema 实际登记 design 命令族，保留现有命令",
+        "索引→有限候选→选中配方→代表页→整套→最多两轮修复",
+        "同授权直接继续；报告未知/失败真实，不要求 MCP 或另一个模型"
+      ],
+      "acceptanceIds": [
+        "A15",
+        "A17",
+        "A19"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "D07",
+      "milestone": "M2",
+      "priority": "P0",
+      "title": "建立成稿质量基准与人工任务门禁",
+      "status": "planned",
+      "effort": "M",
+      "ownerRole": "验收 / 设计",
+      "dependsOn": [
+        "D04",
+        "D05",
+        "D06",
+        "E07",
+        "E08"
+      ],
+      "existingFiles": [
+        "packages/reviewer/src/index.ts",
+        "scripts/blackbox-gates.mjs"
+      ],
+      "newFiles": [
+        "tests/fixtures/evolution/authoring-benchmark.json",
+        "docs/evolution/quality/benchmark-report.json"
+      ],
+      "slices": [
+        "fixture 与答案清单",
+        "基线/候选同题生成",
+        "人工评审校准和 G2 报告"
+      ],
+      "doneCriteria": [
+        "10 固定材料任务、事实答案和编辑脚本版本化",
+        "内容/编辑/渲染/视觉四线独立，允许覆盖关系与截图证据明确",
+        "同 Agent/材料/预算基线对照；人工修复时间与失败项真实记录",
+        "人工脚本按最低阶段选择；M3 表格任务在 G2 不计通过也不阻断，不以 unverified 关闭 G2"
+      ],
+      "acceptanceIds": [
+        "A14",
+        "A15",
+        "A17",
+        "A21"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "F01",
+      "milestone": "M3",
+      "priority": "P1",
+      "title": "Table v2 模型、迁移和 typed 操作",
+      "status": "planned",
+      "effort": "L",
+      "ownerRole": "格式 / 表格",
+      "dependsOn": [
+        "C02",
+        "E01"
+      ],
+      "existingFiles": [
+        "packages/widgets/src/index.ts",
+        "packages/schema/src/operations.ts",
+        "packages/operations/src/index.ts",
+        "packages/facts/src/index.ts",
+        "packages/compatibility/src/index.ts",
+        "schemas/transaction.schema.json"
+      ],
+      "newFiles": [
+        "packages/widgets/src/table-model.ts",
+        "tests/table-v2-contract.test.ts"
+      ],
+      "slices": [
+        "模型/不变量/迁移",
+        "typed 操作/引用/逆操作",
+        "版本能力和通用 props 防绕过"
+      ],
+      "doneCriteria": [
+        "稳定 row/column/cell ID，合并数据保留，typed 值与显示一致",
+        "v1 显式迁移、history/profile 声明、所有 props 入口同样校验",
+        "引用删除需影响审阅；inverse/保存重开准确"
+      ],
+      "acceptanceIds": [
+        "A03",
+        "A13"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "F02",
+      "milestone": "M3",
+      "priority": "P1",
+      "title": "表格选择、粘贴与结构编辑",
+      "status": "planned",
+      "effort": "L",
+      "ownerRole": "编辑器 / 表格",
+      "dependsOn": [
+        "F01",
+        "E03",
+        "E04"
+      ],
+      "existingFiles": [
+        "packages/editor-react/src/Inspector.tsx",
+        "packages/widgets/src/index.ts",
+        "packages/portable-runtime/src/browser.ts"
+      ],
+      "newFiles": [
+        "packages/editor-dom/src/table-selection.ts",
+        "tests/table-editing-journey.test.ts"
+      ],
+      "slices": [
+        "单元格选择和改值",
+        "粘贴/行列/合并 UI",
+        "双端保存重开"
+      ],
+      "doneCriteria": [
+        "Host 支持结构和单元格，Portable 首批改值/样式且权限明确",
+        "TSV/空格/非矩形/合并边界、键盘导航与撤销正确",
+        "改变结构不改变未受影响 cell 身份或事实引用"
+      ],
+      "acceptanceIds": [
+        "A13",
+        "A21"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "F03",
+      "milestone": "M3",
+      "priority": "P1",
+      "title": "表格原生 PPTX 与逐能力导出",
+      "status": "planned",
+      "effort": "L",
+      "ownerRole": "导出 / 表格",
+      "dependsOn": [
+        "F01",
+        "F02"
+      ],
+      "existingFiles": [
+        "packages/exporter-pptx/src/index.ts",
+        "packages/capability/src/index.ts",
+        "schemas/capability-report.schema.json"
+      ],
+      "newFiles": [
+        "tests/pptx-table-native.test.ts"
+      ],
+      "slices": [
+        "原生 table adapter",
+        "结构检查和内容比较",
+        "目标客户端验证交 Q01 汇总"
+      ],
+      "doneCriteria": [
+        "真实 table part 与可编辑单元格，不是图片/文本标签",
+        "合并/尺寸/基础样式/数字内容准确，不支持样式报告降级",
+        "nativeTable 只由实际 adapter 与验证结果给出"
+      ],
+      "acceptanceIds": [
+        "A13",
+        "A17"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "F04",
+      "milestone": "M3",
+      "priority": "P1",
+      "title": "本地视频媒体管线和离线播放",
+      "status": "planned",
+      "effort": "L",
+      "ownerRole": "资源 / 媒体 / 交付",
+      "dependsOn": [
+        "E01",
+        "E06",
+        "C04"
+      ],
+      "existingFiles": [
+        "packages/widgets/src/index.ts",
+        "packages/schema/src/document.ts",
+        "packages/renderer-react/src/index.ts",
+        "packages/portable-runtime/src/browser.ts",
+        "packages/portable-runtime/src/shared.ts",
+        "packages/node-runtime/src/delivery.ts",
+        "packages/capability/src/index.ts",
+        "packages/file-format/src/index.ts"
+      ],
+      "newFiles": [
+        "packages/portable-runtime/src/media-controller.ts",
+        "tests/media-playback-journey.test.ts"
+      ],
+      "slices": [
+        "v2 资源/迁移/CSP",
+        "播放器生命周期",
+        "单 HTML 与离线包实测及能力报告"
+      ],
+      "doneCriteria": [
+        "CAS video 引用、metadata/poster、Blob src、错误反馈真实",
+        "play/pause/ended/离页/释放在离线文件实测；media CSP 最小化",
+        "体积阈值按样例冻结，PDF/PPTX 首批封面降级准确",
+        "目录包有 HTML/manifest/media，明确打包校验与打开校验差异；file:// 不满足合同则不支持该路径"
+      ],
+      "acceptanceIds": [
+        "A12",
+        "A16",
+        "A17",
+        "A20"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "F05",
+      "milestone": "M3",
+      "priority": "P1",
+      "title": "动画配置与正确步骤播放",
+      "status": "planned",
+      "effort": "M",
+      "ownerRole": "放映 / 编辑器",
+      "dependsOn": [
+        "C05",
+        "E01",
+        "E07"
+      ],
+      "existingFiles": [
+        "packages/portable-runtime/src/presenter-state.ts",
+        "packages/portable-runtime/src/browser.ts",
+        "packages/editor-react/src/Inspector.tsx",
+        "packages/schema/src/document.ts",
+        "packages/capability/src/index.ts"
+      ],
+      "newFiles": [
+        "tests/animation-step-contract.test.ts"
+      ],
+      "slices": [
+        "命令/播放头与子集",
+        "配置/预览/减少动态效果"
+      ],
+      "doneCriteria": [
+        "next/previousStep 与 slide 命令边界独立且按 slideId",
+        "声明子集/duration/direction 真正执行，未实现字段保留并报告",
+        "编辑/打印完整显示，减少动态效果保持相同语义终态"
+      ],
+      "acceptanceIds": [
+        "A06",
+        "A16",
+        "A17"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "F06",
+      "milestone": "M3",
+      "priority": "P1",
+      "title": "现场工具与有恢复能力的双屏",
+      "status": "planned",
+      "effort": "L",
+      "ownerRole": "放映 / 交互",
+      "dependsOn": [
+        "F04",
+        "F05"
+      ],
+      "existingFiles": [
+        "packages/editor-react/src/HostApp.tsx",
+        "packages/portable-runtime/src/browser.ts",
+        "packages/portable-runtime/src/shared.ts"
+      ],
+      "newFiles": [
+        "packages/editor-controller/src/presenter-channel.ts",
+        "tests/presenter-tools.test.ts"
+      ],
+      "slices": [
+        "单屏现场工具",
+        "演讲者窗口/消息合同",
+        "断连、弹窗拒绝与安全验证"
+      ],
+      "doneCriteria": [
+        "页索引/黑屏/激光笔/计时/下一页可用，临时状态不污染文档",
+        "双屏 session/seq/ACK/event.source/token 校验与乱序/断连恢复",
+        "备注不进入观众 DOM；弹窗或 file:// 限制时单屏正常"
+      ],
+      "acceptanceIds": [
+        "A06",
+        "A16",
+        "A21"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "P01",
+      "milestone": "M4",
+      "priority": "P1",
+      "title": "真实浏览器基准与预算校准",
+      "status": "planned",
+      "effort": "M",
+      "ownerRole": "性能 / 验收",
+      "dependsOn": [
+        "C01",
+        "C05"
+      ],
+      "existingFiles": [
+        "packages/performance-budget/src/index.ts",
+        "apps/contract-deck/index.ts",
+        "scripts/blackbox-gates.mjs"
+      ],
+      "newFiles": [
+        "scripts/perf-browser.mjs",
+        "tests/fixtures/evolution/performance-manifest.json"
+      ],
+      "slices": [
+        "浏览器测量协议与 fixture",
+        "主设备/较低性能实机校准"
+      ],
+      "doneCriteria": [
+        "Node 微基准名称准确；12/30/100 页真实入口采样",
+        "锁定设备/浏览器/资源/字体，冷热/输入/拖动/媒体分开记录",
+        "冻结候选预算和未实测范围，不以平均值替代 p95"
+      ],
+      "acceptanceIds": [
+        "A20"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "P02",
+      "milestone": "M4",
+      "priority": "P1",
+      "title": "增量渲染、资源与缩略图缓存",
+      "status": "planned",
+      "effort": "L",
+      "ownerRole": "渲染 / 编辑器",
+      "dependsOn": [
+        "P01",
+        "E01",
+        "E03"
+      ],
+      "existingFiles": [
+        "packages/portable-runtime/src/browser.ts",
+        "packages/renderer-react/src/index.ts",
+        "packages/editor-react/src/HostApp.tsx",
+        "packages/editor-react/src/resource-pool.ts"
+      ],
+      "newFiles": [
+        "tests/incremental-rendering.test.ts"
+      ],
+      "slices": [
+        "dirty set 与稳定节点",
+        "资源/字体/缩略图缓存",
+        "邻页窗口化及导出独立路径"
+      ],
+      "doneCriteria": [
+        "dirty elements/slides 驱动更新；不替换无关页/活动文字/媒体",
+        "资源与字体按 digest 缓存，释放/错误重试正确",
+        "缩略图缓存与当前邻页挂载；全量打印/导出不漏页"
+      ],
+      "acceptanceIds": [
+        "A18",
+        "A20"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "P03",
+      "milestone": "M4",
+      "priority": "P1",
+      "title": "增量索引与可取消可信后台作业",
+      "status": "planned",
+      "effort": "L",
+      "ownerRole": "Core / 性能",
+      "dependsOn": [
+        "P02"
+      ],
+      "existingFiles": [
+        "packages/core/src/index.ts",
+        "packages/file-format/src/index.ts",
+        "packages/canonical-json/src/index.ts"
+      ],
+      "newFiles": [
+        "packages/editor-controller/src/background-jobs.ts",
+        "tests/background-job-contract.test.ts"
+      ],
+      "slices": [
+        "索引全量对照",
+        "昂贵作业热点验证",
+        "按需要实现任务池与取消，无热点则记录无需 Worker"
+      ],
+      "doneCriteria": [
+        "索引增量结果与全量重建相等，故障可安全重建",
+        "只迁实测昂贵作业；jobId/baseRevision/digest/取消与背压正确",
+        "无 stale 输出提交，原生与 Worker 总成本对比；Worker 非脚本沙箱"
+      ],
+      "acceptanceIds": [
+        "A18",
+        "A20"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "Q01",
+      "milestone": "M4",
+      "priority": "P0",
+      "title": "浏览器、Office 与完整交付验收",
+      "status": "planned",
+      "effort": "M",
+      "ownerRole": "验收 / 导出",
+      "dependsOn": [
+        "D07",
+        "F03",
+        "F04",
+        "F05",
+        "F06"
+      ],
+      "existingFiles": [
+        "scripts/blackbox-gates.mjs",
+        "packages/capability/src/index.ts",
+        "packages/exporter-pptx/src/index.ts"
+      ],
+      "newFiles": [
+        "docs/evolution/quality/client-matrix.json"
+      ],
+      "slices": [
+        "自动化全旅程",
+        "真实浏览器/Office 人工验证",
+        "能力声明与报告核对"
+      ],
+      "doneCriteria": [
+        "声明的浏览器含真实 Safari/其他目标，不把 WebKit 自动化当 Safari 实机",
+        "Office 支持客户端实开、编辑、重存；原生对象与视觉分开验",
+        "unverified 不冒充通过，报告绑定 ArtifactIdentity"
+      ],
+      "acceptanceIds": [
+        "A17",
+        "A19",
+        "A21"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "Q02",
+      "milestone": "M4",
+      "priority": "P0",
+      "title": "分阶段发布包与回滚演练收口",
+      "status": "planned",
+      "effort": "M",
+      "ownerRole": "发布 / 验收",
+      "dependsOn": [
+        "C06",
+        "P03",
+        "Q01"
+      ],
+      "existingFiles": [
+        "scripts/stage-package.mjs",
+        "skills/ppte/SKILL.md",
+        "docs/PROGRESS.md",
+        "docs/DECISIONS.md"
+      ],
+      "newFiles": [
+        "docs/evolution/quality/release-manifest.json"
+      ],
+      "slices": [
+        "release manifest 与迁移说明",
+        "候选验收与回滚演练",
+        "按实际授权发布并记录实际结果"
+      ],
+      "doneCriteria": [
+        "阶段任务和 blocker 归零；npm/Skill/离线样例可复现",
+        "升级与回滚保留原件、旧 tarball、profile 和报告，不伪称自动降级",
+        "Git/npm/本地安装/HTML 升级四项状态逐一记录"
+      ],
+      "acceptanceIds": [
+        "A03",
+        "A04",
+        "A05",
+        "A19",
+        "A21"
+      ],
+      "releaseRequired": true,
+      "evidence": []
+    },
+    {
+      "id": "X01",
+      "milestone": "M4",
+      "priority": "P2",
+      "title": "可选 QuickJS 扩展验证",
+      "status": "deferred",
+      "effort": "M",
+      "ownerRole": "架构 / 扩展",
+      "dependsOn": [
+        "P01",
+        "P03"
+      ],
+      "existingFiles": [],
+      "newFiles": [
+        "docs/evolution/decisions/optional-quickjs.md"
+      ],
+      "slices": [
+        "核验启动条件",
+        "隔离原型及取舍 ADR"
+      ],
+      "doneCriteria": [
+        "仅真实非声明式第三方需求且需隔离不受信任代码时启动",
+        "同任务 native/Worker/QuickJS 总成本与内存/时间/输出/取消验证",
+        "输出有界 JSON draft 经 Core 重新验证，成品无运行时依赖"
+      ],
+      "acceptanceIds": [
+        "A22"
+      ],
+      "releaseRequired": false,
+      "evidence": [],
+      "activationCondition": "实际扩展无法合理用声明式表达，并必须执行不受信任代码"
+    },
+    {
+      "id": "X02",
+      "milestone": "M4",
+      "priority": "P2",
+      "title": "条件式多人协作设计",
+      "status": "deferred",
+      "effort": "M",
+      "ownerRole": "架构 / 协作",
+      "dependsOn": [
+        "E01",
+        "C03"
+      ],
+      "existingFiles": [],
+      "newFiles": [
+        "docs/evolution/decisions/optional-collaboration.md"
+      ],
+      "slices": [
+        "验证真实协作任务",
+        "冲突/undo/权限原型与 ADR"
+      ],
+      "doneCriteria": [
+        "仅真实多人并发且文件级 patch 不够用时启动",
+        "明确身份/授权/冲突/历史/离线合并合同，再决定 CRDT",
+        "不把引入 Yjs 或服务端当作现有 invariants 自动成立"
+      ],
+      "acceptanceIds": [
+        "A22"
+      ],
+      "releaseRequired": false,
+      "evidence": [],
+      "activationCondition": "实际多人并发任务无法由文件级 diff/patch 满足"
+    }
+  ]
+}

@@ -1,0 +1,755 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>PPTe 下一阶段完整实施方案</title><meta name="description" content="五个阶段、32项必做任务、2项条件探索，以及22组可复现验收。基于PPTe现有代码的下一阶段实施设计。"><style>
+:root{--bg:#f2f4f0;--paper:#fff;--ink:#203330;--muted:#697b74;--line:#dce4dd;--accent:#27654e;--soft:#edf4ed}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:24px}body{margin:0;color:var(--ink);background:var(--bg);font:16px/1.85 -apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif}.layout{max-width:1560px;margin:auto;display:grid;grid-template-columns:238px minmax(0,1fr)}aside{position:sticky;top:0;height:100dvh;overflow:auto;padding:32px 18px;border-right:1px solid var(--line)}.brand{font-size:27px;font-weight:750;letter-spacing:-1px}.brand small{display:block;font-size:10px;letter-spacing:2px;color:var(--muted);font-weight:500}.toc{display:grid;gap:3px;margin-top:24px}.toc a{font-size:12px;line-height:1.65;color:var(--muted);text-decoration:none;padding:7px 9px;border-radius:5px}.toc a:hover,.toc a.active{background:#dfeadf;color:var(--accent)}.aside-note{font-size:11px;color:var(--muted);margin-top:26px;line-height:1.8}main{min-width:0;background:var(--paper);padding:42px 62px 80px;max-width:1180px}.eyebrow{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent);margin-bottom:16px}.intro{border-bottom:1px solid var(--line);padding-bottom:28px;margin-bottom:42px}.intro h1{font-size:36px;line-height:1.35;letter-spacing:-1px;margin:0 0 16px}.intro>p:first-of-type{font-size:13px;color:var(--muted)}.intro>p:nth-of-type(2){font-size:18px;line-height:1.9;border-left:3px solid var(--accent);padding:14px 22px;background:var(--soft);margin:26px 0}.intro>p:nth-of-type(n+3){font-size:13px;color:var(--muted)}.phase-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:26px 0}.phase{border:1px solid var(--line);padding:13px 10px;background:#fafcf8;border-radius:7px}.phase b{font-size:11px;color:var(--accent);display:block}.phase strong{font-size:14px;display:block;margin:4px 0}.phase small{font-size:10px;line-height:1.5;display:block;color:var(--muted)}.counts{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--muted)}.counts span{background:var(--soft);padding:5px 9px;border-radius:4px}section{margin:0 0 50px;scroll-margin-top:24px}h2{font-size:25px;line-height:1.5;margin:0 0 23px;color:#1d5743;letter-spacing:-.5px}h3{font-size:19px;margin:30px 0 12px}h4{font-size:14px;margin:18px 0 6px}p{margin:13px 0}a{color:var(--accent);text-underline-offset:3px;overflow-wrap:anywhere}a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible,.table-scroll:focus-visible{outline:2px solid #27654e;outline-offset:4px}strong{font-weight:650}ul,ol{padding-left:25px}li{margin:7px 0}code{font:12px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;background:#eff3ef;border-radius:3px;padding:2px 5px;overflow-wrap:anywhere}pre{background:#f3f5f1;border:1px solid var(--line);padding:16px;overflow:auto;border-radius:7px}pre code{background:none;padding:0;white-space:pre;font-size:12px}.table-scroll{overflow:auto;margin:22px 0;border:1px solid var(--line);border-radius:6px}table{border-collapse:collapse;width:100%;min-width:580px;font-size:12px;line-height:1.8}th,td{padding:12px 13px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}th{background:var(--soft)}tr:nth-child(even) td{background:#fbfcf9}tr:last-child td{border-bottom:0}td:first-child{font-weight:600;min-width:105px}.explorer{border-top:2px solid var(--accent);padding-top:30px}.explorer-intro{color:var(--muted);font-size:14px}.filters{display:flex;align-items:end;gap:12px;background:var(--soft);padding:16px;border-radius:8px;margin:18px 0}.filters label{display:grid;gap:5px;font-size:11px;color:var(--muted)}.filters label.search-label{flex:1}.filters input,.filters select{font:14px inherit;padding:10px 12px;border:1px solid #b7caba;border-radius:5px;background:white;color:var(--ink);min-width:0;height:42px}.filters input{width:100%}.filters button{height:42px;padding:0 13px;border:1px solid #b7caba;border-radius:5px;background:#fff;color:var(--accent);cursor:pointer}.result-count{font-size:12px;color:var(--muted);margin-bottom:12px}.task{border:1px solid var(--line);border-radius:6px;margin:8px 0;background:#fff}.task[hidden]{display:none}.task>details>summary{display:flex;align-items:center;gap:12px;padding:15px 17px;cursor:pointer;list-style:none}.task>details>summary::-webkit-details-marker{display:none}.task>details>summary:after{content:'＋';margin-left:auto;color:var(--accent);flex:none}.task>details[open]>summary:after{content:'−'}.task-id{font-size:11px;color:var(--accent);background:var(--soft);padding:3px 7px;border-radius:4px;flex:none}.task-title{font-size:14px;font-weight:600;flex:1}.task-state{font-size:10px;color:var(--muted);flex:none}.task-state.deferred{color:#896526}.task-detail{padding:4px 19px 18px;border-top:1px solid var(--line);font-size:13px}.task-meta{display:flex;flex-wrap:wrap;gap:8px;color:var(--muted);font-size:11px;margin:12px 0}.task-meta span{padding:2px 7px;background:#f5f6f3;border-radius:4px}.task-detail a{margin-right:4px}.condition{background:#fbf7eb;padding:10px;border-radius:4px}.paths summary{cursor:pointer;color:var(--muted);font-size:12px;padding:8px 0}.paths ul{list-style:none;padding:0}.paths li{margin:6px 0}.new{color:#896526;font-size:10px}.acceptance-wrap{border-top:2px solid var(--accent);padding-top:25px}.acceptance-wrap>details>summary{cursor:pointer;background:var(--soft);padding:18px;border-radius:6px;font-size:17px;font-weight:650}.acceptance-body{padding-top:24px}.acceptance-body h2{font-size:21px;margin:32px 0 16px}.acceptance-body p{font-size:14px}.footer{font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:20px}.progress{position:fixed;left:0;top:0;height:3px;width:0;background:var(--accent);z-index:10}@media(max-width:1150px){.layout{grid-template-columns:200px 1fr}main{padding:36px}.intro h1{font-size:32px}.phase-row{gap:5px}.phase{padding:10px 7px}.phase strong{font-size:12px}}@media(max-width:760px){.layout{display:block}aside{position:static;height:auto;border:none;padding:23px 20px}.toc{grid-template-columns:1fr 1fr;margin-top:15px;gap:1px}.toc a{font-size:11px;padding:5px}.aside-note{display:none}main{padding:28px 20px}.intro h1{font-size:29px}.intro>p:nth-of-type(2){font-size:16px;padding:13px 15px}.phase-row{grid-template-columns:repeat(3,1fr)}h2{font-size:23px}.filters{flex-wrap:wrap;padding:12px}.filters label.search-label{flex-basis:100%}.filters label{flex:1}.filters button{flex:0}.task>details>summary{gap:8px;padding:13px 11px}.task-title{font-size:13px}.task-state{display:none}.task-detail{padding:3px 13px 14px}pre code{font-size:11px}.counts{gap:5px;font-size:11px}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}@media print{@page{size:A4;margin:16mm}body{background:white;font-size:10pt;line-height:1.6}.layout{display:block}aside,.filters,.progress,.result-count{display:none}main{padding:0;max-width:none}.intro h1{font-size:25pt}h2{font-size:17pt;break-after:avoid}h3{font-size:13pt;break-after:avoid}section{margin-bottom:22pt}.table-scroll{overflow:visible}table{min-width:0;font-size:8pt}th,td{padding:7pt}tr{break-inside:avoid}pre{white-space:pre-wrap}pre code{white-space:pre-wrap;font-size:8pt}.task{break-inside:avoid}.task[hidden]{display:block}details>*{display:block!important}.task-state{display:inline}.phase-row{break-inside:avoid}p,li{orphans:3;widows:3}}
+main{overflow-wrap:anywhere}.filters input,.filters select{font:inherit;font-size:14px}.filters button{white-space:nowrap;min-width:64px}</style></head><body><div class="progress" aria-hidden="true"></div><div class="layout"><aside><div class="brand">PPTe<small>IMPLEMENTATION · V1.0</small></div><nav class="toc" aria-label="方案目录"><a href="#plan-1">01 产品边界与最终交付</a><a href="#plan-2">02 分期、发布与执行顺序</a><a href="#plan-3">03 目标架构与增量决策</a><a href="#plan-4">04 M0：保存、历史、恢复与交付身份</a><a href="#plan-5">05 M0–M1：共享模式与编辑控制层</a><a href="#plan-6">06 M1：文字、对象与编辑界面</a><a href="#plan-7">07 M2：品牌、风格与配方的数据设计</a><a href="#plan-8">08 M3：表格、视频、动画与演讲工具</a><a href="#plan-9">09 能力矩阵与交付合同</a><a href="#plan-10">10 M4：真实性能预算与实施方法</a><a href="#plan-11">11 质量基准、验收与完成定义</a><a href="#plan-12">12 开发、迁移、灰度与发布方式</a><a href="#plan-13">13 风险、决策门与下一次执行入口</a><a href="#plan-14">14 依据与适用范围</a><a href="#tasks">15 可执行任务 · 34 项</a><a href="#acceptance">16 验收规格 · 22 组</a></nav><div class="aside-note">设计基线 2005166<br>2026.09.05<br>离线阅读 · 任务均待实施<br><a href="./IMPLEMENTATION_PLAN.md">Markdown 来源</a><br><a href="./TASKS.json">机器可读任务</a></div></aside><main id="top"><header class="intro"><div class="eyebrow">从研究结论到工程实施</div><h1>PPTe 下一阶段完整实施方案</h1>
+<p>方案版本 1.0 · 2026-09-05 · 状态：设计交付，任务尚未实施</p>
+<p><strong>目标：把现有 PPTe 做成“Agent 能稳定生成、用户能顺手精修、文件能可靠保存、现场能放心放映”的本地演示工具。</strong> 实施顺序是可靠性 → 统一编辑 → 设计质量 → 表格与媒体 → 规模优化。保留 npm CLI + 原生 Skill，沿用语义内核；QuickJS 不进入本轮默认依赖。</p>
+<p>本方案基于代码提交 <code>2005166d3c481b43c559e851b4ad90a53ecfac43</code>、原 v2.3 方案及本轮深度研究。接口、任务、数值门槛和版本名均为设计，不表示已经实现或测试通过。代码工作区在方案编写前干净。原冻结决策文档保留；下文明确列出的增量决策在相应实现任务中落地。</p>
+<p>配套文件：<a href="./TASKS.json">任务清单</a>、<a href="./ACCEPTANCE.md">验收矩阵</a>、<a href="./README.md">阅读入口</a>。任务 ID 用于 PR、测试报告和后续进度追踪；初始状态均为 planned，条件探索为 deferred。</p>
+<div class="phase-row"><div class="phase"><b>M0</b><strong>可靠基线</strong><small>保存 · 升级 · 放映</small></div><div class="phase"><b>M1</b><strong>日常编辑</strong><small>文字 · 对象 · 图片</small></div><div class="phase"><b>M2</b><strong>稳定成稿</strong><small>风格 · 配方 · 质量</small></div><div class="phase"><b>M3</b><strong>内容与演讲</strong><small>表格 · 视频 · 动画</small></div><div class="phase"><b>M4</b><strong>规模与发布</strong><small>性能 · 兼容 · 验收</small></div></div><div class="counts"><span>32 项必做任务</span><span>2 项条件探索</span><span>22 组验收</span><span>0 项宣称已实现</span></div></header><section id="plan-1"><h2>01 产品边界与最终交付</h2>
+<p>优先用户是使用现有 Agent 制作产品介绍、业务汇报、技术讲解和培训材料的人。优先完成两种用途：<strong>现场演讲</strong>和<strong>阅读型汇报</strong>。两者共用内容语义，但在密度、字级、备注、来源标注与页面节奏上分别编排。</p>
+<p>完整交付包括：可恢复的 <code>.ppte</code> 源项目、可离线使用的浏览器可编辑副本、干净的观众放映、能力明确的 PDF/PPTX，以及从资料到成稿的原生 Skill 流程。用户手动改过的内容和锁定对象，必须在 Agent 局部修改与重新排版后继续保留。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="可横向滚动的表格"><table>
+<thead>
+<tr>
+<th>用户要完成的事</th>
+<th>本轮目标</th>
+<th>明确的范围边界</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>改文字</td>
+<td>整框字体字号与段落；选区粗斜体、颜色等；随后扩展选区字体字号</td>
+<td>不做任意 HTML 富文本和完整 Word 排版</td>
+</tr>
+<tr>
+<td>改形状和图片</td>
+<td>插入、填充、边框、透明度、缩放、裁剪、替换、吸附、对齐、图层与锁定</td>
+<td>不做自由钢笔路径和嵌套组坐标体系</td>
+</tr>
+<tr>
+<td>改背景和版式</td>
+<td>纯色/渐变/图片背景；安全换版式和密度；主题应用范围明确</td>
+<td>不因换版式删除事实，不隐式缩小字号掩盖溢出</td>
+</tr>
+<tr>
+<td>用表格</td>
+<td>改值、行列增删、粘贴、尺寸、基础合并、样式与原生 PPTX 表格</td>
+<td>不做公式计算引擎、筛选分析或电子表格替代品</td>
+</tr>
+<tr>
+<td>用视频</td>
+<td>本地导入、封面、手动播放、离页暂停、离线资源交付</td>
+<td>不做视频剪辑；流媒体平台嵌入后置</td>
+</tr>
+<tr>
+<td>做动画和演讲</td>
+<td>分步揭示、有限入场与翻页效果、黑屏/计时/激光笔/下一页预览</td>
+<td>不做复杂时间线和任意动作脚本</td>
+</tr>
+<tr>
+<td>让作品好看</td>
+<td>四套具有不同构图语言的风格，配方参数可执行，整套叙事与视觉检查</td>
+<td>不以模板数量或模型自评分代替质量</td>
+</tr>
+<tr>
+<td>稳定处理较大文稿</td>
+<td>实测后增量渲染、缓存、可取消后台任务</td>
+<td>不预先以更换 JS 引擎作为性能方案</td>
+</tr>
+</tbody></table></div>
+<p>复杂表格结构和视频资源管理优先在 Host 完成；浏览器副本覆盖日常文字、形状、图片、背景和表格改值。不同 profile 可以裁剪入口，同一命令必须保持同一含义。旧 <code>quick-fix</code>、<code>light-edit</code>、<code>full-portable</code> 名称继续识别，不默默降权。当前 full-portable 具有额外事务与组合移动能力，并非纯别名，但也不代表完整 Host 功能；界面统一称“浏览器可编辑副本”，详情列出真实支持项。</p>
+</section><section id="plan-2"><h2>02 分期、发布与执行顺序</h2>
+<p>采用五个阶段，每阶段有独立可体验成果和发布门禁，不等待全部功能完成后才交付。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="可横向滚动的表格"><table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>对用户的实际变化</th>
+<th>必须交付的任务</th>
+<th>发布门禁</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>M0 可靠基线</td>
+<td>保存重开可靠；升级副本有效；两个入口放映都干净</td>
+<td>C01–C06</td>
+<td>G0：历史、恢复、交付身份、放映与无 MCP 安装闭环全部通过</td>
+</tr>
+<tr>
+<td>M1 日常编辑</td>
+<td>可以顺手改文字、形状、图片、背景和排版</td>
+<td>E01–E08</td>
+<td>G1：相同命令跨入口一致，完整编辑旅程通过；新增格式有兼容测试</td>
+</tr>
+<tr>
+<td>M2 稳定成稿</td>
+<td>生成稿有清晰设计语言，换布局不丢内容</td>
+<td>D01–D07</td>
+<td>G2：配方可执行、四风格样例过关、锁定保护与人工任务验证</td>
+</tr>
+<tr>
+<td>M3 内容与演讲</td>
+<td>表格真正可编辑，视频真正可播，动画与现场工具可用</td>
+<td>F01–F06</td>
+<td>G3：真实媒体测试、表格原生导出、动画边界及声明的客户端验证</td>
+</tr>
+<tr>
+<td>M4 规模与收敛</td>
+<td>大文稿编辑更稳，交付与兼容证据完整</td>
+<td>P01–P03、Q01–Q02</td>
+<td>G4：固定设备预算、端到端证据和发布包复现</td>
+</tr>
+</tbody></table></div>
+<p>X01 QuickJS、X02 实时协作为条件探索，不是 M4 或本轮完成的必要条件。</p>
+<p><strong>第一批执行顺序已经确定：</strong> C01 留存失败样本和基线 → C02 修复可逆操作；C04 的构建身份原型与 C05 放映合同可并行，但 C04 完成须等待 C02 的兼容描述冻结；C03 在 C02 后实现旧历史恢复；C06 汇总为 M0 可安装候选包。E02 文本小实验、D01 风格与参数规格可早做原型，但不跨过 M0 发布门禁。随后 E01 共享控制层 → E03/E04/E05/E06 → E07 双端整合，E08 独立完成选区字体字号的格式扩展。设计编译工作与编辑 UI 可由不同执行者并行推进。</p>
+<p>C01 同时前置建立浏览器测量协议和 M1 编辑依赖预算：读取现有各 profile 包体上限，固定参考设备的启动/输入基线，冻结允许的增量开销。E02 必须使用这份带版本预算做选型；M4 的 P01 扩展为大文稿和较低性能实机校准，不把基础依赖预算延后到 M4。</p>
+<p>任务清单记录依赖、目标文件、输出、测试和工作量等级。S 为局部变更；M 为跨模块实现；L 为需要先交付小型原型的高风险工作，不把一个 L 任务压成一次不可审查的大提交。没有团队和投入量依据，因此不承诺日历工期。完成 C01、E02、D02 原型后，用实际吞吐重估后续排期；每个阶段都按验收退出，不用日期替代完成标准。</p>
+</section><section id="plan-3"><h2>03 目标架构与增量决策</h2>
+<p>架构保留四个方向：输入来自 Agent 或用户；设计编译给出提案；Core 是唯一提交入口；所有渲染与导出从文档派生。</p>
+<pre><code class="language-text">原生 Skill / CLI                Host / Portable 界面
+      │                             │
+      │                     EditorController（临时状态）
+      └────────── Command Planners ──┘
+                │  Transaction / PreviewReceipt
+                ▼
+         Core：Scope、Change Contract、Revision、History
+                │  document.json + validated events
+        ┌───────┼───────────┬───────────┐
+        ▼       ▼           ▼           ▼
+      渲染器  资源管理    保存与恢复    HTML / PDF / PPTX
+
+PresentationIR + Brand/Style/Recipe → DesignCompiler → Draft/Transaction
+</code></pre>
+<p>CLI 复用纯命令规划函数，不依赖浏览器 Controller 或 React。Controller 复用 Core 的 subscribe、preview、commit、undo、redo；不另造历史栈或持久文档。设计包无需存在于接收者机器上，成稿必须物化为普通语义对象。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="可横向滚动的表格"><table>
+<thead>
+<tr>
+<th>增量决策</th>
+<th>本轮确定的做法</th>
+<th>对原 v2.3 的影响</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A01 交互统一</td>
+<td>新建无 React 依赖的 editor-controller；DOM 输入适配单列</td>
+<td>补交互层，不改 document 唯一真源</td>
+</tr>
+<tr>
+<td>A02 可选字段可逆</td>
+<td>JSON 可表达的 unset，与操作协议/profile 一并升级</td>
+<td>扩操作协议，不改变旧协议解释</td>
+</tr>
+<tr>
+<td>A03 细粒度文字</td>
+<td>先完成现有 marks；Run 字体字号以显式新能力加入</td>
+<td>有意扩展 Text v1 排除项，不能作为旧 profile 偷渡字段</td>
+</tr>
+<tr>
+<td>A04 设计包</td>
+<td>包装并扩展现有 RecipeSpec、ThemeDefinition、PresentationIR</td>
+<td>不建第二套 DeckPlan 或任意 HTML 源文件</td>
+</tr>
+<tr>
+<td>A05 表格</td>
+<td>core/table v2，稳定行列单元格 ID 和 typed 操作</td>
+<td>保留顶层 component，不先扩大 Element 联合类型</td>
+</tr>
+<tr>
+<td>A06 媒体</td>
+<td>CAS 资源引用 + 可控播放器生命周期</td>
+<td>禁止文档自带可执行脚本；媒体与静态回退分别声明</td>
+</tr>
+<tr>
+<td>A07 运行时</td>
+<td>原生 JS；增量更新优先；可信重计算再考虑 Worker</td>
+<td>QuickJS、守护进程、MCP stdio 均非默认前提</td>
+</tr>
+</tbody></table></div>
+<p>新增包控制为三个：<code>packages/editor-controller</code>、<code>packages/editor-dom</code>、<code>packages/design-system</code>。其中 design-system 首期只负责资源包格式与校验，可先以 design-compiler 子目录原型验证再拆包。命令、布局、媒体工具优先扩展现有包。不得复制 Core、导出器或整套 Host 到另一目录形成第二实现。</p>
+</section><section id="plan-4"><h2>04 M0：保存、历史、恢复与交付身份</h2>
+<h3>4.1 可逆操作协议</h3>
+<p>复现缺陷：原本无背景的 slide 通过 slide.update 设置背景，逆 patch 中 undefined 经 JSON 丢失，保存重开后 HISTORY_RESTORE_FAILED。修复必须覆盖所有可选字段和所有持久化边界，不只背景按钮。</p>
+<p><code>slide.update</code> 新协议支持受白名单约束的 <code>patch</code> 和 <code>unset</code>。示意结构如下，正式 TypeScript 联合类型与 JSON 校验必须同步生成或测试一致：</p>
+<pre><code class="language-ts">type SlideOptionalKey = /* 明确可修改的可选 slide 字段白名单 */ string;
+type SlideUpdateV11 = {
+  kind: &#39;slide.update&#39;; slideId: string; opId: string;
+  patch: Partial&lt;AllowedSlidePatch&gt;;
+  unset?: SlideOptionalKey[];
+};
+</code></pre>
+<p>规则：patch 代表设置完整字段值，unset 代表删除字段；同一字段不能同时出现。不能 unset 必填字段、id、elements、rootOrder，不能借任意路径修改对象结构。null 仍是值，不充当删除标记。对每个旧字段用 hasOwnProperty 区分“缺失”和“有值”；生成的 inverse 也使用 patch/unset。nested style 的缺失恢复、空集合与字段缺失分别审计，已有专用 unset 操作继续复用。</p>
+<p>必须验证 <code>D → T → JSON 序列化 → inverse(T) → D</code> 的 canonical 内容相等，并验证保存前后 undo/redo 行为相同。新增提交前的 inverse proof：preview 对序列化后的 inverse 验证能恢复 beforeRevision；proof 绑定事务摘要、beforeRevision、afterRevision、serialized inverse 摘要及兼容解释器版本，由 Core 内部保存，不仅信任调用方 receipt。commit 仅消费匹配证明；没有有效证明就重新验证。失败返回 <code>INVERSE_ROUNDTRIP_FAILED</code>，不写 journal、不更新文档或历史。证明成本进入性能测量，不能只在开发模式断言。允许只读 preview 事件和临时 proof cache；持久状态、history、journal 和 committed 事件仅在成功提交后变化。</p>
+<h3>4.2 协议与格式兼容</h3>
+<p>旧 profile 与旧 1.0 操作解释冻结。提出新的操作协议 <code>1.1</code> 和兼容 profile <code>ppte-2.0-edit.1</code>，首期文档 schema 仍为 2.0.0、容器仍为 2。带新操作的 history 或 patch 也要求新 profile，即使当前文档内容本身只用了旧字段。兼容推断输入必须扩为 document + undo 及其 inverse + redo + patch，而不是仅看当前页面对象。</p>
+<p>新 profile 的完整设计 descriptor：formatVersion=2、schemaVersion=2.0.0、operationProtocolVersion=1.1、slideIrVersion=1.0、portableRuntimeVersion=2.1.0（协议描述版本，非 npm 应用版本）、layoutRecipeVersion=1.0、widgetAbiVersion=1.0、patchVersion=1、runtimeSubset=ga-c。patch 容器结构不变，但 manifest 明确所需操作协议/profile。新 reader 支持已登记 GA-A/B/C 的旧能力集合；迁移映射逐项登记并保留原件。最低 profile 通过能力集合包含关系选择，不按字符串、命名或简单数字大小排序。C02 同步修改 validation 的操作 kind/字段校验。E08/F01 使用新格式时，必须先追加完整 descriptor 与对应测试，不能只添加一个名字。</p>
+<p>Run 字体字号和表格 typed 操作分别在 E08/F01 中登记新 capability 及所需协议/profile；Run 新字段拟进入 schema 2.1.0，历史格式是否变化由实际 envelope 改动决定，不无理由抬高所有版本。所有字面量类型、file-format 校验、compatibility 映射、patch codec、CLI schema、Portable 开启和保存入口必须一起更新。未知 profile 不自动迁移为已知版本；新读者仅对已登记的来源执行明确迁移。旧读取器无法识别新能力时拒绝编辑，保留文件和可用的只读预览；不能承诺任意旧读取器都能渲染新文件。</p>
+<p>迁移生成新文件及 MigrationReport，至少包含原文件摘要、输入/输出 profile、迁移步骤、保留的内容与身份、历史状态和降级项。新旧文件都保留。不允许为了让旧程序打开，把新历史或格式字段静默剥掉；有损兼容输出必须显式选择并附报告。</p>
+<h3>4.3 损坏历史的保守恢复</h3>
+<p>将“文档快照是否有效”和“历史是否可恢复”分开检测。常规打开仍严格校验；新增恢复入口返回结构化诊断，不直接把异常转为空 history。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="可横向滚动的表格"><table>
+<thead>
+<tr>
+<th>情况</th>
+<th>处理方式</th>
+<th>可对用户声称的结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文档和历史都有效</td>
+<td>原样打开，正常继续编辑</td>
+<td>项目和历史已恢复</td>
+</tr>
+<tr>
+<td>快照有效，历史失败</td>
+<td>保留原始 bytes 和错误；可只读查看；用户选择后另存新恢复项目</td>
+<td>当前内容已保留，历史未恢复</td>
+</tr>
+<tr>
+<td>当前 head 向前存在连续可验证的历史后缀</td>
+<td>逐条 inverse 后再 forward 验证，首个失败处停止；另存时显式选择保留有限历史</td>
+<td>仅所列最早 revision 之后的历史可用</td>
+</tr>
+<tr>
+<td>有经过 hash/revision 验证的前置 checkpoint 和完整 forward 链</td>
+<td>在隔离会话重放，逐步检查 revision，再写新文件</td>
+<td>只报告实际验证通过的历史范围</td>
+</tr>
+<tr>
+<td>无前置基准，inverse 已丢失信息</td>
+<td>不猜测旧值，不把现在的快照当历史起点</td>
+<td>无法可靠恢复该历史段</td>
+</tr>
+<tr>
+<td>快照/资源本身不完整</td>
+<td>M0 仅输出只读诊断与可验证资源，不自动删对象拼成可编辑项目</td>
+<td>内容不完整，不能报告完整恢复</td>
+</tr>
+</tbody></table></div>
+<p>只要快照完整，恢复副本保留 documentId、对象身份和当前 canonical 内容；另存的外部 RecoveryReport 记录 sourceRevision、sourceFileDigest、恢复范围及未恢复诊断。选择重新开始历史时以当前快照为起点，不伪造更早的共同基线；sidecar 使用新文件命名空间。浏览器恢复存储也必须从单一 KEY 改为 recoverySessionId 命名空间：先保全原 tail/base/资源引用，再切换新恢复会话，失败不能覆盖旧入口；只改文件名不够。原文件、诊断和恢复副本分开保存。恢复操作是可审阅的另存，不修改原件。容器/资源完整性失败的数据不作为可信自动重建输入。历史 validator 放在 Core 侧供上层编排复用，避免 file-format 反向依赖整个 Core；CLI 与 Host 共享诊断逻辑。浏览器无法写原路径时提供下载诊断与副本。</p>
+<p>保存状态固定为：内存有改动、本机恢复记录已更新、文件已写出/副本已下载、保存失败。写盘成功才显示“已保存”；下载触发只显示“已下载副本”，不能声称已覆盖原文件。保存前 flush 输入，保存失败保留草稿和未写出的 revision。</p>
+<h3>4.4 衍生文件身份</h3>
+<p>新增 ArtifactIdentity v1，由以下字段 canonical hash 得到 identityDigest：documentId、sourceRevision、documentDigest、historyPayloadDigest、runtimeBuildId、rendererBuildId、shellDigest、fontManifestDigest、fontPolicyVersion、assetManifestDigest、portableProfile、compatibilityDescriptorDigest、capabilityManifestVersion、capabilitiesDigest、exportOptionsDigest。相同 head 可能拥有不同 undo/redo，因此 history 摘要不可省略。runtimeBuildId 由实际打包内容产生，不能只写应用 semver；shellDigest 包含受控 HTML/CSS/CSP，规范化时排除 identity 字段自身和生成时间以避免循环。资源 manifest 包含每份实际 bytes 的摘要；字体摘要记录声明及嵌入字节，不假定另一台机器的系统字体相同；不把时间戳放进可复用身份。</p>
+<p>交付复用条件：身份全部相同、现有文件可解析、文件内部语义内容和交付记录匹配、没有未合并的接收者修改。实际脚本、外壳、资源与 history 均要重新算摘要，不能只信任内嵌 metadata；这是缓存与完整性验证，不是发行者数字签名。旧 HTML 没有新身份视为 unknown，不直接认定可复用。</p>
+<p>新增 <code>collisionPolicy: error | versioned-copy | replace</code>：旧 API 省略参数继续保持 error；新 CLI/产品流程显式传 versioned-copy。旧 replaceExisting=true 映射 replace 并继续要求 confirmed；新旧参数冲突直接报错，不以隐含优先级覆盖。versioned-copy 在同目录使用短 identityDigest，命名规则经过路径白名单校验；目标已存在且不同则延长摘要或加唯一后缀，原子创建，绝不覆盖。replace 明确授权后原子替换，并保留可恢复的旧版本。检测不到的浏览器内存或本机草稿不可能由磁盘判断，因此新产品流程优先新副本；对旧 no-clobber 调用返回 stale/target-exists，不能返回旧 HTML 成功。</p>
+<p>应用版本改为单一配置来源，staging 从根 package.json 读取；当前根 0.6.0 和暂存 npm 0.8.0 的不一致必须消除。先盘点实际已发布/已安装版本再确定下一 release semver，不把文档版本、私有子包版本或 profile 当应用版本。CLI <code>--version</code>、HTML 关于信息、构建 manifest、Skill 要求和验收报告可追溯到同一构建。</p>
+</section><section id="plan-5"><h2>05 M0–M1：共享模式与编辑控制层</h2>
+<h3>5.1 模式合同</h3>
+<p>临时模式为 browse、edit、present、presenter、print。模式、当前页、放映步骤、选择、焦点、缩放、媒体播放位置都不写入文档 revision。Host 打开可编辑项目默认 edit；新交付副本默认 browse，提供醒目的“编辑”和“放映”；viewer profile 没有编辑入口。开始放映不依赖成功全屏。Portable API 新增 enterEdit()/queryCapabilities() 并声明 API 版本；旧 editText/commit 方法签名保留，但在新副本中调用方必须先进入 edit。旧已生成 HTML 行为不被远程改变，新版示例、Skill 和自动化一并迁移，不能同时承诺旧的加载即编辑默认行为。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="可横向滚动的表格"><table>
+<thead>
+<tr>
+<th>模式</th>
+<th>文本/对象修改</th>
+<th>编辑装饰与菜单</th>
+<th>步骤与媒体</th>
+<th>退出行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>browse</td>
+<td>禁止；显式进入 edit 后启用</td>
+<td>无文本框边线；有简洁导航</td>
+<td>显示全部对象；视频用户点击播放</td>
+<td>进入编辑保留页码</td>
+</tr>
+<tr>
+<td>edit</td>
+<td>受 capability/锁定/范围控制</td>
+<td>仅选中或悬停显示必要反馈</td>
+<td>默认显示所有对象；动画预览是临时状态</td>
+<td>未提交输入先收口</td>
+</tr>
+<tr>
+<td>present</td>
+<td>禁止，包括快捷键与程序化编辑入口</td>
+<td>隐藏编辑 UI；退出控件悬停/聚焦出现</td>
+<td>按步骤显示；媒体点击不翻页</td>
+<td>Esc 恢复原模式、页码及可用焦点</td>
+</tr>
+<tr>
+<td>presenter</td>
+<td>禁止编辑当前成稿</td>
+<td>演讲者专用控件</td>
+<td>备注、计时、下一页预览</td>
+<td>关闭观众窗不丢主会话</td>
+</tr>
+<tr>
+<td>print</td>
+<td>禁止</td>
+<td>不生成编辑装饰</td>
+<td>全内容静态、视频封面</td>
+<td>渲染作业完成后释放资源</td>
+</tr>
+</tbody></table></div>
+<p>进入放映顺序：请求收口输入 → 校验/提交成功 → 取消其余暂态交互 → 保存恢复焦点 → 进入 present → 尝试全屏。提交失败保留输入，不切换模式；中文 composition 期间延后到 compositionend，不强行截断输入法。Fullscreen 拒绝只改变全屏标记，不退回可编辑模式；只退出本控制器拥有的全屏对象。请求带 modeEpoch，迟到的全屏事件不得覆盖较新的退出请求。</p>
+<p>事件守卫覆盖 pointer、paste、beforeinput、composition、快捷键、拖入、API commit/undo/redo。UI 隐藏并不等于禁止修改。播放视频、点击链接、使用退出控件应消费对应事件；空白画布单击是否翻步由放映设置控制，默认键盘与明确导航优先。</p>
+<h3>5.2 Controller 设计</h3>
+<p>下面是目标接口草案，实装沿用现有 Core 类型，不要求名称逐字固定：</p>
+<pre><code class="language-ts">interface EditorController {
+  getState(): EditorState;
+  subscribe(listener: (event: EditorEvent) =&gt; void): () =&gt; void;
+  can(command: EditorCommand): CapabilityDecision;
+  preview(command: EditorCommand): Promise&lt;CommandPreview&gt;;
+  execute(command: EditorCommand): Promise&lt;CommandResult&gt;;
+  flush(reason: &#39;blur&#39;|&#39;save&#39;|&#39;present&#39;|&#39;switch-slide&#39;|&#39;undo&#39;): Promise&lt;FlushResult&gt;;
+  cancelTransient(reason: string): void;
+  dispose(): void;
+}
+</code></pre>
+<p><code>EditorState</code> 包含 mode、activeSlideId、selection、focusTarget、textDraft、pointerDraft、saveState；不包含第二份持久文档。<code>CommandResult</code> 区分 committed / no-op / blocked / conflict / cancelled，附 revision、transactionId、issues。preview receipt 绑定 baseRevision、目标、规范化命令及事务摘要；execute 重新验证，不接受过期 receipt。</p>
+<p>命令分两类：UI 命令只改变临时状态；内容命令经纯 planner 生成 Transaction。所有改变内容/模式/保存边界的命令进入单一队列；同一 draft epoch 的 in-flight flush 复用 Promise，成功只提交并清理一次。耗时资源准备可在队列外执行，返回后带 revision/hash 重新规划。composition 期间不执行文档撤销；flush blocked/conflict/failed 时不继续 undo、换页、保存或切模式。所有内容命令复用 scope/contract、锁定及事实保护；混合多选有不允许的对象时默认整组拒绝并列出对象，不静默只改其中一部分。只有用户显式选择“仅修改可编辑对象”才形成新的目标范围。</p>
+<p>Core 提交事件的 diff 用来计算 dirtySlides、dirtyElements、changedResources 和 selectionInvalidation；这是派生索引，可重建，不能写回成为第二真源。无法精确归类时保守失效，不漏更新。Controller 释放订阅、对象 URL、观察器和未完成任务。</p>
+<h3>5.3 渐进迁移</h3>
+<p>C05 先抽出最小共享模式/步骤逻辑并修两端行为；E01 扩成 Controller。按放映 → 文本 → 指针交互 → 属性 → 保存的顺序逐项迁移，每迁移一个命令就删除旧实现入口或转为薄适配，禁止长期双写。Host 的 React state 订阅 Controller；Portable 的 DOM shell 订阅同一事件。现有 interaction.ts 和 richtext-adapter 可迁移复用，不先重写。</p>
+</section><section id="plan-6"><h2>06 M1：文字、对象与编辑界面</h2>
+<h3>6.1 文字选择和输入</h3>
+<p>选择模型使用 paragraphId、runId、offset 和 affinity。offset 明确使用 JavaScript UTF-16 编码单元，落点必须在完整 grapheme 边界，不能切断代理对、组合字符或 emoji；DOM Selection 与语义选区双向映射，拒绝旧 DOM/revision 的位置。模型已有 paragraph/run ID，沿用并规范拆分、合并规则：未变 run 保留 ID，拆分新 run 分配新 ID；引用主目标仍是 element/semanticKey，不能把临时选区 ID 误用作跨版本事实身份。</p>
+<p>文本命令首先覆盖 selectRange、setMarks、clearMarks、setParagraphStyle、setBoxTextStyle。选区格式通过纯 RichText 变换生成 <code>text.replaceContent</code>，不直接把 DOM innerHTML 写回文档。混合样式显示 mixed；折叠选区仅设置后续输入 marks，整框字号与选区字号在 UI 明确显示作用范围。输入先进入 draft，校验提交失败保留 draft、选区和错误；不得先删 draft 再尝试 commit。</p>
+<p>撤销只有 Core 持久历史。连续输入按同一文本框、相同格式和短输入间隔聚合为可配置 burst；默认原型从 750ms 空闲边界开始校准。composition 不在中途提交；compositionend 后的重复 input 通过 epoch/hash 去重；IME 候选阶段不截获其确认、Esc 和方向键。选区格式、粘贴、跨框、保存和开始放映切断 burst。按撤销时先收口 pending draft，再调用 Core.undo；不同时启用浏览器、富文本库和 Core 三套撤销。库内 history 插件关闭。未确认的 pointer/crop preview 按 Esc 直接取消，不增加历史。</p>
+<p>编辑草稿记录 baseRevision 和目标 contentHash。期间仅无关对象变化时，可确认目标 hash 未变后重新规划并预览；目标文字改变则保留草稿进入冲突状态，不无条件覆盖。活动输入 DOM 不得因其他对象重渲染被替换；这一正确性要求在 E03 实现，不能等 M4 的性能优化才补。</p>
+<p>E02 用原生适配与 ProseMirror 适配各做同样的小型用例。若现有适配在中文输入、跨段选区、格式粘贴及撤销上可以满足验收，继续使用；若成熟内核明显减少正确性缺口且通过包体/启动预算，则仅激活文本框使用 ProseMirror，Tiptap 仅在其封装减少维护成本且无强制云功能时采用。输出 ADR 包括包体、集成成本与所有失败用例，不用生态流行度决定依赖。</p>
+<p>E08 单独增加 Run 字体字号：缺省继承 TextStyle，Run override 优先；清除格式删除 override 恢复继承。使用同一 font resolver、coverage 检查和测量路径；更新 HTML/SVG/PPTX 映射、布局、能力报告与新 profile。旧文件打开不改版式，只有首次使用新字段才升级所需能力。以显式有损输出兼容旧格式时报告被统一的 Run 属性；禁止悄悄丢失。</p>
+<h3>6.2 对象操作与 UI</h3>
+<p>编辑器使用统一的界面语言：顶部是文件状态、插入、撤销/重做、放映和导出；左侧是页面缩略图；中间是固定比例画布；右侧是当前目标属性。Portable 按空间把右侧改为可折叠面板。常用命令同时有图标、可访问名称和快捷键提示；不以密集图标墙承载全部功能。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="可横向滚动的表格"><table>
+<thead>
+<tr>
+<th>选择目标</th>
+<th>第一层属性</th>
+<th>次级属性</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文本</td>
+<td>字体、字号、粗斜体、颜色、对齐</td>
+<td>行距、段距、内边距、框背景与边框</td>
+</tr>
+<tr>
+<td>形状</td>
+<td>类型、填充、描边、透明度</td>
+<td>圆角、阴影、尺寸位置、旋转</td>
+</tr>
+<tr>
+<td>图片</td>
+<td>替换、适应/填充、裁剪</td>
+<td>比例、焦点、alt、来源/许可</td>
+</tr>
+<tr>
+<td>页面</td>
+<td>背景、版式、备注、过渡</td>
+<td>主题应用范围、阅读顺序</td>
+</tr>
+<tr>
+<td>多选</td>
+<td>对齐、分布、组合、图层、锁定</td>
+<td>共同属性与 mixed 状态</td>
+</tr>
+</tbody></table></div>
+<p>明确交互规则：单击选对象，双击文字进入输入；拖框多选，Shift 增减；缩放默认保持图片比例，显式解锁比例后允许变形；对齐分布基于选择包围盒或画布，两种范围可见。现有 group 仍扁平，组内锁定成员不能被整体变换绕过。</p>
+<p>拖动、缩放、旋转和裁剪全过程为 transient preview；pointerup 产生一笔事务；pointercancel、lostcapture、Esc 回到起点。零位移不提交。吸附在画布逻辑坐标计算，阈值按屏幕像素换算，缩放后手感一致。首版只吸附安全区、画布中心、其他可见对象边线/中心；禁止因吸附改写非目标对象。键盘方向键细移与 Shift 大步移使用相同 planner，可按连续按键聚合。</p>
+<p>图片导入共用资源管线：文件/拖入/粘贴 → 类型与尺寸校验 → CAS hash 去重 → 预览 → 资源与对象原子提交。撤销可从当前文档移除资源引用，但物理 bytes 的保留集合必须包含当前文档、undo/redo、恢复日志、未决草稿与作业；仅全部无引用才物理回收。checkpoint 保存也要包含重做需要的资源，验证“插图→撤销→保存重开→重做”仍完整。读取、解码或配额失败均不产生半个对象。替换保留 elementId、semanticKey、指定 frame 和裁剪策略，明确重新裁剪的选择。</p>
+<p>背景支持设置和恢复主题背景，后者用可靠 unset；图片背景的资源引用参与 CAS 和导出；应用到全部页由明确 document scope 事务完成。边框和渐变只支持 schema/renderer/exporter 共同声明的子集，未支持的参数不出现可点击入口。</p>
+</section><section id="plan-7"><h2>07 M2：品牌、风格与配方的数据设计</h2>
+<p>复用现有 PresentationIR/SlideIR/RecipeSpec/ThemeDefinition。以下是设计资产层的包装和版本化扩展，不是另一份成稿数据库。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="可横向滚动的表格"><table>
+<thead>
+<tr>
+<th>对象</th>
+<th>必需字段</th>
+<th>持久位置与作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BrandSpec v1</td>
+<td>id/version、品牌色映射、font roles、logo asset refs、品牌安全区、授权/来源、禁用规则</td>
+<td>本地设计资产；编译为 ThemeDefinition 和普通资源；成稿不依赖外部品牌包</td>
+</tr>
+<tr>
+<td>StylePack v1</td>
+<td>id/version、设计说明、适用/不适用、密度、type scale、spacing、图像/线条/图表规则、recipe refs、预览、许可</td>
+<td>可检索资源包；主题值与配方版本固定，包有 digest</td>
+</tr>
+<tr>
+<td>RecipeManifest v1</td>
+<td>recipe ref、purpose、slotRefs、controls、capacity、capabilities、structuralFingerprint、sample refs</td>
+<td>包装 RecipeSpec；槽位定义只在 RecipeSpec，检索摘要由工具生成并校验 digest</td>
+</tr>
+<tr>
+<td>DesignPlan v1</td>
+<td>PresentationIR、brand/style refs、用途、seed、每页 recipe selection 与理由、内容预算、保护规则</td>
+<td>编译输入/审阅记录；成稿仍是 document.json</td>
+</tr>
+<tr>
+<td>DesignBinding v1</td>
+<td>recipeId/version/digest、sourceBlock→element 映射、已应用参数、手动覆盖字段、锁定信息摘要</td>
+<td>成稿的版本化生成元数据/扩展；不能存第二份正文；缺失不影响打开编辑</td>
+</tr>
+</tbody></table></div>
+<p>DesignBinding 中保护摘要仅供重排解释；权威状态来自对象 locked/editPolicy 及页面 protectedAnchors，执行重新查 Core。SlideIR.protectedContent 是本次请求的附加保护，不能替代既有规则。内容发生手动修改后，重新设计从当前文档提取语义值，不拿旧 IR 覆盖当前文稿。绑定失效的对象退出自动重排或要求重新建立绑定，不猜测身份。</p>
+<p>参数例：columns 是整数枚举 1/2/3，captionDensity 是枚举，imageSide 为 left/right。控件描述含 label、type、default、min/max/options、applicability 和影响范围。禁止任意脚本、CSS 字符串或任意 JSON path。改变 columns 只改变已存在内容的安置；容量不足返回 <code>RECIPE_CAPACITY_EXCEEDED</code> 并附换配方/拆页提案，不能截断数组。拆页需要允许 insert-slide 的 scope，不自行扩大权限。</p>
+<p>建议资源结构：</p>
+<pre><code class="language-text">design-packs/&lt;style-id&gt;/
+  manifest.json       品牌兼容、风格规则、许可、版本
+  theme.json          对接现有 ThemeDefinition
+  recipes/*.json      RecipeSpec + manifest 扩展
+  previews/*         使用固定真实材料的代表页
+  fixtures/*.json     正常、边界、超容量输入
+  design.md          Agent 所需设计理由与禁用场景
+</code></pre>
+<h3>7.1 先让参数真正执行</h3>
+<p>现有 variants 有声明，编译执行未完整接入；baseline/keep-together 等约束也需逐项核对实现，qualityRules 的不同类型必须全部兑现。D02 建立“声明 → 校验 → 执行 → 测试”登记表，未实现约束明确拒绝，不可静默忽略。槽位分配必须满足 required/min/max 和配对关系，不能以 first-fit 或统一最多三列规则冒充所有构图。需要新的 repeat/装饰/布局组合时，只允许有界声明式语法并显式升级 RecipeSpec 版本；按内容 block key 生成身份，不按数组位置。配方以编译器和主呈现能力为基础，对每个交付目标分别声明 native/static/rasterized/fallback/unsupported；用户指定必需目标时筛除不能满足该目标合同的候选，不用所有出口的最小交集限制所有设计。</p>
+<p>编译过程固定为：校验 IR → 解析品牌/主题 → 过滤能力与容量 → 应用已选 variant → 槽位分配 → 约束求解 → 文本实际测量 → 安全/阅读顺序检查 → 生成 draft → diff 与 contract 校验。maxChars 只作预筛，最终容量依据字体就绪后的排版框测量；keep-together 可能令候选不可行，不能强行塞入。求解限制配方数量、递归深度、迭代次数和总元素数，避免声明式输入造成无限计算。</p>
+<p>CLI 基础 compile 仍可在没有浏览器的环境运行确定性语义校验和保守度量，报告 <code>visualStatus: unverified</code>。正式视觉校验另用按需浏览器或 Agent 已有浏览器，等待指定字体及资源就绪。D03 工具可以诚实返回 unverified，但 D04 成熟覆盖格和 D07/G2 不能以 unverified 通过：正常/边界样例必须有本构建、fixture、字体摘要与真实截图；超载样例证明拒绝或提案。字体/资源超时使该次验证失败，允许的 fallback 需以另一份明确配置重新验证。浏览器可选不等于视觉门禁可以伪造。</p>
+<h3>7.2 整套编排与风格首批覆盖</h3>
+<p>整套选择先满足硬约束，再按语义适配、密度、素材、相邻结构和章节节奏排序。首版每页保留有限候选，采用有界 beam search 或等价确定性选择；初始上限每页 6 个候选、beam 8，作为可配置预算经 D03 性能测试校准。相同 seed、字体指纹、材料及包 digest 应得到相同选择。不要为了避免重复把合适的连续数据页强行改成海报。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="可横向滚动的表格"><table>
+<thead>
+<tr>
+<th>风格</th>
+<th>设计语言</th>
+<th>首批必须覆盖的八类角色</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>商务信息</td>
+<td>克制色彩、清晰表格与关系、结论优先</td>
+<td>封面、章节、观点、指标、图文、对比、流程、结尾</td>
+</tr>
+<tr>
+<td>瑞士分析</td>
+<td>网格、强字级、数字与留白、有限强调色</td>
+<td>同上，指标/对比以分析阅读为中心</td>
+</tr>
+<tr>
+<td>杂志叙事</td>
+<td>图文张力、章节节奏、摄影与引语</td>
+<td>同上，图文/观点强调故事推进</td>
+</tr>
+<tr>
+<td>产品发布</td>
+<td>主视觉、特性层级、场景与证据</td>
+<td>同上，流程/对比体现使用价值</td>
+</tr>
+</tbody></table></div>
+<p>这是 32 个“风格 × 角色”可验收覆盖格，允许复用底层配方，不要求维护 32 份重复模板。图表、表格、长内容作为每套压力页补测；M2 表格只验现有支持能力的显示、语义保留和既有出口，不提前要求 M3 Table v2 编辑或原生导出。首版风格不全是换颜色：至少在字级、空间结构、图像处理和页间节奏上存在可解释差异。</p>
+<p>度量以画布 du 和比例为主。采用一套标准画布样例，并测试既有不同画布尺寸；不要把示例像素值写成全产品固定规则。初始现场演讲正文字级建议不低于画布高度的 2.2%，阅读型不低于 1.6%，来源等次级信息独立规则；这些是质量预警起点，由代表页评审校准，不是自动判定内容应该删减的依据。</p>
+<h3>7.3 Skill 的可执行流程</h3>
+<p>新增 CLI 命令族的目标形态为 <code>ppte design list/inspect/plan/preview/apply/validate</code>，由 E/D 任务登记到 CLI help/schema；这些命令当前尚不存在。保留已有 compile、preview、commit、deliver 流程兼容。Skill 的输入输出顺序固定为：</p>
+<ol>
+<li>从用户材料提取受众、用途、事实/来源、内容目标和可用素材；没有材料依据的数字不可补写成事实。</li>
+<li>读取轻量 style index，检索少量候选，再读取选中的 design.md 和配方；不一次载入全库。</li>
+<li>形成 DesignPlan，用真实封面、正文、复杂数据三类代表页验证；用户已要求直接做时自动选择继续，不新增强制风格确认。</li>
+<li>批量编译，校验全部内容已安置；生成 proposed transactions，由相同 preview/commit 机制写入。</li>
+<li>渲染检查后最多两轮自动局部修复，每轮记录修改对象、原因和硬约束结果；仍不通过时明确列出未完成项，保存可审查产物，不无限重写。</li>
+<li>人工修订后再设计只取请求范围，保留锁定、事实、语义 ID 和显式覆盖；重新绑定或扩大范围必须有依据。</li>
+<li>输出 <code>.ppte</code>、可编辑副本和与构建身份绑定的报告；未实际执行视觉或 Office 检查的项目写 unverified。</li>
+</ol>
+<p>许可策略延续研究结论：独立实现参数化、布局选择、渐进检索与评审机制；不复制 Dashi 专有导出子包。采用可复用 MIT 代码或素材时固定版本并保留 notices；AGPL 代码不混入默认 Apache-2.0 产品实现。品牌、字体、照片分别记录许可，不能只依赖仓库根许可。</p>
+</section><section id="plan-8"><h2>08 M3：表格、视频、动画与演讲工具</h2>
+<h3>8.1 core/table v2</h3>
+<p>保持 ComponentElement，props 内使用 versioned TableModel：rowOrder、columnOrder、rows、columns、cells、merges、tableStyle。每个 row/column/cell 都有稳定 ID；cell 含 typed value（string/number/boolean/null）、displayFormat、richText 可选、style、fact/source refs。typed value 是数据真值，richText 仅适用于文本单元格，不同时存储相互冲突的数字真值和正文副本。合并记录锚 cellId 与矩形 row/column ID 范围；被覆盖格的数据仍保留，拆分可恢复。</p>
+<p>typed 命令为 setCellValue、insert/delete/moveRows、insert/delete/moveColumns、resizeRows/Columns、mergeCells、splitCell、setCellStyle。UI/Agent 共享 planner，Core 增加经过校验的 <code>table.*</code> 操作及 inverse，仍落在组件 props。禁止通过泛化 component.updateProps 绕过行列一致性、合并与引用不变量；同样的 validator 应用于所有组件更新入口。</p>
+<p>v1 二维数组显式迁移：补齐矩形行列，生成确定性 ID，保留表头、caption、原 scalar 类型与元素 ID，产生迁移报告。空表、非矩形数据、长数字、TSV 粘贴、中文换行、合并边界都要覆盖。结构删除若会删掉被引用的事实单元格，拒绝或要求审阅影响；事实同步不能把位置变化误当新事实。</p>
+<p>首版合并只允许完整矩形、不跨已有合并、不丢被覆盖数据；包含不同非空值时显示合并后的展示规则，值保留可撤销。超过容量建议分页或缩减展示范围，但由用户/Agent 显式确认内容处理。语义 PPTX 使用原生 table 结构；只有通过实际导出对象验证才标 nativeTable。特殊样式可降级但必须列明。</p>
+<h3>8.2 媒体与离线交付</h3>
+<p>core/video v2 使用 assetId，资源 metadata 包含 MIME、byteLength、digest、width/height、durationMs、posterAssetId 与可选的 codec 检测信息。现有 source 字符串在本地导入时解析为资源，未知路径或缺文件维持封面并报告 missing-source，不进行任意网络抓取。</p>
+<p>Renderer 生成受控容器，MediaController 从已验证 CAS bytes 建立 Blob URL 并绑定 src；组件 renderHtml 不读取磁盘或执行任意脚本。CSP 仅按交付模式允许必要的 blob/data 媒体和受控同源资源，不扩大脚本权限。loadedmetadata 后校验实际尺寸与时长；play 的 Promise 失败可见；离页暂停，返回默认从原位置继续；结束/关闭释放 URL 与缓冲引用。导出采用指定 poster frame，测试音频/视频是否停止占用资源。</p>
+<p>交付采用两级：预算内使用单 HTML；超过当前标准目标时提供显式允许的大 HTML，或经过验证的离线目录包。目录包至少包含可打开的 index.html、manifest.json、media/ 文件及可选 <code>.ppte</code> 源包，manifest 将 assetId 映射到受控相对路径与 byte digest；打包时验证所有字节。单 HTML 打开时可校验内嵌 CAS 再建立 Blob URL；file:// 目录无法读取字节时仅声明“打包时完整性已校验、打开时未复验”，不得伪称打开时 CAS 校验。不能在该路径启动未验证的计算/脚本资源。</p>
+<p>先保留已有 20 MiB 标准目标，F04 根据样例决定新阈值，不默默放大默认体积。离线目录相对媒体播放必须实测；需要 fetch/CORS 的实现不得伪称双击可用。若目录无法满足目标合同，就不作为支持交付路径，保留经验证的大 HTML 或 Host 打开方式。</p>
+<p>默认用户手动播放，不自动播放有声视频。PDF、PNG、图片 PPTX 使用封面；首版语义 PPTX 同样允许有报告的封面降级，PPTX 媒体嵌入作为 F04 的后续子项，只在目标客户端实测通过后开启。不能为了完成“视频支持”隐藏导出边界。</p>
+<h3>8.3 动画语义与现场工具</h3>
+<p>放映状态使用 slideId + step，索引只作派生，避免页面重排使演讲者同步错页。step=0 是页面的基础状态；正 appearStep 升序揭示。定义四个独立命令：</p>
+<ul>
+<li>nextStep：揭示下一步；已到末步则进入下一页 step=0。</li>
+<li>previousStep：撤回当前页最近一步，包括 step=1 回到 0；在 step=0 时转上一页的最后一步。</li>
+<li>nextSlide：跳下一页 step=0；previousSlide：跳上一页 step=0。</li>
+<li>gotoSlide：显式指定页面，默认 step=0。首末边界均不越界、不循环。</li>
+</ul>
+<p>首版对象动画实现 fade、slide-up、slide-left，翻页实现 none、fade、slide/push 的已声明方向；duration/delay 有上下界。未实现 scale/exit 等既有字段保留但报告 static/unsupported，不用“动画支持”概括全部枚举。减少动态效果时瞬时切换到同一终态，语义步骤仍正确；打印显示全部可见内容。</p>
+<p>现场工具先做页索引、黑屏、激光笔、计时和下一页预览。黑屏是临时视觉状态，不改变 step；激光笔不写入文档。双屏为 F06 后段，使用版本化消息、session token、seq/ACK 和发送方窗口校验。file:// 可能为 opaque origin，必须验证 event.source 与会话随机 token，不能只校验 origin 字符串；无法可靠隔离时关闭双屏保持单屏可用。弹窗失败、断连、重连、重复/乱序消息和观众屏关闭有明确反馈；备注不发到观众 DOM。</p>
+</section><section id="plan-9"><h2>09 能力矩阵与交付合同</h2>
+<p>能力报告拆为两个维度：操作是否允许（supported/read-only/blocked + 原因），呈现/导出如何实现（native/static/rasterized/fallback/unverified）。不要以“按钮存在”或 widget exportPolicy=native 推断实际支持。报告粒度为目标、对象、属性/命令，聚合结果仍保留原因。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="可横向滚动的表格"><table>
+<thead>
+<tr>
+<th>内容/能力</th>
+<th>Host 编辑</th>
+<th>Portable 日常编辑</th>
+<th>HTML 放映</th>
+<th>PDF</th>
+<th>语义 PPTX</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文本、形状、图片、背景</td>
+<td>本轮完整常用子集</td>
+<td>相同基础命令，profile 可裁剪</td>
+<td>正常显示</td>
+<td>静态视觉</td>
+<td>原生受支持对象；字体风险报告</td>
+</tr>
+<tr>
+<td>表格 v2</td>
+<td>单元格与结构</td>
+<td>首批改值/基础样式</td>
+<td>正常显示</td>
+<td>静态视觉</td>
+<td>原生表格及允许样式</td>
+</tr>
+<tr>
+<td>视频</td>
+<td>资源和封面管理</td>
+<td>播放/封面；资源管理可只读</td>
+<td>受支持素材真实播放</td>
+<td>封面</td>
+<td>首批封面降级；嵌入另验</td>
+</tr>
+<tr>
+<td>步骤与动画</td>
+<td>配置/预览</td>
+<td>基础配置按 profile</td>
+<td>声明子集播放</td>
+<td>全内容静态</td>
+<td>首批静态终态，动画导出后置</td>
+</tr>
+<tr>
+<td>自定义组件</td>
+<td>受控注册实现</td>
+<td>已登记安全参数</td>
+<td>运行时支持或回退</td>
+<td>回退</td>
+<td>依 adapter；未验证不能标原生</td>
+</tr>
+</tbody></table></div>
+<p>Native、nativeTable、nativeChart 等标记必须以实际 exporter adapter 和验证结果产生。布局/字体替代不等于内容丢失，但必须同时报告风险。质量报告绑定 ArtifactIdentity；源内容、字体、配置、运行时或导出器任何一项变化，旧通过报告失效。</p>
+<p>Portable 保存必须带完整资源和兼容声明；浏览器不支持原地写入时下载新副本。用户的浏览器修改与源项目关系通过 revised-copy/patch 审阅处理，不声称自动同步。升级 runtime 时新建派生副本，不自动覆盖接收者修订。</p>
+</section><section id="plan-10"><h2>10 M4：真实性能预算与实施方法</h2>
+<p>先保留现有 Node 微基准，但将“打开/翻页/首屏”中只测字符串生成或构造函数的项目重命名为实际测量对象。另建真实浏览器基准，包含字体和资源就绪后的画面与输入反馈。研究已证明无关页被重建，但尚未证明小文稿普遍慢；不宣传未经测量的优化倍数。</p>
+<p>固定三档素材：12 页 Cherry 案例；30 页、约 900 对象和 50 MiB 资源的常规压力档；100 页混合内容极限档。各档固定文件 hash、字体、浏览器和设备信息。常规档是目标校准集，100 页不自动成为公开容量承诺。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="可横向滚动的表格"><table>
+<thead>
+<tr>
+<th>指标</th>
+<th>首轮候选门槛</th>
+<th>测量规则</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>打开至可交互</td>
+<td>常规档 p95 ≤ 2s</td>
+<td>本地入口到字体/首屏资源就绪、可选中对象；冷/热分别测</td>
+</tr>
+<tr>
+<td>翻页稳定画面</td>
+<td>常规档 p95 ≤ 100ms</td>
+<td>输入到目标页稳定渲染，不只 HTML 字符串生成</td>
+</tr>
+<tr>
+<td>输入/拖拽反馈</td>
+<td>p95 ≤ 50ms；持续拖动无 &gt;100ms 停顿</td>
+<td>合成压力 + 手工 IME/真实指针；口径单独记录</td>
+</tr>
+<tr>
+<td>局部修改影响面</td>
+<td>无关页 DOM 身份、媒体播放和文字焦点不变</td>
+<td>结构性门禁，可独立于速度判断</td>
+</tr>
+<tr>
+<td>内存与资源释放</td>
+<td>反复进入/离开媒体与文件后无持续增长趋势</td>
+<td>至少 20 次循环，记录峰值与稳定后残留，不假定 GC 精确时刻</td>
+</tr>
+<tr>
+<td>默认包体</td>
+<td>不超经校准的 Portable/安装包预算</td>
+<td>新文本依赖、字体和媒体拆开记录，不只压缩后的源码大小</td>
+</tr>
+</tbody></table></div>
+<p>以上是候选目标，C01/P01 在固定主机和较低性能实机校准后冻结；不能一边调门槛一边宣称回归通过。浏览器自动化每场景至少 30 次、启动至少 20 次以观察分布，p95 同时给样本数和散点/原始值；少量数据不包装成统计结论。Chromium 自动化是主线，Playwright WebKit 不等同真实 Safari，公开浏览器支持必须另留实机证据。</p>
+<p>优化按 P01→P02→P03 执行：diff 到脏对象/页 → 稳定节点与当前文本隔离 → 资源/字体 URL 缓存 → 缩略图失效缓存 → 当前与相邻页按需挂载 → Core 索引增量。打印/全量导出使用独立全页路径，避免窗口化遗漏页面；搜索、页码、阅读顺序来自模型，不依赖已挂载 DOM。</p>
+<p>仅对实测占用显著的哈希、压缩、复杂测量准备等可信作业使用 Worker。任务带 jobId、baseRevision、inputDigest、AbortSignal，输出回主线程后重新校验，过期结果丢弃；Worker 不能直接提交 Core。任务池有队列上限和背压，不每次拖动新建 Worker。M4 不把 Worker 当不受信任脚本沙箱。</p>
+<p>QuickJS 只在 X01 条件成立时做独立实验：确有声明式无法合理表达的第三方计算需求，且必须执行不受信任代码。比较 native/Worker/Worker+QuickJS 的总成本及限制；JSON draft 经 Core 校验，成品无需扩展运行时即可打开。实时协作 X02 也只有真实多人需求、文件级合并不够用时启动；不能把 Yjs 接入等同现有事务语义已解决。</p>
+</section><section id="plan-11"><h2>11 质量基准、验收与完成定义</h2>
+<p>质量分为四条独立线：事实内容、语义编辑、渲染交付、视觉叙事。任一硬门禁失败都不能用其余分数抵消。每个功能必须走一遍：生成 → 人工修改 → 撤销/重做 → 保存 → 重开 → 放映 → 导出 → 检查结果。测试通过数不是产品完成度。</p>
+<p>建立 10 个固定任务：产品故事、数据汇报、技术解释、业务提案、培训各两种用途（演讲/阅读）。材料、事实答案、来源、素材许可、目标受众和人工编辑脚本进入 fixtures manifest；真实 Cherry 案例经资料许可与隐私检查后作为回归资产，否则用结构等价脱敏样例。当前基线与候选版本使用同样 Agent、输入、种子/预算，每任务至少两次生成保留原产物，观察波动，不宣称显著性。</p>
+<p>硬门禁为：零关键事实错误、零意外内容删除、零锁定误伤、保存重开/撤销一致、放映无编辑泄漏、媒体真实可用、降级声明准确。视觉检查记录页面/对象与截图证据：层级、密度、构图、素材作用、整套节奏；配方标明允许的文字/背景等覆盖关系，不把所有相交一律判错；不允许只给“8 分”而无修复项。</p>
+<p>人工目标使用 10 项任务脚本（改字、局部加粗、字号、换图、裁剪、对齐、改表格、保留锁定换布局、重开撤销、演讲交付），由项目负责人和至少两名目标使用者执行。脚本标记最低阶段：文字/图片/对齐/重开和基础演讲在 M1，保护式换布局在 M2，表格与媒体现场工具在 M3。G2 仅执行适用子集，其余记 deferred、不计通过；G3/Q01 再执行完整十项。任何保存失败、误伤或无法退出放映均阻断。首轮形成耗时/求助基线，M2 的人工修复时间应有一致改善趋势，关键任务成功率不退步；样本不足不制定伪精确百分比。</p>
+<p>详细正负用例与证据路径见 ACCEPTANCE.md。报告格式统一包含 commit/buildId、fixtureDigest、环境、执行人或自动工具、测量口径、结果、附件和未验证项。人工 Office/浏览器验收未完成时状态保持 unverified；不允许自动测试生成一个假的通过勾。</p>
+</section><section id="plan-12"><h2>12 开发、迁移、灰度与发布方式</h2>
+<p>每个 PR 对应一项任务或 L 任务的一段可验收切片，标题含任务 ID。先提交失败 fixture/合同，再实现，再补跨边界验收；数据操作和恢复使用属性/序列化测试，UI 使用真实浏览器旅程。纯外观微调不写镜像实现的测试，依代表页视觉检查。</p>
+<p>建议工作分工为四条责任线，人数不足时同一人依序承担：Core/持久化、编辑器/交互、设计系统/Skill、验收/交付。Schema、Operations、Compatibility、Core 和共享测试骨架指定单一整合负责人，避免并行分支分别发明不兼容字段。一个功能不能只有 UI 负责人而没有保存/导出验收责任人。</p>
+<p>现有命令继续用于构建、类型检查、单元测试、Host 构建、validate 和 blackbox；新增精确任务命令必须由对应 PR 真正加入 package.json 后才写成可运行手册。文档中的 API 和命令草案不会被冒充为现有 CLI 功能。CI 不修改源 fixture，不自动接受新的视觉 golden。</p>
+<p>每个阶段发布前执行：核对阶段任务及阻断项 → 全量核心/保存回归 → 相关浏览器旅程 → npm 临时目录干净安装 → 原生 Skill 创建/编辑/交付 → 断网基础流程 → 核对 capability/report/buildId → 生成迁移和发布说明。基础安装后不启动 MCP、不配置模型密钥；浏览器导出依赖按需安装，缺失时给操作提示而不是损坏项目。</p>
+<p>先发布候选包和示例副本做验收，再发布正式 npm/Git tag；GitHub 推送、npm 发布、用户技能/runtime 安装和既有 HTML 升级是四个不同动作，发布报告逐项记录。实现本方案不预先授权发布凭据变更或覆盖他人文件。功能开关用于未完成 UI，不得让旧程序忽略新格式；已写入新文档能力后不能仅靠关开关回滚。</p>
+<p>回滚保留旧 npm tarball、旧 runtime build、原始项目和迁移前摘要。降级运行时只打开它能识别的 profile；新格式项目继续用已验证的新读取器只读/导出。暂停 rollout 可以阻止新升级，不能伪称新项目已经自动降级。任何 save/reopen、事实保护或放映控制回归都应停止候选推广并保留失败产物。</p>
+</section><section id="plan-13"><h2>13 风险、决策门与下一次执行入口</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="可横向滚动的表格"><table>
+<thead>
+<tr>
+<th>风险</th>
+<th>最早验证任务</th>
+<th>不通过时的处理</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>新 inverse 修好新文件却无法救旧历史</td>
+<td>C02/C03</td>
+<td>分开报告内容恢复与历史恢复，保留原件；不阻塞可靠的新写入能力</td>
+</tr>
+<tr>
+<td>富文本库破坏输入法或历史/包体</td>
+<td>E02/E03</td>
+<td>使用能通过合同的适配；缩小库使用到活动文本框；不给全画布换内核</td>
+</tr>
+<tr>
+<td>新字段被旧入口静默丢掉</td>
+<td>C02/E08/F01</td>
+<td>persistence/patch/Portable profile 统一推断并拒绝未知能力</td>
+</tr>
+<tr>
+<td>风格好看但长中文或数字失效</td>
+<td>D02/D04/D07</td>
+<td>调配方容量、拆页提案和字体规则，不缩字/删内容装作通过</td>
+</tr>
+<tr>
+<td>表格/媒体在导出中能力缩水</td>
+<td>F03/F04/Q01</td>
+<td>保留显式降级合同；只有验证的子集列原生支持</td>
+</tr>
+<tr>
+<td>性能优化导致漏画/选区丢失/视频重启</td>
+<td>P02/P03</td>
+<td>以语义与交互回归优先，允许安全全量回退后再定位</td>
+</tr>
+<tr>
+<td>多任务并行导致 schema 与 UI 不一致</td>
+<td>E01/D01/F01</td>
+<td>共享契约先合入，一处登记版本，CI 覆盖两端与导出</td>
+</tr>
+</tbody></table></div>
+<p>本轮已决定的方向可以直接执行；待实验决定的仅有文本内核选型、性能阈值校准、媒体体积阈值及条件扩展。它们各有具体任务、判定材料和后备方案，不留成模糊“待研究”。</p>
+<p><strong>开始开发时，从 C01/C02/C04/C05 进入第一批工作，不先扩模板数量或引入 QuickJS。</strong> 首个可体验验收成果必须能演示：无独立背景的页面修改后保存重开并撤销；旧运行时副本生成正确的新版本；Host 与 Portable 放映都无编辑菜单、虚线或可编辑焦点。随后继续 M1 的完整日常编辑闭环。</p>
+</section><section id="plan-14"><h2>14 依据与适用范围</h2>
+<p>本方案是基于固定版本的工程设计，不能当作当前能力说明。主要内部依据：原始 <a href="../PPTe_2.0_%E5%AE%8C%E6%95%B4%E7%A0%94%E5%8F%91%E6%96%B9%E6%A1%88_v2.3.md">v2.3 研发方案</a>、<a href="../ADR_v2.3_%E5%86%BB%E7%BB%93%E5%86%B3%E7%AD%96.md">冻结决策</a>、schema/operations/Core/file-format/compatibility、Host/Portable、richtext-adapter、layout-recipes/design-compiler、widgets/capability/exporter 代码，以及上一轮研究的可复现实验。</p>
+<p>外部取舍沿用已核验的第一方资料：<a href="https://bellard.org/quickjs/quickjs.html">QuickJS 官方说明</a>、<a href="https://tiptap.dev/docs/editor/core-concepts/prosemirror">ProseMirror 体系说明</a>、<a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers">Worker 能力</a>、<a href="https://developer.mozilla.org/en-US/docs/Web/API/CSS_Font_Loading_API">字体加载</a>、<a href="https://learn.microsoft.com/en-us/office/open-xml/presentation/structure-of-a-presentationml-document">PresentationML 结构</a>。六个指定开源项目的固定提交、机制与许可比较保留在深度研究报告；本方案不重复宣称未经同素材实验的效果排名。</p>
+</section><section id="tasks" class="explorer"><h2>15 可执行任务清单</h2><p class="explorer-intro">按阶段筛选，或搜索任务、模块与目标文件。展开任务查看依赖、实施切片和完成标准。依赖链接会定位并展开对应任务。</p><div class="filters"><label class="search-label">搜索任务<input id="task-search" type="search" placeholder="例如：历史、图片、C02" autocomplete="off"></label><label>阶段<select id="task-phase"><option value="all">全部阶段</option><option value="M0">M0 可靠基线</option><option value="M1">M1 日常编辑</option><option value="M2">M2 稳定成稿</option><option value="M3">M3 内容与演讲</option><option value="M4">M4 规模与发布</option></select></label><button type="button" id="task-reset">重置</button></div><p class="result-count" id="task-count" aria-live="polite"></p><div id="task-list"><article class="task" id="task-C01" data-phase="M0" data-search="c01 固化失败样本与真实基线 core / 验收 tests/persistence.test.ts tests/portable-presentation.test.ts tests/delivery.test.ts scripts/blackbox-fixtures.mjs tests/fixtures/evolution/manifest.json tests/fixtures/evolution/history-background.json docs/evolution/quality/m1-dependency-budget.json 背景最小失败、合法旧 profile、错误历史、旧 html 身份样本可独立复现 记录原件 hash、期望 revision、环境与当前失败结果；正式测试材料可公开且有来源 前置冻结浏览器测量协议与 m1 编辑依赖包体/启动增量预算，e02 引用版本化结果"><details><summary><span class="task-id">C01</span><span class="task-title">固化失败样本与真实基线</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M0</span><span>P0</span><span>工作量 S</span><span>Core / 验收</span></div><p><strong>前置任务：</strong>无；首批入口</p><h4>实施切片</h4><ol><li>先加入不依赖真实用户文件的最小 fixture</li><li>经核验再加入真实案例或脱敏等价样本</li></ol><h4>完成标准</h4><ul><li>背景最小失败、合法旧 profile、错误历史、旧 HTML 身份样本可独立复现</li><li>记录原件 hash、期望 revision、环境与当前失败结果；正式测试材料可公开且有来源</li><li>前置冻结浏览器测量协议与 M1 编辑依赖包体/启动增量预算，E02 引用版本化结果</li></ul><p><strong>验收：</strong><a href="#acceptance-A01" data-acceptance-link="A01">A01</a>、<a href="#acceptance-A03" data-acceptance-link="A03">A03</a>、<a href="#acceptance-A05" data-acceptance-link="A05">A05</a>、<a href="#acceptance-A06" data-acceptance-link="A06">A06</a>、<a href="#acceptance-A20" data-acceptance-link="A20">A20</a></p><details class="paths"><summary>目标文件 · 4 个已有 / 3 个拟新增</summary><ul><li><code>tests/persistence.test.ts</code></li><li><code>tests/portable-presentation.test.ts</code></li><li><code>tests/delivery.test.ts</code></li><li><code>scripts/blackbox-fixtures.mjs</code></li><li><span class="new">拟新增</span> <code>tests/fixtures/evolution/manifest.json</code></li><li><span class="new">拟新增</span> <code>tests/fixtures/evolution/history-background.json</code></li><li><span class="new">拟新增</span> <code>docs/evolution/quality/m1-dependency-budget.json</code></li></ul></details></div></details></article><article class="task" id="task-C02" data-phase="M0" data-search="c02 修复可选字段逆操作并升级操作兼容 core / 格式 packages/schema/src/operations.ts packages/schema/src/document.ts packages/schema/src/file-format.ts packages/operations/src/index.ts packages/core/src/index.ts packages/compatibility/src/index.ts packages/change-contract/src/index.ts packages/file-format/src/index.ts packages/portable-runtime/src/shared.ts packages/patch-format/src/codec.ts schemas/transaction.schema.json schemas/manifest.schema.json schemas/compatibility-profile.schema.json schemas/patch-manifest.schema.json packages/validation/src/index.ts tests/history-inverse-roundtrip.test.ts patch/unset 白名单与不存在字段的 inverse 可序列化 提交前 inverse proof 拒绝不可逆变更，失败不写恢复日志 兼容推断覆盖 document/history/redo/patch；旧 1.0 读写语义保留 冻结完整 edit.1 descriptor 与能力包含关系；推断含 inverse，proof 绑定解释器版本"><details><summary><span class="task-id">C02</span><span class="task-title">修复可选字段逆操作并升级操作兼容</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M0</span><span>P0</span><span>工作量 L</span><span>Core / 格式</span></div><p><strong>前置任务：</strong><a href="#task-C01" data-task-link="C01">C01</a></p><h4>实施切片</h4><ol><li>存在性审计与新协议/schema</li><li>serialized inverse proof 和原子拒绝</li><li>全持久化边界与历史/patch 兼容</li></ol><h4>完成标准</h4><ul><li>patch/unset 白名单与不存在字段的 inverse 可序列化</li><li>提交前 inverse proof 拒绝不可逆变更，失败不写恢复日志</li><li>兼容推断覆盖 document/history/redo/patch；旧 1.0 读写语义保留</li><li>冻结完整 edit.1 descriptor 与能力包含关系；推断含 inverse，proof 绑定解释器版本</li></ul><p><strong>验收：</strong><a href="#acceptance-A01" data-acceptance-link="A01">A01</a>、<a href="#acceptance-A02" data-acceptance-link="A02">A02</a>、<a href="#acceptance-A03" data-acceptance-link="A03">A03</a></p><details class="paths"><summary>目标文件 · 15 个已有 / 1 个拟新增</summary><ul><li><code>packages/schema/src/operations.ts</code></li><li><code>packages/schema/src/document.ts</code></li><li><code>packages/schema/src/file-format.ts</code></li><li><code>packages/operations/src/index.ts</code></li><li><code>packages/core/src/index.ts</code></li><li><code>packages/compatibility/src/index.ts</code></li><li><code>packages/change-contract/src/index.ts</code></li><li><code>packages/file-format/src/index.ts</code></li><li><code>packages/portable-runtime/src/shared.ts</code></li><li><code>packages/patch-format/src/codec.ts</code></li><li><code>schemas/transaction.schema.json</code></li><li><code>schemas/manifest.schema.json</code></li><li><code>schemas/compatibility-profile.schema.json</code></li><li><code>schemas/patch-manifest.schema.json</code></li><li><code>packages/validation/src/index.ts</code></li><li><span class="new">拟新增</span> <code>tests/history-inverse-roundtrip.test.ts</code></li></ul></details></div></details></article><article class="task" id="task-C03" data-phase="M0" data-search="c03 分层诊断与保全式历史恢复 core / 文件 packages/core/src/index.ts packages/file-format/src/index.ts packages/recovery-journal/src/index.ts packages/node-runtime/src/index.ts packages/editor-react/src/recovery.ts apps/cli/index.ts packages/portable-runtime/src/shared.ts packages/portable-runtime/src/browser.ts tests/history-repair.test.ts 有效快照可只读查看；历史状态 valid/absent/invalid/unsupported 明确 保留连续可验证后缀；全量重建仅允许精确 checkpoint 基准 另存副本与报告；失败和崩溃不改变原件/sidecar 浏览器 recoverysessionid 隔离原 tail/base；快照或资源不完整仅给只读诊断，不自动拼成完整项目"><details><summary><span class="task-id">C03</span><span class="task-title">分层诊断与保全式历史恢复</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M0</span><span>P0</span><span>工作量 L</span><span>Core / 文件</span></div><p><strong>前置任务：</strong><a href="#task-C02" data-task-link="C02">C02</a></p><h4>实施切片</h4><ol><li>提取历史 validator 与只读 assessment</li><li>可信后缀/精确基准重建</li><li>CLI/Host 另存恢复和故障测试</li></ol><h4>完成标准</h4><ul><li>有效快照可只读查看；历史状态 valid/absent/invalid/unsupported 明确</li><li>保留连续可验证后缀；全量重建仅允许精确 checkpoint 基准</li><li>另存副本与报告；失败和崩溃不改变原件/sidecar</li><li>浏览器 recoverySessionId 隔离原 tail/base；快照或资源不完整仅给只读诊断，不自动拼成完整项目</li></ul><p><strong>验收：</strong><a href="#acceptance-A03" data-acceptance-link="A03">A03</a>、<a href="#acceptance-A04" data-acceptance-link="A04">A04</a></p><details class="paths"><summary>目标文件 · 8 个已有 / 1 个拟新增</summary><ul><li><code>packages/core/src/index.ts</code></li><li><code>packages/file-format/src/index.ts</code></li><li><code>packages/recovery-journal/src/index.ts</code></li><li><code>packages/node-runtime/src/index.ts</code></li><li><code>packages/editor-react/src/recovery.ts</code></li><li><code>apps/cli/index.ts</code></li><li><code>packages/portable-runtime/src/shared.ts</code></li><li><code>packages/portable-runtime/src/browser.ts</code></li><li><span class="new">拟新增</span> <code>tests/history-repair.test.ts</code></li></ul></details></div></details></article><article class="task" id="task-C04" data-phase="M0" data-search="c04 统一版本来源与交付物身份 交付 / 打包 package.json scripts/build-portable.mjs scripts/stage-package.mjs packages/schema/src/file-format.ts packages/portable-runtime/src/shared.ts packages/portable-runtime/src/delivery-policy.ts packages/node-runtime/src/delivery.ts apps/cli/index.ts schemas/portable-origin.schema.json tests/delivery.test.ts tests/delivery-policy.test.ts tests/artifact-identity.test.ts artifactidentity 包含实际 runtime/renderer/shell/resource/font/history/capability/config/兼容 descriptor 摘要 collisionpolicy 旧 api 缺省 error，新流程显式 versioned-copy；参数冲突拒绝，短摘要碰撞原子创建新路径 应用版本单源，旧 profile 保留；审计实际字节与声明一致"><details><summary><span class="task-id">C04</span><span class="task-title">统一版本来源与交付物身份</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M0</span><span>P0</span><span>工作量 L</span><span>交付 / 打包</span></div><p><strong>前置任务：</strong><a href="#task-C01" data-task-link="C01">C01</a>、<a href="#task-C02" data-task-link="C02">C02</a></p><h4>实施切片</h4><ol><li>应用版本及构建 manifest</li><li>身份计算与 audit</li><li>新副本命名/覆盖原子性/旧 API 合同</li></ol><h4>完成标准</h4><ul><li>ArtifactIdentity 包含实际 runtime/renderer/shell/resource/font/history/capability/config/兼容 descriptor 摘要</li><li>collisionPolicy 旧 API 缺省 error，新流程显式 versioned-copy；参数冲突拒绝，短摘要碰撞原子创建新路径</li><li>应用版本单源，旧 profile 保留；审计实际字节与声明一致</li></ul><p><strong>验收：</strong><a href="#acceptance-A05" data-acceptance-link="A05">A05</a>、<a href="#acceptance-A19" data-acceptance-link="A19">A19</a></p><details class="paths"><summary>目标文件 · 11 个已有 / 1 个拟新增</summary><ul><li><code>package.json</code></li><li><code>scripts/build-portable.mjs</code></li><li><code>scripts/stage-package.mjs</code></li><li><code>packages/schema/src/file-format.ts</code></li><li><code>packages/portable-runtime/src/shared.ts</code></li><li><code>packages/portable-runtime/src/delivery-policy.ts</code></li><li><code>packages/node-runtime/src/delivery.ts</code></li><li><code>apps/cli/index.ts</code></li><li><code>schemas/portable-origin.schema.json</code></li><li><code>tests/delivery.test.ts</code></li><li><code>tests/delivery-policy.test.ts</code></li><li><span class="new">拟新增</span> <code>tests/artifact-identity.test.ts</code></li></ul></details></div></details></article><article class="task" id="task-C05" data-phase="M0" data-search="c05 统一 host 与 portable 放映合同 编辑器 / 放映 packages/editor-react/src/hostapp.tsx apps/host/src/host.css packages/portable-runtime/src/browser.ts packages/portable-runtime/src/shared.ts packages/portable-runtime/src/presenter-state.ts tests/portable-presentation.test.ts packages/editor-controller/src/presentation.ts tests/surface-mode-contract.test.ts 两个入口放映无编辑 ui/可编辑焦点，ui 与 api 内容命令均拒绝 flush 失败保留草稿；全屏拒绝仍干净放映；迟到事件不逆转模式 编辑显示全部；previousstep 的当前页 0 边界修正"><details><summary><span class="task-id">C05</span><span class="task-title">统一 Host 与 Portable 放映合同</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M0</span><span>P0</span><span>工作量 L</span><span>编辑器 / 放映</span></div><p><strong>前置任务：</strong><a href="#task-C01" data-task-link="C01">C01</a></p><h4>实施切片</h4><ol><li>纯模式和步骤函数</li><li>两端守卫与输入收口</li><li>生成后的 file:// 与 Host 浏览器回归</li></ol><h4>完成标准</h4><ul><li>两个入口放映无编辑 UI/可编辑焦点，UI 与 API 内容命令均拒绝</li><li>flush 失败保留草稿；全屏拒绝仍干净放映；迟到事件不逆转模式</li><li>编辑显示全部；previousStep 的当前页 0 边界修正</li></ul><p><strong>验收：</strong><a href="#acceptance-A06" data-acceptance-link="A06">A06</a>、<a href="#acceptance-A07" data-acceptance-link="A07">A07</a>、<a href="#acceptance-A16" data-acceptance-link="A16">A16</a></p><details class="paths"><summary>目标文件 · 6 个已有 / 2 个拟新增</summary><ul><li><code>packages/editor-react/src/HostApp.tsx</code></li><li><code>apps/host/src/host.css</code></li><li><code>packages/portable-runtime/src/browser.ts</code></li><li><code>packages/portable-runtime/src/shared.ts</code></li><li><code>packages/portable-runtime/src/presenter-state.ts</code></li><li><code>tests/portable-presentation.test.ts</code></li><li><span class="new">拟新增</span> <code>packages/editor-controller/src/presentation.ts</code></li><li><span class="new">拟新增</span> <code>tests/surface-mode-contract.test.ts</code></li></ul></details></div></details></article><article class="task" id="task-C06" data-phase="M0" data-search="c06 交付 m0 干净安装候选包 验收 / 发布 scripts/stage-package.mjs scripts/blackbox-gates.mjs skills/ppte/skill.md tests/product-workflows.test.ts tests/npm-native-skill.test.ts 干净临时安装后无需 mcp/模型密钥可 compile/edit/deliver m0 真实失败用例和兼容回归通过，报告绑定 buildid 分别记录 git 推送、候选 tarball、npm 发布、skill 安装状态，不混报"><details><summary><span class="task-id">C06</span><span class="task-title">交付 M0 干净安装候选包</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M0</span><span>P0</span><span>工作量 M</span><span>验收 / 发布</span></div><p><strong>前置任务：</strong><a href="#task-C02" data-task-link="C02">C02</a>、<a href="#task-C03" data-task-link="C03">C03</a>、<a href="#task-C04" data-task-link="C04">C04</a>、<a href="#task-C05" data-task-link="C05">C05</a></p><h4>实施切片</h4><ol><li>构建候选与原生 Skill 旅程</li><li>核验报告和迁移说明</li></ol><h4>完成标准</h4><ul><li>干净临时安装后无需 MCP/模型密钥可 compile/edit/deliver</li><li>M0 真实失败用例和兼容回归通过，报告绑定 buildId</li><li>分别记录 Git 推送、候选 tarball、npm 发布、Skill 安装状态，不混报</li></ul><p><strong>验收：</strong><a href="#acceptance-A01" data-acceptance-link="A01">A01</a>、<a href="#acceptance-A03" data-acceptance-link="A03">A03</a>、<a href="#acceptance-A04" data-acceptance-link="A04">A04</a>、<a href="#acceptance-A05" data-acceptance-link="A05">A05</a>、<a href="#acceptance-A06" data-acceptance-link="A06">A06</a>、<a href="#acceptance-A19" data-acceptance-link="A19">A19</a></p><details class="paths"><summary>目标文件 · 4 个已有 / 1 个拟新增</summary><ul><li><code>scripts/stage-package.mjs</code></li><li><code>scripts/blackbox-gates.mjs</code></li><li><code>skills/ppte/SKILL.md</code></li><li><code>tests/product-workflows.test.ts</code></li><li><span class="new">拟新增</span> <code>tests/npm-native-skill.test.ts</code></li></ul></details></div></details></article><article class="task" id="task-E01" data-phase="M1" data-search="e01 共享 controller 与纯命令规划 编辑器 / core packages/editor-react/src/hostapp.tsx packages/editor-react/src/interaction.ts packages/portable-runtime/src/browser.ts packages/capability/src/index.ts packages/core/src/index.ts packages/editor-controller/src/index.ts packages/editor-controller/src/commands.ts packages/editor-controller/src/selection.ts packages/editor-controller/src/policy.ts packages/editor-dom/src/index.ts controller 不依赖 react/dom/文件系统，cli 可复用纯 planner 所有入口共用能力、范围、锁定、revision 守卫及 core 历史 保留旧公开 api facade，订阅与暂态可完整释放 单命令队列、draft epoch 和 in-flight flush 去重；失败不得继续依赖命令"><details><summary><span class="task-id">E01</span><span class="task-title">共享 Controller 与纯命令规划</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M1</span><span>P0</span><span>工作量 L</span><span>编辑器 / Core</span></div><p><strong>前置任务：</strong><a href="#task-C02" data-task-link="C02">C02</a>、<a href="#task-C05" data-task-link="C05">C05</a></p><h4>实施切片</h4><ol><li>SessionPort/Selection/CommandResult 契约</li><li>命令注册/事务 planner 与 capability</li><li>先迁放映再迁文字/对象，清除重复写入</li></ol><h4>完成标准</h4><ul><li>Controller 不依赖 React/DOM/文件系统，CLI 可复用纯 planner</li><li>所有入口共用能力、范围、锁定、revision 守卫及 Core 历史</li><li>保留旧公开 API facade，订阅与暂态可完整释放</li><li>单命令队列、draft epoch 和 in-flight flush 去重；失败不得继续依赖命令</li></ul><p><strong>验收：</strong><a href="#acceptance-A06" data-acceptance-link="A06">A06</a>、<a href="#acceptance-A08" data-acceptance-link="A08">A08</a>、<a href="#acceptance-A11" data-acceptance-link="A11">A11</a></p><details class="paths"><summary>目标文件 · 5 个已有 / 5 个拟新增</summary><ul><li><code>packages/editor-react/src/HostApp.tsx</code></li><li><code>packages/editor-react/src/interaction.ts</code></li><li><code>packages/portable-runtime/src/browser.ts</code></li><li><code>packages/capability/src/index.ts</code></li><li><code>packages/core/src/index.ts</code></li><li><span class="new">拟新增</span> <code>packages/editor-controller/src/index.ts</code></li><li><span class="new">拟新增</span> <code>packages/editor-controller/src/commands.ts</code></li><li><span class="new">拟新增</span> <code>packages/editor-controller/src/selection.ts</code></li><li><span class="new">拟新增</span> <code>packages/editor-controller/src/policy.ts</code></li><li><span class="new">拟新增</span> <code>packages/editor-dom/src/index.ts</code></li></ul></details></div></details></article><article class="task" id="task-E02" data-phase="M1" data-search="e02 活动文本内核的受控选型实验 文字 / 验收 packages/richtext-adapter/src/index.ts packages/editor-react/src/text-measurement.ts scripts/build-portable.mjs docs/evolution/decisions/text-kernel.md tests/fixtures/evolution/text-poc.json 原生适配与 prosemirror 同一组中文/选区/粘贴/历史用例比较 记录 bundle/启动代价、故障、维护差异和明确选择 不用全画布新模型，不启用第二历史，不要求云服务"><details><summary><span class="task-id">E02</span><span class="task-title">活动文本内核的受控选型实验</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M1</span><span>P1</span><span>工作量 M</span><span>文字 / 验收</span></div><p><strong>前置任务：</strong><a href="#task-C01" data-task-link="C01">C01</a></p><h4>实施切片</h4><ol><li>实现最小适配实验</li><li>依据相同用例写 ADR；选中一条生产路径</li></ol><h4>完成标准</h4><ul><li>原生适配与 ProseMirror 同一组中文/选区/粘贴/历史用例比较</li><li>记录 bundle/启动代价、故障、维护差异和明确选择</li><li>不用全画布新模型，不启用第二历史，不要求云服务</li></ul><p><strong>验收：</strong><a href="#acceptance-A08" data-acceptance-link="A08">A08</a>、<a href="#acceptance-A09" data-acceptance-link="A09">A09</a>、<a href="#acceptance-A10" data-acceptance-link="A10">A10</a>、<a href="#acceptance-A20" data-acceptance-link="A20">A20</a></p><details class="paths"><summary>目标文件 · 3 个已有 / 2 个拟新增</summary><ul><li><code>packages/richtext-adapter/src/index.ts</code></li><li><code>packages/editor-react/src/text-measurement.ts</code></li><li><code>scripts/build-portable.mjs</code></li><li><span class="new">拟新增</span> <code>docs/evolution/decisions/text-kernel.md</code></li><li><span class="new">拟新增</span> <code>tests/fixtures/evolution/text-poc.json</code></li></ul></details></div></details></article><article class="task" id="task-E03" data-phase="M1" data-search="e03 精确选区格式、ime 与草稿保护 文字 / 编辑器 packages/richtext-adapter/src/index.ts packages/editor-react/src/hostapp.tsx packages/portable-runtime/src/browser.ts packages/richtext-adapter/src/ranges.ts packages/richtext-adapter/src/transforms.ts packages/richtext-adapter/src/edit-buffer.ts packages/editor-dom/src/text-selection.ts tests/text-range-editing.test.ts 选区基础 marks 精确变换，utf-16/grapheme/id 与光标映射正确 composition 去重、flush 失败和冲突保留草稿，只有 core 撤销 活动 dom 保留，不等 m4 才修 ime 焦点正确性 连点保存/compositionend/blur 并发只提交一次；flush 失败后 undo 不执行"><details><summary><span class="task-id">E03</span><span class="task-title">精确选区格式、IME 与草稿保护</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M1</span><span>P0</span><span>工作量 L</span><span>文字 / 编辑器</span></div><p><strong>前置任务：</strong><a href="#task-E01" data-task-link="E01">E01</a>、<a href="#task-E02" data-task-link="E02">E02</a></p><h4>实施切片</h4><ol><li>纯范围变换及混合格式</li><li>输入组/IME/flush/冲突</li><li>双端活动文本适配与浏览器旅程</li></ol><h4>完成标准</h4><ul><li>选区基础 marks 精确变换，UTF-16/grapheme/ID 与光标映射正确</li><li>composition 去重、flush 失败和冲突保留草稿，只有 Core 撤销</li><li>活动 DOM 保留，不等 M4 才修 IME 焦点正确性</li><li>连点保存/compositionend/blur 并发只提交一次；flush 失败后 undo 不执行</li></ul><p><strong>验收：</strong><a href="#acceptance-A08" data-acceptance-link="A08">A08</a>、<a href="#acceptance-A09" data-acceptance-link="A09">A09</a>、<a href="#acceptance-A10" data-acceptance-link="A10">A10</a>、<a href="#acceptance-A18" data-acceptance-link="A18">A18</a></p><details class="paths"><summary>目标文件 · 3 个已有 / 5 个拟新增</summary><ul><li><code>packages/richtext-adapter/src/index.ts</code></li><li><code>packages/editor-react/src/HostApp.tsx</code></li><li><code>packages/portable-runtime/src/browser.ts</code></li><li><span class="new">拟新增</span> <code>packages/richtext-adapter/src/ranges.ts</code></li><li><span class="new">拟新增</span> <code>packages/richtext-adapter/src/transforms.ts</code></li><li><span class="new">拟新增</span> <code>packages/richtext-adapter/src/edit-buffer.ts</code></li><li><span class="new">拟新增</span> <code>packages/editor-dom/src/text-selection.ts</code></li><li><span class="new">拟新增</span> <code>tests/text-range-editing.test.ts</code></li></ul></details></div></details></article><article class="task" id="task-E04" data-phase="M1" data-search="e04 统一属性面板与插入命令 编辑器 / 设计 packages/editor-react/src/inspector.tsx packages/portable-runtime/src/shared.ts packages/portable-runtime/src/browser.ts packages/schema/src/operations.ts packages/operations/src/index.ts packages/editor-controller/src/object-commands.ts tests/object-properties.test.ts 形状类型/填充/描边、整框文字与段落、背景继承均有常用入口 多选混合值及作用范围清晰；无权限时整组拒绝 属性变化走已有 typed 操作，新属性通过全链路支持检查"><details><summary><span class="task-id">E04</span><span class="task-title">统一属性面板与插入命令</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M1</span><span>P1</span><span>工作量 L</span><span>编辑器 / 设计</span></div><p><strong>前置任务：</strong><a href="#task-E01" data-task-link="E01">E01</a></p><h4>实施切片</h4><ol><li>属性 schema 与命令</li><li>Host/Portable 面板与快捷键</li><li>背景和主题范围合同</li></ol><h4>完成标准</h4><ul><li>形状类型/填充/描边、整框文字与段落、背景继承均有常用入口</li><li>多选混合值及作用范围清晰；无权限时整组拒绝</li><li>属性变化走已有 typed 操作，新属性通过全链路支持检查</li></ul><p><strong>验收：</strong><a href="#acceptance-A08" data-acceptance-link="A08">A08</a>、<a href="#acceptance-A11" data-acceptance-link="A11">A11</a>、<a href="#acceptance-A12" data-acceptance-link="A12">A12</a></p><details class="paths"><summary>目标文件 · 5 个已有 / 2 个拟新增</summary><ul><li><code>packages/editor-react/src/Inspector.tsx</code></li><li><code>packages/portable-runtime/src/shared.ts</code></li><li><code>packages/portable-runtime/src/browser.ts</code></li><li><code>packages/schema/src/operations.ts</code></li><li><code>packages/operations/src/index.ts</code></li><li><span class="new">拟新增</span> <code>packages/editor-controller/src/object-commands.ts</code></li><li><span class="new">拟新增</span> <code>tests/object-properties.test.ts</code></li></ul></details></div></details></article><article class="task" id="task-E05" data-phase="M1" data-search="e05 直接变换、吸附、对齐和图层 几何 / 编辑器 packages/editor-react/src/interaction.ts packages/geometry/src/index.ts packages/operations/src/index.ts packages/editor-react/src/hostapp.tsx packages/portable-runtime/src/browser.ts packages/editor-dom/src/pointer.ts packages/editor-controller/src/transform-session.ts tests/object-transform.test.ts 100 次 pointermove 最多一笔最终事务；取消/丢捕获零事务 屏幕坐标到 du 一处转换，比例/旋转/多选/锁定一致 吸附、对齐/分布、图层、组合使用同 planner"><details><summary><span class="task-id">E05</span><span class="task-title">直接变换、吸附、对齐和图层</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M1</span><span>P1</span><span>工作量 L</span><span>几何 / 编辑器</span></div><p><strong>前置任务：</strong><a href="#task-E01" data-task-link="E01">E01</a>、<a href="#task-E04" data-task-link="E04">E04</a></p><h4>实施切片</h4><ol><li>TransformSession 与坐标/取消合同</li><li>缩放旋转/吸附/对齐</li><li>双端操作与键盘旅程</li></ol><h4>完成标准</h4><ul><li>100 次 pointermove 最多一笔最终事务；取消/丢捕获零事务</li><li>屏幕坐标到 du 一处转换，比例/旋转/多选/锁定一致</li><li>吸附、对齐/分布、图层、组合使用同 planner</li></ul><p><strong>验收：</strong><a href="#acceptance-A11" data-acceptance-link="A11">A11</a></p><details class="paths"><summary>目标文件 · 5 个已有 / 3 个拟新增</summary><ul><li><code>packages/editor-react/src/interaction.ts</code></li><li><code>packages/geometry/src/index.ts</code></li><li><code>packages/operations/src/index.ts</code></li><li><code>packages/editor-react/src/HostApp.tsx</code></li><li><code>packages/portable-runtime/src/browser.ts</code></li><li><span class="new">拟新增</span> <code>packages/editor-dom/src/pointer.ts</code></li><li><span class="new">拟新增</span> <code>packages/editor-controller/src/transform-session.ts</code></li><li><span class="new">拟新增</span> <code>tests/object-transform.test.ts</code></li></ul></details></div></details></article><article class="task" id="task-E06" data-phase="M1" data-search="e06 图片资源导入、替换与直接裁剪 资源 / 编辑器 packages/file-format/src/cas.ts packages/editor-react/src/resource-pool.ts packages/editor-react/src/hostapp.tsx packages/portable-runtime/src/browser.ts packages/renderer-react/src/index.ts packages/editor-controller/src/resource-port.ts tests/image-editing-journey.test.ts 拖入/粘贴/文件选择统一 cas 校验与原子提交 裁剪手柄与替换保持对象身份；引用共用资源安全撤销 解码/配额/取消失败不留下半个对象，离线重开完整 资源保留集合含 undo/redo/journal/draft/jobs；插图撤销保存重开后重做完整"><details><summary><span class="task-id">E06</span><span class="task-title">图片资源导入、替换与直接裁剪</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M1</span><span>P1</span><span>工作量 L</span><span>资源 / 编辑器</span></div><p><strong>前置任务：</strong><a href="#task-E01" data-task-link="E01">E01</a>、<a href="#task-E05" data-task-link="E05">E05</a></p><h4>实施切片</h4><ol><li>准备资源与取消</li><li>裁剪/替换和引用回收</li><li>双端导入保存重开</li></ol><h4>完成标准</h4><ul><li>拖入/粘贴/文件选择统一 CAS 校验与原子提交</li><li>裁剪手柄与替换保持对象身份；引用共用资源安全撤销</li><li>解码/配额/取消失败不留下半个对象，离线重开完整</li><li>资源保留集合含 undo/redo/journal/draft/jobs；插图撤销保存重开后重做完整</li></ul><p><strong>验收：</strong><a href="#acceptance-A12" data-acceptance-link="A12">A12</a>、<a href="#acceptance-A04" data-acceptance-link="A04">A04</a></p><details class="paths"><summary>目标文件 · 5 个已有 / 2 个拟新增</summary><ul><li><code>packages/file-format/src/cas.ts</code></li><li><code>packages/editor-react/src/resource-pool.ts</code></li><li><code>packages/editor-react/src/HostApp.tsx</code></li><li><code>packages/portable-runtime/src/browser.ts</code></li><li><code>packages/renderer-react/src/index.ts</code></li><li><span class="new">拟新增</span> <code>packages/editor-controller/src/resource-port.ts</code></li><li><span class="new">拟新增</span> <code>tests/image-editing-journey.test.ts</code></li></ul></details></div></details></article><article class="task" id="task-E07" data-phase="M1" data-search="e07 统一编辑外壳并完成双端旅程 编辑器 / 验收 packages/editor-react/src/hostapp.tsx packages/editor-react/src/inspector.tsx apps/host/src/host.css packages/portable-runtime/src/shared.ts packages/portable-runtime/src/browser.ts tests/host-completion.test.ts tests/editor-parity-journey.test.ts 顶部/缩略图/舞台/属性与折叠面板一致，按钮可键盘使用 旧 plain-text/api 方法签名兼容，新 api 声明 enteredit 前提；示例与 skill 迁移，已迁命令无第二写入路径 新建→编辑→撤销→保存→重开→放映→导出两端通过"><details><summary><span class="task-id">E07</span><span class="task-title">统一编辑外壳并完成双端旅程</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M1</span><span>P0</span><span>工作量 M</span><span>编辑器 / 验收</span></div><p><strong>前置任务：</strong><a href="#task-C06" data-task-link="C06">C06</a>、<a href="#task-E03" data-task-link="E03">E03</a>、<a href="#task-E04" data-task-link="E04">E04</a>、<a href="#task-E05" data-task-link="E05">E05</a>、<a href="#task-E06" data-task-link="E06">E06</a></p><h4>实施切片</h4><ol><li>界面组件与工具可达性</li><li>跨入口脚本和重复代码清理</li></ol><h4>完成标准</h4><ul><li>顶部/缩略图/舞台/属性与折叠面板一致，按钮可键盘使用</li><li>旧 plain-text/API 方法签名兼容，新 API 声明 enterEdit 前提；示例与 Skill 迁移，已迁命令无第二写入路径</li><li>新建→编辑→撤销→保存→重开→放映→导出两端通过</li></ul><p><strong>验收：</strong><a href="#acceptance-A06" data-acceptance-link="A06">A06</a>、<a href="#acceptance-A08" data-acceptance-link="A08">A08</a>、<a href="#acceptance-A09" data-acceptance-link="A09">A09</a>、<a href="#acceptance-A10" data-acceptance-link="A10">A10</a>、<a href="#acceptance-A11" data-acceptance-link="A11">A11</a>、<a href="#acceptance-A12" data-acceptance-link="A12">A12</a>、<a href="#acceptance-A21" data-acceptance-link="A21">A21</a></p><details class="paths"><summary>目标文件 · 6 个已有 / 1 个拟新增</summary><ul><li><code>packages/editor-react/src/HostApp.tsx</code></li><li><code>packages/editor-react/src/Inspector.tsx</code></li><li><code>apps/host/src/host.css</code></li><li><code>packages/portable-runtime/src/shared.ts</code></li><li><code>packages/portable-runtime/src/browser.ts</code></li><li><code>tests/host-completion.test.ts</code></li><li><span class="new">拟新增</span> <code>tests/editor-parity-journey.test.ts</code></li></ul></details></div></details></article><article class="task" id="task-E08" data-phase="M1" data-search="e08 run 字体字号的格式与导出扩展 格式 / 文字 / 导出 packages/schema/src/document.ts packages/schema/src/validation.ts packages/richtext-adapter/src/index.ts packages/validation/src/index.ts packages/renderer-react/src/index.ts packages/exporter-pptx/src/index.ts packages/compatibility/src/index.ts packages/file-format/src/index.ts packages/capability/src/index.ts schemas/document.schema.json tests/text-run-style-profile.test.ts 新 marks 继承/清除/混合值定义明确，schema/profile/字面量读取器全覆盖 同 font resolver 用于 coverage/测量/html/svg/pptx 旧文件不改版式，旧 target 不静默丢新属性"><details><summary><span class="task-id">E08</span><span class="task-title">Run 字体字号的格式与导出扩展</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M1</span><span>P1</span><span>工作量 L</span><span>格式 / 文字 / 导出</span></div><p><strong>前置任务：</strong><a href="#task-C02" data-task-link="C02">C02</a>、<a href="#task-E03" data-task-link="E03">E03</a></p><h4>实施切片</h4><ol><li>字段/版本及继承契约</li><li>渲染/测量/导出全链路</li><li>新旧读取器和双端属性 UI</li></ol><h4>完成标准</h4><ul><li>新 marks 继承/清除/混合值定义明确，schema/profile/字面量读取器全覆盖</li><li>同 font resolver 用于 coverage/测量/HTML/SVG/PPTX</li><li>旧文件不改版式，旧 target 不静默丢新属性</li></ul><p><strong>验收：</strong><a href="#acceptance-A03" data-acceptance-link="A03">A03</a>、<a href="#acceptance-A08" data-acceptance-link="A08">A08</a>、<a href="#acceptance-A13" data-acceptance-link="A13">A13</a>、<a href="#acceptance-A17" data-acceptance-link="A17">A17</a></p><details class="paths"><summary>目标文件 · 10 个已有 / 1 个拟新增</summary><ul><li><code>packages/schema/src/document.ts</code></li><li><code>packages/schema/src/validation.ts</code></li><li><code>packages/richtext-adapter/src/index.ts</code></li><li><code>packages/validation/src/index.ts</code></li><li><code>packages/renderer-react/src/index.ts</code></li><li><code>packages/exporter-pptx/src/index.ts</code></li><li><code>packages/compatibility/src/index.ts</code></li><li><code>packages/file-format/src/index.ts</code></li><li><code>packages/capability/src/index.ts</code></li><li><code>schemas/document.schema.json</code></li><li><span class="new">拟新增</span> <code>tests/text-run-style-profile.test.ts</code></li></ul></details></div></details></article><article class="task" id="task-D01" data-phase="M2" data-search="d01 品牌、风格、配方包的可验证合同 设计系统 / 格式 packages/schema/src/slide-ir.ts packages/layout-recipes/src/index.ts packages/design-compiler/src/index.ts schemas/recipe.schema.json packages/design-system/src/index.ts schemas/style-pack.schema.json schemas/recipe-manifest.schema.json 复用 presentationir/recipespec/themedefinition，不建第二内容树 品牌强约束/配方强约束/审美建议可区分 包摘要、参数白名单、许可、中文压力输入和旧版本处理明确 recipemanifest 只引用 slotrefs，不双写槽位；保护来自当前对象/页面，ir 只追加保护"><details><summary><span class="task-id">D01</span><span class="task-title">品牌、风格、配方包的可验证合同</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M2</span><span>P1</span><span>工作量 M</span><span>设计系统 / 格式</span></div><p><strong>前置任务：</strong><a href="#task-C01" data-task-link="C01">C01</a></p><h4>实施切片</h4><ol><li>资源包/参数 schema 与示例</li><li>版本解析及信任/许可清单</li></ol><h4>完成标准</h4><ul><li>复用 PresentationIR/RecipeSpec/ThemeDefinition，不建第二内容树</li><li>品牌强约束/配方强约束/审美建议可区分</li><li>包摘要、参数白名单、许可、中文压力输入和旧版本处理明确</li><li>RecipeManifest 只引用 slotRefs，不双写槽位；保护来自当前对象/页面，IR 只追加保护</li></ul><p><strong>验收：</strong><a href="#acceptance-A14" data-acceptance-link="A14">A14</a>、<a href="#acceptance-A17" data-acceptance-link="A17">A17</a></p><details class="paths"><summary>目标文件 · 4 个已有 / 3 个拟新增</summary><ul><li><code>packages/schema/src/slide-ir.ts</code></li><li><code>packages/layout-recipes/src/index.ts</code></li><li><code>packages/design-compiler/src/index.ts</code></li><li><code>schemas/recipe.schema.json</code></li><li><span class="new">拟新增</span> <code>packages/design-system/src/index.ts</code></li><li><span class="new">拟新增</span> <code>schemas/style-pack.schema.json</code></li><li><span class="new">拟新增</span> <code>schemas/recipe-manifest.schema.json</code></li></ul></details></div></details></article><article class="task" id="task-D02" data-phase="M2" data-search="d02 让配方约束、参数与容量真正执行 编译器 / 布局 packages/layout-recipes/src/index.ts packages/design-compiler/src/index.ts packages/schema/src/slide-ir.ts packages/schema/src/slide-ir-validation.ts packages/validation/src/index.ts schemas/recipe.schema.json tests/recipe-execution-contract.test.ts variants/constraints/qualityrules 均有执行或明确拒绝 槽位数量、关系、超容量与可行性正确，无静默 clamp/丢内容 有界、确定性编译；repeat/新增构成使用版本化语法和内容 key"><details><summary><span class="task-id">D02</span><span class="task-title">让配方约束、参数与容量真正执行</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M2</span><span>P0</span><span>工作量 L</span><span>编译器 / 布局</span></div><p><strong>前置任务：</strong><a href="#task-C02" data-task-link="C02">C02</a>、<a href="#task-D01" data-task-link="D01">D01</a></p><h4>实施切片</h4><ol><li>声明执行登记与旧 golden</li><li>槽位匹配/variant/约束</li><li>有限构成与容量失败合同</li></ol><h4>完成标准</h4><ul><li>variants/constraints/qualityRules 均有执行或明确拒绝</li><li>槽位数量、关系、超容量与可行性正确，无静默 clamp/丢内容</li><li>有界、确定性编译；repeat/新增构成使用版本化语法和内容 key</li></ul><p><strong>验收：</strong><a href="#acceptance-A14" data-acceptance-link="A14">A14</a></p><details class="paths"><summary>目标文件 · 6 个已有 / 1 个拟新增</summary><ul><li><code>packages/layout-recipes/src/index.ts</code></li><li><code>packages/design-compiler/src/index.ts</code></li><li><code>packages/schema/src/slide-ir.ts</code></li><li><code>packages/schema/src/slide-ir-validation.ts</code></li><li><code>packages/validation/src/index.ts</code></li><li><code>schemas/recipe.schema.json</code></li><li><span class="new">拟新增</span> <code>tests/recipe-execution-contract.test.ts</code></li></ul></details></div></details></article><article class="task" id="task-D03" data-phase="M2" data-search="d03 整套选型、真实测量与编排报告 编译器 / 设计 packages/design-compiler/src/index.ts packages/layout-recipes/src/index.ts packages/editor-react/src/text-measurement.ts packages/reviewer/src/index.ts tests/deck-layout-planning.test.ts 硬约束先于审美评分，有限候选与确定性 seed 实际字体测量和浏览器复核；无浏览器标 unverified 选择理由、拆页提案、超预算停止有结构化报告"><details><summary><span class="task-id">D03</span><span class="task-title">整套选型、真实测量与编排报告</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M2</span><span>P1</span><span>工作量 L</span><span>编译器 / 设计</span></div><p><strong>前置任务：</strong><a href="#task-D02" data-task-link="D02">D02</a></p><h4>实施切片</h4><ol><li>候选和容量筛选</li><li>整套有界选择</li><li>实际渲染测量与报告</li></ol><h4>完成标准</h4><ul><li>硬约束先于审美评分，有限候选与确定性 seed</li><li>实际字体测量和浏览器复核；无浏览器标 unverified</li><li>选择理由、拆页提案、超预算停止有结构化报告</li></ul><p><strong>验收：</strong><a href="#acceptance-A14" data-acceptance-link="A14">A14</a>、<a href="#acceptance-A17" data-acceptance-link="A17">A17</a>、<a href="#acceptance-A20" data-acceptance-link="A20">A20</a></p><details class="paths"><summary>目标文件 · 4 个已有 / 1 个拟新增</summary><ul><li><code>packages/design-compiler/src/index.ts</code></li><li><code>packages/layout-recipes/src/index.ts</code></li><li><code>packages/editor-react/src/text-measurement.ts</code></li><li><code>packages/reviewer/src/index.ts</code></li><li><span class="new">拟新增</span> <code>tests/deck-layout-planning.test.ts</code></li></ul></details></div></details></article><article class="task" id="task-D04" data-phase="M2" data-search="d04 四套风格与 32 个角色覆盖格 视觉设计 / 配方 packages/layout-recipes/src/index.ts design-packs/business/manifest.json design-packs/swiss/manifest.json design-packs/editorial/manifest.json design-packs/launch/manifest.json tests/fixtures/evolution/design-pack-manifest.json 四套×八角色具真实构图差异；可复用底层配方 每格有正常/边界/超载样例及 preview，外加中文/图表/表格压力页 字号/容量/关键数据和语义可编辑性通过；无包仍能打开成稿 g2 成熟样例必须实际渲染通过；现有表格呈现与保留压力页不要求 table v2"><details><summary><span class="task-id">D04</span><span class="task-title">四套风格与 32 个角色覆盖格</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M2</span><span>P1</span><span>工作量 L</span><span>视觉设计 / 配方</span></div><p><strong>前置任务：</strong><a href="#task-D02" data-task-link="D02">D02</a>、<a href="#task-D03" data-task-link="D03">D03</a></p><h4>实施切片</h4><ol><li>先商务/瑞士代表页</li><li>杂志/发布代表页</li><li>覆盖格、压力样例和版本化素材</li></ol><h4>完成标准</h4><ul><li>四套×八角色具真实构图差异；可复用底层配方</li><li>每格有正常/边界/超载样例及 preview，外加中文/图表/表格压力页</li><li>字号/容量/关键数据和语义可编辑性通过；无包仍能打开成稿</li><li>G2 成熟样例必须实际渲染通过；现有表格呈现与保留压力页不要求 Table v2</li></ul><p><strong>验收：</strong><a href="#acceptance-A14" data-acceptance-link="A14">A14</a>、<a href="#acceptance-A15" data-acceptance-link="A15">A15</a>、<a href="#acceptance-A17" data-acceptance-link="A17">A17</a></p><details class="paths"><summary>目标文件 · 1 个已有 / 5 个拟新增</summary><ul><li><code>packages/layout-recipes/src/index.ts</code></li><li><span class="new">拟新增</span> <code>design-packs/business/manifest.json</code></li><li><span class="new">拟新增</span> <code>design-packs/swiss/manifest.json</code></li><li><span class="new">拟新增</span> <code>design-packs/editorial/manifest.json</code></li><li><span class="new">拟新增</span> <code>design-packs/launch/manifest.json</code></li><li><span class="new">拟新增</span> <code>tests/fixtures/evolution/design-pack-manifest.json</code></li></ul></details></div></details></article><article class="task" id="task-D05" data-phase="M2" data-search="d05 配方参数 ui 与安全换主题/布局 编辑器 / 编译器 packages/editor-react/src/recipestudio.tsx packages/design-compiler/src/index.ts packages/agent-tools/src/index.ts packages/portable-runtime/src/browser.ts tests/design-edit-protection.test.ts 参数面板与 skill 同一 schema，不接受任意 css/代码 当前 document 为输入；保留人工新增/局部 overrides/锁定/facts/ids 列数减少不丢内容；几何重排与重写内容分开"><details><summary><span class="task-id">D05</span><span class="task-title">配方参数 UI 与安全换主题/布局</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M2</span><span>P0</span><span>工作量 L</span><span>编辑器 / 编译器</span></div><p><strong>前置任务：</strong><a href="#task-E01" data-task-link="E01">E01</a>、<a href="#task-D03" data-task-link="D03">D03</a></p><h4>实施切片</h4><ol><li>DesignBinding 及失效处理</li><li>统一参数/换主题/重排 planners</li><li>双端预览与保护序列</li></ol><h4>完成标准</h4><ul><li>参数面板与 Skill 同一 schema，不接受任意 CSS/代码</li><li>当前 Document 为输入；保留人工新增/局部 overrides/锁定/facts/IDs</li><li>列数减少不丢内容；几何重排与重写内容分开</li></ul><p><strong>验收：</strong><a href="#acceptance-A15" data-acceptance-link="A15">A15</a></p><details class="paths"><summary>目标文件 · 4 个已有 / 1 个拟新增</summary><ul><li><code>packages/editor-react/src/RecipeStudio.tsx</code></li><li><code>packages/design-compiler/src/index.ts</code></li><li><code>packages/agent-tools/src/index.ts</code></li><li><code>packages/portable-runtime/src/browser.ts</code></li><li><span class="new">拟新增</span> <code>tests/design-edit-protection.test.ts</code></li></ul></details></div></details></article><article class="task" id="task-D06" data-phase="M2" data-search="d06 原生 skill 的渐进设计工作流 cli / skill apps/cli/index.ts packages/agent-tools/src/index.ts packages/agent-tools/src/tool-schemas.ts skills/ppte/skill.md skills/ppte/references/authoring.md tests/skill-design-workflow.test.ts cli help/schema 实际登记 design 命令族，保留现有命令 索引→有限候选→选中配方→代表页→整套→最多两轮修复 同授权直接继续；报告未知/失败真实，不要求 mcp 或另一个模型"><details><summary><span class="task-id">D06</span><span class="task-title">原生 Skill 的渐进设计工作流</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M2</span><span>P1</span><span>工作量 M</span><span>CLI / Skill</span></div><p><strong>前置任务：</strong><a href="#task-D03" data-task-link="D03">D03</a>、<a href="#task-D05" data-task-link="D05">D05</a></p><h4>实施切片</h4><ol><li>命令与 JSON 合同</li><li>Skill 分层参考</li><li>固定材料全流程验证</li></ol><h4>完成标准</h4><ul><li>CLI help/schema 实际登记 design 命令族，保留现有命令</li><li>索引→有限候选→选中配方→代表页→整套→最多两轮修复</li><li>同授权直接继续；报告未知/失败真实，不要求 MCP 或另一个模型</li></ul><p><strong>验收：</strong><a href="#acceptance-A15" data-acceptance-link="A15">A15</a>、<a href="#acceptance-A17" data-acceptance-link="A17">A17</a>、<a href="#acceptance-A19" data-acceptance-link="A19">A19</a></p><details class="paths"><summary>目标文件 · 5 个已有 / 1 个拟新增</summary><ul><li><code>apps/cli/index.ts</code></li><li><code>packages/agent-tools/src/index.ts</code></li><li><code>packages/agent-tools/src/tool-schemas.ts</code></li><li><code>skills/ppte/SKILL.md</code></li><li><code>skills/ppte/references/authoring.md</code></li><li><span class="new">拟新增</span> <code>tests/skill-design-workflow.test.ts</code></li></ul></details></div></details></article><article class="task" id="task-D07" data-phase="M2" data-search="d07 建立成稿质量基准与人工任务门禁 验收 / 设计 packages/reviewer/src/index.ts scripts/blackbox-gates.mjs tests/fixtures/evolution/authoring-benchmark.json docs/evolution/quality/benchmark-report.json 10 固定材料任务、事实答案和编辑脚本版本化 内容/编辑/渲染/视觉四线独立，允许覆盖关系与截图证据明确 同 agent/材料/预算基线对照；人工修复时间与失败项真实记录 人工脚本按最低阶段选择；m3 表格任务在 g2 不计通过也不阻断，不以 unverified 关闭 g2"><details><summary><span class="task-id">D07</span><span class="task-title">建立成稿质量基准与人工任务门禁</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M2</span><span>P0</span><span>工作量 M</span><span>验收 / 设计</span></div><p><strong>前置任务：</strong><a href="#task-D04" data-task-link="D04">D04</a>、<a href="#task-D05" data-task-link="D05">D05</a>、<a href="#task-D06" data-task-link="D06">D06</a>、<a href="#task-E07" data-task-link="E07">E07</a>、<a href="#task-E08" data-task-link="E08">E08</a></p><h4>实施切片</h4><ol><li>fixture 与答案清单</li><li>基线/候选同题生成</li><li>人工评审校准和 G2 报告</li></ol><h4>完成标准</h4><ul><li>10 固定材料任务、事实答案和编辑脚本版本化</li><li>内容/编辑/渲染/视觉四线独立，允许覆盖关系与截图证据明确</li><li>同 Agent/材料/预算基线对照；人工修复时间与失败项真实记录</li><li>人工脚本按最低阶段选择；M3 表格任务在 G2 不计通过也不阻断，不以 unverified 关闭 G2</li></ul><p><strong>验收：</strong><a href="#acceptance-A14" data-acceptance-link="A14">A14</a>、<a href="#acceptance-A15" data-acceptance-link="A15">A15</a>、<a href="#acceptance-A17" data-acceptance-link="A17">A17</a>、<a href="#acceptance-A21" data-acceptance-link="A21">A21</a></p><details class="paths"><summary>目标文件 · 2 个已有 / 2 个拟新增</summary><ul><li><code>packages/reviewer/src/index.ts</code></li><li><code>scripts/blackbox-gates.mjs</code></li><li><span class="new">拟新增</span> <code>tests/fixtures/evolution/authoring-benchmark.json</code></li><li><span class="new">拟新增</span> <code>docs/evolution/quality/benchmark-report.json</code></li></ul></details></div></details></article><article class="task" id="task-F01" data-phase="M3" data-search="f01 table v2 模型、迁移和 typed 操作 格式 / 表格 packages/widgets/src/index.ts packages/schema/src/operations.ts packages/operations/src/index.ts packages/facts/src/index.ts packages/compatibility/src/index.ts schemas/transaction.schema.json packages/widgets/src/table-model.ts tests/table-v2-contract.test.ts 稳定 row/column/cell id，合并数据保留，typed 值与显示一致 v1 显式迁移、history/profile 声明、所有 props 入口同样校验 引用删除需影响审阅；inverse/保存重开准确"><details><summary><span class="task-id">F01</span><span class="task-title">Table v2 模型、迁移和 typed 操作</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M3</span><span>P1</span><span>工作量 L</span><span>格式 / 表格</span></div><p><strong>前置任务：</strong><a href="#task-C02" data-task-link="C02">C02</a>、<a href="#task-E01" data-task-link="E01">E01</a></p><h4>实施切片</h4><ol><li>模型/不变量/迁移</li><li>typed 操作/引用/逆操作</li><li>版本能力和通用 props 防绕过</li></ol><h4>完成标准</h4><ul><li>稳定 row/column/cell ID，合并数据保留，typed 值与显示一致</li><li>v1 显式迁移、history/profile 声明、所有 props 入口同样校验</li><li>引用删除需影响审阅；inverse/保存重开准确</li></ul><p><strong>验收：</strong><a href="#acceptance-A03" data-acceptance-link="A03">A03</a>、<a href="#acceptance-A13" data-acceptance-link="A13">A13</a></p><details class="paths"><summary>目标文件 · 6 个已有 / 2 个拟新增</summary><ul><li><code>packages/widgets/src/index.ts</code></li><li><code>packages/schema/src/operations.ts</code></li><li><code>packages/operations/src/index.ts</code></li><li><code>packages/facts/src/index.ts</code></li><li><code>packages/compatibility/src/index.ts</code></li><li><code>schemas/transaction.schema.json</code></li><li><span class="new">拟新增</span> <code>packages/widgets/src/table-model.ts</code></li><li><span class="new">拟新增</span> <code>tests/table-v2-contract.test.ts</code></li></ul></details></div></details></article><article class="task" id="task-F02" data-phase="M3" data-search="f02 表格选择、粘贴与结构编辑 编辑器 / 表格 packages/editor-react/src/inspector.tsx packages/widgets/src/index.ts packages/portable-runtime/src/browser.ts packages/editor-dom/src/table-selection.ts tests/table-editing-journey.test.ts host 支持结构和单元格，portable 首批改值/样式且权限明确 tsv/空格/非矩形/合并边界、键盘导航与撤销正确 改变结构不改变未受影响 cell 身份或事实引用"><details><summary><span class="task-id">F02</span><span class="task-title">表格选择、粘贴与结构编辑</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M3</span><span>P1</span><span>工作量 L</span><span>编辑器 / 表格</span></div><p><strong>前置任务：</strong><a href="#task-F01" data-task-link="F01">F01</a>、<a href="#task-E03" data-task-link="E03">E03</a>、<a href="#task-E04" data-task-link="E04">E04</a></p><h4>实施切片</h4><ol><li>单元格选择和改值</li><li>粘贴/行列/合并 UI</li><li>双端保存重开</li></ol><h4>完成标准</h4><ul><li>Host 支持结构和单元格，Portable 首批改值/样式且权限明确</li><li>TSV/空格/非矩形/合并边界、键盘导航与撤销正确</li><li>改变结构不改变未受影响 cell 身份或事实引用</li></ul><p><strong>验收：</strong><a href="#acceptance-A13" data-acceptance-link="A13">A13</a>、<a href="#acceptance-A21" data-acceptance-link="A21">A21</a></p><details class="paths"><summary>目标文件 · 3 个已有 / 2 个拟新增</summary><ul><li><code>packages/editor-react/src/Inspector.tsx</code></li><li><code>packages/widgets/src/index.ts</code></li><li><code>packages/portable-runtime/src/browser.ts</code></li><li><span class="new">拟新增</span> <code>packages/editor-dom/src/table-selection.ts</code></li><li><span class="new">拟新增</span> <code>tests/table-editing-journey.test.ts</code></li></ul></details></div></details></article><article class="task" id="task-F03" data-phase="M3" data-search="f03 表格原生 pptx 与逐能力导出 导出 / 表格 packages/exporter-pptx/src/index.ts packages/capability/src/index.ts schemas/capability-report.schema.json tests/pptx-table-native.test.ts 真实 table part 与可编辑单元格，不是图片/文本标签 合并/尺寸/基础样式/数字内容准确，不支持样式报告降级 nativetable 只由实际 adapter 与验证结果给出"><details><summary><span class="task-id">F03</span><span class="task-title">表格原生 PPTX 与逐能力导出</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M3</span><span>P1</span><span>工作量 L</span><span>导出 / 表格</span></div><p><strong>前置任务：</strong><a href="#task-F01" data-task-link="F01">F01</a>、<a href="#task-F02" data-task-link="F02">F02</a></p><h4>实施切片</h4><ol><li>原生 table adapter</li><li>结构检查和内容比较</li><li>目标客户端验证交 Q01 汇总</li></ol><h4>完成标准</h4><ul><li>真实 table part 与可编辑单元格，不是图片/文本标签</li><li>合并/尺寸/基础样式/数字内容准确，不支持样式报告降级</li><li>nativeTable 只由实际 adapter 与验证结果给出</li></ul><p><strong>验收：</strong><a href="#acceptance-A13" data-acceptance-link="A13">A13</a>、<a href="#acceptance-A17" data-acceptance-link="A17">A17</a></p><details class="paths"><summary>目标文件 · 3 个已有 / 1 个拟新增</summary><ul><li><code>packages/exporter-pptx/src/index.ts</code></li><li><code>packages/capability/src/index.ts</code></li><li><code>schemas/capability-report.schema.json</code></li><li><span class="new">拟新增</span> <code>tests/pptx-table-native.test.ts</code></li></ul></details></div></details></article><article class="task" id="task-F04" data-phase="M3" data-search="f04 本地视频媒体管线和离线播放 资源 / 媒体 / 交付 packages/widgets/src/index.ts packages/schema/src/document.ts packages/renderer-react/src/index.ts packages/portable-runtime/src/browser.ts packages/portable-runtime/src/shared.ts packages/node-runtime/src/delivery.ts packages/capability/src/index.ts packages/file-format/src/index.ts packages/portable-runtime/src/media-controller.ts tests/media-playback-journey.test.ts cas video 引用、metadata/poster、blob src、错误反馈真实 play/pause/ended/离页/释放在离线文件实测；media csp 最小化 体积阈值按样例冻结，pdf/pptx 首批封面降级准确 目录包有 html/manifest/media，明确打包校验与打开校验差异；file:// 不满足合同则不支持该路径"><details><summary><span class="task-id">F04</span><span class="task-title">本地视频媒体管线和离线播放</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M3</span><span>P1</span><span>工作量 L</span><span>资源 / 媒体 / 交付</span></div><p><strong>前置任务：</strong><a href="#task-E01" data-task-link="E01">E01</a>、<a href="#task-E06" data-task-link="E06">E06</a>、<a href="#task-C04" data-task-link="C04">C04</a></p><h4>实施切片</h4><ol><li>v2 资源/迁移/CSP</li><li>播放器生命周期</li><li>单 HTML 与离线包实测及能力报告</li></ol><h4>完成标准</h4><ul><li>CAS video 引用、metadata/poster、Blob src、错误反馈真实</li><li>play/pause/ended/离页/释放在离线文件实测；media CSP 最小化</li><li>体积阈值按样例冻结，PDF/PPTX 首批封面降级准确</li><li>目录包有 HTML/manifest/media，明确打包校验与打开校验差异；file:// 不满足合同则不支持该路径</li></ul><p><strong>验收：</strong><a href="#acceptance-A12" data-acceptance-link="A12">A12</a>、<a href="#acceptance-A16" data-acceptance-link="A16">A16</a>、<a href="#acceptance-A17" data-acceptance-link="A17">A17</a>、<a href="#acceptance-A20" data-acceptance-link="A20">A20</a></p><details class="paths"><summary>目标文件 · 8 个已有 / 2 个拟新增</summary><ul><li><code>packages/widgets/src/index.ts</code></li><li><code>packages/schema/src/document.ts</code></li><li><code>packages/renderer-react/src/index.ts</code></li><li><code>packages/portable-runtime/src/browser.ts</code></li><li><code>packages/portable-runtime/src/shared.ts</code></li><li><code>packages/node-runtime/src/delivery.ts</code></li><li><code>packages/capability/src/index.ts</code></li><li><code>packages/file-format/src/index.ts</code></li><li><span class="new">拟新增</span> <code>packages/portable-runtime/src/media-controller.ts</code></li><li><span class="new">拟新增</span> <code>tests/media-playback-journey.test.ts</code></li></ul></details></div></details></article><article class="task" id="task-F05" data-phase="M3" data-search="f05 动画配置与正确步骤播放 放映 / 编辑器 packages/portable-runtime/src/presenter-state.ts packages/portable-runtime/src/browser.ts packages/editor-react/src/inspector.tsx packages/schema/src/document.ts packages/capability/src/index.ts tests/animation-step-contract.test.ts next/previousstep 与 slide 命令边界独立且按 slideid 声明子集/duration/direction 真正执行，未实现字段保留并报告 编辑/打印完整显示，减少动态效果保持相同语义终态"><details><summary><span class="task-id">F05</span><span class="task-title">动画配置与正确步骤播放</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M3</span><span>P1</span><span>工作量 M</span><span>放映 / 编辑器</span></div><p><strong>前置任务：</strong><a href="#task-C05" data-task-link="C05">C05</a>、<a href="#task-E01" data-task-link="E01">E01</a>、<a href="#task-E07" data-task-link="E07">E07</a></p><h4>实施切片</h4><ol><li>命令/播放头与子集</li><li>配置/预览/减少动态效果</li></ol><h4>完成标准</h4><ul><li>next/previousStep 与 slide 命令边界独立且按 slideId</li><li>声明子集/duration/direction 真正执行，未实现字段保留并报告</li><li>编辑/打印完整显示，减少动态效果保持相同语义终态</li></ul><p><strong>验收：</strong><a href="#acceptance-A06" data-acceptance-link="A06">A06</a>、<a href="#acceptance-A16" data-acceptance-link="A16">A16</a>、<a href="#acceptance-A17" data-acceptance-link="A17">A17</a></p><details class="paths"><summary>目标文件 · 5 个已有 / 1 个拟新增</summary><ul><li><code>packages/portable-runtime/src/presenter-state.ts</code></li><li><code>packages/portable-runtime/src/browser.ts</code></li><li><code>packages/editor-react/src/Inspector.tsx</code></li><li><code>packages/schema/src/document.ts</code></li><li><code>packages/capability/src/index.ts</code></li><li><span class="new">拟新增</span> <code>tests/animation-step-contract.test.ts</code></li></ul></details></div></details></article><article class="task" id="task-F06" data-phase="M3" data-search="f06 现场工具与有恢复能力的双屏 放映 / 交互 packages/editor-react/src/hostapp.tsx packages/portable-runtime/src/browser.ts packages/portable-runtime/src/shared.ts packages/editor-controller/src/presenter-channel.ts tests/presenter-tools.test.ts 页索引/黑屏/激光笔/计时/下一页可用，临时状态不污染文档 双屏 session/seq/ack/event.source/token 校验与乱序/断连恢复 备注不进入观众 dom；弹窗或 file:// 限制时单屏正常"><details><summary><span class="task-id">F06</span><span class="task-title">现场工具与有恢复能力的双屏</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M3</span><span>P1</span><span>工作量 L</span><span>放映 / 交互</span></div><p><strong>前置任务：</strong><a href="#task-F04" data-task-link="F04">F04</a>、<a href="#task-F05" data-task-link="F05">F05</a></p><h4>实施切片</h4><ol><li>单屏现场工具</li><li>演讲者窗口/消息合同</li><li>断连、弹窗拒绝与安全验证</li></ol><h4>完成标准</h4><ul><li>页索引/黑屏/激光笔/计时/下一页可用，临时状态不污染文档</li><li>双屏 session/seq/ACK/event.source/token 校验与乱序/断连恢复</li><li>备注不进入观众 DOM；弹窗或 file:// 限制时单屏正常</li></ul><p><strong>验收：</strong><a href="#acceptance-A06" data-acceptance-link="A06">A06</a>、<a href="#acceptance-A16" data-acceptance-link="A16">A16</a>、<a href="#acceptance-A21" data-acceptance-link="A21">A21</a></p><details class="paths"><summary>目标文件 · 3 个已有 / 2 个拟新增</summary><ul><li><code>packages/editor-react/src/HostApp.tsx</code></li><li><code>packages/portable-runtime/src/browser.ts</code></li><li><code>packages/portable-runtime/src/shared.ts</code></li><li><span class="new">拟新增</span> <code>packages/editor-controller/src/presenter-channel.ts</code></li><li><span class="new">拟新增</span> <code>tests/presenter-tools.test.ts</code></li></ul></details></div></details></article><article class="task" id="task-P01" data-phase="M4" data-search="p01 真实浏览器基准与预算校准 性能 / 验收 packages/performance-budget/src/index.ts apps/contract-deck/index.ts scripts/blackbox-gates.mjs scripts/perf-browser.mjs tests/fixtures/evolution/performance-manifest.json node 微基准名称准确；12/30/100 页真实入口采样 锁定设备/浏览器/资源/字体，冷热/输入/拖动/媒体分开记录 冻结候选预算和未实测范围，不以平均值替代 p95"><details><summary><span class="task-id">P01</span><span class="task-title">真实浏览器基准与预算校准</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M4</span><span>P1</span><span>工作量 M</span><span>性能 / 验收</span></div><p><strong>前置任务：</strong><a href="#task-C01" data-task-link="C01">C01</a>、<a href="#task-C05" data-task-link="C05">C05</a></p><h4>实施切片</h4><ol><li>浏览器测量协议与 fixture</li><li>主设备/较低性能实机校准</li></ol><h4>完成标准</h4><ul><li>Node 微基准名称准确；12/30/100 页真实入口采样</li><li>锁定设备/浏览器/资源/字体，冷热/输入/拖动/媒体分开记录</li><li>冻结候选预算和未实测范围，不以平均值替代 p95</li></ul><p><strong>验收：</strong><a href="#acceptance-A20" data-acceptance-link="A20">A20</a></p><details class="paths"><summary>目标文件 · 3 个已有 / 2 个拟新增</summary><ul><li><code>packages/performance-budget/src/index.ts</code></li><li><code>apps/contract-deck/index.ts</code></li><li><code>scripts/blackbox-gates.mjs</code></li><li><span class="new">拟新增</span> <code>scripts/perf-browser.mjs</code></li><li><span class="new">拟新增</span> <code>tests/fixtures/evolution/performance-manifest.json</code></li></ul></details></div></details></article><article class="task" id="task-P02" data-phase="M4" data-search="p02 增量渲染、资源与缩略图缓存 渲染 / 编辑器 packages/portable-runtime/src/browser.ts packages/renderer-react/src/index.ts packages/editor-react/src/hostapp.tsx packages/editor-react/src/resource-pool.ts tests/incremental-rendering.test.ts dirty elements/slides 驱动更新；不替换无关页/活动文字/媒体 资源与字体按 digest 缓存，释放/错误重试正确 缩略图缓存与当前邻页挂载；全量打印/导出不漏页"><details><summary><span class="task-id">P02</span><span class="task-title">增量渲染、资源与缩略图缓存</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M4</span><span>P1</span><span>工作量 L</span><span>渲染 / 编辑器</span></div><p><strong>前置任务：</strong><a href="#task-P01" data-task-link="P01">P01</a>、<a href="#task-E01" data-task-link="E01">E01</a>、<a href="#task-E03" data-task-link="E03">E03</a></p><h4>实施切片</h4><ol><li>dirty set 与稳定节点</li><li>资源/字体/缩略图缓存</li><li>邻页窗口化及导出独立路径</li></ol><h4>完成标准</h4><ul><li>dirty elements/slides 驱动更新；不替换无关页/活动文字/媒体</li><li>资源与字体按 digest 缓存，释放/错误重试正确</li><li>缩略图缓存与当前邻页挂载；全量打印/导出不漏页</li></ul><p><strong>验收：</strong><a href="#acceptance-A18" data-acceptance-link="A18">A18</a>、<a href="#acceptance-A20" data-acceptance-link="A20">A20</a></p><details class="paths"><summary>目标文件 · 4 个已有 / 1 个拟新增</summary><ul><li><code>packages/portable-runtime/src/browser.ts</code></li><li><code>packages/renderer-react/src/index.ts</code></li><li><code>packages/editor-react/src/HostApp.tsx</code></li><li><code>packages/editor-react/src/resource-pool.ts</code></li><li><span class="new">拟新增</span> <code>tests/incremental-rendering.test.ts</code></li></ul></details></div></details></article><article class="task" id="task-P03" data-phase="M4" data-search="p03 增量索引与可取消可信后台作业 core / 性能 packages/core/src/index.ts packages/file-format/src/index.ts packages/canonical-json/src/index.ts packages/editor-controller/src/background-jobs.ts tests/background-job-contract.test.ts 索引增量结果与全量重建相等，故障可安全重建 只迁实测昂贵作业；jobid/baserevision/digest/取消与背压正确 无 stale 输出提交，原生与 worker 总成本对比；worker 非脚本沙箱"><details><summary><span class="task-id">P03</span><span class="task-title">增量索引与可取消可信后台作业</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M4</span><span>P1</span><span>工作量 L</span><span>Core / 性能</span></div><p><strong>前置任务：</strong><a href="#task-P02" data-task-link="P02">P02</a></p><h4>实施切片</h4><ol><li>索引全量对照</li><li>昂贵作业热点验证</li><li>按需要实现任务池与取消，无热点则记录无需 Worker</li></ol><h4>完成标准</h4><ul><li>索引增量结果与全量重建相等，故障可安全重建</li><li>只迁实测昂贵作业；jobId/baseRevision/digest/取消与背压正确</li><li>无 stale 输出提交，原生与 Worker 总成本对比；Worker 非脚本沙箱</li></ul><p><strong>验收：</strong><a href="#acceptance-A18" data-acceptance-link="A18">A18</a>、<a href="#acceptance-A20" data-acceptance-link="A20">A20</a></p><details class="paths"><summary>目标文件 · 3 个已有 / 2 个拟新增</summary><ul><li><code>packages/core/src/index.ts</code></li><li><code>packages/file-format/src/index.ts</code></li><li><code>packages/canonical-json/src/index.ts</code></li><li><span class="new">拟新增</span> <code>packages/editor-controller/src/background-jobs.ts</code></li><li><span class="new">拟新增</span> <code>tests/background-job-contract.test.ts</code></li></ul></details></div></details></article><article class="task" id="task-Q01" data-phase="M4" data-search="q01 浏览器、office 与完整交付验收 验收 / 导出 scripts/blackbox-gates.mjs packages/capability/src/index.ts packages/exporter-pptx/src/index.ts docs/evolution/quality/client-matrix.json 声明的浏览器含真实 safari/其他目标，不把 webkit 自动化当 safari 实机 office 支持客户端实开、编辑、重存；原生对象与视觉分开验 unverified 不冒充通过，报告绑定 artifactidentity"><details><summary><span class="task-id">Q01</span><span class="task-title">浏览器、Office 与完整交付验收</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M4</span><span>P0</span><span>工作量 M</span><span>验收 / 导出</span></div><p><strong>前置任务：</strong><a href="#task-D07" data-task-link="D07">D07</a>、<a href="#task-F03" data-task-link="F03">F03</a>、<a href="#task-F04" data-task-link="F04">F04</a>、<a href="#task-F05" data-task-link="F05">F05</a>、<a href="#task-F06" data-task-link="F06">F06</a></p><h4>实施切片</h4><ol><li>自动化全旅程</li><li>真实浏览器/Office 人工验证</li><li>能力声明与报告核对</li></ol><h4>完成标准</h4><ul><li>声明的浏览器含真实 Safari/其他目标，不把 WebKit 自动化当 Safari 实机</li><li>Office 支持客户端实开、编辑、重存；原生对象与视觉分开验</li><li>unverified 不冒充通过，报告绑定 ArtifactIdentity</li></ul><p><strong>验收：</strong><a href="#acceptance-A17" data-acceptance-link="A17">A17</a>、<a href="#acceptance-A19" data-acceptance-link="A19">A19</a>、<a href="#acceptance-A21" data-acceptance-link="A21">A21</a></p><details class="paths"><summary>目标文件 · 3 个已有 / 1 个拟新增</summary><ul><li><code>scripts/blackbox-gates.mjs</code></li><li><code>packages/capability/src/index.ts</code></li><li><code>packages/exporter-pptx/src/index.ts</code></li><li><span class="new">拟新增</span> <code>docs/evolution/quality/client-matrix.json</code></li></ul></details></div></details></article><article class="task" id="task-Q02" data-phase="M4" data-search="q02 分阶段发布包与回滚演练收口 发布 / 验收 scripts/stage-package.mjs skills/ppte/skill.md docs/progress.md docs/decisions.md docs/evolution/quality/release-manifest.json 阶段任务和 blocker 归零；npm/skill/离线样例可复现 升级与回滚保留原件、旧 tarball、profile 和报告，不伪称自动降级 git/npm/本地安装/html 升级四项状态逐一记录"><details><summary><span class="task-id">Q02</span><span class="task-title">分阶段发布包与回滚演练收口</span><span class="task-state ">待实施</span></summary><div class="task-detail"><div class="task-meta"><span>M4</span><span>P0</span><span>工作量 M</span><span>发布 / 验收</span></div><p><strong>前置任务：</strong><a href="#task-C06" data-task-link="C06">C06</a>、<a href="#task-P03" data-task-link="P03">P03</a>、<a href="#task-Q01" data-task-link="Q01">Q01</a></p><h4>实施切片</h4><ol><li>release manifest 与迁移说明</li><li>候选验收与回滚演练</li><li>按实际授权发布并记录实际结果</li></ol><h4>完成标准</h4><ul><li>阶段任务和 blocker 归零；npm/Skill/离线样例可复现</li><li>升级与回滚保留原件、旧 tarball、profile 和报告，不伪称自动降级</li><li>Git/npm/本地安装/HTML 升级四项状态逐一记录</li></ul><p><strong>验收：</strong><a href="#acceptance-A03" data-acceptance-link="A03">A03</a>、<a href="#acceptance-A04" data-acceptance-link="A04">A04</a>、<a href="#acceptance-A05" data-acceptance-link="A05">A05</a>、<a href="#acceptance-A19" data-acceptance-link="A19">A19</a>、<a href="#acceptance-A21" data-acceptance-link="A21">A21</a></p><details class="paths"><summary>目标文件 · 4 个已有 / 1 个拟新增</summary><ul><li><code>scripts/stage-package.mjs</code></li><li><code>skills/ppte/SKILL.md</code></li><li><code>docs/PROGRESS.md</code></li><li><code>docs/DECISIONS.md</code></li><li><span class="new">拟新增</span> <code>docs/evolution/quality/release-manifest.json</code></li></ul></details></div></details></article><article class="task" id="task-X01" data-phase="M4" data-search="x01 可选 quickjs 扩展验证 架构 / 扩展 docs/evolution/decisions/optional-quickjs.md 仅真实非声明式第三方需求且需隔离不受信任代码时启动 同任务 native/worker/quickjs 总成本与内存/时间/输出/取消验证 输出有界 json draft 经 core 重新验证，成品无运行时依赖"><details><summary><span class="task-id">X01</span><span class="task-title">可选 QuickJS 扩展验证</span><span class="task-state deferred">条件探索</span></summary><div class="task-detail"><div class="task-meta"><span>M4</span><span>P2</span><span>工作量 M</span><span>架构 / 扩展</span></div><p><strong>前置任务：</strong><a href="#task-P01" data-task-link="P01">P01</a>、<a href="#task-P03" data-task-link="P03">P03</a></p><p class="condition"><strong>启动条件：</strong>实际扩展无法合理用声明式表达，并必须执行不受信任代码</p><h4>实施切片</h4><ol><li>核验启动条件</li><li>隔离原型及取舍 ADR</li></ol><h4>完成标准</h4><ul><li>仅真实非声明式第三方需求且需隔离不受信任代码时启动</li><li>同任务 native/Worker/QuickJS 总成本与内存/时间/输出/取消验证</li><li>输出有界 JSON draft 经 Core 重新验证，成品无运行时依赖</li></ul><p><strong>验收：</strong><a href="#acceptance-A22" data-acceptance-link="A22">A22</a></p><details class="paths"><summary>目标文件 · 0 个已有 / 1 个拟新增</summary><ul><li><span class="new">拟新增</span> <code>docs/evolution/decisions/optional-quickjs.md</code></li></ul></details></div></details></article><article class="task" id="task-X02" data-phase="M4" data-search="x02 条件式多人协作设计 架构 / 协作 docs/evolution/decisions/optional-collaboration.md 仅真实多人并发且文件级 patch 不够用时启动 明确身份/授权/冲突/历史/离线合并合同，再决定 crdt 不把引入 yjs 或服务端当作现有 invariants 自动成立"><details><summary><span class="task-id">X02</span><span class="task-title">条件式多人协作设计</span><span class="task-state deferred">条件探索</span></summary><div class="task-detail"><div class="task-meta"><span>M4</span><span>P2</span><span>工作量 M</span><span>架构 / 协作</span></div><p><strong>前置任务：</strong><a href="#task-E01" data-task-link="E01">E01</a>、<a href="#task-C03" data-task-link="C03">C03</a></p><p class="condition"><strong>启动条件：</strong>实际多人并发任务无法由文件级 diff/patch 满足</p><h4>实施切片</h4><ol><li>验证真实协作任务</li><li>冲突/undo/权限原型与 ADR</li></ol><h4>完成标准</h4><ul><li>仅真实多人并发且文件级 patch 不够用时启动</li><li>明确身份/授权/冲突/历史/离线合并合同，再决定 CRDT</li><li>不把引入 Yjs 或服务端当作现有 invariants 自动成立</li></ul><p><strong>验收：</strong><a href="#acceptance-A22" data-acceptance-link="A22">A22</a></p><details class="paths"><summary>目标文件 · 0 个已有 / 1 个拟新增</summary><ul><li><span class="new">拟新增</span> <code>docs/evolution/decisions/optional-collaboration.md</code></li></ul></details></div></details></article></div></section><section id="acceptance" class="acceptance-wrap"><h2>16 完整验收规格</h2><details id="acceptance-details"><summary>展开 22 组正负用例与证据要求</summary><div class="acceptance-body">
+<p>版本 1.0 · 2026-09-05 · 全部为待执行的验收规格，不是测试结果。</p>
+<p>本矩阵与 <a href="./IMPLEMENTATION_PLAN.md">实施方案</a>、<a href="./TASKS.json">任务清单</a> 配套。每条测试报告使用固定的 Axx 编号；不得因测试尚未实现而将其标为通过。执行前固定 fixture digest、应用版本、runtime buildId、操作/文档 profile 和浏览器/设备。</p>
+<h2>验收规则</h2>
+<ul>
+<li><strong>状态仅取</strong> not-run / pass / fail / blocked / unverified / not-applicable。not-applicable 必须有对应 capability 与原因；不能用于规避已声明支持项。</li>
+<li><strong>证据最少包含</strong> 场景、输入摘要、操作序列、期望与实际、revision/history、环境、产物路径/摘要、执行人或自动工具。浏览器行为另附截图或 trace；实机验收另填实际应用及版本。</li>
+<li><strong>发布顺序</strong> G0 → G1 → G2 → G3 → G4；测试只对该阶段新增/承诺能力要求成功。表格、视频等未交付能力在早期必须准确报告降级，不得提前显示支持。</li>
+<li><strong>阻断原则</strong> 数据/历史损坏、越权误伤、保存失败、放映可编辑、资源丢失、能力虚报直接阻断；视觉建议不能抵消这些错误。</li>
+<li><strong>文件保全</strong> 原始失败文件只读，测试写新目录；fixture 应可合法公开并去除私密内容。不能以清空历史或重制全页图片来让用例通过。</li>
+</ul>
+<h2 id="acceptance-A01">A01 可选字段与序列化逆操作</h2>
+<p>关联 C01/C02/C06；Core 与所有序列化边界。</p>
+<p><strong>准备：</strong> 原本无背景、已有 solid/gradient/token/none 背景各一页；若 schema 不支持某种值，则验证明确拒绝。加入可选元数据、嵌套 overrides、空集合/字段缺失的边界组合。</p>
+<p><strong>操作：</strong> 设置/删除/改值 → preview → commit → JSON roundtrip → undo/redo → checkpoint → 重开 → undo/redo；单页与多操作事务均执行。</p>
+<p><strong>通过：</strong> 每步 canonical revision、字段存在性和 history 链符合预期；none 与继承背景不同；保存重开的撤销结果一致。对所有新增或修复操作执行生成式序列测试，seed 固定并记录失败最小化样例。</p>
+<p><strong>负例：</strong> set/unset 冲突、未知字段、删除 id/elements/rootOrder、非法值与越界路径均拒绝，无文档或日志副作用。</p>
+<h2 id="acceptance-A02">A02 错误 inverse 与事务原子性</h2>
+<p>关联 C02；Core preview/commit、journal。</p>
+<p>注入可执行但错误的 inverse、序列化会丢值的 inverse、过期 proof、被更改的 transaction digest。验证返回 INVERSE_ROUNDTRIP_FAILED 或相应冲突；document/revision/history/redo/journal 与之前完全相同。正确 proof 可复用但只能用于它绑定的事务与 beforeRevision。记录 proof 耗时，不能只在测试配置开启校验。</p>
+<h2 id="acceptance-A03">A03 新旧协议与所有持久边界</h2>
+<p>关联 C02/C03/E08/F01/Q02；CLI、Host、Portable、checkpoint、patch。</p>
+<p><strong>矩阵：</strong> 合法旧 1.0 文件；新 1.1 history 但旧语义对象；仅 redo 含新操作；新 patch；含 Run 新字段；Table v2；未知 profile/操作/required extension；不匹配 manifest 版本。</p>
+<p><strong>通过：</strong> 新 reader 接受声明支持的旧/新版本；未知能力严格按登记规则只读/拒绝，不能推断成已知迁移。profile 推断覆盖 document、undo、redo、patch。保存任何入口都不漏最低能力。原文件摘要保持；迁移写新文件并附报告。旧 reader 对不认识的新版本不静默改写；如果无法显示只读预览，准确说明而不承诺可渲染。</p>
+<h2 id="acceptance-A04">A04 损坏历史、恢复与保存故障</h2>
+<p>关联 C03/C06/E06/Q02；文件与恢复系统。</p>
+<p><strong>正例：</strong> 快照有效/历史失败；可信最近后缀；精确匹配的前置基准+完整 forward 链；无基准的重新开始历史；redo 单独损坏。验证只有已证实的内容/后缀可用，重建每一步 afterRevision 与最终 head 相等。</p>
+<p><strong>负例：</strong> 错 documentId、错 beforeRevision、缺资源、错误 hash、损坏 history checksum、未知操作、相似但非精确基准。不得猜测重建。原 <code>.ppte</code>、journal、CAS 和诊断保留，首次失败处停止，不跳过坏事务。</p>
+<p><strong>故障：</strong> 恢复/保存写入前、临时文件后、替换前注入崩溃；磁盘拒绝、浏览器权限/配额拒绝、下载取消。无半成品宣称成功；原件 hash 不变，草稿保留。浏览器新恢复 namespace 不覆盖原 tail/base/资源引用；快照不完整仅只读诊断，不擅自删除坏对象。UI 区分内存修改/恢复记录/写盘成功/已下载副本。</p>
+<h2 id="acceptance-A05">A05 交付身份与不覆盖行为</h2>
+<p>关联 C04/C06/Q02；打包、delivery、生成后的 HTML。</p>
+<p>相同身份与内容重复交付应复用且字节不变；分别只改 runtime、renderer、字体政策/字体字节、资源字节、history、redo、capability、profile、导出参数，均不能返回旧副本成功。旧 HTML 缺身份、metadata 被改、脚本被改、内容被接收者修改分别测试。</p>
+<p>新副本只使用受控同目录命名，返回真实路径；同名不同文件不覆盖。旧 API 省略 collisionPolicy 仍为 error，新流程显式 versioned-copy；与旧 replaceExisting/confirmed 参数冲突时报错。短 hash 路径碰撞延长 hash/后缀并原子创建。另单独改变受控 shell/CSS/CSP 或兼容 descriptor，旧报告必须失效。明确覆盖路径原子替换并可恢复旧版本。路径穿越/任意目录扩张拒绝。摘要不是数字签名，报告不声称发行者认证。</p>
+<h2 id="acceptance-A06">A06 两端干净放映与模式竞态</h2>
+<p>关联 C05/C06/E01/E07/F05/F06；Host 和生成后的 <code>file://</code> Portable 必须使用同一旅程。</p>
+<p>带当前输入草稿进入放映；全屏正常/拒绝/系统退出；快速进入退出；晚到 fullscreenchange；横竖窗口、缩放与多个放映循环。检查无 toolbar/sidebar/inspector/notes/footer 编辑泄漏、无虚线/选框、所有文本不可编辑、没有编辑焦点。</p>
+<p>放映中通过键盘、paste、拖入、pointer、undo/redo、公开 API 尝试改文档；全部被同一守卫拒绝，revision 和 history depth 不变。媒体、链接、退出按钮不触发意外翻页。Esc 回到原模式与当前页，可继续编辑和保存。仅退出自己拥有的全屏；viewer 不能启用 edit。</p>
+<h2 id="acceptance-A07">A07 放映前输入收口</h2>
+<p>关联 C05；两端 DOM/IME。</p>
+<p>文本有未提交内容时点击放映、换页和保存。正常情况恰好提交一次；验证失败保留原草稿/选区、停留可修正模式；composition 进行中等待用户完成，不能截断候选词。多个待切换请求只执行最新有效请求，取消后 compositionend 不能重新强制进入放映。</p>
+<h2 id="acceptance-A08">A08 精确文字范围与格式</h2>
+<p>关联 E01/E02/E03/E04/E07/E08；RichText 纯函数与两端浏览器。</p>
+<p>选中“Cherry Studio”中的“Studio”设粗体/强调色；跨段、反向选区、混合 marks、折叠光标、整框选择分别测试。选区外内容、marks、未受影响 run ID 不变；正确更新拆分 ID 和 PositionMap；工具栏抢焦点后恢复准确范围。</p>
+<p>E03 要求基础 marks 和整框字号；E08 才要求选区字体字号。新增 Run 属性要测继承、mixed、清除格式、字体 token/缺字、测量、HTML/SVG/PDF/PPTX；未实现前 UI 不能宣称支持。每种变换撤销、保存重开后相同。</p>
+<h2 id="acceptance-A09">A09 IME、粘贴与唯一历史</h2>
+<p>关联 E02/E03/E07；实际中文输入法人工验证 + 自动事件合同。</p>
+<p>中文连续组合输入、候选选择、取消、emoji ZWJ、重音组合、中英混排、跨段粘贴、纯文本/受支持富文本粘贴。compositionend 后重复 input 不双提交；候选期按键不误当翻页/退出；不得拆代理对/完整字符。</p>
+<p>输入 → 加粗 → 输入 → 保存 → undo/redo 的顺序可预测。只有 Core 历史生效，重开仍可撤销；浏览器/库历史不能抢一次操作。输入分组边界固定并记录，自动测试不能替代真正 IME 的最终验收。</p>
+<h2 id="acceptance-A10">A10 草稿失败与并发冲突</h2>
+<p>关联 E02/E03/E07；编辑控制层。</p>
+<p>编辑期间注入 commit 拒绝、保存错误、相关/无关对象 revision 更新。无关更新仅在目标 hash 未变时重新规划；目标变更进入冲突，保留本地草稿，不覆盖远端/Agent 修改。活动 DOM 与选区不被无关渲染替换。重试成功后才清理 draft；放弃草稿是显式可理解操作。双击保存 + compositionend + blur、字号与 blur 并发只提交一次；flush 失败后 undo/换页/切模式不继续执行，composition 中不执行文档撤销。</p>
+<h2 id="acceptance-A11">A11 对象手势、锁定与精确排版</h2>
+<p>关联 E01/E04/E05/E07；两端相同指针与键盘脚本。</p>
+<p>移动/缩放/旋转/多选/扁平组合/图层/对齐分布，覆盖 50%/100%/200% 舞台缩放。100 次 move 只一笔最终事务；零位移零事务；Esc/pointercancel/lostcapture 零提交。框尺寸改变默认不改字号；图片比例行为可见。</p>
+<p>锁定成员、混合多选、越权组、无效几何拒绝且整组不动。对齐范围是选择或画布，吸附不改别的对象。相同逻辑坐标的操作在不同缩放结果一致；撤销重开仍一致。</p>
+<h2 id="acceptance-A12">A12 图片、背景与资源闭环</h2>
+<p>关联 E04/E06/E07/F04；CAS、两端导入与导出。</p>
+<p>拖入/文件/剪贴板导入相同图片，去重但引用独立；裁剪/替换保持目标身份和指定几何。背景图片、纯色/渐变/主题继承回退都可撤销并重开。</p>
+<p>解码错误、拒绝 MIME、损坏字节、取消、配额失败不产生半对象；撤销不能删掉其他对象共用资源。资源保留集合含当前文档、undo/redo、journal、draft/jobs；必须测试插图→撤销→保存重开→重做，history 引用的字节不丢。替换/删除后的 URL 与资源生命周期有证据；离线副本包含所有需要的字节。大素材处理建议明确，不能静默丢图。</p>
+<h2 id="acceptance-A13">A13 表格与事实稳定性</h2>
+<p>关联 E08/F01/F02/F03；组件、Core、UI、导出。</p>
+<p>v1→v2 迁移保留表头/caption/scalar 类型/元素 ID；建立 cell IDs。测试改值、行列插删移动、尺寸、矩形合并拆分、TSV、非矩形输入、空表、中文长内容及长数字。未改格身份与事实引用不变；结构删除引用目标需影响审阅。</p>
+<p>合并不得丢被覆盖格的值；非法交叉/非矩形合并拒绝；泛化 props 更新不能绕过不变量。表格组件更新只影响目标。Office 中实际可编辑单元格，原生 table part 内容与输入一致；图片或标签不能计为 nativeTable。E08 仅共享兼容/原生文本相关子项，其余表格子项在 F01–F03 执行。</p>
+<h2 id="acceptance-A14">A14 配方执行、容量与确定性</h2>
+<p>关联 D01/D02/D03/D04/D07；编译器与实际浏览器测量。</p>
+<p>每种声明的 variant/constraint/qualityRule 至少正常、冲突和边界用例；未支持的显式拒绝。类型/required/min/max/keepTogether/baseline 与有界 repeat 逐项有效，槽位不能被 first-fit 错占。固定输入、版本、seed、font digest 后输出一致。</p>
+<p>每个风格角色格提供正常/接近上限/超载样例，超载明确失败或换版式/拆页提案；全部内容块已安置，无隐式截断或缩字。真实测量等待字体/资源；无浏览器只报告 unverified，D04 成熟覆盖格与 G2 不能因此通过。正常/边界必须留本构建和固定字体的截图；字体资源超时算该次失败，fallback 用明确新配置重验。有意图文覆盖按配方关系验收，非预期遮挡/缺字/越界阻断。M2 表格压力只验证现有呈现与语义保留，Table v2 归 M3。</p>
+<h2 id="acceptance-A15">A15 安全换主题、配方与 Skill 调用</h2>
+<p>关联 D04/D05/D06/D07；Controller、设计编译、CLI/Skill。</p>
+<p>八条序列：改字后换主题；局部格式后换字体；锁几何后重排；换图裁剪后换版式；人工加形状后美化；4 列改 3 列；重排后撤销重开；缺风格包环境打开并导出。</p>
+<p>当前 Document 是真源；手动文字、局部 overrides、锁定/受保护内容、语义 ID、事实和素材不变。容量不足给提案，不删第四项；恢复风格默认是显式命令。绑定失效不猜测。Skill 读取索引→候选→选中配方、用真实代表页、最多两轮修复，所有内容变更经过 preview/commit；不要求用户重复批准已授权的制作范围。</p>
+<h2 id="acceptance-A16">A16 视频、步骤与现场工具</h2>
+<p>关联 C05/F04/F05/F06；至少两种声明支持的视频素材及失败素材。</p>
+<p>验证真实 src/Blob 绑定、loadedmetadata、手动 play、pause、ended；离页暂停、返回续播、退出释放、解码/自动播放拒绝可见。单 HTML 和离线目录均在声明的真实浏览器入口断网实测；目录包应含 HTML 入口、manifest 和 media，区分打包时字节校验与打开时能否复验。若 file:// 受限，不声明该路径支持，保留验证的大 HTML 或 Host 方式。</p>
+<p>step 1→0，step 0→上一页末步，nextSlide/previousSlide/gotoSlide 与首末边界符合合同；编辑/打印显示所有内容。减少动态效果后终态与步骤一致，未实现动画参数保持降级声明。</p>
+<p>黑屏/激光笔/计时不改 revision。双屏弹窗拒绝、断连、重复乱序消息、错误 token/来源、观众窗关闭可恢复；备注不出现在观众 DOM。C05 只执行基础步骤/模式子项，真实媒体与现场工具随 F04–F06 验收。</p>
+<h2 id="acceptance-A17">A17 跨格式与报告真实性</h2>
+<p>关联 E08/D01/D03/D04/D06/D07/F03/F04/F05/Q01；所有交付目标。</p>
+<p>检查 HTML 编辑、HTML 放映、PDF、图片 PPTX、语义 PPTX 的每项 capability 与实际表现。原生文本/形状/图片/图表/表格分别证明；视频/动画静态化明确报告；字体替代与布局风险真实可见。报告必须绑定源文档、history/资源、runtime/renderer 和配置身份，修改任一项使旧报告失效。</p>
+<p>选定支持的 PowerPoint/Keynote/LibreOffice 客户端后，分别记录实开、原生对象编辑、重存、文本顺序和视觉；未选支持的客户端不暗示兼容。没有实际 Office 环境时保持 unverified，不能仅 unzip 就宣布全面保真。</p>
+<h2 id="acceptance-A18">A18 增量更新与异步过期结果</h2>
+<p>关联 E03/P02/P03；浏览器与 Core。</p>
+<p>编辑第一页文字，未改页 DOM 身份不变；当前 IME 节点和其他页媒体位置不被重置。资源 hash 不变不重复生成 URL/解码；缩略图只失效相关页。窗口化不影响搜索、页序、打印和全量导出。</p>
+<p>增量索引与全量重建对照完全一致。Worker 任务取消、超时、输入改变、乱序返回、队列过载、关闭文件后返回均不能写入过期结果或泄漏资源；作业只返回提案。E03 执行活动文本正确性子项，全面性能部分由 P02/P03 完成。</p>
+<h2 id="acceptance-A19">A19 npm、Skill、版本与离线交付</h2>
+<p>关联 C04/C06/D06/Q01/Q02；干净临时目录与安装包。</p>
+<p>从实际 tarball 安装，不借源码工作区依赖；记录应用版本、包摘要、runtime buildId、Skill 来源。安装后断网执行 compile→inspect→preview→commit→undo/redo→deliver；不启动 MCP、不设模型密钥、不靠守护进程。渲染导出缺浏览器时清晰提示按需安装，基础命令仍可用。</p>
+<p>另测原生 Skill 安装到新目录、冲突目录保护、升级说明。CLI/Host/Portable 关于信息/报告版本一致。GitHub 推送、npm 发布、本地安装和副本升级各有真实状态；未执行的操作写未执行。</p>
+<h2 id="acceptance-A20">A20 真实浏览器性能</h2>
+<p>关联 C01/E02/D03/F04/P01/P02/P03；固定 12/30/100 页材料。</p>
+<p>记录真实设备、浏览器、视口、字体、文件 hash；启动冷/热分开。场景至少 30 次、启动至少 20 次，保留原始采样与 p50/p95；测交互/画面而非仅 HTML 生成。输入、拖动、翻页、撤销、保存、媒体往返、内存与包体分开。</p>
+<p>冻结预算后再评候选，不随失败调高阈值。达到速度预算同时满足无关节点稳定和文档正确性。较低性能实机与真实 Safari 没测时标 unverified；CPU 节流可辅助，但不替代设备证据。E02/D03/F04 只要求本模块开销/容量采样，不提前要求整个产品预算。</p>
+<h2 id="acceptance-A21">A21 人工完整旅程与可用性</h2>
+<p>关联 E07/F02/F06/D07/Q01/Q02；产品负责人及至少两名目标使用者。</p>
+<p>10 个任务：改字、局部加粗、字号、换图、裁剪、对齐、改表格、保留锁定换布局、重开撤销、演讲交付。文字/图片/对齐/重开/基础放映从 M1 开始，保护式换布局从 M2，表格与媒体现场工具从 M3。G2 仅测适用子集，未到阶段记 deferred、不计通过；G3/Q01 执行完整十项。记录成功/失败、耗时、求助和修复操作。</p>
+<p>键盘可到达常用控件、焦点可见、弹层可退出、按钮有可访问名称。Host 桌面主编辑与 Portable 窄窗口有合理折叠，不将小屏完整创作作为未测承诺。任何数据丢失、误伤或无法退出放映阻断；美观评审提供页/对象证据。</p>
+<p>五类材料×两种用途的同题基准保留首次产物、修复版本和人工耗时；同 Agent/预算至少两次生成看波动。首轮建立基线，不编造百分比或“完美分数”。</p>
+<h2 id="acceptance-A22">A22 条件探索门禁</h2>
+<p>仅 X01/X02，非 G0–G4 必做项目。</p>
+<p>QuickJS 先有实际无法合理声明式表达且需要不受信任代码隔离的需求证据；实验验证总耗时、内存/栈/时间/输出/日志/宿主调用预算、死循环与取消，成品无需扩展引擎。多人协作先证明文件级 patch 无法满足，验证权限、冲突、undo/redo、离线/重连与保护语义。条件不成立则保持 deferred，并记录原因；不得为了完成任务表强行引入依赖。</p>
+<h2>报告骨架</h2>
+<p>以下字段为报告协议示意，不是已完成证据：</p>
+<pre><code class="language-json">{
+  &quot;reportVersion&quot;: &quot;1&quot;,
+  &quot;acceptanceId&quot;: &quot;A06&quot;,
+  &quot;taskIds&quot;: [&quot;C05&quot;],
+  &quot;status&quot;: &quot;not-run&quot;,
+  &quot;buildId&quot;: null,
+  &quot;fixtureDigest&quot;: null,
+  &quot;environment&quot;: null,
+  &quot;executedBy&quot;: null,
+  &quot;cases&quot;: [],
+  &quot;artifacts&quot;: [],
+  &quot;unverified&quot;: [],
+  &quot;blockers&quot;: []
+}
+</code></pre>
+<p>每个阶段的 gate 报告引用所有必要 task/case 结果，而非直接手填整体 pass。任何旧 build 的测试结果只能做历史对照，不能算当前产物的发布凭证。</p>
+</div></details></section><p class="footer">本文件是方案阅读副本，功能与验收均为待执行设计。结构校验不代表产品测试通过。<a href="#top">返回开头 ↑</a></p></main></div><script>
+const cards=[...document.querySelectorAll('.task')],search=document.querySelector('#task-search'),phase=document.querySelector('#task-phase');function filter(){let n=0;const q=search.value.trim().toLowerCase();for(const c of cards){const show=(phase.value==='all'||c.dataset.phase===phase.value)&&(!q||c.dataset.search.includes(q));c.hidden=!show;if(show)n++}document.querySelector('#task-count').textContent='显示 '+n+' / '+cards.length+' 项任务'}search.addEventListener('input',filter);phase.addEventListener('change',filter);document.querySelector('#task-reset').addEventListener('click',()=>{search.value='';phase.value='all';filter()});filter();function showTask(id){const el=document.getElementById('task-'+id);if(!el)return;search.value='';phase.value='all';filter();el.querySelector('details').open=true;el.scrollIntoView({block:'start'})}document.addEventListener('click',e=>{const a=e.target.closest('a');if(!a)return;if(a.dataset.taskLink){e.preventDefault();history.replaceState(null,'','#task-'+a.dataset.taskLink);showTask(a.dataset.taskLink)}if(a.dataset.acceptanceLink){e.preventDefault();document.querySelector('#acceptance-details').open=true;const el=document.getElementById('acceptance-'+a.dataset.acceptanceLink);el.scrollIntoView({block:'start'});history.replaceState(null,'','#acceptance-'+a.dataset.acceptanceLink)}});if(location.hash.startsWith('#task-'))showTask(location.hash.slice(6));if(location.hash.startsWith('#acceptance-'))document.querySelector('#acceptance-details').open=true;const links=[...document.querySelectorAll('.toc a')],sections=[...document.querySelectorAll('main>section')];function update(){let current=sections[0];for(const s of sections)if(s.getBoundingClientRect().top<140)current=s;for(const a of links){const active=a.hash==='#'+current?.id;a.classList.toggle('active',active);if(active)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current')}const d=document.documentElement;document.querySelector('.progress').style.width=100*d.scrollTop/Math.max(1,d.scrollHeight-d.clientHeight)+'%'}addEventListener('scroll',update,{passive:true});update();let printOpen=[];addEventListener('beforeprint',()=>{printOpen=[...document.querySelectorAll('details')].map(d=>[d,d.open]);document.querySelectorAll('details').forEach(d=>d.open=true)});addEventListener('afterprint',()=>printOpen.forEach(([d,o])=>d.open=o));
+</script></body></html>
