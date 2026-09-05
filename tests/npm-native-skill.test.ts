@@ -27,13 +27,23 @@ function cli(...args: string[]) { return JSON.parse(run(join(install, 'node_modu
 function tree(path: string, prefix = ''): Record<string, string> {
   return Object.fromEntries(readdirSync(path, { withFileTypes: true }).flatMap(entry => entry.isDirectory() ? Object.entries(tree(join(path, entry.name), prefix + entry.name + '/')) : [[prefix + entry.name, sha(join(path, entry.name))]]))
 }
+function candidateFilename(directory: string): string {
+  // npm versions/configurations can differ in their JSON envelope. The release
+  // candidate is the archive actually written into our fresh output directory.
+  const archives = readdirSync(directory, { withFileTypes: true })
+    .filter(entry => entry.isFile() && entry.name.endsWith('.tgz'))
+    .map(entry => entry.name)
+  assert.equal(archives.length, 1, `Expected exactly one npm candidate archive, found ${JSON.stringify(archives)}`)
+  return archives[0]!
+}
 before(() => {
   mkdirSync(install); mkdirSync(env.HOME!); mkdirSync(join(dir, 'skills'))
   writeFileSync(join(dir, 'offline.cjs'), `const deny=()=>{throw new Error('C06_NETWORK_DISABLED')}; for(const [name,keys] of [['net',['connect','createConnection']],['tls',['connect']],['http',['request','get']],['https',['request','get']],['dns',['lookup','resolve']]]){const m=require(name);for(const k of keys)m[k]=deny;} require('net').Socket.prototype.connect=deny; globalThis.fetch=deny;`)
   run('pnpm', ['host:build', '--outDir', host])
   run(process.execPath, ['scripts/stage-package.mjs', stage, host])
-  const packed = JSON.parse(run('npm', ['pack', stage, '--pack-destination', dir, '--json']))[0]
-  const tarball = join(dir, packed.filename)
+  run('npm', ['pack', stage, '--pack-destination', dir, '--json'])
+  const filename = candidateFilename(dir)
+  const tarball = join(dir, filename)
   writeFileSync(join(install, 'package.json'), '{"private":true}')
   run('npm', ['install', '--ignore-scripts', '--omit=optional', '--no-audit', '--no-fund', '--cache', join(dir, 'npm-cache'), tarball], install, { PATH: process.env.PATH, HOME: env.HOME, PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1' })
   const installed = join(install, 'node_modules/ppte-cli')
@@ -42,11 +52,23 @@ before(() => {
   assert.equal(existsSync(join(install, 'node_modules/playwright')), false)
   assert.equal(cli('--version').version, manifest.applicationVersion)
   report.packageFiles = tree(installed)
-  report.actions.candidateTarball = { status: 'pass', filename: packed.filename, sha256: sha(tarball), bytes: readFileSync(tarball).length }
+  report.actions.candidateTarball = { status: 'pass', filename, sha256: sha(tarball), bytes: readFileSync(tarball).length }
   if (process.env.C06_OUTPUT) {
     mkdirSync(resolve(process.env.C06_OUTPUT), { recursive: true })
-    cpSync(tarball, join(resolve(process.env.C06_OUTPUT), packed.filename))
+    cpSync(tarball, join(resolve(process.env.C06_OUTPUT), filename))
   }
+})
+
+test('C06: candidate discovery requires exactly one real archive, independent of npm stdout metadata', () => {
+  const output = mkdtempSync(join(dir, 'pack-discovery-'))
+  assert.throws(() => candidateFilename(output), /Expected exactly one npm candidate archive/)
+  mkdirSync(join(output, 'directory.tgz'))
+  writeFileSync(join(output, 'metadata.json'), '{}')
+  assert.throws(() => candidateFilename(output), /Expected exactly one npm candidate archive/)
+  writeFileSync(join(output, 'candidate.tgz'), 'discovery fixture; never installed')
+  assert.equal(candidateFilename(output), 'candidate.tgz')
+  writeFileSync(join(output, 'unexpected.tgz'), 'discovery fixture; never installed')
+  assert.throws(() => candidateFilename(output), /Expected exactly one npm candidate archive/)
 })
 after(() => {
   if (process.env.C06_OUTPUT) writeFileSync(join(resolve(process.env.C06_OUTPUT), 'candidate-report.json'), JSON.stringify(report, null, 2) + '\n')
