@@ -686,7 +686,7 @@
       "milestone": "M1",
       "priority": "P0",
       "title": "共享 Controller 与纯命令规划",
-      "status": "planned",
+      "status": "done",
       "effort": "L",
       "ownerRole": "编辑器 / Core",
       "dependsOn": [
@@ -724,7 +724,15 @@
         "A11"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        "commit:6941d92b6cd248907176598d2670099d531f6668",
+        "tests/editor-controller.test.ts",
+        "tests/surface-mode-contract.test.ts",
+        "tests/presentation-controller.test.ts",
+        "docs/evolution/E01_EVIDENCE.md",
+        "pnpm typecheck && pnpm build && pnpm test: 171 passed (baseline 158, +13); pnpm host:build passed",
+        "pnpm blackbox:final: 69 green / 0 red (baseline 69 / 0; no new reds)"
+      ]
     },
     {
       "id": "E02",
