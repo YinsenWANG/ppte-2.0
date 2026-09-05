@@ -1,0 +1,72 @@
+{
+  "task": "D07",
+  "status": "partial",
+  "implementationCommit": "2d6fc3fce31d86f05cdde23b76b14aebef18ca65",
+  "environment": {
+    "node": "v22.23.2",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "buildManifest": {
+    "applicationVersion": "0.9.0-next.0",
+    "runtimeBuildId": "4468fbdb2cec913f9de87e8ebd8bb603fc83c6acba1e59a61ed9d83822efad50"
+  },
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm build",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm test",
+      "exitCode": 0,
+      "counts": {
+        "tests": 311,
+        "pass": 311,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "command": "pnpm blackbox:final",
+      "exitCode": 0,
+      "green": 70,
+      "red": 0
+    }
+  ],
+  "baselineTests": {
+    "tests": 301,
+    "pass": 301,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "testCountDelta": 10,
+  "blackbox": {
+    "baselineGreen": 69,
+    "baselineRed": 0,
+    "finalGreen": 70,
+    "finalRed": 0,
+    "newReds": [],
+    "allBaselineCasesRetained": true,
+    "newCases": [
+      "review-patch:10"
+    ]
+  },
+  "tests": [
+    "tests/authoring-benchmark.test.ts"
+  ],
+  "humanEvidence": "None. Synthetic test submissions are ephemeral contract tests and are not release evidence.",
+  "g2": "blocked",
+  "remainingGaps": [
+    "Execute and retain 40 actual generations: baseline and candidate, ten tasks, two fixed seeds, same pinned Agent and budget.",
+    "Collect owner and at least two target-user sessions, real elapsed/help/repair measurements, failures, originals and repaired artifacts.",
+    "Calibrate visual hierarchy/density/composition/asset-purpose/rhythm with page/object PNG evidence and directional recipe overlap checks.",
+    "Bind actual HTML editing/presentation, PDF, image PPTX and semantic PPTX observations to each artifact identity; Office remains unverified until actually opened.",
+    "Demonstrate consistent paired human repair-time improvement without candidate task regressions; automated contract tests do not fulfill this evidence."
+  ]
+}

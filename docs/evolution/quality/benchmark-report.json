@@ -13,7 +13,8 @@
       "arch": "arm64"
     },
     "executor": "Codex automated implementation; not a human reviewer",
-    "measurement": "Evidence contract only. No timed human sessions or paired Agent generations have been performed."
+    "measurement": "Evidence contract only. No timed human sessions or paired Agent generations have been performed.",
+    "implementationCommit": "2d6fc3fce31d86f05cdde23b76b14aebef18ca65"
   },
   "submission": {
     "version": "d07-evidence-v1",
@@ -139,5 +140,6 @@
   "automatedEvidence": [
     "tests/authoring-benchmark.test.ts",
     "scripts/blackbox-gates.mjs:review-patch:D07-evidence"
-  ]
+  ],
+  "verification": "docs/evolution/quality/d07-verification.json"
 }

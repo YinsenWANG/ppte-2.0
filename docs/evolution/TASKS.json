@@ -1897,7 +1897,54 @@
         "A21"
       ],
       "releaseRequired": true,
-      "evidence": [],
+      "evidence": [
+        {
+          "commit": "2d6fc3fce31d86f05cdde23b76b14aebef18ca65",
+          "tests": [
+            "tests/authoring-benchmark.test.ts"
+          ],
+          "verification": "docs/evolution/quality/d07-verification.json",
+          "report": "docs/evolution/quality/benchmark-report.json",
+          "criteria": [
+            {
+              "criterion": 1,
+              "status": "implemented",
+              "tests": [
+                "D07 criterion 1: ten fixed briefs cover five categories and two uses with sourced answers, licensed bytes and versioned journeys"
+              ],
+              "result": "Ten synthetic fixed tasks, sourced numerical answers/caveats, two licensed SVG assets with byte digests, and ten versioned scripts."
+            },
+            {
+              "criterion": 2,
+              "status": "partial",
+              "tests": [
+                "D07 criterion 2 A14 A17: each quality line independently blocks candidate failure despite other passes",
+                "D07 criterion 2 A14: overlap allowances are directional and recipe/page scoped; screenshots remain required",
+                "D07 criterion 2 A17: every identity domain and missing/tampered retained artifacts invalidate evidence"
+              ],
+              "result": "Independent line verdicts, explicit scoped overlap permission and identity-bound PNG evidence contract implemented. Actual visual calibration and format/client observations missing."
+            },
+            {
+              "criterion": 3,
+              "status": "partial",
+              "tests": [
+                "D07 criterion 3 A21: forty runs require the same agent/material/seed/budget/environment and two repetitions",
+                "D07 criterion 3 A21: real timing fields, owner plus two users, failures and repair trends are mandatory"
+              ],
+              "result": "Comparison/timing/failure gate tested using ephemeral synthetic submissions. No actual paired generations or human sessions have been performed; no improvement claimed."
+            },
+            {
+              "criterion": 4,
+              "status": "implemented",
+              "tests": [
+                "D07 criterion 4 A21: stage selection defers M3 table without counting or blocking G2, and requires it at M3",
+                "D07 criterion 4 A17 A21: checked report recomputes honestly; empty submissions cannot close G2"
+              ],
+              "result": "Stage selection, M3 deferral and fail-closed G2 evidence reporting implemented. Checked-in G2 remains blocked; this does not complete human acceptance."
+            }
+          ]
+        }
+      ],
       "remainingGaps": [
         "Forty retained same-Agent baseline/candidate generations have not been executed.",
         "Project owner and at least two target users have not supplied timed review sessions, failure logs or repair comparisons.",
