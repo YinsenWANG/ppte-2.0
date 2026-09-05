@@ -1,3 +1,4 @@
+import { rememberTableCell } from '../../editor-dom/src/table-selection.js'
 import { renderRunFontControls } from '../../editor-dom/src/text-selection.js'
 import { mountEditorShell, editorShellCss } from '../../editor-dom/src/editor-shell.js'
 import { mountImageCrop } from '../../editor-dom/src/image-crop.js'
@@ -287,6 +288,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     const target = event.target instanceof window.Element ? event.target.closest<HTMLElement>('[data-ppte-element-id]') : null
     const elementId = target?.dataset.ppteElementId
     if (!elementId || !activeSlide?.elements[elementId]) {if(!event.shiftKey)setSelection({slideId:activeSlideId,elementIds:[]});return}
+    if(!event.ctrlKey&&!event.metaKey&&rememberTableCell(event.target,event.shiftKey)){setSelection({slideId:activeSlideId,elementIds:[elementId],primaryElementId:elementId});return}
     const group=!event.altKey?Object.values(activeSlide.groups??{}).find(g=>g.memberIds.includes(elementId)):undefined
     const nextIds=event.shiftKey&&!event.ctrlKey&&!event.metaKey ? activeElementIds.includes(elementId)?activeElementIds.filter(id=>id!==elementId):[...activeElementIds,...(group?.memberIds??[elementId])] : activeElementIds.includes(elementId)?activeElementIds:group?.memberIds??[elementId]
     setSelection({slideId:activeSlideId,elementIds:nextIds,primaryElementId:elementId})
@@ -683,6 +685,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     if (event.key === 'Escape') { imageJob.current?.abort(); pendingPresentation.current = false; cancelTransform() }
     if(!presenting&&!event.nativeEvent.isComposing&&![...(textSurface.current?.drafts.values()??[])].some(b=>b.isComposing())&&!(event.target as HTMLElement).closest('input,textarea,select,[contenteditable="true"]')&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key)&&activeElementIds.length){event.preventDefault();try{if(!controller().flushSync().ok)return;const step=event.shiftKey?10:1;const tx=planTransform(documentNode,{revision:canonicalRevision(documentNode),slideId:activeSlideId,ids:activeElementIds,command:{kind:'move',dx:event.key==='ArrowLeft'?-step:event.key==='ArrowRight'?step:0,dy:event.key==='ArrowUp'?-step:event.key==='ArrowDown'?step:0},transactionId:nextOperationId('nudge'),createdAt:now()});if(tx)commitTransaction(tx,'对象已移动')}catch(error){setStatus(String(error))}return}
     if(event.nativeEvent.isComposing || [...(textSurface.current?.drafts.values()??[])].some(b=>b.isComposing()))return
+    if(!presenting&&(event.target as HTMLElement).closest('[data-table-cell]')&&(event.ctrlKey||event.metaKey)&&['z','y'].includes(event.key.toLowerCase())){event.preventDefault();event.stopPropagation();if(event.key.toLowerCase()==='y'||event.shiftKey)redo();else undo();return}
     if(!presenting){if(event.key==='Escape'){const target=textTarget(event);if(target){textSurface.current?.discard(target.element.id);setRenderEpoch(n=>n+1);target.node.blur();event.preventDefault();setStatus('已取消本次文字编辑')}}if((event.metaKey||event.ctrlKey)&&event.key==='s'){event.preventDefault();void saveCopy()}return}
     if (event.key !== 'Escape' && (event.target as HTMLElement).closest('a,button,video,audio,input,textarea,select')) return
     if (event.key === 'ArrowRight' || event.key === ' ') { event.preventDefault(); nextPresenter() }

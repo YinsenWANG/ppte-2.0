@@ -1,3 +1,4 @@
+import { renderTableEditor, rememberTableCell } from '../../editor-dom/src/table-selection.js'
 import { planDesignEdit, planDesignTheme, recipeControls } from '../../design-compiler/src/design-edits.js'
 import { builtInRecipeSpecs } from '../../layout-recipes/src/index.js'
 import { renderSlideHtml } from '../../renderer-react/src/index.js'
@@ -95,6 +96,7 @@ pagesPanel.dataset.pptePagesPanel = ''; pagesPanel.open = true;
 const pagesTitle = document.createElement('summary'); pagesTitle.textContent = '页面';
 const thumbnails = document.createElement('div'); thumbnails.dataset.ppteThumbnails = '';
 pagesPanel.append(pagesTitle, thumbnails); root.append(pagesPanel);
+const tableProperties = document.createElement('section'); tableProperties.dataset.ppteTableEditor = ''; propertiesPanel.append(tableProperties);
 let thumbnailRevision = '';
 const designPanel = document.createElement('details');
 designPanel.dataset.ppteDesignPanel = '';
@@ -179,6 +181,9 @@ function show(result?: { ok: boolean; issues?: Array<{ message: string }> }) {
   }
   thumbnails.querySelectorAll('button').forEach((b,index)=>b.setAttribute('aria-current',String(index===state.slideIndex)));
   propertiesPanel.hidden = !editable || presenting;
+  const tableTarget = runtime.getSelection().filter(t=>t.slideId===state.slideId);
+  const tableElement = tableTarget.length===1?runtime.getDocument().slides[state.slideId].elements[tableTarget[0].elementId]:undefined;
+  renderTableEditor(tableProperties,!presenting&&editable&&tableElement?.type==='component'?tableElement:undefined,state.slideId,false,ops=>{const result=runtime.editTable(ops); if(result.ok) change(result); return result.ok});
   properties.hidden = runtime.profile !== "full-portable";
   if (!propertiesPanel.hidden && !properties.hidden) renderObjectProperties(properties, runtime.getDocument(), state.slideId, runtime.getSelection().filter(t=>t.slideId===state.slideId).map(t=>t.elementId), command => {
     if (!flush().ok) return;
@@ -546,6 +551,7 @@ dom.listen(stage, "click", (event) => {
   const n = elementTarget(event);
   if (presenting) return;
   if (!editable || !n) return;
+  if(rememberTableCell(event.target,event.shiftKey)){select(n.dataset.ppteElementId!);return}
   if (event.shiftKey && runtime.profile === "full-portable") {
     const items = runtime.getSelection();
     selectMany(
@@ -562,7 +568,7 @@ dom.listen(stage, "click", (event) => {
 });
 function cancelTransform(event?:{pointerId:number}){if(event&&drag?.pointerId!==event.pointerId)return;const gesture=drag;drag=undefined;gesture?.cancel()}
 dom.listen(stage, 'pointerdown', event=>{
-  const n=elementTarget(event);if(presenting||!advanced||!n||event.button!==0||(event.shiftKey&&!event.ctrlKey&&!event.metaKey)||(n.isContentEditable&&!event.ctrlKey&&!event.metaKey))return;
+  const n=elementTarget(event);if(presenting||!advanced||!n||((event.target as HTMLElement).closest('[data-cell-id]')&&!event.ctrlKey&&!event.metaKey)||event.button!==0||(event.shiftKey&&!event.ctrlKey&&!event.metaKey)||(n.isContentEditable&&!event.ctrlKey&&!event.metaKey))return;
   const id=n.dataset.ppteElementId!,state=runtime.presenterState(),doc=runtime.getDocument(),slideId=state.slideId;
   const group=!event.altKey?Object.values(doc.slides[slideId].groups??{}).find(g=>g.memberIds.includes(id)):undefined;
   if(!runtime.getSelection().some(t=>t.elementId===id))selectMany((group?.memberIds??[id]).map(elementId=>({slideId,elementId})));
@@ -675,6 +681,7 @@ const api = {
   redo: () => change(runtime.redo()),
   saveAsProject,
   saveAsNewProject: saveAsProject,
+  editTable: (operations: import('../../schema/src/index.js').Operation[]) => change(runtime.editTable(operations)),
   saveAsPortable,
   saveAsEditableCopy: saveAsPortable,
   next: () => {

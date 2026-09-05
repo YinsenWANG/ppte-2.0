@@ -1,3 +1,4 @@
+import { renderTableEditor } from '../../editor-dom/src/table-selection.js'
 import { planTransform, type TransformCommand } from '../../editor-controller/src/transform-session.js'
 import { canonicalRevision } from '../../canonical-json/src/index.js'
 import { useEffect, useRef } from 'react'
@@ -26,6 +27,11 @@ export function Inspector({
   commitProperty?: (command: ObjectPropertyCommand) => boolean;
   commit: (operations: Operation[], reason?: string) => boolean;
 }): ReactElement {
+  const tableRoot = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const e = ids.length === 1 ? slide.elements[ids[0]] : undefined
+    if(tableRoot.current)renderTableEditor(tableRoot.current,e?.type==='component'?e:undefined,slide.id,true,ops=>commit(ops,'编辑表格'))
+  },[document,slide,ids,commit])
   const propertyRoot = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (propertyRoot.current) renderObjectProperties(propertyRoot.current, document, slide.id, ids, command => {
@@ -217,7 +223,8 @@ export function Inspector({
             </label>
           )}
           <details><summary>来源与诊断</summary><p>{element.semanticKey??'未设置语义标识'}</p>{element.semanticRefs?.factIds?.map(id=><p key={id}>{document.facts?.[id]?.key}: {String(document.facts?.[id]?.value)}</p>)}{element.semanticRefs?.sourceIds?.map(id=><p key={id}>{document.sources?.[id]?.title} · {document.sources?.[id]?.citation}</p>)}</details>
-          {element.type === "component" &&
+          <div ref={tableRoot} data-ppte-table-editor />
+          {element.type === "component" && element.componentType !== "core/table" &&
             Object.entries(element.props).map(([key, value]) => (
               <label key={key}>
                 {key}

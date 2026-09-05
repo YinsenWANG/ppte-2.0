@@ -191,6 +191,7 @@ function escapeHtml(value: string): string { return value.replaceAll('&', '&amp;
 function escapeXml(value: string): string { return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&apos;') }
 
 function tableWidgetV2(): WidgetDefinition {
+  const fill = (cell: import('../../schema/src/table.js').TableCell) => typeof cell.style?.fill==='string' && /^#[\da-f]{6}$/i.test(cell.style.fill) ? cell.style.fill : '#ffffff'
   const cellLayout = (m: TableModel) => m.rowOrder.flatMap((rowId, r) => m.columnOrder.flatMap((columnId, c) => {
     const cell = Object.values(m.cells).find(x=>x.rowId===rowId&&x.columnId===columnId)!
     const merge = m.merges.find(x=>x.rowIds.includes(rowId)&&x.columnIds.includes(columnId))
@@ -202,13 +203,16 @@ function tableWidgetV2(): WidgetDefinition {
     renderHtml: props => {
       const m=props as unknown as TableModel, layout=cellLayout(m)
       const header=m.columnOrder.some(id=>m.columns[id].label!==undefined)?`<thead><tr>${m.columnOrder.map(id=>`<th>${escapeHtml(m.columns[id].label??'')}</th>`).join('')}</tr></thead>`:''
-      return `<table data-ppte-widget="table"><caption>${escapeHtml(m.caption??'')}</caption>${header}<tbody>${m.rowOrder.map((id,r)=>`<tr data-row-id="${escapeHtml(id)}">${layout.filter(x=>x.r===r).map(x=>`<td data-cell-id="${escapeHtml(x.cell.id)}" rowspan="${x.rowspan}" colspan="${x.colspan}">${escapeHtml(tableCellDisplay(x.cell))}</td>`).join('')}</tr>`).join('')}</tbody></table>`
+      return `<table data-ppte-widget="table"><caption>${escapeHtml(m.caption??'')}</caption><colgroup>${m.columnOrder.map(id=>`<col style="width:${num((m.columns[id].size??120)/m.columnOrder.reduce((sum,id)=>sum+(m.columns[id].size??120),0)*100)}%">`).join('')}</colgroup>${header}<tbody>${m.rowOrder.map((id,r)=>`<tr data-row-id="${escapeHtml(id)}" style="height:${num(m.rows[id].size??32)}px">${layout.filter(x=>x.r===r).map(x=>`<td data-cell-id="${escapeHtml(x.cell.id)}" rowspan="${x.rowspan}" colspan="${x.colspan}" style="background-color:${fill(x.cell)}">${escapeHtml(tableCellDisplay(x.cell))}</td>`).join('')}</tr>`).join('')}</tbody></table>`
     },
     renderSvg: (props,width,height) => {
       const m=props as unknown as TableModel
-      const cw=width/Math.max(1,m.columnOrder.length), hasHeader=m.columnOrder.some(id=>m.columns[id].label!==undefined), ch=height/Math.max(1,m.rowOrder.length+(hasHeader?1:0))
-      const draw=(text:string,x:number,y:number,w:number,h:number)=>`<rect x="${num(x)}" y="${num(y)}" width="${num(w)}" height="${num(h)}" fill="#ffffff" stroke="#94a3b8"/><text x="${num(x+6)}" y="${num(y+h/2)}" dominant-baseline="middle" font-size="${num(Math.max(9,Math.min(18,ch*.36)))}">${escapeXml(text)}</text>`
-      return (hasHeader?m.columnOrder.map((id,c)=>draw(m.columns[id].label??'',c*cw,0,cw,ch)).join(''):'')+cellLayout(m).map(x=>draw(tableCellDisplay(x.cell),x.c*cw,(x.r+(hasHeader?1:0))*ch,x.colspan*cw,x.rowspan*ch)).join('')
+      const hasHeader=m.columnOrder.some(id=>m.columns[id].label!==undefined)
+      const columns=m.columnOrder.map(id=>m.columns[id].size??120), rows=[...(hasHeader?[32]:[]),...m.rowOrder.map(id=>m.rows[id].size??32)]
+      const positions=(sizes:number[],total:number)=>{const sum=sizes.reduce((a,b)=>a+b,0)||1;return sizes.reduce((out,size)=>[...out,out.at(-1)!+size/sum*total],[0])}
+      const xs=positions(columns,width),ys=positions(rows,height),offset=hasHeader?1:0
+      const draw=(text:string,x:number,y:number,w:number,h:number,color='#ffffff')=>`<rect x="${num(x)}" y="${num(y)}" width="${num(w)}" height="${num(h)}" fill="${color}" stroke="#94a3b8"/><text x="${num(x+6)}" y="${num(y+h/2)}" dominant-baseline="middle" font-size="${num(Math.max(9,Math.min(18,h*.36)))}">${escapeXml(text)}</text>`
+      return (hasHeader?m.columnOrder.map((id,c)=>draw(m.columns[id].label??'',xs[c],0,xs[c+1]-xs[c],ys[1])).join(''):'')+cellLayout(m).map(x=>draw(tableCellDisplay(x.cell),xs[x.c],ys[x.r+offset],xs[x.c+x.colspan]-xs[x.c],ys[x.r+offset+x.rowspan]-ys[x.r+offset],fill(x.cell))).join('')
     },
   }
 }

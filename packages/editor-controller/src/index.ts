@@ -58,7 +58,7 @@ export class EditorController {
   can(command: EditorCommand): PreviewResult {
     if (this.disposed) return { ok: false, baseRevision: this.session.getRevision(), issues: this.blocked('CONTROLLER_DISPOSED').issues }
     const transaction = this.transaction(command)
-    const issues = commandPolicy(this.profile, this.presentation.canMutate, transaction)
+    const issues = commandPolicy(this.profile, this.presentation.canMutate, transaction, this.session.getDocument())
     return issues.length || !transaction ? { ok: !issues.length, baseRevision: this.session.getRevision(), issues } : this.session.preview(transaction)
   }
   preview(transaction: Transaction): PreviewResult { return this.can({ kind: 'commit', transaction }) }
@@ -78,7 +78,7 @@ export class EditorController {
     this.busy = true
     try {
       const transaction = this.transaction(command)
-      const issues = commandPolicy(this.profile, this.presentation.canMutate, transaction)
+      const issues = commandPolicy(this.profile, this.presentation.canMutate, transaction, this.session.getDocument())
       if (issues.length) return this.result(issues)
       if (transaction || command.kind === 'undo' || command.kind === 'redo') this.beforeWrite(command.kind === 'undo' || command.kind === 'redo' ? command.kind : 'commit')
       const result = command.kind === 'undo' ? this.session.undo() : command.kind === 'redo' ? this.session.redo() : transaction ? this.session.commit(transaction) : undefined

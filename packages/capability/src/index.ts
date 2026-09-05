@@ -121,6 +121,9 @@ function capabilityForElement(document: PpteDocument, slideId: string, element: 
     reason = `Widget fallback asset ${element.fallback.assetId} is not present in the document asset table.`
     recovery = 'Embed the fallback asset or use a host with the Widget implementation.'
   }
+  if (element.type === 'component' && element.componentType === 'core/table' && element.componentVersion === '2.0.0' && ['portable-quick-fix','portable-light-edit'].includes(target) && status !== 'missing-source') {
+    status = 'property'; reason = 'Cell values, TSV paste and basic fill style are editable; table structure requires Host.'; recovery = 'Use Host for row/column and merge edits.'
+  }
   if (element.type === 'component' && status === 'static' && !reason) {
     reason = element.componentType === 'core/video'
       ? 'Video playback is unavailable in the offline Light Edit surface; the controlled poster fallback is retained.'

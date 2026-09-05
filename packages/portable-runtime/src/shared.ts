@@ -302,6 +302,13 @@ export class PortableRuntime {
     if (this.profile !== "full-portable") return { ok: false, issues: [issue("PORTABLE_EDIT_UNSUPPORTED", "Arbitrary transactions require Full Portable.")] }
     return this.commitPortableTransaction(transaction)
   }
+  editTable(operations: import('../../schema/src/index.js').Operation[]): QuickFixResult {
+    if (!quickFixEditingEnabled(this.profile) || !operations.length || operations.some(op=>!['table.setCellValue','table.setCellStyle'].includes(op.kind))) return {ok:false,issues:[issue('PORTABLE_EDIT_UNSUPPORTED','Portable tables support values and basic styles; use Host for structure.')]}
+    const targets=operations as Array<Extract<import('../../schema/src/index.js').Operation,{kind:'table.setCellValue'|'table.setCellStyle'}>>
+    if(targets.some(op=>op.slideId!==targets[0].slideId||op.elementId!==targets[0].elementId))return {ok:false,issues:[issue('TABLE_SELECTION_INVALID','Edit one table at a time.')]}
+    const transaction: Transaction = {transactionId:`portable:table:${this.getRevision()}:${this.getHistory().length}`,baseRevision:this.getRevision(),createdAt:'1970-01-01T00:00:00.000Z',actor:{type:'human'},scope:{kind:'selection',slideIds:[targets[0].slideId],elementIds:[targets[0].elementId],permissions:['content']},changeContract:{allowedOperationKinds:['table.setCellValue','table.setCellStyle'],allowedElementIds:[targets[0].elementId],maxChangedElements:1,maxChangedSlides:1},operations}
+    return this.commitPortableTransaction(transaction)
+  }
   getLastTransaction(): Readonly<Transaction> | undefined { return this.lastTransaction ? structuredClone(this.lastTransaction) : undefined }
 
   select(target: PortableElementTarget | string): PortableSelectionResult {
