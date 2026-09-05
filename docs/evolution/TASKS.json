@@ -253,7 +253,7 @@
       "milestone": "M0",
       "priority": "P0",
       "title": "统一 Host 与 Portable 放映合同",
-      "status": "planned",
+      "status": "in_progress",
       "effort": "L",
       "ownerRole": "编辑器 / 放映",
       "dependsOn": [
@@ -287,7 +287,12 @@
         "A16"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        "tests/presentation-controller.test.ts",
+        "tests/portable-presentation.test.ts",
+        "tests/host-completion.test.ts",
+        "docs/evolution/PROGRESS.md"
+      ]
     },
     {
       "id": "C06",

@@ -23,6 +23,7 @@ export class ImeTextEditSession {
   input(content: RichTextDocument) { this.current = cloneRichText(content); assertSafeRichText(this.current) }
   isComposing() { return this.composing }
   getLocalContent(): RichTextDocument { return cloneRichText(this.current) }
+  retryAfterRejectedCommit(): void { this.finished = false }
   hasChanges(): boolean { return canonicalHash(this.initial) !== canonicalHash(this.current) }
 
   finish(transactionId: string, baseRevision: string, createdAt = new Date().toISOString()): Transaction | undefined {

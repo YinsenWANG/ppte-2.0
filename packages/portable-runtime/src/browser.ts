@@ -58,10 +58,10 @@ function show(result?: { ok: boolean; issues?: Array<{ message: string }> }) {
       n.dataset.ppteSlideId === state.slideId ? "block" : "none";
     n.style.transform = `scale(${scale})`;
     n.querySelectorAll<HTMLElement>("[data-ppte-appear-step]").forEach((e) => {
-      const visible = Number(e.dataset.ppteAppearStep) <= state.step;
+      const visible = !presenting || Number(e.dataset.ppteAppearStep) <= state.step;
       e.style.visibility = visible ? "visible" : "hidden";
       e.style.animationName =
-        visible && e.dataset.ppteAnimationEnter
+        presenting && visible && e.dataset.ppteAnimationEnter
           ? `ppte-enter-${e.dataset.ppteAnimationEnter}`
           : "none";
       e.style.animationDuration = `${Number(e.dataset.ppteAnimationDurationMs ?? 0)}ms`;
@@ -70,13 +70,13 @@ function show(result?: { ok: boolean; issues?: Array<{ message: string }> }) {
       e.style.animationFillMode = "both";
     });
     if (
-      n.dataset.ppteTransitionType &&
+      presenting && n.dataset.ppteTransitionType &&
       n.dataset.ppteTransitionType !== "none"
     ) {
       n.style.animationName = `ppte-transition-${n.dataset.ppteTransitionType}`;
       n.style.animationDuration = `${Number(n.dataset.ppteTransitionDurationMs ?? 0)}ms`;
       n.style.animationFillMode = "both";
-    }
+    } else n.style.animationName = "none";
   });
   canvas
     .querySelectorAll<HTMLElement>("[data-ppte-element-id]")
@@ -140,6 +140,7 @@ async function enterPresentation() {
   if (!pending.ok) { show(pending); return pending; }
   (document.activeElement as HTMLElement | null)?.blur();
   drag = undefined;
+  runtime.presentation.enter(() => ({ ok: true }));
   presenting = true;
   root.dataset.ppteMode = "present";
   root.querySelectorAll("details[open]").forEach(n => n.removeAttribute("open"));
@@ -153,6 +154,7 @@ async function enterPresentation() {
   return { ok: true, issues: [] };
 }
 function leavePresentation() {
+  runtime.presentation.leave();
   presenting = false;
   root.dataset.ppteMode = "edit";
   drag = undefined;
@@ -183,9 +185,9 @@ function flush(): QuickFixResult {
       "Finish the current input composition before saving.",
     );
   for (const [id, text] of [...drafts]) {
-    drafts.delete(id);
     const r = runtime.editText({ elementId: id }, text);
     if (!r.ok) return r;
+    drafts.delete(id);
   }
   return { ok: true, issues: [] };
 }
@@ -494,8 +496,9 @@ stage.addEventListener("focusout", (event) => {
     const id = n.dataset.ppteElementId!;
     if (drafts.has(id)) {
       const text = drafts.get(id)!;
-      drafts.delete(id);
-      change(runtime.editText({ elementId: id }, text));
+      const result = runtime.editText({ elementId: id }, text);
+      if (result.ok) drafts.delete(id);
+      change(result);
     }
   }
 });

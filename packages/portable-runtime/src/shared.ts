@@ -1,3 +1,4 @@
+import { PresentationController } from '../../editor-controller/src/presentation.js'
 import { canonicalJsonString, canonicalRevision, sha256HexBytes } from '../../canonical-json/src/index.js'
 import { gzipSync as portableGzip } from 'fflate'
 let gzipSync: (data: Uint8Array) => Uint8Array = portableGzip
@@ -239,6 +240,7 @@ export class PortableRuntime {
   }
 
   readonly profile: PortableProfile
+  readonly presentation = new PresentationController()
 
   getDocument(): Readonly<PpteDocument> { return this.session.getDocument() }
   getRevision(): Revision { return this.session.getRevision() }
@@ -283,6 +285,7 @@ export class PortableRuntime {
     let content
     try { content = editRichText(found.element.content, value) } catch (cause) { return { ok: false, issues: [issue('TEXT_INVALID', cause instanceof Error ? cause.message : String(cause))] } }
     const transaction = textTransaction(this.session.getRevision(), found.slideId, found.element.id, content)
+    if (!this.presentation.canMutate) return { ok: false, issues: [issue('PRESENTATION_READONLY', 'Exit presentation mode before editing.')] }
     const result = this.session.commit(transaction)
     if (result.ok) this.lastTransaction = transaction
     return { ok: result.ok, revision: result.afterRevision, issues: result.issues }
@@ -313,6 +316,7 @@ export class PortableRuntime {
       validationLevel: 'L2',
       operations,
     }
+    if (!this.presentation.canMutate) return { ok: false, issues: [issue('PRESENTATION_READONLY', 'Exit presentation mode before editing.')] }
     const result = this.session.commit(transaction)
     if (result.ok) this.lastTransaction = transaction
     return { ok: result.ok, revision: result.afterRevision, issues: result.issues }
@@ -342,6 +346,7 @@ export class PortableRuntime {
     try {
       transaction = buildFactUpdateTransaction(this.session.getDocument(), factId, value, { actor: { type: 'human', id: 'portable-quick-fix' }, requireConfirmation: false })
     } catch (cause) { return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', cause instanceof Error ? cause.message : String(cause))] } }
+    if (!this.presentation.canMutate) return { ok: false, issues: [issue('PRESENTATION_READONLY', 'Exit presentation mode before editing.')] }
     const result = this.session.commit(transaction)
     if (result.ok) this.lastTransaction = transaction
     return { ok: result.ok, revision: result.afterRevision, issues: result.issues }
@@ -428,12 +433,14 @@ export class PortableRuntime {
 
   undo(): QuickFixResult {
     if (!quickFixEditingEnabled(this.profile)) return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Viewer profile does not allow undo.')] }
+    if (!this.presentation.canMutate) return { ok: false, issues: [issue('PRESENTATION_READONLY', 'Exit presentation mode before undo.')] }
     const result = this.session.undo()
     return { ok: result.ok, revision: result.afterRevision, issues: result.issues }
   }
 
   redo(): QuickFixResult {
     if (!quickFixEditingEnabled(this.profile)) return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Viewer profile does not allow redo.')] }
+    if (!this.presentation.canMutate) return { ok: false, issues: [issue('PRESENTATION_READONLY', 'Exit presentation mode before redo.')] }
     const result = this.session.redo()
     return { ok: result.ok, revision: result.afterRevision, issues: result.issues }
   }
@@ -490,6 +497,7 @@ export class PortableRuntime {
   clickStep(): PresenterState { return this.next() }
 
   private commitPortableTransaction(transaction: Transaction): QuickFixResult {
+    if (!this.presentation.canMutate) return { ok: false, issues: [issue('PRESENTATION_READONLY', 'Exit presentation mode before editing.')] }
     const result = this.session.commit(transaction)
     if (result.ok) this.lastTransaction = transaction
     return { ok: result.ok, revision: result.afterRevision, issues: result.issues }

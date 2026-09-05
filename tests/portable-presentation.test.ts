@@ -30,6 +30,8 @@ test('portable slideshow separates editing, supports fullscreen refusal and exit
     assert.equal(await page.locator('[contenteditable=true]').count(), 0)
     assert.equal(await text.evaluate(n => getComputedStyle(n).outlineStyle), 'none')
     const before = await page.evaluate(() => (globalThis as any).PPTEPortable.getRevision())
+    const rejected = await page.evaluate(() => { const api=(globalThis as any).PPTEPortable; return [api.editText({elementId:'text_body'}, 'forbidden API edit'), api.undo(), api.redo()] })
+    assert.ok(rejected.every((result: any) => !result.ok))
     await page.keyboard.press('ControlOrMeta+z')
     await page.keyboard.type('accidental typing')
     assert.equal(await page.evaluate(() => (globalThis as any).PPTEPortable.getRevision()), before)

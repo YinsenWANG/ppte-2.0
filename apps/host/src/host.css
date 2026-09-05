@@ -113,3 +113,11 @@ button, input, textarea { font: inherit; }
 .ppte-recipe-studio{position:fixed;inset:4vh 10vw;z-index:40;overflow:auto;background:#fff;color:#172033;padding:24px;box-shadow:0 10px 70px #0007;border-radius:12px}.ppte-recipe-studio label{display:inline-flex;gap:6px;margin:8px;align-items:center}.ppte-recipe-studio textarea{display:block;width:95%;height:240px}.ppte-recipe-zones{position:relative;width:100%;aspect-ratio:16/9;background:#eef2f8;touch-action:none}.ppte-recipe-zones button{padding:2px;min-width:0;min-height:0;background:#dbeafe99}.ppte-recipe-studio svg{max-height:220px;background:#f8fafc}
 .ppte-host-inspector>section>button,.ppte-host-inspector>section>label,.ppte-host-inspector>section>select{display:block;margin:8px 0}.ppte-host-inspector button{border:1px solid #64748b;border-radius:5px;background:#1e293b;color:#f8fafc;cursor:pointer;font-size:.8rem}.ppte-host-inspector input[type=file]{display:block;max-width:100%;font-size:.75rem}.ppte-recipe-studio{color-scheme:light}.ppte-recipe-studio button{background:#e2e8f0;color:#172033}.ppte-recipe-studio .ppte-recipe-zones button{background:#dbeafe99}
 .ppte-studio-draft{overflow:hidden;background:#f8fafc;width:100%;max-width:384px}
+
+.ppte-host-app.is-presenting{grid-template-columns:1fr;grid-template-rows:1fr;background:#000;height:100dvh;overflow:hidden}
+.ppte-host-app.is-presenting .ppte-host-main{grid-column:1;grid-row:1;padding:0;background:#000}
+.ppte-presenter-controls{position:fixed;z-index:50;bottom:18px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid #ffffff20;border-radius:14px;background:#111827dd;color:#fff;opacity:0;transition:opacity .15s}
+.ppte-presenter-controls:hover,.ppte-presenter-controls:focus-within{opacity:1}
+.ppte-presenter-controls button{border:0;border-radius:8px;padding:8px 12px;background:#ffffff15;color:#fff;cursor:pointer}
+@media(prefers-reduced-motion:reduce){.ppte-presenter-controls{transition:none}.ppte-host-app.is-presenting [data-ppte-element-id],.ppte-host-app.is-presenting .ppte-slide{animation:none!important}}
+@media print{.ppte-presenter-controls{display:none!important}}
