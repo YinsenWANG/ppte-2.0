@@ -38,7 +38,7 @@ const advanced =
 const composing = new Set<string>();
 const drafts = new Map<string, string>();
 let presenting = false;
-let fullscreenOwned = false;
+let pendingPresentation = false;
 let scale = 1;
 let sequence = 0;
 let drag:
@@ -137,8 +137,11 @@ function render() {
   fit();
 }
 async function enterPresentation() {
+  if (presenting) return { ok: true, issues: [] };
+  pendingPresentation = composing.size > 0;
   const pending = flush();
   if (!pending.ok) { show(pending); return pending; }
+  pendingPresentation = false;
   (document.activeElement as HTMLElement | null)?.blur();
   drag = undefined;
   runtime.presentation.enter(() => ({ ok: true }));
@@ -149,24 +152,22 @@ async function enterPresentation() {
   stage.tabIndex = -1;
   stage.focus();
   // Slideshow mode works even when the browser refuses fullscreen.
-  try { await root.requestFullscreen(); fullscreenOwned = document.fullscreenElement === root; }
-  catch { fullscreenOwned = false; }
+  await runtime.presentation.requestFullscreen(root);
   fit();
   return { ok: true, issues: [] };
 }
 function leavePresentation() {
+  pendingPresentation = false;
   runtime.presentation.leave();
   presenting = false;
   root.dataset.ppteMode = "edit";
   drag = undefined;
   render();
   if (document.fullscreenElement === root) void document.exitFullscreen().catch(() => {});
-  fullscreenOwned = false;
   root.querySelector<HTMLButtonElement>('[data-ppte-action="fullscreen"]')?.focus();
 }
 document.addEventListener("fullscreenchange", () => {
-  if (document.fullscreenElement === root) fullscreenOwned = true;
-  else if (fullscreenOwned && presenting) leavePresentation();
+  if (runtime.presentation.fullscreenChanged(root)) leavePresentation();
   fit();
 });
 function change<T extends { ok: boolean; issues?: Array<{ message: string }> }>(
@@ -453,7 +454,7 @@ const elementTarget = (event: Event) =>
     : null;
 stage.addEventListener("click", (event) => {
   const n = elementTarget(event);
-  if (presenting) { if (!(event.target as Element).closest("a,button")) { runtime.next(); show(); } return; }
+  if (presenting) return;
   if (!editable || !n) return;
   if (event.shiftKey && runtime.profile === "full-portable") {
     const items = runtime.getSelection();
@@ -481,13 +482,12 @@ stage.addEventListener("compositionend", (event) => {
   if (n) {
     const id = n.dataset.ppteElementId!;
     composing.delete(id);
-    drafts.delete(id);
-    change(
-      runtime.editText(
-        { elementId: id },
-        n.innerText.replaceAll("\u00a0", " "),
-      ),
-    );
+    const text = n.innerText.replaceAll("\u00a0", " ");
+    drafts.set(id, text);
+    const result = runtime.editText({ elementId: id }, text);
+    if (result.ok) drafts.delete(id);
+    change(result);
+    if (result.ok && pendingPresentation && !composing.size) void enterPresentation();
   }
 });
 stage.addEventListener("focusout", (event) => {
@@ -533,7 +533,9 @@ stage.addEventListener("pointerup", () => {
 });
 window.addEventListener("resize", fit);
 document.addEventListener("keydown", (event) => {
+  if (event.isComposing) return;
   if (presenting) {
+    if (event.key !== "Escape" && (event.target as HTMLElement).closest("a,button,video,audio,input,textarea,select")) return;
     if (event.key === "Escape") { event.preventDefault(); leavePresentation(); }
     else if (["ArrowRight", "ArrowDown", "PageDown", " "].includes(event.key)) { event.preventDefault(); runtime.next(); show(); }
     else if (["ArrowLeft", "ArrowUp", "PageUp"].includes(event.key)) { event.preventDefault(); runtime.previous(); show(); }
@@ -558,6 +560,10 @@ document.addEventListener("keydown", (event) => {
     change(event.shiftKey ? runtime.redo() : runtime.undo());
   }
 });
+for (const type of ["beforeinput", "paste", "drop"]) {
+  stage.addEventListener(type, event => { if (!runtime.presentation.canMutate) event.preventDefault(); }, true);
+}
+document.addEventListener("keydown", event => { if (event.key === "Escape") pendingPresentation = false; }, true);
 const api = {
   enterPresentation,
   leavePresentation,

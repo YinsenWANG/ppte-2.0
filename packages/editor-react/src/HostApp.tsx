@@ -16,7 +16,7 @@ import { createEmptyDocument } from '../../authoring/src/default-document.js'
 export { createEmptyDocument } from '../../authoring/src/default-document.js'
 import { buildAuthoringTransaction, type AuthoringInput } from '../../authoring/src/index.js'
 import { PpteSession, type HistoryEntry } from '../../core/src/index.js'
-import { useEffect, useMemo, useRef, useState, type ChangeEvent, type CompositionEvent, type FocusEvent, type FormEvent, type KeyboardEvent, type PointerEvent as ReactPointerEvent, type ReactElement } from 'react'
+import { useLayoutEffect, useEffect, useMemo, useRef, useState, type ChangeEvent, type CompositionEvent, type FocusEvent, type FormEvent, type KeyboardEvent, type PointerEvent as ReactPointerEvent, type ReactElement } from 'react'
 import { canonicalJsonString, canonicalRevision, sha256HexBytes } from '../../canonical-json/src/index.js'
 import { readStoredZip } from '../../archive/src/index.js'
 import { buildDuplicateSlideOperation } from '../../operations/src/index.js'
@@ -66,6 +66,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
   const [notesDraft, setNotesDraft] = useState('')
   const [status, setStatus] = useState('就绪 · 本地语义文档')
   const [presenting, setPresenting] = useState(false)
+  const pendingPresentation = useRef(false)
   const presentation = useRef(new PresentationController()).current
   const [presenterState, setPresenterState] = useState<PresenterAnimationState>({ slideIndex: 0, step: 0 })
   const [historyDepth, setHistoryDepth] = useState(() => sessionRef.current?.getHistory().length ?? 0)
@@ -144,7 +145,8 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     return () => observer.disconnect()
   }, [documentNode.canvas.width])
 
-  useEffect(() => {
+  // React can replace innerHTML on any shell rerender; apply steps before paint.
+  useLayoutEffect(() => {
     const surface = renderedRef.current
     if (!surface) return
     for (const element of Array.from(surface.querySelectorAll<HTMLElement>('[data-ppte-appear-step]'))) {
@@ -164,10 +166,11 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
       slide.style.animationDuration = `${Number(slide.dataset.ppteTransitionDurationMs ?? 0)}ms`
       slide.style.animationFillMode = 'both'
     } else if (slide) slide.style.animationName = 'none'
-  }, [presenting, presenterState, activeSlideId, documentNode])
+  })
 
   const renderOptions: RenderOptions = useMemo(() => ({ editable: storageReady && !presenting, assetSources }), [assetSources,storageReady,presenting])
   const slideHtml = useMemo(() => activeSlideId ? renderSlideHtml(documentNode, activeSlideId, renderOptions) : '', [activeSlideId, documentNode, renderOptions])
+  const slideMarkup = useMemo(() => ({ __html: slideHtml }), [slideHtml])
   const thumbnails = useMemo(() => documentNode.slideOrder.map((slideId) => ({ slideId, html: renderThumbnailHtml(documentNode, slideId, assetSources) })), [assetSources, documentNode])
   const selectedOverlay = useMemo(() => buildSelectionOverlay(documentNode, { slideId: activeSlideId, elementIds: activeElementIds }), [activeElementIds, activeSlideId, documentNode])
 
@@ -179,14 +182,14 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     setRedoDepth(session.getRedoHistory().length)
   }
 
-  function commitTransaction(transaction: Transaction, successMessage?: string): boolean {
+  function commitTransaction(transaction: Transaction, successMessage?: string, preserveDraft = false): boolean {
+    if (!presentation.canMutate) return false
     try {
-      if(!presentation.canMutate)throw new Error('请先退出放映再修改内容')
       if(!storageReady)throw new Error('本地保护未就绪，暂不能修改')
       recoveryRef.current!.action='commit'
       const result = sessionRef.current?.commit(transaction)
       if (!result?.ok) {
-        setRenderEpoch(n=>n+1)
+        if (!preserveDraft) setRenderEpoch(n=>n+1)
         setStatus(`操作未提交 · ${result?.issues.map((issue) => issue.message).join('; ') ?? '未知错误'}`)
         return false
       }
@@ -195,7 +198,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
       setStatus(result.issues.length ? result.issues.map(i=>i.message).join('; ') : (successMessage ?? '修改已本地保护'))
       return true
     } catch (cause) {
-      setRenderEpoch(n=>n+1)
+      if (!preserveDraft) setRenderEpoch(n=>n+1)
       setStatus(`操作未提交 · ${cause instanceof Error ? cause.message : String(cause)}`)
       return false
     }
@@ -251,8 +254,9 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     if (!session) return
     session.endComposition(editRichText(target.element.content, target.node.innerText.replaceAll('\u00a0', ' ')))
     const transaction = session.finish(nextOperationId('text-ime'), canonicalRevision(documentNode), now())
-    if (transaction && !commitTransaction(transaction, '输入法编辑已作为一个语义操作提交')) { session.retryAfterRejectedCommit(); return }
+    if (transaction && !commitTransaction(transaction, '输入法编辑已作为一个语义操作提交', true)) { session.retryAfterRejectedCommit(); return }
     editSessions.current.delete(target.element.id)
+    if (pendingPresentation.current) togglePresenter()
   }
 
   function onBlur(event: FocusEvent<HTMLDivElement>): void {
@@ -405,30 +409,32 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     }
   }
 
-  function undo(): void {
-    if (!presentation.canMutate) return
+  function undo(): boolean {
+    if (!presentation.canMutate) return false
     recoveryRef.current!.action='undo'
     const result = sessionRef.current?.undo()
     if (!result?.ok) {
       setStatus(`Undo 不可用 · ${result?.issues.map((issue) => issue.message).join('; ') ?? '没有可撤销操作'}`)
-      return
+      return false
     }
     syncSessionState()
     setSaveLabel('可恢复 · 尚未写入项目文件')
     setStatus('已撤销最近一个语义操作')
+    return true
   }
 
-  function redo(): void {
-    if (!presentation.canMutate) return
+  function redo(): boolean {
+    if (!presentation.canMutate) return false
     recoveryRef.current!.action='redo'
     const result = sessionRef.current?.redo()
     if (!result?.ok) {
       setStatus(`Redo 不可用 · ${result?.issues.map((issue) => issue.message).join('; ') ?? '没有可重做操作'}`)
-      return
+      return false
     }
     syncSessionState()
     setSaveLabel('可恢复 · 尚未写入项目文件')
     setStatus('已重做最近一个语义操作')
+    return true
   }
 
   async function openFile(event: ChangeEvent<HTMLInputElement>): Promise<void> {
@@ -531,7 +537,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     for (const session of editSessions.current.values()) if(session.isComposing()) throw new Error('请先完成当前输入法组合，再保存。')
     for (const [id,editor] of editSessions.current) {
       const tx=editor.finish(nextOperationId('save-text'),sessionRef.current!.getRevision(),now())
-      if(tx&&!commitTransaction(tx)){editor.retryAfterRejectedCommit();throw new Error('文字保存未通过校验，草稿已保留。')}
+      if(tx&&!commitTransaction(tx, undefined, true)){editor.retryAfterRejectedCommit();throw new Error('文字保存未通过校验，草稿已保留。')}
       editSessions.current.delete(id)
     }
   }
@@ -603,29 +609,71 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     if(commitOperations([op],'调整页面'))setActiveSlideIndex(Math.max(0,kind==='delete'?activeSlideIndex-1:op.kind==='slide.move'?op.index:0))
   }
 
+  function leavePresenter(): void {
+    pendingPresentation.current = false
+    presentation.leave()
+    setPresenting(false)
+    const surface = renderedRef.current?.closest<HTMLElement>('[data-ppte-host]')
+    if (surface && document.fullscreenElement === surface) void document.exitFullscreen().catch(() => {})
+    requestAnimationFrame(() => { if (presentation.canMutate) document.querySelector<HTMLButtonElement>('[data-ppte-action="present"]')?.focus() })
+  }
+
+  useEffect(() => {
+    const changed = () => {
+      const surface = renderedRef.current?.closest<HTMLElement>('[data-ppte-host]')
+      if (surface && presentation.fullscreenChanged(surface)) leavePresenter()
+    }
+    const blockInput = (event: Event) => { if (!presentation.canMutate && (event.target as Element)?.closest('[data-ppte-stage]')) event.preventDefault() }
+    document.addEventListener('beforeinput', blockInput, true)
+    document.addEventListener('fullscreenchange', changed)
+    return () => { document.removeEventListener('fullscreenchange', changed); document.removeEventListener('beforeinput', blockInput, true) }
+  }, [presentation])
+
+  // The browser API uses the same guarded command boundary as the UI.
+  useEffect(() => {
+    const api = {
+      getMode: () => presentation.isPresenting ? 'present' : 'edit',
+      getRevision: () => sessionRef.current!.getRevision(),
+      getHistory: () => structuredClone(sessionRef.current!.getHistory()),
+      commit: (transaction: Transaction) => ({ ok: commitTransaction(transaction) }),
+      undo: () => ({ ok: undo() }),
+      redo: () => ({ ok: redo() }),
+      enterPresentation: () => { if (!presentation.isPresenting) togglePresenter() },
+      leavePresentation: leavePresenter,
+    }
+    const scope = globalThis as typeof globalThis & { PPTEHost?: typeof api }
+    scope.PPTEHost = api
+    return () => { if (scope.PPTEHost === api) delete scope.PPTEHost }
+  })
+
   function togglePresenter(): void {
-    if (presentation.isPresenting) { presentation.leave(); setPresenting(false); setStatus('已退出演示模式'); return }
+    if (presentation.isPresenting) { leavePresenter(); return }
+    pendingPresentation.current = [...editSessions.current.values()].some(session => session.isComposing())
+    if (pendingPresentation.current) return
     try {
       if (!presentation.enter(() => { flushHostEdits(); return { ok: true } })) return
       dragRef.current = undefined; setDragFrame(undefined); setPendingEdit(undefined); setReviewing(false); setStudio(false)
-      setPresenting(true); requestAnimationFrame(() => renderedRef.current?.closest<HTMLElement>('[data-ppte-host]')?.focus()); setStatus('演示模式 · 使用方向键翻页，Esc 退出')
+      setPresenting(true); requestAnimationFrame(() => { if (!presentation.isPresenting) return; const surface = renderedRef.current?.closest<HTMLElement>('[data-ppte-host]'); surface?.focus(); if (surface) void presentation.requestFullscreen(surface) }); setStatus('演示模式 · 使用方向键翻页，Esc 退出')
     } catch (cause) { setStatus(String(cause)) }
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLDivElement>): void {
+    if (event.key === 'Escape') pendingPresentation.current = false
     if(!presenting){if(event.key==='Escape'){const target=textTarget(event);if(target){editSessions.current.get(target.element.id)?.cancel();editSessions.current.delete(target.element.id);setRenderEpoch(n=>n+1);target.node.blur();event.preventDefault();setStatus('已取消本次文字编辑')}}if((event.metaKey||event.ctrlKey)&&event.key==='s'){event.preventDefault();void saveCopy()}return}
+    if (event.key !== 'Escape' && (event.target as HTMLElement).closest('a,button,video,audio,input,textarea,select')) return
     if (event.key === 'ArrowRight' || event.key === ' ') { event.preventDefault(); nextPresenter() }
     else if (event.key === 'ArrowLeft') { event.preventDefault(); previousPresenter() }
-    else if (event.key === 'Escape') { presentation.leave(); setPresenting(false) }
+    else if (event.key === 'Escape') { leavePresenter() }
   }
 
   useEffect(() => {
     if (!presenting) return
     const handle = (event: globalThis.KeyboardEvent) => {
       if (event.isComposing) return
+      if (event.key !== 'Escape' && (event.target as HTMLElement).closest('a,button,video,audio,input,textarea,select')) return
       if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(event.key)) { event.preventDefault(); event.stopPropagation(); nextPresenter() }
       else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(event.key)) { event.preventDefault(); event.stopPropagation(); previousPresenter() }
-      else if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); presentation.leave(); setPresenting(false) }
+      else if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); leavePresenter() }
       else if ((event.ctrlKey || event.metaKey) && ['z', 'y'].includes(event.key.toLowerCase())) { event.preventDefault(); event.stopPropagation() }
     }
     window.addEventListener('keydown', handle, true)
@@ -646,7 +694,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
       <button type="button" data-ppte-action="save" onClick={() => void saveCopy()}>保存 PPTe 项目 (.ppte)</button>
       <button type="button" data-ppte-action="save-editable" onClick={saveEditable}>保存可编辑 HTML</button>
       <label className="ppte-toolbar-label">预览 Agent 修改<input type="file" accept=".json" onChange={previewAgentEdit}/></label>
-      <button type="button" data-ppte-action="present" onClick={togglePresenter}>{presenting ? 'Exit' : 'Present'}</button>
+      <button type="button" data-ppte-action="present" onMouseDown={event => event.preventDefault()} onClick={togglePresenter}>{presenting ? 'Exit' : 'Present'}</button>
       <button onClick={()=>setReviewing(v=>!v)}>比较修订副本</button><label className="ppte-toolbar-label">预览补丁<input type="file" accept=".patch" onChange={e=>void patchInput(e.target.files?.[0])}/></label><span className="ppte-host-file-help" title="PPTe 源项目需要由 PPTe Host 打开；浏览器可编辑副本请使用 Portable 交付">先打开 Host，再选 .ppte</span>
       <span className="ppte-host-status" data-ppte-status>{status}</span>
     </header>}
@@ -659,9 +707,9 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
       </div>
     </aside>}
     {presenting && <nav className="ppte-presenter-controls" aria-label="放映控制"><button onClick={previousPresenter} aria-label="上一页">←</button><span>{presenterState.slideIndex + 1} / {documentNode.slideOrder.length}</span><button onClick={nextPresenter} aria-label="下一页">→</button><button data-ppte-action="exit-present" onClick={togglePresenter}>退出放映</button></nav>}
-    <main className="ppte-host-main" data-ppte-stage>
-      <div className="ppte-canvas-wrap" ref={renderedRef} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp} onDoubleClick={(event) => { if (!presentation.canMutate) return; const target = textTarget(event); if (target) { setSelection({slideId:activeSlideId,elementIds:[target.element.id],primaryElementId:target.element.id}); target.node.focus(); setStatus('文字编辑中 · compositionend 后提交') } }} onCompositionStart={onCompositionStart} onCompositionEnd={onCompositionEnd} onInput={onInput} onBlur={onBlur}>
-        <div key={renderEpoch} className="ppte-rendered-slide" data-ppte-canvas-scale={canvasScale} style={{ ['--ppte-scale' as string]: canvasScale }} dangerouslySetInnerHTML={{ __html: slideHtml }} />
+    <main className="ppte-host-main" data-ppte-stage onPasteCapture={event => { if (!presentation.canMutate) event.preventDefault() }} onDropCapture={event => { if (!presentation.canMutate) event.preventDefault() }}>
+      <div className="ppte-canvas-wrap" style={{ aspectRatio: `${documentNode.canvas.width} / ${documentNode.canvas.height}`, ['--ppte-aspect' as string]: documentNode.canvas.width / documentNode.canvas.height }} ref={renderedRef} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp} onDoubleClick={(event) => { if (!presentation.canMutate) return; const target = textTarget(event); if (target) { setSelection({slideId:activeSlideId,elementIds:[target.element.id],primaryElementId:target.element.id}); target.node.focus(); setStatus('文字编辑中 · compositionend 后提交') } }} onBeforeInput={event => { if (!presentation.canMutate) event.preventDefault() }} onPaste={event => { if (!presentation.canMutate) event.preventDefault() }} onDrop={event => { if (!presentation.canMutate) event.preventDefault() }} onCompositionStart={onCompositionStart} onCompositionEnd={onCompositionEnd} onInput={onInput} onBlur={onBlur}>
+        <div key={renderEpoch} className="ppte-rendered-slide" data-ppte-canvas-scale={canvasScale} style={{ ['--ppte-scale' as string]: canvasScale }} dangerouslySetInnerHTML={slideMarkup} />
         {!presenting && selectedOverlay.map((item) => {
           const moving=dragRef.current
           const frame = moving&&dragFrame&&moving.memberIds?.includes(item.elementId) ? {...item.frame,x:item.frame.x+dragFrame.x-moving.originalFrame.x,y:item.frame.y+dragFrame.y-moving.originalFrame.y} : item.elementId === moving?.elementId && dragFrame ? dragFrame : item.frame

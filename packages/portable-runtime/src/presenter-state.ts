@@ -33,5 +33,5 @@ export function retreatPresenterState(document: PpteDocument, state: PresenterAn
   const previousStep = steps.filter((candidate) => candidate < current.step).at(-1)
   if (previousStep !== undefined) return { slideIndex: current.slideIndex, step: previousStep }
   if (current.step > 0) return { slideIndex: current.slideIndex, step: 0 }
-  return current.slideIndex > 0 ? { slideIndex: current.slideIndex - 1, step: 0 } : current
+  return current.slideIndex > 0 ? { slideIndex: current.slideIndex - 1, step: animationSteps(document, document.slideOrder[current.slideIndex - 1] ?? '').at(-1) ?? 0 } : current
 }

@@ -121,3 +121,7 @@ button, input, textarea { font: inherit; }
 .ppte-presenter-controls button{border:0;border-radius:8px;padding:8px 12px;background:#ffffff15;color:#fff;cursor:pointer}
 @media(prefers-reduced-motion:reduce){.ppte-presenter-controls{transition:none}.ppte-host-app.is-presenting [data-ppte-element-id],.ppte-host-app.is-presenting .ppte-slide{animation:none!important}}
 @media print{.ppte-presenter-controls{display:none!important}}
+
+.ppte-host-app.is-presenting .ppte-canvas-wrap{width:min(100%,calc(100dvh * var(--ppte-aspect)));flex:none}
+.ppte-host-app.is-presenting .ppte-slide{box-shadow:none}
+.ppte-host-app.is-presenting [data-ppte-element-id]{outline:none!important;cursor:default}
