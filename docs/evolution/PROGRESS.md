@@ -41,3 +41,9 @@
 - 浏览器实时 payload 不继续携带旧成品 identity，保存时重新计算。
 
 验证：完整测试 116/116 通过；3 项身份回归覆盖脚本改变、redo-only 历史、旧副本保留及短名冲突；schema/example 和源码 guard 通过。C04 仍需打包安装及发布门禁验收。
+
+## 2026-09-06：C03 完整验收
+
+实现提交 `d8240d58b73578e1f9a8c3f2778c5c1cc8928e2b`。CLI/Host 共享快照与历史分层诊断，精确基准逐步重建，另存副本及报告；浏览器 recoverySessionId 保全原 tail/base，首次写入核对源状态。损坏资源仅只读诊断。
+
+验证：typecheck/build 通过，测试 145/145（基线 137，新增 8），黑盒 69 green / 0 red（基线相同，无新增红项）。`tests/history-repair.test.ts` 共 12 项，含真实 SIGKILL 和 Chromium Host/Portable/IndexedDB 测试。逐条件证据和实际浏览器 trace/screenshot 摘要见 `quality/c03-verification.json`。本记录仅关闭 C03，不声明整个 A03/A04 跨任务矩阵或发布阶段完成。

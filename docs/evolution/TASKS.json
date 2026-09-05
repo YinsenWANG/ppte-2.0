@@ -306,7 +306,7 @@
       "milestone": "M0",
       "priority": "P0",
       "title": "分层诊断与保全式历史恢复",
-      "status": "in_progress",
+      "status": "done",
       "effort": "L",
       "ownerRole": "Core / 文件",
       "dependsOn": [
@@ -343,7 +343,67 @@
       "releaseRequired": true,
       "evidence": [
         "tests/history-repair.test.ts",
-        "docs/evolution/PROGRESS.md"
+        "tests/host-completion.test.ts",
+        "docs/evolution/quality/c03-verification.json",
+        {
+          "commit": "d8240d58b73578e1f9a8c3f2778c5c1cc8928e2b",
+          "criteria": {
+            "1": {
+              "tests": [
+                "A03/A04 shared diagnosis exposes valid, absent, invalid and unsupported without trusting damaged history checksums",
+                "A04 Host offers read-only inspection and separate downloads, with incomplete files restricted to diagnosis"
+              ],
+              "result": "Shared CLI/Host diagnosis separates snapshot integrity from history; strict opening continues to reject damaged checksums."
+            },
+            "2": {
+              "tests": [
+                "assessment keeps only the verified contiguous suffix and never mutates history",
+                "redo assessment preserves only the reachable prefix of the redo stack",
+                "history rebuild requires an exact base and exact final snapshot",
+                "A04 exact rebuild rejects wrong document identity and every incorrect recorded intermediate revision"
+              ],
+              "result": "Stop on first bad entry. Rebuild checks exact document identity, beforeRevision, each recorded afterRevision, and final head. Redo corruption preserves valid undo."
+            },
+            "3": {
+              "tests": [
+                "repair saves a verified new copy and report while preserving source and journal byte for byte",
+                "A04 repair failures and actual process crashes preserve original, sidecar and CAS at all publication stages",
+                "A03/A04 CLI diagnoses then saves a separate recovery package and report",
+                "A04 Host offers read-only inspection and separate downloads, with incomplete files restricted to diagnosis"
+              ],
+              "result": "Exclusive save-as directory, original/report/copy preservation, injected failure and real SIGKILL before write/after temporary evidence/before publication; Host copy/report download and denied-download preservation."
+            },
+            "4": {
+              "tests": [
+                "A04 real browser recoverySessionId isolates original tail/base and rejects quota, missing resources and corrupt snapshots",
+                "A04 unknown operations and malformed redo are diagnostic; incomplete content cannot become a recovered project",
+                "A04 generated Portable shows read-only diagnostics for incomplete resources and invalid history",
+                "Host persists edits/undo/redo, rejects stale tabs, retains marks, moves groups, and reviews conflicts"
+              ],
+              "result": "Recovery forks tail/base before attaching a writer; first-write source check preserves stale-tab rejection. Missing resources or invalid snapshots cannot produce editable recovery."
+            }
+          },
+          "verification": {
+            "typecheck": "pass",
+            "build": "pass",
+            "tests": {
+              "baseline": 137,
+              "final": 145,
+              "delta": 8,
+              "failed": 0,
+              "skipped": 0,
+              "testFile": "tests/history-repair.test.ts",
+              "focusedTests": 12
+            },
+            "blackbox": {
+              "baselineGreen": 69,
+              "baselineRed": 0,
+              "finalGreen": 69,
+              "finalRed": 0,
+              "newReds": 0
+            }
+          }
+        }
       ]
     },
     {
