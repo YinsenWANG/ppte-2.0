@@ -90,11 +90,12 @@ export interface DeliveryResult {
 export function readCheckpointResources(
   target: string,
   document: PpteDocument,
+  resolveBlob?: (hash:string)=>Uint8Array|undefined,
 ): CheckpointResources {
   const archive = readStoredZip(new Uint8Array(readFileSync(target)));
   const assetBytes: Record<string, Uint8Array> = {};
   for (const asset of Object.values(document.assets)) {
-    const data = archive.get(asset.path);
+    const data = resolveBlob?.(asset.hash) ?? archive.get(asset.path);
     if (!data)
       throw new Error(`ASSET_MISSING: checkpoint does not contain ${asset.id}`);
     assetBytes[asset.id] = new Uint8Array(data);
@@ -102,7 +103,7 @@ export function readCheckpointResources(
   const fontBytes: Record<string, Uint8Array> = {};
   for (const font of Object.values(document.fonts)) {
     if (font.source !== "embedded") continue;
-    const data = archive.get(font.path ?? `fonts/${font.id}.woff2`);
+    const data = (font.hash ? resolveBlob?.(font.hash) : undefined) ?? archive.get(font.path ?? `fonts/${font.id}.woff2`);
     if (!data)
       throw new Error(`FONT_MISSING: checkpoint does not contain ${font.id}`);
     fontBytes[font.id] = new Uint8Array(data);

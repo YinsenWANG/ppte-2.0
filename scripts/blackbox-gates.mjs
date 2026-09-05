@@ -425,6 +425,7 @@ async function runHostJourney(ctx, options = {}) {
   return withHostBrowser(async (page) => {
     const evidence = {}
     await page.locator('[data-ppte-action="new"]').click()
+    await page.waitForFunction(() => document.querySelector('[data-ppte-host]')?.getAttribute('data-ppte-ready') === 'true')
     evidence.created = await page.locator('[data-ppte-host]').getAttribute('data-ppte-slide-count')
 
     await page.locator('input[data-ppte-action="agent-source"]').setInputFiles({ name: 'quarterly-design.json', mimeType: 'application/json', buffer: readFileSync(join(ROOT, 'examples', 'quarterly-design.json')) })
@@ -626,7 +627,7 @@ function runPythonNativeChart(pptxPath) {
 }
 
 function runPdftotext(pdfPath) {
-  const result = spawnSync('pdftotext', [pdfPath, '-'], { cwd: ROOT, encoding: 'utf8' })
+  const result = spawnSync('pdftotext', ['-raw', pdfPath, '-'], { cwd: ROOT, encoding: 'utf8' })
   if (!result.error && result.status === 0) return `${result.stdout ?? ''}${result.stderr ?? ''}`
   if (result.error?.code !== 'ENOENT') {
     const raw = `${result.stdout ?? ''}${result.stderr ?? ''}`
@@ -1160,8 +1161,9 @@ register('export', '20', 'PDF preserves Chinese and emoji text.', 'User exports 
     const path = join(directory, 'semantic.pdf')
     writeFileSync(path, exported.bytes)
     const extracted = ctx.runPdftotext(path)
-    // pdftotext may segment a rotated baseline into multiple layout lines.
-    // Ignore layout whitespace, but still require every authored code point in order.
+    // Read PDF content-stream order (-raw), not Poppler's geometric reading-order
+    // heuristic, which interleaves rotated lines. Require every authored code
+    // point in order; PNG golden checks independently verify visual placement.
     const normalized = extracted.replace(/\s+/gu, '')
     ctx.expectGate(normalized.includes('年度经营回顾') && normalized.includes('第二段：😀') && !normalized.includes('?'), 'PDF text extraction lost authored Unicode content.', { extracted, normalized })
     return { extracted }
@@ -1602,6 +1604,7 @@ register('section-41', '§41-A', 'Scenario A: AI new presentation starts in a re
 register('section-41', '§41-B', 'Scenario B: human small edit crosses the browser transaction boundary.', 'User double-clicks a text box, enters IME text, sees no intermediate commits, then saves and reopens.', 'Chromium exposes editable text and save/reopen controls for the file journey', async (ctx) => {
   return withHostBrowser(async (page) => {
     await page.locator('[data-ppte-action="new"]').click()
+    await page.waitForFunction(() => document.querySelector('[data-ppte-host]')?.getAttribute('data-ppte-ready') === 'true')
     const title = page.locator('[data-ppte-element-id="text_title"]').first()
     await title.dblclick()
     await title.dispatchEvent('compositionstart')

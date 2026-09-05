@@ -1,56 +1,42 @@
-# Product completion repair — 2026-09-05
+# Product completion audit remediation — 0.8.0
 
-This branch includes the existing delivery-layer work from PR #1 and repairs
-the product gaps found against v2.3. It is a release candidate, not a claim
-that every future feature or every Agent host has received live acceptance.
+Baseline: `7fcf43a` on `fix/product-completion`, reviewed against the original v2.3 plan and the user's npm + native Skill integration decision. This document records implemented work and observed acceptance; it does not turn untested integrations into a blanket “100% complete” claim.
 
-## Repairs
+## Implemented audit fixes
 
-| Audit finding | Implemented behavior | Evidence |
-| --- | --- | --- |
-| Host “generate ten pages” duplicated a template using an uploaded filename | Existing host Agent authors real Presentation IR; shared authoring compiler imports distinct content, Sources/Facts/resources, rejects malformed/overflowing designs before mutation | Quarterly source brief and ten-slide design fixture; CLI workflow test; §41-A checks actual values and different content |
-| Host had its own operation/session implementation | React Host uses `PpteSession`; inspector exposes geometry, text/style, crop, chart cells, component props and flat-group operations; Agent edits are previewed before acceptance | Existing Host/IME/undo black-box journeys, shared Core tests |
-| Portable HTML shipped a separate operation interpreter | Browser entry bundles the same Core, contract checks, renderer, history and file codec | Browser test rejects locked text/invalid crop, visibly redraws an edited chart, saves/reopens and undoes |
-| Crop/chart buttons made predetermined changes | Real input dialogs accept crop bounds, every chart cell and rotation; changes rerender from the semantic Document | Browser interaction test |
-| npm/Skill use required stdio MCP | Packaged CLI supports compile, inspect, schema, query/propose tools, preview/commit, persisted undo/redo, deliver, export, Host and native Skill installation | Install local `.tgz` with `--omit=optional`, invoke real `bin` symlink, compile/deliver and install Skill/Host |
-| Short CLI processes lose session history or race | Checkpoints retain undo and redo; commit receipt binds revisions/transaction/scope; project writers hold exclusive locks; stale edits fail | Separate-process workflow, stale receipt, changed receipt, scope and lock tests |
-| Compound authoring history failed reopening | Restore replays forward from the reconstructed before-snapshot; inverses preserve absent optional Source/Fact collections exactly | Compile → checkpoint → reopen → preview → commit → undo → redo test |
-| Default new project could not deliver due to undeclared Inter font | Default uses an explicitly declared system sans-serif family; custom embedded fonts still require coverage/resources | New/compile and real packaged delivery |
-| GA-A latency budgets failed | Clone once per transaction, reuse validated apply result inside commit, cache frozen snapshot, compare JSON fields directly rather than hashing every subtree; keep external canonical revisions | Original capacity and budget gate passes without relaxed limits or special V8 flags |
-| Black-box job could be skipped while CI appeared successful | Independent required job, hard infrastructure preflight, explicit CJK font dependencies, retained JSON evidence; source guard fails if ripgrep is missing | Updated CI workflow; local complete black-box run |
+| Audit finding | Delivered behavior | Evidence |
+|---|---|---|
+| Browser edits lost on refresh | IndexedDB base/resources plus synchronous checksummed localStorage journal before Core commit; refresh restores history and redo; damaged data remains read-only | `tests/host-completion.test.ts` exercises edit/reload/undo/reload/redo, stale tabs and corrupted journal |
+| Save/open race | Recovery checkpoint and resource writes are serialized; immediate reopen waits for checkpoint completion | §41-B real IME → download → immediate reopen → undo |
+| Rich text marks lost | Unicode-aware text edits preserve unaffected paragraphs, runs, marks and list metadata in Host and Portable | Pure text identity/marks test and browser save/reopen assertions |
+| Groups edited only first member | First selection targets the whole group; Alt/double-click targets a member; move/resize emits group Operations | Browser inspector group geometry + existing group inverse black-box checks |
+| Missing editing affordances | Page delete/order, align/distribute, presets/reset, mark/paragraph controls, image replacement, explicit fit/clip, Escape cancel | Host controls use Core transactions; geometry/text regression |
+| Missing Review surface | Two-/three-way field comparison, explicit local/revised decisions, conflicts, preview/accept/cancel, patch upload/export with resources | Actual conflicting title/body revisions accepted selectively, then undone |
+| Missing design entry points | Content-preserving layout and protected-element regeneration preview; accepting uses the same Core revision | Existing compiler scope/anchor tests plus Host preview path |
+| Missing Recipe Studio | Drag/numeric zones, full declarative spec edit, immutable local versions/rollback/import/export, boundary corpus, rendered draft previews, diagnostics and downloadable snapshots; baseline hash comparison; local confirmed-use counts | Browser drag/save/reload and 17-case corpus test; no executable recipe imports |
+| Fonts absent from Host | Embedded FontFaces mounted before load; actual browser glyph bounds measured after fonts settle, explicit fit action | Rendering inspection; deterministic non-browser metrics retained as a separate diagnostic |
+| Unicode PDF gate red | Content-stream-order extraction with `pdftotext -raw` avoids geometrical interleaving of rotated lines; exact CJK/emoji content assertion retained | Full `export:1` gate green; independent PNG visual gates unchanged |
+| Native review tools missing | CLI `validate`, `diff`, `patch-create`, `patch-preview`; receipts bind patch bytes; CAS persists old/new resource versions for recovery and undo | Native resource replacement patch → commit → fresh-process undo/redo |
+| Unknown schema handling | Unsupported versions offer original-data read-only inspection and original-file download; active project is unchanged | Future-version browser regression |
+| Only canned Agent authoring evidence | This Codex session read project material, authored a new ten-slide, multiple-layout IR and exercised installed CLI compile/validate/inspect/deliver/skill-install/host | `examples/acceptance/project-brief.md`, `project-design.json`, `native-run.json` |
 
-## Local verification
+## Acceptance recorded locally
 
-- Node 24.19, pnpm 11.19; typecheck, recursive typecheck and schema/source guards.
-- 97 tests passed, zero failures or skips.
-- 69 independent black-box cases passed, zero red cases.
-- GA-A original corpus: 30 slides, 900 elements, 120 groups, 50 MiB assets,
-  20 fonts. Latest p95: human commit 81.5 ms / 100 ms, text 28.8 / 150,
-  undo 37.9 / 100, redo 28.6 / 100, checkpoint 1001 / 3000.
-  These are local measurements, not a guarantee for every machine.
-- Actual packed CLI installed without optional dependencies; basic commands
-  work without browser installation. Tarball was approximately 0.88 MB before
-  the final documentation rebuild; package output reports exact size.
-- Local browser was Chromium 149 because the standard Playwright CDN download
-  was unavailable in this environment. CI installs its own matching browser
-  and runs Node 22 independently. Local CJK verification used Noto Sans SC;
-  CI installs Noto CJK. A rotated PDF baseline can be split by `pdftotext`, so
-  that assertion normalizes layout whitespace while requiring the full
-  Chinese strings and emoji in their authored order.
+- Full tests: 100 passed, 0 failed. Includes browser-driven and cross-process regression.
+- Full black-box suite: 69 green, 0 red; original §41 A–J groups included. The fixed-file §41-A is supplemented by the separate current-host authoring run, not relabeled as a model call.
+- Root and workspace type checks, 15 schema/example validations and source guards passed.
+- Original GA-A capacity/performance budgets passed using the standard Node runtime: 30 slides, 900 elements, 120 groups, 50 MiB assets, 20 fonts.
+- `ppte-cli@0.8.0` tarball installed into an isolated prefix with `--omit=optional`; native compile/validate/inspect/HTML delivery/Skill installation/Host generation passed without starting MCP.
+- New ten-slide project compiled and delivered successfully; representative PNG reviewed visually. Rendering exports preserve their explicit rasterization/degradation reports.
 
-## Remaining release boundaries
+See `product-acceptance-2026-09-05.json` for compact machine-readable evidence. Remote CI is an additional platform check, linked from the pull request; local results are not substituted for its status.
 
-1. Actual model-driven authoring in each target Agent client still needs a
-   live integration run. The ten-page acceptance checks compilation of a
-   source-backed design, not a claim that an unconfigured external model ran.
-2. npm registry publication and a public package name are not established by
-   a local tarball. Do not tell users to execute an unverified registry name.
-3. CLI requires host shell execution. MCP-only hosts use the optional adapter.
-   stdio MCP is normally a client-launched subprocess, not a separate network
-   service; it retains tool discovery and session benefits.
-4. System-font appearance depends on the receiving machine. Embed licensed
-   fonts with glyph coverage when exact cross-machine typography is required.
-5. Editable HTML is a local copy. Reconciliation uses existing review/patch
-   tools; this change does not implement live cloud sync, CRDTs or multiplayer.
-6. The browser editor still exists for human edits. Replacing MCP changes
-   Agent integration, not the need for the editing UI or the shared Core.
+## Integration and format boundaries
+
+The supported primary path is npm CLI + native Skill, not a model service or MCP daemon. The optional stdio adapter remains tested independently. Browser storage belongs to one editor URL/profile; clearing it removes recovery data. Save a portable/project copy for durable transfer. Keep the CLI `.cas` and `.journal` siblings while a project has active recovery/history resource dependencies.
+
+The compiler's font metrics are deterministic reference metrics. The Host now offers actual-browser checks, but this is not a claim that every operating system/font renders identically. PNG and image PPTX are raster outputs; semantic PPTX supports the documented subset and reports degradation. Office/Keynote application-specific visual certification was not performed in this environment.
+
+Recipe corpus failures stay visible. A sample without an image does not certify image-ratio handling; draft hashes are deterministic layout regression snapshots, not a claim of cross-platform pixel identity. Local acceptance counts are only this browser's confirmed applications.
+
+The current Codex integration was exercised. Claude Code and Cherry Studio were not claimed as live-tested clients. The npm tarball is an installable release candidate, not a public npm registry publication. No external account, public package identity or release credentials were invented. Unsupported future versions are inspected read-only; no speculative downgrade or destructive migration is offered.

@@ -14,6 +14,7 @@ import { AgentToolServer } from "../../agent-tools/src/index.js";
 import {
   openCheckpoint,
   writeCheckpoint,
+  ContentAddressedStore,
 } from "../../file-format/src/index.js";
 import { inferCompatibilityProfile } from "../../compatibility/src/index.js";
 import {
@@ -64,7 +65,9 @@ export function openFileSession(
   options: { readonly?: boolean; scope?: TransactionScope } = {},
 ) {
   const target = resolve(path);
+  const cas=existsSync(`${target}.cas`)||!options.readonly?new ContentAddressedStore(`${target}.cas`):undefined
   const opened = openCheckpoint(target, {
+    cas,
     recovery: options.readonly ? "ignore" : "recover",
     journalPath: `${target}.journal`,
   });
@@ -76,7 +79,7 @@ export function openFileSession(
       "RECOVERY_REJECTED: " +
         opened.recovery.issues.map((i) => i.message).join("; "),
     );
-  const resources = readCheckpointResources(target, opened.document);
+  const resources = readCheckpointResources(target, opened.document, hash=>cas?.get(hash));
   if (options.readonly) {
     const session = new PpteSession(opened.document);
     return {
@@ -86,6 +89,7 @@ export function openFileSession(
       path: target,
     };
   }
+  for(const bytes of [...Object.values(resources.assetBytes),...Object.values(resources.fontBytes)])cas!.put(bytes);
   const journalPath = `${target}.journal`;
   const existing = readJournal(journalPath);
   const journal = new RecoveryJournal(
@@ -104,7 +108,8 @@ export function openFileSession(
     checkpoint: {
       write: (document, destination, _, recent) =>
         writeCheckpoint(document, String(destination), {
-          ...resources,
+          assetBytes:Object.fromEntries(Object.values(document.assets).map(a=>[a.id,cas?.get(a.hash)??resources.assetBytes[a.id]])),
+          fontBytes:Object.fromEntries(Object.values(document.fonts).map(f=>[f.id,(f.hash?cas?.get(f.hash):undefined)??resources.fontBytes[f.id]])),
           redoHistory: [...session.getRedoHistory()],
           recentTransactions: recent ? [...recent] : [],
           compatibilityProfile: inferCompatibilityProfile(document),
@@ -117,6 +122,7 @@ export function openFileSession(
     session,
     agent: new AgentToolServer(session, { grantedScope: options.scope }),
     resources,
+    persistResources: (assets:Record<string,Uint8Array>,fonts:Record<string,Uint8Array>)=>{for(const bytes of [...Object.values(assets),...Object.values(fonts)])cas!.put(bytes);Object.assign(resources.assetBytes,assets);Object.assign(resources.fontBytes,fonts)},
     path: target,
   };
 }

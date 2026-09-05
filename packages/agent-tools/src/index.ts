@@ -639,7 +639,7 @@ function replaceArtworkTransaction(revision: Revision, slideId: string, elementI
   }
 }
 
-function inferSlideIR(document: PpteDocument, slideId: string): SlideIR {
+export function inferSlideIR(document: PpteDocument, slideId: string): SlideIR {
   const slide = document.slides[slideId]
   if (!slide) throw new Error(`SLIDE_MISSING: ${slideId}`)
   const blocks = slide.rootOrder.map((elementId) => slide.elements[elementId]).filter((element): element is Element => Boolean(element)).filter((element) => element.role !== 'decorative' && element.role !== 'background').map(elementToBlock)

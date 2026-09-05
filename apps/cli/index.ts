@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+import {compareDocuments,compareTwoWayDocuments,createPatch} from '../../packages/reviewer/src/index.js'
+import {encodePatch,decodePatch,buildPatchTransaction} from '../../packages/patch-format/src/codec.js'
+import {validateRuntimeDocument} from '../../packages/validation/src/index.js'
+import {readCheckpointResources} from '../../packages/node-runtime/src/delivery.js'
+import {openCheckpoint} from '../../packages/file-format/src/index.js'
 import {
   readFileSync,
   writeFileSync,
@@ -46,6 +51,10 @@ const HELP = `PPTe CLI — file-based presentation tools; no daemon or model cre
 ppte new <project.ppte> [--title "Title"]
 ppte compile <design.json> --out <project.ppte>
 ppte inspect <project.ppte>
+ppte validate <project.ppte>
+ppte diff <project.ppte> --revised <revised.ppte> [--base <base.ppte>]
+ppte patch-create <base.ppte> --revised <revised.ppte> --out <changes.ppte.patch>
+ppte patch-preview <project.ppte> --patch <changes.ppte.patch> --out <review.json>
 ppte tool <project.ppte> <tool-name> [--args <args.json>] [--scope <scope.json>]
 ppte preview <project.ppte> --transaction <tx.json> --out <review.json> [--scope <scope.json>]
 ppte commit <project.ppte> --preview <review.json> [--confirmed]
@@ -101,6 +110,7 @@ function receiptHash(r: any) {
     proposedRevision: r.proposedRevision,
     transaction: r.transaction,
     scope: r.scope,
+    ...(r.resources?{resources:r.resources}:{}),
   });
 }
 export function runCli(argv: string[]): any {
@@ -225,6 +235,13 @@ export function runCli(argv: string[]): any {
     const workspace = openFileSession(absolute, { readonly: !mutation, scope });
     const { session, agent, resources } = workspace;
     if (command === "inspect") return agent.execute("inspect_document");
+    if(command==='validate'){const issues=validateRuntimeDocument(session.getDocument());return {ok:!issues.some(i=>i.severity==='error'),issues}}
+    if(command==='diff'||command==='patch-create'){
+      const revisedPath=required(flags,'revised');const revised=openCheckpoint(revisedPath,{recovery:'ignore'}).document;
+      if(revised.documentId!==session.getDocument().documentId)throw new Error('DOCUMENT_MISMATCH: choose copies of the same project');
+      if(command==='diff'){const comparison=typeof flags.base==='string'?compareDocuments(openCheckpoint(flags.base,{recovery:'ignore'}).document,session.getDocument(),revised):compareTwoWayDocuments(session.getDocument(),revised);return {ok:!comparison.issues.some(i=>i.severity==='error'),comparison}}
+      const patch=createPatch(session.getDocument(),revised,readCheckpointResources(revisedPath,revised));freshOutput(required(flags,'out'),encodePatch(patch));return {ok:true,path:resolve(required(flags,'out')),operations:patch.operations.length}
+    }
     if (command === "tool") {
       const def = AGENT_TOOL_DEFINITIONS.find((d) => d.name === tool);
       if (!def || def.mutates)
@@ -236,8 +253,10 @@ export function runCli(argv: string[]): any {
         typeof flags.args === "string" ? json(flags.args) : {},
       );
     }
-    if (command === "preview") {
-      const transaction = json(required(flags, "transaction")) as Transaction;
+    if (command === "preview" || command === "patch-preview") {
+      const patch=command==='patch-preview'?decodePatch(new Uint8Array(readFileSync(required(flags,'patch')))):undefined;
+      if(patch){const checked=session.previewPatch(patch);if(!checked.ok)return checked}
+      const transaction = patch?buildPatchTransaction(patch):json(required(flags, "transaction")) as Transaction;
       const preview = agent.execute("preview_transaction", { transaction });
       if (!preview.ok) return preview;
       const data = preview.data as any;
@@ -248,6 +267,7 @@ export function runCli(argv: string[]): any {
         proposedRevision: preview.revision,
         transaction,
         scope,
+        ...(patch?{resources:{assets:Object.fromEntries(Object.entries(patch.assets??{}).map(([id,b])=>[id,Buffer.from(b).toString('base64')])),fonts:Object.fromEntries(Object.entries(patch.fonts??{}).map(([id,b])=>[id,Buffer.from(b).toString('base64')]))}}:{}),
         diff: preview.diff ?? data.diff,
         issues: preview.issues,
         requiresConfirmation:
@@ -284,6 +304,7 @@ export function runCli(argv: string[]): any {
         throw new Error(
           "PREVIEW_INVALID: proposed revision differs from the reviewed result.",
         );
+      if(receipt.resources){const decode=(r:Record<string,string>)=>Object.fromEntries(Object.entries(r).map(([id,b])=>[id,new Uint8Array(Buffer.from(b,'base64'))]));const assets=decode(receipt.resources.assets??{}),fonts=decode(receipt.resources.fonts??{});const candidate=session.preview(receipt.transaction);if(!candidate.ok||!candidate.document)return candidate;buildCheckpointBytes(candidate.document,{assetBytes:{...resources.assetBytes,...assets},fontBytes:{...resources.fontBytes,...fonts}});workspace.persistResources?.(assets,fonts)}
       const result = scopedAgent.execute("commit_transaction", {
         transaction: receipt.transaction,
         confirmed: flags.confirmed === true,

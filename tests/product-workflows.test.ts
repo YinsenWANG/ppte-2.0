@@ -346,3 +346,22 @@ test("Fast equality and path diffs preserve canonical JSON semantics", () => {
         canonicalJsonString(a) === canonicalJsonString(b),
       );
 });
+
+test('native CLI patch embeds image bytes and remains reversible across process restarts',async()=>{
+  const {writeCheckpoint}=await import('../packages/file-format/src/index.js')
+  const {sha256HexBytes}=await import('../packages/canonical-json/src/index.js')
+  const {makeContractDocument}=await import('../apps/contract-deck/index.js')
+  const dir=mkdtempSync(join(tmpdir(),'ppte-patch-cli-'))
+  try{
+    const {document,imageBytes}=makeContractDocument();const base=join(dir,'base.ppte'),revised=join(dir,'revised.ppte'),patch=join(dir,'change.ppte.patch'),receipt=join(dir,'review.json')
+    writeCheckpoint(document,base,{assetBytes:{asset_pixel:imageBytes}})
+    const changed=structuredClone(document);const asset=changed.assets.asset_pixel!;const next=new Uint8Array([...imageBytes,0]);asset.hash=`sha256-${sha256HexBytes(next)}`;asset.byteLength=next.length;asset.path=`assets/${asset.hash.slice(7)}.png`
+    writeCheckpoint(changed,revised,{assetBytes:{asset_pixel:next}})
+    for(const args of [['patch-create',base,'--revised',revised,'--out',patch],['patch-preview',base,'--patch',patch,'--out',receipt],['commit',base,'--preview',receipt,'--confirmed']]){const r=cli(...args);assert.equal(r.status,0,JSON.stringify(r.result))}
+    assert.equal(openCheckpoint(base).document.assets.asset_pixel!.hash,asset.hash)
+    let revision=canonicalRevision(openCheckpoint(base).document)
+    const undone=cli('undo',base,'--expect-revision',revision);assert.equal(undone.status,0,JSON.stringify(undone.result));assert.equal(openCheckpoint(base).document.assets.asset_pixel!.hash,document.assets.asset_pixel!.hash)
+    revision=canonicalRevision(openCheckpoint(base).document)
+    const redone=cli('redo',base,'--expect-revision',revision);assert.equal(redone.status,0,JSON.stringify(redone.result));assert.equal(openCheckpoint(base).document.assets.asset_pixel!.hash,asset.hash)
+  }finally{rmSync(dir,{recursive:true,force:true})}
+})

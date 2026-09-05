@@ -1,0 +1,495 @@
+{
+  "presentation": {
+    "irVersion": "1.0",
+    "title": "PPTe 产品方案与验收路径",
+    "audience": "项目负责人",
+    "objective": "展示产品架构与验收工作流",
+    "narrative": [
+      {
+        "key": "product",
+        "title": "产品方案",
+        "slideKeys": [
+          "vision",
+          "native",
+          "source",
+          "milestones",
+          "editing",
+          "agent",
+          "recovery",
+          "review",
+          "acceptance",
+          "delivery"
+        ]
+      }
+    ],
+    "slides": [
+      {
+        "irVersion": "1.0",
+        "slideKey": "vision",
+        "purpose": "cover",
+        "message": "PPTe：语义演示文稿",
+        "visualStrategy": "structured",
+        "density": "low",
+        "blocks": [
+          {
+            "key": "title",
+            "kind": "heading",
+            "content": "PPTe：语义演示文稿",
+            "importance": "primary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          },
+          {
+            "key": "b0",
+            "kind": "paragraph",
+            "content": "同一份语义源文件，连接人类编辑、宿主 Agent 与离线交付。",
+            "importance": "secondary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          }
+        ],
+        "sourceIds": [
+          "project-brief"
+        ],
+        "layoutIntent": {
+          "preferredRecipeIds": [
+            "cover.split"
+          ],
+          "balance": "text-led"
+        }
+      },
+      {
+        "irVersion": "1.0",
+        "slideKey": "native",
+        "purpose": "statement",
+        "message": "npm + 原生 Skill",
+        "visualStrategy": "structured",
+        "density": "low",
+        "blocks": [
+          {
+            "key": "title",
+            "kind": "heading",
+            "content": "npm + 原生 Skill",
+            "importance": "primary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          },
+          {
+            "key": "b0",
+            "kind": "paragraph",
+            "content": "宿主 Agent 负责理解资料与编写设计；CLI 负责校验、编译和提交。MCP stdio 仅为可选适配。",
+            "importance": "secondary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          }
+        ],
+        "sourceIds": [
+          "project-brief"
+        ],
+        "layoutIntent": {
+          "preferredRecipeIds": [
+            "statement.focus"
+          ],
+          "balance": "text-led"
+        }
+      },
+      {
+        "irVersion": "1.0",
+        "slideKey": "source",
+        "purpose": "explanation",
+        "message": "语义文档是唯一事实来源",
+        "visualStrategy": "structured",
+        "density": "low",
+        "blocks": [
+          {
+            "key": "title",
+            "kind": "heading",
+            "content": "语义文档是唯一事实来源",
+            "importance": "primary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          },
+          {
+            "key": "b0",
+            "kind": "paragraph",
+            "content": "页面、文本、图像与引用保存为结构化对象。",
+            "importance": "secondary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          },
+          {
+            "key": "b1",
+            "kind": "paragraph",
+            "content": "HTML、PDF、PNG 和 PPTX 都从源文档派生。",
+            "importance": "secondary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          }
+        ],
+        "sourceIds": [
+          "project-brief"
+        ],
+        "layoutIntent": {
+          "preferredRecipeIds": [
+            "explanation.text-visual"
+          ],
+          "balance": "text-led"
+        }
+      },
+      {
+        "irVersion": "1.0",
+        "slideKey": "milestones",
+        "purpose": "summary",
+        "message": "分阶段交付产品能力",
+        "visualStrategy": "structured",
+        "density": "low",
+        "blocks": [
+          {
+            "key": "title",
+            "kind": "heading",
+            "content": "分阶段交付产品能力",
+            "importance": "primary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          },
+          {
+            "key": "b0",
+            "kind": "paragraph",
+            "content": "GA-A：核心、编辑、恢复与交付",
+            "importance": "secondary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          },
+          {
+            "key": "b1",
+            "kind": "paragraph",
+            "content": "GA-B：图表、事实与审阅补丁",
+            "importance": "secondary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          },
+          {
+            "key": "b2",
+            "kind": "paragraph",
+            "content": "GA-C：组件、海报与有限语义 PPTX",
+            "importance": "secondary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          }
+        ],
+        "sourceIds": [
+          "project-brief"
+        ],
+        "layoutIntent": {
+          "preferredRecipeIds": [
+            "summary.grid"
+          ],
+          "balance": "text-led"
+        }
+      },
+      {
+        "irVersion": "1.0",
+        "slideKey": "editing",
+        "purpose": "comparison",
+        "message": "内容修改与结构修改分开",
+        "visualStrategy": "structured",
+        "density": "low",
+        "blocks": [
+          {
+            "key": "title",
+            "kind": "heading",
+            "content": "内容修改与结构修改分开",
+            "importance": "primary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          },
+          {
+            "key": "b0",
+            "kind": "paragraph",
+            "content": "文字编辑保留格式和对象身份。",
+            "importance": "secondary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          },
+          {
+            "key": "b1",
+            "kind": "paragraph",
+            "content": "组移动覆盖全部成员，几何修改可撤销。",
+            "importance": "secondary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          }
+        ],
+        "sourceIds": [
+          "project-brief"
+        ],
+        "layoutIntent": {
+          "preferredRecipeIds": [
+            "comparison.two-column"
+          ],
+          "balance": "text-led"
+        }
+      },
+      {
+        "irVersion": "1.0",
+        "slideKey": "agent",
+        "purpose": "process",
+        "message": "Agent 修改经过三步",
+        "visualStrategy": "structured",
+        "density": "low",
+        "blocks": [
+          {
+            "key": "title",
+            "kind": "heading",
+            "content": "Agent 修改经过三步",
+            "importance": "primary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          },
+          {
+            "key": "b0",
+            "kind": "paragraph",
+            "content": "检查对象和授权范围",
+            "importance": "secondary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          },
+          {
+            "key": "b1",
+            "kind": "paragraph",
+            "content": "预览实际差异与诊断",
+            "importance": "secondary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          },
+          {
+            "key": "b2",
+            "kind": "paragraph",
+            "content": "提交已审阅版本并保存",
+            "importance": "secondary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          }
+        ],
+        "sourceIds": [
+          "project-brief"
+        ],
+        "layoutIntent": {
+          "preferredRecipeIds": [
+            "process.steps"
+          ],
+          "balance": "text-led"
+        }
+      },
+      {
+        "irVersion": "1.0",
+        "slideKey": "recovery",
+        "purpose": "statement",
+        "message": "可恢复不等于已写入文件",
+        "visualStrategy": "structured",
+        "density": "low",
+        "blocks": [
+          {
+            "key": "title",
+            "kind": "heading",
+            "content": "可恢复不等于已写入文件",
+            "importance": "primary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          },
+          {
+            "key": "b0",
+            "kind": "paragraph",
+            "content": "浏览器先持久化操作，再更新文档。保存按钮将当前修订写入项目文件或下载副本。",
+            "importance": "secondary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          }
+        ],
+        "sourceIds": [
+          "project-brief"
+        ],
+        "layoutIntent": {
+          "preferredRecipeIds": [
+            "statement.focus"
+          ],
+          "balance": "text-led"
+        }
+      },
+      {
+        "irVersion": "1.0",
+        "slideKey": "review",
+        "purpose": "explanation",
+        "message": "离线副本通过审阅回归",
+        "visualStrategy": "structured",
+        "density": "low",
+        "blocks": [
+          {
+            "key": "title",
+            "kind": "heading",
+            "content": "离线副本通过审阅回归",
+            "importance": "primary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          },
+          {
+            "key": "b0",
+            "kind": "paragraph",
+            "content": "共同原始版本、当前版本与修订副本进行字段级比较。",
+            "importance": "secondary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          },
+          {
+            "key": "b1",
+            "kind": "paragraph",
+            "content": "先解决冲突，再预览并接受选定修改。",
+            "importance": "secondary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          }
+        ],
+        "sourceIds": [
+          "project-brief"
+        ],
+        "layoutIntent": {
+          "preferredRecipeIds": [
+            "explanation.text-visual"
+          ],
+          "balance": "text-led"
+        }
+      },
+      {
+        "irVersion": "1.0",
+        "slideKey": "acceptance",
+        "purpose": "summary",
+        "message": "验收覆盖实际工作流",
+        "visualStrategy": "structured",
+        "density": "low",
+        "blocks": [
+          {
+            "key": "title",
+            "kind": "heading",
+            "content": "验收覆盖实际工作流",
+            "importance": "primary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          },
+          {
+            "key": "b0",
+            "kind": "paragraph",
+            "content": "资料生成与精确编辑",
+            "importance": "secondary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          },
+          {
+            "key": "b1",
+            "kind": "paragraph",
+            "content": "重排、重设计与恢复",
+            "importance": "secondary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          },
+          {
+            "key": "b2",
+            "kind": "paragraph",
+            "content": "离线审阅与多格式导出",
+            "importance": "secondary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          }
+        ],
+        "sourceIds": [
+          "project-brief"
+        ],
+        "layoutIntent": {
+          "preferredRecipeIds": [
+            "summary.grid"
+          ],
+          "balance": "text-led"
+        }
+      },
+      {
+        "irVersion": "1.0",
+        "slideKey": "delivery",
+        "purpose": "closing",
+        "message": "以可验证的交付结束",
+        "visualStrategy": "structured",
+        "density": "low",
+        "blocks": [
+          {
+            "key": "title",
+            "kind": "heading",
+            "content": "以可验证的交付结束",
+            "importance": "primary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          },
+          {
+            "key": "b0",
+            "kind": "paragraph",
+            "content": "完成度以实测记录为准；派生产物保留能力边界与降级说明。",
+            "importance": "secondary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          },
+          {
+            "key": "b1",
+            "kind": "cta",
+            "content": "检查源文件与可编辑副本",
+            "importance": "secondary",
+            "sourceIds": [
+              "project-brief"
+            ]
+          }
+        ],
+        "sourceIds": [
+          "project-brief"
+        ],
+        "layoutIntent": {
+          "preferredRecipeIds": [
+            "closing.cta"
+          ],
+          "balance": "text-led"
+        }
+      }
+    ]
+  },
+  "sources": {
+    "project-brief": {
+      "id": "project-brief",
+      "title": "PPTe 项目方案摘要",
+      "citation": "examples/acceptance/project-brief.md；原方案 v2.3 §3、§12、§14.5、§20–22、§41"
+    }
+  }
+}

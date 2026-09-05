@@ -1,6 +1,10 @@
+import { boundingFrame } from '../../geometry/src/index.js'
+import { editRichText } from '../../richtext-adapter/src/index.js'
 import {
   effectiveTextStyle,
   resolveEffectiveStyle,
+  validateTextOverflow,
+  measureTextLayout,
 } from "../../validation/src/index.js";
 import type { PpteDocument, Operation, Slide } from "../../schema/src/index.js";
 import type { ReactElement } from "react";
@@ -43,11 +47,13 @@ export function Inspector({
     </label>
   );
   const group = Object.values(slide.groups ?? {}).find(
-    (g) => ids.length > 0 && ids.every((id) => g.memberIds.includes(id)),
+    (g) => ids.length === g.memberIds.length && ids.length > 1 && ids.every((id) => g.memberIds.includes(id)),
   );
+  const frame=group?boundingFrame(group.memberIds.map(id=>slide.elements[id].frame)):element?.frame
   return (
     <section className="ppte-inspector" data-ppte-inspector>
       <strong>{ids.length ? `${ids.length} 个对象` : "选择对象后调整"}</strong>
+      {ids.length>1&&<fieldset><legend>对齐与分布</legend>{(['left','center-x','right','top','center-y','bottom'] as const).map((alignment)=><button key={alignment} onClick={()=>emit({kind:'layout.align',elementIds:ids,alignment,reference:'selection'})}>{({left:'左对齐','center-x':'水平居中',right:'右对齐',top:'顶对齐','center-y':'垂直居中',bottom:'底对齐'})[alignment]}</button>)}{(['horizontal','vertical'] as const).map(axis=><button key={axis} onClick={()=>emit({kind:'layout.distribute',elementIds:ids,axis,mode:'gaps'})}>{axis==='horizontal'?'水平等距':'垂直等距'}</button>)}</fieldset>}
       {ids.length > 1 && !group && (
         <button
           onClick={() =>
@@ -75,10 +81,9 @@ export function Inspector({
       {element && (
         <>
           {(["x", "y", "width", "height"] as const).map((key) =>
-            number(key, element.frame[key], (value) =>
+            number(key, frame![key], (value) =>
               emit({
-                kind: "element.resize",
-                frame: { ...element.frame, [key]: value },
+                ...(group ? {kind:"group.resize",groupId:group.id,targetFrame:{...frame,[key]:value}} : {kind:"element.resize",frame:{...frame,[key]:value}}),
               }),
             ),
           )}
@@ -95,6 +100,7 @@ export function Inspector({
               }
             />
           </label>
+          {'style' in element && element.style && <fieldset><legend>样式预设</legend><select aria-label="样式预设" value={element.style.styleRef} onChange={e=>emit({kind:'element.setStyleRef',styleRef:e.target.value})}>{Object.keys(document.theme.presets[element.type as 'text'|'image'|'shape'|'chart']??{}).map(id=><option key={id}>{id}</option>)}</select><button onClick={()=>emit({kind:'element.clearStyleOverrides'})}>重置为预设</button></fieldset>}
           {element.type === "text" && (
             <>
               <label>
@@ -112,18 +118,17 @@ export function Inspector({
                     if (text !== previous)
                       emit({
                         kind: "text.replaceContent",
-                        content: {
-                          paragraphs: text
-                            .split("\n")
-                            .map((line, i) => ({
-                              id: `p${i}`,
-                              runs: [{ id: `r${i}`, text: line }],
-                            })),
-                        },
+                        content: editRichText(element.content,text),
                       });
                   }}
                 />
               </label>
+              <fieldset><legend>强调格式</legend>{(['bold','italic','underline','strike'] as const).map(mark=><button key={mark} onClick={()=>{const content=structuredClone(element.content);const enabled=content.paragraphs.every(p=>p.runs.every(r=>r.marks?.[mark]));for(const p of content.paragraphs)for(const r of p.runs)r.marks={...r.marks,[mark]:!enabled};emit({kind:'text.replaceContent',content})}}>{({bold:'粗体',italic:'斜体',underline:'下划线',strike:'删除线'})[mark]}</button>)}</fieldset>
+              <label>文字颜色<input type="color" defaultValue="#172033" onChange={e=>emit({kind:'element.updateStyleOverrides',patch:{color:{kind:'value',value:e.target.value}}})}/></label>
+              <label>对齐<select aria-label="文字对齐" value={element.paragraphStyle?.align??'left'} onChange={e=>emit({kind:'text.updateStyle',paragraphStyle:{...element.paragraphStyle,align:e.target.value}})}><option value="left">左对齐</option><option value="center">居中</option><option value="right">右对齐</option></select></label>
+              {validateTextOverflow(document,slide.id,element).length>0&&<p role="status">文字溢出：可缩短内容、扩大文本框，或显式适配字号。</p>}
+              <button onClick={()=>{const style=effectiveTextStyle(document,element);let size=style.fontSize;while(size>8){const m=measureTextLayout(element.content.paragraphs.map(p=>p.runs.map(r=>r.text).join('')).join('\n'),element.frame,{...style,fontSize:size},element.boxStyle?.padding);if(!m.overflowX&&!m.overflowY)break;size-=0.5}emit({kind:'text.fitByReducingFont',minFontSize:8,resolvedFontSize:size})}}>适配字号</button>
+              <button onClick={()=>emit({kind:'text.setOverflowPolicy',overflowPolicy:'clip'})}>截断溢出显示</button>
               {number(
                 "字号",
                 effectiveTextStyle(document, element).fontSize,
@@ -201,6 +206,7 @@ export function Inspector({
               />
             </label>
           )}
+          <details><summary>来源与诊断</summary><p>{element.semanticKey??'未设置语义标识'}</p>{element.semanticRefs?.factIds?.map(id=><p key={id}>{document.facts?.[id]?.key}: {String(document.facts?.[id]?.value)}</p>)}{element.semanticRefs?.sourceIds?.map(id=><p key={id}>{document.sources?.[id]?.title} · {document.sources?.[id]?.citation}</p>)}</details>
           {element.type === "component" &&
             Object.entries(element.props).map(([key, value]) => (
               <label key={key}>

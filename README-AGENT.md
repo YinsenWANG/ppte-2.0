@@ -7,11 +7,11 @@ The recommended integration is the native `ppte` Skill plus a file-based CLI. Th
 ```sh
 pnpm install --frozen-lockfile
 pnpm package:pack
-npm install -g ./artifacts/ppte-cli-0.7.0.tgz
+npm install -g ./artifacts/ppte-cli-0.8.0.tgz
 ppte --help
 ```
 
-The tarball is locally installable. It has **not** been published to the npm registry; do not run `npx ppte-cli` against an unrelated public package. `npm exec --package=/absolute/path/ppte-cli-0.7.0.tgz -- ppte --help` is an alternative to global installation.
+The tarball is locally installable. It has **not** been published to the npm registry; do not run `npx ppte-cli` against an unrelated public package. `npm exec --package=/absolute/path/ppte-cli-0.8.0.tgz -- ppte --help` is an alternative to global installation.
 
 Install the same native skill in the directory your Agent scans, for example:
 
@@ -65,3 +65,23 @@ Use `--readonly` to remove mutation tools. A writable MCP session detects when a
 | Best fit | Local file authoring and batch workflows | MCP-only hosts and repeated low-latency calls |
 
 A Skill is guidance, not an access-control boundary. Validation, locks, scopes and revisions are enforced by the executable. The CLI removes a transport dependency; it does not replace the browser editor needed for manual changes.
+
+## Review, recovery and layout editing
+
+```sh
+ppte validate presentation.ppte
+ppte diff presentation.ppte --revised revised.ppte --base original.ppte
+ppte patch-create original.ppte --revised revised.ppte --out changes.ppte.patch
+ppte patch-preview presentation.ppte --patch changes.ppte.patch --out patch-review.json
+ppte commit presentation.ppte --preview patch-review.json --confirmed
+```
+
+Patch receipts bind their embedded resource bytes as well as the transaction. An adjacent `.ppte.cas` directory retains content-addressed bytes required by recovery and undo; keep it together with the project and its journal while editing. A stale patch is rejected; use the Host's three-way Review panel to resolve divergent versions.
+
+The offline Host persists the active project's base/resources in IndexedDB and checksummed edits in localStorage before committing. Refresh restores edits and undo/redo. Its footer distinguishes browser recovery protection from a saved project file. Browser storage is local to this editor URL/profile; clearing it removes recovery protection. Save the `.ppte` or editable HTML for transfer. A damaged recovery record is preserved and opens read-only rather than being silently discarded.
+
+Host tools include group move/resize, alignment/distribution, text marks and presets, page order/delete, image replacement, layout/re-design preview, and field-level revised-copy review. Embedded fonts are mounted; actual browser text bounds provide overflow diagnostics and an explicit fit action. The non-browser compiler continues to use deterministic reference font metrics; exports must still be visually checked with their actual fonts.
+
+Layout Studio edits data-only zones/constraints, saves immutable local versions, imports/exports recipes, and runs text-length/CJK/metric/image-ratio samples with rendered previews and downloadable diagnostic/draft snapshots. Load an earlier report to detect changed draft hashes. Local acceptance counts record only confirmed applications in that browser; they are not global user-quality statistics. A case with no source image does not establish image-ratio coverage.
+
+See `docs/PRODUCT_COMPLETION_2026-09-05.md` for the completed audit work, evidence and explicit integration boundaries.

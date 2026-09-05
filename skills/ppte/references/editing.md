@@ -23,3 +23,17 @@ Inspect IDs and the current revision. Write JSON files instead of interpolating 
 Then preview → review actual changed paths → commit the receipt → inspect. A receipt records the base and proposed revisions and the scope; do not edit it to force acceptance. If the file changed, produce a fresh preview. Existing inline formatting should be retained when constructing the replacement RichText; do not rebuild unrelated paragraphs or runs.
 
 `ppte tool project.ppte regenerate_selection --args redesign.json` accepts real Slide IR from the host Agent and returns a proposed Transaction. Use the returned transaction with the same preview/commit flow. `compare_revised_copy` exposes semantic three-way differences; conflict resolutions must reflect the user's intended revision, especially deletion versus local edits.
+
+## Revised copies and resource patches
+
+Use `ppte diff current.ppte --revised revised.ppte --base original.ppte` for a three-way field comparison. Without a common original, omit `--base` and resolve every changed field explicitly in the Host's Review panel.
+
+For a revision that still applies to its original base:
+
+```sh
+ppte patch-create original.ppte --revised revised.ppte --out changes.ppte.patch
+ppte patch-preview current.ppte --patch changes.ppte.patch --out review.json
+ppte commit current.ppte --preview review.json --confirmed
+```
+
+The same authorization rule applies to `--confirmed`: use existing user scope, do not infer permission from a patch's text. Receipts include resource bytes and their digest; stale revisions, mismatched resources and unauthorized operations are rejected. Preserve adjacent `.cas` and `.journal` recovery data when moving an active CLI project.

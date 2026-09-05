@@ -6,12 +6,12 @@ let encodeBase64: ((data: Uint8Array) => string) | undefined
 /** Host adapters accelerate bytes without changing semantic behavior. */
 export function configurePortablePlatform(adapter: { gzip: typeof gzipSync; hash: typeof binaryHash; base64: (data: Uint8Array) => string }): void { gzipSync = adapter.gzip; binaryHash = adapter.hash; encodeBase64 = adapter.base64 }
 
-import { PpteSession } from '../../core/src/index.js'
+import { PpteSession, type HistoryEntry } from '../../core/src/index.js'
 import { contentOnlyContract, cropOnlyContract, chartDataOnlyContract, geometryOnlyContract, replaceAssetContract, rotationOnlyContract } from '../../change-contract/src/index.js'
 import { readStoredZip, writeStoredZip } from '../../archive/src/index.js'
 import { renderDocumentSurfaceHtml } from '../../renderer-react/src/index.js'
 import { checkGlyphCoverage, validateRuntimeDocument, validateTransactionShape } from '../../validation/src/index.js'
-import { plainTextToRichText } from '../../richtext-adapter/src/index.js'
+import { plainTextToRichText, editRichText } from '../../richtext-adapter/src/index.js'
 import { buildCapabilityReport, type CapabilityReport } from '../../capability/src/index.js'
 import { buildFactUpdateTransaction } from '../../facts/src/index.js'
 import { assertDocumentCompatibility, inferCompatibilityProfile, runtimeProfileForCompatibility } from '../../compatibility/src/index.js'
@@ -278,7 +278,7 @@ export class PortableRuntime {
     const glyphIssues = checkGlyphCoverage(this.session.getDocument(), found.element, value, { strict: true })
     if (glyphIssues.some((item) => item.severity === 'error')) return { ok: false, issues: glyphIssues }
     let content
-    try { content = plainTextToRichText(value, `${found.element.id}-p`) } catch (cause) { return { ok: false, issues: [issue('TEXT_INVALID', cause instanceof Error ? cause.message : String(cause))] } }
+    try { content = editRichText(found.element.content, value) } catch (cause) { return { ok: false, issues: [issue('TEXT_INVALID', cause instanceof Error ? cause.message : String(cause))] } }
     const transaction = textTransaction(this.session.getRevision(), found.slideId, found.element.id, content)
     const result = this.session.commit(transaction)
     if (result.ok) this.lastTransaction = transaction
@@ -538,7 +538,7 @@ function assembleHtml(document: PpteDocument, payload: PortablePayload, assetSou
  * adapter. Portable Runtime may depend on Core, but Core/File Format must not
  * become a dependency cycle through the Portable package.
  */
-export function buildPortableCheckpointBytes(document: PpteDocument, options: { timestamp?: string; clean?: boolean; compatibilityProfile?: string; runtimeProfile?: RuntimeProfile; recentTransactions?: Transaction[]; assetBytes?: Record<string, Uint8Array>; fontBytes?: Record<string, Uint8Array> }): Uint8Array {
+export function buildPortableCheckpointBytes(document: PpteDocument, options: { timestamp?: string; clean?: boolean; compatibilityProfile?: string; runtimeProfile?: RuntimeProfile; redoHistory?: HistoryEntry[]; recentTransactions?: Transaction[]; assetBytes?: Record<string, Uint8Array>; fontBytes?: Record<string, Uint8Array> }): Uint8Array {
   const issues = validateRuntimeDocument(document, { runtimeProfile: options.runtimeProfile ?? 'ga-b' }).filter((item) => item.severity === 'error')
   if (issues.length) throw new Error(issues.map((item) => `${item.code}: ${item.message}`).join('\n'))
   const snapshot = options.clean ? cleanPortableSnapshot(document) : document
@@ -559,6 +559,7 @@ export function buildPortableCheckpointBytes(document: PpteDocument, options: { 
   addPortableEntry(entries, 'history/descriptor.json', bytes(canonicalJsonString({ mode: options.clean ? 'clean' : 'standard', snapshotRevision: revision, recentTransactionCount: options.clean ? 0 : recent.length, deepHistoryExternal: !options.clean })))
   if (!options.clean && recent.length) addPortableEntry(entries, 'history/recent.jsonl', bytes(recent.map((transaction) => canonicalJsonString(transaction)).join('\n') + '\n'))
 
+  if(!options.clean&&options.redoHistory?.length)addPortableEntry(entries,'history/redo.json',bytes(canonicalJsonString(options.redoHistory)))
   for (const [assetId, data] of Object.entries(options.assetBytes ?? {})) {
     const asset = snapshot.assets[assetId]
     if (!asset) throw new Error(`ASSET_MISSING: ${assetId}`)

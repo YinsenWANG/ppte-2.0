@@ -27,7 +27,7 @@ writeFileSync(
   JSON.stringify(
     {
       name: "ppte-cli",
-      version: "0.7.0",
+      version: "0.8.0",
       description: "File-based PPTe presentation compiler and editor tools",
       type: "module",
       license: repo.license,

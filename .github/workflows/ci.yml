@@ -35,7 +35,7 @@ jobs:
       - run: pnpm package:pack
       - name: Install and exercise the packaged CLI without optional browser dependencies
         run: |
-          npm install --prefix "$RUNNER_TEMP/ppte-installed" --omit=optional ./artifacts/ppte-cli-0.7.0.tgz
+          npm install --prefix "$RUNNER_TEMP/ppte-installed" --omit=optional ./artifacts/ppte-cli-0.8.0.tgz
           export PATH="$RUNNER_TEMP/ppte-installed/node_modules/.bin:$PATH"
           ppte compile examples/quarterly-design.json --out "$RUNNER_TEMP/quarterly.ppte"
           ppte deliver "$RUNNER_TEMP/quarterly.ppte"
@@ -44,7 +44,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: ppte-cli-candidate
-          path: artifacts/ppte-cli-0.7.0.tgz
+          path: artifacts/ppte-cli-0.8.0.tgz
 
   blackbox:
     name: Full black-box acceptance
