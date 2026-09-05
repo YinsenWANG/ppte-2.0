@@ -636,6 +636,48 @@
             "Manual model-host evaluation, real Safari and physical-device performance unverified.",
             "Public synthetic failure equivalents only; no private user originals supplied."
           ]
+        },
+        {
+          "commit": "7b32b000776842c3924b805ef759255dc13e4cef",
+          "tests": [
+            "tests/npm-native-skill.test.ts"
+          ],
+          "criteria": {
+            "1": "Fresh candidate tarball installs and completes credential-free, network-blocked compile/inspect/preview/commit/reopen/undo/redo/deliver; all existing assertions retained.",
+            "2": "57 M0 regression tests pass, packaged runtime bytes match tested workspace bytes, candidate and blackbox reports bind the same runtimeBuildId.",
+            "3": "Separate tested Git push/not-run, npm publish/not-run, candidate tarball/pass and temporary Skill installation/pass records; persistent user installation/not-run."
+          },
+          "fix": "Discover exactly one actual .tgz file instead of indexing npm stdout JSON. Added missing/ambiguous/non-file archive rejection regression. Supplied TypeError did not reproduce locally: original direct test and full 157-test baseline passed on npm 10.9.8.",
+          "verification": {
+            "typecheck": "pass",
+            "build": "pass",
+            "test": {
+              "before": 157,
+              "after": 158,
+              "delta": 1,
+              "passed": 158,
+              "failed": 0,
+              "skipped": 0
+            },
+            "testLogSha256": "1ea1d141c2b7f2ad808097c343e364076977bb443c1baf4a46aed3ab7a3d08f3",
+            "blackbox": {
+              "start": "docs/evolution/quality/c06-fix-blackbox-start.json",
+              "final": "docs/evolution/quality/c06-fix-blackbox-final.json",
+              "beforeGreen": 69,
+              "beforeRed": 0,
+              "green": 69,
+              "red": 0,
+              "newRed": [],
+              "exitCode": 0
+            }
+          },
+          "report": "docs/evolution/quality/c06-fix-candidate-report.json",
+          "candidateTarball": "/tmp/c06-fix-candidate/ppte-cli-0.9.0-next.0.tgz",
+          "remainingRisks": [
+            "Original failing npm environment unavailable; failure site removed without changing journey assertions.",
+            "Offline runtime verification blocks Node network APIs, not OS networking; initial installation may fetch fflate.",
+            "Git push, npm publication and persistent user Skill installation not performed."
+          ]
         }
       ]
     },
