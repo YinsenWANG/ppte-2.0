@@ -249,7 +249,7 @@
       "milestone": "M0",
       "priority": "P0",
       "title": "修复可选字段逆操作并升级操作兼容",
-      "status": "in_progress",
+      "status": "done",
       "effort": "L",
       "ownerRole": "Core / 格式",
       "dependsOn": [
@@ -293,8 +293,12 @@
       ],
       "releaseRequired": true,
       "evidence": [
+        "commit:8bf277db971d1421abda6475c8209c0f3e9fb5a4",
         "tests/history-inverse-roundtrip.test.ts",
-        "docs/evolution/PROGRESS.md"
+        "tests/r1-agent-editing.test.ts",
+        "docs/evolution/C02_EVIDENCE.md",
+        "pnpm typecheck && pnpm build && pnpm test: 137 passed (baseline 129, +8)",
+        "pnpm blackbox:final: 69 green / 0 red (baseline 69 / 0; no new reds)"
       ]
     },
     {
