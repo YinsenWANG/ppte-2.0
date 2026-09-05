@@ -1,0 +1,127 @@
+{
+  "version": "c01-fixtures-v1",
+  "baselineCommit": "dc64f90d857cab01438b73620255ba19823fe1ba",
+  "environment": {
+    "node": "v22.23.2",
+    "os": "darwin",
+    "release": "25.6.0",
+    "arch": "arm64",
+    "cpu": "Apple M4",
+    "logicalCpus": 10,
+    "memoryBytes": 17179869184,
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "headless": true,
+    "browser": "151.0.7922.34"
+  },
+  "privateUserFilesIncluded": false,
+  "provenance": "Synthetic minimized equivalents authored from scripts/blackbox-fixtures.mjs; no real user originals were supplied or claimed. HTML is a current generated shell with artifactIdentity removed, not a historical released runtime.",
+  "fixtures": [
+    {
+      "path": "tests/fixtures/evolution/history-background.json",
+      "sha256": "cd3fe8f8a35e9d625c730fc9bf83dd772c12226c392924ecd07a782254d4ed72",
+      "source": "scripts/evolution-fixtures.mjs: empty slide derived from makeCoreDocument; forward change via PpteSession; bad inverse is intentionally captured legacy JSON loss",
+      "license": "Apache-2.0",
+      "expected": {
+        "beforeRevision": "sha256-8ddbfd1e63204bf2cfa86fc10f14a82bbf14fb0bf471e7c3e29ef525c21a1873",
+        "afterRevision": "sha256-ed8c7c54e19c6acb6c0acd3dc9cd4c824bafdeb7ee4a89402397880f672cbaa5"
+      },
+      "observed": {
+        "legacyInverseRestoresBefore": false,
+        "currentCheckpointUndoRedo": "pass",
+        "invalidHistory": "invalid; constructor HISTORY_RESTORE_FAILED"
+      }
+    },
+    {
+      "path": "tests/fixtures/evolution/legacy-profile.ppte",
+      "sha256": "60bad8ff3f00c24af2584ba62b19e6b8212129933c8df8fe145bf12c8cdced8f",
+      "source": "scripts/evolution-fixtures.mjs: public checkpoint writer, no history, operation protocol 1.0",
+      "license": "Apache-2.0",
+      "expected": {
+        "revision": "sha256-8ddbfd1e63204bf2cfa86fc10f14a82bbf14fb0bf471e7c3e29ef525c21a1873",
+        "operationProtocolVersion": "1.0"
+      },
+      "observed": {
+        "open": "pass",
+        "revisionUnchanged": true
+      }
+    },
+    {
+      "path": "tests/fixtures/evolution/legacy-identity.html",
+      "sha256": "48ad9a3fc173c4a95bdcee81a10aad3414267cf61429344ddd835c99b75fcce0",
+      "source": "scripts/evolution-fixtures.mjs: remove artifactIdentity from generated Portable payload only",
+      "license": "Apache-2.0",
+      "expected": {
+        "revision": "sha256-8ddbfd1e63204bf2cfa86fc10f14a82bbf14fb0bf471e7c3e29ef525c21a1873",
+        "artifactIdentity": "absent"
+      },
+      "observed": {
+        "defaultDelivery": "reject existing target",
+        "versionedCopy": "pass; original preserved"
+      }
+    }
+  ],
+  "evidence": [
+    {
+      "path": "docs/evolution/quality/c01-blackbox-start.json",
+      "sha256": "f2c6dc246984b8f41b75751807d0f57cb12c61fb45d474fe87928168a7cf44b1",
+      "source": "pnpm build && pnpm host:build && pnpm blackbox:final at baselineCommit",
+      "license": "Apache-2.0",
+      "expected": {
+        "newRedAllowed": 0
+      },
+      "observed": {
+        "green": 67,
+        "red": 2
+      }
+    },
+    {
+      "path": "docs/evolution/quality/c01-browser-baseline.json",
+      "sha256": "fca1686d7cd45e5a3c57396fae7992a4f65956e02b2602643a5ca87e10ba5296",
+      "source": "node scripts/evolution-baseline.mjs docs/evolution/quality/c01-browser-baseline.json",
+      "license": "Apache-2.0",
+      "expected": {
+        "pageCounts": [
+          12,
+          30,
+          100
+        ],
+        "startupSamplesPerMode": 20,
+        "inputSamples": 30
+      },
+      "observed": {
+        "status": "measured",
+        "scope": "Chromium Portable API-to-paint; not physical IME or full A20 certification"
+      }
+    },
+    {
+      "path": "docs/evolution/quality/m1-dependency-budget.json",
+      "sha256": "9558308000231ebe504259ab392bc06f8520055340ba7d8fd480cb350309c0c7",
+      "source": "C01 engineering budget frozen before E02 candidate selection",
+      "license": "Apache-2.0",
+      "expected": {
+        "version": "c01-m1-v1"
+      },
+      "observed": {
+        "status": "frozen",
+        "E02": "must cite version and measured comparison"
+      }
+    },
+    {
+      "path": "docs/evolution/quality/c01-blackbox-final.json",
+      "sha256": "f2c6dc246984b8f41b75751807d0f57cb12c61fb45d474fe87928168a7cf44b1",
+      "source": "pnpm typecheck && pnpm build && pnpm test && pnpm blackbox:final; C01 implementation verification",
+      "license": "Apache-2.0",
+      "expected": {
+        "newRedAllowed": 0
+      },
+      "observed": {
+        "green": 67,
+        "red": 2,
+        "newRed": []
+      }
+    }
+  ]
+}

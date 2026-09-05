@@ -1,0 +1,24 @@
+{
+  "version": "c01-m1-v1",
+  "status": "frozen-before-E02",
+  "scope": "Incremental active-text dependency cost; not a whole-product performance certification",
+  "runtimeGzipCapsBytes": { "viewer": 1200000, "quick-fix": 2000000, "light-edit": 3000000, "full-portable": 3000000 },
+  "incrementalLimits": { "runtimeGzipBytes": 100000, "runtimeRawBytes": 350000, "coldStartupP95Ms": 100, "warmStartupP95Ms": 50, "inputP95Ms": 16 },
+  "decisionRule": "E02 must compare native and ProseMirror on the same device, corpus, font policy and this protocol; every absolute profile cap and every candidate-minus-native increment must pass. Correctness is required independently. Missing samples are unverified, never pass. Changing thresholds requires a new version and a new decision, never retroactive edits.",
+  "baselinePath": "docs/evolution/quality/c01-browser-baseline.json",
+  "protocol": {
+    "pageCounts": [12, 30, 100],
+    "viewport": { "width": 1440, "height": 900 },
+    "startupSamples": 20,
+    "interactionSamples": 30,
+    "percentile": "linear interpolation at (n-1)*p over ascending samples",
+    "cold": "fresh Chromium process/context per sample; file:// navigation; OS disk caches not flushed",
+    "warm": "reload same page/context immediately after cold sample",
+    "startupEnd": "PPTEPortable ready, document.fonts.ready, all image decode promises, then two requestAnimationFrame callbacks; time from navigation time origin",
+    "input": "public editText Operation Engine commit through two animation frames; explicit API-to-paint latency, not OS keyboard or IME latency",
+    "corpus": "scripts/evolution-baseline.mjs: fixed blackbox core slide repeated 12/30/100 times, image removed, no binary fonts; record canonical revision and actual HTML SHA256",
+    "requiredEnvironment": ["node", "os", "release", "arch", "cpu", "logicalCpus", "memoryBytes", "browser", "viewport", "headless"],
+    "requiredFutureScenarios": ["keyboard input", "drag", "page switch", "undo", "save", "media roundtrip", "memory"],
+    "evidence": "Keep all raw samples, p50/p95, application commit, fixture revision, HTML digest and font policy. Startup and each interaction are separate; instrument document correctness and unrelated-node stability when evaluating E02. Font/resource timeout fails a sample; fallback requires a new explicit configuration. Real Safari and lower-performance hardware remain unverified until physically measured."
+  }
+}

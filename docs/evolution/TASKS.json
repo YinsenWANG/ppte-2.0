@@ -421,7 +421,12 @@
         "A20"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [],
+      "budgetReference": {
+        "version": "c01-m1-v1",
+        "path": "docs/evolution/quality/m1-dependency-budget.json",
+        "baseline": "docs/evolution/quality/c01-browser-baseline.json"
+      }
     },
     {
       "id": "E03",
