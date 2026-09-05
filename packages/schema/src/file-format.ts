@@ -167,3 +167,10 @@ export interface PptePatch {
   fontMetadata?: Record<FontId, import('./document.js').FontAsset>
   metadata?: Record<string, JsonValue>
 }
+
+/** Content identity, not a publisher signature. Timestamps are intentionally excluded. */
+export interface ArtifactIdentity {
+  version: 1
+  digest: string
+  components: Record<'document' | 'runtime' | 'renderer' | 'shell' | 'resources' | 'fonts' | 'history' | 'capabilities' | 'compatibility' | 'configuration', string>
+}

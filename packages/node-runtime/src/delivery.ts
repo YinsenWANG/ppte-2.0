@@ -1,5 +1,6 @@
 import {
   closeSync,
+  lstatSync,
   existsSync,
   fsyncSync,
   linkSync,
@@ -47,6 +48,7 @@ export type DeliveryFaultPoint = "build" | "audit" | "before-rename";
 
 export interface DeliveryAdapterOptions {
   fault?: DeliveryFaultPoint;
+  beforePublish?: (target: string) => void;
   build?: typeof buildPortable;
   audit?: typeof auditPortableBundle;
 }
@@ -158,7 +160,7 @@ export function deliverPresentation(
       "交付失败：只允许可编辑 Portable profile。",
     );
   }
-  if ((request.collisionPolicy !== undefined && !['error', 'versioned-copy', 'replace'].includes(request.collisionPolicy)) || (request.replaceExisting === true && request.collisionPolicy !== undefined && request.collisionPolicy !== 'replace')) return failure(revision, requestedProfile, 'DELIVERY_POLICY_CONFLICT', 'Conflicting collision options.', [], policy.profile, '交付选项冲突，未覆盖现有副本。');
+  if ((request.collisionPolicy !== undefined && !['error', 'versioned-copy', 'replace'].includes(request.collisionPolicy)) || (request.replaceExisting !== undefined && request.collisionPolicy !== undefined && request.replaceExisting !== (request.collisionPolicy === 'replace'))) return failure(revision, requestedProfile, 'DELIVERY_POLICY_CONFLICT', 'Conflicting collision options.', [], policy.profile, '交付选项冲突，未覆盖现有副本。');
   const replaceExisting = request.replaceExisting === true || request.collisionPolicy === 'replace';
   if (replaceExisting && request.confirmed !== true) {
     return failure(
@@ -347,7 +349,7 @@ export function deliverPresentation(
     const nextCopyPath = () => originalTarget.slice(0, -STANDARD_EDITABLE_SUFFIX.length) + '.' + (audit.artifactIdentity?.digest.replace(/^sha256[-:]/, '').slice(0, 12) ?? 'copy') + (copyIndex++ ? `-${copyIndex}` : '') + STANDARD_EDITABLE_SUFFIX;
     let existing = readExisting(target);
     if (request.collisionPolicy === 'versioned-copy') {
-      while (existsSync(target)) {
+      while (pathOccupied(target)) {
         const existingIdentity = existing && auditPortableBundle(existing.text);
         if (existingIdentity && existingIdentity.ok && audit.artifactIdentity?.digest && existingIdentity.artifactIdentity?.digest === audit.artifactIdentity.digest) break;
         target = nextCopyPath();
@@ -407,10 +409,11 @@ export function deliverPresentation(
     }
 
     hitFault(internal, "before-rename");
+    internal.beforePublish?.(target);
     for (;;) {
       try { writeAtomic(target, htmlBytes, replaceExisting); break; }
       catch (cause) {
-        if (request.collisionPolicy !== 'versioned-copy' || !existsSync(target)) throw cause;
+        if (request.collisionPolicy !== 'versioned-copy' || !(cause instanceof Error && cause.message.startsWith('DELIVERY_TARGET_EXISTS'))) throw cause;
         target = nextCopyPath();
       }
     }
@@ -563,6 +566,11 @@ function readRevision(path: string): Revision | undefined {
   }
 }
 
+function pathOccupied(path: string): boolean {
+  try { lstatSync(path); return true; }
+  catch (cause) { if ((cause as NodeJS.ErrnoException).code === 'ENOENT') return false; throw cause; }
+}
+
 function readExisting(
   path: string,
 ): { bytes: Uint8Array; text: string } | undefined {
@@ -593,7 +601,19 @@ function writeAtomic(
     fsyncSync(descriptor);
     closeSync(descriptor);
     descriptor = undefined;
-    if (replaceExisting) renameSync(temporary, target);
+    if (replaceExisting) {
+      if (pathOccupied(target)) {
+        // Preserve the exact previous inode before the atomic replacement.
+        let index = 0;
+        for (;;) {
+          const backup = `${target}.previous${index ? `-${index}` : ''}`;
+          try { linkSync(target, backup); break; }
+          catch (cause) { if (!isAlreadyExists(cause)) throw cause; index++; }
+        }
+        fsyncDirectory(directory);
+      }
+      renameSync(temporary, target);
+    }
     else {
       try {
         // A hard-link create is the no-clobber operation: a concurrent writer

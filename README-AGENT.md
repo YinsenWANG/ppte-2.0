@@ -7,11 +7,11 @@ The recommended integration is the native `ppte` Skill plus a file-based CLI. Th
 ```sh
 pnpm install --frozen-lockfile
 pnpm package:pack
-npm install -g ./artifacts/ppte-cli-0.8.0.tgz
+npm install -g ./artifacts/ppte-cli-*.tgz
 ppte --help
 ```
 
-The tarball is locally installable. It has **not** been published to the npm registry; do not run `npx ppte-cli` against an unrelated public package. `npm exec --package=/absolute/path/ppte-cli-0.8.0.tgz -- ppte --help` is an alternative to global installation.
+The tarball is locally installable. It has **not** been published to the npm registry; do not run `npx ppte-cli` against an unrelated public package. `npm exec --package=/absolute/path/ppte-cli-<version>.tgz -- ppte --help` is an alternative to global installation.
 
 Install the same native skill in the directory your Agent scans, for example:
 
@@ -85,3 +85,5 @@ Host tools include group move/resize, alignment/distribution, text marks and pre
 Layout Studio edits data-only zones/constraints, saves immutable local versions, imports/exports recipes, and runs text-length/CJK/metric/image-ratio samples with rendered previews and downloadable diagnostic/draft snapshots. Load an earlier report to detect changed draft hashes. Local acceptance counts record only confirmed applications in that browser; they are not global user-quality statistics. A case with no source image does not establish image-ratio coverage.
 
 See `docs/PRODUCT_COMPLETION_2026-09-05.md` for the completed audit work, evidence and explicit integration boundaries.
+
+Run `ppte --version` to record the installed application version. Packaging reads the root `package.json`; `build-manifest.json` records that version and a SHA-256 digest of the embedded runtime. Portable copies include the same information. These content digests detect changes; they do not authenticate the publisher. Confirmed replacement retains the previous editable HTML at `.previous` (or a numbered sibling) for recovery.

@@ -21,6 +21,7 @@ cpSync("schemas", `${root}/schemas`, { recursive: true });
 cpSync("examples", `${root}/examples`, { recursive: true });
 cpSync("README-AGENT.md", `${root}/README.md`);
 cpSync("LICENSE", `${root}/LICENSE`);
+cpSync("artifacts/build-manifest.json", `${root}/build-manifest.json`);
 const repo = JSON.parse(readFileSync("package.json", "utf8"));
 writeFileSync(
   `${root}/package.json`,

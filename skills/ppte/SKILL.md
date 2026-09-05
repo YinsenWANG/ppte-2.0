@@ -6,7 +6,7 @@ metadata:
     bins: ["node"]
 ---
 
-Use the installed `ppte` CLI, or `node /path/to/ppte-2.0/dist/apps/cli/index.js` in a built checkout. Do not start an MCP server. Run `ppte --help` and `ppte schema` when discovering an unfamiliar command. Commands return JSON; a nonzero exit or `ok:false` is a failed operation.
+Use the installed `ppte` CLI, or `node /path/to/ppte-2.0/dist/apps/cli/index.js` in a built checkout. Do not start an MCP server. Run `ppte --version` and record the application version with delivery evidence; the installed package’s `build-manifest.json` identifies the exact runtime bytes. Application semver is separate from file and Portable profiles. Run `ppte --help` and `ppte schema` when discovering an unfamiliar command. Commands return JSON; a nonzero exit or `ok:false` is a failed operation.
 
 ## Create a presentation
 

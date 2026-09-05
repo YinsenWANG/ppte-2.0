@@ -1,7 +1,10 @@
+import { PPTE_APP_VERSION } from '../../../packages/schema/src/version.js'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { HostApp } from '../../../packages/editor-react/src/HostApp.js'
 import './host.css'
+
+document.title = `PPTe Host ${PPTE_APP_VERSION}`
 
 const root = document.getElementById('root')
 if (!root) throw new Error('PPTE_HOST_ROOT_MISSING')

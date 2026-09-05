@@ -1,5 +1,5 @@
 import { build } from "esbuild";
-import { writeFileSync, readFileSync } from "node:fs";
+import { writeFileSync, readFileSync, mkdirSync } from "node:fs";
 const { version } = JSON.parse(readFileSync('package.json', 'utf8'));
 writeFileSync('packages/schema/src/version.ts', '// Generated from package.json by scripts/build-portable.mjs.\nexport const PPTE_APP_VERSION = ' + JSON.stringify(version) + ';\n');
 const result = await build({
@@ -18,3 +18,10 @@ writeFileSync(
     JSON.stringify(result.outputFiles[0].text) +
     "\n",
 );
+
+mkdirSync('artifacts', { recursive: true });
+const { createHash } = await import('node:crypto');
+writeFileSync('artifacts/build-manifest.json', JSON.stringify({
+  applicationVersion: version,
+  runtimeBuildId: createHash('sha256').update(result.outputFiles[0].text.replace(/<\/script/gi, '<\\/script')).digest('hex'),
+}, null, 2) + '\n');

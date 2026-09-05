@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { PPTE_APP_VERSION } from '../../packages/schema/src/version.js';
 import { inspectHistoryFile, repairHistoryCopy } from '../../packages/node-runtime/src/history-repair.js'
 import {compareDocuments,compareTwoWayDocuments,createPatch} from '../../packages/reviewer/src/index.js'
 import {encodePatch,decodePatch,buildPatchTransaction} from '../../packages/patch-format/src/codec.js'
@@ -75,7 +76,7 @@ type Flags = Record<string, string | boolean>;
 function parse(argv: string[]) {
   const positional: string[] = [];
   const flags: Flags = {};
-  const booleans = new Set(["confirmed", "replace-existing", "help", "json"]);
+  const booleans = new Set(["confirmed", "replace-existing", "help", "json", "version"]);
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i]!;
     if (!a.startsWith("--")) {
@@ -119,6 +120,7 @@ function receiptHash(r: any) {
 export function runCli(argv: string[]): any {
   const { positional, flags } = parse(argv);
   const [command, path, tool] = positional;
+  if (flags.version) return { version: PPTE_APP_VERSION };
   if (!command || flags.help) return { help: HELP };
   if (command === "skill-install") {
     const output = required(flags, "out");
