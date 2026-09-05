@@ -1,0 +1,475 @@
+{
+  "brand": {
+    "contractVersion": "1",
+    "id": "d01.brand",
+    "version": "1.0.0",
+    "colors": {
+      "primary": "#123456"
+    },
+    "fontRoles": {
+      "body": "Inter"
+    },
+    "logoAssetRefs": [
+      "asset:synthetic-logo"
+    ],
+    "safeAreas": [
+      {
+        "x": 0,
+        "y": 0,
+        "width": 10,
+        "height": 10
+      }
+    ],
+    "forbidden": [
+      "不得拉伸品牌标志"
+    ],
+    "licenses": [
+      {
+        "resource": "d01.brand",
+        "kind": "brand",
+        "license": "Apache-2.0",
+        "source": "repository-authored synthetic fixture",
+        "notice": "Copyright PPTe contributors; Apache-2.0. Font names only; no font bytes distributed."
+      },
+      {
+        "resource": "asset:synthetic-logo",
+        "kind": "brand",
+        "license": "Apache-2.0",
+        "source": "repository-authored synthetic fixture",
+        "notice": "Copyright PPTe contributors; Apache-2.0. Font names only; no font bytes distributed."
+      },
+      {
+        "resource": "Inter",
+        "kind": "font",
+        "license": "Apache-2.0",
+        "source": "repository-authored synthetic fixture",
+        "notice": "Copyright PPTe contributors; Apache-2.0. Font names only; no font bytes distributed."
+      }
+    ]
+  },
+  "style": {
+    "contractVersion": "1",
+    "id": "d01.editorial",
+    "version": "1.0.0",
+    "description": "中文经营回顾的合成合同样例；不是视觉成熟度证明。",
+    "suitableFor": [
+      "经营汇报"
+    ],
+    "unsuitableFor": [
+      "海报"
+    ],
+    "density": "medium",
+    "theme": {
+      "id": "theme_contract",
+      "name": "Contract Theme",
+      "tokens": {
+        "colors": {
+          "color.background": "#F7F8FA",
+          "color.text.primary": "#172033",
+          "color.text.muted": "#5B667A",
+          "color.accent": "#3B82F6",
+          "color.surface": "#FFFFFF"
+        },
+        "fontFamilies": {
+          "font.heading": "Inter",
+          "font.body": "Inter"
+        },
+        "fontSizes": {
+          "fontSize.title": 64,
+          "fontSize.body": 28
+        },
+        "spacing": {},
+        "radii": {},
+        "shadows": {}
+      },
+      "presets": {
+        "text": {
+          "text.title.primary": {
+            "fontFamily": {
+              "kind": "token",
+              "token": "font.heading"
+            },
+            "fontSize": 64,
+            "fontWeight": 700,
+            "color": {
+              "kind": "token",
+              "token": "color.text.primary"
+            },
+            "lineHeight": 1.15
+          },
+          "text.body": {
+            "fontFamily": {
+              "kind": "token",
+              "token": "font.body"
+            },
+            "fontSize": 28,
+            "fontWeight": 400,
+            "color": {
+              "kind": "token",
+              "token": "color.text.muted"
+            },
+            "lineHeight": 1.35
+          }
+        },
+        "shape": {
+          "shape.surface": {
+            "fill": {
+              "kind": "solid",
+              "color": {
+                "kind": "token",
+                "token": "color.surface"
+              }
+            },
+            "stroke": {
+              "color": {
+                "kind": "token",
+                "token": "color.accent"
+              },
+              "width": 2,
+              "opacity": 0.5
+            },
+            "radius": 28,
+            "shadow": {
+              "color": {
+                "kind": "value",
+                "value": "#172033"
+              },
+              "offsetX": 0,
+              "offsetY": 12,
+              "blur": 28,
+              "opacity": 0.12
+            }
+          }
+        },
+        "image": {
+          "image.hero": {
+            "border": {
+              "color": {
+                "kind": "token",
+                "token": "color.accent"
+              },
+              "width": 2,
+              "opacity": 0.6
+            },
+            "radius": 20,
+            "shadow": {
+              "color": {
+                "kind": "value",
+                "value": "#172033"
+              },
+              "offsetX": 0,
+              "offsetY": 8,
+              "blur": 20,
+              "opacity": 0.16
+            }
+          }
+        },
+        "chart": {}
+      }
+    },
+    "rules": {
+      "image": [
+        "保持图片比例"
+      ],
+      "line": [
+        "优先细线"
+      ],
+      "chart": [
+        "建议减少网格线"
+      ]
+    },
+    "recipeRefs": [
+      {
+        "id": "d01.statement",
+        "version": "1.0.0",
+        "digest": "sha256-1f230c7dc57d0dad8873caf2711ee3980b313c9b4e5da652354106d448edbd70"
+      }
+    ],
+    "previews": [],
+    "licenses": [
+      {
+        "resource": "Inter",
+        "kind": "font",
+        "license": "Apache-2.0",
+        "source": "repository-authored synthetic fixture",
+        "notice": "Copyright PPTe contributors; Apache-2.0. Font names only; no font bytes distributed."
+      }
+    ],
+    "digest": "sha256-56c815fbc1b5252c0b0ca826df5b10fee45952b1872130c5f78cedd67310b884"
+  },
+  "recipe": {
+    "id": "d01.statement",
+    "version": "1.0.0",
+    "supports": [
+      "statement"
+    ],
+    "slots": [
+      {
+        "key": "title",
+        "accepts": [
+          "heading"
+        ],
+        "required": true,
+        "maxCount": 1
+      },
+      {
+        "key": "body",
+        "accepts": [
+          "paragraph"
+        ],
+        "maxCount": 2
+      }
+    ],
+    "zones": [
+      {
+        "id": "title",
+        "x": 0.1,
+        "y": 0.1,
+        "width": 0.8,
+        "height": 0.2
+      },
+      {
+        "id": "body",
+        "x": 0.1,
+        "y": 0.4,
+        "width": 0.8,
+        "height": 0.5
+      }
+    ],
+    "constraints": [
+      {
+        "kind": "safe-area",
+        "slotId": "*"
+      }
+    ]
+  },
+  "manifest": {
+    "contractVersion": "1",
+    "recipeRef": {
+      "id": "d01.statement",
+      "version": "1.0.0",
+      "digest": "sha256-1f230c7dc57d0dad8873caf2711ee3980b313c9b4e5da652354106d448edbd70"
+    },
+    "purpose": [
+      "statement"
+    ],
+    "slotRefs": [
+      "title",
+      "body"
+    ],
+    "controls": [
+      {
+        "name": "columns",
+        "label": "列数",
+        "type": "integer",
+        "default": 2,
+        "min": 1,
+        "max": 3,
+        "options": [
+          1,
+          2,
+          3
+        ],
+        "applicability": [
+          "body"
+        ],
+        "affects": "layout"
+      },
+      {
+        "name": "captionDensity",
+        "label": "说明密度",
+        "type": "enum",
+        "default": "medium",
+        "options": [
+          "low",
+          "medium",
+          "high"
+        ],
+        "applicability": [
+          "body"
+        ],
+        "affects": "caption"
+      },
+      {
+        "name": "imageSide",
+        "label": "图像位置",
+        "type": "enum",
+        "default": "right",
+        "options": [
+          "left",
+          "right"
+        ],
+        "applicability": [
+          "body"
+        ],
+        "affects": "image"
+      }
+    ],
+    "capacity": {
+      "maxBlocks": 3,
+      "overflow": "reject-or-propose",
+      "textUnit": "unicode-code-point"
+    },
+    "capabilities": {
+      "html-edit": "unverified",
+      "html-present": "unverified",
+      "pdf": "unverified",
+      "pptx-image": "unverified",
+      "pptx-semantic": "unverified"
+    },
+    "structuralFingerprint": "sha256-051f47e8b9e1cbcdf32651fdd43e845532268e9a5f2c30edcaa62f7db56122b7",
+    "samples": [
+      {
+        "kind": "normal",
+        "locale": "zh-CN",
+        "input": {
+          "irVersion": "1.0",
+          "title": "中文压力合同",
+          "narrative": [
+            {
+              "key": "main",
+              "title": "经营回顾",
+              "slideKeys": [
+                "main"
+              ]
+            }
+          ],
+          "slides": [
+            {
+              "irVersion": "1.0",
+              "slideKey": "main",
+              "purpose": "statement",
+              "message": "中文、长数字与标点保持原文",
+              "visualStrategy": "structured",
+              "density": "medium",
+              "blocks": [
+                {
+                  "key": "block0",
+                  "kind": "heading",
+                  "importance": "primary",
+                  "content": "年度经营回顾"
+                },
+                {
+                  "key": "block1",
+                  "kind": "paragraph",
+                  "importance": "secondary",
+                  "content": "年度经营情况：增长率 12345678901234567890.123456789%，中文标点与𠀀字符。年度经营情况：增长率 12345678901234567890.123456789%，中文标点与𠀀字符。"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "kind": "boundary",
+        "locale": "zh-CN",
+        "input": {
+          "irVersion": "1.0",
+          "title": "中文压力合同",
+          "narrative": [
+            {
+              "key": "main",
+              "title": "经营回顾",
+              "slideKeys": [
+                "main"
+              ]
+            }
+          ],
+          "slides": [
+            {
+              "irVersion": "1.0",
+              "slideKey": "main",
+              "purpose": "statement",
+              "message": "中文、长数字与标点保持原文",
+              "visualStrategy": "structured",
+              "density": "medium",
+              "blocks": [
+                {
+                  "key": "block0",
+                  "kind": "heading",
+                  "importance": "primary",
+                  "content": "年度经营回顾"
+                },
+                {
+                  "key": "block1",
+                  "kind": "paragraph",
+                  "importance": "secondary",
+                  "content": "年度经营情况：增长率 12345678901234567890.123456789%，中文标点与𠀀字符。年度经营情况：增长率 12345678901234567890.123456789%，中文标点与𠀀字符。年度经营情况：增长率 12345678901234567890.123456789%，中文标点与𠀀字符。"
+                },
+                {
+                  "key": "block2",
+                  "kind": "paragraph",
+                  "importance": "secondary",
+                  "content": "年度经营情况：增长率 12345678901234567890.123456789%，中文标点与𠀀字符。年度经营情况：增长率 12345678901234567890.123456789%，中文标点与𠀀字符。年度经营情况：增长率 12345678901234567890.123456789%，中文标点与𠀀字符。"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "kind": "overload",
+        "locale": "zh-CN",
+        "input": {
+          "irVersion": "1.0",
+          "title": "中文压力合同",
+          "narrative": [
+            {
+              "key": "main",
+              "title": "经营回顾",
+              "slideKeys": [
+                "main"
+              ]
+            }
+          ],
+          "slides": [
+            {
+              "irVersion": "1.0",
+              "slideKey": "main",
+              "purpose": "statement",
+              "message": "中文、长数字与标点保持原文",
+              "visualStrategy": "structured",
+              "density": "medium",
+              "blocks": [
+                {
+                  "key": "block0",
+                  "kind": "heading",
+                  "importance": "primary",
+                  "content": "年度经营回顾"
+                },
+                {
+                  "key": "block1",
+                  "kind": "paragraph",
+                  "importance": "secondary",
+                  "content": "年度经营情况：增长率 12345678901234567890.123456789%，中文标点与𠀀字符。年度经营情况：增长率 12345678901234567890.123456789%，中文标点与𠀀字符。年度经营情况：增长率 12345678901234567890.123456789%，中文标点与𠀀字符。年度经营情况：增长率 12345678901234567890.123456789%，中文标点与𠀀字符。"
+                },
+                {
+                  "key": "block2",
+                  "kind": "paragraph",
+                  "importance": "secondary",
+                  "content": "年度经营情况：增长率 12345678901234567890.123456789%，中文标点与𠀀字符。年度经营情况：增长率 12345678901234567890.123456789%，中文标点与𠀀字符。年度经营情况：增长率 12345678901234567890.123456789%，中文标点与𠀀字符。年度经营情况：增长率 12345678901234567890.123456789%，中文标点与𠀀字符。"
+                },
+                {
+                  "key": "block3",
+                  "kind": "paragraph",
+                  "importance": "secondary",
+                  "content": "年度经营情况：增长率 12345678901234567890.123456789%，中文标点与𠀀字符。年度经营情况：增长率 12345678901234567890.123456789%，中文标点与𠀀字符。年度经营情况：增长率 12345678901234567890.123456789%，中文标点与𠀀字符。年度经营情况：增长率 12345678901234567890.123456789%，中文标点与𠀀字符。"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "licenses": [
+      {
+        "resource": "d01.statement",
+        "kind": "recipe",
+        "license": "Apache-2.0",
+        "source": "repository-authored synthetic fixture",
+        "notice": "Copyright PPTe contributors; Apache-2.0. Font names only; no font bytes distributed."
+      }
+    ],
+    "digest": "sha256-9fe1f90ccf23f0cb3eaaeaded88ec56ed5e712927143f7e6f4144331be409c29"
+  }
+}

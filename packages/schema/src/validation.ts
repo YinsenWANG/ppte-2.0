@@ -153,6 +153,14 @@ function validateWidgetRequirements(requirements: NonNullable<PpteDocument['widg
   for (const [index, requirement] of requirements.entries()) if (!requirement || typeof requirement !== 'object' || !requirement.type || !requirement.versionRange || requirement.fallbackRequired !== true) add('SCHEMA_INVALID', 'Widget requirement must contain type, versionRange, and fallbackRequired=true.', { path: `/widgetRequirements/${index}` })
 }
 
+/** Shared theme contract for documents and external design assets. */
+export function validateThemeDefinition(theme: PpteDocument['theme']): ValidationIssue[] {
+  const issues: ValidationIssue[] = []
+  if (!theme || typeof theme !== 'object') return [{ code: 'SCHEMA_INVALID', severity: 'error', message: 'Theme must be an object.' }]
+  validateTheme(theme, (code, message, extra) => issues.push({ code, message, severity: 'error', ...extra }))
+  return issues
+}
+
 function validateTheme(theme: PpteDocument['theme'], add: (code: string, message: string, extra?: Partial<ValidationIssue>) => void) {
   if (!theme.id || typeof theme.id !== 'string' || typeof theme.name !== 'string' || !theme.name || !theme.tokens || typeof theme.tokens !== 'object' || !theme.presets || typeof theme.presets !== 'object') {
     add('SCHEMA_INVALID', 'Theme requires id, name, tokens, and presets.', { path: '/theme' })

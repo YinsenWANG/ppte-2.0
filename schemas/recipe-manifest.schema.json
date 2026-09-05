@@ -1,0 +1,412 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ppte.dev/schemas/1.0/recipe-manifest.schema.json",
+  "title": "PPTe recipe-manifest contract v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contractVersion",
+    "recipeRef",
+    "purpose",
+    "slotRefs",
+    "controls",
+    "capacity",
+    "capabilities",
+    "structuralFingerprint",
+    "samples",
+    "licenses",
+    "digest"
+  ],
+  "properties": {
+    "contractVersion": {
+      "const": "1"
+    },
+    "recipeRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "digest"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$"
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^sha256-[a-f0-9]{64}$"
+        }
+      }
+    },
+    "purpose": {
+      "$ref": "recipe.schema.json#/properties/supports"
+    },
+    "slotRefs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "controls": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "label",
+              "type",
+              "default",
+              "options",
+              "applicability",
+              "affects"
+            ],
+            "properties": {
+              "name": {
+                "const": "columns"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1
+              },
+              "type": {
+                "const": "integer"
+              },
+              "default": {
+                "enum": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    1,
+                    2,
+                    3
+                  ]
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              },
+              "applicability": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1
+              },
+              "affects": {
+                "const": "layout"
+              },
+              "min": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 3
+              },
+              "max": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 3
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "label",
+              "type",
+              "default",
+              "options",
+              "applicability",
+              "affects"
+            ],
+            "properties": {
+              "name": {
+                "const": "captionDensity"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1
+              },
+              "type": {
+                "const": "enum"
+              },
+              "default": {
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ]
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "low",
+                    "medium",
+                    "high"
+                  ]
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              },
+              "applicability": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1
+              },
+              "affects": {
+                "const": "caption"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "label",
+              "type",
+              "default",
+              "options",
+              "applicability",
+              "affects"
+            ],
+            "properties": {
+              "name": {
+                "const": "imageSide"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1
+              },
+              "type": {
+                "const": "enum"
+              },
+              "default": {
+                "enum": [
+                  "left",
+                  "right"
+                ]
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "left",
+                    "right"
+                  ]
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              },
+              "applicability": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1
+              },
+              "affects": {
+                "const": "image"
+              }
+            }
+          }
+        ]
+      },
+      "maxItems": 3
+    },
+    "capacity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maxBlocks",
+        "overflow",
+        "textUnit"
+      ],
+      "properties": {
+        "maxBlocks": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "overflow": {
+          "const": "reject-or-propose"
+        },
+        "textUnit": {
+          "const": "unicode-code-point"
+        }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "html-edit",
+        "html-present",
+        "pdf",
+        "pptx-image",
+        "pptx-semantic"
+      ],
+      "properties": {
+        "html-edit": {
+          "enum": [
+            "unverified",
+            "unsupported"
+          ]
+        },
+        "html-present": {
+          "enum": [
+            "unverified",
+            "unsupported"
+          ]
+        },
+        "pdf": {
+          "enum": [
+            "unverified",
+            "unsupported"
+          ]
+        },
+        "pptx-image": {
+          "enum": [
+            "unverified",
+            "unsupported"
+          ]
+        },
+        "pptx-semantic": {
+          "enum": [
+            "unverified",
+            "unsupported"
+          ]
+        }
+      }
+    },
+    "structuralFingerprint": {
+      "type": "string",
+      "pattern": "^sha256-[a-f0-9]{64}$"
+    },
+    "samples": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "locale",
+          "input"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "normal",
+              "boundary",
+              "overload"
+            ]
+          },
+          "locale": {
+            "const": "zh-CN"
+          },
+          "input": {
+            "$ref": "presentation-ir.schema.json"
+          }
+        }
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "licenses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "resource",
+          "kind",
+          "license",
+          "source",
+          "notice"
+        ],
+        "properties": {
+          "resource": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "enum": [
+              "brand",
+              "font",
+              "photo",
+              "recipe",
+              "preview"
+            ]
+          },
+          "license": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1
+          },
+          "notice": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "minItems": 1
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256-[a-f0-9]{64}$"
+    }
+  },
+  "$defs": {
+    "parameters": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "columns": {
+          "enum": [
+            1,
+            2,
+            3
+          ]
+        },
+        "captionDensity": {
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "imageSide": {
+          "enum": [
+            "left",
+            "right"
+          ]
+        }
+      }
+    }
+  }
+}

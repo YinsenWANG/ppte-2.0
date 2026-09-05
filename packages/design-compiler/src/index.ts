@@ -1,3 +1,4 @@
+import { regenerationProtectedIds } from '../../design-system/src/index.js'
 import { canonicalHash, canonicalJsonString, cloneJson } from '../../canonical-json/src/index.js'
 import { validateCompiledSlideDraft, validatePresentationIR, validateSlideIR } from '../../schema/src/index.js'
 import { RecipeRegistry, matchBlocksToSlots, resolveRecipeZones, selectRecipe } from '../../layout-recipes/src/index.js'
@@ -284,14 +285,30 @@ export function buildRegenerateTransaction(document: PpteDocument, draft: Compil
   const slide = document.slides[slideId]
   if (!slide) throw new Error(`SLIDE_MISSING: ${slideId}`)
   const protectedKeys = new Set(options.protectedSemanticKeys ?? [])
-  const protectedIds = new Set(options.protectedElementIds ?? [])
+  const protectedIds = regenerationProtectedIds(slide, options.protectedContent)
+  for (const id of options.protectedElementIds ?? []) protectedIds.add(id)
   for (const protectedContent of options.protectedContent ?? []) {
     if (protectedContent.semanticKey) protectedKeys.add(protectedContent.semanticKey)
     if (protectedContent.factId) for (const element of Object.values(slide.elements)) if (element.semanticRefs?.factIds?.includes(protectedContent.factId)) protectedIds.add(element.id)
   }
   for (const element of Object.values(slide.elements)) if (element.editPolicy?.protected === true) protectedIds.add(element.id)
 
+  // Existing content-preserving regeneration may replace identity while carrying
+  // every current value forward. Locks and request-added protection still retain
+  // the original instance. Never take protected values from a stale IR.
+  const preservedReplacements = new Set<string>()
+  const requestIds = regenerationProtectedIds({ ...slide, elements: Object.fromEntries(Object.entries(slide.elements).map(([id, element]) => [id, { ...element, locked: false, editPolicy: undefined }])), protectedAnchors: [] }, options.protectedContent)
+  for (const element of Object.values(slide.elements)) {
+    const hard = element.locked || element.editPolicy?.protected || element.editPolicy?.mode === 'locked' || element.editPolicy?.agentEditable === false || element.editPolicy?.lockedFields?.length
+    const requested = requestIds.has(element.id) || options.protectedElementIds?.includes(element.id) || (element.semanticKey && protectedKeys.has(element.semanticKey))
+    if (protectedIds.has(element.id) && !hard && !requested && element.semanticKey && draft.elementDrafts.some(item => item.semanticKey === element.semanticKey)) {
+      protectedIds.delete(element.id)
+      preservedReplacements.add(element.id)
+    }
+  }
+
   const targetIds = [...new Set(options.targetElementIds ?? [])]
+  if (targetIds.some(id => protectedIds.has(id) || (slide.elements[id]?.semanticKey && protectedKeys.has(slide.elements[id].semanticKey!)))) throw new Error('REGENERATION_TARGET_PROTECTED')
   if (targetIds.length > 0) return buildSelectionRegenerationTransaction(document, draft, slideId, targetIds, options)
 
   const keep = slide.rootOrder.map((elementId) => slide.elements[elementId]).filter((element): element is Element => Boolean(element) && (protectedIds.has(element.id) || (element.semanticKey !== undefined && protectedKeys.has(element.semanticKey))))
@@ -299,10 +316,10 @@ export function buildRegenerateTransaction(document: PpteDocument, draft: Compil
   const keepKeys = new Set(keep.map((element) => element.semanticKey).filter((key): key is string => Boolean(key)))
   const replacements = new Map<string, Element>()
   for (const element of Object.values(slide.elements)) if (element.semanticKey) replacements.set(element.semanticKey, element)
-  const materialized = draft.elementDrafts.filter((item) => !(item.semanticKey && keepKeys.has(item.semanticKey))).map((item) => {
+  const materialized = draft.elementDrafts.filter((item) => !keepSet.has(item.draftId) && !(item.sourceBlockKey && keepSet.has(item.sourceBlockKey)) && !(item.semanticKey && keepKeys.has(item.semanticKey))).map((item) => {
     const generated = materializeElementDraft(item, draft)
     const prior = item.semanticKey ? replacements.get(item.semanticKey) : undefined
-    const element = prior && !keepSet.has(prior.id) ? inheritRegenerationProperties(prior, generated) : generated
+    const element = prior && preservedReplacements.has(prior.id) ? { ...cloneJson(prior), id: generated.id } : prior && !keepSet.has(prior.id) ? inheritRegenerationProperties(prior, generated) : generated
     if (!prior || keepSet.has(prior.id)) return element
     element.provenance = { ...element.provenance, replacesElementId: prior.id, sourceSemanticKey: prior.semanticKey, kind: 'generated' }
     return element
@@ -339,7 +356,7 @@ function buildSelectionRegenerationTransaction(document: PpteDocument, draft: Co
     const rootIndex = slide.rootOrder.indexOf(elementId)
     const readingOrderIndex = slide.readingOrder?.indexOf(elementId) ?? -1
     const generated = materializeElementDraft(draftElement, draft)
-    const replacement = inheritRegenerationProperties(element, generated)
+    const replacement = regenerationProtectedIds(slide).has(element.id) ? { ...cloneJson(element), id: generated.id } : inheritRegenerationProperties(element, generated)
     // Selection regeneration is an object-level replacement, not a reflow;
     // keep the selected object's current placement exactly where the user
     // selected it.

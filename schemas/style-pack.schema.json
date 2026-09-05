@@ -1,0 +1,342 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ppte.dev/schemas/1.0/style-pack.schema.json",
+  "title": "PPTe style-pack contract v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contractVersion",
+    "id",
+    "version",
+    "description",
+    "suitableFor",
+    "unsuitableFor",
+    "density",
+    "theme",
+    "rules",
+    "recipeRefs",
+    "previews",
+    "licenses",
+    "digest"
+  ],
+  "properties": {
+    "contractVersion": {
+      "const": "1"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "suitableFor": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "unsuitableFor": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "density": {
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "theme": {
+      "$ref": "document.schema.json#/properties/theme"
+    },
+    "rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "image",
+        "line",
+        "chart"
+      ],
+      "properties": {
+        "image": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "line": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "chart": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "recipeRefs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "version",
+          "digest"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$"
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^sha256-[a-f0-9]{64}$"
+          }
+        }
+      },
+      "minItems": 1
+    },
+    "previews": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "licenses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "resource",
+          "kind",
+          "license",
+          "source",
+          "notice"
+        ],
+        "properties": {
+          "resource": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "enum": [
+              "brand",
+              "font",
+              "photo",
+              "recipe",
+              "preview"
+            ]
+          },
+          "license": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1
+          },
+          "notice": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "minItems": 1
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256-[a-f0-9]{64}$"
+    }
+  },
+  "$defs": {
+    "brandSpec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contractVersion",
+        "id",
+        "version",
+        "colors",
+        "fontRoles",
+        "logoAssetRefs",
+        "safeAreas",
+        "forbidden",
+        "licenses"
+      ],
+      "properties": {
+        "contractVersion": {
+          "const": "1"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$"
+        },
+        "colors": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^#[a-fA-F0-9]{6}$"
+          }
+        },
+        "fontRoles": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "logoAssetRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "safeAreas": {
+          "type": "array",
+          "items": {
+            "$ref": "recipe.schema.json#/$defs/rect"
+          }
+        },
+        "forbidden": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "licenses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "resource",
+              "kind",
+              "license",
+              "source",
+              "notice"
+            ],
+            "properties": {
+              "resource": {
+                "type": "string",
+                "minLength": 1
+              },
+              "kind": {
+                "enum": [
+                  "brand",
+                  "font",
+                  "photo",
+                  "recipe",
+                  "preview"
+                ]
+              },
+              "license": {
+                "type": "string",
+                "minLength": 1
+              },
+              "source": {
+                "type": "string",
+                "minLength": 1
+              },
+              "notice": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "packageRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "digest"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$"
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^sha256-[a-f0-9]{64}$"
+        }
+      }
+    },
+    "licenseEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resource",
+        "kind",
+        "license",
+        "source",
+        "notice"
+      ],
+      "properties": {
+        "resource": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "brand",
+            "font",
+            "photo",
+            "recipe",
+            "preview"
+          ]
+        },
+        "license": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "notice": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}
