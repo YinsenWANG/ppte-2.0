@@ -1,0 +1,104 @@
+{
+  "taskId": "F02",
+  "acceptanceIds": [
+    "A13",
+    "A21 (automated table journey subset)"
+  ],
+  "status": "pass",
+  "baselineCommit": "cd3a46e94aaee2eb79859f7ddb1c581de8bb0d68",
+  "implementationCommit": "e3aef98488afca4cb69d029a5182c61c7b980ff6",
+  "signed": true,
+  "sourceSha256": {
+    "packages/capability/src/index.ts": "7362b52533e3dc8c03ecb331df595e5ca78e08c53b51c1114b1e40eaf5a2c0de",
+    "packages/editor-controller/src/index.ts": "bb252b8b9fa91bb8129233c25e95178960e2792c68f10dacfc28c9cb553313c9",
+    "packages/editor-controller/src/policy.ts": "f04846c690611fb707fc648bc8bfc96ec49b5d49aae952119c47e1eda10862ae",
+    "packages/editor-dom/src/table-selection.ts": "8d71c2a7e4c968ee134879279547f94d0a8f75c2fd5871daa0d83c63c9bf55c7",
+    "packages/editor-react/src/HostApp.tsx": "67d681beee8b86eac22467a056f5cc4a6656ee924231c63e2554805b9768ea00",
+    "packages/editor-react/src/Inspector.tsx": "7d82f58d4375e6181b390a97ee535ee1b199c39333301f430bde35a1938852b6",
+    "packages/portable-runtime/src/browser.ts": "fe967dc99d8d7d3c7a3b6be6b3b447776c07e3579cea4efaf7237359349e17ae",
+    "packages/portable-runtime/src/shared.ts": "527ace8ee9814809dfe4f161c5d12784ff75fbcc3d52fa9995cf1509138b9124",
+    "packages/widgets/src/index.ts": "2b05ee244936f360c1e6f3ac2de33433d27898d03c29d58d6c9a47de86d3bfad",
+    "tests/table-editing-journey.test.ts": "6603e6c65758d49de2ef86ddc95f367a561fa726681dba12b149ab0faf0ee16c"
+  },
+  "fixtureSummary": "Public synthetic table v2, two rows and two columns: Chinese text, long numeric string, integer; derived from createEmptyDocument. Referenced and locked variants are built in the tests.",
+  "fixtureDefinition": "tests/table-editing-journey.test.ts",
+  "fixtureDefinitionSha256": "6603e6c65758d49de2ef86ddc95f367a561fa726681dba12b149ab0faf0ee16c",
+  "environment": {
+    "node": "v22.23.2",
+    "platform": "darwin",
+    "arch": "arm64",
+    "playwright": "1.62.1",
+    "browser": "chromium",
+    "desktopViewport": {
+      "width": 1600,
+      "height": 1100
+    },
+    "portableNarrowViewport": {
+      "width": 700,
+      "height": 1100
+    }
+  },
+  "buildManifest": {
+    "applicationVersion": "0.9.0-next.0",
+    "runtimeBuildId": "e3cfc62362db43fbd078e8e32bb49add02398198fad535ffae8b749e3b408f3c"
+  },
+  "executedBy": "Codex, node --test and Playwright",
+  "verification": {
+    "typecheck": "pass",
+    "build": "pass",
+    "tests": {
+      "before": 321,
+      "after": 326,
+      "delta": 5,
+      "passed": 326,
+      "failed": 0,
+      "skipped": 0,
+      "testFile": "tests/table-editing-journey.test.ts",
+      "cases": [
+        "F02 A13 TSV preserves spaces, blanks, CRLF, Chinese and long numbers; rejects ragged, overflow and merged boundaries atomically",
+        "F02 A13 rectangle selection and keyboard navigation skip covered cells and clamp edges",
+        "F02 A13 structure retains untouched cell identities and fact/source references; referenced deletion rejected; empty table can grow",
+        "F02 A13 Portable profile permissions, locks, presentation guard, style rendering and checkpoint undo",
+        "F02 A13/A21 real Host and file Portable table selection, paste, styles, structure, save/reopen/undo journey"
+      ]
+    },
+    "blackbox": {
+      "start": "docs/evolution/quality/f02-blackbox-start.json",
+      "final": "docs/evolution/quality/f02-blackbox-final.json",
+      "beforeGreen": 70,
+      "beforeRed": 0,
+      "green": 70,
+      "red": 0,
+      "newRed": []
+    }
+  },
+  "artifacts": {
+    "artifacts/f02/host-trace.zip": {
+      "sha256": "c32b9e61f946ca0760a8f7b8d0cf2ee721d308aaf8904c251cd2c1a438e9c895",
+      "bytes": 2774110
+    },
+    "artifacts/f02/host.png": {
+      "sha256": "4de7a86ef4533b0e529bbc8aa829274937399ea0ce5059d19da16a91bd049cf9",
+      "bytes": 176369
+    },
+    "artifacts/f02/portable-narrow.png": {
+      "sha256": "50f55055a019e25283e09dab0ddc8422bb1892e0df496939677b550893cd1369",
+      "bytes": 54871
+    },
+    "artifacts/f02/portable-trace.zip": {
+      "sha256": "d018d3801675fc2917502b48cd47ff894a6f468350808eb4e2dd5774e31b1034",
+      "bytes": 1479234
+    },
+    "artifacts/f02/portable.png": {
+      "sha256": "266d0358b43f087d558a4188995b022ff821763fbfb29d4dd8d047262684add9",
+      "bytes": 82823
+    }
+  },
+  "unverified": [
+    "A21 product-owner and two target-user sessions",
+    "Physical IME",
+    "Safari and lower-performance physical devices",
+    "F03 native Office export/client validation"
+  ],
+  "report": "docs/evolution/quality/F02.md"
+}
