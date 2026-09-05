@@ -794,7 +794,7 @@
       "milestone": "M1",
       "priority": "P0",
       "title": "精确选区格式、IME 与草稿保护",
-      "status": "planned",
+      "status": "done",
       "effort": "L",
       "ownerRole": "文字 / 编辑器",
       "dependsOn": [
@@ -831,7 +831,20 @@
         "A18"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        "commit:4e933ab237f0647cde7c1c7e85fc6f511f35703e",
+        "tests/text-range-editing.test.ts",
+        "tests/surface-mode-contract.test.ts",
+        "tests/host-completion.test.ts",
+        "tests/portable-presentation.test.ts",
+        "tests/r3-portable.test.ts",
+        "docs/evolution/E03_EVIDENCE.md",
+        "docs/evolution/quality/e03-blackbox-start.json",
+        "docs/evolution/quality/e03-blackbox-final.json",
+        "pnpm typecheck && pnpm build && pnpm test: 182 passed (baseline 176, +6); 0 failed, 0 skipped",
+        "pnpm blackbox:final: 69 green / 0 red (baseline 69 / 0; no new reds)",
+        "Shared native production range/buffer/DOM adapter in Host and Portable. Synthetic Chromium IME, selection, rich paste, save/reopen and conflict journeys passed; real OS Chinese IME and physical Safari remain manual A09/Q01 validation."
+      ]
     },
     {
       "id": "E04",
