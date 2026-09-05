@@ -46,7 +46,7 @@ test('R3 file:// Quick Fix imports, edits, saves, and reopens the semantic docum
     await page.waitForFunction(() => Boolean((globalThis as any).PPTEPortable?.getDocument))
 
     const input = page.locator('input[data-ppte-action="import-image"]')
-    await input.setInputFiles({ name: 'new-image.png', mimeType: 'image/png', buffer: Buffer.from([1, 2, 3, 4]) })
+    await input.setInputFiles({ name: 'new-image.png', mimeType: 'image/png', buffer: Buffer.from(imageBytes) })
     await page.waitForFunction(() => Object.keys((globalThis as any).PPTEPortable.getDocument().assets).some((id) => id !== 'asset_pixel'))
     const imported = await page.evaluate(() => {
       const api = (globalThis as any).PPTEPortable

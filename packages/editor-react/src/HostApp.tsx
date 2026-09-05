@@ -1,3 +1,5 @@
+import { mountImageCrop } from '../../editor-dom/src/image-crop.js'
+import { prepareImage, decodeBrowserImage, planImage } from '../../editor-controller/src/resource-port.js'
 import { TransformSession, planTransform, type TransformGeometry } from '../../editor-controller/src/transform-session.js'
 import { TransformPointer, screenToDu } from '../../editor-dom/src/pointer.js'
 import { planObjectProperty } from '../../editor-controller/src/object-commands.js'
@@ -5,7 +7,7 @@ import { TextEditingSurface, reconcileTextSurface, type TextSurfacePort } from '
 import { EditorController } from '../../editor-controller/src/index.js'
 import { PresentationController } from '../../editor-controller/src/presentation.js'
 import {actualTextOverflow,fittedBrowserFont} from './text-measurement.js'
-import {poolBytes,resolveBytes,type ResourceBytes} from './resource-pool.js'
+import {poolBytes,resolveBytes,collectResourcePool,type ResourceBytes} from './resource-pool.js'
 import { ReviewPanel, type ReviewProject } from './ReviewPanel.js'
 import { RecipeStudio } from './RecipeStudio.js'
 import { builtInRecipeSpecs, RecipeRegistry } from '../../layout-recipes/src/index.js'
@@ -132,18 +134,21 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
 
   const activeSlideId = documentNode.slideOrder[activeSlideIndex] ?? documentNode.slideOrder[0] ?? ''
   const activeSlide = documentNode.slides[activeSlideId]
-  const activeElementIds = selection.slideId === activeSlideId ? selection.elementIds : []
+  const activeElementIds = selection.slideId === activeSlideId ? selection.elementIds.filter(id=>activeSlide?.elements[id]) : []
   const nextOperationId = (kind: string) => `host:${kind}:${++operationNumber.current}:${crypto.randomUUID()}`
 
   useEffect(() => {
     const created: Record<string, string> = {}
+    const referenced=new Set<string>()
+    const visit=(value:unknown):void=>{if(value&&typeof value==='object')for(const [key,child] of Object.entries(value)){if(key==='assetId'&&typeof child==='string')referenced.add(child);else visit(child)}}
+    visit(documentNode.slides);visit(documentNode.theme)
     for (const [assetId, bytes] of Object.entries(assetBytes)) {
       const asset = documentNode.assets[assetId]
-      if (asset) created[assetId] = URL.createObjectURL(new Blob([blobBytes(bytes)], { type: asset.mimeType }))
+      if (asset && referenced.has(assetId)) created[assetId] = URL.createObjectURL(new Blob([blobBytes(bytes)], { type: asset.mimeType }))
     }
     setAssetSources(created)
     return () => Object.values(created).forEach((source) => URL.revokeObjectURL(source))
-  }, [assetBytes, assetSpecKey])
+  }, [assetBytes, assetSpecKey, documentNode.slides, documentNode.theme])
 
   useEffect(() => {
     setNotesDraft(activeSlide?.notes?.speaker ?? '')
@@ -255,6 +260,16 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     return target && element?.type === 'text' ? { node: target, element } : undefined
   }
 
+  const cropCleanup=useRef<(()=>void)|undefined>(undefined)
+  useEffect(()=>{cropCleanup.current?.();cropCleanup.current=undefined},[documentNode,activeSlideId,selection,presenting])
+  useEffect(()=>()=>cropCleanup.current?.(),[])
+  function cropSelected():void {
+    cropCleanup.current?.()
+    const id=activeElementIds[0],element=activeSlide?.elements[id]
+    if(activeElementIds.length!==1||element?.type!=='image'||!controller().flushSync().ok)return
+    const node=Array.from(renderedRef.current?.querySelectorAll<HTMLElement>('[data-ppte-element-id]')??[]).find(n=>n.dataset.ppteElementId===id)
+    if(node)cropCleanup.current=mountImageCrop(node,element,()=>canvasScale,crop=>commitOperations([{opId:nextOperationId('crop'),kind:'image.setCrop',slideId:activeSlideId,elementId:id,crop}],'图片已裁剪'))
+  }
   function pointerInDu(event: ReactPointerEvent<HTMLDivElement>): { x: number; y: number } {
     const slide = renderedRef.current?.querySelector<HTMLElement>('.ppte-slide')
     const rect = slide?.getBoundingClientRect()
@@ -453,34 +468,31 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     }
   }
 
-  async function importImage(event: ChangeEvent<HTMLInputElement>): Promise<void> {
-    const file = event.target.files?.[0]
-    if (!file || !file.type.startsWith('image/')) {
-      if (file) setStatus('图片导入失败 · 请选择图片文件')
-      return
-    }
+  const imageJob = useRef<AbortController | undefined>(undefined)
+  useEffect(()=>()=>imageJob.current?.abort(),[])
+  async function importImageFile(file: File): Promise<void> {
+    imageJob.current?.abort()
+    const job = new AbortController(); imageJob.current = job
+    const origin = sessionRef.current, slideId = activeSlideId
+    const replace = activeElementIds.length === 1 && activeSlide?.elements[activeElementIds[0]]?.type === 'image'
+    const elementId = replace ? activeElementIds[0] : `image_host_${crypto.randomUUID()}`
     try {
-      const bytes = new Uint8Array(await file.arrayBuffer())
-      const assetId = `asset_host_${crypto.randomUUID()}`
-      const elementId = `image_host_${crypto.randomUUID()}`
-      const asset: Asset = { id: assetId, hash: `sha256-${sha256HexBytes(bytes)}`, mimeType: file.type, byteLength: bytes.length, path: `assets/${assetId}.${extensionForMime(file.type)}`, altText: file.name, source: { kind: 'upload', importedAt: now() } }
-      const image: ImageElement = { id: elementId, type: 'image', semanticKey: `image.${assetId}`, role: 'image', frame: { x: 1120, y: 260, width: 600, height: 460 }, assetId, fit: 'contain', altText: file.name, style: { styleRef: 'image.hero' } }
-      const replace=activeElementIds.length===1&&activeSlide?.elements[activeElementIds[0]]?.type==='image'
-      const operations: Operation[] = [
-        { opId: nextOperationId('asset'), kind: 'asset.upsert', asset },
-        replace ? {opId:nextOperationId('replace-image'),kind:'image.replaceAsset',slideId:activeSlideId,elementId:activeElementIds[0],assetId} : { opId: nextOperationId('image'), kind: 'element.insert', slideId: activeSlideId, element: image, index: activeSlide?.rootOrder.length ?? 0, readingOrderIndex: activeSlide?.readingOrder?.length ?? 0 },
-      ]
-      await recoveryRef.current!.resources({[assetId]:bytes},{})
-      if (commitOperations(operations, '导入并插入图片')) {
-        setAssetBytes((current) => ({ ...current, [assetId]: bytes }))
-        setSelection({ slideId: activeSlideId, elementIds: [replace?activeElementIds[0]:elementId], primaryElementId: replace?activeElementIds[0]:elementId })
-        setStatus(`已导入图片 ${file.name}`)
+      const prepared = await prepareImage(new Uint8Array(await file.arrayBuffer()), {mimeType:file.type,name:file.name,decode:decodeBrowserImage,signal:job.signal})
+      if (!controller().flushSync().ok) return
+      if (job.signal.aborted || origin !== sessionRef.current || !presentation.canMutate) throw Error('IMAGE_CANCELLED')
+      await recoveryRef.current!.resources({[prepared.asset.id]:prepared.bytes},{})
+      if (job.signal.aborted || origin !== sessionRef.current || !presentation.canMutate) throw Error('IMAGE_CANCELLED')
+      const transaction = planImage(origin!.getDocument(), {revision:origin!.getRevision(),slideId,elementId,replace,prepared,transactionId:nextOperationId('image')})
+      if (commitTransaction(transaction,'图片已导入')) {
+        setAssetBytes(current=>({...current,[prepared.asset.id]:prepared.bytes,[prepared.asset.hash]:prepared.bytes}))
+        setSelection({slideId,elementIds:[elementId],primaryElementId:elementId})
       }
-    } catch (cause) {
-      setStatus(`图片导入失败 · ${cause instanceof Error ? cause.message : String(cause)}`)
-    } finally {
-      event.target.value = ''
-    }
+    } catch (cause) { setStatus(`图片导入失败 · ${String(cause)}`) }
+    finally { if(imageJob.current===job)imageJob.current=undefined }
+  }
+  async function importImage(event: ChangeEvent<HTMLInputElement>): Promise<void> {
+    const file=event.target.files?.[0]; event.target.value=''
+    if(file)await importImageFile(file)
   }
 
   async function saveCopy(): Promise<void> {
@@ -488,7 +500,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
       flushHostEdits()
       const recentTransactions = sessionRef.current?.getHistory().map((entry) => entry.transaction) ?? []
       setSaveLabel('正在保存')
-      const bytes = await buildBrowserCheckpoint(sessionRef.current!.getDocument(), assetBytes, fontBytes, recentTransactions, [...sessionRef.current!.getRedoHistory()])
+      const bytes = await buildBrowserCheckpoint(sessionRef.current!.getDocument(), assetPool, fontBytes, recentTransactions, [...sessionRef.current!.getRedoHistory()])
       const filename = `${safeFilename(documentNode.metadata.title || 'presentation')}.ppte`
       const picker = (window as unknown as { showSaveFilePicker?: (options: unknown) => Promise<{ createWritable: () => Promise<{ write: (data: Uint8Array) => Promise<void>; close: () => Promise<void> }> }> }).showSaveFilePicker
       if (picker && window.isSecureContext && !navigator.webdriver) {
@@ -520,7 +532,14 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     }
   }
 
-  async function compactRecovery(){const s=sessionRef.current!;sessionRef.current=await recoveryRef.current!.replace({document:structuredClone(s.getDocument()),assetBytes:assetPool,fontBytes:fontPool,history:[...s.getHistory()],redo:[...s.getRedoHistory()]})}
+  async function compactRecovery(){
+    const s=sessionRef.current!
+    // The replaced recovery namespace owns its old journal bytes independently.
+    // Active preparations pin the live pool until they finish or cancel.
+    const retained=collectResourcePool(assetPool,{document:s.getDocument(),undo:s.getHistory(),redo:s.getRedoHistory(),journal:[],draft:pendingEdit?.document,jobs:imageJob.current?Object.keys(assetPool):[]})
+    sessionRef.current=await recoveryRef.current!.replace({document:structuredClone(s.getDocument()),assetBytes:retained,fontBytes:fontPool,history:[...s.getHistory()],redo:[...s.getRedoHistory()]})
+    setAssetPool(retained)
+  }
 
   function flushHostEdits():void {
     const result = controller().flushSync()
@@ -530,7 +549,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     try {
       flushHostEdits()
       const session=sessionRef.current!
-      const result=buildPortable(session.getDocument(),{profile:'full-portable',assetBytes,fontBytes,recentTransactions:session.getHistory().map(h=>h.transaction)})
+      const result=buildPortable(session.getDocument(),{profile:'full-portable',assetBytes:assetPool,fontBytes,recentTransactions:session.getHistory().map(h=>h.transaction),redoHistory:[...session.getRedoHistory()]})
       if(!result.ok)throw new Error(result.issues.map(i=>i.message).join('; '))
       const url=URL.createObjectURL(new Blob([result.html],{type:'text/html'}));const a=document.createElement('a');a.href=url;a.download=`${safeFilename(session.getDocument().metadata.title)}.editable.ppte.html`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)
       setStatus('已保存可直接打开、编辑的 HTML 副本')
@@ -655,7 +674,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLDivElement>): void {
-    if (event.key === 'Escape') { pendingPresentation.current = false; cancelTransform() }
+    if (event.key === 'Escape') { imageJob.current?.abort(); pendingPresentation.current = false; cancelTransform() }
     if(!presenting&&!event.nativeEvent.isComposing&&![...(textSurface.current?.drafts.values()??[])].some(b=>b.isComposing())&&!(event.target as HTMLElement).closest('input,textarea,select,[contenteditable="true"]')&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key)&&activeElementIds.length){event.preventDefault();try{if(!controller().flushSync().ok)return;const step=event.shiftKey?10:1;const tx=planTransform(documentNode,{revision:canonicalRevision(documentNode),slideId:activeSlideId,ids:activeElementIds,command:{kind:'move',dx:event.key==='ArrowLeft'?-step:event.key==='ArrowRight'?step:0,dy:event.key==='ArrowUp'?-step:event.key==='ArrowDown'?step:0},transactionId:nextOperationId('nudge'),createdAt:now()});if(tx)commitTransaction(tx,'对象已移动')}catch(error){setStatus(String(error))}return}
     if(event.nativeEvent.isComposing || [...(textSurface.current?.drafts.values()??[])].some(b=>b.isComposing()))return
     if(!presenting){if(event.key==='Escape'){const target=textTarget(event);if(target){textSurface.current?.discard(target.element.id);setRenderEpoch(n=>n+1);target.node.blur();event.preventDefault();setStatus('已取消本次文字编辑')}}if((event.metaKey||event.ctrlKey)&&event.key==='s'){event.preventDefault();void saveCopy()}return}
@@ -689,7 +708,8 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
       <button type="button" data-ppte-action="add-page" onClick={addPage}>复制页</button><button onClick={()=>pageAction('delete')}>删除页</button><button onClick={()=>pageAction('up')}>上移页</button><button onClick={()=>pageAction('down')}>下移页</button>
       <button type="button" data-ppte-action="undo" onClick={undo} disabled={historyDepth === 0}>Undo</button>
       <button type="button" data-ppte-action="redo" onClick={redo} disabled={redoDepth === 0}>Redo</button>
-      <label className="ppte-toolbar-label">{activeElementIds.length===1&&activeSlide?.elements[activeElementIds[0]]?.type==='image'?'替换图片':'Add image'}<input type="file" accept="image/*" data-ppte-action="import-image" onChange={importImage} /></label>
+      <label className="ppte-toolbar-label">{activeElementIds.length===1&&activeSlide?.elements[activeElementIds[0]]?.type==='image'?'替换图片':'Add image'}<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" data-ppte-action="import-image" onChange={importImage} /></label>
+      <button type="button" data-ppte-action="crop" onClick={cropSelected}>裁剪图片</button>
       <button type="button" data-ppte-action="save" onClick={() => void saveCopy()}>保存 PPTe 项目 (.ppte)</button>
       <button type="button" data-ppte-action="save-editable" onClick={saveEditable}>保存可编辑 HTML</button>
       <label className="ppte-toolbar-label">预览 Agent 修改<input type="file" accept=".json" onChange={previewAgentEdit}/></label>
@@ -706,7 +726,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
       </div>
     </aside>}
     {presenting && <nav className="ppte-presenter-controls" aria-label="放映控制"><button onClick={previousPresenter} aria-label="上一页">←</button><span>{presenterState.slideIndex + 1} / {documentNode.slideOrder.length}</span><button onClick={nextPresenter} aria-label="下一页">→</button><button data-ppte-action="exit-present" onClick={togglePresenter}>退出放映</button></nav>}
-    <main className="ppte-host-main" data-ppte-stage onPasteCapture={event => { if (!presentation.canMutate) event.preventDefault() }} onDropCapture={event => { if (!presentation.canMutate) event.preventDefault() }}>
+    <main className="ppte-host-main" data-ppte-stage onDragOver={event=>{if(presentation.canMutate)event.preventDefault()}} onPaste={event=>{const file=event.clipboardData.files[0];if(file&&presentation.canMutate){event.preventDefault();void importImageFile(file)}}} onDrop={event=>{event.preventDefault();const file=event.dataTransfer.files[0];if(file&&presentation.canMutate)void importImageFile(file)}} onPasteCapture={event => { if (!presentation.canMutate) event.preventDefault() }} onDropCapture={event => { if (!presentation.canMutate) event.preventDefault() }}>
       <div className="ppte-canvas-wrap" tabIndex={-1} style={{ aspectRatio: `${documentNode.canvas.width} / ${documentNode.canvas.height}`, ['--ppte-aspect' as string]: documentNode.canvas.width / documentNode.canvas.height }} ref={renderedRef} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={cancelTransform} onLostPointerCapture={cancelTransform} onDoubleClick={(event) => { if (!presentation.canMutate) return; const target = textTarget(event); if (target) { setSelection({slideId:activeSlideId,elementIds:[target.element.id],primaryElementId:target.element.id}); target.node.focus(); setStatus('文字编辑中 · compositionend 后提交') } }} onBeforeInput={event => { if (!presentation.canMutate) event.preventDefault() }} onPaste={event => { if (!presentation.canMutate) event.preventDefault() }} onDrop={event => { if (!presentation.canMutate) event.preventDefault() }}>
         <div className="ppte-rendered-slide" data-ppte-canvas-scale={canvasScale} style={{ ['--ppte-scale' as string]: canvasScale }} />
         {!presenting && selectedOverlay.map((item) => {

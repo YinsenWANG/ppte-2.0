@@ -108,7 +108,8 @@ export function openFileSession(
     checkpoint: {
       write: (document, destination, _, recent) =>
         writeCheckpoint(document, String(destination), {
-          assetBytes:Object.fromEntries(Object.values(document.assets).map(a=>[a.id,cas?.get(a.hash)??resources.assetBytes[a.id]])),
+          assetBytes:{...resources.assetBytes,...Object.fromEntries(Object.values(document.assets).map(a=>[a.id,cas?.get(a.hash)??resources.assetBytes[a.id]]))},
+          cas,
           fontBytes:Object.fromEntries(Object.values(document.fonts).map(f=>[f.id,(f.hash?cas?.get(f.hash):undefined)??resources.fontBytes[f.id]])),
           redoHistory: [...session.getRedoHistory()],
           recentTransactions: recent ? [...recent] : [],

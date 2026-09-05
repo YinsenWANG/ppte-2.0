@@ -1,3 +1,5 @@
+import { mountImageCrop } from '../../editor-dom/src/image-crop.js'
+import { prepareImage, decodeBrowserImage } from '../../editor-controller/src/resource-port.js'
 import { TransformSession, planTransform } from '../../editor-controller/src/transform-session.js';
 import { TransformPointer, screenToDu } from '../../editor-dom/src/pointer.js';
 import { renderObjectProperties } from '../../editor-dom/src/object-properties.js';
@@ -153,6 +155,7 @@ function fit() {
   show();
 }
 function render() {
+  cropCleanup?.(); cropCleanup=undefined;
   const doc = runtime.getDocument();
   const assets = runtime.getAssetBytes();
   textSurface.refresh();
@@ -325,30 +328,16 @@ function dialogForm(
   document.body.append(dialog);
   dialog.showModal();
 }
+let cropCleanup:(()=>void)|undefined;
 function cropDialog() {
-  const target = selected();
-  if (!target)
-    return show(error("PORTABLE_SELECTION_INVALID", "Select an image."));
-  const e =
-    runtime.getDocument().slides[target.slideId]!.elements[target.elementId]!;
-  if (e.type !== "image")
-    return show(error("PORTABLE_EDIT_UNSUPPORTED", "Select an image."));
-  const crop = e.crop ?? { x: 0, y: 0, width: 1, height: 1 };
-  const keys = ["x", "y", "width", "height"] as const;
-  dialogForm(
-    "Crop",
-    keys.map((k) => ({ label: k, value: String(crop[k]), type: "number" })),
-    (values) =>
-      change(
-        runtime.cropImage(
-          target,
-          Object.fromEntries(
-            keys.map((k, i) => [k, Number(values[i])]),
-          ) as unknown as typeof crop,
-        ),
-      ),
-  );
+  cropCleanup?.();
+  const target=selected();if(!target)return show(error('PORTABLE_SELECTION_INVALID','Select an image.'));
+  const image=runtime.getDocument().slides[target.slideId!]!.elements[target.elementId!]!;
+  if(image.type!=='image')return show(error('PORTABLE_SELECTION_INVALID','Select an image.'));
+  const node=Array.from(canvas.querySelectorAll<HTMLElement>('[data-ppte-element-id]')).find(n=>n.dataset.ppteElementId===image.id);
+  if(node)cropCleanup=mountImageCrop(node,image,()=>scale,crop=>change(runtime.cropImage(target,crop)));
 }
+dom.own(()=>cropCleanup?.());
 function chartDialog() {
   const target = selected();
   if (!target)
@@ -378,26 +367,31 @@ function chartDialog() {
     },
   );
 }
+let imageJob:AbortController|undefined;
+dom.own(()=>imageJob?.abort());
+dom.listen(document,"keydown",event=>{if(event.key==="Escape")imageJob?.abort()});
 async function importImage(
   target: PortableElementTarget | undefined,
   data: Blob | Uint8Array,
   options: Record<string, any> = {},
 ) {
-  const resolved =
-    target ??
-    selected() ??
-    Object.entries(runtime.getDocument().slides).flatMap(([slideId, s]) =>
-      Object.values(s.elements)
-        .filter((e) => e.type === "image")
-        .map((e) => ({ slideId, elementId: e.id })),
-    )[0];
-  if (!resolved)
-    return error("PORTABLE_SELECTION_INVALID", "Select an image to replace.");
+  if(!runtime.presentation.canMutate)return error('PRESENTATION_READONLY','Exit presentation before editing.');
+  const candidate:PortableElementTarget|undefined=target??selected()??(runtime.profile!=='full-portable'?Object.entries(runtime.getDocument().slides).flatMap(([slideId,slide])=>Object.values(slide.elements).filter(e=>e.type==='image').map(e=>({slideId,elementId:e.id})))[0]:undefined);
+  const resolved=candidate?Object.entries(runtime.getDocument().slides).flatMap(([slideId,slide])=>Object.values(slide.elements).filter(e=>e.type==='image'&&(!candidate.slideId||candidate.slideId===slideId)&&(candidate.elementId===e.id||Boolean(candidate.semanticKey&&candidate.semanticKey===e.semanticKey))).map(e=>({slideId,elementId:e.id})))[0]:undefined;
+  if(target&&!resolved)return error('PORTABLE_SELECTION_INVALID','Image target no longer exists.');
+  const slideId=resolved?.slideId??runtime.presenterState().slideId;
+  imageJob?.abort();const job=new AbortController();imageJob=job;
+  try {
   const bytes =
     data instanceof Uint8Array
       ? data
       : new Uint8Array(await data.arrayBuffer());
-  return change(runtime.importImage(resolved, bytes, options));
+    const prepared = await prepareImage(bytes,{mimeType:options.mimeType ?? (data instanceof Blob ? data.type : 'image/png'),name:options.fileName,decode:decodeBrowserImage,signal:job.signal});
+    if(job.signal.aborted)return error('IMAGE_CANCELLED','Image import cancelled.');
+    const pending=flush();if(!pending.ok)return change(pending);
+    return change(runtime.commitPreparedImage(slideId,resolved?.elementId??`image_${crypto.randomUUID()}`,prepared,Boolean(resolved)));
+  } catch(cause) { return change(error('IMAGE_IMPORT_FAILED',String(cause))); }
+  finally {if(imageJob===job)imageJob=undefined;}
 }
 root.querySelectorAll<HTMLButtonElement>("button[data-ppte-action]").forEach(
   (button) =>
@@ -450,6 +444,11 @@ if (imageInput) dom.listen(imageInput, "change", (event) => {
       });
     input.value = "";
   });
+for(const type of ['paste','drop'] as const) dom.listen(root,type,event=>{
+  const file=type==='paste'?(event as ClipboardEvent).clipboardData?.files[0]:(event as DragEvent).dataTransfer?.files[0];
+  if(file){event.preventDefault();void importImage(undefined,file,{mimeType:file.type,fileName:file.name})}
+});
+dom.listen(root,'dragover',event=>event.preventDefault());
 dom.own(() => { root.querySelectorAll<HTMLButtonElement>("button[data-ppte-action]").forEach(button => { button.onclick = null }); });
 const elementTarget = (event: Event) =>
   event.target instanceof Element

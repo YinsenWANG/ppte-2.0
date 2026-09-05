@@ -1,3 +1,4 @@
+import { readHistoryResourcePool } from '../../file-format/src/resource-retention.js'
 import {
   closeSync,
   lstatSync,
@@ -96,7 +97,7 @@ export function readCheckpointResources(
   resolveBlob?: (hash:string)=>Uint8Array|undefined,
 ): CheckpointResources {
   const archive = readStoredZip(new Uint8Array(readFileSync(target)));
-  const assetBytes: Record<string, Uint8Array> = {};
+  const assetBytes: Record<string, Uint8Array> = readHistoryResourcePool(archive);
   for (const asset of Object.values(document.assets)) {
     const data = resolveBlob?.(asset.hash) ?? archive.get(asset.path);
     if (!data)

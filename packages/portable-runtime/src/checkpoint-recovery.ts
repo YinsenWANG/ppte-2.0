@@ -1,3 +1,4 @@
+import { readHistoryResourcePool, referencedAssets, requireAssetBytes, hashPool } from '../../file-format/src/resource-retention.js'
 import { canonicalHash, canonicalRevision, sha256HexBytes } from '../../canonical-json/src/index.js'
 import { readStoredZip } from '../../archive/src/index.js'
 import { assessHistory, type HistoryAssessment } from '../../core/src/history.js'
@@ -71,6 +72,7 @@ export function assessCheckpointRecovery(bytes: Uint8Array): CheckpointRecoveryA
       if (!data || (font.hash && sha256HexBytes(data) !== font.hash.replace(/^sha256-/, ''))) throw new Error(`FONT_HASH_MISMATCH: ${font.id}`)
       result.fontBytes[font.id] = data
     }
+    Object.assign(result.assetBytes,readHistoryResourcePool(archive))
     result.document = document
     result.snapshotStatus = 'valid'
     const lines = new TextDecoder().decode(archive.get('history/recent.jsonl')).split('\n').filter(Boolean)
@@ -89,6 +91,10 @@ export function assessCheckpointRecovery(bytes: Uint8Array): CheckpointRecoveryA
     if (archive.has('history/redo.json')) {
       try { redo = parse('history/redo.json'); if (!Array.isArray(redo)) throw new Error('Redo is not an array') }
       catch { redo = []; redoIntegrityFailed = true; historyIssues.push('Malformed redo history') }
+    }
+    for(const [rows,isRedo] of [[entries,false],[redo,true]] as const){
+      try { for(const asset of referencedAssets(rows))requireAssetBytes(hashPool(result.assetBytes),asset) }
+      catch(cause){historyIssues.push(String(cause));if(isRedo)redoIntegrityFailed=true;else undoIntegrityFailed=true}
     }
     result.history = assessHistory(document, entries, redo, 'ga-c', manifest.operationProtocolVersion)
     result.recentTransactions = entries.map(entry => entry?.transaction)

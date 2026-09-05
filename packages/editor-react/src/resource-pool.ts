@@ -10,3 +10,11 @@ export function poolBytes(bytes:ResourceBytes):ResourceBytes {
 export function resolveBytes(pool:ResourceBytes,metadata:Record<string,{hash?:string}>):ResourceBytes {
   return Object.fromEntries(Object.entries(metadata).flatMap(([id,m])=>{const b=(m.hash?pool[m.hash]:undefined)??pool[id];return b?[[id,b]]:[]}))
 }
+
+/** Call only with the complete owner roots; missing owners are not interpreted as empty. */
+export function collectResourcePool(pool:ResourceBytes, roots:Record<'document'|'undo'|'redo'|'journal'|'draft'|'jobs',unknown>):ResourceBytes {
+  for(const owner of ['document','undo','redo','journal','draft','jobs'])if(!Object.hasOwn(roots,owner))throw Error(`RESOURCE_ROOT_MISSING: ${owner}`)
+  const keep=retainedResourceHashes(roots)
+  return Object.fromEntries(Object.entries(poolBytes(pool)).filter(([,bytes])=>keep.has(`sha256-${sha256HexBytes(bytes)}`)))
+}
+import { retainedResourceHashes } from '../../editor-controller/src/resource-port.js'

@@ -1,3 +1,4 @@
+import { hashPool, requireAssetBytes, historyResourceEntries, referencedAssets, readHistoryResourcePool } from './resource-retention.js'
 import { assessCheckpointRecovery } from '../../portable-runtime/src/checkpoint-recovery.js'
 import { type HistoryAssessment } from '../../core/src/history.js'
 import { existsSync, fsyncSync, mkdirSync, openSync, closeSync, readFileSync, readdirSync, renameSync, statSync, unlinkSync, writeFileSync } from 'node:fs'
@@ -146,19 +147,17 @@ export function writeCheckpoint(document: PpteDocument, target: string, options:
   }
   addEntry(entries, 'history/descriptor.json', bytes(canonicalJsonString({ mode: options.clean ? 'clean' : 'standard', snapshotRevision: revision, recentTransactionCount: options.clean ? 0 : recent.length, deepHistoryExternal: !options.clean })))
   if (!options.clean && recent.length) addEntry(entries, 'history/recent.jsonl', bytes(recent.map((transaction) => canonicalJsonString(transaction)).join('\n') + '\n'))
-  for (const [assetId, data] of Object.entries(options.assetBytes ?? {})) {
-    const asset = document.assets[assetId]
-    if (!asset) throw new Error(`ASSET_MISSING: ${assetId}`)
-    if (data.length !== asset.byteLength || normalizeHash(asset.hash) !== sha256Binary(data)) throw new Error(`ASSET_HASH_MISMATCH: ${assetId}`)
-    addEntry(entries, safePackagePath(asset.path, `assets/${assetId}`, 'assets/'), data)
+  const assetPool=hashPool(options.assetBytes ?? {})
+  for(const asset of Object.values(document.assets)){
+    const data=assetPool[asset.hash]??assetPool[asset.id]??options.cas?.get(asset.hash)??resolveBlob(options.blobResolver,asset.hash)
+    addEntry(entries,safePackagePath(asset.path,`assets/${asset.id}`,'assets/'),requireAssetBytes(data?{[asset.hash]:data}:{},asset))
   }
-  for (const asset of Object.values(document.assets)) {
-    const data = options.assetBytes?.[asset.id] ?? options.cas?.get(asset.hash) ?? resolveBlob(options.blobResolver, asset.hash)
-    if (!data) throw new Error(`ASSET_MISSING: checkpoint requires bytes for ${asset.id}`)
-    if (!options.assetBytes?.[asset.id]) {
-      if (data.length !== asset.byteLength || normalizeHash(asset.hash) !== sha256Binary(data)) throw new Error(`ASSET_HASH_MISMATCH: ${asset.id}`)
-      addEntry(entries, safePackagePath(asset.path, `assets/${asset.id}`, 'assets/'), data)
+  if(!options.clean){
+    for(const asset of referencedAssets(options.recentTransactions,options.redoHistory))if(!assetPool[asset.hash]){
+      const data=options.cas?.get(asset.hash)??resolveBlob(options.blobResolver,asset.hash)
+      if(data)assetPool[asset.hash]=data
     }
+    for(const entry of historyResourceEntries(assetPool,options.recentTransactions,options.redoHistory))if(!Object.values(document.assets).some(a=>entry.name===`assets/cas/${a.hash}`))addEntry(entries,entry.name,entry.data)
   }
   for (const [fontId, data] of Object.entries(options.fontBytes ?? {})) {
     const font = document.fonts[fontId]
@@ -284,6 +283,8 @@ export function openCheckpointBytes(bytesOnDisk: Uint8Array, options: { history?
   const history = manifest.history
   if (!history || descriptor.mode !== history.mode || descriptor.snapshotRevision !== history.snapshotRevision || descriptor.recentTransactionCount !== history.recentTransactionCount || descriptor.deepHistoryExternal !== history.deepHistoryExternal) throw new Error('CHECKPOINT_FAILED: history descriptor does not match manifest')
   const recentTransactions = readRecentTransactions(archive, manifest)
+  const historyPool=hashPool({...Object.fromEntries(Object.values(document.assets).map(a=>[a.id,archive.get(a.path)!])),...readHistoryResourcePool(archive)})
+  for(const asset of referencedAssets(recentTransactions,archive.has('history/redo.json')?parseJson(archive,'history/redo.json'):[]))requireAssetBytes(historyPool,asset)
   attachCheckpointRestoreContext(document, recentTransactions, manifest.compatibilityProfile, archive.has('history/redo.json') ? parseJson<SessionHistoryEntrySnapshot[]>(archive, 'history/redo.json') : [])
   return { document, manifest, recentTransactions }
 }
@@ -309,19 +310,17 @@ export function buildCheckpointBytes(document: PpteDocument, options: Checkpoint
   }
   addEntry(entries, 'history/descriptor.json', bytes(canonicalJsonString({ mode: options.clean ? 'clean' : 'standard', snapshotRevision: revision, recentTransactionCount: options.clean ? 0 : recent.length, deepHistoryExternal: !options.clean })))
   if (!options.clean && recent.length) addEntry(entries, 'history/recent.jsonl', bytes(recent.map((transaction) => canonicalJsonString(transaction)).join('\n') + '\n'))
-  for (const [assetId, data] of Object.entries(options.assetBytes ?? {})) {
-    const asset = document.assets[assetId]
-    if (!asset) throw new Error(`ASSET_MISSING: ${assetId}`)
-    if (data.length !== asset.byteLength || normalizeHash(asset.hash) !== sha256Binary(data)) throw new Error(`ASSET_HASH_MISMATCH: ${assetId}`)
-    addEntry(entries, safePackagePath(asset.path, `assets/${assetId}`, 'assets/'), data)
+  const assetPool=hashPool(options.assetBytes ?? {})
+  for(const asset of Object.values(document.assets)){
+    const data=assetPool[asset.hash]??assetPool[asset.id]??options.cas?.get(asset.hash)??resolveBlob(options.blobResolver,asset.hash)
+    addEntry(entries,safePackagePath(asset.path,`assets/${asset.id}`,'assets/'),requireAssetBytes(data?{[asset.hash]:data}:{},asset))
   }
-  for (const asset of Object.values(document.assets)) {
-    const data = options.assetBytes?.[asset.id] ?? options.cas?.get(asset.hash) ?? resolveBlob(options.blobResolver, asset.hash)
-    if (!data) throw new Error(`ASSET_MISSING: checkpoint requires bytes for ${asset.id}`)
-    if (!options.assetBytes?.[asset.id]) {
-      if (data.length !== asset.byteLength || normalizeHash(asset.hash) !== sha256Binary(data)) throw new Error(`ASSET_HASH_MISMATCH: ${asset.id}`)
-      addEntry(entries, safePackagePath(asset.path, `assets/${asset.id}`, 'assets/'), data)
+  if(!options.clean){
+    for(const asset of referencedAssets(options.recentTransactions,options.redoHistory))if(!assetPool[asset.hash]){
+      const data=options.cas?.get(asset.hash)??resolveBlob(options.blobResolver,asset.hash)
+      if(data)assetPool[asset.hash]=data
     }
+    for(const entry of historyResourceEntries(assetPool,options.recentTransactions,options.redoHistory))if(!Object.values(document.assets).some(a=>entry.name===`assets/cas/${a.hash}`))addEntry(entries,entry.name,entry.data)
   }
   for (const [fontId, data] of Object.entries(options.fontBytes ?? {})) {
     const font = document.fonts[fontId]

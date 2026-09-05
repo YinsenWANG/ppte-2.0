@@ -232,7 +232,7 @@ function renderImage(document: PpteDocument, element: ImageElement, frame: strin
     'position:absolute;left:0;top:0;width:100%;height:100%;',
     `object-fit:${element.fit};`,
     focal ? `object-position:${number(focal.x * 100)}% ${number(focal.y * 100)}%;` : 'object-position:50% 50%;',
-    crop ? `transform:scale(${number(1 / crop.width)},${number(1 / crop.height)});transform-origin:${number((crop.x + crop.width / 2) * 100)}% ${number((crop.y + crop.height / 2) * 100)}%;` : '',
+    crop ? `transform:scale(${number(1 / crop.width)},${number(1 / crop.height)});transform-origin:0 0;left:${number(-crop.x / crop.width * 100)}%;top:${number(-crop.y / crop.height * 100)}%;` : '',
   ].join('')
   const wrapper = [
     `position:absolute;${frame}overflow:hidden;border-radius:${cssLength(asNumber(style.radius) ?? 0)};`,

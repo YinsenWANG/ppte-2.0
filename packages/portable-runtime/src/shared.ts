@@ -1,3 +1,5 @@
+import { hashPool, requireAssetBytes, historyResourceEntries } from '../../file-format/src/resource-retention.js'
+import { planImage, type PreparedImage } from '../../editor-controller/src/resource-port.js'
 import { EditorController, planTextReplacement } from '../../editor-controller/src/index.js'
 export { assessCheckpointRecovery, type CheckpointRecoveryAssessment } from './checkpoint-recovery.js'
 import { computeArtifactIdentity, type ArtifactIdentity } from './artifact-identity.js'
@@ -155,13 +157,15 @@ export function buildPortable(document: PpteDocument, options: PortableBuildOpti
   // attributes and JSON.
   const assetSources: Record<string, string> = {}
   for (const asset of Object.values(document.assets)) {
-    const data = options.assetBytes?.[asset.id]
+    const data = options.assetBytes?.[asset.hash] ?? options.assetBytes?.[asset.id]
     if (!data) issues.push(issue('ASSET_MISSING', `Portable package requires embedded bytes for asset ${asset.id}.`, asset.id, 'Embed the asset before creating an offline package.'))
     else if (data.length !== asset.byteLength || normalizeHash(asset.hash) !== sha256Binary(data)) issues.push(issue('ASSET_HASH_MISMATCH', `Portable asset ${asset.id} failed hash verification.`, asset.id, 'Use the bytes that belong to the declared asset hash.'))
     else {
       assets[asset.id] = base64(data)
     }
   }
+  try { for(const entry of historyResourceEntries(options.assetBytes ?? {},options.recentTransactions,options.redoHistory))if(!Object.values(document.assets).some(a=>entry.name===`assets/cas/${a.hash}`))assets[entry.name.slice('assets/cas/'.length)]=base64(entry.data) }
+  catch(cause){issues.push(issue('ASSET_MISSING',String(cause)))}
   const fonts: Record<string, string> = {}
   for (const font of Object.values(document.fonts)) if (font.source === 'embedded') {
     const data = options.fontBytes?.[font.id]
@@ -183,7 +187,7 @@ export function buildPortable(document: PpteDocument, options: PortableBuildOpti
   const runtimeBytes = encoder.encode(runtimeHtml).length
   const runtimeGzipBytes = gzipSync(encoder.encode(runtimeHtml)).length
   const gzipBytes = gzipSync(htmlBytes).length
-  const resourceBytes = Object.values(document.assets).reduce((sum, asset) => sum + (options.assetBytes?.[asset.id]?.length ?? 0), 0) + Object.values(document.fonts).filter((font) => font.source === 'embedded').reduce((sum, font) => sum + (options.fontBytes?.[font.id]?.length ?? 0), 0)
+  const resourceBytes = [...Object.values(assets),...Object.values(fonts)].reduce((sum,value)=>sum+Math.floor(value.length*3/4)-(value.endsWith('==')?2:value.endsWith('=')?1:0),0)
   const budgetBytes = runtimeBudgetFor(options.profile)
   const metrics = { runtimeBytes, runtimeGzipBytes, resourceBytes, gzipBytes, budgetBytes }
   if (runtimeGzipBytes > budgetBytes) return { ok: false, html: '', origin, capabilityReport, issues: [...dedupe(issues), issue('PORTABLE_BUDGET_EXCEEDED', `Portable ${options.profile} runtime is ${runtimeGzipBytes} bytes gzip; budget is ${budgetBytes} bytes.`)], bytes: 0, ...metrics }
@@ -276,7 +280,7 @@ export class PortableRuntime {
     const runtimeProfile = this.profile === 'light-edit' || this.profile === 'full-portable' ? 'ga-c' : runtimeProfileForCompatibility(inferCompatibilityProfile(document))
     this.session = new PpteSession(document, { runtimeProfile, recentTransactions: options.recentTransactions, redoHistory: options.redoHistory })
     this.controller = new EditorController(this.session, this.profile, this.presentation)
-    this.assetBytes = cloneBytes(options.assetBytes)
+    this.assetBytes = hashPool(cloneBytes(options.assetBytes))
     this.fontBytes = cloneBytes(options.fontBytes)
   }
 
@@ -288,7 +292,7 @@ export class PortableRuntime {
   getDocument(): Readonly<PpteDocument> { return this.session.getDocument() }
   getRevision(): Revision { return this.session.getRevision() }
   getCapabilityReport(): CapabilityReport { return buildCapabilityReport(this.session.getDocument(), this.profile === 'quick-fix' ? 'portable-quick-fix' : this.profile === 'light-edit' || this.profile === 'full-portable' ? 'portable-light-edit' : 'portable-viewer', { sourceRevision: this.session.getRevision() }) }
-  getAssetBytes(): Record<string, Uint8Array> { return cloneBytes(this.assetBytes) }
+  getAssetBytes(): Record<string, Uint8Array> { return cloneBytes({...this.assetBytes,...Object.fromEntries(Object.values(this.getDocument().assets).map(a=>[a.id,requireAssetBytes(this.assetBytes,a)]))}) }
   getFontBytes(): Record<string, Uint8Array> { return cloneBytes(this.fontBytes) }
   getHistory(): Transaction[] { return this.session.getHistory().map(entry => entry.transaction) }
   getRedoHistory(): HistoryEntry[] { return [...this.session.getRedoHistory()] }
@@ -317,7 +321,7 @@ export class PortableRuntime {
     return { ok: true, revision: this.session.getRevision(), selection: structuredClone(this.selection), issues: [] }
   }
 
-  getSelection(): Array<{ slideId: string; elementId: string }> { return structuredClone(this.selection) }
+  getSelection(): Array<{ slideId: string; elementId: string }> { return structuredClone(this.selection.filter(t=>this.getDocument().slides[t.slideId]?.elements[t.elementId])) }
 
   editText(target: { slideId?: string; elementId?: string; semanticKey?: string }, value: string, baseRevision = this.session.getRevision()): QuickFixResult {
     if (!quickFixEditingEnabled(this.profile)) return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Viewer profile does not allow edits.')] }
@@ -372,13 +376,25 @@ export class PortableRuntime {
     if (bytes.length === 0) return { ok: false, issues: [issue('ASSET_METADATA_MISSING', 'Imported image bytes must not be empty.')] }
     const assetId = options.assetId ?? `portable_asset_${sha256Binary(bytes).slice(0, 16)}`
     const previous = this.assetBytes[assetId]
+    const hash=`sha256-${sha256HexBytes(bytes)}`,previousHash=this.assetBytes[hash]
+    this.assetBytes[hash] = bytes
     this.assetBytes[assetId] = bytes
     const result = this.replaceImage(target, assetId, options)
     if (!result.ok) {
       if (previous) this.assetBytes[assetId] = previous
       else delete this.assetBytes[assetId]
+      if(!previousHash)delete this.assetBytes[hash]
     }
     return result
+  }
+
+  commitPreparedImage(slideId:string,elementId:string,prepared:PreparedImage,replace=false):QuickFixResult {
+    try {
+      const tx=planImage(this.getDocument(),{revision:this.getRevision(),slideId,elementId,prepared,replace,transactionId:`portable:image:${crypto.randomUUID()}`})
+      const result=this.controller.commit(tx)
+      if(result.ok){Object.assign(this.assetBytes,hashPool({[prepared.asset.id]:new Uint8Array(prepared.bytes)}));this.lastTransaction=tx}
+      return {ok:result.ok,issues:result.issues}
+    }catch(cause){return {ok:false,issues:[issue('IMAGE_IMPORT_FAILED',String(cause))]}}
   }
 
   /** Numeric Fact Quick Fix. The generated update and every display sync are one reviewable Transaction. */
@@ -585,7 +601,7 @@ function assembleHtml(document: PpteDocument, payload: PortablePayload, assetSou
   const rendered = renderDocumentSurfaceHtml(document, { assetSources: offlineAssetSources, editable })
   const payloadJson = JSON.stringify(payload).replaceAll('<', '\\u003c').replaceAll('>', '\\u003e').replaceAll('&', '\\u0026')
   const editingControls = editable
-    ? `<div class="ppte-tool-group"><button type="button" data-ppte-action="undo" title="撤销">↶</button><button type="button" data-ppte-action="redo" title="重做">↷</button></div><details class="ppte-tools"><summary>对象工具</summary><div class="ppte-tool-menu"><label class="ppte-file-label">替换图片<input type="file" accept="image/*" data-ppte-action="import-image"></label>${payload.origin.profile === 'light-edit' || payload.origin.profile === 'full-portable' ? '<button type="button" data-ppte-action="crop">裁剪图片</button><button type="button" data-ppte-action="chart-data">图表数据</button><button type="button" data-ppte-action="move-left">向左移动</button><button type="button" data-ppte-action="move-right">向右移动</button><button type="button" data-ppte-action="scale-up">放大对象</button><button type="button" data-ppte-action="scale-down">缩小对象</button><button type="button" data-ppte-action="rotate">旋转对象</button>' : ''}<button type="button" data-ppte-action="save">导出源项目</button></div></details><button type="button" data-ppte-action="save-portable">保存可编辑副本 (.ppte.html)</button>`
+    ? `<div class="ppte-tool-group"><button type="button" data-ppte-action="undo" title="撤销">↶</button><button type="button" data-ppte-action="redo" title="重做">↷</button></div><details class="ppte-tools"><summary>对象工具</summary><div class="ppte-tool-menu"><label class="ppte-file-label">${payload.origin.profile === 'full-portable' ? '插入 / 替换图片' : '替换图片'}<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" data-ppte-action="import-image"></label>${payload.origin.profile === 'light-edit' || payload.origin.profile === 'full-portable' ? '<button type="button" data-ppte-action="crop">裁剪图片</button><button type="button" data-ppte-action="chart-data">图表数据</button><button type="button" data-ppte-action="move-left">向左移动</button><button type="button" data-ppte-action="move-right">向右移动</button><button type="button" data-ppte-action="scale-up">放大对象</button><button type="button" data-ppte-action="scale-down">缩小对象</button><button type="button" data-ppte-action="rotate">旋转对象</button>' : ''}<button type="button" data-ppte-action="save">导出源项目</button></div></details><button type="button" data-ppte-action="save-portable">保存可编辑副本 (.ppte.html)</button>`
     : ''
   return `<!doctype html><html lang="${css(document.locale)}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="ppte-application-version" content="${css(payload.buildVersion ?? payload.origin.runtimeVersion)}"><meta name="ppte-runtime-version" content="${css(payload.origin.runtimeVersion)}"><meta name="ppte-source-revision" content="${css(payload.origin.sourceRevision)}"><meta name="ppte-deliverable" content="${editable ? 'editable-browser-copy' : 'read-only-preview'}"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data: blob:; font-src data: blob:; script-src 'unsafe-inline';"><style>html,body{margin:0;min-height:100%;background:#111827;color:#f9fafb;font-family:system-ui,sans-serif}#ppte-shell{min-height:100vh;display:grid;grid-template-rows:auto 1fr auto}.ppte-toolbar{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;padding:.5rem;background:#0f172a;position:sticky;top:0;z-index:2}.ppte-toolbar button,.ppte-file-label{padding:.35rem .6rem;color:#f9fafb;background:#1e293b;border:1px solid #475569;border-radius:.25rem;cursor:pointer;font-size:.82rem}.ppte-file-label input{display:none}.ppte-status{margin-left:auto;font-size:.8rem;color:#cbd5e1}.ppte-stage{display:flex;align-items:center;justify-content:center;overflow:auto;padding:1rem;min-width:0;min-height:0}.ppte-canvas{position:relative;flex:none}.ppte-canvas>.ppte-slide{position:absolute;left:0;top:0;display:none;box-shadow:0 1rem 3rem #0008;transform-origin:top left;max-width:none;max-height:none}.ppte-${payload.origin.profile} [data-ppte-type="text"]{outline:none;cursor:text}.ppte-${payload.origin.profile} [data-ppte-selected="true"]{outline:2px solid #38bdf8!important;outline-offset:2px}.ppte-notes{min-height:1.5rem;padding:.5rem 1rem;background:#0f172a;color:#cbd5e1;font-size:.85rem;white-space:pre-wrap}@keyframes ppte-enter-fade{from{opacity:0}to{opacity:1}}@keyframes ppte-enter-slide-up{from{opacity:0;transform:translateY(1rem)}to{opacity:1;transform:translateY(0)}}@keyframes ppte-enter-slide-left{from{opacity:0;transform:translateX(1rem)}to{opacity:1;transform:translateX(0)}}@keyframes ppte-enter-scale{from{opacity:0;scale:.96}to{opacity:1;scale:1}}@keyframes ppte-transition-fade{from{opacity:0}to{opacity:1}}@keyframes ppte-transition-slide{from{opacity:0;transform:translateX(2rem)}to{opacity:1;transform:translateX(0)}}@keyframes ppte-transition-push{from{opacity:0}to{opacity:1}}
 *{box-sizing:border-box}html,body{height:100%;background:#e9eaee;color:#292b35}#ppte-shell{height:100dvh;min-height:0;width:100%;grid-template-rows:auto minmax(0,1fr) auto}.ppte-toolbar{gap:12px;padding:12px 24px;background:#fff;border-bottom:1px solid #e2e3e8;position:relative}.ppte-brand{font-size:20px;letter-spacing:-.8px;margin-right:16px}.ppte-brand span{font-size:12px;font-weight:400;letter-spacing:0;color:#8a8d9b;margin-left:12px}.ppte-toolbar button,.ppte-file-label,.ppte-tools summary{font:500 13px/20px system-ui,sans-serif;min-height:36px;padding:8px 12px;border:0;border-radius:8px;background:transparent;color:#414452;cursor:pointer;white-space:nowrap;transition:background .15s}.ppte-toolbar button:hover,.ppte-file-label:hover,.ppte-tools summary:hover{background:#f0f1f5}.ppte-toolbar button:focus-visible,summary:focus-visible,.ppte-exit:focus-visible{outline:2px solid #e34461;outline-offset:3px}.ppte-tool-group{display:flex;gap:2px;border-right:1px solid #e5e6eb;padding-right:12px}.ppte-toolbar .ppte-primary{background:#e34461;color:white;padding:8px 20px;box-shadow:0 2px 5px #e3446120}.ppte-toolbar .ppte-primary:hover{background:#cb3451}.ppte-status{margin-right:auto;margin-left:0;color:#828591;font-size:12px}.ppte-tools{position:relative}.ppte-tools summary{list-style:none}.ppte-tools summary:after{content:'⌄';margin-left:10px}.ppte-tools summary::-webkit-details-marker{display:none}.ppte-tool-menu{position:absolute;right:0;top:46px;width:190px;padding:8px;background:white;border:1px solid #e5e6eb;border-radius:12px;box-shadow:0 12px 36px #25293920;display:grid;z-index:10}.ppte-tool-menu button,.ppte-file-label{text-align:left}.ppte-notes{background:#f7f8fa;color:#727682;max-height:100px;overflow:auto;padding:12px 24px;font-size:12px;line-height:1.6;border-top:1px solid #e2e3e8}.ppte-notes:empty{display:none}.ppte-stage{padding:24px;overflow:hidden}.ppte-canvas>.ppte-slide{box-shadow:0 8px 32px #25293922}#ppte-shell[data-ppte-mode=edit] [contenteditable=true]:hover{outline:1px dashed #e3446180}#ppte-shell[data-ppte-mode=edit] [contenteditable=true]:focus{outline:2px solid #e34461}.ppte-exit{display:none}#ppte-shell[data-ppte-mode=present]{position:fixed;inset:0;background:#000;grid-template-rows:minmax(0,1fr);z-index:100}#ppte-shell[data-ppte-mode=present] .ppte-toolbar,#ppte-shell[data-ppte-mode=present] .ppte-notes{display:none}#ppte-shell[data-ppte-mode=present] .ppte-stage{padding:0}#ppte-shell[data-ppte-mode=present] [data-ppte-element-id]{outline:none!important;cursor:default;user-select:none}#ppte-shell[data-ppte-mode=present] .ppte-slide{box-shadow:none}#ppte-shell[data-ppte-mode=present] .ppte-exit{display:block;position:absolute;right:20px;top:16px;z-index:20;background:#222b;color:#fff;border:1px solid #ffffff30;border-radius:20px;padding:9px 16px;opacity:0;cursor:pointer}#ppte-shell[data-ppte-mode=present] .ppte-exit:hover,#ppte-shell[data-ppte-mode=present] .ppte-exit:focus-visible{opacity:1}dialog{border:1px solid #e5e6eb;border-radius:16px;padding:28px;color:#292b35;box-shadow:0 24px 80px #0003;font:14px system-ui;max-width:90vw}dialog::backdrop{background:#1c203855}dialog input{margin:8px 0 16px 12px;border:1px solid #d9dbe3;border-radius:6px;padding:8px}dialog button{border:0;border-radius:8px;background:#eceef3;padding:10px 18px;margin-right:8px;cursor:pointer}dialog button[data-ppte-dialog-apply]{background:#e34461;color:white}@media(max-width:720px){.ppte-toolbar{padding:8px;gap:4px}.ppte-brand span,.ppte-status{display:none}.ppte-brand{margin-right:auto}.ppte-stage{padding:12px}}
@@ -621,17 +637,9 @@ export function buildPortableCheckpointBytes(document: PpteDocument, options: { 
   if (!options.clean && recent.length) addPortableEntry(entries, 'history/recent.jsonl', bytes(recent.map((transaction) => canonicalJsonString(transaction)).join('\n') + '\n'))
 
   if(!options.clean&&options.redoHistory?.length)addPortableEntry(entries,'history/redo.json',bytes(canonicalJsonString(options.redoHistory)))
-  for (const [assetId, data] of Object.entries(options.assetBytes ?? {})) {
-    const asset = snapshot.assets[assetId]
-    if (!asset) throw new Error(`ASSET_MISSING: ${assetId}`)
-    verifyPortableBytes(asset.byteLength, asset.hash, data, `ASSET_HASH_MISMATCH: ${assetId}`)
-    addPortableEntry(entries, safePortablePath(asset.path, `assets/${assetId}`, 'assets/'), data)
-  }
-  for (const asset of Object.values(snapshot.assets)) {
-    const data = options.assetBytes?.[asset.id]
-    if (!data) throw new Error(`ASSET_MISSING: checkpoint requires bytes for ${asset.id}`)
-    if (!entries.some((entry) => entry.name === safePortablePath(asset.path, `assets/${asset.id}`, 'assets/'))) addPortableEntry(entries, safePortablePath(asset.path, `assets/${asset.id}`, 'assets/'), data)
-  }
+  const assetPool=hashPool(options.assetBytes ?? {})
+  for(const asset of Object.values(snapshot.assets))addPortableEntry(entries,safePortablePath(asset.path,`assets/${asset.id}`,'assets/'),requireAssetBytes(assetPool,asset))
+  if(!options.clean)for(const entry of historyResourceEntries(assetPool,recent,options.redoHistory))if(!Object.values(snapshot.assets).some(a=>entry.name===`assets/cas/${a.hash}`))addPortableEntry(entries,entry.name,entry.data)
   for (const [fontId, data] of Object.entries(options.fontBytes ?? {})) {
     const font = snapshot.fonts[fontId]
     if (!font) throw new Error(`FONT_MISSING: ${fontId}`)
