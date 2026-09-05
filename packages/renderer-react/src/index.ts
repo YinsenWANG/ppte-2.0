@@ -194,8 +194,8 @@ function renderText(document: PpteDocument, element: TextElement, frame: string,
   const paragraphs = element.content.paragraphs.map((paragraph) => {
     const paragraphStyle = [
       paragraph.align ? `text-align:${paragraph.align};` : '',
-      paragraph.spaceBefore !== undefined ? `margin-top:${cssLength(paragraph.spaceBefore)};` : '',
-      paragraph.spaceAfter !== undefined ? `margin-bottom:${cssLength(paragraph.spaceAfter)};` : '',
+      `margin-top:${cssLength(paragraph.spaceBefore ?? 0)};`,
+      `margin-bottom:${cssLength(paragraph.spaceAfter ?? 0)};`,
     ].join('')
     const align = paragraphStyle ? ` style="${escapeAttr(paragraphStyle)}"` : ''
     const listPrefix = paragraph.list?.type === 'bullet' ? '• ' : paragraph.list?.type === 'number' ? '1. ' : ''

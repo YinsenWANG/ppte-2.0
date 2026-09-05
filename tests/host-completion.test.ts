@@ -34,6 +34,9 @@ test('Host persists edits/undo/redo, rejects stale tabs, retains marks, moves gr
   async function save(){const [d]=await Promise.all([page.waitForEvent('download'),page.locator('[data-ppte-action="save"]').click()]);const path=await d.path();assert.ok(path);return openCheckpoint(path).document}
   try{
     await page.goto(url)
+    await page.waitForFunction(()=>document.querySelector('[data-ppte-host]')?.getAttribute('data-ppte-ready')==='true')
+    const layout=await title(page).evaluate(n=>{const p=n.querySelector('p')!;const range=document.createRange();range.selectNodeContents(p);return {margin:getComputedStyle(p).marginTop,textBottom:range.getBoundingClientRect().bottom,frameBottom:n.getBoundingClientRect().bottom}})
+    assert.equal(layout.margin,'0px');assert.ok(layout.textBottom<=layout.frameBottom+1,'default title must fit its semantic frame')
     await title(page).fill('Recovered title');await flush()
     await page.waitForFunction(()=>document.querySelector('[data-ppte-host]')?.getAttribute('data-ppte-history-depth')==='1')
     await page.reload();await page.locator('[data-ppte-action="new"]').waitFor();await page.waitForFunction(()=>document.querySelector('[data-ppte-status]')?.textContent?.includes('恢复'))
