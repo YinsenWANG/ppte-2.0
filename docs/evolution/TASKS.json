@@ -411,7 +411,7 @@
       "milestone": "M0",
       "priority": "P0",
       "title": "统一版本来源与交付物身份",
-      "status": "in_progress",
+      "status": "done",
       "effort": "L",
       "ownerRole": "交付 / 打包",
       "dependsOn": [
@@ -450,8 +450,13 @@
       ],
       "releaseRequired": true,
       "evidence": [
+        "commit:a0c207ea7c1f88fe53731fa20553a9b4ae6b47fd",
         "tests/artifact-identity.test.ts",
-        "docs/evolution/PROGRESS.md"
+        "tests/delivery.test.ts",
+        "tests/delivery-policy.test.ts",
+        "docs/evolution/C04_EVIDENCE.md",
+        "pnpm typecheck && pnpm build && pnpm test: 154 passed (baseline 145, +9)",
+        "pnpm blackbox:final: 69 green / 0 red (baseline 69 / 0; no new reds)"
       ]
     },
     {
