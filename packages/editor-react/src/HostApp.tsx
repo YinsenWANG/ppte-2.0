@@ -82,6 +82,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
   const operationNumber = useRef(0)
   const renderedRef = useRef<HTMLDivElement>(null)
   const [canvasScale, setCanvasScale] = useState(1)
+  const [renderEpoch,setRenderEpoch]=useState(0)
   const [actualOverflow,setActualOverflow]=useState<string[]>([])
 
   useEffect(() => {
@@ -182,6 +183,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
       recoveryRef.current!.action='commit'
       const result = sessionRef.current?.commit(transaction)
       if (!result?.ok) {
+        setRenderEpoch(n=>n+1)
         setStatus(`操作未提交 · ${result?.issues.map((issue) => issue.message).join('; ') ?? '未知错误'}`)
         return false
       }
@@ -190,6 +192,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
       setStatus(result.issues.length ? result.issues.map(i=>i.message).join('; ') : (successMessage ?? '修改已本地保护'))
       return true
     } catch (cause) {
+      setRenderEpoch(n=>n+1)
       setStatus(`操作未提交 · ${cause instanceof Error ? cause.message : String(cause)}`)
       return false
     }
@@ -577,7 +580,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     let cancelled=false
     void document.fonts.ready.then(()=>{if(cancelled)return;const nodes=renderedRef.current?.querySelectorAll<HTMLElement>('[data-ppte-type="text"]')??[];setActualOverflow(Array.from(nodes).filter(actualTextOverflow).map(n=>n.dataset.ppteElementId!))})
     return()=>{cancelled=true}
-  },[documentNode,fontBytes,canvasScale])
+  },[documentNode,fontBytes,canvasScale,renderEpoch])
   async function fitActual(id:string){
     const node=Array.from(renderedRef.current!.querySelectorAll<HTMLElement>('[data-ppte-type="text"]')).find(n=>n.dataset.ppteElementId===id)
     if(!node)return
@@ -597,7 +600,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLDivElement>): void {
-    if(!presenting){if(event.key==='Escape'){const target=textTarget(event);if(target){editSessions.current.get(target.element.id)?.cancel();editSessions.current.delete(target.element.id);target.node.innerHTML='';syncSessionState();target.node.blur();event.preventDefault();setStatus('已取消本次文字编辑')}}if((event.metaKey||event.ctrlKey)&&event.key==='s'){event.preventDefault();void saveCopy()}return}
+    if(!presenting){if(event.key==='Escape'){const target=textTarget(event);if(target){editSessions.current.get(target.element.id)?.cancel();editSessions.current.delete(target.element.id);setRenderEpoch(n=>n+1);target.node.blur();event.preventDefault();setStatus('已取消本次文字编辑')}}if((event.metaKey||event.ctrlKey)&&event.key==='s'){event.preventDefault();void saveCopy()}return}
     if (event.key === 'ArrowRight' || event.key === ' ') { event.preventDefault(); nextPresenter() }
     else if (event.key === 'ArrowLeft') { event.preventDefault(); previousPresenter() }
     else if (event.key === 'Escape') setPresenting(false)
@@ -631,7 +634,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     </aside>
     <main className="ppte-host-main" data-ppte-stage>
       <div className="ppte-canvas-wrap" ref={renderedRef} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp} onDoubleClick={(event) => { const target = textTarget(event); if (target) { setSelection({slideId:activeSlideId,elementIds:[target.element.id],primaryElementId:target.element.id}); target.node.focus(); setStatus('文字编辑中 · compositionend 后提交') } }} onCompositionStart={onCompositionStart} onCompositionEnd={onCompositionEnd} onInput={onInput} onBlur={onBlur}>
-        <div className="ppte-rendered-slide" data-ppte-canvas-scale={canvasScale} style={{ ['--ppte-scale' as string]: canvasScale }} dangerouslySetInnerHTML={{ __html: slideHtml }} />
+        <div key={renderEpoch} className="ppte-rendered-slide" data-ppte-canvas-scale={canvasScale} style={{ ['--ppte-scale' as string]: canvasScale }} dangerouslySetInnerHTML={{ __html: slideHtml }} />
         {selectedOverlay.map((item) => {
           const moving=dragRef.current
           const frame = moving&&dragFrame&&moving.memberIds?.includes(item.elementId) ? {...item.frame,x:item.frame.x+dragFrame.x-moving.originalFrame.x,y:item.frame.y+dragFrame.y-moving.originalFrame.y} : item.elementId === moving?.elementId && dragFrame ? dragFrame : item.frame

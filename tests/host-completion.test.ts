@@ -37,6 +37,7 @@ test('Host persists edits/undo/redo, rejects stale tabs, retains marks, moves gr
     await page.waitForFunction(()=>document.querySelector('[data-ppte-host]')?.getAttribute('data-ppte-ready')==='true')
     const layout=await title(page).evaluate(n=>{const p=n.querySelector('p')!;const range=document.createRange();range.selectNodeContents(p);return {margin:getComputedStyle(p).marginTop,textBottom:range.getBoundingClientRect().bottom,frameBottom:n.getBoundingClientRect().bottom}})
     assert.equal(layout.margin,'0px');assert.ok(layout.textBottom<=layout.frameBottom+1,'default title must fit its semantic frame')
+    await title(page).fill('Cancelled edit');await title(page).press('Escape');assert.equal(await title(page).innerText(),'Untitled presentation');assert.equal(await page.locator('[data-ppte-host]').getAttribute('data-ppte-history-depth'),'0')
     await title(page).fill('Recovered title');await flush()
     await page.waitForFunction(()=>document.querySelector('[data-ppte-host]')?.getAttribute('data-ppte-history-depth')==='1')
     await page.reload();await page.locator('[data-ppte-action="new"]').waitFor();await page.waitForFunction(()=>document.querySelector('[data-ppte-status]')?.textContent?.includes('恢复'))
@@ -49,6 +50,7 @@ test('Host persists edits/undo/redo, rejects stale tabs, retains marks, moves gr
     await title(page).fill('First tab wins');await flush()
     await title(other).fill('Stale tab');await other.locator('[data-ppte-notes-input]').click()
     assert.match(await other.locator('[data-ppte-status]').innerText(),/Another editor|REVISION_CONFLICT/)
+    assert.equal(await title(other).innerText(),'Recovered title')
     await other.close()
     const {makeCoreFixture,IDS}=await import(pathToFileURL(resolve('scripts/blackbox-fixtures.mjs')).href)
     const fixture=makeCoreFixture();const doc=fixture.document
