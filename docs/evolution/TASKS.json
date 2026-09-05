@@ -1012,7 +1012,7 @@
       "milestone": "M1",
       "priority": "P1",
       "title": "图片资源导入、替换与直接裁剪",
-      "status": "planned",
+      "status": "done",
       "effort": "L",
       "ownerRole": "资源 / 编辑器",
       "dependsOn": [
@@ -1046,7 +1046,109 @@
         "A04"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        {
+          "commit": "6a73b9de23467c383fe48345e14619a9a5840a7c",
+          "report": "docs/evolution/E06_EVIDENCE.json",
+          "testFiles": [
+            "tests/image-editing-journey.test.ts"
+          ],
+          "criteria": {
+            "1": {
+              "testFile": "tests/image-editing-journey.test.ts",
+              "tests": [
+                "E06 A12 shared preparation validates MIME, signature, hash, decode, dimensions, limits and cancellation without objects",
+                "E06 A12 image insertion is one atomic operation-engine transaction; shared asset reuse and locked replacement undo safely",
+                "E06 A12 real offline browser file, paste and drop use decoded CAS imports; crop pointer cancellation and save/redo survive",
+                "E06 A04 Host quota/decode/cancel failures leave no half object; all import sources and crop survive source save/reopen"
+              ],
+              "result": "Host and Portable file/paste/drop await the same byte/MIME/hash/size/decoder checks and use planImage through the Operation Engine. Repeated source bytes use a deterministic full SHA-256 asset ID; independent inserted references share assets."
+            },
+            "2": {
+              "testFile": "tests/image-editing-journey.test.ts",
+              "tests": [
+                "E06 A12 image insertion is one atomic operation-engine transaction; shared asset reuse and locked replacement undo safely",
+                "E06 A12 crop previews are transient, bounded and cancellable; replacement preserves identity, frame and crop",
+                "E06 A12 real offline browser file, paste and drop use decoded CAS imports; crop pointer cancellation and save/redo survive",
+                "E06 A04 Host quota/decode/cancel failures leave no half object; all import sources and crop survive source save/reopen"
+              ],
+              "result": "Pointer crop previews stay in DOM until release; cancellation and Escape leave history untouched. Replacement preserves element/semantic identity, frame and crop. Undo of a shared insertion retains the asset used by its sibling. Host URL accounting verifies one live image URL after replacements and zero after undo removes the image."
+            },
+            "3": {
+              "testFile": "tests/image-editing-journey.test.ts",
+              "tests": [
+                "E06 A12 shared preparation validates MIME, signature, hash, decode, dimensions, limits and cancellation without objects",
+                "E06 A04 insert → undo → Node/browser checkpoint → offline reopen → redo retains verified image bytes",
+                "E06 A12 real offline browser file, paste and drop use decoded CAS imports; crop pointer cancellation and save/redo survive",
+                "E06 A04 Host quota/decode/cancel failures leave no half object; all import sources and crop survive source save/reopen"
+              ],
+              "result": "Real Chromium rejects corrupt decode, injected IndexedDB quota errors, and a decoder released after Escape with no object/history additions. Both offline HTML and source checkpoints reopen with history and decoded images intact. Imports reject unsupported formats and explain the byte/pixel limits."
+            },
+            "4": {
+              "testFile": "tests/image-editing-journey.test.ts",
+              "tests": [
+                "E06 A04 complete resource retention includes document, undo, redo, journal, drafts and jobs; only unreferenced bytes collect",
+                "E06 A04 insert → undo → Node/browser checkpoint → offline reopen → redo retains verified image bytes",
+                "E06 A12 real offline browser file, paste and drop use decoded CAS imports; crop pointer cancellation and save/redo survive",
+                "E06 A04 Host quota/decode/cancel failures leave no half object; all import sources and crop survive source save/reopen"
+              ],
+              "result": "Collection requires all six owner roots (document, undo, redo, journal, draft, jobs). Checkpoint/HTML save includes hash-addressed history-only bytes; Node and browser readers verify them. Missing history resources reject saving. Insert-undo-save-reopen-redo passes in both checkpoint writers, offline Portable HTML and the actual Host source-file workflow."
+            }
+          },
+          "verification": {
+            "commands": [
+              "pnpm typecheck",
+              "pnpm build",
+              "pnpm test",
+              "pnpm blackbox:final"
+            ],
+            "allExitCodes": 0,
+            "tests": {
+              "baseline": 202,
+              "final": 209,
+              "delta": 7,
+              "failed": 0
+            },
+            "blackbox": {
+              "baselineGreen": 69,
+              "baselineRed": 0,
+              "finalGreen": 69,
+              "finalRed": 0,
+              "newRed": 0
+            },
+            "buildManifest": {
+              "applicationVersion": "0.9.0-next.0",
+              "runtimeBuildId": "f33ac0f8062273c17e86a5e63b1534645ac62b36f42fbdbb86157d5f5c77528c"
+            },
+            "logs": {
+              "baseline-tests": {
+                "path": "artifacts/evolution/E06/baseline-tests.log",
+                "sha256": "9da6f22d1dc63cc4c551fa6540c4b98b4b71f479f9a4b702d09a7d53f2486f0e"
+              },
+              "baseline-blackbox": {
+                "path": "artifacts/evolution/E06/baseline-blackbox.log",
+                "sha256": "4885184502a55966abd441a1607017b81f30cc85c813a927e6f76e20c50229ad"
+              },
+              "typecheck": {
+                "path": "artifacts/evolution/E06/typecheck.log",
+                "sha256": "a7149824f4d2e2b22a41ec34ca6b451f7ac9e9003b5167390eead15d29870e70"
+              },
+              "build": {
+                "path": "artifacts/evolution/E06/build.log",
+                "sha256": "60ca46444de45fc682ae3a482a3992ab8dd7a618503d54c03c79c3f44488bba4"
+              },
+              "final-tests": {
+                "path": "artifacts/evolution/E06/final-tests.log",
+                "sha256": "db6915293519085608ab78c7e1e20a1ae0021132a44cb9bd40dcf20affe46f61"
+              },
+              "final-blackbox": {
+                "path": "artifacts/evolution/E06/final-blackbox.log",
+                "sha256": "9b84411ba13492c120a16eaf8dc4db2240902e9fac042527e72d6b2a7fe4aca2"
+              }
+            }
+          }
+        }
+      ]
     },
     {
       "id": "E07",
