@@ -488,6 +488,15 @@ async function runHostJourney(ctx, options = {}) {
     evidence.presenting = await page.locator('[data-ppte-host]').getAttribute('data-ppte-presenting')
     evidence.presenterSlide = Number(await page.locator('[data-ppte-host]').getAttribute('data-ppte-presenter-slide'))
 
+    // A06 removes editing controls during presentation. Complete the receiver's
+    // exit-to-edit step before exercising the unchanged save/reopen assertions.
+    ctx.expectEqual(await page.locator('[data-ppte-action="save"]').count(), 0, 'Presentation must not expose the editor Save control.')
+    const presentationHistory = await page.locator('[data-ppte-host]').getAttribute('data-ppte-history-depth')
+    await page.keyboard.press('Escape')
+    await page.waitForFunction(() => document.querySelector('[data-ppte-host]')?.getAttribute('data-ppte-presenting') === 'false')
+    ctx.expectEqual(await page.locator('[data-ppte-host]').getAttribute('data-ppte-history-depth'), presentationHistory, 'Leaving presentation must preserve history.')
+    ctx.expectGate(await page.locator('[data-ppte-action="save"]').isVisible(), 'Leaving presentation must restore Save.')
+
     const [download] = await Promise.all([
       page.waitForEvent('download'),
       page.locator('[data-ppte-action="save"]').click(),

@@ -58,6 +58,12 @@ test('Host persists edits/undo/redo, rejects stale tabs, retains marks, moves gr
     await page.keyboard.press('Escape')
     await page.waitForFunction(() => document.querySelector('[data-ppte-host]')?.getAttribute('data-ppte-presenting') === 'false')
     assert.equal(await title(page).getAttribute('contenteditable'),'true')
+    assert.equal(await page.locator('[data-ppte-host]').getAttribute('data-ppte-history-depth'),presentationHistory)
+    assert.equal(await page.locator('[data-ppte-action="save"]').isVisible(),true)
+    const presentationCopy=await save()
+    const savedTitle=presentationCopy.slides[presentationCopy.slideOrder[0]!]!.elements.text_title
+    assert.equal(savedTitle?.type,'text')
+    if(savedTitle?.type==='text') assert.equal(savedTitle.content.paragraphs[0]!.runs[0]!.text,'Recovered title')
     const other=await context.newPage();await other.goto(url);await other.waitForFunction(()=>document.querySelector('[data-ppte-status]')?.textContent?.includes('恢复'))
     await title(page).fill('First tab wins');await flush()
     await title(other).fill('Stale tab');await other.locator('[data-ppte-notes-input]').click()

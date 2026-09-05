@@ -193,6 +193,54 @@
             "Frozen browser performance measurements describe their original build; real Safari, lower-performance physical devices, physical IME and Host startup remain unverified.",
             "Only public synthetic equivalents are included."
           ]
+        },
+        {
+          "kind": "host-gate-fix-verification",
+          "baselineCommit": "fa6e32832cae7c64ec907cc9b50520e7662cc8cc",
+          "implementationCommitForFrozenCriteria": "20da0b03db264e79438627acb52461d665a0a817",
+          "sourceSha256": {
+            "scripts/blackbox-gates.mjs": "9c52d07b2a8afbcd7d8bae253523ef8ef4c4fa216debbdc3a8130d8deb6254a3",
+            "tests/host-completion.test.ts": "fa65749753e7780eb3ff0e67e7075415b7394947fe15654d9b25acf12fddde1e"
+          },
+          "tests": [
+            "tests/evolution-baseline.test.ts",
+            "tests/host-completion.test.ts",
+            "tests/portable-presentation.test.ts"
+          ],
+          "criteria": {
+            "1": "First four evolution-baseline tests independently reproduce absent-background inverse loss, legal old profile, invalid history and identity-less HTML.",
+            "2": "Provenance test verifies exact fixture/report hashes, public source/license, revisions and recorded environment/outcomes.",
+            "3": "A20 test verifies frozen c01-m1-v1 dependency budget, raw browser samples/percentiles and E02 reference."
+          },
+          "verification": {
+            "typecheck": "pass",
+            "build": "pass",
+            "test": {
+              "before": 125,
+              "after": 125,
+              "delta": 0,
+              "passed": 125,
+              "failed": 0
+            },
+            "blackbox": {
+              "start": "docs/evolution/quality/c01-host-blackbox-start.json",
+              "final": "docs/evolution/quality/c01-host-blackbox-final.json",
+              "beforeGreen": 68,
+              "beforeRed": 1,
+              "green": 69,
+              "red": 0,
+              "newRed": [],
+              "resolved": [
+                "section-41:1"
+              ],
+              "exitCode": 0
+            }
+          },
+          "report": "docs/evolution/quality/C01.md",
+          "remainingRisks": [
+            "Synthetic public fixtures only; no real user originals supplied.",
+            "Frozen performance baseline is historical; real Safari, lower-performance hardware, physical IME and Host startup remain unverified."
+          ]
         }
       ]
     },
