@@ -2073,8 +2073,11 @@ async function main() {
     return 0
   }
   const selected = validateSelection(options)
+  const buildManifest = JSON.parse(readFileSync(join(ROOT, "artifacts/build-manifest.json"), "utf8"))
   const summaries = await runGroups(selected)
-  const report = { mode: options.mode, selectedGroups: selected, groups: summaries, green: summaries.reduce((sum, item) => sum + item.green, 0), red: summaries.reduce((sum, item) => sum + item.red, 0) }
+  const finalManifest = JSON.parse(readFileSync(join(ROOT, "artifacts/build-manifest.json"), "utf8"))
+  if (JSON.stringify(buildManifest) !== JSON.stringify(finalManifest)) throw new HarnessFailure("Build changed during blackbox verification")
+  const report = { buildManifest, environment: { node: process.version, platform: process.platform, arch: process.arch }, mode: options.mode, selectedGroups: selected, groups: summaries, green: summaries.reduce((sum, item) => sum + item.green, 0), red: summaries.reduce((sum, item) => sum + item.red, 0) }
   if (options.mode === 'expect-red') {
     const core = summaries.find((item) => item.group === 'core-basic')
     const expectedRed = options.groups.map((group) => summaries.find((item) => item.group === group)).every((item) => item.red > 0)

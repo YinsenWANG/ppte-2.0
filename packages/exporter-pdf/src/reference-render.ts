@@ -52,7 +52,7 @@ function runBrowser(request: { mode: 'png' | 'pdf'; html: string; width: number;
   try {
     playwrightEntry = createRequire(import.meta.url).resolve('playwright')
   } catch (cause) {
-    throw new Error(`EXPORT_RENDERER_UNAVAILABLE: Playwright is required for Reference Renderer export. ${cause instanceof Error ? cause.message : String(cause)}`)
+    throw new Error(`EXPORT_RENDERER_UNAVAILABLE: Playwright is required for Reference Renderer export. Install it with npm install playwright, then npx playwright install chromium. ${cause instanceof Error ? cause.message : String(cause)}`)
   }
   const child = spawnSync(process.execPath, ['--input-type=module', '-e', BROWSER_WORKER], {
     cwd: process.cwd(),
