@@ -679,3 +679,6 @@ function recipeGroups(ir: SlideIR, recipe: RecipeSpec, assignments: Array<{ bloc
     return { draftId: `group:${safeId(ir.slideKey)}:${safeId(keys[0])}`, memberDraftIds: keys.map(k => draftId(ir.slideKey, k)) }
   })
 }
+
+export { planDeckLayout } from './deck-planning.js'
+export type { DeckPlanningOptions, DeckLayoutReport, DeckCandidateReport, LayoutMeasurement } from './deck-planning.js'

@@ -14,3 +14,41 @@ export async function fittedBrowserFont(node:HTMLElement,min=8):Promise<number>{
   document.body.append(copy)
   try{let size=parseFloat(getComputedStyle(node).fontSize);while(size>min&&actualTextOverflow(copy)){size=Math.max(min,size-.5);copy.style.fontSize=`${size}px`}return size}finally{copy.remove()}
 }
+
+/** Read-only DOM measurement, shared by design verification and editor surfaces.
+ * Serializable for browser automation: no closure dependencies, no font fitting. */
+export async function measureRenderedLayout(input: { timeoutMs: number; fonts: Array<{ family: string; source: string }> }) {
+  let timer: ReturnType<typeof setTimeout> | undefined
+  try {
+    return await Promise.race([
+      (async () => {
+        for (const font of input.fonts) {
+          const face = new FontFace(font.family, `url(${JSON.stringify(font.source)})`)
+          ;(document.fonts as FontFaceSet & { add(face: FontFace): void }).add(await face.load())
+        }
+        await document.fonts.ready
+        await Promise.all(Array.from(document.images).map(image => image.decode()))
+        const nodes = Array.from(document.querySelectorAll<HTMLElement>('[data-ppte-type="text"]'))
+        const elements = nodes.map(node => {
+          const box = node.getBoundingClientRect()
+          const style = getComputedStyle(node)
+          let overflow = false
+          const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT)
+          let text: Node | null
+          while ((text = walker.nextNode())) {
+            if (!text.textContent?.trim()) continue
+            const parentStyle = getComputedStyle(text.parentElement!)
+            const families = parentStyle.fontFamily.split(',').map(s => s.trim().replace(/^["']|["']$/g, ''))
+            if (!input.fonts.some(f => families[0] === f.family)) throw new Error(`FONT_UNPINNED: ${families[0]}`)
+            if (!document.fonts.check(`${parentStyle.fontSize} "${families[0]}"`, text.textContent)) throw new Error('FONT_NOT_READY')
+            const range = document.createRange(); range.selectNodeContents(text)
+            for (const rect of Array.from(range.getClientRects())) if (rect.left < box.left - 1 || rect.top < box.top - 1 || rect.right > box.right + 1 || rect.bottom > box.bottom + 1) overflow = true
+          }
+          return { id: node.dataset.ppteElementId!, overflow, font: style.font, width: box.width, height: box.height }
+        })
+        return elements
+      })(),
+      new Promise<never>((_, reject) => { timer = setTimeout(() => reject(new Error('FONT_OR_RESOURCE_TIMEOUT')), input.timeoutMs) }),
+    ])
+  } finally { clearTimeout(timer) }
+}

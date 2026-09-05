@@ -782,3 +782,8 @@ function normalizeLabel(element: Element): string { return element.type === 'tex
 function unitId(kind: string, slideId: string, elementId: string, field: string): string { return `${kind}:${slideId}:${elementId}:${field}` }
 function elementPath(slideId: string, elementId: string, field: string): string { return `/slides/${pointer(slideId)}/elements/${pointer(elementId)}/${field}` }
 function pointer(value: string): string { return value.replaceAll('~', '~0').replaceAll('/', '~1') }
+
+/** Planning reports are reusable only for the exact planning and delivery identity. */
+export function isDeckLayoutReportCurrent(report: import('../../design-compiler/src/deck-planning.js').DeckLayoutReport, identity: string): boolean {
+  return report.version === '1' && report.identity === identity && report.status === 'complete'
+}

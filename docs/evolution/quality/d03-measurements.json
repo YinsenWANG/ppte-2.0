@@ -1,0 +1,762 @@
+{
+  "fixtureDigest": "ceaa0e43b6e1bff78446f1ca8e303f4dbcf394ec91a7257adf89fdbf65baadc9",
+  "rendererDigest": "18f95ee5c06c145999c676e3bf4f6355ab7f0ac77e79581faa9c122c43de0e9e",
+  "fontDigest": "240f5aa6379621b131640cb106084c180930b1fdea6af2363b52bcd2c99f572c",
+  "browser": "151.0.7922.34",
+  "environment": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v22.23.2",
+    "hardware": "Mac16,10 / Apple M4 / 16 GiB RAM"
+  },
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "samples": [
+    {
+      "pages": 12,
+      "elapsedMs": 1069.944875,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 2851.2804579999997,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 8910.463083999999,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 1079.3387500000008,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 2637.447875,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 7384.704458,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 773.1137500000004,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1955.4087499999987,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 6289.780332999999,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 741.5012500000012,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1948.8112499999988,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 6413.253791999996,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 774.4102500000008,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1939.5074590000004,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 5964.217584000005,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 701.7977080000055,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1805.637834000001,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 6006.337207999997,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 681.3836250000022,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1834.6401660000047,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 6041.149207999995,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 736.4832499999902,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1790.9635000000126,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 5998.750583000001,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 765.8153750000056,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1786.3066249999974,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 6053.534082999991,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 772.6900410000089,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1848.6150409999973,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 5966.067209000001,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 781.3991669999959,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1836.715167000002,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 6335.7588749999995,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 729.8132080000069,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1850.2817919999943,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 6177.811499999996,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 815.3240829999995,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1892.2526660000003,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 5978.2250420000055,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 717.4391659999965,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1791.7936670000054,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 6245.429042000003,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 690.206290999995,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1847.8146250000136,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 6022.616875000007,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 708.9179160000058,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1682.8348750000005,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 6086.735916000005,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 774.072125000006,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1828.4260000000068,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 6202.0968750000175,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 712.1253330000036,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1831.4692910000158,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 6059.1050000000105,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 709.6294169999892,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1999.0170000000217,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 6115.231874999998,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 745.1215000000084,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1769.9867499999818,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 6080.747833000001,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 698.9846660000039,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1793.8294170000008,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 6035.611334000016,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 775.4750829999975,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1922.2542919999978,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 6266.257249999995,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 721.2627500000235,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1909.7968330000003,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 6142.103624999989,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 767.0039169999945,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1904.7183750000258,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 6098.684875000006,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 769.6282090000168,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1915.8343750000058,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 6315.320250000019,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 762.0476670000062,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 2006.589082999999,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 6281.673749999987,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 737.0504169999913,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1936.3160409999837,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 6242.813832999993,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 716.901125000004,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1821.2055839999812,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 6363.82241600001,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 791.4892079999845,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1915.031209000008,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 6369.796459000005,
+      "evaluations": 100,
+      "transitions": 100
+    },
+    {
+      "pages": 12,
+      "elapsedMs": 806.5939580000122,
+      "evaluations": 12,
+      "transitions": 12
+    },
+    {
+      "pages": 30,
+      "elapsedMs": 1834.551959000004,
+      "evaluations": 30,
+      "transitions": 30
+    },
+    {
+      "pages": 100,
+      "elapsedMs": 6398.375416999974,
+      "evaluations": 100,
+      "transitions": 100
+    }
+  ],
+  "summaries": [
+    {
+      "pages": 12,
+      "count": 30,
+      "p50": 745.1215000000084,
+      "p95": 1069.944875
+    },
+    {
+      "pages": 30,
+      "count": 30,
+      "p50": 1848.6150409999973,
+      "p95": 2637.447875
+    },
+    {
+      "pages": 100,
+      "count": 30,
+      "p50": 6142.103624999989,
+      "p95": 7384.704458
+    }
+  ],
+  "normal": {
+    "version": "1",
+    "identity": "ac996af6b831584f43e59f6799776055dad873098b4f566083c782b0e271bf7e",
+    "seed": "d03",
+    "status": "complete",
+    "visualStatus": "pass",
+    "budget": {
+      "candidatesPerSlide": 6,
+      "beamWidth": 8,
+      "maxEvaluations": 4096,
+      "maxTransitions": 10000,
+      "measurementTimeoutMs": 10000
+    },
+    "evaluations": 1,
+    "transitions": 1,
+    "pages": [
+      {
+        "slideKey": "s0",
+        "candidates": [
+          {
+            "key": "a@1.0.0:base",
+            "status": "eligible",
+            "reasons": [
+              "hard-constraints-pass",
+              "all-blocks-have-a-slot"
+            ],
+            "measurement": {
+              "draftDigest": "e27a4b1ffd2e1d9c477f7645747157d7ffe911cff32f8ab51b27f50f19c179c2",
+              "fontDigest": "f52bb6c9df68406fcc5eebbd3c0c6e4bac84956fdb491415530391eeafe42986",
+              "resourceDigest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+              "rendererDigest": "18f95ee5c06c145999c676e3bf4f6355ab7f0ac77e79581faa9c122c43de0e9e",
+              "status": "pass",
+              "elements": [
+                {
+                  "id": "draft:s0:body",
+                  "overflow": false,
+                  "font": "28px / 37.8px \"D03 Fixture\"",
+                  "width": 1024,
+                  "height": 576
+                }
+              ],
+              "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+              "screenshotDigest": "730b51fecb81bb88e5dce02f9bfb72151d15a53ce259341c7ed4a81bd08c841e"
+            },
+            "score": 55
+          }
+        ],
+        "selected": "a@1.0.0:base",
+        "reasons": [
+          "hard-constraints-pass",
+          "all-blocks-have-a-slot",
+          "bounded-deck-semantic-and-adjacency-score"
+        ]
+      }
+    ],
+    "splitProposals": []
+  },
+  "boundary": {
+    "version": "1",
+    "identity": "2c367cb2e3ad52db36d4f79b95787570cbb76233ee0a55d1d49e6f837ca71726",
+    "seed": "d03",
+    "status": "complete",
+    "visualStatus": "pass",
+    "budget": {
+      "candidatesPerSlide": 6,
+      "beamWidth": 8,
+      "maxEvaluations": 4096,
+      "maxTransitions": 10000,
+      "measurementTimeoutMs": 10000
+    },
+    "evaluations": 1,
+    "transitions": 1,
+    "pages": [
+      {
+        "slideKey": "s0",
+        "candidates": [
+          {
+            "key": "a@1.0.0:base",
+            "status": "eligible",
+            "reasons": [
+              "hard-constraints-pass",
+              "all-blocks-have-a-slot"
+            ],
+            "measurement": {
+              "draftDigest": "1cce051f77dee72f4bec72d8706b292e9c916555729a35927af0eca2b6dae37a",
+              "fontDigest": "f52bb6c9df68406fcc5eebbd3c0c6e4bac84956fdb491415530391eeafe42986",
+              "resourceDigest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+              "rendererDigest": "18f95ee5c06c145999c676e3bf4f6355ab7f0ac77e79581faa9c122c43de0e9e",
+              "status": "pass",
+              "elements": [
+                {
+                  "id": "draft:s0:body",
+                  "overflow": false,
+                  "font": "28px / 37.8px \"D03 Fixture\"",
+                  "width": 1024,
+                  "height": 37.796875
+                }
+              ],
+              "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+              "screenshotDigest": "96525ae01e1d6782cab24855694e9fbbbe0f7454f5ee91800b75dd286d9665ed"
+            },
+            "score": 55
+          }
+        ],
+        "selected": "a@1.0.0:base",
+        "reasons": [
+          "hard-constraints-pass",
+          "all-blocks-have-a-slot",
+          "bounded-deck-semantic-and-adjacency-score"
+        ]
+      }
+    ],
+    "splitProposals": []
+  },
+  "overflow": {
+    "version": "1",
+    "identity": "d723a93259f5642042ffa036cba2a4a1d8a3f7f3f1c774d5ee56313533373f61",
+    "seed": "d03",
+    "status": "infeasible",
+    "visualStatus": "fail",
+    "budget": {
+      "candidatesPerSlide": 6,
+      "beamWidth": 8,
+      "maxEvaluations": 4096,
+      "maxTransitions": 10000,
+      "measurementTimeoutMs": 10000
+    },
+    "evaluations": 1,
+    "transitions": 0,
+    "pages": [
+      {
+        "slideKey": "s0",
+        "candidates": [
+          {
+            "key": "a@1.0.0:base",
+            "status": "rejected",
+            "reasons": [
+              "BROWSER_OVERFLOW"
+            ],
+            "measurement": {
+              "draftDigest": "58135a67140610d56af6557a9b2b2400037ea6cf3d3739502292aabad74ed03c",
+              "fontDigest": "f52bb6c9df68406fcc5eebbd3c0c6e4bac84956fdb491415530391eeafe42986",
+              "resourceDigest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+              "rendererDigest": "18f95ee5c06c145999c676e3bf4f6355ab7f0ac77e79581faa9c122c43de0e9e",
+              "status": "fail",
+              "elements": [
+                {
+                  "id": "draft:s0:body",
+                  "overflow": true,
+                  "font": "28px / 37.8px \"D03 Fixture\"",
+                  "width": 1024,
+                  "height": 37.796875
+                }
+              ],
+              "environment": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+              "screenshotDigest": "fe67c8bf1a75701d10080aa30c5310494ab92e3ca5baa5a7df2f87ce495e7985"
+            }
+          }
+        ]
+      }
+    ],
+    "splitProposals": [
+      {
+        "slideKey": "s0",
+        "reason": "No feasible candidate; review these indivisible groups for a new page or recipe. Capacity of proposed pages is not yet verified.",
+        "blockGroups": [
+          [
+            "body"
+          ]
+        ],
+        "requiresApproval": true
+      }
+    ],
+    "stop": {
+      "code": "NO_FEASIBLE_CANDIDATE",
+      "slideKey": "s0"
+    }
+  },
+  "unverified": [
+    "Physical low-performance devices",
+    "Safari",
+    "Office clients",
+    "General font glyph coverage outside the ASCII fixture"
+  ]
+}
