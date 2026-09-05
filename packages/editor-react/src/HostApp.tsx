@@ -1,3 +1,4 @@
+import { EditorController } from '../../editor-controller/src/index.js'
 import { PresentationController } from '../../editor-controller/src/presentation.js'
 import {actualTextOverflow,fittedBrowserFont} from './text-measurement.js'
 import {poolBytes,resolveBytes,type ResourceBytes} from './resource-pool.js'
@@ -67,6 +68,18 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
   const [presenting, setPresenting] = useState(false)
   const pendingPresentation = useRef(false)
   const presentation = useRef(new PresentationController()).current
+  const controllerRef = useRef<EditorController | undefined>(undefined)
+  function controller(): EditorController {
+    if (controllerRef.current?.session !== sessionRef.current) {
+      controllerRef.current?.dispose()
+      controllerRef.current = new EditorController(sessionRef.current!, 'host', presentation, action => { recoveryRef.current!.action = action })
+      controllerRef.current.subscribe(event => { if (event.type !== 'previewed') syncSessionState() })
+      controllerRef.current.own(() => { for (const edit of editSessions.current.values()) edit.cancel(); editSessions.current.clear() })
+    }
+    controllerRef.current!.setFlushHandler(() => { flushHostDrafts(); return { ok: true } })
+    return controllerRef.current!
+  }
+  useEffect(() => () => controllerRef.current?.dispose(), [])
   const [presenterState, setPresenterState] = useState<PresenterAnimationState>({ slideIndex: 0, step: 0 })
   const [historyDepth, setHistoryDepth] = useState(() => sessionRef.current?.getHistory().length ?? 0)
   const [redoDepth, setRedoDepth] = useState(() => sessionRef.current?.getRedoHistory().length ?? 0)
@@ -187,7 +200,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     try {
       if(!storageReady)throw new Error('本地保护未就绪，暂不能修改')
       recoveryRef.current!.action='commit'
-      const result = sessionRef.current?.commit(transaction)
+      const result = controller().commit(transaction)
       if (!result?.ok) {
         if (!preserveDraft) setRenderEpoch(n=>n+1)
         setStatus(`操作未提交 · ${result?.issues.map((issue) => issue.message).join('; ') ?? '未知错误'}`)
@@ -214,7 +227,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     const slide = documentNode.slides[activeSlideId]
     const element = slide?.elements[elementId]
     if (!slide || !element || element.type !== 'text') return
-    const session = editSessions.current.get(elementId) ?? new ImeTextEditSession(element, activeSlideId)
+    const session = editSessions.current.get(elementId) ?? new ImeTextEditSession(element, activeSlideId, sessionRef.current!.getRevision())
     session.input(editRichText(element.content, value))
     const transaction = session.finish(nextOperationId('text'), canonicalRevision(documentNode), now())
     if (transaction && !commitTransaction(transaction, '文字已本地保护，尚未写入项目文件')) { session.retryAfterRejectedCommit(); editSessions.current.set(elementId, session); return }
@@ -232,7 +245,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     if (!presentation.canMutate) return
     const target = textTarget(event)
     if (!target) return
-    const session = new ImeTextEditSession(target.element, activeSlideId)
+    const session = new ImeTextEditSession(target.element, activeSlideId, sessionRef.current!.getRevision())
     session.beginComposition()
     editSessions.current.set(target.element.id, session)
   }
@@ -241,7 +254,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     if (!presentation.canMutate) return
     const target = textTarget(event)
     if (!target) return
-    const session = editSessions.current.get(target.element.id) ?? new ImeTextEditSession(target.element, activeSlideId)
+    const session = editSessions.current.get(target.element.id) ?? new ImeTextEditSession(target.element, activeSlideId, sessionRef.current!.getRevision())
     session[session.isComposing() ? 'updateComposition' : 'input'](editRichText(target.element.content, target.node.innerText.replaceAll('\u00a0', ' ')))
     editSessions.current.set(target.element.id, session)
   }
@@ -329,12 +342,14 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
   }
 
   function nextPresenter(): void {
+    if (!controller().flushSync().ok) return
     const next = advancePresenterState(documentNode, presenterState)
     setPresenterState(next)
     if (next.slideIndex !== activeSlideIndex) setActiveSlideIndex(next.slideIndex)
   }
 
   function previousPresenter(): void {
+    if (!controller().flushSync().ok) return
     const previous = retreatPresenterState(documentNode, presenterState)
     setPresenterState(previous)
     if (previous.slideIndex !== activeSlideIndex) setActiveSlideIndex(previous.slideIndex)
@@ -383,7 +398,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
       const decode = (value:string) => Uint8Array.from(atob(value),c=>c.charCodeAt(0))
       const nextAssets = {...assetBytes,...Object.fromEntries(Object.entries(project.assetBytes??{}).map(([id,value])=>[id,decode(value)]))}
       const nextFonts = {...fontBytes,...Object.fromEntries(Object.entries(project.fontBytes??{}).map(([id,value])=>[id,decode(value)]))}
-      const preview = session.preview(transaction)
+      const preview = controller().preview(transaction)
       if (!preview.ok || !preview.document) throw new Error(preview.issues.map(i=>i.message).join('; '))
       buildPortableCheckpointBytes(preview.document,{runtimeProfile:'ga-c',assetBytes:nextAssets,fontBytes:nextFonts})
       await recoveryRef.current!.resources(nextAssets,nextFonts)
@@ -412,7 +427,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
   function undo(): boolean {
     if (!presentation.canMutate) return false
     recoveryRef.current!.action='undo'
-    const result = sessionRef.current?.undo()
+    const result = controller().undo()
     if (!result?.ok) {
       setStatus(`Undo 不可用 · ${result?.issues.map((issue) => issue.message).join('; ') ?? '没有可撤销操作'}`)
       return false
@@ -426,7 +441,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
   function redo(): boolean {
     if (!presentation.canMutate) return false
     recoveryRef.current!.action='redo'
-    const result = sessionRef.current?.redo()
+    const result = controller().redo()
     if (!result?.ok) {
       setStatus(`Redo 不可用 · ${result?.issues.map((issue) => issue.message).join('; ') ?? '没有可重做操作'}`)
       return false
@@ -549,6 +564,10 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
   async function compactRecovery(){const s=sessionRef.current!;sessionRef.current=await recoveryRef.current!.replace({document:structuredClone(s.getDocument()),assetBytes:assetPool,fontBytes:fontPool,history:[...s.getHistory()],redo:[...s.getRedoHistory()]})}
 
   function flushHostEdits():void {
+    const result = controller().flushSync()
+    if (!result.ok) throw new Error(result.issues.map(issue => issue.message).join('; '))
+  }
+  function flushHostDrafts():void {
     for (const session of editSessions.current.values()) if(session.isComposing()) throw new Error('请先完成当前输入法组合，再保存。')
     for (const [id,editor] of editSessions.current) {
       const tx=editor.finish(nextOperationId('save-text'),sessionRef.current!.getRevision(),now())
@@ -579,7 +598,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
 
   function stagePreview(transaction:Transaction,resources?:ReviewProject,recipeKey?:string):void {
     try{
-      const p=sessionRef.current!.preview(transaction)
+      const p=controller().preview(transaction)
       if(!p.ok||!p.document)throw new Error(p.issues.map(i=>i.message).join('; '))
       buildPortableCheckpointBytes(p.document,{runtimeProfile:'ga-c',assetBytes:resolveBytes(poolBytes({...assetBytes,...resources?.assetBytes}),p.document.assets),fontBytes:resolveBytes(poolBytes({...fontBytes,...resources?.fontBytes}),p.document.fonts)})
       setPendingEdit({transaction,recipeKey,document:structuredClone(p.document),resources,summary:JSON.stringify({reason:transaction.reason,changes:p.diff?.changedPaths,warnings:p.issues.map(i=>i.message)},null,2)})
@@ -724,7 +743,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     {!presenting && <aside className="ppte-host-sidebar" aria-label="Pages">
       <div className="ppte-sidebar-heading">Pages <span>{documentNode.slideOrder.length}</span></div>
       <div className="ppte-thumbnails" data-ppte-thumbnails>
-        {thumbnails.map(({ slideId, html }, index) => <button type="button" className={`ppte-thumbnail${index === activeSlideIndex ? ' is-active' : ''}`} key={slideId} data-ppte-slide-index={index} aria-label={`Slide ${index + 1}`} onClick={() => { setActiveSlideIndex(index); setPresenterState({ slideIndex: index, step: 0 }) }}>
+        {thumbnails.map(({ slideId, html }, index) => <button type="button" className={`ppte-thumbnail${index === activeSlideIndex ? ' is-active' : ''}`} key={slideId} data-ppte-slide-index={index} aria-label={`Slide ${index + 1}`} onClick={() => { if (!controller().flushSync().ok) return; setActiveSlideIndex(index); setPresenterState({ slideIndex: index, step: 0 }) }}>
           <span className="ppte-thumbnail-surface" dangerouslySetInnerHTML={{ __html: html }} /><span className="ppte-thumbnail-label">{index + 1} · {documentNode.slides[slideId]?.name ?? 'Untitled'}</span>
         </button>)}
       </div>

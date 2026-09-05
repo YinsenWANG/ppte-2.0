@@ -1,3 +1,4 @@
+import { DomResources } from '../../editor-dom/src/index.js';
 import { inferCompatibilityProfile } from '../../compatibility/src/index.js';
 import { STANDARD_EDITABLE_SUFFIX } from "./delivery-policy.js";
 import {
@@ -38,6 +39,8 @@ const runtime = new PortableRuntime(payload.document, {
   recentTransactions: payload.recentTransactions,
   redoHistory: payload.redoHistory,
 });
+const dom = new DomResources();
+runtime.controller.own(() => dom.dispose());
 const root = document.getElementById("ppte-shell")!;
 const canvas = document.querySelector<HTMLElement>("[data-ppte-canvas]")!;
 const stage = document.querySelector<HTMLElement>("[data-ppte-stage]")!;
@@ -46,7 +49,12 @@ const editable = runtime.profile !== "viewer";
 const advanced =
   runtime.profile === "light-edit" || runtime.profile === "full-portable";
 const composing = new Set<string>();
-const drafts = new Map<string, string>();
+const drafts = new Map<string, { value: string; baseRevision: string }>();
+function recordDraft(id: string, value: string) {
+  drafts.set(id, {value, baseRevision:drafts.get(id)?.baseRevision ?? runtime.getRevision()});
+}
+runtime.controller.own(() => { composing.clear(); drafts.clear(); drag = undefined; pendingPresentation = false });
+dom.listen(window, 'pagehide', () => runtime.dispose(), { once: true });
 let presenting = false;
 let pendingPresentation = false;
 let scale = 1;
@@ -176,7 +184,7 @@ function leavePresentation() {
   if (document.fullscreenElement === root) void document.exitFullscreen().catch(() => {});
   root.querySelector<HTMLButtonElement>('[data-ppte-action="fullscreen"]')?.focus();
 }
-document.addEventListener("fullscreenchange", () => {
+dom.listen(document, "fullscreenchange", () => {
   if (runtime.presentation.fullscreenChanged(root)) leavePresentation();
   fit();
 });
@@ -190,14 +198,16 @@ function change<T extends { ok: boolean; issues?: Array<{ message: string }> }>(
 function editText(target: PortableElementTarget, value: string) {
   return change(runtime.editText(target, value));
 }
-function flush(): QuickFixResult {
+function flush(): QuickFixResult { return runtime.controller.flushSync() }
+runtime.controller.setFlushHandler(flushDrafts);
+function flushDrafts(): QuickFixResult {
   if (composing.size)
     return error(
       "PORTABLE_COMPOSITION_ACTIVE",
       "Finish the current input composition before saving.",
     );
   for (const [id, text] of [...drafts]) {
-    const r = runtime.editText({ elementId: id }, text);
+    const r = runtime.editText({ elementId: id }, text.value, text.baseRevision);
     if (!r.ok) return r;
     drafts.delete(id);
   }
@@ -213,7 +223,9 @@ function download(value: Uint8Array | string, name: string, type: string) {
   a.href = url;
   a.download = name;
   a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  const release = dom.own(() => URL.revokeObjectURL(url));
+  const timer = setTimeout(release, 1000);
+  dom.own(() => clearTimeout(timer));
 }
 function saveAsProject() {
   const pending = flush();
@@ -446,9 +458,8 @@ root.querySelectorAll<HTMLButtonElement>("button[data-ppte-action]").forEach(
       }
     }),
 );
-root
-  .querySelector<HTMLInputElement>('[data-ppte-action="import-image"]')
-  ?.addEventListener("change", (event) => {
+const imageInput = root.querySelector<HTMLInputElement>('[data-ppte-action="import-image"]');
+if (imageInput) dom.listen(imageInput, "change", (event) => {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (file)
@@ -458,11 +469,12 @@ root
       });
     input.value = "";
   });
+dom.own(() => { root.querySelectorAll<HTMLButtonElement>("button[data-ppte-action]").forEach(button => { button.onclick = null }); });
 const elementTarget = (event: Event) =>
   event.target instanceof Element
     ? event.target.closest<HTMLElement>("[data-ppte-element-id]")
     : null;
-stage.addEventListener("click", (event) => {
+dom.listen(stage, "click", (event) => {
   const n = elementTarget(event);
   if (presenting) return;
   if (!editable || !n) return;
@@ -475,45 +487,46 @@ stage.addEventListener("click", (event) => {
     );
   } else select(n.dataset.ppteElementId!);
 });
-stage.addEventListener("compositionstart", (event) => {
+dom.listen(stage, "compositionstart", (event) => {
   if (presenting) return;
   const n = elementTarget(event);
   if (n) composing.add(n.dataset.ppteElementId!);
 });
-stage.addEventListener("input", (event) => {
+dom.listen(stage, "input", (event) => {
   if (presenting) return;
   const n = elementTarget(event);
   if (n)
-    drafts.set(n.dataset.ppteElementId!, n.innerText.replaceAll("\u00a0", " "));
+    recordDraft(n.dataset.ppteElementId!, n.innerText.replaceAll("\u00a0", " "));
 });
-stage.addEventListener("compositionend", (event) => {
+dom.listen(stage, "compositionend", (event) => {
   if (presenting) return;
   const n = elementTarget(event);
   if (n) {
     const id = n.dataset.ppteElementId!;
     composing.delete(id);
     const text = n.innerText.replaceAll("\u00a0", " ");
-    drafts.set(id, text);
-    const result = runtime.editText({ elementId: id }, text);
+    recordDraft(id, text);
+    const draft = drafts.get(id)!;
+    const result = runtime.editText({ elementId: id }, draft.value, draft.baseRevision);
     if (result.ok) drafts.delete(id);
     change(result);
     if (result.ok && pendingPresentation && !composing.size) void enterPresentation();
   }
 });
-stage.addEventListener("focusout", (event) => {
+dom.listen(stage, "focusout", (event) => {
   if (presenting) return;
   const n = elementTarget(event);
   if (n && !composing.has(n.dataset.ppteElementId!)) {
     const id = n.dataset.ppteElementId!;
     if (drafts.has(id)) {
       const text = drafts.get(id)!;
-      const result = runtime.editText({ elementId: id }, text);
+      const result = runtime.editText({ elementId: id }, text.value, text.baseRevision);
       if (result.ok) drafts.delete(id);
       change(result);
     }
   }
 });
-stage.addEventListener("pointerdown", (event) => {
+dom.listen(stage, "pointerdown", (event) => {
   const n = elementTarget(event);
   if (presenting || !advanced || !n || n.isContentEditable || event.shiftKey) return;
   const id = n.dataset.ppteElementId!;
@@ -521,7 +534,7 @@ stage.addEventListener("pointerdown", (event) => {
   drag = { id, x: event.clientX, y: event.clientY, dx: 0, dy: 0 };
   n.setPointerCapture(event.pointerId);
 });
-stage.addEventListener("pointermove", (event) => {
+dom.listen(stage, "pointermove", (event) => {
   if (!drag) return;
   drag.dx = (event.clientX - drag.x) / scale;
   drag.dy = (event.clientY - drag.y) / scale;
@@ -534,15 +547,15 @@ stage.addEventListener("pointermove", (event) => {
     }
   }
 });
-stage.addEventListener("pointerup", () => {
+dom.listen(stage, "pointerup", () => {
   if (!drag) return;
   const { dx, dy } = drag;
   drag = undefined;
   if (Math.abs(dx) + Math.abs(dy) > 0.5) moveSelection(dx, dy);
   else render();
 });
-window.addEventListener("resize", fit);
-document.addEventListener("keydown", (event) => {
+dom.listen(window, "resize", fit);
+dom.listen(document, "keydown", (event) => {
   if (event.isComposing) return;
   if (presenting) {
     if (event.key !== "Escape" && (event.target as HTMLElement).closest("a,button,video,audio,input,textarea,select")) return;
@@ -570,10 +583,10 @@ document.addEventListener("keydown", (event) => {
     change(event.shiftKey ? runtime.redo() : runtime.undo());
   }
 });
-for (const type of ["beforeinput", "paste", "drop"]) {
-  stage.addEventListener(type, event => { if (!runtime.presentation.canMutate) event.preventDefault(); }, true);
+for (const type of ["beforeinput", "paste", "drop"] as const) {
+  dom.listen(stage, type, event => { if (!runtime.presentation.canMutate) event.preventDefault(); }, true);
 }
-document.addEventListener("keydown", event => { if (event.key === "Escape") pendingPresentation = false; }, true);
+dom.listen(document, "keydown", event => { if (event.key === "Escape") pendingPresentation = false; }, true);
 const api = {
   enterPresentation,
   leavePresentation,
@@ -640,7 +653,9 @@ const api = {
     return r;
   },
 };
-new ResizeObserver(fit).observe(stage);
+const observer = new ResizeObserver(fit);
+observer.observe(stage);
+dom.own(() => observer.disconnect());
 root.dataset.ppteMode = "edit";
 (globalThis as any).PPTEPortable = api;
 render();

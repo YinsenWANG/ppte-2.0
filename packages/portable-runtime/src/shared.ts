@@ -1,3 +1,4 @@
+import { EditorController, planTextReplacement } from '../../editor-controller/src/index.js'
 export { assessCheckpointRecovery, type CheckpointRecoveryAssessment } from './checkpoint-recovery.js'
 import { computeArtifactIdentity, type ArtifactIdentity } from './artifact-identity.js'
 import { PPTE_APP_VERSION } from '../../schema/src/version.js'
@@ -261,6 +262,7 @@ function auditPortableContents(html: string): PortableAuditResult {
 }
 
 export class PortableRuntime {
+  readonly controller: EditorController
   private readonly session: PpteSession
   private readonly assetBytes: Record<string, Uint8Array>
   private readonly fontBytes: Record<string, Uint8Array>
@@ -273,12 +275,15 @@ export class PortableRuntime {
     this.profile = options.profile ?? 'viewer'
     const runtimeProfile = this.profile === 'light-edit' || this.profile === 'full-portable' ? 'ga-c' : runtimeProfileForCompatibility(inferCompatibilityProfile(document))
     this.session = new PpteSession(document, { runtimeProfile, recentTransactions: options.recentTransactions, redoHistory: options.redoHistory })
+    this.controller = new EditorController(this.session, this.profile, this.presentation)
     this.assetBytes = cloneBytes(options.assetBytes)
     this.fontBytes = cloneBytes(options.fontBytes)
   }
 
   readonly profile: PortableProfile
   readonly presentation = new PresentationController()
+
+  dispose(): void { this.controller.dispose(); this.selection = [] }
 
   getDocument(): Readonly<PpteDocument> { return this.session.getDocument() }
   getRevision(): Revision { return this.session.getRevision() }
@@ -287,7 +292,7 @@ export class PortableRuntime {
   getFontBytes(): Record<string, Uint8Array> { return cloneBytes(this.fontBytes) }
   getHistory(): Transaction[] { return this.session.getHistory().map(entry => entry.transaction) }
   getRedoHistory(): HistoryEntry[] { return [...this.session.getRedoHistory()] }
-  preview(transaction: Transaction) { return this.session.preview(transaction) }
+  preview(transaction: Transaction) { return this.controller.preview(transaction) }
   commit(transaction: Transaction): QuickFixResult {
     if (this.profile !== "full-portable") return { ok: false, issues: [issue("PORTABLE_EDIT_UNSUPPORTED", "Arbitrary transactions require Full Portable.")] }
     return this.commitPortableTransaction(transaction)
@@ -314,7 +319,7 @@ export class PortableRuntime {
 
   getSelection(): Array<{ slideId: string; elementId: string }> { return structuredClone(this.selection) }
 
-  editText(target: { slideId?: string; elementId?: string; semanticKey?: string }, value: string): QuickFixResult {
+  editText(target: { slideId?: string; elementId?: string; semanticKey?: string }, value: string, baseRevision = this.session.getRevision()): QuickFixResult {
     if (!quickFixEditingEnabled(this.profile)) return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Viewer profile does not allow edits.')] }
     const found = findElement(this.session.getDocument(), target)
     if (!found || found.element.type !== 'text') return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Quick Fix text editing requires a resolvable Text element.')] }
@@ -322,9 +327,9 @@ export class PortableRuntime {
     if (glyphIssues.some((item) => item.severity === 'error')) return { ok: false, issues: glyphIssues }
     let content
     try { content = editRichText(found.element.content, value) } catch (cause) { return { ok: false, issues: [issue('TEXT_INVALID', cause instanceof Error ? cause.message : String(cause))] } }
-    const transaction = textTransaction(this.session.getRevision(), found.slideId, found.element.id, content)
+    const transaction = textTransaction(baseRevision, found.slideId, found.element.id, content)
     if (!this.presentation.canMutate) return { ok: false, issues: [issue('PRESENTATION_READONLY', 'Exit presentation mode before editing.')] }
-    const result = this.session.commit(transaction)
+    const result = this.controller.commit(transaction)
     if (result.ok) this.lastTransaction = transaction
     return { ok: result.ok, revision: result.afterRevision, issues: result.issues }
   }
@@ -355,7 +360,7 @@ export class PortableRuntime {
       operations,
     }
     if (!this.presentation.canMutate) return { ok: false, issues: [issue('PRESENTATION_READONLY', 'Exit presentation mode before editing.')] }
-    const result = this.session.commit(transaction)
+    const result = this.controller.commit(transaction)
     if (result.ok) this.lastTransaction = transaction
     return { ok: result.ok, revision: result.afterRevision, issues: result.issues }
   }
@@ -385,7 +390,7 @@ export class PortableRuntime {
       transaction = buildFactUpdateTransaction(this.session.getDocument(), factId, value, { actor: { type: 'human', id: 'portable-quick-fix' }, requireConfirmation: false })
     } catch (cause) { return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', cause instanceof Error ? cause.message : String(cause))] } }
     if (!this.presentation.canMutate) return { ok: false, issues: [issue('PRESENTATION_READONLY', 'Exit presentation mode before editing.')] }
-    const result = this.session.commit(transaction)
+    const result = this.controller.commit(transaction)
     if (result.ok) this.lastTransaction = transaction
     return { ok: result.ok, revision: result.afterRevision, issues: result.issues }
   }
@@ -472,18 +477,19 @@ export class PortableRuntime {
   undo(): QuickFixResult {
     if (!quickFixEditingEnabled(this.profile)) return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Viewer profile does not allow undo.')] }
     if (!this.presentation.canMutate) return { ok: false, issues: [issue('PRESENTATION_READONLY', 'Exit presentation mode before undo.')] }
-    const result = this.session.undo()
+    const result = this.controller.undo()
     return { ok: result.ok, revision: result.afterRevision, issues: result.issues }
   }
 
   redo(): QuickFixResult {
     if (!quickFixEditingEnabled(this.profile)) return { ok: false, issues: [issue('PORTABLE_EDIT_UNSUPPORTED', 'Viewer profile does not allow redo.')] }
     if (!this.presentation.canMutate) return { ok: false, issues: [issue('PRESENTATION_READONLY', 'Exit presentation mode before redo.')] }
-    const result = this.session.redo()
+    const result = this.controller.redo()
     return { ok: result.ok, revision: result.afterRevision, issues: result.issues }
   }
 
   saveAsProject(options: { timestamp?: string; clean?: boolean; compatibilityProfile?: string } = {}): QuickFixResult {
+    const flush = this.controller.flushSync(); if (!flush.ok) return flush
     try {
       const bytes = buildPortableCheckpointBytes(this.session.getDocument(), { timestamp: options.timestamp ?? '1970-01-01T00:00:00.000Z', clean: options.clean, compatibilityProfile: options.compatibilityProfile, redoHistory: options.clean ? [] : [...this.session.getRedoHistory()], runtimeProfile: this.profile === 'light-edit' || this.profile === 'full-portable' ? 'ga-c' : runtimeProfileForCompatibility(inferCompatibilityProfile(this.session.getDocument())), recentTransactions: options.clean ? [] : this.session.getHistory().map((entry) => entry.transaction), assetBytes: this.assetBytes, fontBytes: this.fontBytes })
       return { ok: true, revision: this.session.getRevision(), bytes, issues: [] }
@@ -513,6 +519,7 @@ export class PortableRuntime {
   }
 
   next(): PresenterState {
+    if (!this.controller.flushSync().ok) return this.presenterState()
     const next = advancePresenterState(this.session.getDocument(), { slideIndex: this.slideIndex, step: this.step })
     this.slideIndex = next.slideIndex
     this.step = next.step
@@ -520,6 +527,7 @@ export class PortableRuntime {
   }
 
   previous(): PresenterState {
+    if (!this.controller.flushSync().ok) return this.presenterState()
     const previous = retreatPresenterState(this.session.getDocument(), { slideIndex: this.slideIndex, step: this.step })
     this.slideIndex = previous.slideIndex
     this.step = previous.step
@@ -527,6 +535,7 @@ export class PortableRuntime {
   }
 
   setSlide(index: number): PresenterState {
+    if (!this.controller.flushSync().ok) return this.presenterState()
     this.slideIndex = Math.max(0, Math.min(Math.floor(index), this.session.getDocument().slideOrder.length - 1))
     this.step = 0
     return this.presenterState()
@@ -536,7 +545,7 @@ export class PortableRuntime {
 
   private commitPortableTransaction(transaction: Transaction): QuickFixResult {
     if (!this.presentation.canMutate) return { ok: false, issues: [issue('PRESENTATION_READONLY', 'Exit presentation mode before editing.')] }
-    const result = this.session.commit(transaction)
+    const result = this.controller.commit(transaction)
     if (result.ok) this.lastTransaction = transaction
     return { ok: result.ok, revision: result.afterRevision, issues: result.issues }
   }
@@ -700,7 +709,7 @@ function portableScript(): string {
 }
 
 function textTransaction(baseRevision: string, slideId: string, elementId: string, content: ReturnType<typeof plainTextToRichText>): Transaction {
-  return { transactionId: `portable:text:${elementId}:${baseRevision.slice(-12)}`, baseRevision, actor: { type: 'human', id: 'portable-quick-fix' }, scope: { kind: 'selection', slideIds: [slideId], elementIds: [elementId], permissions: ['content'], allowInsert: false, allowDelete: false }, changeContract: contentOnlyContract(elementId), reason: 'Portable Quick Fix text edit', createdAt: '1970-01-01T00:00:00.000Z', validationLevel: 'L2', operations: [{ opId: `portable:text:${elementId}`, kind: 'text.replaceContent', slideId, elementId, content }] }
+  return planTextReplacement({ transactionId: `portable:text:${elementId}:${baseRevision.slice(-12)}`, baseRevision, slideId, elementId, content, actor: { type: 'human', id: 'portable-quick-fix' }, reason: 'Portable Quick Fix text edit', createdAt: '1970-01-01T00:00:00.000Z', validationLevel: 'L2', opId: `portable:text:${elementId}` })
 }
 
 function findElement(document: PpteDocument, target: { slideId?: string; elementId?: string; semanticKey?: string }): { slideId: string; element: Element } | undefined {

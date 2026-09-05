@@ -1,3 +1,4 @@
+import { planTextReplacement } from '../../editor-controller/src/commands.js'
 import { canonicalHash } from '../../canonical-json/src/index.js'
 import type { RichTextDocument, TextElement, Transaction } from '../../schema/src/index.js'
 
@@ -9,7 +10,7 @@ export class ImeTextEditSession {
   private composing = false
   private finished = false
 
-  constructor(private readonly element: TextElement, private readonly slideId = 'current-slide') {
+  constructor(private readonly element: TextElement, private readonly slideId = 'current-slide', private readonly draftRevision?: string) {
     this.initial = cloneRichText(element.content)
     this.current = cloneRichText(element.content)
   }
@@ -30,23 +31,7 @@ export class ImeTextEditSession {
     if (this.finished || this.composing || !this.hasChanges()) return undefined
     assertSafeRichText(this.current)
     this.finished = true
-    return {
-      transactionId,
-      baseRevision,
-      actor: { type: 'human', id: 'editor' },
-      scope: { kind: 'selection', slideIds: [this.slideId], elementIds: [this.element.id], permissions: ['content'], allowInsert: false, allowDelete: false },
-      changeContract: {
-        allowedOperationKinds: ['text.replaceContent'],
-        allowedElementIds: [this.element.id],
-        maxChangedSlides: 1,
-        maxChangedElements: 1,
-        maxInsertedElements: 0,
-        maxDeletedElements: 0,
-        preserve: { style: 'preserve', geometry: 'preserve', asset: 'preserve', semanticIdentity: 'preserve', readingOrder: 'preserve', facts: 'preserve' },
-      },
-      createdAt,
-      operations: [{ opId: `${transactionId}:replace`, kind: 'text.replaceContent', slideId: this.slideId, elementId: this.element.id, content: cloneRichText(this.current) }],
-    }
+    return planTextReplacement({transactionId, baseRevision:this.draftRevision ?? baseRevision, createdAt, slideId:this.slideId, elementId:this.element.id, content:this.current})
   }
 
   cancel(): RichTextDocument {
