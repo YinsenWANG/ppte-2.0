@@ -157,8 +157,8 @@ test('R3 full Portable file:// editing, save/reopen, presentation, IME guard, an
     await page.goto(pathToFileURL(sourcePath).href)
     await page.waitForFunction(() => Boolean((globalThis as any).PPTEPortable?.getDocument))
     assert.equal(await page.locator('[data-ppte-deliverable="true"]').count(), 1)
-    assert.equal(await page.locator('button[data-ppte-action="save-portable"]').innerText(), '保存可编辑副本 (.ppte.html)')
-    assert.equal(await page.locator('button[data-ppte-action="fullscreen"]').innerText(), '开始演示（全屏）')
+    assert.equal(await page.locator('button[data-ppte-action="save-portable"]').innerText(), '保存副本')
+    assert.equal(await page.locator('button[data-ppte-action="fullscreen"]').innerText(), '▶ 开始放映')
     assert.equal(await page.locator('[contenteditable="true"]').count() > 0, true)
 
     const title = page.locator('[data-ppte-element-id="text_title"]')

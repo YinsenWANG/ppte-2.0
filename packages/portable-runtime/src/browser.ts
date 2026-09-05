@@ -35,6 +35,8 @@ const advanced =
   runtime.profile === "light-edit" || runtime.profile === "full-portable";
 const composing = new Set<string>();
 const drafts = new Map<string, string>();
+let presenting = false;
+let fullscreenOwned = false;
 let scale = 1;
 let sequence = 0;
 let drag:
@@ -80,7 +82,7 @@ function show(result?: { ok: boolean; issues?: Array<{ message: string }> }) {
     .forEach(
       (n) =>
         (n.dataset.ppteSelected = String(
-          runtime
+          !presenting && runtime
             .getSelection()
             .some((s) => s.elementId === n.dataset.ppteElementId),
         )),
@@ -93,15 +95,15 @@ function show(result?: { ok: boolean; issues?: Array<{ message: string }> }) {
   status.textContent =
     result?.ok === false
       ? (result.issues?.map((i) => i.message).join("; ") ?? "Edit failed")
-      : `${runtime.profile} · ${state.slideIndex + 1}/${runtime.getDocument().slideOrder.length} · ${runtime.getHistory().length} edits`;
+      : `第 ${state.slideIndex + 1} / ${runtime.getDocument().slideOrder.length} 页 · ${editable ? "编辑模式" : "浏览模式"}`;
 }
 function fit() {
   const spec = runtime.getDocument().canvas;
   scale = Math.max(
     0.05,
     Math.min(
-      (window.innerWidth - 32) / spec.width,
-      (window.innerHeight - 150) / spec.height,
+      (stage.clientWidth - (presenting ? 0 : 48)) / spec.width,
+      (stage.clientHeight - (presenting ? 0 : 48)) / spec.height,
     ),
   );
   canvas.style.width = `${spec.width * scale}px`;
@@ -112,7 +114,7 @@ function render() {
   const doc = runtime.getDocument();
   const assets = runtime.getAssetBytes();
   canvas.innerHTML = renderDocumentSurfaceHtml(doc, {
-    editable,
+    editable: editable && !presenting,
     assetSources: Object.fromEntries(
       Object.entries(assets).map(([id, data]) => [
         id,
@@ -132,6 +134,37 @@ function render() {
   document.head.append(fontStyle);
   fit();
 }
+async function enterPresentation() {
+  const pending = flush();
+  if (!pending.ok) { show(pending); return pending; }
+  (document.activeElement as HTMLElement | null)?.blur();
+  drag = undefined;
+  presenting = true;
+  root.dataset.ppteMode = "present";
+  root.querySelectorAll("details[open]").forEach(n => n.removeAttribute("open"));
+  render();
+  stage.tabIndex = -1;
+  stage.focus();
+  // Slideshow mode works even when the browser refuses fullscreen.
+  try { await root.requestFullscreen(); fullscreenOwned = document.fullscreenElement === root; }
+  catch { fullscreenOwned = false; }
+  fit();
+  return { ok: true, issues: [] };
+}
+function leavePresentation() {
+  presenting = false;
+  root.dataset.ppteMode = "edit";
+  drag = undefined;
+  render();
+  if (document.fullscreenElement === root) void document.exitFullscreen().catch(() => {});
+  fullscreenOwned = false;
+  root.querySelector<HTMLButtonElement>('[data-ppte-action="fullscreen"]')?.focus();
+}
+document.addEventListener("fullscreenchange", () => {
+  if (document.fullscreenElement === root) fullscreenOwned = true;
+  else if (fullscreenOwned && presenting) leavePresentation();
+  fit();
+});
 function change<T extends { ok: boolean; issues?: Array<{ message: string }> }>(
   result: T,
 ): T {
@@ -369,7 +402,8 @@ root.querySelectorAll<HTMLButtonElement>("button[data-ppte-action]").forEach(
       } else if (action === "next") {
         runtime.next();
         show();
-      } else if (action === "fullscreen") void root.requestFullscreen();
+      } else if (action === "fullscreen") void enterPresentation();
+      else if (action === "exit-present") leavePresentation();
       else if (action === "save") saveAsProject();
       else if (action === "save-portable") saveAsPortable();
       else if (action === "undo") change(runtime.undo());
@@ -415,6 +449,7 @@ const elementTarget = (event: Event) =>
     : null;
 stage.addEventListener("click", (event) => {
   const n = elementTarget(event);
+  if (presenting) { if (!(event.target as Element).closest("a,button")) { runtime.next(); show(); } return; }
   if (!editable || !n) return;
   if (event.shiftKey && runtime.profile === "full-portable") {
     const items = runtime.getSelection();
@@ -426,15 +461,18 @@ stage.addEventListener("click", (event) => {
   } else select(n.dataset.ppteElementId!);
 });
 stage.addEventListener("compositionstart", (event) => {
+  if (presenting) return;
   const n = elementTarget(event);
   if (n) composing.add(n.dataset.ppteElementId!);
 });
 stage.addEventListener("input", (event) => {
+  if (presenting) return;
   const n = elementTarget(event);
   if (n)
     drafts.set(n.dataset.ppteElementId!, n.innerText.replaceAll("\u00a0", " "));
 });
 stage.addEventListener("compositionend", (event) => {
+  if (presenting) return;
   const n = elementTarget(event);
   if (n) {
     const id = n.dataset.ppteElementId!;
@@ -449,6 +487,7 @@ stage.addEventListener("compositionend", (event) => {
   }
 });
 stage.addEventListener("focusout", (event) => {
+  if (presenting) return;
   const n = elementTarget(event);
   if (n && !composing.has(n.dataset.ppteElementId!)) {
     const id = n.dataset.ppteElementId!;
@@ -461,7 +500,7 @@ stage.addEventListener("focusout", (event) => {
 });
 stage.addEventListener("pointerdown", (event) => {
   const n = elementTarget(event);
-  if (!advanced || !n || n.isContentEditable || event.shiftKey) return;
+  if (presenting || !advanced || !n || n.isContentEditable || event.shiftKey) return;
   const id = n.dataset.ppteElementId!;
   if (!runtime.getSelection().some((s) => s.elementId === id)) select(id);
   drag = { id, x: event.clientX, y: event.clientY, dx: 0, dy: 0 };
@@ -489,6 +528,15 @@ stage.addEventListener("pointerup", () => {
 });
 window.addEventListener("resize", fit);
 document.addEventListener("keydown", (event) => {
+  if (presenting) {
+    if (event.key === "Escape") { event.preventDefault(); leavePresentation(); }
+    else if (["ArrowRight", "ArrowDown", "PageDown", " "].includes(event.key)) { event.preventDefault(); runtime.next(); show(); }
+    else if (["ArrowLeft", "ArrowUp", "PageUp"].includes(event.key)) { event.preventDefault(); runtime.previous(); show(); }
+    else if (event.key === "Home") { event.preventDefault(); runtime.setSlide(0); show(); }
+    else if (event.key === "End") { event.preventDefault(); runtime.setSlide(runtime.getDocument().slideOrder.length - 1); show(); }
+    else if ((event.ctrlKey || event.metaKey) && ["z", "y"].includes(event.key.toLowerCase())) event.preventDefault();
+    return;
+  }
   if (
     (event.target as HTMLElement).isContentEditable ||
     ["INPUT", "TEXTAREA"].includes((event.target as HTMLElement).tagName)
@@ -506,6 +554,9 @@ document.addEventListener("keydown", (event) => {
   }
 });
 const api = {
+  enterPresentation,
+  leavePresentation,
+  getMode: () => presenting ? "present" : "edit",
   origin: payload.origin,
   get capabilityReport() {
     return runtime.getCapabilityReport();
@@ -561,5 +612,7 @@ const api = {
     return r;
   },
 };
+new ResizeObserver(fit).observe(stage);
+root.dataset.ppteMode = "edit";
 (globalThis as any).PPTEPortable = api;
 render();

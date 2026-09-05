@@ -92,8 +92,8 @@ test('all four Portable profiles keep their explicit editability boundary', () =
   assert.equal(results.every((result) => result.ok), true)
   assert.equal(results[0]?.html.includes('data-ppte-deliverable="false"'), true)
   assert.equal(results.slice(1).every((result) => result.html.includes('data-ppte-deliverable="true"')), true)
-  assert.equal(results.slice(1).every((result) => result.html.includes('保存可编辑副本 (.ppte.html)')), true)
-  assert.equal(results[0]?.html.includes('保存可编辑副本 (.ppte.html)'), false)
+  assert.equal(results.slice(1).every((result) => result.html.includes('保存副本')), true)
+  assert.equal(results[0]?.html.includes('保存副本'), false)
   assert.equal(results.every((result) => result.runtimeGzipBytes! <= result.budgetBytes!), true)
 })
 
