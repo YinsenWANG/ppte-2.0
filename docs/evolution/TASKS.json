@@ -1956,7 +1956,7 @@
       "milestone": "M3",
       "priority": "P1",
       "title": "Table v2 模型、迁移和 typed 操作",
-      "status": "planned",
+      "status": "done",
       "effort": "L",
       "ownerRole": "格式 / 表格",
       "dependsOn": [
@@ -1990,7 +1990,72 @@
         "A13"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        {
+          "commit": "d5fa634031322af58836aa90bbb8673a14521fae",
+          "tests": [
+            "tests/table-v2-contract.test.ts"
+          ],
+          "criteria": {
+            "1": {
+              "status": "pass",
+              "tests": [
+                "explicit v1 migration preserves scalar types, header/caption/element identity and source bytes",
+                "all typed operations preserve untouched IDs and serialized inverses restore exact revisions",
+                "typed display, text consistency and rectangular merges retain covered values in HTML/SVG",
+                "seeded generated value/axis sequences undo and redo without identity drift"
+              ]
+            },
+            "2": {
+              "status": "pass",
+              "tests": [
+                "malformed models cannot bypass validation through props, restore, element/slide insertion or checkpoint",
+                "complete registered descriptor and history/inverse/redo/patch minimum profile declarations",
+                "literal JSON Schema validates v2 document, typed transactions, manifest and descriptor",
+                "typed table patch codec preserves operations, declarations and replay"
+              ]
+            },
+            "3": {
+              "status": "pass",
+              "tests": [
+                "cell fact/source identities survive merge/move and every reference deletion requires impact review",
+                "Host and Portable checkpoints retain exact migration/merge/value history and redo-only tables",
+                "all typed operations preserve untouched IDs and serialized inverses restore exact revisions"
+              ]
+            }
+          },
+          "verification": {
+            "typecheck": "pass",
+            "build": "pass",
+            "schemaValidation": "pass",
+            "tests": {
+              "baseline": 311,
+              "final": 321,
+              "delta": 10,
+              "pass": 321,
+              "fail": 0,
+              "skipped": 0
+            },
+            "blackbox": {
+              "baselineGreen": 70,
+              "baselineRed": 0,
+              "finalGreen": 70,
+              "finalRed": 0,
+              "newRed": []
+            }
+          },
+          "report": "docs/evolution/quality/f01-verification.json",
+          "contract": "docs/evolution/F01_TABLE_V2.md",
+          "testOutput": "docs/evolution/quality/f01-tests.tap",
+          "blackboxStart": "docs/evolution/quality/f01-blackbox-start.json",
+          "blackboxFinal": "docs/evolution/quality/f01-blackbox-final.json",
+          "remainingRisks": [
+            "F02/F03 UI, TSV workflows and native editable Office table export are not claimed by F01.",
+            "Structural edits that invalidate a merge require an explicit split first.",
+            "Migration rejects ragged input and unknown v1 props, retaining the source for explicit review."
+          ]
+        }
+      ]
     },
     {
       "id": "F02",
