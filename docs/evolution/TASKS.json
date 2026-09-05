@@ -1508,7 +1508,7 @@
       "milestone": "M2",
       "priority": "P1",
       "title": "整套选型、真实测量与编排报告",
-      "status": "planned",
+      "status": "done",
       "effort": "L",
       "ownerRole": "编译器 / 设计",
       "dependsOn": [
@@ -1539,7 +1539,74 @@
         "A20"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        {
+          "commit": "a468e561cdf1c2860e3dd9a42937a6ae84c4766b",
+          "tests": [
+            "tests/deck-layout-planning.test.ts"
+          ],
+          "criteria": [
+            {
+              "criterion": "硬约束先于审美评分，有限候选与确定性 seed",
+              "tests": [
+                "D03 A14 hard constraints beat preference; deterministic seed, variants and bounded deck rhythm",
+                "D03 A17 required output contracts reject unsupported, absent and unverified mappings before scoring"
+              ],
+              "result": "Hard purpose/capacity/variant/quality/output-contract checks precede aesthetic ranking. Deterministic seed and reversed registry-order equivalence; six-candidate/eight-beam defaults and bounded counters."
+            },
+            {
+              "criterion": "实际字体测量和浏览器复核；无浏览器标 unverified",
+              "tests": [
+                "D03 A14/A17 no browser stays unverified; structured reasons and identity reject stale reports",
+                "D03 A14/A17/A20 actual pinned font DOM measurements, screenshots, failures and 30 capacity samples per deck size",
+                "D03 A17 measurement failure, stale evidence and timeout never count as visual success"
+              ],
+              "result": "Real Chromium font loading, Range geometry, glyph-source inspection and screenshots. Normal/boundary pass, actual/reference disagreement reconciled, overflow/broken fonts/missing glyphs/broken images reject. No browser remains unverified. Ninety actual browser samples: thirty each for 12/30/100 pages."
+            },
+            {
+              "criterion": "选择理由、拆页提案、超预算停止有结构化报告",
+              "tests": [
+                "D03 A14 split proposals preserve linked blocks; evaluation and beam budgets stop without partial drafts",
+                "D03 A14/A17 no browser stays unverified; structured reasons and identity reject stale reports"
+              ],
+              "result": "Structured candidate and selection reasons, identity-bound measurement evidence, connected keepTogether split proposals, validated work/timeout budgets and explicit stopping phase/page; no partial drafts or source writes."
+            }
+          ],
+          "verification": {
+            "typecheck": "pass",
+            "build": "pass",
+            "test": {
+              "baseline": 243,
+              "final": 249,
+              "delta": 6,
+              "pass": 249,
+              "fail": 0,
+              "skipped": 0
+            },
+            "blackbox": {
+              "baselineGreen": 69,
+              "baselineRed": 0,
+              "finalGreen": 69,
+              "finalRed": 0,
+              "newReds": 0
+            }
+          },
+          "report": "docs/evolution/quality/D03.md",
+          "artifacts": [
+            "docs/evolution/quality/d03-blackbox-start.json",
+            "docs/evolution/quality/d03-blackbox-final.json",
+            "docs/evolution/quality/d03-measurements.json",
+            "docs/evolution/quality/d03-normal.png",
+            "docs/evolution/quality/d03-boundary.png"
+          ],
+          "limitations": [
+            "Chromium CDP required for actual glyph-source verification; Safari, low-performance physical devices and Office clients unverified.",
+            "Synthetic pinned ASCII font/capacity corpus is module evidence, not D04 style coverage or D07 human visual acceptance.",
+            "Bounded beam heuristic is not globally optimal; split groups require explicit review and capacity revalidation.",
+            "Required output capabilities are caller-supplied contracts, not actual Office verification."
+          ]
+        }
+      ]
     },
     {
       "id": "D04",
