@@ -851,7 +851,7 @@
       "milestone": "M1",
       "priority": "P1",
       "title": "统一属性面板与插入命令",
-      "status": "planned",
+      "status": "done",
       "effort": "L",
       "ownerRole": "编辑器 / 设计",
       "dependsOn": [
@@ -884,7 +884,18 @@
         "A12"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        "commit:426c4d7bfdbfb9975883ec45fb479ce018d2637c",
+        "tests/object-properties.test.ts",
+        "tests/text-range-editing.test.ts",
+        "tests/host-completion.test.ts",
+        "docs/evolution/E04_EVIDENCE.md",
+        "docs/evolution/quality/e04-blackbox-start.json",
+        "docs/evolution/quality/e04-blackbox-final.json",
+        "pnpm typecheck && pnpm build && pnpm test: 193 passed (baseline 182, +11); 0 failed, 0 skipped",
+        "pnpm blackbox:final: 69 green / 0 red (baseline 69 / 0; no new reds)",
+        "Host and full-portable share object properties and typed planners; background is current-page only; shape.setKind supports inverse, export, checkpoint and edit-profile inference. Chromium traces/screenshots: artifacts/evolution/E04/."
+      ]
     },
     {
       "id": "E05",
