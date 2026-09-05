@@ -1337,7 +1337,7 @@
       "milestone": "M2",
       "priority": "P1",
       "title": "品牌、风格、配方包的可验证合同",
-      "status": "planned",
+      "status": "done",
       "effort": "M",
       "ownerRole": "设计系统 / 格式",
       "dependsOn": [
@@ -1369,7 +1369,33 @@
         "A17"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        {
+          "commit": "7d085fa2d0b115bdbdbcb21250b1058ae66ca4b7",
+          "tests": [
+            "tests/design-system-contract.test.ts"
+          ],
+          "report": "docs/evolution/quality/D01.md",
+          "verification": "docs/evolution/quality/D01-verification.json",
+          "criteria": {
+            "1": "Criterion 1 test compiles existing PresentationIR through RecipeRegistry/DesignCompiler with a regular ThemeDefinition; binding and manifest contain no second content/slot tree.",
+            "2": "Criterion 2 test distinguishes brand and recipe error layers from aesthetic suggestions.",
+            "3": "Criterion 3 tests verify canonical digest and trust, exact old versions, parameter whitelist, per-resource licenses, Chinese normal/boundary/overload inputs and unverified capabilities; literal JSON Schema test validates examples and rejects extra fields.",
+            "4": "Criterion 4 tests verify generated slotRefs and structural fingerprints, live lock/editPolicy/page anchor union with additive IR, and stale-IR-safe Operation Engine replacement/undo."
+          },
+          "results": {
+            "typecheck": "pass",
+            "build": "pass",
+            "tests": "233 pass, 0 fail, 0 skip; +10 tests",
+            "blackbox": "69 green, 0 red; baseline 69 green, 0 red; no new reds"
+          },
+          "unverified": [
+            "D01 validates asset/parameter/input contracts, not D02 parameter execution or D03 browser capacity measurement.",
+            "Office client fidelity and visual maturity remain unverified; static capabilities cannot claim verified.",
+            "Synthetic examples include font names and authored inputs, not licensed font binaries."
+          ]
+        }
+      ]
     },
     {
       "id": "D02",
