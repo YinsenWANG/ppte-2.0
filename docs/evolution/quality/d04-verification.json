@@ -1,0 +1,101 @@
+{
+  "task": "D04",
+  "implementationCommit": "41c581a293aeea27d171dd4f2cd2cded1db22768",
+  "signed": true,
+  "verifiedAt": "2026-09-05T21:25:39.950950+00:00",
+  "testFiles": [
+    "tests/design-pack-coverage.test.ts",
+    "tests/helpers/design-pack-fixtures.ts"
+  ],
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm build",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm test",
+      "exitCode": 0,
+      "tests": 288,
+      "pass": 288,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "command": "pnpm blackbox:final",
+      "exitCode": 0,
+      "green": 69,
+      "red": 0,
+      "newReds": 0
+    }
+  ],
+  "testCount": {
+    "baseline": 249,
+    "final": 288,
+    "delta": 39
+  },
+  "criteria": [
+    {
+      "criterion": 1,
+      "test": "32 parameterized D04 A14 criteria 1/2/3 style × role tests; versioned manifests test",
+      "result": "Four distinct geometries per role, eight role fingerprints per style, declarative repeat and theme typography/image differences; deterministic layouts at 1280x720, 1920x1080 and 1600x1200."
+    },
+    {
+      "criterion": 2,
+      "test": "versioned manifests, all 96 samples/previews, 12 pressure pages, asset digests and licenses are real",
+      "result": "32 cells × normal/boundary/overload, 12 Chinese/chart/Table v1 stress inputs, all 108 real PNG files and byte digests; trusted versioned style/recipe manifests and OFL font/Apache illustration notices."
+    },
+    {
+      "criterion": 3,
+      "test": "32 capacity/content tests; four Operation Engine edit/undo/redo/checkpoint and fresh-process export tests; pinned font layout-controls/uncovered-glyph regression",
+      "result": "Resolved text-size floors, count/character rejection without shrinking, stable semantic text and typed chart/table data; edit/undo/redo/history checkpoint reopening; isolated process with no design-pack files exports 11-slide HTML/PPTX per style. Chart options/alt text are retained; layout controls require no font glyph while missing visible glyphs still reject."
+    },
+    {
+      "criterion": 4,
+      "test": "G2 all normal/boundary and Chinese/chart/Table v1 pressure pages actually render with pinned fonts offline",
+      "result": "Current-build Chromium renders 64 normal/boundary plus 12 stress pages; pinned custom glyph inspection, text bounds, image decode, no accidental overlaps, table bounds and chart labels pass. All 32 overloads reject with full-input diagnostic previews. No Table v2 claim."
+    }
+  ],
+  "render": {
+    "report": "design-packs/render-evidence.json",
+    "freshReport": "artifacts/d04/report.json",
+    "buildDigest": "6ee4fd290712b38198899617cfc22be3964a2019a6d691f981ffa3f4776f74a2",
+    "fontDigest": "sha256-6d3ceafe90dafe95a6c6dd8260ef951c49f85d33bde36bc72d54118956d2f9fd",
+    "fixtureDigest": "08b8dc5be15708b24846b45f0d6908799b28eeb54eae6a9220fe230c2131f359",
+    "environment": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "node": "v22.23.2"
+    },
+    "browser": "151.0.7922.34",
+    "renderedPass": 76,
+    "rejected": 32,
+    "previews": 108
+  },
+  "blackbox": {
+    "baseline": "docs/evolution/quality/d04-blackbox-start.json",
+    "final": "docs/evolution/quality/d04-blackbox-final.json",
+    "baselineGreen": 69,
+    "baselineRed": 0,
+    "finalGreen": 69,
+    "finalRed": 0,
+    "newReds": 0
+  },
+  "filesAddedInImplementation": 131,
+  "unverified": [
+    "Office client visual fidelity",
+    "Safari",
+    "Human G2 editing study",
+    "Glyph coverage outside the declared sample subset",
+    "Table v2 and native table export"
+  ],
+  "notes": [
+    "No existing test assertions were edited or removed.",
+    "Default recipe selection is unchanged; packs register explicitly.",
+    "The upstream OFL notice is retained verbatim, including upstream whitespace.",
+    "Implementation and completion evidence are separate signed commits so TASKS.json references a real, reachable implementation commit."
+  ]
+}

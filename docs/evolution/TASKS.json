@@ -1613,7 +1613,7 @@
       "milestone": "M2",
       "priority": "P1",
       "title": "四套风格与 32 个角色覆盖格",
-      "status": "planned",
+      "status": "done",
       "effort": "L",
       "ownerRole": "视觉设计 / 配方",
       "dependsOn": [
@@ -1647,7 +1647,60 @@
         "A17"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        {
+          "commit": "41c581a293aeea27d171dd4f2cd2cded1db22768",
+          "tests": [
+            "tests/design-pack-coverage.test.ts"
+          ],
+          "verification": "docs/evolution/quality/d04-verification.json",
+          "criteria": [
+            {
+              "criterion": 1,
+              "test": "32 parameterized D04 A14 criteria 1/2/3 style × role tests; versioned manifests test",
+              "result": "Four distinct geometries per role, eight role fingerprints per style, declarative repeat and theme typography/image differences; deterministic layouts at 1280x720, 1920x1080 and 1600x1200."
+            },
+            {
+              "criterion": 2,
+              "test": "versioned manifests, all 96 samples/previews, 12 pressure pages, asset digests and licenses are real",
+              "result": "32 cells × normal/boundary/overload, 12 Chinese/chart/Table v1 stress inputs, all 108 real PNG files and byte digests; trusted versioned style/recipe manifests and OFL font/Apache illustration notices."
+            },
+            {
+              "criterion": 3,
+              "test": "32 capacity/content tests; four Operation Engine edit/undo/redo/checkpoint and fresh-process export tests; pinned font layout-controls/uncovered-glyph regression",
+              "result": "Resolved text-size floors, count/character rejection without shrinking, stable semantic text and typed chart/table data; edit/undo/redo/history checkpoint reopening; isolated process with no design-pack files exports 11-slide HTML/PPTX per style. Chart options/alt text are retained; layout controls require no font glyph while missing visible glyphs still reject."
+            },
+            {
+              "criterion": 4,
+              "test": "G2 all normal/boundary and Chinese/chart/Table v1 pressure pages actually render with pinned fonts offline",
+              "result": "Current-build Chromium renders 64 normal/boundary plus 12 stress pages; pinned custom glyph inspection, text bounds, image decode, no accidental overlaps, table bounds and chart labels pass. All 32 overloads reject with full-input diagnostic previews. No Table v2 claim."
+            }
+          ],
+          "testCount": {
+            "baseline": 249,
+            "final": 288,
+            "delta": 39
+          },
+          "renderReport": "design-packs/render-evidence.json",
+          "fixtureManifest": "tests/fixtures/evolution/design-pack-manifest.json",
+          "blackbox": {
+            "baseline": "docs/evolution/quality/d04-blackbox-start.json",
+            "final": "docs/evolution/quality/d04-blackbox-final.json",
+            "baselineGreen": 69,
+            "baselineRed": 0,
+            "finalGreen": 69,
+            "finalRed": 0,
+            "newReds": 0
+          },
+          "unverified": [
+            "Office client visual fidelity",
+            "Safari",
+            "Human G2 editing study",
+            "Glyph coverage outside the declared sample subset",
+            "Table v2 and native table export"
+          ]
+        }
+      ]
     },
     {
       "id": "D05",
