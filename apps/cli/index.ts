@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { inspectHistoryFile, repairHistoryCopy } from '../../packages/node-runtime/src/history-repair.js'
 import {compareDocuments,compareTwoWayDocuments,createPatch} from '../../packages/reviewer/src/index.js'
 import {encodePatch,decodePatch,buildPatchTransaction} from '../../packages/patch-format/src/codec.js'
 import {validateRuntimeDocument} from '../../packages/validation/src/index.js'
@@ -51,6 +52,8 @@ const HELP = `PPTe CLI — file-based presentation tools; no daemon or model cre
 ppte new <project.ppte> [--title "Title"]
 ppte compile <design.json> --out <project.ppte>
 ppte inspect <project.ppte>
+ppte history-inspect <project.ppte>
+ppte history-repair <project.ppte> --out <new-recovery-directory> [--base <exact-base.ppte>]
 ppte validate <project.ppte>
 ppte diff <project.ppte> --revised <revised.ppte> [--base <base.ppte>]
 ppte patch-create <base.ppte> --revised <revised.ppte> --out <changes.ppte.patch>
@@ -226,6 +229,8 @@ export function runCli(argv: string[]): any {
       };
     });
   }
+  if (command === 'history-inspect') return { ok: true, ...inspectHistoryFile(path) };
+  if (command === 'history-repair') return { ok: true, ...repairHistoryCopy(path, required(flags, 'out'), { baseCheckpoint: typeof flags.base === 'string' ? flags.base : undefined }) };
   const mutation = ["commit", "undo", "redo", "deliver"].includes(command);
   const run = (absolute: string) => {
     const scope =

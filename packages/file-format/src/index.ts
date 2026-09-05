@@ -1,3 +1,4 @@
+import { assessHistory, type HistoryAssessment } from '../../core/src/history.js'
 import { existsSync, fsyncSync, mkdirSync, openSync, closeSync, readFileSync, readdirSync, renameSync, statSync, unlinkSync, writeFileSync } from 'node:fs'
 import { createHash } from 'node:crypto'
 import { dirname, basename, join } from 'node:path'
@@ -44,6 +45,7 @@ export interface OpenCheckpointResult {
   manifest: PpteManifest
   recentTransactions: Transaction[]
   recovery?: RecoveryResult
+  historyAssessment?: HistoryAssessment
 }
 
 export type RecoveryAction = 'recover' | 'discard' | 'save-as' | 'prompt' | 'ignore'
@@ -235,7 +237,7 @@ export function recoverCheckpoint(target: string, action: Exclude<RecoveryAction
   return openCheckpoint(target, { ...options, recovery: action, discoverAllJournals: true })
 }
 
-export function openCheckpointBytes(bytesOnDisk: Uint8Array): OpenCheckpointResult {
+export function openCheckpointBytes(bytesOnDisk: Uint8Array, options: { history?: 'strict' | 'inspect' } = {}): OpenCheckpointResult {
   const archive = readZip(bytesOnDisk)
   if (new TextDecoder().decode(archive.get('mimetype') ?? new Uint8Array()) !== 'application/vnd.ppte+zip') throw new Error('CHECKPOINT_FAILED: invalid mimetype')
   const manifest = parseJson<PpteManifest>(archive, 'manifest.json')
@@ -275,6 +277,28 @@ export function openCheckpointBytes(bytesOnDisk: Uint8Array): OpenCheckpointResu
   const descriptor = parseJson<Record<string, unknown>>(archive, 'history/descriptor.json')
   const history = manifest.history
   if (!history || descriptor.mode !== history.mode || descriptor.snapshotRevision !== history.snapshotRevision || descriptor.recentTransactionCount !== history.recentTransactionCount || descriptor.deepHistoryExternal !== history.deepHistoryExternal) throw new Error('CHECKPOINT_FAILED: history descriptor does not match manifest')
+  if (options.history === 'inspect') {
+    const rawLines = new TextDecoder().decode(archive.get('history/recent.jsonl') ?? new Uint8Array()).split('\n').filter(Boolean)
+    const entries: SessionHistoryEntrySnapshot[] = rawLines.map(line => {
+      try {
+        const transaction = JSON.parse(line) as Transaction
+        const metadata = readPersistedHistoryMetadata(transaction)
+        return { transaction, inverse: metadata?.inverse, beforeRevision: metadata?.beforeRevision, afterRevision: metadata?.afterRevision } as SessionHistoryEntrySnapshot
+      } catch { return null as unknown as SessionHistoryEntrySnapshot }
+    })
+    let redo: SessionHistoryEntrySnapshot[] = []
+    const structuralIssues: string[] = []
+    if (rawLines.length !== (manifest.history?.recentTransactionCount ?? 0)) structuralIssues.push('History count differs from manifest')
+    if (archive.has('history/redo.json')) {
+      try { redo = parseJson<SessionHistoryEntrySnapshot[]>(archive, 'history/redo.json'); if (!Array.isArray(redo)) throw new Error('Redo history is not an array') }
+      catch { redo = []; structuralIssues.push('Malformed redo history') }
+    }
+    const assessment = assessHistory(document, entries, redo, runtimeProfileForCompatibility(manifest.compatibilityProfile), manifest.operationProtocolVersion)
+    try { assertDocumentCompatibility(document, manifest.compatibilityProfile, { recentTransactions: assessment.retained.map(entry => entry.transaction), redoHistory: assessment.retainedRedo }) }
+    catch (cause) { assessment.status = 'unsupported'; assessment.issues.push(String(cause)); assessment.retained = []; assessment.retainedRedo = []; assessment.discardedHistoryCount = entries.length; assessment.discardedRedoCount = redo.length }
+    if (structuralIssues.length) { assessment.status = 'invalid'; assessment.issues.push(...structuralIssues); assessment.retained = []; assessment.retainedRedo = []; assessment.discardedHistoryCount = entries.length; assessment.discardedRedoCount = redo.length }
+    return { document, manifest, recentTransactions: entries.map(entry => entry?.transaction) as Transaction[], historyAssessment: assessment }
+  }
   const recentTransactions = readRecentTransactions(archive, manifest)
   attachCheckpointRestoreContext(document, recentTransactions, manifest.compatibilityProfile, archive.has('history/redo.json') ? parseJson<SessionHistoryEntrySnapshot[]>(archive, 'history/redo.json') : [])
   return { document, manifest, recentTransactions }

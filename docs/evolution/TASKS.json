@@ -163,7 +163,7 @@
       "milestone": "M0",
       "priority": "P0",
       "title": "分层诊断与保全式历史恢复",
-      "status": "planned",
+      "status": "in_progress",
       "effort": "L",
       "ownerRole": "Core / 文件",
       "dependsOn": [
@@ -198,7 +198,10 @@
         "A04"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        "tests/history-repair.test.ts",
+        "docs/evolution/PROGRESS.md"
+      ]
     },
     {
       "id": "C04",

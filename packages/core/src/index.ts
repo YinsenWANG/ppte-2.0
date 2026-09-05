@@ -1,3 +1,5 @@
+import { validateHistoryChain } from './history.js'
+export { assessHistory, validateHistoryChain, type HistoryAssessment } from './history.js'
 import { canonicalJsonString, canonicalRevision, cloneJson, deepFreeze } from '../../canonical-json/src/index.js'
 import { computeStructuralDiff } from '../../diff/src/index.js'
 import { applyTransaction, OperationApplyError } from '../../operations/src/index.js'
@@ -375,37 +377,8 @@ export class PpteSession {
    * undo.
    */
   private restoreHistory(entries: ReadonlyArray<HistoryEntry | SessionHistoryEntrySnapshot>): void {
-    const candidate = entries.map((entry) => cloneJson(entry) as HistoryEntry)
-    let cursor = cloneJson(this.document)
-    let cursorRevision = this.revision
-    for (let index = candidate.length - 1; index >= 0; index -= 1) {
-      const entry = candidate[index]
-      if (!entry) throw new Error('HISTORY_RESTORE_FAILED: missing history entry.')
-      const transactionIssues = validateTransactionShape(entry.transaction).filter((issue) => issue.severity === 'error')
-      const inverseIssues = validateTransactionShape(entry.inverse).filter((issue) => issue.severity === 'error')
-      if (transactionIssues.length || inverseIssues.length) throw new Error(`HISTORY_RESTORE_FAILED: invalid history entry ${index + 1}.`)
-      if (entry.transaction.baseRevision !== entry.beforeRevision) throw new Error(`HISTORY_RESTORE_FAILED: transaction ${entry.transaction.transactionId} has an invalid before revision.`)
-      if (entry.afterRevision !== cursorRevision || entry.inverse.baseRevision !== entry.afterRevision) throw new Error(`HISTORY_RESTORE_FAILED: transaction ${entry.transaction.transactionId} does not terminate at the opened revision.`)
-      let applied: ReturnType<typeof applyTransaction>
-      try {
-        applied = applyTransaction(cursor, { ...entry.inverse, baseRevision: cursorRevision }, { runtimeProfile: this.runtimeProfile, strictFactSync: true })
-      } catch (cause) {
-        throw new Error(`HISTORY_RESTORE_FAILED: inverse ${entry.transaction.transactionId} could not be applied: ${cause instanceof Error ? cause.message : String(cause)}`)
-      }
-      const restoredRevision = canonicalRevision(applied.document)
-      if (restoredRevision !== entry.beforeRevision) throw new Error(`HISTORY_RESTORE_FAILED: inverse ${entry.transaction.transactionId} restored ${restoredRevision}, expected ${entry.beforeRevision}.`)
-      const restoredIssues = validateRuntimeDocument(applied.document, { runtimeProfile: this.runtimeProfile }).filter((issue) => issue.severity === 'error')
-      if (restoredIssues.length) throw new Error(`HISTORY_RESTORE_FAILED: inverse ${entry.transaction.transactionId} produced an invalid snapshot.`)
-      let replayed: ReturnType<typeof applyTransaction>
-      try {
-        replayed = applyTransaction(applied.document, { ...entry.transaction, baseRevision: restoredRevision }, { runtimeProfile: this.runtimeProfile, strictFactSync: true })
-      } catch (cause) {
-        throw new Error(`HISTORY_RESTORE_FAILED: transaction ${entry.transaction.transactionId} could not be replayed: ${cause instanceof Error ? cause.message : String(cause)}`)
-      }
-      if (canonicalRevision(replayed.document) !== cursorRevision) throw new Error(`HISTORY_RESTORE_FAILED: transaction ${entry.transaction.transactionId} does not reproduce its after revision.`)
-      cursor = applied.document
-      cursorRevision = restoredRevision
-    }
+    validateHistoryChain(this.document, entries, this.runtimeProfile)
+    const candidate = entries.map(entry => cloneJson(entry) as HistoryEntry)
     for (const entry of candidate) {
       this.history.push(entry)
       while (this.history.length > this.historyLimit || (this.historyBytesLimit !== Number.MAX_SAFE_INTEGER && this.history.length > 0 && historyBytes(this.history) > this.historyBytesLimit)) this.history.shift()
@@ -421,6 +394,19 @@ export class PpteSession {
     if (this.runtimeProfile === 'ga-c' || inferRuntimeProfile(this.document) === 'ga-c' || transactionIntroducesGaC(transaction)) return 'ga-c'
     return this.runtimeProfile
   }
+}
+
+/** Rebuild only from an exact supplied base and require the exact destination snapshot. */
+export function rebuildHistoryFromBase(base: PpteDocument, destination: PpteDocument, transactions: ReadonlyArray<Transaction>): HistoryEntry[] {
+  if (base.documentId !== destination.documentId) throw new Error('HISTORY_REBUILD_BASE_MISMATCH: different document identity.')
+  const session = new PpteSession(base, { history: [], redoHistory: [], restoreContext: undefined, historyLimit: Number.MAX_SAFE_INTEGER, historyBytesLimit: Number.MAX_SAFE_INTEGER })
+  for (const transaction of transactions) {
+    if (!transaction || transaction.baseRevision !== session.getRevision()) throw new Error('HISTORY_REBUILD_BASE_MISMATCH: an exact checkpoint and uninterrupted forward chain are required.')
+    const result = session.commit(transaction)
+    if (!result.ok) throw new Error(`HISTORY_REBUILD_FAILED: ${result.issues.map(issue => issue.message).join('; ')}`)
+  }
+  if (session.getRevision() !== canonicalRevision(destination)) throw new Error('HISTORY_REBUILD_HEAD_MISMATCH: forward replay does not reproduce the complete destination snapshot.')
+  return cloneJson([...session.getHistory()])
 }
 
 /** Functional alias for Hosts that prefer a factory over the static method. */
