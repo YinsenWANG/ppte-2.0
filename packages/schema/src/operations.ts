@@ -27,6 +27,7 @@ import type {
   RichTextDocument,
   SemanticRefs,
   ShapeStyle,
+  ShapeKind,
   Slide,
   SlideId,
   Source,
@@ -158,6 +159,7 @@ export type Operation =
   | ImageSetFocalPointOperation
   | AssetUpsertOperation
   | FontUpsertOperation
+  | ShapeSetKindOperation
   | ShapeUpdateStyleOperation
   | ChartReplaceDataOperation
   | ChartUpdateEncodingOperation
@@ -400,6 +402,12 @@ export interface FontUpsertOperation extends OperationBase<'font.upsert'> {
   font: FontAsset
   /** Used only by generated inverse operations; normal patches must omit it. */
   remove?: boolean
+}
+/** Change a preset shape without replacing its identity, geometry or style. */
+export interface ShapeSetKindOperation extends OperationBase<'shape.setKind'> {
+  slideId: SlideId
+  elementId: ElementId
+  shape: ShapeKind
 }
 export interface ShapeUpdateStyleOperation extends OperationBase<'shape.updateStyle'> {
   slideId: SlideId

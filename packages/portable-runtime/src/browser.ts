@@ -1,3 +1,5 @@
+import { renderObjectProperties } from '../../editor-dom/src/object-properties.js';
+import { planObjectProperty } from '../../editor-controller/src/object-commands.js';
 import { TextEditingSurface, reconcileTextSurface } from '../../editor-dom/src/text-selection.js';
 import { DomResources } from '../../editor-dom/src/index.js';
 import { inferCompatibilityProfile } from '../../compatibility/src/index.js';
@@ -13,7 +15,7 @@ import {
   type QuickFixResult,
 } from "./shared.js";
 import { renderDocumentSurfaceHtml } from "../../renderer-react/src/index.js";
-import { geometryOnlyContract, styleOnlyContract } from "../../change-contract/src/index.js";
+import { geometryOnlyContract } from "../../change-contract/src/index.js";
 import type { ChartData, Transaction } from "../../schema/src/index.js";
 
 function startPortable() {
@@ -70,6 +72,15 @@ const error = (code: string, message: string): QuickFixResult => ({
   ok: false,
   issues: [{ code, message, severity: "error" }],
 });
+const properties = document.createElement('section');
+properties.dataset.ppteObjectProperties = '';
+const propertiesPanel = document.createElement('details');
+propertiesPanel.dataset.pptePropertiesPanel = '';
+propertiesPanel.open = true;
+const propertiesTitle = document.createElement('summary');
+propertiesTitle.textContent = '对象属性';
+propertiesPanel.append(propertiesTitle, properties);
+root.append(propertiesPanel);
 const selected = () => runtime.getSelection()[0];
 const nodeFor = (id: string) =>
   Array.from(
@@ -77,6 +88,11 @@ const nodeFor = (id: string) =>
   ).find((n) => n.dataset.ppteElementId === id);
 function show(result?: { ok: boolean; issues?: Array<{ message: string }> }) {
   const state = runtime.presenterState();
+  propertiesPanel.hidden = runtime.profile !== "full-portable" || presenting;
+  if (!propertiesPanel.hidden) renderObjectProperties(properties, runtime.getDocument(), state.slideId, runtime.getSelection().filter(t=>t.slideId===state.slideId).map(t=>t.elementId), command => {
+    if (!flush().ok) return;
+    change(runtime.controller.commit(planObjectProperty(runtime.getDocument(), {revision:runtime.getRevision(),slideId:state.slideId,ids:runtime.getSelection().filter(t=>t.slideId===state.slideId).map(t=>t.elementId),command,transactionId:`properties:${++sequence}`,createdAt:new Date().toISOString()})));
+  });
   canvas.querySelectorAll<HTMLElement>("[data-ppte-slide-id]").forEach((n) => {
     n.style.display =
       n.dataset.ppteSlideId === state.slideId ? "block" : "none";
@@ -546,15 +562,6 @@ if(editable){
   for(const mark of ['bold','italic','underline','strike','clear'] as const){const button=document.createElement('button');button.textContent=mark;button.dataset.ppteTextMark=mark;button.onmousedown=e=>{textSurface.remember();e.preventDefault()};button.onclick=()=>textSurface.format(mark==='clear'?{bold:null,italic:null,underline:null,strike:null,color:null}:{[mark]:true});toolbar.append(button)}
   const color=document.createElement('input');color.type='color';color.setAttribute('aria-label','选区颜色');color.onpointerdown=()=>textSurface.remember();color.onchange=()=>textSurface.format({color:{kind:'value',value:color.value as `#${string}`}});toolbar.append(color);
   const discard=document.createElement('button');discard.textContent='放弃文字草稿';discard.onclick=()=>{textSurface.discardActive();render()};toolbar.append(discard);
-  if(runtime.profile==='full-portable'){
-    const size=document.createElement('input');size.type='number';size.min='1';size.max='512';size.setAttribute('aria-label','整框字号');size.placeholder='整框字号';size.onchange=()=>{
-      const pending=flush();if(!pending.ok){show(pending);return}
-      const t=selected(),fontSize=Number(size.value);if(!t||!Number.isFinite(fontSize)||fontSize<1||fontSize>512)return;
-      const element=runtime.getDocument().slides[t.slideId].elements[t.elementId];if(element.type!=='text'||element.style.overrides?.fontSize===fontSize)return;
-      const transactionId=`box-size-${++sequence}`;
-      change(runtime.controller.commit({transactionId,baseRevision:runtime.getRevision(),createdAt:new Date().toISOString(),actor:{type:'human',id:'portable'},scope:{kind:'selection',slideIds:[t.slideId],elementIds:[t.elementId],permissions:['style'],allowInsert:false,allowDelete:false},changeContract:styleOnlyContract([t.elementId],false),operations:[{opId:transactionId,kind:'element.updateStyleOverrides',slideId:t.slideId,elementId:t.elementId,patch:{fontSize}}]}));
-    };toolbar.append(size);
-  }
   const tools=root.querySelector('[data-ppte-toolbar]')??root.querySelector('header');(tools??root).append(toolbar);
 }
 const api = {

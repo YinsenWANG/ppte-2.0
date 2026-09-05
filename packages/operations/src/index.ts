@@ -40,7 +40,7 @@ export const GA_B_OPERATION_KINDS = [
 /** GA-C adds Area/Donut chart data paths and the controlled Widget props path. */
 export const GA_C_OPERATION_KINDS = [
   ...GA_B_OPERATION_KINDS,
-  'component.updateProps',
+  'component.updateProps', 'shape.setKind',
 ] as const
 
 /** Backward-compatible name retained for the Week 1–2 operation matrix. */
@@ -540,6 +540,14 @@ function applyToDraft(next: PpteDocument, operation: Operation, options: Operati
           ? [op(operation, 'font.upsert', { font: before })]
           : [op(operation, 'font.upsert', { font: cloneJson(operation.font), remove: true })],
       }
+    }
+    case 'shape.setKind': {
+      const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)
+      if (element.type !== 'shape') throw error('OPERATION_TYPE_MISMATCH', 'shape.setKind requires a Shape element.')
+      if (operation.shape === 'polygon' && !element.points?.length) throw error('SCHEMA_INVALID', 'Polygon requires existing points.')
+      const before = element.shape
+      element.shape = operation.shape
+      return {document:next,inverse:[op(operation,'shape.setKind',{slideId:operation.slideId,elementId:operation.elementId,shape:before})]}
     }
     case 'shape.updateStyle': {
       const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)

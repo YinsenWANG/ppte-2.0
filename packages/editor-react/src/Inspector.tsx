@@ -1,3 +1,6 @@
+import { useEffect, useRef } from 'react'
+import { renderObjectProperties } from '../../editor-dom/src/object-properties.js'
+import { objectPropertyOperations, type ObjectPropertyCommand } from '../../editor-controller/src/object-commands.js'
 import { boundingFrame } from '../../geometry/src/index.js'
 import { editRichText } from '../../richtext-adapter/src/index.js'
 import {
@@ -13,13 +16,22 @@ export function Inspector({
   slide,
   ids,
   commit,
+  commitProperty,
 }: {
   document: PpteDocument;
   slide: Slide;
   ids: string[];
+  commitProperty?: (command: ObjectPropertyCommand) => boolean;
   commit: (operations: Operation[], reason?: string) => boolean;
 }): ReactElement {
-  const element = slide.elements[ids[0] ?? ""];
+  const propertyRoot = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (propertyRoot.current) renderObjectProperties(propertyRoot.current, document, slide.id, ids, command => {
+      const ok = commitProperty ? commitProperty(command) : commit(objectPropertyOperations(document, slide.id, ids, command, `properties:${crypto.randomUUID()}`), '修改对象属性')
+      if (!ok) throw new Error('属性修改被拒绝；所选对象均未修改。请查看编辑器状态。')
+    })
+  }, [document, slide, ids, commit, commitProperty])
+  const element = ids.length === 1 ? slide.elements[ids[0] ?? ""] : undefined;
   const emit = (value: Record<string, unknown>) =>
     commit(
       [
@@ -53,6 +65,7 @@ export function Inspector({
   const frame=group?boundingFrame(group.memberIds.map(id=>slide.elements[id].frame)):element?.frame
   return (
     <section className="ppte-inspector" data-ppte-inspector>
+      <div ref={propertyRoot} data-ppte-object-properties />
       <strong>{ids.length ? `${ids.length} 个对象` : "选择对象后调整"}</strong>
       {ids.length>1&&<fieldset><legend>对齐与分布</legend>{(['left','center-x','right','top','center-y','bottom'] as const).map((alignment)=><button key={alignment} onClick={()=>emit({kind:'layout.align',elementIds:ids,alignment,reference:'selection'})}>{({left:'左对齐','center-x':'水平居中',right:'右对齐',top:'顶对齐','center-y':'垂直居中',bottom:'底对齐'})[alignment]}</button>)}{(['horizontal','vertical'] as const).map(axis=><button key={axis} onClick={()=>emit({kind:'layout.distribute',elementIds:ids,axis,mode:'gaps'})}>{axis==='horizontal'?'水平等距':'垂直等距'}</button>)}</fieldset>}
       {ids.length > 1 && !group && (
@@ -74,6 +87,7 @@ export function Inspector({
           >
             取消组合
           </button>
+          {(["x", "y", "width", "height"] as const).map(key => number(key, frame![key], value => emit({kind:'group.resize',groupId:group.id,targetFrame:{...frame,[key]:value}})))}
           {number("组旋转角度", 0, (v) =>
             emit({ kind: "group.rotate", groupId: group.id, rotationDeg: v }),
           )}

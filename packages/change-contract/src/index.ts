@@ -156,7 +156,7 @@ export function analyzeOperation(document: PpteDocument, operation: Operation): 
       break
     case 'slide.update':
       slideIds.add(operation.slideId)
-      for (const key of Object.keys(operation.patch)) {
+      for (const key of new Set([...Object.keys(operation.patch), ...(operation.unset ?? [])])) {
         paths.add(`/slides/${pointer(operation.slideId)}/${pointer(key)}`)
         permissions.add(key === 'notes' ? 'notes' : 'structure')
       }
@@ -294,6 +294,10 @@ export function analyzeOperation(document: PpteDocument, operation: Operation): 
     case 'font.upsert':
       permissions.add('assets')
       paths.add(`/fonts/${pointer(operation.font.id)}`)
+      break
+    case 'shape.setKind':
+      permissions.add('style')
+      addElement(operation.slideId, operation.elementId, `/slides/${pointer(operation.slideId)}/elements/${pointer(operation.elementId)}/shape`)
       break
     case 'shape.updateStyle':
       permissions.add('style')

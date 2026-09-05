@@ -194,7 +194,7 @@ export interface PersistedCompatibilityInput {
 }
 
 export function requiresEditProtocol(input: PersistedCompatibilityInput): boolean {
-  const usesUnset = (operations: ReadonlyArray<Operation> = []) => operations.some(op => (op.kind === 'slide.update' && op.unset !== undefined) || (['group.delete', 'fact.delete', 'source.delete'].includes(op.kind) && 'removeEmptyCollection' in op && op.removeEmptyCollection !== undefined))
+  const usesUnset = (operations: ReadonlyArray<Operation> = []) => operations.some(op => op.kind === 'shape.setKind' || (op.kind === 'slide.update' && op.unset !== undefined) || (['group.delete', 'fact.delete', 'source.delete'].includes(op.kind) && 'removeEmptyCollection' in op && op.removeEmptyCollection !== undefined))
   const transactionUsesUnset = (tx: Transaction) => usesUnset(tx.operations) || usesUnset(readPersistedHistoryMetadata(tx)?.inverse.operations)
   return usesUnset(input.operations) || Boolean(input.recentTransactions?.some(transactionUsesUnset)) || Boolean(input.redoHistory?.some(entry => transactionUsesUnset(entry.transaction) || transactionUsesUnset(entry.inverse)))
 }

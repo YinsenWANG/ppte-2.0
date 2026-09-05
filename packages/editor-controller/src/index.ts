@@ -152,3 +152,5 @@ export class EditorController {
     this.releases.clear(); this.flights.clear(); this.flushHandler = undefined
   }
 }
+
+export * from "./object-commands.js"

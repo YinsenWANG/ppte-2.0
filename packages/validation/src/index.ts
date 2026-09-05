@@ -30,7 +30,7 @@ const OPERATION_KINDS = new Set<OperationKind>([
   'slide.insert', 'slide.duplicate', 'slide.delete', 'slide.move', 'slide.update', 'slide.setNotes', 'slide.setTransition', 'slide.setReadingOrder', 'slide.setProtectedAnchors',
   'element.insert', 'element.delete', 'element.duplicate', 'element.move', 'element.resize', 'element.rotate', 'element.reorder', 'element.setVisibility', 'element.setLocked', 'element.setAppearStep', 'element.setAnimation', 'element.setEditPolicy', 'element.setSemanticKey', 'element.setSemanticRefs', 'element.setStyleRef', 'element.updateStyleOverrides', 'element.clearStyleOverrides',
   'text.replaceContent', 'text.updateStyle', 'text.setOverflowPolicy', 'text.fitByReducingFont', 'text.resizeBox',
-  'image.replaceAsset', 'image.setCrop', 'image.setFocalPoint', 'asset.upsert', 'font.upsert', 'shape.updateStyle',
+  'image.replaceAsset', 'image.setCrop', 'image.setFocalPoint', 'asset.upsert', 'font.upsert', 'shape.updateStyle', 'shape.setKind',
   'chart.replaceData', 'chart.updateEncoding', 'chart.updateOptions', 'chart.updateStyle', 'component.updateProps',
   'group.create', 'group.delete', 'group.addMembers', 'group.removeMembers', 'group.move', 'group.resize', 'group.rotate',
   'fact.upsert', 'fact.delete', 'fact.syncReferences', 'source.upsert', 'source.delete', 'layout.align', 'layout.distribute',
@@ -193,9 +193,9 @@ function validateOperationShape(operation: Record<string, unknown>, index: numbe
   }
   if (operation.preconditions !== undefined) validatePreconditions(operation.preconditions, path, issues)
 
-  const slideKinds = new Set(['slide.delete', 'slide.move', 'slide.update', 'slide.setNotes', 'slide.setTransition', 'slide.setReadingOrder', 'slide.setProtectedAnchors', 'element.insert', 'element.delete', 'element.duplicate', 'element.move', 'element.resize', 'element.rotate', 'element.reorder', 'element.setVisibility', 'element.setLocked', 'element.setAppearStep', 'element.setAnimation', 'element.setEditPolicy', 'element.setSemanticKey', 'element.setSemanticRefs', 'element.setStyleRef', 'element.updateStyleOverrides', 'element.clearStyleOverrides', 'text.replaceContent', 'text.updateStyle', 'text.setOverflowPolicy', 'text.fitByReducingFont', 'text.resizeBox', 'image.replaceAsset', 'image.setCrop', 'image.setFocalPoint', 'shape.updateStyle', 'chart.replaceData', 'chart.updateEncoding', 'chart.updateOptions', 'chart.updateStyle', 'component.updateProps', 'group.create', 'group.delete', 'group.addMembers', 'group.removeMembers', 'group.move', 'group.resize', 'group.rotate', 'layout.align', 'layout.distribute'])
+  const slideKinds = new Set(['slide.delete', 'slide.move', 'slide.update', 'slide.setNotes', 'slide.setTransition', 'slide.setReadingOrder', 'slide.setProtectedAnchors', 'element.insert', 'element.delete', 'element.duplicate', 'element.move', 'element.resize', 'element.rotate', 'element.reorder', 'element.setVisibility', 'element.setLocked', 'element.setAppearStep', 'element.setAnimation', 'element.setEditPolicy', 'element.setSemanticKey', 'element.setSemanticRefs', 'element.setStyleRef', 'element.updateStyleOverrides', 'element.clearStyleOverrides', 'text.replaceContent', 'text.updateStyle', 'text.setOverflowPolicy', 'text.fitByReducingFont', 'text.resizeBox', 'image.replaceAsset', 'image.setCrop', 'image.setFocalPoint', 'shape.updateStyle', 'shape.setKind', 'chart.replaceData', 'chart.updateEncoding', 'chart.updateOptions', 'chart.updateStyle', 'component.updateProps', 'group.create', 'group.delete', 'group.addMembers', 'group.removeMembers', 'group.move', 'group.resize', 'group.rotate', 'layout.align', 'layout.distribute'])
   if (slideKinds.has(kind)) requireString('slideId')
-  const elementKinds = new Set(['element.delete', 'element.move', 'element.resize', 'element.rotate', 'element.reorder', 'element.setVisibility', 'element.setLocked', 'element.setAppearStep', 'element.setAnimation', 'element.setEditPolicy', 'element.setSemanticKey', 'element.setSemanticRefs', 'element.setStyleRef', 'element.updateStyleOverrides', 'element.clearStyleOverrides', 'text.replaceContent', 'text.updateStyle', 'text.setOverflowPolicy', 'text.fitByReducingFont', 'text.resizeBox', 'image.replaceAsset', 'image.setCrop', 'image.setFocalPoint', 'shape.updateStyle', 'chart.replaceData', 'chart.updateEncoding', 'chart.updateOptions', 'chart.updateStyle', 'component.updateProps'])
+  const elementKinds = new Set(['element.delete', 'element.move', 'element.resize', 'element.rotate', 'element.reorder', 'element.setVisibility', 'element.setLocked', 'element.setAppearStep', 'element.setAnimation', 'element.setEditPolicy', 'element.setSemanticKey', 'element.setSemanticRefs', 'element.setStyleRef', 'element.updateStyleOverrides', 'element.clearStyleOverrides', 'text.replaceContent', 'text.updateStyle', 'text.setOverflowPolicy', 'text.fitByReducingFont', 'text.resizeBox', 'image.replaceAsset', 'image.setCrop', 'image.setFocalPoint', 'shape.updateStyle', 'shape.setKind', 'chart.replaceData', 'chart.updateEncoding', 'chart.updateOptions', 'chart.updateStyle', 'component.updateProps'])
   if (elementKinds.has(kind)) requireString('elementId')
 
   switch (kind) {
@@ -303,6 +303,9 @@ function validateOperationShape(operation: Record<string, unknown>, index: numbe
       if (operation.remove !== undefined && typeof operation.remove !== 'boolean') issues.push(error('SCHEMA_INVALID', 'font.upsert.remove must be boolean.', `${path}/remove`))
       break
     }
+    case 'shape.setKind':
+      if (!['rectangle','rounded-rectangle','ellipse','line','arrow','triangle','diamond','chevron','polygon'].includes(String(operation.shape))) issues.push(error('SCHEMA_INVALID', 'shape.setKind requires a supported shape.', `${path}/shape`))
+      break
     case 'shape.updateStyle': requireRecord('patch'); if (operation.replace !== undefined && typeof operation.replace !== 'boolean') issues.push(error('SCHEMA_INVALID', 'shape.updateStyle.replace must be boolean.', `${path}/replace`)); break
     case 'chart.replaceData': requireRecord('data'); break
     case 'chart.updateEncoding': requireRecord('encoding'); break
