@@ -77,6 +77,7 @@ export interface DesignBinding {
   sourceBlockToElement: Record<string, string>
   parameters: Partial<Record<ControlName, number | string>>
   manualOverrides: Record<string, string[]>
+  protectionDigest?: string
 }
 export interface TrustPolicy { trustedDigests: readonly string[]; allowedLicenses: readonly string[] }
 
@@ -228,5 +229,7 @@ export function regenerationProtectedIds(slide: Slide, additions: ProtectedConte
     if (addition.semanticKey) anchors.push({ target: { kind: 'semantic', semanticKey: addition.semanticKey }, preserve: addition.preserve })
     if (addition.factId) anchors.push({ target: { kind: 'fact', factId: addition.factId }, preserve: addition.preserve })
   }
-  return new Set(Object.values(slide.elements).filter(element => element.locked || element.editPolicy?.protected || element.editPolicy?.mode === 'locked' || element.editPolicy?.agentEditable === false || element.editPolicy?.preserveOnRegenerate || element.editPolicy?.lockedFields?.length || anchors.some(anchor => anchor.preserve.length > 0 && (anchor.target.kind === 'element' ? anchor.target.elementId === element.id : anchor.target.kind === 'semantic' ? anchor.target.semanticKey === element.semanticKey : element.semanticRefs?.factIds?.includes(anchor.target.factId)))).map(element => element.id))
+  const result = new Set(Object.values(slide.elements).filter(element => element.locked || element.editPolicy?.protected || element.editPolicy?.mode === 'locked' || element.editPolicy?.agentEditable === false || element.editPolicy?.preserveOnRegenerate || element.editPolicy?.lockedFields?.length || anchors.some(anchor => anchor.preserve.length > 0 && (anchor.target.kind === 'element' ? anchor.target.elementId === element.id : anchor.target.kind === 'semantic' ? anchor.target.semanticKey === element.semanticKey : element.semanticRefs?.factIds?.includes(anchor.target.factId)))).map(element => element.id))
+  for (const group of Object.values(slide.groups ?? {})) if (group.locked || group.editPolicy?.mode === 'locked' || group.editPolicy?.agentEditable === false) for (const id of group.memberIds) result.add(id)
+  return result
 }

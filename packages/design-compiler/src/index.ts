@@ -77,6 +77,8 @@ export interface RegenerateTransactionOptions extends DraftTransactionOptions {
 }
 
 export interface ReflowTransactionOptions extends DraftTransactionOptions {
+  elementIdsByBlock?: Record<string, string>
+  protectedElementIds?: string[]
   slideId: string
   requireConfirmation?: boolean
 }
@@ -272,14 +274,18 @@ export function buildReflowTransaction(document: PpteDocument, draft: CompiledSl
   const slide = document.slides[options.slideId]
   if (!slide) throw new Error(`SLIDE_MISSING: ${options.slideId}`)
   const operations: Transaction['operations'] = []
+  if (draft.validationIssues.some(i => i.severity === 'error')) throw new Error('RECIPE_DRAFT_REJECTED')
+  const protectedIds = regenerationProtectedIds(slide)
+  for (const id of options.protectedElementIds ?? []) protectedIds.add(id)
   for (const item of draft.elementDrafts) {
-    if (!item.semanticKey) continue
-    const current = Object.values(slide.elements).find((element) => element.semanticKey === item.semanticKey)
-    if (!current) continue
+    const exactId = item.sourceBlockKey && options.elementIdsByBlock?.[item.sourceBlockKey]
+    const matches = item.semanticKey ? Object.values(slide.elements).filter(element => element.semanticKey === item.semanticKey) : []
+    const current = exactId ? slide.elements[exactId] : matches.length === 1 ? matches[0] : undefined
+    if (!current || protectedIds.has(current.id)) continue
     if (current.frame.x !== item.frame.x || current.frame.y !== item.frame.y) operations.push({ opId: `${options.transactionId}:move:${current.id}`, kind: 'element.move', slideId: options.slideId, elementId: current.id, x: item.frame.x, y: item.frame.y })
     if (current.frame.width !== item.frame.width || current.frame.height !== item.frame.height) operations.push({ opId: `${options.transactionId}:resize:${current.id}`, kind: 'element.resize', slideId: options.slideId, elementId: current.id, frame: cloneJson(item.frame) })
   }
-  if (operations.length === 0) operations.push({ opId: `${options.transactionId}:noop`, kind: 'element.move', slideId: options.slideId, elementId: firstElementId(slide), x: slide.elements[firstElementId(slide)].frame.x, y: slide.elements[firstElementId(slide)].frame.y })
+  // An empty geometry proposal must not fabricate an edit on a locked object.
   const elementIds = [...new Set(operations.flatMap((operation) => 'elementId' in operation ? [operation.elementId] : []))]
   return {
     transactionId: options.transactionId,
@@ -683,3 +689,6 @@ function recipeGroups(ir: SlideIR, recipe: RecipeSpec, assignments: Array<{ bloc
 
 export { planDeckLayout } from './deck-planning.js'
 export type { DeckPlanningOptions, DeckLayoutReport, DeckCandidateReport, LayoutMeasurement } from './deck-planning.js'
+
+export { planDesignEdit, planDesignTheme, recipeControls, parameterizeRecipe, readDesignBinding, bindingExtension } from './design-edits.js'
+export type { DesignEditOptions } from './design-edits.js'

@@ -1,3 +1,6 @@
+import { planDesignEdit, planDesignTheme, recipeControls } from '../../design-compiler/src/design-edits.js'
+import { inferSlideIR } from '../../design-compiler/src/current-document.js'
+export { inferSlideIR } from '../../design-compiler/src/current-document.js'
 import { canonicalRevision, cloneJson } from '../../canonical-json/src/index.js'
 import { computeStructuralDiff } from '../../diff/src/index.js'
 import { compareDocuments, compareTwoWayDocuments } from '../../reviewer/src/index.js'
@@ -80,6 +83,8 @@ export type AgentToolName =
   | 'redesign_others'
   | 'regenerate_slide'
   | 'apply_layout_recipe'
+  | 'get_recipe_controls'
+  | 'apply_design_theme'
   | 'expand_macro'
   | 'replace_artwork'
   | 'sync_fact_references'
@@ -140,6 +145,8 @@ export const AGENT_TOOL_NAMES: readonly AgentToolName[] = [
   'redesign_others',
   'regenerate_slide',
   'apply_layout_recipe',
+  'get_recipe_controls',
+  'apply_design_theme',
   'expand_macro',
   'replace_artwork',
   'sync_fact_references',
@@ -149,7 +156,7 @@ export const AGENT_TOOL_NAMES: readonly AgentToolName[] = [
 export const AGENT_TOOL_DEFINITIONS: readonly AgentToolDefinition[] = AGENT_TOOL_NAMES.map((name) => ({
   name,
   mutates: ['commit_transaction', 'undo_transaction'].includes(name),
-  requiresConfirmation: ['commit_transaction', 'undo_transaction', 'regenerate_selection', 'redesign_others', 'regenerate_slide', 'apply_layout_recipe', 'replace_artwork', 'sync_fact_references'].includes(name),
+  requiresConfirmation: ['apply_design_theme', 'commit_transaction', 'undo_transaction', 'regenerate_selection', 'redesign_others', 'regenerate_slide', 'apply_layout_recipe', 'replace_artwork', 'sync_fact_references'].includes(name),
   description: name === 'render_slide' ? 'Return a read-only single-slide preview fragment for inspection; it is not an independent delivery file.' : name === 'commit_transaction' ? 'Commit a validated Transaction through the Session.' : name === 'preview_transaction' ? 'Preview a Transaction and return actual Diff and Issues.' : `Execute the ${name} Agent tool within the granted Scope.`,
 }))
 
@@ -213,6 +220,15 @@ export class AgentToolServer {
         case 'regenerate_selection': return this.regenerateSelection(args) as AgentToolResult<T>
         case 'redesign_others': return this.redesignOthers(args) as AgentToolResult<T>
         case 'regenerate_slide': return this.regenerateSlide(args) as AgentToolResult<T>
+        case 'get_recipe_controls': {
+          const recipe = this.recipes.get(stringArg(args, 'recipeId'), optionalString(args, 'recipeVersion'))
+          return (recipe ? success('get_recipe_controls', this.revision(), recipeControls(recipe)) : failure('get_recipe_controls', 'RECIPE_MISSING', this.revision(), 'Recipe unavailable')) as AgentToolResult<T>
+        }
+        case 'apply_design_theme': {
+          const transaction = planDesignTheme(this.document(), args.theme as import('../../schema/src/index.js').ThemeDefinition, { transactionId: stringArgOr(args, 'transactionId', `theme:${this.revision()}`), baseRevision: this.revision(), actor: { type: 'agent', id: 'design-theme' }, requireConfirmation: args.requireConfirmation !== false })
+          const preview = this.previewTransaction(transaction)
+          return generatedResult('apply_design_theme', this.revision(), { preview: preview.data }, transaction, preview) as AgentToolResult<T>
+        }
         case 'apply_layout_recipe': return this.applyLayoutRecipe(args) as AgentToolResult<T>
         case 'expand_macro': return this.expandMacroTool(args) as AgentToolResult<T>
         case 'replace_artwork': return this.replaceArtwork(args) as AgentToolResult<T>
@@ -451,20 +467,15 @@ export class AgentToolServer {
   private applyLayoutRecipe(args: Record<string, unknown>): AgentToolResult {
     const slideId = stringArg(args, 'slideId')
     if (!this.canReadSlide(slideId)) return failure('apply_layout_recipe', 'SCOPE_VIOLATION', this.revision(), `Slide ${slideId} is outside the granted scope.`)
-    const ir = readSlideIR(args.slideIR) ?? inferSlideIR(this.document(), slideId)
-    const draft = compileSlide(ir, this.compileContext(args))
-    if (draft.validationIssues.some((issue) => issue.severity === 'error')) return { tool: 'apply_layout_recipe', ok: false, revision: this.revision(), data: { draft, validationIssues: draft.validationIssues }, issues: draft.validationIssues }
     try {
-      const transaction = buildReflowTransaction(this.document(), draft, {
-        transactionId: stringArgOr(args, 'transactionId', `recipe:${slideId}:${this.revision()}`),
-        baseRevision: this.revision(),
-        slideId,
-        actor: { type: 'agent', id: 'layout-recipe' },
-        reason: stringArgOr(args, 'reason', 'Apply a declarative layout Recipe.'),
-        requireConfirmation: args.requireConfirmation !== false,
-      })
-      const preview = this.previewTransaction(transaction)
-      return generatedResult('apply_layout_recipe', this.revision(), { draft, preview: preview.data }, transaction, preview)
+      const ir = inferSlideIR(this.document(), slideId)
+      const selection = compileSlide(ir, this.compileContext(args))
+      const recipe = this.recipes.get(optionalString(args, 'recipeId') ?? selection.provenance.recipeId ?? '', optionalString(args, 'recipeVersion') ?? selection.provenance.recipeVersion)
+      if (!recipe) return failure('apply_layout_recipe', 'RECIPE_MISSING', this.revision(), 'Recipe unavailable')
+      const plan = planDesignEdit(this.document(), { recipe, slideId, protectedElementIds: stringArray(args, 'protectedElementIds'), parameters: args.parameters as Record<string, unknown> | undefined, rebuildBinding: args.rebuildBinding === true, transactionId: stringArgOr(args, 'transactionId', `recipe:${slideId}:${this.revision()}`), baseRevision: this.revision(), actor: { type: 'agent', id: 'layout-recipe' }, requireConfirmation: args.requireConfirmation !== false })
+      if (!plan.transaction) return { tool: 'apply_layout_recipe', ok: false, revision: this.revision(), data: plan, issues: plan.issues }
+      const preview = this.previewTransaction(plan.transaction)
+      return generatedResult('apply_layout_recipe', this.revision(), { ...plan, preview: preview.data }, plan.transaction, preview)
     } catch (cause) {
       return failure('apply_layout_recipe', 'TRANSACTION_BUILD_FAILED', this.revision(), cause instanceof Error ? cause.message : String(cause))
     }
@@ -639,23 +650,6 @@ function replaceArtworkTransaction(revision: Revision, slideId: string, elementI
   }
 }
 
-export function inferSlideIR(document: PpteDocument, slideId: string): SlideIR {
-  const slide = document.slides[slideId]
-  if (!slide) throw new Error(`SLIDE_MISSING: ${slideId}`)
-  const blocks = slide.rootOrder.map((elementId) => slide.elements[elementId]).filter((element): element is Element => Boolean(element)).filter((element) => element.role !== 'decorative' && element.role !== 'background').map(elementToBlock)
-  const purpose = slide.semantic?.purpose ?? 'custom'
-  return { irVersion: '1.0' as const, slideKey: slideId, purpose, message: slide.semantic?.keyMessage ?? slide.name ?? '', visualStrategy: slide.visualStrategy ?? 'structured', density: 'medium' as const, blocks, ...(slide.visualStrategy === 'hybrid' ? { artworkIntent: { subject: 'existing artwork', function: 'illustration' as const, placement: 'side' as const } } : {}) }
-}
-
-function elementToBlock(element: Element): BlockIR {
-  if (element.type === 'text') {
-    const kind: BlockIR['kind'] = element.role === 'title' ? 'heading' : element.role === 'source' ? 'source' : element.role === 'metric' ? 'metric' : element.role === 'cta' ? 'cta' : 'paragraph'
-    return { key: element.id, kind, content: renderTextPlain(element), semanticKey: element.semanticKey, ...(element.semanticRefs?.factIds ? { factIds: cloneJson(element.semanticRefs.factIds) } : {}), ...(element.semanticRefs?.sourceIds ? { sourceIds: cloneJson(element.semanticRefs.sourceIds) } : {}), importance: element.role === 'title' ? 'primary' as const : 'supporting' as const, editabilityTarget: 'full' as const }
-  }
-  if (element.type === 'image') return { key: element.id, kind: 'image' as const, content: { assetId: element.assetId }, semanticKey: element.semanticKey, ...(element.semanticRefs?.factIds ? { factIds: cloneJson(element.semanticRefs.factIds) } : {}), ...(element.semanticRefs?.sourceIds ? { sourceIds: cloneJson(element.semanticRefs.sourceIds) } : {}), importance: element.role === 'artwork' ? 'supporting' as const : 'secondary' as const, editabilityTarget: 'replace' as const }
-  if (element.type === 'chart') return { key: element.id, kind: 'chart' as const, content: { chartType: element.chartType, data: element.data } as unknown as JsonValue, semanticKey: element.semanticKey, ...(element.semanticRefs?.factIds ? { factIds: cloneJson(element.semanticRefs.factIds) } : {}), ...(element.semanticRefs?.sourceIds ? { sourceIds: cloneJson(element.semanticRefs.sourceIds) } : {}), importance: 'secondary' as const, editabilityTarget: 'property' as const }
-  return { key: element.id, kind: 'paragraph' as const, content: element.description ?? '', semanticKey: element.semanticKey, ...(element.semanticRefs?.factIds ? { factIds: cloneJson(element.semanticRefs.factIds) } : {}), ...(element.semanticRefs?.sourceIds ? { sourceIds: cloneJson(element.semanticRefs.sourceIds) } : {}), importance: 'supporting' as const, editabilityTarget: 'property' as const }
-}
 
 function readSlideIR(value: unknown): SlideIR | undefined {
   if (value === undefined) return undefined

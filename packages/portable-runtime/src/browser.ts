@@ -1,3 +1,6 @@
+import { planDesignEdit, planDesignTheme, recipeControls } from '../../design-compiler/src/design-edits.js'
+import { builtInRecipeSpecs } from '../../layout-recipes/src/index.js'
+import { renderSlideHtml } from '../../renderer-react/src/index.js'
 import { renderRunFontControls } from '../../editor-dom/src/text-selection.js'
 import { mountEditorShell } from '../../editor-dom/src/editor-shell.js'
 import { mountImageCrop } from '../../editor-dom/src/image-crop.js'
@@ -93,6 +96,56 @@ const pagesTitle = document.createElement('summary'); pagesTitle.textContent = '
 const thumbnails = document.createElement('div'); thumbnails.dataset.ppteThumbnails = '';
 pagesPanel.append(pagesTitle, thumbnails); root.append(pagesPanel);
 let thumbnailRevision = '';
+const designPanel = document.createElement('details');
+designPanel.dataset.ppteDesignPanel = '';
+if (runtime.profile === 'full-portable') {
+  const title = document.createElement('summary'); title.textContent = '页面设计';
+  const recipes = builtInRecipeSpecs();
+  const choice = document.createElement('select'); choice.setAttribute('aria-label', '配方');
+  for (const recipe of recipes) { const option = document.createElement('option'); option.value = recipe.id; option.textContent = recipe.id; choice.append(option) }
+  const controls = document.createElement('fieldset'); controls.dataset.ppteRecipeParameters = '';
+  let parameters: Record<string, unknown> = {};
+  const updateControls = () => {
+    controls.replaceChildren(); parameters = {};
+    for (const c of recipeControls(recipes.find(r => r.id === choice.value)!)) {
+      const label = document.createElement('label'); label.textContent = c.label;
+      const select = document.createElement('select'); select.setAttribute('aria-label', c.label);
+      for (const value of c.options) { const option = document.createElement('option'); option.value = String(value); option.textContent = String(value); select.append(option) }
+      select.value = String(c.default);
+      select.onchange = () => { parameters[c.name] = c.type === 'integer' ? Number(select.value) : select.value; clearPreview() };
+      label.append(select); controls.append(label);
+    }
+  };
+  const preview = document.createElement('section'); preview.dataset.ppteDesignPreview = '';
+  let pending: Transaction | undefined;
+  const accept = document.createElement('button'); accept.textContent = '接受设计修改'; accept.hidden = true;
+  const cancel = document.createElement('button'); cancel.textContent = '取消设计修改'; cancel.hidden = true;
+  function clearPreview() { pending = undefined; preview.replaceChildren(); accept.hidden = cancel.hidden = true }
+  function stageDesign(transaction: Transaction) {
+    clearPreview();
+    const result = runtime.controller.preview(transaction);
+    if (!result.ok || !result.document) throw new Error(result.issues.map(i => i.message).join('; '));
+    pending = transaction;
+    preview.innerHTML = renderSlideHtml(result.document, runtime.presenterState().slideId, { assetSources: Object.fromEntries(Object.entries(payload.assets).map(([id, bytes]) => [id, `data:${payload.document.assets[id]?.mimeType};base64,${bytes}`])) });
+    accept.hidden = cancel.hidden = false;
+  }
+  choice.onchange = () => { clearPreview(); updateControls() };
+  accept.onclick = () => { if (pending) { const result = change(runtime.controller.commit(pending)); if (result.ok) clearPreview() } };
+  cancel.onclick = clearPreview;
+  const apply = document.createElement('button'); apply.textContent = '预览保留内容重排';
+  apply.onclick = () => { try {
+    const flushed = textSurface.flush(); if (!flushed.ok) throw new Error('Finish the text edit before changing design');
+    const plan = planDesignEdit(runtime.getDocument(), { recipe: recipes.find(r => r.id === choice.value)!, parameters, slideId: runtime.presenterState().slideId, transactionId: `design:${++sequence}`, baseRevision: runtime.getRevision() });
+    if (!plan.transaction) throw new Error([...plan.issues.map(i => i.message), ...plan.proposals].join('; '));
+    stageDesign(plan.transaction);
+  } catch (cause) { clearPreview(); show(error('DESIGN_REJECTED', String(cause))) } };
+  const themeLabel = document.createElement('label'); themeLabel.textContent = '预览全稿主题（保留局部格式）';
+  const themeInput = document.createElement('input'); themeInput.type = 'file'; themeInput.accept = '.json'; themeInput.setAttribute('aria-label', '全稿主题');
+  themeInput.onchange = async () => { try { const file = themeInput.files?.[0]; if (!file) return; const theme = JSON.parse(await file.text()); if (!textSurface.flush().ok) throw new Error('Finish the text edit before changing design'); stageDesign(planDesignTheme(runtime.getDocument(), theme, { transactionId: `theme:${++sequence}`, baseRevision: runtime.getRevision() })) } catch (cause) { clearPreview(); show(error('DESIGN_REJECTED', String(cause))) } };
+  themeLabel.append(themeInput); updateControls();
+  designPanel.append(title, choice, controls, apply, themeLabel, preview, accept, cancel); root.append(designPanel);
+}
+
 
 const selected = () => runtime.getSelection()[0];
 const nodeFor = (id: string) =>
@@ -103,6 +156,7 @@ function show(result?: { ok: boolean; issues?: Array<{ message: string }> }) {
   const state = runtime.presenterState();
   if(drag&&(drag.session.slideId!==state.slideId||drag.session.revision!==runtime.getRevision()))cancelTransform();
   pagesPanel.hidden = presenting;
+  designPanel.hidden = presenting;
   if (thumbnailRevision !== runtime.getRevision()) {
     thumbnailRevision = runtime.getRevision();
     thumbnails.replaceChildren();

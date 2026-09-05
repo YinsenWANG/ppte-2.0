@@ -47,3 +47,11 @@ text and selecting a real range before `setTextMarks`. Legacy plain-text
 whole-box styles; do not modify document JSON, DOM styles or build a second undo
 stack. See `docs/evolution/E07_EDITOR_API.md` in the source checkout for the
 save/reopen example. Save an independent HTML copy or export .ppte back to Host.
+
+### Safe recipe parameters and theme changes
+
+Use `get_recipe_controls` with an exact `recipeId` and `recipeVersion` to read the same finite controls shown in RecipeStudio and the Full Portable design panel. Pass only the returned parameter names and options to `apply_layout_recipe` (for example `parameters: {"columns":3}`). CSS, code, arbitrary paths, and undeclared controls are rejected. This command always extracts values from the current document; `slideIR` is not a replacement source for reflow. Content regeneration remains a separate command.
+
+The first layout preview registers exact current content IDs in optional `ppte.design-binding` metadata. Subsequent previews retain unbound manual additions, local overrides, assets/crops, facts, reading order, and protected objects. Invalid bindings fail without guessing; use `rebuildBinding:true` only for an explicit request to register current objects again. Reducing columns retains every item and adds rows; capacity failure returns proposals without a transaction or automatic page insertion.
+
+`apply_design_theme` accepts a validated `ThemeDefinition` and proposes a document-wide theme transaction. Local overrides remain intact. If global tokens could affect protected objects, it rejects the proposal. Neither layout nor theme application implicitly restores styles or rewrites text. Preview and commit the returned transaction through the normal reviewed revision flow; a stale preview must be planned again.
