@@ -7,7 +7,7 @@ import { builtInRecipeSpecs, RecipeRegistry } from '../../layout-recipes/src/ind
 import { decodePatch, buildPatchTransaction } from '../../patch-format/src/codec.js'
 import { BrowserRecovery } from './recovery.js'
 import { Inspector } from './Inspector.js'
-import { buildPortable, buildPortableCheckpointBytes, configurePortableScript, base64 } from '../../portable-runtime/src/shared.js'
+import { buildPortable, assessCheckpointRecovery, buildRecoveryCheckpoint, type CheckpointRecoveryAssessment, buildPortableCheckpointBytes, configurePortableScript, base64 } from '../../portable-runtime/src/shared.js'
 import { portableBrowserScript } from '../../portable-runtime/src/browser-bundle.js'
 import { authoringProject } from '../../authoring/src/index.js'
 import { AgentToolServer } from '../../agent-tools/src/index.js'
@@ -18,13 +18,12 @@ import { buildAuthoringTransaction, type AuthoringInput } from '../../authoring/
 import { PpteSession, type HistoryEntry } from '../../core/src/index.js'
 import { useLayoutEffect, useEffect, useMemo, useRef, useState, type ChangeEvent, type CompositionEvent, type FocusEvent, type FormEvent, type KeyboardEvent, type PointerEvent as ReactPointerEvent, type ReactElement } from 'react'
 import { canonicalJsonString, canonicalRevision, sha256HexBytes } from '../../canonical-json/src/index.js'
-import { readStoredZip } from '../../archive/src/index.js'
 import { buildDuplicateSlideOperation } from '../../operations/src/index.js'
 import { editRichText, ImeTextEditSession } from '../../richtext-adapter/src/index.js'
 import { validateRuntimeDocument } from '../../validation/src/index.js'
 import { advancePresenterState, retreatPresenterState, type PresenterAnimationState } from '../../portable-runtime/src/presenter-state.js'
 import { renderSlideHtml, type RenderOptions } from '../../renderer-react/src/index.js'
-import type { Asset, ImageElement, Operation, PpteDocument, PpteManifest, TextElement, Transaction, ValidationIssue } from '../../schema/src/index.js'
+import type { Asset, ImageElement, Operation, PpteDocument, TextElement, Transaction, ValidationIssue } from '../../schema/src/index.js'
 import { beginDrag, buildSelectionOverlay, endDrag, type DragTransient, updateDrag, type SelectionState } from './interaction.js'
 
 export interface HostAppProps {
@@ -78,6 +77,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
   const [recipeId,setRecipeId]=useState('')
   const [designIR,setDesignIR]=useState<unknown>()
   const [studio,setStudio]=useState(false)
+  const [recoveryInspection,setRecoveryInspection] = useState<{file:File; diagnosis:CheckpointRecoveryAssessment}>()
   const [unsupported,setUnsupported]=useState<UnsupportedProjectError>()
   const [assetSources, setAssetSources] = useState<Record<string, string>>({})
   const dragRef = useRef<DragTransient | undefined>(undefined)
@@ -437,6 +437,20 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     return true
   }
 
+  function downloadRecovery(kind: 'report' | 'copy') {
+    if (!recoveryInspection) return
+    try {
+      const {diagnosis} = recoveryInspection
+      const recovered = kind === 'copy' ? buildRecoveryCheckpoint(diagnosis) : undefined
+      const downloads = recovered ? [{name:'recovered.ppte', data:blobBytes(recovered.bytes)}, {name:'recovery-report.json', data:JSON.stringify(recovered.report,null,2)}] : [{name:'recovery-diagnosis.json', data:JSON.stringify(diagnosis,null,2)}]
+      for (const item of downloads) {
+        const url = URL.createObjectURL(new Blob([item.data])); const a = document.createElement('a')
+        a.href=url; a.download=item.name; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1000)
+      }
+      setStatus('已请求下载恢复副本/报告；请检查浏览器下载结果，原文件未改写')
+    } catch (cause) { setStatus(`恢复副本下载失败 · ${String(cause)}`) }
+  }
+
   async function openFile(event: ChangeEvent<HTMLInputElement>): Promise<void> {
     const file = event.target.files?.[0]
     if (!file) return
@@ -458,6 +472,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
       setStatus(`已打开 ${file.name}`);setSaveLabel('已打开项目 · 本地保护就绪')
     } catch (cause) {
       if(cause instanceof UnsupportedProjectError)setUnsupported(cause)
+      else setRecoveryInspection({file, diagnosis:assessCheckpointRecovery(new Uint8Array(await file.arrayBuffer()))})
       setStatus(`打开失败 · ${cause instanceof Error ? cause.message : String(cause)}`)
     } finally {
       event.target.value = ''
@@ -717,7 +732,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
         })}
       </div>
     </main>
-    {!presenting&&<aside className="ppte-host-inspector"><Inspector key={`${activeSlideId}:${activeElementIds.join(',')}:${sessionRef.current!.getRevision()}`} document={documentNode} slide={activeSlide} ids={activeElementIds} commit={commitOperations}/><section>{actualOverflow.length>0&&<section data-ppte-actual-overflow><h3>实际渲染溢出</h3><p>已等待字体就绪；请检查以下文字框。</p>{actualOverflow.map(id=><div key={id}><button onClick={()=>setSelection({slideId:activeSlideId,elementIds:[id]})}>{activeSlide.elements[id]?.semanticKey??id}</button><button onClick={()=>void fitActual(id)}>按实际字体适配</button></div>)}</section>}<h3>页面设计</h3><button onClick={()=>setStudio(true)}>布局工作室</button><select aria-label="布局" value={recipeId} onChange={e=>setRecipeId(e.target.value)}><option value="">自动匹配</option>{builtInRecipeSpecs().map(r=><option key={r.id}>{r.id}</option>)}</select><button onClick={()=>design('layout')}>保留内容重排</button><label>新页面设计（可选）<input type="file" accept=".json" onChange={async e=>{try{const f=e.target.files?.[0];if(f)setDesignIR(JSON.parse(await f.text()))}catch(e){setStatus(String(e))}}}/></label><p>选中对象将在重设计时受到保护。</p><button onClick={()=>design('redesign')}>预览重设计</button></section>{unsupported&&<section className="ppte-review-panel" data-ppte-unsupported><h3>不支持的项目版本 · 只读检查</h3><p>原文件和当前编辑项目均未改写。可查看原始结构，或使用支持该版本的编辑器；这里不会尝试降级保存。</p><pre>{JSON.stringify(unsupported.snapshot,null,2)}</pre><button onClick={()=>{const a=document.createElement('a');const u=URL.createObjectURL(unsupported.file);a.href=u;a.download=unsupported.file.name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}}>下载原文件</button><button onClick={()=>setUnsupported(undefined)}>关闭只读检查</button></section>}{studio&&<RecipeStudio documentNode={documentNode} slideId={activeSlideId} assetSources={assetSources} onClose={()=>setStudio(false)} onApply={spec=>{try{const server=new AgentToolServer(sessionRef.current!,{recipes:new RecipeRegistry([spec])});const r=server.execute('apply_layout_recipe',{slideId:activeSlideId,recipeId:spec.id,recipeVersion:spec.version,requireConfirmation:true});if(!r.ok||!r.transaction)throw new Error(r.issues.map(i=>i.message).join('; '));stagePreview(r.transaction,undefined,`${spec.id}@${spec.version}`);setStudio(false)}catch(e){setStatus(String(e))}}}/>}{reviewing&&<ReviewPanel local={documentNode} resources={{assetBytes,fontBytes}} read={readBrowserProject} onPreview={stagePreview} onClose={()=>setReviewing(false)}/>}{pendingEdit&&<section data-ppte-preview><h3>修改预览</h3><pre>{pendingEdit.summary}</pre><div className="ppte-preview-surface" dangerouslySetInnerHTML={{__html:renderSlideHtml(pendingEdit.document,pendingEdit.document.slides[activeSlideId]?activeSlideId:pendingEdit.document.slideOrder[0],{assetSources:{...assetSources,...Object.fromEntries(Object.entries(pendingEdit.resources?.assetBytes??{}).map(([id,bytes])=>[id,`data:${pendingEdit.document.assets[id]?.mimeType};base64,${base64(bytes)}`]))}})}}/><button onClick={()=>void acceptPreview()}>接受修改</button><button onClick={()=>setPendingEdit(undefined)}>取消</button></section>}</aside>}
+    {!presenting&&<aside className="ppte-host-inspector"><Inspector key={`${activeSlideId}:${activeElementIds.join(',')}:${sessionRef.current!.getRevision()}`} document={documentNode} slide={activeSlide} ids={activeElementIds} commit={commitOperations}/><section>{actualOverflow.length>0&&<section data-ppte-actual-overflow><h3>实际渲染溢出</h3><p>已等待字体就绪；请检查以下文字框。</p>{actualOverflow.map(id=><div key={id}><button onClick={()=>setSelection({slideId:activeSlideId,elementIds:[id]})}>{activeSlide.elements[id]?.semanticKey??id}</button><button onClick={()=>void fitActual(id)}>按实际字体适配</button></div>)}</section>}<h3>页面设计</h3><button onClick={()=>setStudio(true)}>布局工作室</button><select aria-label="布局" value={recipeId} onChange={e=>setRecipeId(e.target.value)}><option value="">自动匹配</option>{builtInRecipeSpecs().map(r=><option key={r.id}>{r.id}</option>)}</select><button onClick={()=>design('layout')}>保留内容重排</button><label>新页面设计（可选）<input type="file" accept=".json" onChange={async e=>{try{const f=e.target.files?.[0];if(f)setDesignIR(JSON.parse(await f.text()))}catch(e){setStatus(String(e))}}}/></label><p>选中对象将在重设计时受到保护。</p><button onClick={()=>design('redesign')}>预览重设计</button></section>{recoveryInspection&&<section data-ppte-recovery-inspection><h3>只读恢复诊断</h3><p>快照：{recoveryInspection.diagnosis.snapshotStatus} · 历史：{recoveryInspection.diagnosis.history.status}。原文件与恢复记录已保留。</p><pre>{JSON.stringify({issues:recoveryInspection.diagnosis.issues,history:recoveryInspection.diagnosis.history,snapshot:recoveryInspection.diagnosis.snapshot},null,2)}</pre><button onClick={()=>downloadRecovery('report')}>下载诊断报告</button>{recoveryInspection.diagnosis.snapshotStatus==='valid'&&recoveryInspection.diagnosis.history.status!=='unsupported'&&<button onClick={()=>downloadRecovery('copy')}>另存恢复副本（保留已验证历史）</button>}<button onClick={()=>setRecoveryInspection(undefined)}>关闭诊断</button></section>}{unsupported&&<section className="ppte-review-panel" data-ppte-unsupported><h3>不支持的项目版本 · 只读检查</h3><p>原文件和当前编辑项目均未改写。可查看原始结构，或使用支持该版本的编辑器；这里不会尝试降级保存。</p><pre>{JSON.stringify(unsupported.snapshot,null,2)}</pre><button onClick={()=>{const a=document.createElement('a');const u=URL.createObjectURL(unsupported.file);a.href=u;a.download=unsupported.file.name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}}>下载原文件</button><button onClick={()=>setUnsupported(undefined)}>关闭只读检查</button></section>}{studio&&<RecipeStudio documentNode={documentNode} slideId={activeSlideId} assetSources={assetSources} onClose={()=>setStudio(false)} onApply={spec=>{try{const server=new AgentToolServer(sessionRef.current!,{recipes:new RecipeRegistry([spec])});const r=server.execute('apply_layout_recipe',{slideId:activeSlideId,recipeId:spec.id,recipeVersion:spec.version,requireConfirmation:true});if(!r.ok||!r.transaction)throw new Error(r.issues.map(i=>i.message).join('; '));stagePreview(r.transaction,undefined,`${spec.id}@${spec.version}`);setStudio(false)}catch(e){setStatus(String(e))}}}/>}{reviewing&&<ReviewPanel local={documentNode} resources={{assetBytes,fontBytes}} read={readBrowserProject} onPreview={stagePreview} onClose={()=>setReviewing(false)}/>}{pendingEdit&&<section data-ppte-preview><h3>修改预览</h3><pre>{pendingEdit.summary}</pre><div className="ppte-preview-surface" dangerouslySetInnerHTML={{__html:renderSlideHtml(pendingEdit.document,pendingEdit.document.slides[activeSlideId]?activeSlideId:pendingEdit.document.slideOrder[0],{assetSources:{...assetSources,...Object.fromEntries(Object.entries(pendingEdit.resources?.assetBytes??{}).map(([id,bytes])=>[id,`data:${pendingEdit.document.assets[id]?.mimeType};base64,${base64(bytes)}`]))}})}}/><button onClick={()=>void acceptPreview()}>接受修改</button><button onClick={()=>setPendingEdit(undefined)}>取消</button></section>}</aside>}
     {!presenting && <section className="ppte-host-notes" data-ppte-notes-panel>
       <div className="ppte-notes-heading"><span>Speaker notes</span><span className="ppte-notes-hint">Changes save on blur</span></div>
       <textarea id="ppte-speaker-notes" data-ppte-notes-input value={notesDraft} onChange={(event) => setNotesDraft(event.target.value)} onBlur={updateNotes} placeholder="Add notes for this slide…" />
@@ -729,34 +744,16 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
 async function readBrowserProject(file: File): Promise<BrowserProject> {
   const bytes = new Uint8Array(await file.arrayBuffer())
   const text = new TextDecoder().decode(bytes)
-  const first = text.trimStart().slice(0, 1)
-  let entries: Map<string, Uint8Array> | undefined
-  if (first !== '{') entries = readStoredZip(bytes)
-  const documentNode = entries ? JSON.parse(new TextDecoder().decode(entries.get('document.json') ?? new Uint8Array())) as PpteDocument : JSON.parse(text) as PpteDocument
-  if(documentNode&&typeof documentNode.schemaVersion==='string'&&documentNode.schemaVersion!=='2.0.0')throw new UnsupportedProjectError(file,documentNode)
-  if (!documentNode || !documentNode.slides || !Array.isArray(documentNode.slideOrder)) throw new Error('文件不是 PPTe 2.0 semantic document')
-  if (entries) {
-    const raw=entries.get('manifest.json');if(!raw)throw new Error('缺少项目清单')
-    const manifest=JSON.parse(new TextDecoder().decode(raw)) as PpteManifest
-    if(manifest.contentRevision!==canonicalRevision(documentNode)||manifest.documentId!==documentNode.documentId)throw new Error('项目内容与清单不一致')
-    for(const file of manifest.files){const data=entries.get(file.path);if(!data||data.length!==file.byteLength||sha256HexBytes(data)!==file.sha256.replace(/^sha256-/,''))throw new Error(`文件校验失败: ${file.path}`)}
+  if (text.trimStart()[0] !== '{') {
+    const diagnosis = assessCheckpointRecovery(bytes)
+    if (diagnosis.snapshotStatus !== 'valid' || !diagnosis.document || !['valid', 'absent'].includes(diagnosis.history.status)) throw new Error('项目需要只读恢复诊断')
+    return {document:diagnosis.document, assetBytes:diagnosis.assetBytes, fontBytes:diagnosis.fontBytes, recentTransactions:diagnosis.recentTransactions, redoHistory:diagnosis.history.retainedRedo}
   }
-  const recentTransactions = entries?.get('history/recent.jsonl')
-    ? new TextDecoder().decode(entries.get('history/recent.jsonl')).split('\n').map((line) => line.trim()).filter(Boolean).map((line) => JSON.parse(line) as Transaction)
-    : []
-  const assetBytes: Record<string, Uint8Array> = {}
-  for (const asset of Object.values(documentNode.assets ?? {})) {
-    const data = entries?.get(asset.path)
-    if (data) assetBytes[asset.id] = data
-  }
-  const fontBytes: Record<string, Uint8Array> = {}
-  for (const font of Object.values(documentNode.fonts ?? {})) {
-    if (font.source !== 'embedded' || !font.path) continue
-    const data = entries?.get(font.path)
-    if (data) fontBytes[font.id] = data
-  }
-  buildPortableCheckpointBytes(documentNode,{runtimeProfile:'ga-c',assetBytes,fontBytes,recentTransactions})
-  return { document: documentNode, assetBytes, fontBytes, recentTransactions,redoHistory:entries?.has('history/redo.json')?JSON.parse(new TextDecoder().decode(entries.get('history/redo.json'))):[] }
+  const documentNode = JSON.parse(text) as PpteDocument
+  if (documentNode?.schemaVersion && documentNode.schemaVersion !== '2.0.0') throw new UnsupportedProjectError(file, documentNode)
+  // Raw JSON may only open when the entire document is self-contained.
+  buildPortableCheckpointBytes(documentNode, {runtimeProfile:'ga-c', assetBytes:{}, fontBytes:{}})
+  return {document:documentNode, assetBytes:{}, fontBytes:{}, recentTransactions:[], redoHistory:[]}
 }
 
 async function buildBrowserCheckpoint(documentNode:PpteDocument,assetBytes:Record<string,Uint8Array>,fontBytes:Record<string,Uint8Array>,recentTransactions:ReadonlyArray<Transaction>=[],redoHistory:HistoryEntry[]=[]):Promise<Uint8Array> {

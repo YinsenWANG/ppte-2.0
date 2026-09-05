@@ -411,7 +411,10 @@ export function rebuildHistoryFromBase(base: PpteDocument, destination: PpteDocu
   const session = new PpteSession(base, { history: [], redoHistory: [], restoreContext: undefined, historyLimit: Number.MAX_SAFE_INTEGER, historyBytesLimit: Number.MAX_SAFE_INTEGER })
   for (const transaction of transactions) {
     if (!transaction || transaction.baseRevision !== session.getRevision()) throw new Error('HISTORY_REBUILD_BASE_MISMATCH: an exact checkpoint and uninterrupted forward chain are required.')
+    const metadata = readPersistedHistoryMetadata(transaction)
+    if (!metadata || metadata.beforeRevision !== session.getRevision()) throw new Error('HISTORY_REBUILD_BASE_MISMATCH: recorded before/after revisions are required.')
     const result = session.commit(transaction)
+    if (result.ok && session.getRevision() !== metadata.afterRevision) throw new Error('HISTORY_REBUILD_STEP_MISMATCH: forward replay differs from the recorded afterRevision.')
     if (!result.ok) throw new Error(`HISTORY_REBUILD_FAILED: ${result.issues.map(issue => issue.message).join('; ')}`)
   }
   if (session.getRevision() !== canonicalRevision(destination)) throw new Error('HISTORY_REBUILD_HEAD_MISMATCH: forward replay does not reproduce the complete destination snapshot.')

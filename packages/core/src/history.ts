@@ -54,6 +54,13 @@ export interface HistoryAssessment {
 export function assessHistory(document: PpteDocument, entries: ReadonlyArray<HistoryEntry>, redo: ReadonlyArray<HistoryEntry> = [], runtimeProfile: RuntimeProfile = 'ga-c', protocol = '1.1'): HistoryAssessment {
   const result: HistoryAssessment = { status: entries.length || redo.length ? 'valid' : 'absent', snapshotRevision: canonicalRevision(document), retained: [], retainedRedo: [], discardedHistoryCount: entries.length, discardedRedoCount: redo.length, issues: [] }
   if (!['1.0', '1.1'].includes(protocol)) return { ...result, status: 'unsupported', issues: [`Unsupported history operation protocol: ${protocol}`] }
+  for (const entry of [...entries, ...redo]) {
+    for (const transaction of [entry?.transaction, entry?.inverse]) {
+      if (transaction && validateTransactionShape(transaction).some(issue => issue.message.startsWith('Unknown operation kind'))) {
+        return { ...result, status: 'unsupported', issues: ['Unknown history operation; use a compatible runtime.'] }
+      }
+    }
+  }
   const snapshotErrors = validateRuntimeDocument(document, { runtimeProfile }).filter(issue => issue.severity === 'error')
   if (snapshotErrors.length) return { ...result, status: 'invalid', issues: snapshotErrors.map(issue => issue.message) }
   let cursor = cloneJson(document)

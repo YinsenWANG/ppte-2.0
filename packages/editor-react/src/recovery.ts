@@ -1,4 +1,5 @@
-import {poolBytes} from './resource-pool.js'
+import { buildPortableCheckpointBytes } from '../../portable-runtime/src/shared.js'
+import {poolBytes,resolveBytes} from './resource-pool.js'
 import { canonicalHash, canonicalRevision } from '../../canonical-json/src/index.js'
 import { PpteSession, type HistoryEntry, type JournalSink } from '../../core/src/index.js'
 import type { PpteDocument, Transaction } from '../../schema/src/index.js'
@@ -20,6 +21,13 @@ const KEY = 'ppte.host.recovery.v1'
  * another tab's write rejects the commit; no false "protected" status. */
 export class BrowserRecovery implements JournalSink {
   action: Action = 'commit'
+  recoverySessionId?: string
+  private key = KEY
+  private active?: string
+  private predecessor?: { key: string; encoded?: string }
+  private validateBase(base: BrowserBase): void {
+    buildPortableCheckpointBytes(base.document, { runtimeProfile: 'ga-c', assetBytes: resolveBytes(base.assetBytes, base.document.assets), fontBytes: resolveBytes(base.fontBytes, base.document.fonts) })
+  }
   private tail?: Tail
   private encoded?: string
   private db?: IDBDatabase
@@ -32,26 +40,44 @@ export class BrowserRecovery implements JournalSink {
       request.onsuccess = () => resolve(request.result)
       request.onerror = () => reject(request.error)
     })
-    const raw = localStorage.getItem(KEY)
-    if (!raw) return
+    // A legacy entry remains forensic evidence even after namespace migration.
+    // Do not silently ignore newly discovered corruption in that entry.
+    const legacyRaw = localStorage.getItem(KEY)
+    if (legacyRaw) {
+      const legacy = JSON.parse(legacyRaw) as Tail
+      if (!legacy || legacy.version !== 1 || !Array.isArray(legacy.rows)) throw new Error('RECOVERY_INVALID: Unsupported legacy recovery journal; existing data was retained.')
+    }
+    this.active = localStorage.getItem(`${KEY}.active`) ?? undefined
+    this.recoverySessionId = this.active
+    this.key = this.active ? `${KEY}.${this.active}` : KEY
+    const raw = localStorage.getItem(this.key)
+    if (!raw) {
+      if (this.active) throw new Error('RECOVERY_INVALID: Active recovery tail is missing; existing data was retained.')
+      return
+    }
     const tail = JSON.parse(raw) as Tail
     if (tail.version !== 1 || !Array.isArray(tail.rows)) throw new Error('RECOVERY_INVALID: Unsupported recovery journal; existing data was retained.')
     const base = await this.read(tail.baseId)
     if (!base || canonicalRevision(base.document) !== tail.baseRevision) throw new Error('RECOVERY_INVALID: Checkpoint does not match journal; existing data was retained.')
+    this.validateBase(base)
     const replay = new PpteSession(base.document, {history:base.history, redoHistory:base.redo})
     for (const row of tail.rows) {
+      if (!['commit', 'undo', 'redo'].includes(row.action)) throw new Error('RECOVERY_INVALID: Unknown journal action; existing data was retained.')
       if (canonicalHash({action:row.action,transaction:row.transaction,revision:row.revision}) !== row.checksum) throw new Error('RECOVERY_CHECKSUM: Journal is damaged; existing data was retained.')
       const result = row.action === 'undo' ? replay.undo() : row.action === 'redo' ? replay.redo() : replay.commit(row.transaction)
       if (!result.ok || replay.getRevision() !== row.revision) throw new Error('RECOVERY_REVISION: Journal replay failed; existing data was retained.')
     }
+    this.validateBase({...base, document: replay.getDocument()})
     this.tail = tail; this.encoded = raw
-    return {base,session:this.attach(replay)}
+    // Fork before attaching a writer; the recovered tail/base remain forensic evidence.
+    return {base,session:await this.serial(()=>this.replaceNow({...base, document: replay.getDocument(), history:[...replay.getHistory()], redo:[...replay.getRedoHistory()]}, false))}
   }
   attach(session: PpteSession): PpteSession {
     return new PpteSession(session.getDocument(), {history:session.getHistory(),redoHistory:session.getRedoHistory(),journal:this,initialSaveState:'recoverable'})
   }
   replace(base:BrowserBase):Promise<PpteSession>{return this.serial(()=>this.replaceNow(base))}
-  private async replaceNow(base: BrowserBase): Promise<PpteSession> {
+  private async replaceNow(base: BrowserBase, activate = true): Promise<PpteSession> {
+    this.validateBase(base)
     const expected=this.encoded
     const checked = new PpteSession(base.document,{history:base.history,redoHistory:base.redo})
     const id = crypto.randomUUID()
@@ -62,7 +88,16 @@ export class BrowserRecovery implements JournalSink {
     this.assertCurrent()
     const tail: Tail = {version:1,baseId:id,baseRevision:checked.getRevision(),rows:[]}
     const encoded = JSON.stringify(tail)
-    localStorage.setItem(KEY, encoded)
+    const recoverySessionId = crypto.randomUUID()
+    const key = `${KEY}.${recoverySessionId}`
+    localStorage.setItem(key, encoded)
+    // Opening another tab stages a private copy, but does not seize the active
+    // writer. Its first edit must still match the source tail it observed.
+    if (activate) {
+      localStorage.setItem(`${KEY}.active`, recoverySessionId)
+      this.active = recoverySessionId; this.predecessor = undefined
+    } else this.predecessor = { key: this.key, encoded: this.encoded }
+    this.key = key; this.recoverySessionId = recoverySessionId
     this.tail = tail; this.encoded = encoded
     return this.attach(checked)
   }
@@ -83,11 +118,18 @@ export class BrowserRecovery implements JournalSink {
     const value={action:this.action,transaction,revision:resultRevision}
     const next={...this.tail,rows:[...this.tail.rows,{...value,checksum:canonicalHash(value)}]}
     const encoded=JSON.stringify(next)
-    try { localStorage.setItem(KEY,encoded) } catch { throw new Error('RECOVERY_STORAGE_FULL: Save a project checkpoint before continuing; this edit was not committed.') }
+    try {
+      localStorage.setItem(this.key,encoded)
+      if (this.predecessor) {
+        localStorage.setItem(`${KEY}.active`, this.recoverySessionId!)
+        this.active = this.recoverySessionId; this.predecessor = undefined
+      }
+    } catch { throw new Error('RECOVERY_STORAGE_FULL: Save a project checkpoint before continuing; this edit was not committed.') }
     this.tail=next;this.encoded=encoded
   }
   private assertCurrent() {
-    if ((localStorage.getItem(KEY) ?? undefined) !== this.encoded) throw new Error('REVISION_CONFLICT: Another editor tab changed this project. Reload to recover its current state.')
+    if (this.predecessor && (localStorage.getItem(this.predecessor.key) ?? undefined) !== this.predecessor.encoded) throw new Error('REVISION_CONFLICT: Another editor changed the recovery source.')
+    if ((localStorage.getItem(this.key) ?? undefined) !== this.encoded || (localStorage.getItem(`${KEY}.active`) ?? undefined) !== this.active) throw new Error('REVISION_CONFLICT: Another editor tab changed this project. Reload to recover its current state.')
   }
   private read(id:string):Promise<BrowserBase|undefined> {
     return new Promise((resolve,reject)=>{const r=this.db!.transaction('bases').objectStore('bases').get(id);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})

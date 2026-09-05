@@ -2,6 +2,8 @@ import { inferCompatibilityProfile } from '../../compatibility/src/index.js';
 import { STANDARD_EDITABLE_SUFFIX } from "./delivery-policy.js";
 import {
   PortableRuntime,
+  buildPortableCheckpointBytes,
+  assessCheckpointRecovery,
   configurePortableScript,
   decodePortable,
   base64,
@@ -12,11 +14,19 @@ import { renderDocumentSurfaceHtml } from "../../renderer-react/src/index.js";
 import { geometryOnlyContract } from "../../change-contract/src/index.js";
 import type { ChartData, Transaction } from "../../schema/src/index.js";
 
+function startPortable() {
 // This entry is bundled once; every edit executes the same Core used by Node.
 const payload = decodePortable(document.documentElement.outerHTML);
 configurePortableScript(document.getElementById("ppte-runtime")!.textContent!);
 const decode = (value: string) =>
   Uint8Array.from(atob(value), (c) => c.charCodeAt(0));
+const diagnosis = assessCheckpointRecovery(buildPortableCheckpointBytes(payload.document, {
+  runtimeProfile: 'ga-c', compatibilityProfile: payload.minimumCompatibilityProfile,
+  assetBytes: Object.fromEntries(Object.entries(payload.assets).map(([k,v]) => [k,decode(v)])),
+  fontBytes: Object.fromEntries(Object.entries(payload.fonts).map(([k,v]) => [k,decode(v)])),
+  recentTransactions: payload.recentTransactions, redoHistory: payload.redoHistory,
+}));
+if (diagnosis.snapshotStatus !== 'valid' || !['valid','absent'].includes(diagnosis.history.status)) throw new Error(JSON.stringify(diagnosis));
 const runtime = new PortableRuntime(payload.document, {
   profile: payload.origin.profile,
   assetBytes: Object.fromEntries(
@@ -634,3 +644,11 @@ new ResizeObserver(fit).observe(stage);
 root.dataset.ppteMode = "edit";
 (globalThis as any).PPTEPortable = api;
 render();
+
+}
+try { startPortable() } catch (cause) {
+  const panel = document.createElement('pre')
+  panel.dataset.ppteRecoveryDiagnostic = 'true'
+  panel.textContent = `只读诊断：项目未完整验证，不能编辑或另存为完整项目。原文件已保留。\n${String(cause)}`
+  document.body.replaceChildren(panel)
+}

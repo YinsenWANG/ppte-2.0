@@ -1,3 +1,4 @@
+export { assessCheckpointRecovery, type CheckpointRecoveryAssessment } from './checkpoint-recovery.js'
 import { computeArtifactIdentity, type ArtifactIdentity } from './artifact-identity.js'
 import { PPTE_APP_VERSION } from '../../schema/src/version.js'
 export { computeArtifactIdentity, type ArtifactIdentity } from './artifact-identity.js'
@@ -731,3 +732,12 @@ function normalizeHash(hash: string): string { return (hash.startsWith('sha256-'
 function sha256Binary(data: Uint8Array): string { return binaryHash(data) }
 function issue(code: string, message: string, elementId?: string, recovery?: string): ValidationIssue { return withErrorSemantics({ code, severity: 'error', message, elementId, recovery }) }
 function dedupe(issues: ValidationIssue[]): ValidationIssue[] { const seen = new Set<string>(); return issues.filter((item) => { const key = `${item.code}|${item.message}|${item.elementId ?? ''}`; if (seen.has(key)) return false; seen.add(key); return true }) }
+
+/** Explicit save-as only: never attach an unverified snapshot or invent earlier history. */
+export function buildRecoveryCheckpoint(diagnosis: import('./checkpoint-recovery.js').CheckpointRecoveryAssessment) {
+  if (diagnosis.snapshotStatus !== 'valid' || !diagnosis.document || diagnosis.history.status === 'unsupported') throw new Error('RECOVERY_READ_ONLY: complete supported content is required')
+  const session = new PpteSession(diagnosis.document, { history: diagnosis.history.retained, redoHistory: diagnosis.history.retainedRedo })
+  const bytes = buildPortableCheckpointBytes(session.getDocument(), { runtimeProfile: 'ga-c', assetBytes: diagnosis.assetBytes, fontBytes: diagnosis.fontBytes, recentTransactions: session.getHistory().map(entry => entry.transaction), redoHistory: [...session.getRedoHistory()] })
+  const report = { version: 1, sourceHash: diagnosis.sourceHash, recoveredHash: sha256HexBytes(bytes), sourceRevision: session.getRevision(), history: diagnosis.history, strategy: 'verified-contiguous-history', originalPreserved: true }
+  return { bytes, report }
+}
