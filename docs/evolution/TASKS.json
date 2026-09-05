@@ -456,7 +456,10 @@
         "tests/delivery-policy.test.ts",
         "docs/evolution/C04_EVIDENCE.md",
         "pnpm typecheck && pnpm build && pnpm test: 154 passed (baseline 145, +9)",
-        "pnpm blackbox:final: 69 green / 0 red (baseline 69 / 0; no new reds)"
+        "pnpm blackbox:final: 69 green / 0 red (baseline 69 / 0; no new reds)",
+        "tests/surface-mode-contract.test.ts: deterministic deferred-frame focus regression; original behavior fails, fixed behavior passes",
+        "tests/host-completion.test.ts: isolated Host output prevents concurrent rebuild deletion",
+        "C04 gate repair: pnpm typecheck && pnpm build && pnpm test: 154 passed, 0 failed (repair count delta 0); four concurrent affected-suite runs 72/72; blackbox:final 69 green / 0 red against 69 / 0 baseline"
       ]
     },
     {

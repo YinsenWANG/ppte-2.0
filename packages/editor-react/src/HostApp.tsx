@@ -668,7 +668,15 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     try {
       if (!presentation.enter(() => { flushHostEdits(); return { ok: true } })) return
       dragRef.current = undefined; setDragFrame(undefined); setPendingEdit(undefined); setReviewing(false); setStudio(false)
-      setPresenting(true); requestAnimationFrame(() => { if (!presentation.isPresenting) return; const surface = renderedRef.current?.closest<HTMLElement>('[data-ppte-host]'); surface?.focus(); if (surface) void presentation.requestFullscreen(surface) }); setStatus('演示模式 · 使用方向键翻页，Esc 退出')
+      setPresenting(true)
+      requestAnimationFrame(() => {
+        if (!presentation.isPresenting) return
+        const surface = renderedRef.current?.closest<HTMLElement>('[data-ppte-host]')
+        // A user may already have focused a presentation control before this frame.
+        if (surface && !surface.contains(document.activeElement)) surface.focus()
+        if (surface) void presentation.requestFullscreen(surface)
+      })
+      setStatus('演示模式 · 使用方向键翻页，Esc 退出')
     } catch (cause) { setStatus(String(cause)) }
   }
 

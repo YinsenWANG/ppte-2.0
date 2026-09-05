@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
 import { mkdtempSync, writeFileSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join, resolve } from 'node:path'
+import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { chromium } from 'playwright'
 import { makeContractDocument } from '../apps/contract-deck/index.js'
@@ -49,9 +49,9 @@ for (const host of [false, true]) test(`C05 ${host ? 'Host' : 'generated file Po
   const assetBytes = { asset_pixel: imageBytes }
   let file: string
   if (host) {
-    const build = spawnSync('pnpm', ['host:build'], { encoding: 'utf8' })
+    const build = spawnSync('pnpm', ['host:build', '--outDir', join(dir, 'host')], { encoding: 'utf8' })
     assert.equal(build.status, 0, build.stdout + build.stderr)
-    file = resolve('apps/host/dist/index.html')
+    file = join(dir, 'host/index.html')
     writeFileSync(join(dir, 'deck.ppte'), buildCheckpointBytes(doc, { assetBytes }))
   } else {
     const built = createPortableFullPortable(doc, { assetBytes }); assert.equal(built.ok, true)
@@ -140,8 +140,20 @@ for (const host of [false, true]) test(`C05 ${host ? 'Host' : 'generated file Po
     await page.waitForFunction(() => document.fullscreenElement !== null)
     await page.evaluate(() => document.exitFullscreen())
     await page.waitForFunction(name => (globalThis as any)[name].getMode() === 'edit', apiName)
+    if (host) await page.evaluate(() => {
+      const original = window.requestAnimationFrame
+      window.requestAnimationFrame = callback => {
+        window.requestAnimationFrame = original
+        ;(globalThis as any).finishPresentationFrame = () => callback(performance.now())
+        return 0
+      }
+    })
     await page.locator(host ? '[data-ppte-action="present"]' : '[data-ppte-action="fullscreen"]').click()
     await page.locator('[data-ppte-action="exit-present"]').focus()
+    if (host) {
+      await page.evaluate(() => (globalThis as any).finishPresentationFrame())
+      assert.equal(await page.locator('[data-ppte-action="exit-present"]').evaluate(n => n === document.activeElement), true, 'deferred presentation entry preserves control focus')
+    }
     await page.keyboard.press('Space')
     await page.waitForFunction(name => (globalThis as any)[name].getMode() === 'edit', apiName)
   } finally { await browser.close(); rmSync(dir, { recursive: true, force: true }) }

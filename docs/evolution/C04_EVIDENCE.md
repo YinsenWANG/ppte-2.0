@@ -31,3 +31,19 @@ Digests identify content, not publishers or signatures. Legacy HTML without the 
 Backups are local siblings and require user-managed retention; atomicity depends on the existing local filesystem hard-link/rename support. The race test deterministically inserts a competing writer between preflight and publication; it is not a distributed filesystem stress test.
 
 Application semver was retained; no npm publication, global installation, registry version inventory, network-disconnected tarball acceptance, or push was performed. The A19 staging/version slice is covered here; full installation/offline workflows remain the related release tasks' responsibility.
+
+## Gate repair verification
+
+This fix round retains implementation commit `a0c207ea7c1f88fe53731fa20553a9b4ae6b47fd` and the per-criterion tests above. Two independent races were reproduced:
+
+- The initial full suite returned **153 passed, 1 failed, 154 total**. `tests/host-completion.test.ts` failed on `page.reload: net::ERR_FILE_NOT_FOUND`: three concurrent test files rebuilt the shared Host directory with `emptyOutDir`. All three now build into unique temporary directories. The staging script accepts optional output and Host input directories, retaining its default release paths. The staging test also compares the staged Host bytes with its isolated input.
+- After isolating builds, four concurrent runs of the three affected test files reproduced **two C05 failures** at the final Space-to-exit assertion. Host's deferred presentation frame stole focus from the exit button. Entry now preserves focus already inside the presentation surface. `tests/surface-mode-contract.test.ts` explicitly defers that frame until the exit control is focused and asserts focus survives before pressing Space. Restoring the original unconditional focus while keeping the test produced `false !== true` at `deferred presentation entry preserves control focus`; the fixed implementation passes. No existing assertions were removed or relaxed.
+
+Final verification after restoring the fix:
+
+- `pnpm typecheck && pnpm build && pnpm test`: **154 passed, 0 failed**. Test count delta for this repair: **0**; existing tests gained regression assertions. Original C04 implementation delta remains **+9**.
+- Four concurrent runs of `node --test dist/tests/artifact-identity.test.js dist/tests/host-completion.test.js dist/tests/surface-mode-contract.test.js`: **18/18 each, 72/72 total**.
+- Subsequent `pnpm blackbox:final`: **69 green, 0 red**, matching this round's task-start **69/0** baseline.
+- No tracked files added in this repair. Required `tests/artifact-identity.test.ts` exists and passes; the two Host test files and existing evidence were strengthened.
+
+The staging CLI test links the repository's installed dependencies into the temporary package, matching its prior dependency resolution through the repository parent. It verifies staged bytes and versions, not a fresh offline dependency installation. Browser regression coverage is Chromium automation; the previously documented platform and publisher-authentication limitations remain.

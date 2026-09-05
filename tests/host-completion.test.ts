@@ -22,13 +22,13 @@ test('text replacement retains untouched paragraph identity and marks across Uni
 })
 
 test('Host persists edits/undo/redo, rejects stale tabs, retains marks, moves groups, and reviews conflicts',async()=>{
-  const build=spawnSync('pnpm',['host:build'],{encoding:'utf8'})
-  assert.equal(build.status,0,build.stderr||build.stdout)
   const dir=mkdtempSync(join(tmpdir(),'ppte-host-completion-'))
+  const build=spawnSync('pnpm',['host:build','--outDir',join(dir,'host')],{encoding:'utf8'})
+  assert.equal(build.status,0,build.stderr||build.stdout)
   const browser=await chromium.launch({headless:true})
   const context=await browser.newContext({viewport:{width:1600,height:1100},acceptDownloads:true})
   const page=await context.newPage()
-  const url=pathToFileURL(resolve('apps/host/dist/index.html')).href
+  const url=pathToFileURL(join(dir,'host/index.html')).href
   const title=(p:Page)=>p.locator('[data-ppte-stage] [data-ppte-element-id="text_title"]').first()
   const flush=()=>page.locator('[data-ppte-notes-input]').click()
   async function save(){const [d]=await Promise.all([page.waitForEvent('download'),page.locator('[data-ppte-action="save"]').click()]);const path=await d.path();assert.ok(path);return openCheckpoint(path).document}

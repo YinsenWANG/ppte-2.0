@@ -223,14 +223,21 @@ test('A05 atomic publication retries a writer arriving after target preflight', 
 }))
 
 test('A19 staged distributable carries root version and exact build manifest', () => {
-  execFileSync('pnpm', ['host:build'], { stdio: 'pipe' })
-  execFileSync(process.execPath, ['scripts/stage-package.mjs'], { stdio: 'pipe' })
-  const staged = JSON.parse(readFileSync('artifacts/npm-package/package.json', 'utf8'))
-  assert.equal(staged.version, PPTE_APP_VERSION)
-  assert.deepEqual(readFileSync('artifacts/npm-package/build-manifest.json'), readFileSync('artifacts/build-manifest.json'))
-  const version = JSON.parse(execFileSync(process.execPath, ['artifacts/npm-package/dist/apps/cli/index.js', '--version'], { encoding: 'utf8' }))
-  assert.equal(version.version, staged.version)
-  assert.equal(built.html.includes(`name="ppte-application-version" content="${staged.version}"`), true)
+  const directory = mkdtempSync(join(tmpdir(), 'ppte-c04-stage-'))
+  const hostDirectory = join(directory, 'host')
+  const stage = join(directory, 'package')
+  try {
+    execFileSync('pnpm', ['host:build', '--outDir', hostDirectory], { stdio: 'pipe' })
+    execFileSync(process.execPath, ['scripts/stage-package.mjs', stage, hostDirectory], { stdio: 'pipe' })
+    const staged = JSON.parse(readFileSync(join(stage, 'package.json'), 'utf8'))
+    assert.equal(staged.version, PPTE_APP_VERSION)
+    assert.deepEqual(readFileSync(join(stage, 'build-manifest.json')), readFileSync('artifacts/build-manifest.json'))
+    assert.deepEqual(readFileSync(join(stage, 'host/index.html')), readFileSync(join(hostDirectory, 'index.html')))
+    symlinkSync(join(process.cwd(), 'node_modules'), join(stage, 'node_modules'), 'dir')
+    const version = JSON.parse(execFileSync(process.execPath, [join(stage, 'dist/apps/cli/index.js'), '--version'], { encoding: 'utf8' }))
+    assert.equal(version.version, staged.version)
+    assert.equal(built.html.includes(`name="ppte-application-version" content="${staged.version}"`), true)
+  } finally { rmSync(directory, { recursive: true, force: true }) }
 })
 
 test('A05 embedded font bytes are audited independently of a recomputed identity', () => {

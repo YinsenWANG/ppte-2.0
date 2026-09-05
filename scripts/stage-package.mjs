@@ -6,14 +6,16 @@ import {
   rmSync,
   chmodSync,
 } from "node:fs";
-const root = "artifacts/npm-package";
+// Optional destinations let verification stage isolated builds concurrently.
+const root = process.argv[2] ?? "artifacts/npm-package";
+const hostDirectory = process.argv[3] ?? "apps/host/dist";
 rmSync(root, { recursive: true, force: true });
 mkdirSync(root, { recursive: true });
 cpSync("dist/packages", `${root}/dist/packages`, { recursive: true });
 for (const app of ["cli", "mcp"])
   cpSync(`dist/apps/${app}`, `${root}/dist/apps/${app}`, { recursive: true });
 mkdirSync(`${root}/host`, { recursive: true });
-cpSync("apps/host/dist/index.html", `${root}/host/index.html`, {
+cpSync(`${hostDirectory}/index.html`, `${root}/host/index.html`, {
   recursive: false,
 });
 cpSync("skills/ppte", `${root}/skills/ppte`, { recursive: true });
