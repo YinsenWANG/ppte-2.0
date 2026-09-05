@@ -708,3 +708,5 @@ function stringArray(args: Record<string, unknown>, key: string): string[] { ret
 function findElementSlide(document: PpteDocument, elementId: string): string | undefined { return document.slideOrder.find((slideId) => Boolean(document.slides[slideId]?.elements[elementId])) }
 function revisionOf(document: PpteDocument): string { return canonicalRevision(document) }
 function readPointer(root: unknown, path: string): unknown { if (!path || path === '/') return root; let current: unknown = root; for (const token of path.slice(1).split('/').map((item) => item.replaceAll('~1', '/').replaceAll('~0', '~'))) { if (current === null || typeof current !== 'object') return undefined; current = Array.isArray(current) ? current[Number(token)] : (current as Record<string, unknown>)[token] } return current }
+
+export { listDesignStyles, inspectDesignStyle, planDesignWorkflow } from './design-workflow.js'

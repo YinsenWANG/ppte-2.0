@@ -36,6 +36,7 @@ export function authoringProject(input: AuthoringInput): AuthoringProject {
 export function buildAuthoringTransaction(
   document: PpteDocument,
   input: AuthoringInput,
+  context: Partial<import("../../design-compiler/src/index.js").CompilePresentationContext> = {},
 ): Transaction {
   const project = authoringProject(input);
   const raw = project.presentation;
@@ -56,6 +57,7 @@ export function buildAuthoringTransaction(
     })),
   };
   const draft = compilePresentation(ir, {
+    ...context,
     canvas: document.canvas,
     theme: project.theme ?? document.theme,
   });

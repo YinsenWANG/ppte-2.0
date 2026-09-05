@@ -41,3 +41,7 @@ The example illustrates structure, not finished slide content. Replace its instr
 Every slide has a unique `slideKey`; every block a unique key within that slide. If `semanticKey` is omitted the compiler scopes it to the slide. Explicit semantic keys must be globally unique. The compiler selects a declared Recipe; `layoutIntent.preferredRecipeIds` can guide selection. Use `ppte tool ... apply_layout_recipe` to preview an alternative layout on an existing slide.
 
 Charts use structured columns, rows and encoding in `block.content`; images use `{ "assetId": "..." }`. The envelope supplies resource definitions and bytes. Source/fact IDs must resolve. The compiler rejects malformed IR and critical text overflow; simplify wording or choose a suitable layout rather than silently shrinking important text or converting it to a screenshot.
+
+## Progressive design entry
+
+Use [design-workflow.md](design-workflow.md) after choosing a candidate from `ppte design list` and inspecting only the selected style. `ppte schema design` describes the native JSON contract. The `input` field uses this same envelope; it is not another DeckPlan or an executable script. Keep resource bytes, sources and facts in the envelope, including for representative pages. Representatives are selected from the full real material, never from catalogue demonstration copy.

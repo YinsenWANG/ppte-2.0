@@ -14,10 +14,13 @@ Read the user's actual source material using the host Agent's existing file, PDF
 
 Read [references/authoring.md](references/authoring.md) for the design input contract. Use `ppte schema presentation` and `ppte schema slide` for field definitions. Choose layouts to fit the material; do not duplicate one page to satisfy a requested page count. Keep titles, facts, source references and other important content as semantic objects. Images are embedded assets, never arbitrary document scripts.
 
-1. Write the design to a JSON file.
-2. `ppte compile design.json --out presentation.ppte` validates the whole design, compiles it through the Design Compiler and commits through Core. Fix any errors against the same material; never relabel a placeholder as successful AI generation.
-3. Inspect the resulting slides and validation issues with `ppte inspect` and `ppte tool`. Render/export representative slides and visually inspect them if the host supports image inspection. Verify cited numbers, reading order, overflow and actual page variety.
-4. `ppte deliver presentation.ppte` produces the editable browser copy. Return the artifact marked `primary:true`; retain `.ppte` as the source project. A `.preview.html` is not a deliverable.
+1. Extract the audience, present/read usage, objective, verified facts/sources and available assets from the actual material. Read the lightweight index with `ppte design list`; consider at most three candidates, then `ppte design inspect <selected-style>` for that style's design rationale, exclusions and executable recipes. Do not load all recipe bodies.
+2. Read [references/design-workflow.md](references/design-workflow.md) only when entering design planning. Author real cover, body and complex-data representatives from the same brief, then plan → preview → apply them in a scratch project. Inspect rendered representatives before compiling the full deck. If image inspection is unavailable, record `unverified` and the limitation.
+3. Continue directly within existing user authorization; “make the deck” authorizes choosing a style and proceeding. Do not add a mandatory style-approval pause. Compile the full material in a separate fresh project, review its proposed transaction and apply through the same preview/commit engine.
+4. After rendering, perform at most two automatic local repair rounds. Record changed object IDs, reasons and hard-constraint results per round. Retain reviewable artifacts and list unresolved failures when the cap is reached; never loop indefinitely or remove facts to pass.
+5. `ppte design validate presentation.ppte` reports structural checks separately from visual/Office `unverified`. `ppte deliver presentation.ppte` produces the editable browser copy. Return its `primary:true` artifact, retain `.ppte`, and attach the delivery report with its actual artifact identity. A `.preview.html` is not a deliverable.
+
+Legacy `compile`, `preview`, `commit` and `deliver` remain available. The native workflow uses the current Agent and local CLI, with no MCP server, additional model or model key.
 
 ## Edit an existing project
 

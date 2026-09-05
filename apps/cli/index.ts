@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { auditPortableBundle, decodePortable } from '../../packages/portable-runtime/src/index.js';
 import { PPTE_APP_VERSION } from '../../packages/schema/src/version.js';
 import { inspectHistoryFile, repairHistoryCopy } from '../../packages/node-runtime/src/history-repair.js'
 import {compareDocuments,compareTwoWayDocuments,createPatch} from '../../packages/reviewer/src/index.js'
@@ -22,6 +23,7 @@ import {
 } from "../../packages/canonical-json/src/index.js";
 import { PpteSession } from "../../packages/core/src/index.js";
 import {
+  listDesignStyles, inspectDesignStyle, planDesignWorkflow,
   AGENT_TOOL_DEFINITIONS,
   AgentToolServer,
   type AgentToolName,
@@ -43,13 +45,20 @@ import {
   exportImagePptx,
   exportSemanticPptx,
 } from "../../packages/exporter-pptx/src/index.js";
-import { MCP_TOOL_INPUT_SCHEMAS } from "../../packages/agent-tools/src/tool-schemas.js";
+import { DESIGN_COMMAND_SCHEMAS, MCP_TOOL_INPUT_SCHEMAS } from "../../packages/agent-tools/src/tool-schemas.js";
 import type {
   Transaction,
   TransactionScope,
 } from "../../packages/schema/src/index.js";
 
 const HELP = `PPTe CLI — file-based presentation tools; no daemon or model credentials.
+ppte design list [--query <text>] [--limit <1..3>]
+ppte design inspect <style>
+ppte design plan <empty-project.ppte> --args <workflow.json> --out <plan.json>
+ppte design preview <project.ppte> --plan <plan.json> --out <review.json> [--round <0..2>] [--scope <scope.json>]
+ppte design preview <project.ppte> --transaction <edit.json> --out <review.json> [--round <0..2>] [--scope <scope.json>]
+ppte design apply <project.ppte> --preview <review.json> [--confirmed]
+ppte design validate <project.ppte> [--artifact <editable.html>]
 ppte new <project.ppte> [--title "Title"]
 ppte compile <design.json> --out <project.ppte>
 ppte inspect <project.ppte>
@@ -66,7 +75,7 @@ ppte undo|redo <project.ppte> --expect-revision <revision>
 ppte deliver <project.ppte> [--replace-existing --confirmed]
 ppte export <project.ppte> --format pdf|png|pptx|pptx-image --out <file>
 ppte host --out <editor.html>
-ppte schema [presentation|slide|transaction|document|tool-name]
+ppte schema [design|presentation|slide|transaction|document|tool-name]
 ppte skill-install --out <native-skill-directory>
 All results are JSON on stdout (except --help); errors exit nonzero.
 Compile consumes genuine Presentation IR authored by your existing Agent. It does not call a model.
@@ -115,6 +124,7 @@ function receiptHash(r: any) {
     transaction: r.transaction,
     scope: r.scope,
     ...(r.resources?{resources:r.resources}:{}),
+    ...(r.designReview ? { designReview: r.designReview } : {}),
   });
 }
 export function runCli(argv: string[]): any {
@@ -138,7 +148,45 @@ export function runCli(argv: string[]): any {
     });
     return { ok: true, path: resolve(output) };
   }
+  if (command === "design") {
+    if (!path || !Object.hasOwn(DESIGN_COMMAND_SCHEMAS, path)) throw new Error('DESIGN_COMMAND_UNKNOWN: use list/inspect/plan/preview/apply/validate.')
+    if (path === 'list') return listDesignStyles(typeof flags.query === 'string' ? flags.query : '', flags.limit === undefined ? 3 : Number(flags.limit))
+    if (path === 'inspect') return inspectDesignStyle(tool)
+    if (!tool) throw new Error('ARGUMENT_MISSING: provide a project path.')
+    if (path === 'plan') {
+      const workspace = openFileSession(resolve(tool), { readonly: true })
+      return planDesignWorkflow(workspace.session.getDocument(), json(required(flags, 'args'))).then(result => {
+        freshOutput(required(flags, 'out'), JSON.stringify(result, null, 2) + '\n')
+        return result
+      })
+    }
+    if (path === 'preview') {
+      const round = flags.round === undefined ? 0 : Number(flags.round)
+      if (!Number.isInteger(round) || round < 0 || round > 2) throw new Error('DESIGN_REPAIR_LIMIT: at most two automatic repair rounds; retain the last reviewable artifact and report unresolved issues.')
+      if (Boolean(flags.plan) === Boolean(flags.transaction)) throw new Error('DESIGN_ARGUMENT_INVALID: choose exactly one of --plan or --transaction.')
+    }
+    if (path === 'validate') {
+      const workspace = openFileSession(resolve(tool), { readonly: true })
+      const issues = validateRuntimeDocument(workspace.session.getDocument())
+      let artifactIdentity
+      if (typeof flags.artifact === 'string') {
+        const html = readFileSync(flags.artifact, 'utf8'), audit = auditPortableBundle(html)
+        issues.push(...audit.issues)
+        if (audit.ok) {
+          const payload = decodePortable(html)
+          const sameDocument = canonicalHash(payload.document) === canonicalHash(workspace.session.getDocument())
+          const sameHistory = canonicalHash(payload.recentTransactions ?? []) === canonicalHash(workspace.session.getHistory().map(h => h.transaction)) && canonicalHash(payload.redoHistory ?? []) === canonicalHash(workspace.session.getRedoHistory())
+          if (!sameDocument || !sameHistory) issues.push({ code: 'DESIGN_ARTIFACT_STALE', severity: 'error', message: 'Artifact document/history differs from the current source; deliver and validate again.' })
+          else artifactIdentity = audit.artifactIdentity
+        }
+      }
+      return { ok: !issues.some(i => i.severity === 'error'), artifactIdentity, revision: workspace.session.getRevision(), identity: canonicalHash({ document: workspace.session.getDocument(), history: workspace.session.getHistory(), resources: workspace.resources }), issues, visualStatus: 'unverified', officeStatus: 'unverified', maxRepairRounds: 2 }
+    }
+    const forwarded = argv.slice(3)
+    return runCli([path === 'apply' ? 'commit' : path, tool, ...forwarded])
+  }
   if (command === "schema") {
+    if (path === 'design') return { ok: true, commands: DESIGN_COMMAND_SCHEMAS }
     const files: Record<string, string> = {
       presentation: "presentation-ir",
       slide: "slide-ir",
@@ -167,6 +215,7 @@ export function runCli(argv: string[]): any {
       tools: path
         ? { [name]: MCP_TOOL_INPUT_SCHEMAS[name] }
         : MCP_TOOL_INPUT_SCHEMAS,
+      commands: path ? undefined : { design: DESIGN_COMMAND_SCHEMAS },
     };
   }
   if (command === "host") {
@@ -263,7 +312,9 @@ export function runCli(argv: string[]): any {
     if (command === "preview" || command === "patch-preview") {
       const patch=command==='patch-preview'?decodePatch(new Uint8Array(readFileSync(required(flags,'patch')))):undefined;
       if(patch){const checked=session.previewPatch(patch);if(!checked.ok)return checked}
-      const transaction = patch?buildPatchTransaction(patch):json(required(flags, "transaction")) as Transaction;
+      const designPlan = typeof flags.plan === 'string' ? json(flags.plan) : undefined;
+      if (designPlan && (!designPlan.ok || !designPlan.transaction)) throw new Error('DESIGN_PLAN_FAILED: cannot preview a failed plan.');
+      const transaction = patch?buildPatchTransaction(patch):designPlan ? designPlan.transaction : json(required(flags, "transaction")) as Transaction;
       const preview = agent.execute("preview_transaction", { transaction });
       if (!preview.ok) return preview;
       const data = preview.data as any;
@@ -275,6 +326,8 @@ export function runCli(argv: string[]): any {
         transaction,
         scope,
         ...(patch?{resources:{assets:Object.fromEntries(Object.entries(patch.assets??{}).map(([id,b])=>[id,Buffer.from(b).toString('base64')])),fonts:Object.fromEntries(Object.entries(patch.fonts??{}).map(([id,b])=>[id,Buffer.from(b).toString('base64')]))}}:{}),
+        ...(designPlan ? { resources: designPlan.resources } : {}),
+        ...(flags.round !== undefined ? { designReview: { round: Number(flags.round), reason: transaction.reason ?? transaction.changeContract.userIntentSummary, changedObjectIds: [...new Set(transaction.operations.flatMap((op: any) => [op.slideId, op.elementId].filter(Boolean)))], hardConstraintIssues: preview.issues } } : {}),
         diff: preview.diff ?? data.diff,
         issues: preview.issues,
         requiresConfirmation:
@@ -369,7 +422,7 @@ export function runCli(argv: string[]): any {
 const entry = process.argv[1];
 if (entry && realpathSync(entry) === fileURLToPath(import.meta.url)) {
   try {
-    const result = runCli(process.argv.slice(2));
+    const result = await runCli(process.argv.slice(2));
     if (result.help) process.stdout.write(result.help);
     else {
       process.stdout.write(JSON.stringify(result) + "\n");

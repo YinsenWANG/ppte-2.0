@@ -111,3 +111,13 @@ export const MCP_TOOL_INPUT_SCHEMAS: Record<AgentToolName | 'deliver_presentatio
     confirmed: { ...booleanSchema, description: 'Required for replacing an existing sibling.' },
   }, [], false),
 }
+
+/** Native CLI contracts; these commands do not require an MCP transport. */
+export const DESIGN_COMMAND_SCHEMAS: Record<string, JsonSchema> = {
+  list: object({ query: stringSchema, limit: { type: 'integer', minimum: 1, maximum: 3, default: 3 } }, [], false),
+  inspect: object({ style: { type: 'string', enum: ['business', 'swiss', 'editorial', 'launch'] } }, ['style'], false),
+  plan: object({ input: documentSchema, style: { type: 'string', enum: ['business', 'swiss', 'editorial', 'launch'] }, usage: { type: 'string', enum: ['present', 'read'] }, stage: { type: 'string', enum: ['representatives', 'deck'] }, representativeKeys: object({ cover: stringSchema, body: stringSchema, data: stringSchema }, ['cover', 'body', 'data'], false), seed: stringSchema }, ['input', 'style', 'usage', 'stage', 'representativeKeys'], false),
+  preview: object({ plan: stringSchema, transaction: stringSchema, out: stringSchema, scope: stringSchema, round: { type: 'integer', minimum: 0, maximum: 2, default: 0 } }, ['out'], false),
+  apply: object({ preview: stringSchema, confirmed: booleanSchema }, ['preview'], false),
+  validate: object({ artifact: stringSchema }, [], false),
+}
