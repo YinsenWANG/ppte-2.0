@@ -739,7 +739,7 @@
       "milestone": "M1",
       "priority": "P1",
       "title": "活动文本内核的受控选型实验",
-      "status": "planned",
+      "status": "done",
       "effort": "M",
       "ownerRole": "文字 / 验收",
       "dependsOn": [
@@ -770,7 +770,19 @@
         "A20"
       ],
       "releaseRequired": true,
-      "evidence": [],
+      "evidence": [
+        "commit:1469cc38029ffc9385b18d87d751dfe1ce54240c",
+        "tests/text-kernel-poc.test.ts",
+        "tests/fixtures/evolution/text-poc.json",
+        "docs/evolution/decisions/text-kernel.md",
+        "docs/evolution/E02_EVIDENCE.md",
+        "docs/evolution/quality/e02-text-kernel-measurements.json",
+        "docs/evolution/quality/e02-blackbox-start.json",
+        "docs/evolution/quality/e02-blackbox-final.json",
+        "pnpm typecheck && pnpm build && pnpm test: 176 passed (baseline 171, +5); no skipped tests",
+        "pnpm blackbox:final: 69 green / 0 red (baseline 69 / 0; no new reds)",
+        "Native selected; PM budget passes but minimal mapping loses stable run identity. Native range/paste gaps and real IME/Safari remain explicitly unverified for E03/E07 acceptance."
+      ],
       "budgetReference": {
         "version": "c01-m1-v1",
         "path": "docs/evolution/quality/m1-dependency-budget.json",
