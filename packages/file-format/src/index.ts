@@ -9,7 +9,7 @@ import { assertDocumentCompatibility, profileDescriptor, checkCompatibility, inf
 import { readJournal, replayJournal } from '../../recovery-journal/src/index.js'
 import type { BlobResolver } from '../../recovery-journal/src/index.js'
 import { validateRuntimeDocument, validateTransactionShape } from '../../validation/src/index.js'
-import { PPTE_FORMAT, PPTE_FORMAT_VERSION, PPTE_OPERATION_PROTOCOL_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
+import { PPTE_FORMAT, PPTE_FORMAT_VERSION } from '../../schema/src/index.js'
 import { attachSessionRestoreContext, readPersistedHistoryMetadata } from '../../schema/src/file-format.js'
 import type { PpteDocument, PpteManifest, PortableProfile, Revision, SessionHistoryEntrySnapshot, Transaction, ValidationIssue } from '../../schema/src/index.js'
 import { ContentAddressedStore } from './cas.js'
@@ -177,7 +177,7 @@ export function writeCheckpoint(document: PpteDocument, target: string, options:
   const manifest: PpteManifest = {
     format: 'ppte',
     formatVersion: '2',
-    schemaVersion: '2.0.0',
+    schemaVersion: profileDescriptor(compatibilityProfile).schemaVersion,
     operationProtocolVersion: profileDescriptor(compatibilityProfile).operationProtocolVersion,
     compatibilityProfile,
     documentId: document.documentId,
@@ -340,7 +340,7 @@ export function buildCheckpointBytes(document: PpteDocument, options: Checkpoint
   const manifest: PpteManifest = {
     format: 'ppte',
     formatVersion: '2',
-    schemaVersion: '2.0.0',
+    schemaVersion: profileDescriptor(compatibilityProfile).schemaVersion,
     operationProtocolVersion: profileDescriptor(compatibilityProfile).operationProtocolVersion,
     compatibilityProfile,
     documentId: document.documentId,
@@ -373,7 +373,7 @@ export function cleanDocumentSnapshot(document: PpteDocument): PpteDocument {
 
 export function validateManifest(manifest: PpteManifest): void {
   if (!manifest || typeof manifest !== 'object') throw new Error('CHECKPOINT_FAILED: manifest must be an object')
-  if (manifest.format !== PPTE_FORMAT || manifest.formatVersion !== PPTE_FORMAT_VERSION || manifest.schemaVersion !== PPTE_SCHEMA_VERSION) throw new Error('CHECKPOINT_FAILED: unsupported manifest format or schema version')
+  if (manifest.format !== PPTE_FORMAT || manifest.formatVersion !== PPTE_FORMAT_VERSION || !['2.0.0', '2.1.0'].includes(manifest.schemaVersion)) throw new Error('CHECKPOINT_FAILED: unsupported manifest format or schema version')
   const compatibility = checkCompatibility(manifest)
   if (!compatibility.ok || compatibility.disposition !== 'native') throw new Error(`CHECKPOINT_FAILED: ${compatibility.issues[0]?.code ?? 'COMPATIBILITY_PROFILE_UNSUPPORTED'}`)
   if (typeof manifest.documentId !== 'string' || !manifest.documentId || typeof manifest.contentRevision !== 'string' || !/^sha256-[0-9a-fA-F]{64}$/.test(manifest.contentRevision)) throw new Error('CHECKPOINT_FAILED: invalid manifest identity or revision')

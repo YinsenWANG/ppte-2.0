@@ -2,7 +2,7 @@ import { canonicalRevision } from '../../canonical-json/src/index.js'
 import { GA_C_CHART_TYPES, validateChartContract } from '../../charts/src/index.js'
 import { checkFactSourceConsistency } from '../../facts/src/index.js'
 import { validateDocument } from '../../schema/src/index.js'
-import { checkGlyphCoverage, inspectGlyphCoverage, textContent, validateTextOverflow } from '../../validation/src/index.js'
+import { effectiveRunStyle, checkGlyphCoverage, inspectGlyphCoverage, textContent, validateTextOverflow } from '../../validation/src/index.js'
 import type { Element, PpteDocument, ValidationIssue } from '../../schema/src/index.js'
 
 export type CapabilityTarget = 'portable-viewer' | 'portable-quick-fix' | 'portable-light-edit' | 'presenter' | 'pdf' | 'png' | 'pptx-image' | 'pptx-semantic'
@@ -19,6 +19,8 @@ export interface CapabilityItem {
   sourcePath?: string
   /** True when a semantic Chart is emitted as an editable Office chart part. */
   nativeChart?: boolean
+  /** Requested run families/sizes retained by the selected target; Office still may substitute fonts. */
+  runFonts?: Array<{fontFamily:string;fontSize:number}>
 }
 
 export interface CapabilityReport {
@@ -73,6 +75,7 @@ function capabilityForElement(document: PpteDocument, slideId: string, element: 
   const nativePptxChart = target === 'pptx-semantic' && element.type === 'chart' && ['bar', 'line', 'pie'].includes(element.chartType)
   const item: CapabilityItem = { id: `${slideId}:${element.id}`, slideId, elementId: element.id, type: element.type, status, ...(nativePptxChart ? { nativeChart: true } : {}) }
   if (element.type === 'text') {
+    if(element.content.paragraphs.some(p=>p.runs.some(r=>r.marks?.fontFamily!==undefined||r.marks?.fontSize!==undefined))) item.runFonts=element.content.paragraphs.flatMap(p=>p.runs.map(r=>{const font=effectiveRunStyle(document,element,r.marks);return {fontFamily:font.fontFamily,fontSize:font.fontSize}}))
     const glyph = inspectGlyphCoverage(document, element, undefined, { strict: target === 'portable-quick-fix' || target === 'portable-light-edit' })
     const glyphIssues = checkGlyphCoverage(document, element, undefined, { strict: target === 'portable-quick-fix' || target === 'portable-light-edit' })
     if (glyphIssues.length) {

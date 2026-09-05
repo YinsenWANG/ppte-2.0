@@ -22,14 +22,18 @@
         "ppte-2.0-ga-a.1",
         "ppte-2.0-ga-b.1",
         "ppte-2.0-ga-c.1",
-        "ppte-2.0-edit.1"
+        "ppte-2.0-edit.1",
+        "ppte-2.1-text-run.1"
       ]
     },
     "formatVersion": {
       "const": "2"
     },
     "schemaVersion": {
-      "const": "2.0.0"
+      "enum": [
+        "2.0.0",
+        "2.1.0"
+      ]
     },
     "operationProtocolVersion": {
       "enum": [
@@ -123,11 +127,61 @@
         }
       },
       "else": {
+        "if": {
+          "properties": {
+            "id": {
+              "const": "ppte-2.1-text-run.1"
+            }
+          }
+        },
+        "then": {
+          "properties": {
+            "schemaVersion": {
+              "const": "2.1.0"
+            },
+            "operationProtocolVersion": {
+              "const": "1.1"
+            },
+            "portableRuntimeVersion": {
+              "const": "2.1.0"
+            },
+            "runtimeSubset": {
+              "const": "ga-c"
+            },
+            "widgetAbiVersion": {
+              "const": "1.0"
+            },
+            "patchVersion": {
+              "const": "1"
+            }
+          }
+        },
+        "else": {
+          "properties": {
+            "schemaVersion": {
+              "const": "2.0.0"
+            },
+            "operationProtocolVersion": {
+              "const": "1.0"
+            },
+            "portableRuntimeVersion": {
+              "const": "2.0.0"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
         "properties": {
-          "operationProtocolVersion": {
-            "const": "1.0"
-          },
-          "portableRuntimeVersion": {
+          "id": {
+            "const": "ppte-2.0-edit.1"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "schemaVersion": {
             "const": "2.0.0"
           }
         }

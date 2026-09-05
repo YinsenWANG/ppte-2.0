@@ -21,6 +21,7 @@ export const PPTE_OPERATION_PROTOCOL_VERSION = '1.0' as const
 export const PPTE_COMPATIBILITY_PROFILE = 'ppte-2.0-ga-a.1' as const
 export const PPTE_GA_B_COMPATIBILITY_PROFILE = 'ppte-2.0-ga-b.1' as const
 export const PPTE_GA_C_COMPATIBILITY_PROFILE = 'ppte-2.0-ga-c.1' as const
+export const PPTE_TEXT_RUN_COMPATIBILITY_PROFILE = 'ppte-2.1-text-run.1' as const
 export const PPTE_EDIT_COMPATIBILITY_PROFILE = 'ppte-2.0-edit.1' as const
 
 /** Runtime capability gates are explicit so forward-compatible data is never
@@ -44,7 +45,7 @@ export type ValueOrToken<T> =
   | { kind: 'token'; token: string }
 
 export interface PpteDocument {
-  schemaVersion: '2.0.0'
+  schemaVersion: '2.0.0' | '2.1.0'
   documentId: DocumentId
   locale: string
   metadata: DocumentMetadata
@@ -302,7 +303,12 @@ export interface TextRun {
   marks?: TextMarks
 }
 
+/** Omitted overrides inherit TextStyle. Null is a command-only clear sentinel;
+ * persisted marks never contain null. Mixed compares explicit overrides, so an
+ * inherited value and an explicit equal value are mixed. Sizes are canvas du. */
 export interface TextMarks {
+  fontFamily?: ValueOrToken<string>
+  fontSize?: number
   bold?: boolean
   italic?: boolean
   underline?: boolean

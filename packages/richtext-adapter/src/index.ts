@@ -1,3 +1,4 @@
+import { validTextMarks } from '../../schema/src/validation.js'
 import { boundaries } from './ranges.js'
 export * from './ranges.js'
 export * from './transforms.js'
@@ -121,13 +122,8 @@ export function assertSafeRichText(value: RichTextDocument): void {
     for (const run of paragraph.runs) {
       if (!run || !run.id || runIds.has(run.id) || typeof run.text !== 'string' || run.text.includes('\u0000')) throw new Error('Rich text runs require unique ids and NUL-free text.')
       runIds.add(run.id)
-      if (Object.keys(run as unknown as Record<string, unknown>).some((key) => !['id', 'text', 'marks'].includes(key))) throw new Error('Run-level font and font-size fields are not supported.')
-      if(run.marks){
-        for(const key of ['bold','italic','underline','strike'] as const)if(run.marks[key]!==undefined&&typeof run.marks[key]!=='boolean')throw new Error('Boolean mark required')
-        const color=run.marks.color
-        if(color&&!(color.kind==='value'&&/^#[0-9a-f]{6}([0-9a-f]{2})?$/i.test(color.value))&&!(color.kind==='token'&&typeof color.token==='string'))throw new Error('Invalid color mark')
-      }
-      if (run.marks && Object.keys(run.marks).some((key) => !['bold', 'italic', 'underline', 'strike', 'color'].includes(key))) throw new Error('Unsupported run mark.')
+      if (Object.keys(run as unknown as Record<string, unknown>).some((key) => !['id', 'text', 'marks'].includes(key))) throw new Error('Run properties must be id, text and marks.')
+      if(run.marks!==undefined&&!validTextMarks(run.marks))throw new Error('Invalid run marks')
     }
   }
 }

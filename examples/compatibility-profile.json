@@ -1,6 +1,7 @@
 {
   "id": "ppte-2.0-ga-a.1",
   "formatVersion": "2",
+  "runtimeSubset": "ga-a",
   "schemaVersion": "2.0.0",
   "operationProtocolVersion": "1.0",
   "slideIrVersion": "1.0",

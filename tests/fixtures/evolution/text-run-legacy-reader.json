@@ -1,0 +1,242 @@
+{
+  "sourceCommit": "4eb6dd9770b1d4ca1349cce2f412a3a1fc00d21b",
+  "source": "schemas/document.schema.json (marks subschema), schemas/manifest.schema.json",
+  "marks": {
+    "type": "object",
+    "properties": {
+      "bold": {
+        "type": "boolean"
+      },
+      "italic": {
+        "type": "boolean"
+      },
+      "underline": {
+        "type": "boolean"
+      },
+      "strike": {
+        "type": "boolean"
+      },
+      "color": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "value"
+            ],
+            "properties": {
+              "kind": {
+                "const": "value"
+              },
+              "value": {
+                "type": "string",
+                "pattern": "^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "token"
+            ],
+            "properties": {
+              "kind": {
+                "const": "token"
+              },
+              "token": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "additionalProperties": false
+  },
+  "manifest": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://ppte.dev/schemas/2.0/manifest.schema.json",
+    "title": "PPTe Package Manifest",
+    "type": "object",
+    "required": [
+      "format",
+      "formatVersion",
+      "schemaVersion",
+      "operationProtocolVersion",
+      "compatibilityProfile",
+      "documentId",
+      "contentRevision",
+      "title",
+      "createdAt",
+      "updatedAt",
+      "requiredWidgets",
+      "clean",
+      "files"
+    ],
+    "properties": {
+      "format": {
+        "const": "ppte"
+      },
+      "formatVersion": {
+        "const": "2"
+      },
+      "schemaVersion": {
+        "const": "2.0.0"
+      },
+      "operationProtocolVersion": {
+        "enum": [
+          "1.0",
+          "1.1"
+        ]
+      },
+      "compatibilityProfile": {
+        "enum": [
+          "ppte-2.0-ga-a.1",
+          "ppte-2.0-ga-b.1",
+          "ppte-2.0-ga-c.1",
+          "ppte-2.0-edit.1"
+        ]
+      },
+      "documentId": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 256
+      },
+      "contentRevision": {
+        "type": "string",
+        "pattern": "^sha256-[0-9a-fA-F]{64}$"
+      },
+      "title": {
+        "type": "string"
+      },
+      "createdAt": {
+        "type": "string"
+      },
+      "updatedAt": {
+        "type": "string"
+      },
+      "requiredWidgets": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "type",
+            "versionRange",
+            "fallbackRequired"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "versionRange": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "fallbackRequired": {
+              "const": true
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "clean": {
+        "type": "boolean"
+      },
+      "files": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "path",
+            "mediaType",
+            "byteLength",
+            "sha256",
+            "required"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "pattern": "^(document\\.json|assets/|fonts/|history/)"
+            },
+            "mediaType": {
+              "type": "string"
+            },
+            "byteLength": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{64}$"
+            },
+            "required": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "history": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "enum": [
+              "standard",
+              "audit",
+              "clean"
+            ]
+          },
+          "snapshotRevision": {
+            "type": "string",
+            "pattern": "^sha256-[0-9a-fA-F]{64}$"
+          },
+          "recentTransactionCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "deepHistoryExternal": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "mode"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "additionalProperties": false,
+    "allOf": [
+      {
+        "if": {
+          "properties": {
+            "compatibilityProfile": {
+              "const": "ppte-2.0-edit.1"
+            }
+          }
+        },
+        "then": {
+          "properties": {
+            "operationProtocolVersion": {
+              "const": "1.1"
+            }
+          }
+        },
+        "else": {
+          "properties": {
+            "operationProtocolVersion": {
+              "const": "1.0"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

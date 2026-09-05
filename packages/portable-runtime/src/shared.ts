@@ -24,7 +24,7 @@ import { plainTextToRichText, editRichText } from '../../richtext-adapter/src/in
 import { buildCapabilityReport, type CapabilityReport } from '../../capability/src/index.js'
 import { buildFactUpdateTransaction } from '../../facts/src/index.js'
 import { assertDocumentCompatibility, profileDescriptor, inferCompatibilityProfile, runtimeProfileForCompatibility } from '../../compatibility/src/index.js'
-import { PPTE_FORMAT, PPTE_FORMAT_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
+import { PPTE_FORMAT, PPTE_FORMAT_VERSION } from '../../schema/src/index.js'
 import { withErrorSemantics } from '../../schema/src/errors.js'
 import type { Asset, AssetId, ChartData, Element, FontId, Frame, NormalizedRect, PpteDocument, PpteManifest, PortableOrigin, PortableProfile, Revision, RuntimeProfile, Transaction, ValidationIssue } from '../../schema/src/index.js'
 import { advancePresenterState, animationSteps, normalizePresenterState, retreatPresenterState, type PresenterAnimationState } from './presenter-state.js'
@@ -659,7 +659,7 @@ export function buildPortableCheckpointBytes(document: PpteDocument, options: { 
   const manifest: PpteManifest = {
     format: PPTE_FORMAT,
     formatVersion: PPTE_FORMAT_VERSION,
-    schemaVersion: PPTE_SCHEMA_VERSION,
+    schemaVersion: profileDescriptor(compatibilityProfile).schemaVersion,
     operationProtocolVersion: profileDescriptor(compatibilityProfile).operationProtocolVersion,
     compatibilityProfile,
     documentId: snapshot.documentId,

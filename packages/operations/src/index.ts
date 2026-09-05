@@ -1,3 +1,4 @@
+import { validTextMarks } from '../../schema/src/validation.js'
 import { cloneJson } from '../../canonical-json/src/index.js'
 import { syncChartFact, validateChartContract } from '../../charts/src/index.js'
 import { formatFactValue } from '../../facts/src/index.js'
@@ -1023,8 +1024,8 @@ function assertRichText(content: unknown): asserts content is TextElement['conte
     for (const run of paragraph.runs) {
       if (!run || typeof run !== 'object' || !run.id || runIds.has(run.id) || typeof run.text !== 'string' || run.text.includes('\u0000')) throw error('SCHEMA_INVALID', 'Rich text runs require unique ids and NUL-free text.')
       runIds.add(run.id)
-      if (Object.keys(run as unknown as Record<string, unknown>).some((key) => !['id', 'text', 'marks'].includes(key))) throw error('SCHEMA_INVALID', 'Run-level font and font-size fields are not supported.')
-      if (run.marks && Object.keys(run.marks).some((key) => !['bold', 'italic', 'underline', 'strike', 'color'].includes(key))) throw error('SCHEMA_INVALID', 'Unsupported run mark.')
+      if (Object.keys(run as unknown as Record<string, unknown>).some((key) => !['id', 'text', 'marks'].includes(key))) throw error('SCHEMA_INVALID', 'Run properties must be id, text and marks.')
+      if(run.marks!==undefined&&!validTextMarks(run.marks))throw new Error('Invalid run marks')
     }
   }
 }

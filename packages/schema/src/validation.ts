@@ -20,7 +20,7 @@ export function validateDocument(document: PpteDocument, options: { runtimeSubse
   const root = document as unknown as Record<string, unknown> | undefined
   if (!root || typeof root !== 'object') return [withErrorSemantics({ code: 'SCHEMA_INVALID', severity: 'error', message: 'Document must be an object.', path: '/' })]
 
-  if (document.schemaVersion !== '2.0.0') add('SCHEMA_VERSION_UNSUPPORTED', 'Only document schema 2.0.0 is supported.')
+  if (!['2.0.0', '2.1.0'].includes(document.schemaVersion)) add('SCHEMA_VERSION_UNSUPPORTED', 'Only document schemas 2.0.0 and 2.1.0 are supported.')
   if (!document.documentId || typeof document.documentId !== 'string') add('SCHEMA_INVALID', 'documentId is required.', { path: '/documentId' })
   if (!document.locale || typeof document.locale !== 'string' || document.locale.length < 2) add('SCHEMA_INVALID', 'locale is required.', { path: '/locale' })
   if (!document.metadata || typeof document.metadata !== 'object' || typeof document.metadata.title !== 'string' || !document.metadata.title) add('SCHEMA_INVALID', 'metadata.title is required.', { path: '/metadata/title' })
@@ -264,9 +264,9 @@ function validateText(element: TextElement, add: (code: string, message: string,
       }
       runIds.add(run.id)
       if (typeof run.text !== 'string' || run.text.includes('\u0000')) add('SCHEMA_INVALID', 'Text must be a NUL-free string.', { slideId, elementId: element.id })
-      if (run && Object.keys(run as unknown as Record<string, unknown>).some((key) => !['id', 'text', 'marks'].includes(key))) add('SCHEMA_INVALID', 'Text Run may not contain font or font-size fields.', { slideId, elementId: element.id })
+      if (run && Object.keys(run as unknown as Record<string, unknown>).some((key) => !['id', 'text', 'marks'].includes(key))) add('SCHEMA_INVALID', 'Run font and font-size overrides belong in marks; only id, text and marks are allowed.', { slideId, elementId: element.id })
       const marks = run.marks as Record<string, unknown> | undefined
-      if (marks && (!isPlainObject(marks) || Object.keys(marks).some((key) => !['bold', 'italic', 'underline', 'strike', 'color'].includes(key)) || ['bold', 'italic', 'underline', 'strike'].some((key) => marks[key] !== undefined && typeof marks[key] !== 'boolean') || (marks.color !== undefined && !validValueOrToken(marks.color, 'color')))) add('SCHEMA_INVALID', 'Run marks are invalid or contain unsupported font fields.', { slideId, elementId: element.id })
+      if (marks !== undefined && !validTextMarks(marks)) add('SCHEMA_INVALID', 'Run marks are invalid.', { slideId, elementId: element.id })
     }
   }
 }
@@ -419,3 +419,17 @@ function safeRelativeFontPath(value: string): boolean { return typeof value === 
 export type RuntimeElement = TextElement | ImageElement | ShapeElement | ChartElement | import('./document.js').ComponentElement
 export type RuntimeShape = ShapeElement
 export type RuntimeImage = ImageElement
+
+/** Shared literal-reader contract, including Operation Engine and patch payloads. */
+export function validTextMarks(value: unknown): boolean {
+  if (!isPlainObject(value) || !hasOnlyKeys(value, ['bold','italic','underline','strike','color','fontFamily','fontSize'])) return false
+  if (['bold','italic','underline','strike'].some(key=>value[key]!==undefined&&typeof value[key]!=='boolean')) return false
+  if (value.color!==undefined&&!validValueOrToken(value.color,'color')) return false
+  if (value.fontSize!==undefined&&!finitePositive(value.fontSize)) return false
+  if (value.fontFamily!==undefined) {
+    if (!validValueOrToken(value.fontFamily,'string')) return false
+    const family=value.fontFamily as {kind:string;value?:string;token?:string}
+    if (!(family.kind==='value'?family.value:family.token)?.trim()) return false
+  }
+  return true
+}

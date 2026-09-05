@@ -1,3 +1,4 @@
+import { effectiveRunStyle, runFontFamilyCss } from '../../validation/src/index.js'
 import { canonicalHash, canonicalJsonString } from '../../canonical-json/src/index.js'
 import { renderChartSvg } from '../../charts/src/index.js'
 import { getBuiltinWidgetRegistry, renderWidgetHtml, renderWidgetSvg, type WidgetRegistry } from '../../widgets/src/index.js'
@@ -199,7 +200,7 @@ function renderText(document: PpteDocument, element: TextElement, frame: string,
     ].join('')
     const align = paragraphStyle ? ` style="${escapeAttr(paragraphStyle)}"` : ''
     const listPrefix = paragraph.list?.type === 'bullet' ? '• ' : paragraph.list?.type === 'number' ? '1. ' : ''
-    const content = paragraph.runs.map((run) => renderRun(document, run.text, run.marks, style.color)).join('')
+    const content = paragraph.runs.map((run) => renderRun(document, run.text, run.marks, style.color, element)).join('')
     const line = `${listPrefix}${content}`
     const paragraphTag = paragraph.list?.type === 'bullet' ? 'ul' : paragraph.list?.type === 'number' ? 'ol' : 'p'
     return paragraphTag === 'p'
@@ -210,14 +211,21 @@ function renderText(document: PpteDocument, element: TextElement, frame: string,
   return `<div data-ppte-element-id="${escapeAttr(element.id)}" data-ppte-type="text" data-ppte-semantic-key="${escapeAttr(element.semanticKey ?? '')}"${editable} style="${box}">${paragraphs}</div>`
 }
 
-function renderRun(document: PpteDocument, text: string, marks: TextElement['content']['paragraphs'][number]['runs'][number]['marks'], fallbackColor: ValueOrToken<`#${string}`>): string {
+function renderRun(document: PpteDocument, text: string, marks: TextElement['content']['paragraphs'][number]['runs'][number]['marks'], fallbackColor: ValueOrToken<`#${string}`>, element: TextElement): string {
   let result = escapeHtml(text)
   if (marks?.bold) result = `<strong>${result}</strong>`
   if (marks?.italic) result = `<em>${result}</em>`
   if (marks?.underline) result = `<u>${result}</u>`
   if (marks?.strike) result = `<s>${result}</s>`
   const color = marks?.color ? resolveColor(marks.color, document, resolveColor(fallbackColor, document, '#111827')) : undefined
-  return color ? `<span style="color:${color}">${result}</span>` : result
+  if (color) result = `<span style="color:${color}">${result}</span>`
+  if (marks?.fontFamily !== undefined || marks?.fontSize !== undefined) {
+    const font = effectiveRunStyle(document, element, marks)
+    const family = marks.fontFamily !== undefined ? `font-family:${escapeAttr(runFontFamilyCss(font.fontFamily))};` : ''
+    const size = marks.fontSize !== undefined ? `font-size:${cssLength(font.fontSize)}` : ''
+    result = `<span style="${family}${size}">${result}</span>`
+  }
+  return result
 }
 
 function renderImage(document: PpteDocument, element: ImageElement, frame: string, options: RenderOptions): string {
@@ -329,15 +337,20 @@ function renderTextSvg(document: PpteDocument, element: TextElement, defs: strin
   const clipId = `ppte-clip-${safeId(element.id)}`
   const overflow = element.overflowPolicy === 'clip' || element.overflowPolicy === 'ellipsis'
   if (overflow) defs.push(`<clipPath id="${escapeAttr(clipId)}"><rect x="0" y="0" width="${number(element.frame.width)}" height="${number(element.frame.height)}" rx="${number(element.boxStyle?.radius ?? 0)}"/></clipPath>`)
+  let baseline = padding.top
+  const hasFonts = element.content.paragraphs.some(p=>p.runs.some(r=>r.marks?.fontSize!==undefined||r.marks?.fontFamily!==undefined))
   const lines = element.content.paragraphs.map((paragraph, paragraphIndex) => {
-    const y = padding.top + style.fontSize * (paragraphIndex + 1) * (style.lineHeight ?? 1.2)
+    baseline += Math.max(style.fontSize, ...paragraph.runs.map(run=>effectiveRunStyle(document,element,run.marks).fontSize)) * (style.lineHeight??1.2)
+    const y = hasFonts ? baseline : padding.top + style.fontSize * (paragraphIndex + 1) * (style.lineHeight ?? 1.2)
     const x = paragraph.align === 'center' ? element.frame.width / 2 : paragraph.align === 'right' ? element.frame.width - padding.right : padding.left
     const anchor = paragraph.align === 'center' ? 'middle' : paragraph.align === 'right' ? 'end' : 'start'
     const prefix = paragraph.list?.type === 'bullet' ? '• ' : paragraph.list?.type === 'number' ? '1. ' : ''
     const runs = paragraph.runs.map((run) => {
       const marks = run.marks
       const color = marks?.color ? resolveColor(marks.color, document, resolveColor(style.color, document, '#111827')) : resolveColor(style.color, document, '#111827')
-      return `<tspan fill="${escapeAttr(color)}"${marks?.bold ? ' font-weight="700"' : ''}${marks?.italic ? ' font-style="italic"' : ''}${marks?.underline ? ' text-decoration="underline"' : ''}${marks?.strike ? ' text-decoration="line-through"' : ''}>${escapeXml(run.text)}</tspan>`
+      const font=effectiveRunStyle(document,element,marks)
+      const fontAttrs=(marks?.fontFamily!==undefined ? ` font-family="${escapeAttr(runFontFamilyCss(font.fontFamily))}"` : '') + (marks?.fontSize!==undefined ? ` font-size="${number(font.fontSize)}"` : '')
+      return `<tspan${fontAttrs} fill="${escapeAttr(color)}"${marks?.bold ? ' font-weight="700"' : ''}${marks?.italic ? ' font-style="italic"' : ''}${marks?.underline ? ' text-decoration="underline"' : ''}${marks?.strike ? ' text-decoration="line-through"' : ''}>${escapeXml(run.text)}</tspan>`
     }).join('')
     return `<text x="${number(x)}" y="${number(y)}" text-anchor="${anchor}" font-family="${escapeAttr(sanitizeFontFamily(resolve(style.fontFamily, document, 'font.body')))}" font-size="${number(style.fontSize)}" font-weight="${number(style.fontWeight ?? 400)}" line-height="${number(style.lineHeight ?? 1.2)}"${style.direction && style.direction !== 'auto' ? ` direction="${style.direction}"` : ''}>${escapeXml(prefix)}${runs}</text>`
   }).join('')

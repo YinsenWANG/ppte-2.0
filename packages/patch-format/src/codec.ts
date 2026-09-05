@@ -1,5 +1,6 @@
+import { validTextMarks } from '../../schema/src/validation.js'
 import { canonicalHash, canonicalJsonString, canonicalRevision, sha256HexBytes } from '../../canonical-json/src/index.js'
-import { assertDocumentCompatibility, requiresEditProtocol, checkCompatibility, runtimeProfileForCompatibility } from '../../compatibility/src/index.js'
+import { assertDocumentCompatibility, hasRunFontOverrides, profileIncludes, TEXT_RUN_PROFILE, requiresEditProtocol, checkCompatibility, runtimeProfileForCompatibility } from '../../compatibility/src/index.js'
 import { withErrorSemantics } from '../../schema/src/errors.js'
 import { applyTransaction } from '../../operations/src/index.js'
 import { computeStructuralDiff } from '../../diff/src/index.js'
@@ -107,6 +108,7 @@ export function decodePatch(data: Uint8Array): PptePatch {
 export function validatePatch(patch: PptePatch): PatchValidationResult {
   if (!patch || typeof patch !== 'object') return { ok: false, issues: [error('PATCH_INVALID', 'Patch must be an object.')] }
   const issues: ValidationIssue[] = []
+  if (hasRunFontOverrides(patch.operations) && !profileIncludes(patch.manifest?.compatibilityProfile, TEXT_RUN_PROFILE.id)) issues.push(error('PATCH_INVALID','Run font marks require the text-run profile.'))
   if (Array.isArray(patch.operations) && requiresEditProtocol({ operations: patch.operations }) && patch.manifest?.operationProtocolVersion !== '1.1') issues.push(error('PATCH_INVALID', 'slide.update.unset requires operation protocol 1.1.'))
   try { validatePatchManifest(patch?.manifest, Array.isArray(patch?.manifest?.files) && patch.manifest.files.length > 0) } catch (cause) { issues.push(error('PATCH_INVALID', cause instanceof Error ? cause.message : String(cause))) }
   if (!Array.isArray(patch.operations) || patch.operations.length === 0) issues.push(error('PATCH_INVALID', 'A patch must contain at least one operation.'))
@@ -353,6 +355,7 @@ function assertPatchRichText(value: unknown): void {
       if (typeof itemRun.id !== 'string' || !itemRun.id || runIds.has(itemRun.id) || typeof itemRun.text !== 'string') throw new Error('text.replaceContent runs require unique ids and string text.')
       if (itemRun.text.includes('\u0000')) throw new Error('text.replaceContent text may not contain NUL.')
       runIds.add(itemRun.id)
+      if(itemRun.marks!==undefined&&!validTextMarks(itemRun.marks))throw new Error('Invalid run marks')
       if (itemRun.marks !== undefined && (!itemRun.marks || typeof itemRun.marks !== 'object' || Array.isArray(itemRun.marks))) throw new Error('text.replaceContent run marks must be an object.')
     }
   }

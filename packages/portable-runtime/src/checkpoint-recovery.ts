@@ -34,7 +34,7 @@ export function assessCheckpointRecovery(bytes: Uint8Array): CheckpointRecoveryA
     const manifest = parse<PpteManifest>('manifest.json')
     result.manifest = manifest
     if (new TextDecoder().decode(archive.get('mimetype')) !== 'application/vnd.ppte+zip') throw new Error('Invalid mimetype')
-    if (!checkCompatibility(manifest).ok || manifest.format !== 'ppte' || manifest.schemaVersion !== '2.0.0' || manifest.formatVersion !== '2') {
+    if (!checkCompatibility(manifest).ok || manifest.format !== 'ppte' || !['2.0.0', '2.1.0'].includes(manifest.schemaVersion) || manifest.formatVersion !== '2') {
       result.snapshotStatus = 'unsupported'; result.history.status = 'unsupported'
       throw new Error('Unsupported checkpoint compatibility descriptor')
     }

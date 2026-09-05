@@ -1,3 +1,4 @@
+import { renderRunFontControls } from '../../editor-dom/src/text-selection.js'
 import { mountEditorShell, editorShellCss } from '../../editor-dom/src/editor-shell.js'
 import { mountImageCrop } from '../../editor-dom/src/image-crop.js'
 import { prepareImage, decodeBrowserImage, planImage } from '../../editor-controller/src/resource-port.js'
@@ -172,6 +173,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
   const slideHtml = useMemo(() => activeSlideId ? renderSlideHtml(documentNode, activeSlideId, renderOptions) : '', [activeSlideId, documentNode, renderOptions])
   textPort.current = {
     colors:()=>sessionRef.current!.getDocument().theme.tokens.colors,
+    fonts:()=>sessionRef.current!.getDocument().theme.tokens.fontFamilies,
     revision: () => sessionRef.current!.getRevision(),
     target: (id: string) => { const d=sessionRef.current!.getDocument(); for(const slideId of d.slideOrder){const element=d.slides[slideId].elements[id];if(element?.type==='text')return {element,slideId}} },
     commit: (tx: Transaction) => {const ok=commitTransaction(tx, undefined, true);return {ok,issues:lastCommitIssues.current}},
@@ -182,7 +184,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
   useLayoutEffect(() => {
     const root=renderedRef.current!
     if(!textSurface.current)textSurface.current=new TextEditingSurface(root, {
-      colors:()=>textPort.current!.colors!(),revision:()=>textPort.current!.revision(),target:id=>textPort.current!.target(id),commit:tx=>textPort.current!.commit(tx),history:redo=>textPort.current!.history(redo),changed:r=>textPort.current!.changed(r),canEdit:()=>textPort.current!.canEdit(),
+      fonts:()=>textPort.current!.fonts!(),colors:()=>textPort.current!.colors!(),revision:()=>textPort.current!.revision(),target:id=>textPort.current!.target(id),commit:tx=>textPort.current!.commit(tx),history:redo=>textPort.current!.history(redo),changed:r=>textPort.current!.changed(r),canEdit:()=>textPort.current!.canEdit(),
     })
     textSurface.current.refresh()
     const surface=root.querySelector<HTMLElement>('.ppte-rendered-slide')!
@@ -739,7 +741,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
         })}
       </div>
     </main>
-    {!presenting&&<aside className="ppte-host-inspector"><details open data-ppte-properties-panel><summary>对象属性</summary><section aria-label="选区格式" onPointerDown={()=>textSurface.current?.remember()}><p>选区格式 · 字号在下方调整整框</p>{textSurface.current?.retainedDrafts().map(d=><div key={d.id}><p>{d.error} · 草稿仍保留</p><textarea aria-label="保留的文字草稿" readOnly value={d.text}/></div>)}{(['bold','italic','underline','strike'] as const).map(mark=><button key={mark} data-ppte-text-mark={mark} onMouseDown={e=>e.preventDefault()} onClick={()=>textSurface.current?.format({[mark]:true})}>{mark}</button>)}<button onMouseDown={e=>e.preventDefault()} onClick={()=>textSurface.current?.format({bold:null,italic:null,underline:null,strike:null,color:null})}>清除选区格式</button><input type="color" aria-label="选区颜色" onChange={e=>textSurface.current?.format({color:{kind:'value',value:e.target.value as `#${string}`}})}/><button onClick={()=>{textSurface.current?.discardActive();setRenderEpoch(n=>n+1);setStatus('已放弃文字草稿')}}>放弃文字草稿</button></section><Inspector key={`${activeSlideId}:${activeElementIds.join(',')}`} document={documentNode} slide={activeSlide} ids={activeElementIds} commit={commitOperations} commitProperty={command=>{
+    {!presenting&&<aside className="ppte-host-inspector"><details open data-ppte-properties-panel><summary>对象属性</summary><section aria-label="选区格式" onPointerDown={()=>textSurface.current?.remember()}><p>选区格式</p><div ref={node=>{if(node&&textSurface.current)renderRunFontControls(node,textSurface.current)}}/>{textSurface.current?.retainedDrafts().map(d=><div key={d.id}><p>{d.error} · 草稿仍保留</p><textarea aria-label="保留的文字草稿" readOnly value={d.text}/></div>)}{(['bold','italic','underline','strike'] as const).map(mark=><button key={mark} data-ppte-text-mark={mark} onMouseDown={e=>e.preventDefault()} onClick={()=>textSurface.current?.format({[mark]:true})}>{mark}</button>)}<button onMouseDown={e=>e.preventDefault()} onClick={()=>textSurface.current?.format({bold:null,italic:null,underline:null,strike:null,color:null,fontFamily:null,fontSize:null})}>清除选区格式</button><input type="color" aria-label="选区颜色" onChange={e=>textSurface.current?.format({color:{kind:'value',value:e.target.value as `#${string}`}})}/><button onClick={()=>{textSurface.current?.discardActive();setRenderEpoch(n=>n+1);setStatus('已放弃文字草稿')}}>放弃文字草稿</button></section><Inspector key={`${activeSlideId}:${activeElementIds.join(',')}`} document={documentNode} slide={activeSlide} ids={activeElementIds} commit={commitOperations} commitProperty={command=>{
       if(!controller().flushSync().ok)return false
       const session=sessionRef.current!
       return commitTransaction(planObjectProperty(session.getDocument(),{revision:session.getRevision(),slideId:activeSlideId,ids:activeElementIds,command,transactionId:`host:properties:${crypto.randomUUID()}`,createdAt:now()}))
@@ -761,7 +763,7 @@ async function readBrowserProject(file: File): Promise<BrowserProject> {
     return {document:diagnosis.document, assetBytes:diagnosis.assetBytes, fontBytes:diagnosis.fontBytes, recentTransactions:diagnosis.recentTransactions, redoHistory:diagnosis.history.retainedRedo}
   }
   const documentNode = JSON.parse(text) as PpteDocument
-  if (documentNode?.schemaVersion && documentNode.schemaVersion !== '2.0.0') throw new UnsupportedProjectError(file, documentNode)
+  if (documentNode?.schemaVersion && !['2.0.0', '2.1.0'].includes(documentNode.schemaVersion)) throw new UnsupportedProjectError(file, documentNode)
   // Raw JSON may only open when the entire document is self-contained.
   buildPortableCheckpointBytes(documentNode, {runtimeProfile:'ga-c', assetBytes:{}, fontBytes:{}})
   return {document:documentNode, assetBytes:{}, fontBytes:{}, recentTransactions:[], redoHistory:[]}

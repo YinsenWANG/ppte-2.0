@@ -58,7 +58,7 @@
   ],
   "properties": {
     "schemaVersion": {
-      "const": "2.0.0"
+      "enum": ["2.0.0", "2.1.0"]
     },
     "documentId": {
       "type": "string",
@@ -1671,6 +1671,48 @@
                                                   "type": "string",
                                                   "minLength": 1,
                                                   "maxLength": 256
+                                                }
+                                              },
+                                              "additionalProperties": false
+                                            }
+                                          ]
+                                        },
+                                        "fontSize": {
+                                          "type": "number",
+                                          "exclusiveMinimum": 0
+                                        },
+                                        "fontFamily": {
+                                          "oneOf": [
+                                            {
+                                              "type": "object",
+                                              "required": [
+                                                "kind",
+                                                "value"
+                                              ],
+                                              "properties": {
+                                                "kind": {
+                                                  "const": "value"
+                                                },
+                                                "value": {
+                                                  "type": "string",
+                                                  "minLength": 1
+                                                }
+                                              },
+                                              "additionalProperties": false
+                                            },
+                                            {
+                                              "type": "object",
+                                              "required": [
+                                                "kind",
+                                                "token"
+                                              ],
+                                              "properties": {
+                                                "kind": {
+                                                  "const": "token"
+                                                },
+                                                "token": {
+                                                  "type": "string",
+                                                  "minLength": 1
                                                 }
                                               },
                                               "additionalProperties": false

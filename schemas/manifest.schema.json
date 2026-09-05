@@ -26,7 +26,10 @@
       "const": "2"
     },
     "schemaVersion": {
-      "const": "2.0.0"
+      "enum": [
+        "2.0.0",
+        "2.1.0"
+      ]
     },
     "operationProtocolVersion": {
       "enum": [
@@ -39,7 +42,8 @@
         "ppte-2.0-ga-a.1",
         "ppte-2.0-ga-b.1",
         "ppte-2.0-ga-c.1",
-        "ppte-2.0-edit.1"
+        "ppte-2.0-edit.1",
+        "ppte-2.1-text-run.1"
       ]
     },
     "documentId": {
@@ -170,9 +174,47 @@
         }
       },
       "else": {
+        "if": {
+          "properties": {
+            "compatibilityProfile": {
+              "const": "ppte-2.1-text-run.1"
+            }
+          }
+        },
+        "then": {
+          "properties": {
+            "schemaVersion": {
+              "const": "2.1.0"
+            },
+            "operationProtocolVersion": {
+              "const": "1.1"
+            }
+          }
+        },
+        "else": {
+          "properties": {
+            "schemaVersion": {
+              "const": "2.0.0"
+            },
+            "operationProtocolVersion": {
+              "const": "1.0"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
         "properties": {
-          "operationProtocolVersion": {
-            "const": "1.0"
+          "compatibilityProfile": {
+            "const": "ppte-2.0-edit.1"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "schemaVersion": {
+            "const": "2.0.0"
           }
         }
       }

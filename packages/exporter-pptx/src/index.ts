@@ -1,3 +1,4 @@
+import { resolveRunFont } from '../../validation/src/index.js'
 import { canonicalRevision, sha256HexBytes } from '../../canonical-json/src/index.js'
 import { buildCapabilityReport, type CapabilityReport } from '../../capability/src/index.js'
 import { writeStoredZip, readStoredZip, type StoredZipEntry } from '../../archive/src/index.js'
@@ -452,6 +453,9 @@ function semanticParagraphXml(paragraph: SemanticPptxParagraph, fontSize: number
 
 function semanticRunXml(run: SemanticPptxRun, fontSize: number, fontFamily: string | undefined, defaultColor: string, opacity: number | undefined, defaultBold: boolean, document: PpteDocument): string {
   const marks = run.marks
+  const resolved = resolveRunFont(document.theme.tokens.fontFamilies, {fontFamily:fontFamily??'Inter',fontSize:fontSize/75}, marks)
+  if (marks?.fontSize !== undefined) fontSize=Math.max(100,Math.round(resolved.fontSize*75))
+  if (marks?.fontFamily !== undefined) fontFamily=resolved.fontFamily
   const color = marks?.color ? resolveTextColor(marks.color, document) ?? defaultColor : defaultColor
   const attributes = [
     ` lang="en-US" sz="${fontSize}"`,
@@ -460,7 +464,7 @@ function semanticRunXml(run: SemanticPptxRun, fontSize: number, fontFamily: stri
     marks?.underline ? ' u="sng"' : '',
     marks?.strike ? ' strike="sng"' : '',
   ].join('')
-  const family = fontFamily ? `<a:latin typeface="${escapeXml(fontFamily)}"/>` : ''
+  const family = fontFamily ? `<a:latin typeface="${escapeXml(fontFamily)}"/>` + (marks?.fontFamily !== undefined ? `<a:ea typeface="${escapeXml(fontFamily)}"/><a:cs typeface="${escapeXml(fontFamily)}"/>` : '') : ''
   return `<a:r><a:rPr${attributes}><a:solidFill>${srgbColorXml(color, opacity)}</a:solidFill>${family}</a:rPr><a:t>${escapeXml(run.text)}</a:t></a:r>`
 }
 

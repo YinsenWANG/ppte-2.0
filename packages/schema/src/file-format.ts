@@ -12,7 +12,7 @@ export interface FileEntry {
 export interface PpteManifest {
   format: 'ppte'
   formatVersion: '2'
-  schemaVersion: '2.0.0'
+  schemaVersion: '2.0.0' | '2.1.0'
   operationProtocolVersion: string
   compatibilityProfile: string
   documentId: DocumentId

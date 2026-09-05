@@ -1,3 +1,4 @@
+import { resolveRunFont, runFontFamilyCss } from '../../validation/src/index.js'
 import type { RichTextDocument, TextElement, Transaction } from '../../schema/src/index.js'
 import { canonicalHash } from '../../canonical-json/src/index.js'
 import { editRichText } from '../../richtext-adapter/src/index.js'
@@ -49,7 +50,7 @@ export function restoreTextSelection(saved:SavedTextSelection, root:HTMLElement,
   root.focus();root.ownerDocument.getSelection()?.setBaseAndExtent(a.node,a.index,h.node,h.index)
   return true
 }
-export function writeText(root:HTMLElement, content:RichTextDocument, colors:Record<string,string>={}) {
+export function writeText(root:HTMLElement, content:RichTextDocument, colors:Record<string,string>={}, fonts:Record<string,string>={}) {
   const doc=root.ownerDocument
   root.replaceChildren(...content.paragraphs.map(p=>{
     const node=doc.createElement(p.list?.type==='bullet'?'ul':p.list?.type==='number'?'ol':'p');node.dataset.ppteParagraphId=p.id
@@ -59,6 +60,12 @@ export function writeText(root:HTMLElement, content:RichTextDocument, colors:Rec
     for(const r of p.runs) {
       const span=doc.createElement('span');span.dataset.ppteRunId=r.id;span.textContent=r.text
       if(r.marks?.bold)span.style.fontWeight='bold'
+      if(r.marks?.fontFamily!==undefined||r.marks?.fontSize!==undefined){
+        const base=root.ownerDocument.defaultView!.getComputedStyle(root)
+        const font=resolveRunFont(fonts,{fontFamily:base.fontFamily,fontSize:parseFloat(base.fontSize)||28},r.marks)
+        if(r.marks.fontFamily!==undefined)span.style.fontFamily=runFontFamilyCss(font.fontFamily)
+        if(r.marks.fontSize!==undefined)span.style.fontSize=`${font.fontSize}px`
+      }
       if(r.marks?.italic)span.style.fontStyle='italic'
       span.style.textDecoration=[r.marks?.underline?'underline':'',r.marks?.strike?'line-through':''].join(' ')
       if(r.marks?.color)span.style.color=r.marks.color.kind==='value'?r.marks.color.value:colors[r.marks.color.token]??''
@@ -94,6 +101,7 @@ export function reconcileTextSurface(root:HTMLElement, html:string, protect:(nod
 
 export interface TextSurfacePort {
   colors?():Record<string,string>
+  fonts?():Record<string,string>
   revision():string
   target(id:string): {element:TextElement;slideId:string}|undefined
   commit(tx:Transaction):FlushResult
@@ -130,7 +138,7 @@ export class TextEditingSurface {
       if(e.key==='Escape'){e.preventDefault();e.stopPropagation();this.discard(n.dataset.ppteElementId!)}
     })
     listen('paste',e=>{const n=this.node(e.target);if(!n||!port.canEdit())return;e.preventDefault();if(this.buffer(n)?.isComposing())return;this.insert(n,e.clipboardData?.getData('text/plain')??'',e.clipboardData?.getData('text/html'))})
-    const remember=()=>this.remember();root.ownerDocument.addEventListener('selectionchange',remember);this.cleanups.push(()=>root.ownerDocument.removeEventListener('selectionchange',remember))
+    const remember=()=>{this.remember();this.syncFontControls()};root.ownerDocument.addEventListener('selectionchange',remember);this.cleanups.push(()=>root.ownerDocument.removeEventListener('selectionchange',remember))
   }
   private node(target:EventTarget|null):HTMLElement|undefined {
     const n=target instanceof Element?target.closest<HTMLElement>('[data-ppte-type="text"][data-ppte-element-id]'):null
@@ -162,7 +170,17 @@ export class TextEditingSurface {
     const s=this.root.ownerDocument.getSelection(),n=this.node(s?.anchorNode instanceof Element?s.anchorNode:s?.anchorNode?.parentElement??null)
     if(n){const b=this.buffer(n);if(b){const saved=captureTextSelection(n,b.content(),this.port.revision());if(saved){if(this.saved&&this.saved.root!==saved.root)this.pending={};this.saved=saved;b.selection=saved.range;const marks=this.marks();for(const button of Array.from(this.root.ownerDocument.querySelectorAll<HTMLElement>('[data-ppte-text-mark]'))){const key=button.dataset.ppteTextMark as keyof typeof marks;button.setAttribute('aria-pressed',marks[key]==='mixed'?'mixed':String(marks[key]===true));button.dataset.ppteMarkLabel??=button.textContent??key;button.textContent=button.dataset.ppteMarkLabel+(marks[key]==='mixed'?' (mixed)':'')}}}}
   }
-  marks() {const s=this.saved,b=s&&this.drafts.get(s.root.dataset.ppteElementId!);return s&&b?mixedMarks(b.content(),s.range):{}}
+  syncFontControls() {
+    const marks=this.marks()
+    for(const input of Array.from(this.root.ownerDocument.querySelectorAll<HTMLInputElement>('[data-ppte-run-font]'))) {
+      if(input===input.ownerDocument.activeElement)continue
+      const key=input.dataset.ppteRunFont as 'fontSize'|'fontFamily',value=marks[key]
+      input.dataset.valueState=value==='mixed'?'mixed':value===undefined?'inherited':'value'
+      input.placeholder=value==='mixed'?'混合值':'继承整框'
+      input.value=value===undefined||value==='mixed'?'':typeof value==='number'?String(value):value.kind==='token'?`@${value.token}`:value.value
+    }
+  }
+  marks() {const s=this.saved,b=s&&this.drafts.get(s.root.dataset.ppteElementId!);return s&&b&&s.contentHash===canonicalHash(b.content())?mixedMarks(b.content(),s.range):{}}
   format(patch:MarkPatch):FlushResult {
     const saved=this.saved
     if(!saved||!this.port.canEdit())return {ok:false}
@@ -171,7 +189,7 @@ export class TextEditingSurface {
     const boundary=this.flush();if(!boundary.ok)return boundary
     const result=setMarks(b.content(),saved.range,patch)
     if(result.pendingMarks){this.pending={...this.pending,...patch};return {ok:true}}
-    b.input(result.content);writeText(saved.root,result.content,this.port.colors?.())
+    b.input(result.content);writeText(saved.root,result.content,this.port.colors?.(),this.port.fonts?.())
     this.saved={...saved,range:result.range,contentHash:canonicalHash(result.content),revision:this.port.revision()}
     restoreTextSelection(this.saved,saved.root,result.content,this.port.revision())
     const flushed=this.flush();this.saved.revision=this.port.revision();this.port.changed(flushed);return flushed
@@ -185,9 +203,9 @@ export class TextEditingSurface {
       // Detached inert parse; only text and the five registered marks survive.
       template.content.querySelectorAll('script,style,iframe,object,embed,svg,math,img,audio,video,source,link,meta').forEach(node=>node.remove())
       for(const node of Array.from(template.content.querySelectorAll<HTMLElement>('*'))){
-        const {fontWeight,fontStyle,textDecoration,color}=node.style
+        const {fontWeight,fontStyle,textDecoration,color,fontFamily,fontSize}=node.style
         for(const attr of Array.from(node.attributes))node.removeAttribute(attr.name)
-        Object.assign(node.style,{fontWeight,fontStyle,textDecoration,color})
+        Object.assign(node.style,{fontWeight,fontStyle,textDecoration,color,fontFamily,fontSize})
       }
       container.append(template.content);plain=readText(container)
       pasted=editRichText({paragraphs:[{id:'paste',runs:[{id:'paste-run',text:''}]}]},plain)
@@ -199,6 +217,8 @@ export class TextEditingSurface {
           if(['I','EM'].includes(parent.tagName)||parent.style.fontStyle==='italic')patch.italic=true
           if(parent.tagName==='U'||parent.style.textDecoration.includes('underline'))patch.underline=true
           if(['S','STRIKE'].includes(parent.tagName)||parent.style.textDecoration.includes('line-through'))patch.strike=true
+          if(patch.fontFamily===undefined&&parent.style.fontFamily)patch.fontFamily={kind:'value',value:parent.style.fontFamily.replace(/^['"]|['"]$/g,'')}
+          if(patch.fontSize===undefined&&/^\d+(\.\d+)?px$/.test(parent.style.fontSize)&&parseFloat(parent.style.fontSize)>0)patch.fontSize=parseFloat(parent.style.fontSize)
           const color=parent.style.color;const rgb=color.match(/^rgb\((\d+), (\d+), (\d+)\)$/)
           if(rgb)patch.color={kind:'value',value:('#'+rgb.slice(1).map(v=>Number(v).toString(16).padStart(2,'0')).join('')) as `#${string}`}
         }
@@ -208,8 +228,8 @@ export class TextEditingSurface {
     const before=b.content(),a=offsetOf(before,saved.range.anchor),h=offsetOf(before,saved.range.head),start=Math.min(a,h),end=Math.max(a,h)
     let content=editRichText(before,textOf(before).slice(0,start)+plain+textOf(before).slice(end))
     if(plain.length)content=setMarks(content,{anchor:positionAt(content,start,'backward'),head:positionAt(content,start+plain.length,'forward')},this.pending).content
-    if(pasted){let at=start;for(const p of pasted.paragraphs){for(const r of p.runs){if(r.text)content=setMarks(content,{anchor:positionAt(content,at,'backward'),head:positionAt(content,at+r.text.length,'forward')},{bold:null,italic:null,underline:null,strike:null,color:null,...r.marks}).content;at+=r.text.length}at++}}
-    b.input(content);writeText(n,content,this.port.colors?.())
+    if(pasted){let at=start;for(const p of pasted.paragraphs){for(const r of p.runs){if(r.text)content=setMarks(content,{anchor:positionAt(content,at,'backward'),head:positionAt(content,at+r.text.length,'forward')},{bold:null,italic:null,underline:null,strike:null,color:null,fontFamily:null,fontSize:null,...r.marks}).content;at+=r.text.length}at++}}
+    b.input(content);writeText(n,content,this.port.colors?.(),this.port.fonts?.())
     const caret=positionAt(content,start+plain.length)
     this.saved={root:n,revision:this.port.revision(),contentHash:canonicalHash(content),range:{anchor:caret,head:caret}}
     restoreTextSelection(this.saved,n,content,this.port.revision());if(boundary)this.port.changed(this.flush());else b.schedule(()=>this.port.changed(this.flush()))
@@ -228,9 +248,35 @@ export class TextEditingSurface {
     return this.port.canEdit()&&!!b&&(this.inputErrors.has(b.elementId)||b.dirty()||b.isComposing()||n.contains(n.ownerDocument.activeElement))
   }
   retainedDrafts() {return [...this.drafts.values()].filter(b=>b.error).map(b=>({id:b.elementId,text:textOf(b.content()),error:b.error}))}
-  showCanonical(id:string) {const n=Array.from(this.root.querySelectorAll<HTMLElement>('[data-ppte-element-id]')).find(n=>n.dataset.ppteElementId===id),target=this.port.target(id);if(n&&target)writeText(n,target.element.content,this.port.colors?.())}
+  showCanonical(id:string) {const n=Array.from(this.root.querySelectorAll<HTMLElement>('[data-ppte-element-id]')).find(n=>n.dataset.ppteElementId===id),target=this.port.target(id);if(n&&target)writeText(n,target.element.content,this.port.colors?.(),this.port.fonts?.())}
   discardActive() {const id=this.saved?.root.dataset.ppteElementId??[...this.drafts.values()].find(b=>b.dirty()||b.error)?.elementId;if(id)this.discard(id)}
-  discard(id:string) {this.inputErrors.delete(id);const b=this.drafts.get(id);b?.cancel();this.drafts.delete(id);const n=Array.from(this.root.querySelectorAll<HTMLElement>('[data-ppte-element-id]')).find(n=>n.dataset.ppteElementId===id);const t=this.port.target(id);if(n&&t)writeText(n,t.element.content,this.port.colors?.());this.saved=undefined;this.pending={}}
+  discard(id:string) {this.inputErrors.delete(id);const b=this.drafts.get(id);b?.cancel();this.drafts.delete(id);const n=Array.from(this.root.querySelectorAll<HTMLElement>('[data-ppte-element-id]')).find(n=>n.dataset.ppteElementId===id);const t=this.port.target(id);if(n&&t)writeText(n,t.element.content,this.port.colors?.(),this.port.fonts?.());this.saved=undefined;this.pending={}}
   reset(){for(const b of this.drafts.values())b.stopTimer();this.drafts.clear();this.saved=undefined;this.pending={};this.inputErrors.clear()}
   dispose(){for(const b of this.drafts.values())b.stopTimer();for(const release of this.cleanups)release();this.drafts.clear()}
+}
+
+const fontControlOwners=new WeakMap<HTMLElement,TextEditingSurface>()
+
+/** Shared controls route through the saved text selection and Operation Engine. */
+export function renderRunFontControls(root: HTMLElement, surface: TextEditingSurface) {
+  if(fontControlOwners.get(root)===surface){surface.syncFontControls();return}
+  fontControlOwners.set(root,surface)
+  root.style.cssText='display:flex;flex-direction:column;gap:8px;padding:8px;background:#fff;color:#292b35;border:1px solid #d9dbe3;border-radius:5px;font:13px/1.5 system-ui'
+  root.replaceChildren()
+  for(const [key,label,type] of [['fontFamily','选区字体','text'],['fontSize','选区字号','number']] as const) {
+    const wrap=root.ownerDocument.createElement('label');wrap.textContent=label;wrap.style.cssText='display:flex;flex-direction:column;gap:3px'
+    const input=root.ownerDocument.createElement('input');input.type=type;input.dataset.ppteRunFont=key;input.setAttribute('aria-label',label)
+    input.style.cssText='min-width:0;max-width:100%;box-sizing:border-box;background:#fff;color:#292b35;border:1px solid #d9dbe3;border-radius:3px;padding:4px;font:inherit'
+    input.placeholder='继承整框';if(key==='fontSize'){input.min='0.01';input.step='any'}
+    input.onpointerdown=()=>surface.remember()
+    input.onchange=()=>{
+      const value=input.value.trim()
+      const patch:MarkPatch=key==='fontSize'?{fontSize:value?Number(value):null}:{fontFamily:!value?null:value.startsWith('@')?{kind:'token',token:value.slice(1)}:{kind:'value',value}}
+      try {const result=surface.format(patch);input.setCustomValidity(result.ok?'':'无法应用格式，请恢复文字选区或完成输入')} catch(error){input.setCustomValidity(String(error))}
+      surface.syncFontControls()
+    }
+    wrap.append(input);root.append(wrap)
+  }
+  const hint=root.ownerDocument.createElement('small');hint.textContent='留空恢复继承；字体可用 @主题 token';root.append(hint)
+  surface.syncFontControls()
 }

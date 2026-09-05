@@ -12,6 +12,7 @@ import type {
   RuntimeProfile,
   TextElement,
   TextStyle,
+  TextMarks,
   Transaction,
   ValidationIssue,
   ValueOrToken,
@@ -400,12 +401,7 @@ function asRecord(value: unknown): Record<string, unknown> | undefined { return 
 function isRecord(value: unknown): value is Record<string, unknown> { return Boolean(value) && typeof value === 'object' && !Array.isArray(value) }
 function nonEmptyString(value: unknown): value is string { return typeof value === 'string' && value.length > 0 }
 export function validateTextOverflow(document: PpteDocument, slideId: string, element: TextElement): ValidationIssue[] {
-  const text = textContent(element)
-  const style = effectiveTextStyle(document, element)
-  const padding = element.boxStyle?.padding && typeof element.boxStyle.padding === 'object' ? element.boxStyle.padding : undefined
-  const width = finitePositiveNumber(element.frame?.width) ? element.frame.width : 1
-  const height = finiteNonNegativeNumber(element.frame?.height) ? element.frame.height : 0
-  const measurement = measureTextLayout(text, { width, height }, style, padding)
+  const measurement = measureRichTextLayout(document, element)
   if (!measurement.overflowX && !measurement.overflowY) return []
   return [withErrorSemantics({
     code: 'TEXT_OVERFLOW',
@@ -467,6 +463,14 @@ function numberForMessage(value: number): string { return String(Math.round(valu
  * reason to let the browser silently select a fallback font.
  */
 export function inspectGlyphCoverage(document: PpteDocument, element: TextElement, addedText?: string, options: { strict?: boolean } = {}): GlyphCoverageReport {
+  if (addedText === undefined && element.content.paragraphs.some(p=>p.runs.some(r=>r.marks?.fontFamily !== undefined || r.marks?.fontSize !== undefined))) {
+    const reports = element.content.paragraphs.flatMap(p=>p.runs.map(run=>{
+      const style=effectiveRunStyle(document,element,run.marks)
+      const runElement: TextElement={...element,style:{...element.style,overrides:{...element.style.overrides,fontFamily:{kind:'value',value:style.fontFamily},fontSize:style.fontSize}}}
+      return inspectGlyphCoverage(document,runElement,run.text,run.marks?.fontFamily!==undefined?{strict:true}:options)
+    }))
+    return reports.find(report=>!report.covered) ?? reports[0]
+  }
   const text = addedText ?? textContent(element)
   const fonts = Object.values(document.fonts ?? {}).filter((font): font is FontAsset => Boolean(font) && typeof font === 'object')
   const style = effectiveTextStyle(document, element)
@@ -488,6 +492,50 @@ export function checkGlyphCoverage(document: PpteDocument, element: TextElement,
   if (report.source === 'unresolved') return [withErrorSemantics({ code: 'FONT_GLYPH_MISSING', severity: 'error', message: `Font ${report.fontFamily} has no explicit coverage declaration for portable editing.`, elementId: element.id, recovery: 'Choose a declared system-safe font or embed a font with glyph coverage.' })]
   if (report.source === 'unsafe') return [withErrorSemantics({ code: 'FONT_GLYPH_MISSING', severity: 'error', message: `Font ${report.fontFamily} is not marked editableSafe for portable editing.`, elementId: element.id, recovery: 'Choose a font with declared editable coverage.' })]
   return [withErrorSemantics({ code: 'FONT_GLYPH_MISSING', severity: 'error', message: `Font ${report.fontFamily} does not cover ${report.missingCodePoints.map((codePoint) => `U+${codePoint.toString(16).toUpperCase()}`).join(', ')}.`, elementId: element.id, recovery: 'Choose a compatible font, add coverage, or cancel the edit.' })]
+}
+
+/** Quote one semantic font family for CSS without renaming punctuation. */
+export function runFontFamilyCss(family: string): string {
+  return '"' + family.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/[\n\r\f]/g, char => `\\${char.charCodeAt(0).toString(16)} `) + '"'
+}
+
+/** The shared font resolver. Family tokens never resolve through color/size buckets.
+ * Unknown tokens retain a visible unresolved name for coverage diagnostics. */
+export function resolveRunFont(tokens: Record<string, string>, base: {fontFamily: string; fontSize: number}, marks?: TextMarks): {fontFamily: string; fontSize: number} {
+  const value = marks?.fontFamily
+  return {fontFamily: value ? (value.kind === 'value' ? value.value : tokens[value.token] ?? value.token) : base.fontFamily,
+    fontSize: marks?.fontSize ?? base.fontSize}
+}
+
+export function effectiveRunStyle(document: PpteDocument, element: TextElement, marks?: TextMarks): ResolvedTextStyle {
+  const base = effectiveTextStyle(document, element)
+  return {...base, ...resolveRunFont(document.theme.tokens.fontFamilies, base, marks),
+    fontWeight: marks?.bold === undefined ? base.fontWeight : marks.bold ? 700 : 400}
+}
+
+/** Reference measurement for mixed run sizes, wrapping per glyph and retaining
+ * the maximum em of each visual line. The old path remains byte-for-byte stable. */
+export function measureRichTextLayout(document: PpteDocument, element: TextElement): TextLayoutMeasurement {
+  const base = effectiveTextStyle(document, element), padding = element.boxStyle?.padding ?? {top:0,right:0,bottom:0,left:0}
+  if (!element.content.paragraphs.some(p=>p.runs.some(r=>r.marks?.fontFamily!==undefined||r.marks?.fontSize!==undefined))) return measureTextLayout(textContent(element),element.frame,base,padding)
+  const availableWidth = Math.max(0,element.frame.width-padding.left-padding.right), availableHeight = Math.max(0,element.frame.height-padding.top-padding.bottom)
+  let lines=0, maxLineWidth=0, contentHeight=0
+  for (const paragraph of element.content.paragraphs) {
+    let width=0, em=base.fontSize
+    const finish=()=>{lines++;maxLineWidth=Math.max(maxLineWidth,width);contentHeight+=(em||base.fontSize)*(base.lineHeight??1.2);width=0;em=base.fontSize}
+    contentHeight+=paragraph.spaceBefore??0
+    for (const run of paragraph.runs) {
+      const style=effectiveRunStyle(document,element,run.marks)
+      for(const char of run.text) {
+        if(char==='\n'){finish();continue}
+        const advance=glyphAdvance(char,style.fontSize,style.letterSpacing??0)
+        if(width>0&&width+advance>availableWidth)finish()
+        width+=advance;em=Math.max(em,style.fontSize)
+      }
+    }
+    finish();contentHeight+=paragraph.spaceAfter??0
+  }
+  return {lines,maxLineWidth,contentHeight,availableWidth,availableHeight,overflowX:maxLineWidth>availableWidth+.001,overflowY:contentHeight>availableHeight+.001}
 }
 
 export function effectiveTextStyle(document: PpteDocument, element: TextElement): ResolvedTextStyle {

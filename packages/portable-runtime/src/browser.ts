@@ -1,3 +1,4 @@
+import { renderRunFontControls } from '../../editor-dom/src/text-selection.js'
 import { mountEditorShell } from '../../editor-dom/src/editor-shell.js'
 import { mountImageCrop } from '../../editor-dom/src/image-crop.js'
 import { prepareImage, decodeBrowserImage } from '../../editor-controller/src/resource-port.js'
@@ -58,6 +59,7 @@ const advanced =
   runtime.profile === "light-edit" || runtime.profile === "full-portable";
 const textSurface = new TextEditingSurface(stage, {
   colors:()=>runtime.getDocument().theme.tokens.colors,
+  fonts:()=>runtime.getDocument().theme.tokens.fontFamilies,
   revision:()=>runtime.getRevision(),
   target:id=>{const d=runtime.getDocument();for(const slideId of d.slideOrder){const element=d.slides[slideId].elements[id];if(element?.type==='text')return {element,slideId}}},
   commit:tx=>runtime.controller.commit(tx),
@@ -561,7 +563,8 @@ for (const type of ["beforeinput", "paste", "drop"] as const) {
 dom.listen(document, "keydown", event => { if (event.key === "Escape") pendingPresentation = false; }, true);
 if(editable){
   const toolbar=document.createElement('div');toolbar.setAttribute('aria-label','选区格式');
-  for(const mark of ['bold','italic','underline','strike','clear'] as const){const button=document.createElement('button');button.textContent=mark;button.dataset.ppteTextMark=mark;button.onmousedown=e=>{textSurface.remember();e.preventDefault()};button.onclick=()=>textSurface.format(mark==='clear'?{bold:null,italic:null,underline:null,strike:null,color:null}:{[mark]:true});toolbar.append(button)}
+  for(const mark of ['bold','italic','underline','strike','clear'] as const){const button=document.createElement('button');button.textContent=mark;button.dataset.ppteTextMark=mark;button.onmousedown=e=>{textSurface.remember();e.preventDefault()};button.onclick=()=>textSurface.format(mark==='clear'?{bold:null,italic:null,underline:null,strike:null,color:null,fontFamily:null,fontSize:null}:{[mark]:true});toolbar.append(button)}
+  const fonts=document.createElement('div');renderRunFontControls(fonts,textSurface);toolbar.append(fonts);
   const color=document.createElement('input');color.type='color';color.setAttribute('aria-label','选区颜色');color.onpointerdown=()=>textSurface.remember();color.onchange=()=>textSurface.format({color:{kind:'value',value:color.value as `#${string}`}});toolbar.append(color);
   const discard=document.createElement('button');discard.textContent='放弃文字草稿';discard.onclick=()=>{textSurface.discardActive();render()};toolbar.append(discard);
   propertiesPanel.insertBefore(toolbar, properties);
