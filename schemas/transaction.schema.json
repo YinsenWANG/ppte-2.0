@@ -5579,7 +5579,8 @@
                 "maxLength": 256
               },
               "patch": {
-                "type": "object"
+                "type": "object",
+                "propertyNames": { "enum": ["name", "hidden", "background", "notes", "transition", "semantic", "visualStrategy", "provenance", "extensions"] }
               },
               "unset": {
                 "type": "array",
@@ -14975,6 +14976,7 @@
                 "minLength": 1,
                 "maxLength": 256
               },
+              "removeEmptyCollection": { "type": "boolean" },
               "groupId": {
                 "type": "string",
                 "minLength": 1,

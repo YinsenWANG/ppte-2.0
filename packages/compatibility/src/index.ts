@@ -1,3 +1,4 @@
+import { deepFreeze } from '../../canonical-json/src/index.js'
 import { PPTE_COMPATIBILITY_PROFILE, PPTE_FORMAT_VERSION, PPTE_GA_B_COMPATIBILITY_PROFILE, PPTE_GA_C_COMPATIBILITY_PROFILE, PPTE_OPERATION_PROTOCOL_VERSION, PPTE_SCHEMA_VERSION } from '../../schema/src/index.js'
 import type { PpteDocument, RuntimeProfile } from '../../schema/src/index.js'
 import { PPTE_EDIT_COMPATIBILITY_PROFILE, readPersistedHistoryMetadata, type Operation, type Transaction, type SessionHistoryEntrySnapshot } from '../../schema/src/index.js'
@@ -9,6 +10,7 @@ export interface CompatibilityProfile {
   schemaVersion: '2.0.0'
   operationProtocolVersion: '1.0' | '1.1'
   slideIrVersion: '1.0'
+  runtimeSubset: RuntimeProfile
   portableRuntimeVersion: '2.0.0' | '2.1.0'
   layoutRecipeVersion: '1.0'
   widgetAbiVersion: string | null
@@ -37,6 +39,7 @@ export interface CompatibilityCheck {
 
 export const GA_A_PROFILE: CompatibilityProfile = {
   id: PPTE_COMPATIBILITY_PROFILE,
+  runtimeSubset: 'ga-a',
   formatVersion: PPTE_FORMAT_VERSION,
   schemaVersion: PPTE_SCHEMA_VERSION,
   operationProtocolVersion: PPTE_OPERATION_PROTOCOL_VERSION,
@@ -54,6 +57,7 @@ export const GA_A_PROFILE: CompatibilityProfile = {
 
 export const GA_B_PROFILE: CompatibilityProfile = {
   id: PPTE_GA_B_COMPATIBILITY_PROFILE,
+  runtimeSubset: 'ga-b',
   formatVersion: PPTE_FORMAT_VERSION,
   schemaVersion: PPTE_SCHEMA_VERSION,
   operationProtocolVersion: PPTE_OPERATION_PROTOCOL_VERSION,
@@ -71,6 +75,7 @@ export const GA_B_PROFILE: CompatibilityProfile = {
 
 export const GA_C_PROFILE: CompatibilityProfile = {
   id: PPTE_GA_C_COMPATIBILITY_PROFILE,
+  runtimeSubset: 'ga-c',
   formatVersion: PPTE_FORMAT_VERSION,
   schemaVersion: PPTE_SCHEMA_VERSION,
   operationProtocolVersion: PPTE_OPERATION_PROTOCOL_VERSION,
@@ -99,6 +104,20 @@ const PROFILES: Readonly<Record<string, CompatibilityProfile>> = {
   [GA_B_PROFILE.id]: GA_B_PROFILE,
   [GA_C_PROFILE.id]: GA_C_PROFILE,
   [EDIT_PROFILE.id]: EDIT_PROFILE,
+}
+
+deepFreeze(PROFILES)
+
+/** Capabilities are cumulative sets, never a lexical ordering of profile names. */
+export const PROFILE_CAPABILITIES = deepFreeze({
+  [GA_A_PROFILE.id]: ['semantic-core'],
+  [GA_B_PROFILE.id]: ['semantic-core', 'charts-animation', 'patch'],
+  [GA_C_PROFILE.id]: ['semantic-core', 'charts-animation', 'patch', 'widgets-poster-extended-charts'],
+  [EDIT_PROFILE.id]: ['semantic-core', 'charts-animation', 'patch', 'widgets-poster-extended-charts', 'slide-unset'],
+})
+
+export function profileIncludes(reader: string, required: string): boolean {
+  return Boolean(PROFILE_CAPABILITIES[reader] && PROFILE_CAPABILITIES[required]?.every(capability => PROFILE_CAPABILITIES[reader]!.includes(capability)))
 }
 
 export const SUPPORTED_COMPATIBILITY_PROFILES = Object.freeze(Object.keys(PROFILES)) as readonly string[]
@@ -146,7 +165,7 @@ export function checkCompatibility(input: { id?: unknown; formatVersion?: unknow
     disposition: 'readonly',
     issues: [{ code: 'COMPATIBILITY_PROFILE_UNSUPPORTED', message: `Package profile ${profileId || '(missing)'} belongs to a newer incompatible format.`, recovery: 'Open it read-only with a newer host or export a supported profile.' }],
   }
-  if (profileId.startsWith('ppte-') || Object.values(PROFILES).some((candidate) => candidate.migration.from.includes(profileId))) return {
+  if (Object.values(PROFILES).some((candidate) => candidate.migration.from.includes(profileId))) return {
     ok: false,
     disposition: 'migrate',
     issues: [{ code: 'COMPATIBILITY_PROFILE_MIGRATION_REQUIRED', message: `Package profile ${profileId} is not in the verified native set.`, recovery: 'Run the forward migration and review its report before saving a new package.' }],
@@ -175,29 +194,41 @@ export interface PersistedCompatibilityInput {
 }
 
 export function requiresEditProtocol(input: PersistedCompatibilityInput): boolean {
-  const usesUnset = (operations: ReadonlyArray<Operation> = []) => operations.some(op => op.kind === 'slide.update' && op.unset !== undefined)
+  const usesUnset = (operations: ReadonlyArray<Operation> = []) => operations.some(op => (op.kind === 'slide.update' && op.unset !== undefined) || (['group.delete', 'fact.delete', 'source.delete'].includes(op.kind) && 'removeEmptyCollection' in op && op.removeEmptyCollection !== undefined))
   const transactionUsesUnset = (tx: Transaction) => usesUnset(tx.operations) || usesUnset(readPersistedHistoryMetadata(tx)?.inverse.operations)
   return usesUnset(input.operations) || Boolean(input.recentTransactions?.some(transactionUsesUnset)) || Boolean(input.redoHistory?.some(entry => transactionUsesUnset(entry.transaction) || transactionUsesUnset(entry.inverse)))
 }
 
 export function inferCompatibilityProfile(document: PpteDocument, persisted: PersistedCompatibilityInput = {}): string {
   if (requiresEditProtocol(persisted)) return PPTE_EDIT_COMPATIBILITY_PROFILE
-  let requiresGaB = false
-  for (const slide of Object.values(document.slides ?? {})) {
-    if (slide.visualStrategy === 'poster' || slide.transition !== undefined) {
-      if (slide.visualStrategy === 'poster') return PPTE_GA_C_COMPATIBILITY_PROFILE
-      requiresGaB = true
-    }
-    for (const element of Object.values(slide.elements ?? {})) {
-      if (element.type === 'component') return PPTE_GA_C_COMPATIBILITY_PROFILE
-      if (element.type === 'chart') {
-        if (element.chartType === 'area' || element.chartType === 'donut') return PPTE_GA_C_COMPATIBILITY_PROFILE
-        requiresGaB = true
-      }
-      if (element.appearStep !== undefined || element.animation !== undefined) requiresGaB = true
+  const required = new Set<string>(PROFILE_CAPABILITIES[GA_A_PROFILE.id])
+  const requireProfile = (id: string) => { for (const capability of PROFILE_CAPABILITIES[id]!) required.add(capability) }
+  const inspectElement = (element: Record<string, unknown>) => {
+    if (element.type === 'component' || element.chartType === 'area' || element.chartType === 'donut') requireProfile(GA_C_PROFILE.id)
+    if (element.type === 'chart' || element.appearStep !== undefined || element.animation !== undefined) requireProfile(GA_B_PROFILE.id)
+  }
+  const inspectSlide = (slide: Record<string, unknown>) => {
+    if (slide.visualStrategy === 'poster') requireProfile(GA_C_PROFILE.id)
+    if (slide.transition !== undefined) requireProfile(GA_B_PROFILE.id)
+    for (const element of Object.values(slide.elements ?? {})) inspectElement(element as Record<string, unknown>)
+  }
+  const inspectOperations = (operations: ReadonlyArray<Operation> = []) => {
+    for (const operation of operations) {
+      if (operation.kind === 'slide.insert') inspectSlide(operation.slide as unknown as Record<string, unknown>)
+      if (operation.kind === 'slide.update') inspectSlide(operation.patch as Record<string, unknown>)
+      if (operation.kind === 'element.insert') inspectElement(operation.element as unknown as Record<string, unknown>)
+      if (operation.kind.startsWith('component.')) requireProfile(GA_C_PROFILE.id)
+      if (operation.kind.startsWith('chart.') || ['slide.setTransition', 'element.setAppearStep', 'element.setAnimation'].includes(operation.kind)) requireProfile(GA_B_PROFILE.id)
     }
   }
-  return requiresGaB ? PPTE_GA_B_COMPATIBILITY_PROFILE : PPTE_COMPATIBILITY_PROFILE
+  inspectOperations(persisted.operations)
+  for (const tx of persisted.recentTransactions ?? []) { inspectOperations(tx.operations); inspectOperations(readPersistedHistoryMetadata(tx)?.inverse.operations) }
+  for (const entry of persisted.redoHistory ?? []) {
+    for (const tx of [entry.transaction, entry.inverse]) { inspectOperations(tx.operations); inspectOperations(readPersistedHistoryMetadata(tx)?.inverse.operations) }
+  }
+  for (const slide of Object.values(document.slides ?? {})) inspectSlide(slide as unknown as Record<string, unknown>)
+  const candidates = Object.values(PROFILES).filter(profile => [...required].every(capability => PROFILE_CAPABILITIES[profile.id]!.includes(capability)))
+  return candidates.find(candidate => candidates.every(other => profileIncludes(other.id, candidate.id)))!.id
 }
 
 /** Map a persisted profile to the runtime capability subset used for checks. */
@@ -209,13 +240,7 @@ export function runtimeProfileForCompatibility(profileId: string): RuntimeProfil
 export function assertDocumentCompatibility(document: PpteDocument, profileId: string, persisted: PersistedCompatibilityInput = {}): void {
   assertSupportedCompatibilityProfile(profileId)
   const minimum = inferCompatibilityProfile(document, persisted)
-  const supports: Record<string, readonly string[]> = {
-    [GA_A_PROFILE.id]: [GA_A_PROFILE.id],
-    [GA_B_PROFILE.id]: [GA_A_PROFILE.id, GA_B_PROFILE.id],
-    [GA_C_PROFILE.id]: [GA_A_PROFILE.id, GA_B_PROFILE.id, GA_C_PROFILE.id],
-    [EDIT_PROFILE.id]: [GA_A_PROFILE.id, GA_B_PROFILE.id, GA_C_PROFILE.id, EDIT_PROFILE.id],
-  }
-  if (!supports[profileId]?.includes(minimum)) {
+  if (!profileIncludes(profileId, minimum)) {
     throw new Error(`CHECKPOINT_FAILED: document requires compatibility profile ${minimum}; received ${profileId}.`)
   }
 }

@@ -1,6 +1,6 @@
 import { validateHistoryChain } from './history.js'
 export { assessHistory, validateHistoryChain, type HistoryAssessment } from './history.js'
-import { canonicalJsonString, canonicalRevision, cloneJson, deepFreeze } from '../../canonical-json/src/index.js'
+import { canonicalHash, canonicalJsonString, canonicalRevision, cloneJson, deepFreeze } from '../../canonical-json/src/index.js'
 import { computeStructuralDiff } from '../../diff/src/index.js'
 import { applyTransaction, OperationApplyError } from '../../operations/src/index.js'
 import { checkPreconditions, checkTransactionScope, enforceChangeContract } from '../../change-contract/src/index.js'
@@ -87,10 +87,13 @@ export interface SessionEvent {
   diff?: StructuralDiff
 }
 
+/** Bump whenever operation interpretation or strict inverse validation changes. */
+export const INVERSE_INTERPRETER_VERSION = 'ppte-operations/1.1:inverse-proof/1'
+
 export class PpteSession {
   private document: PpteDocument
   private snapshot?: Readonly<PpteDocument>
-  private readonly verifiedApplies = new WeakMap<PreviewResult, ReturnType<typeof applyTransaction>>()
+  private readonly verifiedApplies = new WeakMap<PreviewResult, { applied: ReturnType<typeof applyTransaction>; binding: string }>()
   private revision: Revision
   private readonly journal?: JournalSink
   private readonly checkpointAdapter?: CheckpointAdapter
@@ -208,7 +211,7 @@ export class PpteSession {
       issues: dedupe(issues),
       requiresConfirmation: transaction.changeContract.requireConfirmation === true,
     }
-    if (ok) this.verifiedApplies.set(result, applied)
+    if (ok) this.verifiedApplies.set(result, { applied, binding: this.proofBinding(transaction, applied, runtimeProfile) })
     this.notify({ type: 'previewed', revision: this.revision, diff })
     return result
   }
@@ -297,6 +300,10 @@ export class PpteSession {
     return () => this.listeners.delete(listener)
   }
 
+  private proofBinding(transaction: Transaction, applied: ReturnType<typeof applyTransaction>, runtimeProfile: RuntimeProfile): string {
+    return canonicalHash({ transactionDigest: canonicalHash(transaction), beforeRevision: this.revision, afterRevision: canonicalRevision(applied.document), inverseDigest: canonicalHash(applied.inverseOperations), interpreter: INVERSE_INTERPRETER_VERSION, runtimeProfile })
+  }
+
   private performCommit(transaction: Transaction, recordHistory: boolean, clearRedo: boolean, eventType: SessionEvent['type'], allowSystemInversePolicy = false): CommitResult {
     transaction = cloneJson(transaction)
     const beforeRevision = this.revision
@@ -312,9 +319,11 @@ export class PpteSession {
     if (!preview.ok || !preview.document || !preview.diff) return { ok: false, beforeRevision, transactionId: transaction.transactionId, diff: preview.diff, issues: preview.issues }
     if (this.revision !== beforeRevision) return failure('REVISION_CONFLICT', 'The document changed while preview listeners were running.', this.revision, transaction.transactionId)
     // Consume the result already checked by preview; do not apply and hash twice.
-    const applied = this.verifiedApplies.get(preview)!
+    const proof = this.verifiedApplies.get(preview)
+    if (!proof || proof.binding !== this.proofBinding(transaction, proof.applied, runtimeProfile)) return failure('INVERSE_ROUNDTRIP_FAILED', 'Inverse proof does not match the transaction and interpreter.', this.revision, transaction.transactionId)
+    const applied = proof.applied
     this.verifiedApplies.delete(preview)
-    const afterRevision = preview.proposedRevision!
+    const afterRevision = canonicalRevision(applied.document)
     const inverse: Transaction = {
       transactionId: `${transaction.transactionId}:inverse`,
       baseRevision: afterRevision,

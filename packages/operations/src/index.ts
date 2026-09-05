@@ -81,9 +81,8 @@ export const duplicateSlideOperation = buildDuplicateSlideOperation
 export const duplicateSlide = buildDuplicateSlideOperation
 
 /** Generic slide.update is intentionally limited to these persisted metadata fields. */
-export const SLIDE_UPDATE_METADATA_KEYS = [
-  'name', 'hidden', 'background', 'notes', 'transition', 'semantic', 'visualStrategy', 'provenance', 'extensions',
-] as const
+import { SLIDE_OPTIONAL_KEYS, type SlideOptionalKey } from '../../schema/src/index.js'
+export const SLIDE_UPDATE_METADATA_KEYS = SLIDE_OPTIONAL_KEYS
 import type {
   Operation,
   Transaction,
@@ -189,14 +188,14 @@ function applyToDraft(next: PpteDocument, operation: Operation, options: Operati
       const slide = requireSlide(next, operation.slideId)
       const metadata = slide as unknown as Record<string, unknown>
       const before: Record<string, unknown> = {}
-      const absent: string[] = []
+      const absent: SlideOptionalKey[] = []
       const removals = operation.unset ?? []
       if (!Array.isArray(removals) || new Set(removals).size !== removals.length) throw error('SCHEMA_INVALID', 'slide.update.unset must contain unique metadata keys.')
       for (const key of [...Object.keys(operation.patch), ...removals]) {
         if (!(SLIDE_UPDATE_METADATA_KEYS as readonly string[]).includes(key)) throw error('SLIDE_UPDATE_FIELD_NOT_ALLOWED', `slide.update may only change slide metadata; field ${key} has a dedicated operation or is not mutable.`)
-        if (removals.includes(key) && Object.prototype.hasOwnProperty.call(operation.patch, key)) throw error('SCHEMA_INVALID', `slide.update cannot set and unset ${key}.`)
+        if (removals.includes(key as SlideOptionalKey) && Object.prototype.hasOwnProperty.call(operation.patch, key)) throw error('SCHEMA_INVALID', `slide.update cannot set and unset ${key}.`)
         if (Object.prototype.hasOwnProperty.call(metadata, key)) before[key] = cloneJson(metadata[key])
-        else absent.push(key)
+        else absent.push(key as SlideOptionalKey)
       }
       for (const [key, value] of Object.entries(operation.patch)) metadata[key] = cloneJson(value)
       for (const key of removals) delete metadata[key]
@@ -401,14 +400,14 @@ function applyToDraft(next: PpteDocument, operation: Operation, options: Operati
       const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)
       assertStyleElement(element)
       assertTypedStyleOverrides(element.type, operation.patch)
-      const before = cloneJson(element.style.overrides ?? {})
+      const before = cloneJson(element.style.overrides)
       element.style.overrides = { ...(element.style.overrides ?? {}), ...cloneJson(operation.patch) }
       return { document: next, inverse: restoreOverrides(operation, before) }
     }
     case 'element.clearStyleOverrides': {
       const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)
       assertStyleElement(element)
-      const before = cloneJson(element.style.overrides ?? {})
+      const before = cloneJson(element.style.overrides)
       if (!operation.paths?.length) delete element.style.overrides
       else for (const path of operation.paths) deleteNested(element.style.overrides ?? {}, path)
       return { document: next, inverse: restoreOverrides(operation, before) }
@@ -465,9 +464,9 @@ function applyToDraft(next: PpteDocument, operation: Operation, options: Operati
       if (operation.resolvedFontSize < operation.minFontSize || operation.minFontSize <= 0) throw error('SCHEMA_INVALID', 'Resolved font size is below minFontSize.')
       const currentFontSize = effectiveFontSize(next, element)
       if (currentFontSize !== undefined && operation.resolvedFontSize > currentFontSize + 0.001) throw error('STYLE_OVERRIDE_INVALID', 'text.fitByReducingFont may not increase the effective font size.')
-      const before = cloneJson(element.style.overrides ?? {})
+      const before = cloneJson(element.style.overrides)
       const upperBound = Math.min(currentFontSize ?? operation.resolvedFontSize, operation.resolvedFontSize)
-      const resolvedFontSize = solveFittingFontSize(next, operation.slideId, element, before, operation.minFontSize, upperBound)
+      const resolvedFontSize = solveFittingFontSize(next, operation.slideId, element, before ?? {}, operation.minFontSize, upperBound)
       element.style.overrides = { ...(element.style.overrides ?? {}), fontSize: resolvedFontSize }
       return { document: next, inverse: restoreOverrides(operation, before) }
     }
@@ -546,7 +545,7 @@ function applyToDraft(next: PpteDocument, operation: Operation, options: Operati
       const element = requireElement(requireSlide(next, operation.slideId), operation.elementId)
       if (element.type !== 'shape') throw error('OPERATION_TYPE_MISMATCH', 'shape.updateStyle requires a Shape element.')
       assertTypedStyleOverrides('shape', operation.patch)
-      const before = cloneJson(element.style.overrides ?? {})
+      const before = cloneJson(element.style.overrides)
       if (operation.replace) {
         if (Object.keys(operation.patch).length === 0) delete element.style.overrides
         else element.style.overrides = cloneJson(operation.patch)
@@ -554,7 +553,7 @@ function applyToDraft(next: PpteDocument, operation: Operation, options: Operati
         assertTypedStyleOverrides('shape', operation.patch)
         element.style.overrides = { ...(element.style.overrides ?? {}), ...cloneJson(operation.patch) }
       }
-      return { document: next, inverse: [op(operation, 'shape.updateStyle', { slideId: operation.slideId, elementId: operation.elementId, patch: before, replace: true })] }
+      return { document: next, inverse: restoreOverrides(operation, before) }
     }
     case 'chart.replaceData': {
       const element = requireChart(next, operation.slideId, operation.elementId, runtimeProfile)
@@ -583,27 +582,29 @@ function applyToDraft(next: PpteDocument, operation: Operation, options: Operati
     }
     case 'chart.updateStyle': {
       const element = requireChart(next, operation.slideId, operation.elementId, runtimeProfile)
-      const before = cloneJson(element.style.overrides ?? {})
+      const before = cloneJson(element.style.overrides)
       if (operation.unset || (operation.replace && Object.keys(operation.patch).length === 0)) delete element.style.overrides
       else if (operation.replace) element.style.overrides = cloneJson(operation.patch)
       else element.style.overrides = { ...(element.style.overrides ?? {}), ...cloneJson(operation.patch) }
       assertTypedStyleOverrides('chart', operation.patch)
-      return { document: next, inverse: [op(operation, 'chart.updateStyle', { slideId: operation.slideId, elementId: operation.elementId, patch: before, replace: true })] }
+      return { document: next, inverse: restoreOverrides(operation, before) }
     }
     case 'group.create': {
       const slide = requireSlide(next, operation.slideId)
       if (slide.groups?.[operation.group.id]) throw error('ID_CONFLICT', `Group already exists: ${operation.group.id}.`)
       assertUniqueElementIds(operation.group.memberIds)
       assertGroupMembersAvailable(slide, operation.group.memberIds)
+      const collectionAbsent = !Object.prototype.hasOwnProperty.call(slide, 'groups')
       slide.groups ??= {}
       slide.groups[operation.group.id] = cloneJson(operation.group)
-      return { document: next, inverse: [op(operation, 'group.delete', { slideId: operation.slideId, groupId: operation.group.id })] }
+      return { document: next, inverse: [op(operation, 'group.delete', { slideId: operation.slideId, groupId: operation.group.id, ...(collectionAbsent ? { removeEmptyCollection: true } : {}) })] }
     }
     case 'group.delete': {
       const slide = requireSlide(next, operation.slideId)
       const group = slide.groups?.[operation.groupId]
       if (!group) throw error('GROUP_MISSING', `Group does not exist: ${operation.groupId}.`)
       delete slide.groups?.[operation.groupId]
+      if (operation.removeEmptyCollection && Object.keys(slide.groups ?? {}).length === 0) delete slide.groups
       return { document: next, inverse: [op(operation, 'group.create', { slideId: operation.slideId, group: cloneJson(group) })] }
     }
     case 'group.addMembers': {
@@ -646,7 +647,7 @@ function applyToDraft(next: PpteDocument, operation: Operation, options: Operati
       const before = members.map((element) => ({ elementId: element.id, frame: cloneJson(element.frame) }))
       const beforeStyles = members
         .filter((element): element is TextElement => element.type === 'text' && operation.scaleTextStyle === true)
-        .map((element) => ({ elementId: element.id, overrides: cloneJson(element.style.overrides ?? {}) }))
+        .map((element) => ({ elementId: element.id, overrides: cloneJson(element.style.overrides) }))
       for (const element of members) {
         element.frame = {
           x: operation.targetFrame.x + (element.frame.x - bounds.x) * scaleX,
@@ -1105,9 +1106,9 @@ function findElement(document: PpteDocument, elementId: string): { slideId: stri
   return undefined
 }
 
-function restoreOverrides(operation: Operation, before: Record<string, unknown>): Operation[] {
+function restoreOverrides(operation: Operation, before: Record<string, unknown> | undefined): Operation[] {
   const clear = op(operation, 'element.clearStyleOverrides', { slideId: (operation as { slideId: string }).slideId, elementId: (operation as { elementId: string }).elementId })
-  if (Object.keys(before).length === 0) return [clear]
+  if (before === undefined) return [clear]
   return [clear, op(operation, 'element.updateStyleOverrides', { slideId: (operation as { slideId: string }).slideId, elementId: (operation as { elementId: string }).elementId, patch: before as never })]
 }
 

@@ -701,7 +701,7 @@ function operationsForSlideField(slideId: string, local: PpteDocument['slides'][
   const prefix = `review:${slideId}:slide:${field}`
   if (['name', 'hidden', 'background', 'semantic', 'visualStrategy', 'provenance', 'extensions'].includes(field)) {
     const value = revised[field as keyof typeof revised]
-    return value === undefined ? [{ opId: prefix, kind: 'slide.update', slideId, patch: {}, unset: [field] }] : [{ opId: prefix, kind: 'slide.update', slideId, patch: { [field]: cloneJson(value) } as Record<string, never> }]
+    return value === undefined ? [{ opId: prefix, kind: 'slide.update', slideId, patch: {}, unset: [field as import('../../schema/src/index.js').SlideOptionalKey] }] : [{ opId: prefix, kind: 'slide.update', slideId, patch: { [field]: cloneJson(value) } as Record<string, never> }]
   }
   if (field === 'notes') return revised.notes === undefined ? [{ opId: prefix, kind: 'slide.setNotes', slideId, unset: true }] : [{ opId: prefix, kind: 'slide.setNotes', slideId, notes: cloneJson(revised.notes) }]
   if (field === 'transition') return revised.transition === undefined ? [{ opId: prefix, kind: 'slide.setTransition', slideId, unset: true }] : [{ opId: prefix, kind: 'slide.setTransition', slideId, transition: cloneJson(revised.transition) }]

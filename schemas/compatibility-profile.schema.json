@@ -13,28 +13,125 @@
     "layoutRecipeVersion",
     "widgetAbiVersion",
     "patchVersion",
-    "migration"
+    "migration",
+    "runtimeSubset"
   ],
   "properties": {
-    "id": { "enum": ["ppte-2.0-ga-a.1", "ppte-2.0-ga-b.1", "ppte-2.0-ga-c.1"] },
-    "formatVersion": { "const": "2" },
-    "schemaVersion": { "const": "2.0.0" },
-    "operationProtocolVersion": { "enum": ["1.0", "1.1"] },
-    "slideIrVersion": { "const": "1.0" },
-    "portableRuntimeVersion": { "enum": ["2.0.0", "2.1.0"] },
-    "layoutRecipeVersion": { "const": "1.0" },
-    "widgetAbiVersion": { "type": ["null", "string"] },
-    "patchVersion": { "type": ["string", "null"] },
+    "id": {
+      "enum": [
+        "ppte-2.0-ga-a.1",
+        "ppte-2.0-ga-b.1",
+        "ppte-2.0-ga-c.1",
+        "ppte-2.0-edit.1"
+      ]
+    },
+    "formatVersion": {
+      "const": "2"
+    },
+    "schemaVersion": {
+      "const": "2.0.0"
+    },
+    "operationProtocolVersion": {
+      "enum": [
+        "1.0",
+        "1.1"
+      ]
+    },
+    "slideIrVersion": {
+      "const": "1.0"
+    },
+    "portableRuntimeVersion": {
+      "enum": [
+        "2.0.0",
+        "2.1.0"
+      ]
+    },
+    "layoutRecipeVersion": {
+      "const": "1.0"
+    },
+    "widgetAbiVersion": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "patchVersion": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
     "migration": {
       "type": "object",
-      "required": ["from", "direction", "preservesSource"],
+      "required": [
+        "from",
+        "direction",
+        "preservesSource"
+      ],
       "properties": {
-        "from": { "type": "array", "items": { "type": "string", "minLength": 1 } },
-        "direction": { "const": "forward-only" },
-        "preservesSource": { "const": true }
+        "from": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "direction": {
+          "const": "forward-only"
+        },
+        "preservesSource": {
+          "const": true
+        }
       },
       "additionalProperties": false
+    },
+    "runtimeSubset": {
+      "enum": [
+        "ga-a",
+        "ga-b",
+        "ga-c"
+      ]
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "id": {
+            "const": "ppte-2.0-edit.1"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "operationProtocolVersion": {
+            "const": "1.1"
+          },
+          "portableRuntimeVersion": {
+            "const": "2.1.0"
+          },
+          "runtimeSubset": {
+            "const": "ga-c"
+          },
+          "widgetAbiVersion": {
+            "const": "1.0"
+          },
+          "patchVersion": {
+            "const": "1"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "operationProtocolVersion": {
+            "const": "1.0"
+          },
+          "portableRuntimeVersion": {
+            "const": "2.0.0"
+          }
+        }
+      }
+    }
+  ]
 }

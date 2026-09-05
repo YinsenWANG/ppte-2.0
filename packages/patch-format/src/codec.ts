@@ -192,7 +192,7 @@ function applyPatchAtMatchingBase(document: PpteDocument, patch: PptePatch): Pat
     const revision = canonicalRevision(applied.document)
     if (patch.manifest.headRevision !== undefined && revision !== patch.manifest.headRevision) return { ok: false, revision, issues: [error('PATCH_HEAD_REVISION_MISMATCH', `Applied patch produced ${revision}, expected ${patch.manifest.headRevision}.`)] }
     try {
-      assertDocumentCompatibility(applied.document, patch.manifest.compatibilityProfile)
+      assertDocumentCompatibility(applied.document, patch.manifest.compatibilityProfile, { operations: patch.operations })
     } catch (cause) {
       return { ok: false, revision, issues: [error('PATCH_PROFILE_MISMATCH', cause instanceof Error ? cause.message : String(cause))] }
     }

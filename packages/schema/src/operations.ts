@@ -217,11 +217,15 @@ export interface SlideMoveOperation extends OperationBase<'slide.move'> {
   slideId: SlideId
   index: number
 }
+export const SLIDE_OPTIONAL_KEYS = ['name', 'hidden', 'background', 'notes', 'transition', 'semantic', 'visualStrategy', 'provenance', 'extensions'] as const
+export type SlideOptionalKey = typeof SLIDE_OPTIONAL_KEYS[number]
+export type AllowedSlidePatch = Pick<Slide, SlideOptionalKey>
+
 export interface SlideUpdateOperation extends OperationBase<'slide.update'> {
   slideId: SlideId
-  patch: Record<string, JsonValue>
+  patch: Partial<AllowedSlidePatch>
   /** Protocol 1.1: restore inheritance by removing optional metadata fields. */
-  unset?: string[]
+  unset?: SlideOptionalKey[]
 }
 export interface SlideSetNotesOperation extends OperationBase<'slide.setNotes'> {
   slideId: SlideId
@@ -438,6 +442,8 @@ export interface GroupCreateOperation extends OperationBase<'group.create'> {
   group: LogicalGroup
 }
 export interface GroupDeleteOperation extends OperationBase<'group.delete'> {
+  /** Protocol 1.1: restore an originally absent collection. */
+  removeEmptyCollection?: boolean
   slideId: SlideId
   groupId: GroupId
 }

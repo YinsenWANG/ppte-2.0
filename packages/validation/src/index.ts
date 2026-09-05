@@ -1,3 +1,4 @@
+import { SLIDE_OPTIONAL_KEYS } from '../../schema/src/index.js'
 import { canonicalHash } from '../../canonical-json/src/index.js'
 import { validateDocument } from '../../schema/src/index.js'
 import { validateSemanticIdentity } from '../../semantic-identity/src/index.js'
@@ -225,7 +226,8 @@ function validateOperationShape(operation: Record<string, unknown>, index: numbe
     case 'slide.duplicate': requireString('sourceSlideId'); requireString('newSlideId'); if (operation.index !== undefined) requireInteger('index'); if (operation.offset !== undefined) requirePoint('offset'); break
     case 'slide.update': {
       const patch = requireRecord('patch')
-      const allowed = ['name', 'hidden', 'background', 'notes', 'transition', 'semantic', 'visualStrategy', 'provenance', 'extensions']
+      const allowed: readonly string[] = SLIDE_OPTIONAL_KEYS
+      if (patch && Object.keys(patch).some(key => !allowed.includes(key))) issues.push(error('SLIDE_UPDATE_FIELD_NOT_ALLOWED', 'slide.update patch contains a non-metadata field.', `${path}/patch`))
       if (operation.unset !== undefined) {
         if (!Array.isArray(operation.unset) || operation.unset.some(key => typeof key !== 'string' || !allowed.includes(key)) || new Set(operation.unset).size !== operation.unset.length) issues.push(error('SCHEMA_INVALID', 'slide.update.unset must contain unique optional metadata keys.', `${path}/unset`))
         else if (patch && operation.unset.some(key => Object.prototype.hasOwnProperty.call(patch, key))) issues.push(error('SCHEMA_INVALID', 'slide.update cannot set and unset the same field.', `${path}/unset`))
@@ -313,7 +315,7 @@ function validateOperationShape(operation: Record<string, unknown>, index: numbe
       break
     case 'component.updateProps': requireRecord('patch'); if (operation.replace !== undefined && typeof operation.replace !== 'boolean') issues.push(error('SCHEMA_INVALID', 'component.updateProps.replace must be boolean.', `${path}/replace`)); break
     case 'group.create': { const group = requireRecord('group'); if (group) { requireStringAt(group, 'id', `${path}/group`, issues); if (!Array.isArray(group.memberIds)) issues.push(error('SCHEMA_INVALID', 'group.create.group.memberIds must be an array.', `${path}/group/memberIds`)); else checkUniqueStrings(group.memberIds, `${path}/group/memberIds`, issues) } break }
-    case 'group.delete': requireString('groupId'); break
+    case 'group.delete': requireString('groupId'); if (operation.removeEmptyCollection !== undefined && typeof operation.removeEmptyCollection !== 'boolean') issues.push(error('SCHEMA_INVALID', 'group.delete.removeEmptyCollection must be boolean.', `${path}/removeEmptyCollection`)); break
     case 'group.addMembers': case 'group.removeMembers': requireString('groupId'); requireStringArray('elementIds'); break
     case 'group.move': requireString('groupId'); requireFiniteNumber('dx'); requireFiniteNumber('dy'); break
     case 'group.resize': requireString('groupId'); requireFrame('targetFrame'); if (operation.scaleTextStyle !== undefined && typeof operation.scaleTextStyle !== 'boolean') issues.push(error('SCHEMA_INVALID', 'group.resize.scaleTextStyle must be boolean.', `${path}/scaleTextStyle`)); break

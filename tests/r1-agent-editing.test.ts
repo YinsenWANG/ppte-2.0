@@ -41,7 +41,7 @@ test('R1 finding 7: slide metadata updates are typed, reversible, and stale revi
 
   const stale = session.preview({ ...transaction, transactionId: 'r1-slide-metadata-stale', baseRevision: 'sha256-stale' })
   assert.ok(stale.issues.some((issue) => issue.code === 'REVISION_CONFLICT'))
-  const unsafe = session.preview({ ...transaction, transactionId: 'r1-slide-elements-unsafe', baseRevision: session.getRevision(), operations: [{ opId: 'unsafe', kind: 'slide.update', slideId: 'slide_main', patch: { elements: {} } }] })
+  const unsafe = session.preview({ ...transaction, transactionId: 'r1-slide-elements-unsafe', baseRevision: session.getRevision(), operations: [{ opId: 'unsafe', kind: 'slide.update', slideId: 'slide_main', patch: { elements: {} } as never }] })
   assert.ok(unsafe.issues.some((issue) => issue.code === 'SLIDE_UPDATE_FIELD_NOT_ALLOWED'))
 })
 
