@@ -111,6 +111,8 @@ export function validateRecipeSpec(value: unknown): ValidationIssue[] {
   if (object.artworkSafeRegions !== undefined) validateRects(object.artworkSafeRegions, '/artworkSafeRegions', add)
   if (object.qualityRules !== undefined && (!Array.isArray(object.qualityRules) || object.qualityRules.length > MAX_ARRAY)) add(`qualityRules must contain at most ${MAX_ARRAY} items.`, '/qualityRules')
   if (Array.isArray(object.qualityRules)) object.qualityRules.forEach((rule, index) => validateQualityRule(rule, index, add))
+  for (const key of slotKeys) if (!zoneIds.has(key)) add(`Slot ${key} requires its own zone.`, '/zones')
+  if (Array.isArray(object.variants) && new Set(object.variants.map(v => isRecord(v) ? v.id : undefined)).size !== object.variants.length) add('Duplicate variant id.', '/variants')
   return normalizeIssues(issues)
 }
 
@@ -271,7 +273,17 @@ function validateProtectedContent(value: unknown, index: number, add: (message: 
 function validateRecipeSlot(value: unknown, index: number, keys: Set<string>, add: (message: string, path?: string) => void) {
   const path = `/slots/${index}`
   if (!isRecord(value)) { add('Recipe slot must be an object.', path); return }
-  checkKnown(value, ['key', 'accepts', 'required', 'minCount', 'maxCount', 'maxChars', 'preferredAspectRatio', 'styleRef', 'semanticRole'], add, path)
+  checkKnown(value, ['repeat', 'key', 'accepts', 'required', 'minCount', 'maxCount', 'maxChars', 'preferredAspectRatio', 'styleRef', 'semanticRole'], add, path)
+  if (value.repeat !== undefined) {
+    const r = value.repeat
+    if (!isRecord(r)) add('repeat must be versioned declarative data.', `${path}/repeat`)
+    else {
+      checkKnown(r, ['version', 'maxCount', 'columns', 'gapX', 'gapY'], add, `${path}/repeat`)
+      if (r.version !== '1.0') add('Unsupported repeat version.', `${path}/repeat/version`)
+      for (const k of ['maxCount', 'columns']) if (!Number.isInteger(r[k]) || Number(r[k]) < 1 || Number(r[k]) > 128) add('repeat counts must be integers in 1..128.', `${path}/repeat/${k}`)
+      for (const k of ['gapX', 'gapY']) if (!finiteNonNegative(r[k]) || r[k] > 1) add('repeat gaps must be normalized.', `${path}/repeat/${k}`)
+    }
+  }
   requireString(value, 'key', add, undefined, path)
   if (typeof value.key === 'string') { if (keys.has(value.key)) add(`Duplicate slot key ${value.key}.`, `${path}/key`); keys.add(value.key) }
   if (!Array.isArray(value.accepts)) add('accepts must contain at least one block kind.', `${path}/accepts`)
@@ -280,6 +292,7 @@ function validateRecipeSlot(value: unknown, index: number, keys: Set<string>, ad
   if (value.required !== undefined && typeof value.required !== 'boolean') add('required must be boolean.', `${path}/required`)
   for (const field of ['minCount', 'maxCount'] as const) if (value[field] !== undefined && (!Number.isInteger(value[field]) || Number(value[field]) < 0)) add(`${field} must be a non-negative integer.`, `${path}/${field}`)
   if (value.minCount !== undefined && value.maxCount !== undefined && Number(value.minCount) > Number(value.maxCount)) add('minCount must not exceed maxCount.', path)
+  if (Math.max(value.required === true ? 1 : 0, Number(value.minCount ?? 0)) > Math.min(Number(value.maxCount ?? 128), isRecord(value.repeat) ? Number(value.repeat.maxCount) : 128)) add('Slot minimum exceeds capacity.', path)
   if (value.maxChars !== undefined && (!Number.isInteger(value.maxChars) || Number(value.maxChars) < 1)) add('maxChars must be a positive integer.', `${path}/maxChars`)
   if (value.preferredAspectRatio !== undefined && !finitePositive(value.preferredAspectRatio)) add('preferredAspectRatio must be positive and finite.', `${path}/preferredAspectRatio`)
   if (value.styleRef !== undefined && typeof value.styleRef !== 'string') add('styleRef must be a string.', `${path}/styleRef`)
@@ -290,13 +303,17 @@ function validateRecipeVariant(value: unknown, index: number, zoneIds: Set<strin
   if (!isRecord(value)) { add('Recipe variant must be an object.', path); return }
   checkKnown(value, ['id', 'when', 'zoneOverrides'], add, path)
   requireString(value, 'id', add, undefined, path)
-  if (value.when !== undefined && !isJsonValue(value.when, 0)) add('Recipe variant when must be bounded JSON data.', `${path}/when`)
+  if (isRecord(value.when)) for (const [key, condition] of Object.entries(value.when)) {
+    const allowed: Record<string, Set<string>> = { density: DENSITIES, purpose: SLIDE_PURPOSES, visualStrategy: VISUAL_STRATEGIES }
+    if (typeof condition !== 'string' || !Object.hasOwn(allowed, key) || !allowed[key].has(condition)) add('Unsupported variant condition.', `${path}/when/${key}`)
+  }
+  if (value.when !== undefined && (!isRecord(value.when) || !isJsonValue(value.when, 0))) add('Recipe variant when must be bounded JSON data.', `${path}/when`)
   if (value.zoneOverrides !== undefined) {
     if (!isRecord(value.zoneOverrides)) add('Recipe variant zoneOverrides must be an object.', `${path}/zoneOverrides`)
     else for (const [zoneId, override] of Object.entries(value.zoneOverrides)) {
       if (!zoneIds.has(zoneId)) add(`Recipe variant references unknown zone ${zoneId}.`, `${path}/zoneOverrides/${escapePointer(zoneId)}`)
       if (!isRecord(override)) add('Recipe zone override must be an object.', `${path}/zoneOverrides/${escapePointer(zoneId)}`)
-      else { checkKnown(override, ['id', 'x', 'y', 'width', 'height'], add, `${path}/zoneOverrides/${escapePointer(zoneId)}`); for (const field of ['x', 'y', 'width', 'height'] as const) if (override[field] !== undefined && (!finite(override[field]) || Number(override[field]) < 0 || Number(override[field]) > 1)) add(`Zone override ${field} must be normalized.`, `${path}/zoneOverrides/${escapePointer(zoneId)}/${field}`) }
+      else { if (override.id !== undefined && override.id !== zoneId) add('Variant cannot rename a zone.', `${path}/zoneOverrides/${escapePointer(zoneId)}/id`); checkKnown(override, ['id', 'x', 'y', 'width', 'height'], add, `${path}/zoneOverrides/${escapePointer(zoneId)}`); for (const field of ['x', 'y', 'width', 'height'] as const) if (override[field] !== undefined && (!finite(override[field]) || Number(override[field]) < 0 || Number(override[field]) > 1)) add(`Zone override ${field} must be normalized.`, `${path}/zoneOverrides/${escapePointer(zoneId)}/${field}`) }
     }
   }
 }
@@ -306,7 +323,7 @@ function validateQualityRule(value: unknown, index: number, add: (message: strin
   if (!isRecord(value)) { add('Recipe quality rule must be an object.', path); return }
   checkKnown(value, ['kind', 'value'], add, path)
   if (!['max-elements', 'min-font-size', 'max-overflow', 'required-reading-order'].includes(String(value.kind))) add('Recipe quality rule kind is invalid.', `${path}/kind`)
-  if (!(typeof value.value === 'boolean' || finite(value.value))) add('Recipe quality rule value must be a finite number or boolean.', `${path}/value`)
+  if (value.kind === 'required-reading-order' ? typeof value.value !== 'boolean' : !finiteNonNegative(value.value) || (value.kind !== 'min-font-size' && !Number.isInteger(value.value))) add('Quality rule value has the wrong type or range.', `${path}/value`)
 }
 
 function validateThemeIntent(value: unknown, add: (message: string, path?: string) => void) {
@@ -345,6 +362,10 @@ function validateConstraint(value: unknown, index: number, slotIds: Set<string>,
   if (value.kind === 'safe-area' && value.slotId !== '*' && (typeof value.slotId !== 'string' || !slotIds.has(value.slotId))) add(`Constraint references unknown slot ${String(value.slotId)}.`, `${path}/slotId`)
   if (value.kind === 'padding' && (typeof value.zoneId !== 'string' || !zoneIds.has(value.zoneId))) add(`Constraint references unknown zone ${String(value.zoneId)}.`, `${path}/zoneId`)
   for (const field of ['gap', 'value', 'ratio', 'gapX', 'gapY', 'width', 'height', 'top', 'right', 'bottom', 'left'] as const) if (constraint[field] !== undefined && !finiteNonNegative(constraint[field])) add(`${field} must be finite and non-negative.`, `${path}/${field}`)
+  const requiredNumbers: Record<string, string[]> = { stack: ['gap'], gap: ['value'], grid: ['gapX', 'gapY'], padding: ['top', 'right', 'bottom', 'left'], 'aspect-ratio': ['ratio'] }
+  for (const field of requiredNumbers[value.kind] ?? []) if (!finiteNonNegative(value[field])) add('Required finite non-negative number.', `${path}/${field}`)
+  if (value.kind === 'aspect-ratio' && !finitePositive(value.ratio)) add('ratio must be positive.', `${path}/ratio`)
+  if (value.kind === 'avoid-region' && !validRect(value.region)) add('avoid-region requires a valid region.', `${path}/region`)
   if (value.kind === 'grid' && (!Number.isInteger(value.columns) || Number(value.columns) < 1)) add('Grid columns must be a positive integer.', `${path}/columns`)
   if (value.kind === 'align' && (!['x', 'y'].includes(String(value.axis)) || !['start', 'center', 'end'].includes(String(value.mode)))) add('Align axis or mode is invalid.', path)
   if (['stack', 'gap'].includes(value.kind) && !['horizontal', 'vertical'].includes(String(value.axis))) add('Stack/gap axis is invalid.', `${path}/axis`)

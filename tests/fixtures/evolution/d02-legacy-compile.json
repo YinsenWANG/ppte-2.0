@@ -1,0 +1,59 @@
+{
+  "slideKey": "legacy",
+  "slide": {
+    "slideKey": "legacy",
+    "purpose": "cover",
+    "message": "Legacy",
+    "visualStrategy": "structured"
+  },
+  "elementDrafts": [
+    {
+      "draftId": "draft:legacy:title",
+      "kind": "text",
+      "semanticKey": "block.title",
+      "role": "title",
+      "frame": {
+        "x": 102.4,
+        "y": 100.80000000000001,
+        "width": 614.4,
+        "height": 172.79999999999998
+      },
+      "data": {
+        "content": {
+          "paragraphs": [
+            {
+              "id": "draft:legacy:title:paragraph",
+              "runs": [
+                {
+                  "id": "draft:legacy:title:run",
+                  "text": "Legacy"
+                }
+              ]
+            }
+          ]
+        },
+        "style": {
+          "styleRef": "text.title.primary"
+        },
+        "overflowPolicy": "warn"
+      },
+      "sourceBlockKey": "title"
+    }
+  ],
+  "groups": [],
+  "readingOrder": [
+    "draft:legacy:title"
+  ],
+  "semanticKeyMap": {
+    "title": "draft:legacy:title"
+  },
+  "assetIds": [],
+  "validationIssues": [],
+  "provenance": {
+    "compilerVersion": "design-compiler-1.0.0",
+    "slideIrDigest": "sha256-7b40bf6b7de847ad350d34ff9c47ff3d0d467dfae695d7f92491407dec90dcb6",
+    "fontMetricsFingerprint": "reference-font-metrics-1",
+    "recipeId": "cover.split",
+    "recipeVersion": "1.0.0"
+  }
+}

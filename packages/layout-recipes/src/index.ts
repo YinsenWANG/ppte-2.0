@@ -28,14 +28,16 @@ export class RecipeRegistry {
   }
 
   register(spec: RecipeSpec): void {
+    if (this.declarative.size + this.controlled.size >= 128) throw new Error('RECIPE_LIMIT: at most 128 recipes')
     const issues = validateRecipeSpec(spec)
     if (issues.some((issue) => issue.severity === 'error')) throw new Error(issues.map((issue) => `${issue.code}: ${issue.message}`).join('\n'))
     const key = recipeKey(spec)
     if (this.declarative.has(key) || this.controlled.has(key)) throw new Error(`RECIPE_ID_CONFLICT: ${key}`)
-    this.declarative.set(key, spec)
+    this.declarative.set(key, cloneSpec(spec))
   }
 
   registerControlled(recipe: ControlledRecipe): void {
+    if (this.declarative.size + this.controlled.size >= 128) throw new Error('RECIPE_LIMIT: at most 128 recipes')
     if (recipe.trusted !== true || typeof recipe.compile !== 'function') throw new Error('CONTROLLED_RECIPE_UNTRUSTED: a trusted compile handler is required.')
     const issues = validateRecipeSpec(recipe.spec)
     if (issues.some((issue) => issue.severity === 'error')) throw new Error(issues.map((issue) => `${issue.code}: ${issue.message}`).join('\n'))
@@ -45,7 +47,7 @@ export class RecipeRegistry {
   }
 
   get(id: string, version?: string): RecipeSpec | undefined {
-    if (version) return this.declarative.get(`${id}@${version}`) ?? this.controlled.get(`${id}@${version}`)?.spec
+    if (version) return this.list().find(spec => spec.id === id && spec.version === version)
     const candidates = this.list().filter((recipe) => recipe.id === id)
     return candidates.sort(compareVersions).at(-1)
   }
@@ -62,7 +64,7 @@ export class RecipeRegistry {
 export function recipeKey(recipe: Pick<RecipeSpec, 'id' | 'version'>): string { return `${recipe.id}@${recipe.version}` }
 
 export function selectRecipe(ir: SlideIR, registry = new RecipeRegistry(), history: RecipeAcceptanceHistory = {}): RecipeCandidate | undefined {
-  const candidates = registry.list().map((recipe) => scoreRecipe(ir, recipe, history.acceptanceByRecipe?.[recipeKey(recipe)]))
+  const candidates = registry.list().map((recipe) => registry.getControlled(recipe.id, recipe.version) ? { recipe, score: recipe.supports.includes(ir.purpose) ? 50 : Number.NEGATIVE_INFINITY, reasons: ['trusted-controlled-handler'] } : scoreRecipe(ir, recipe, history.acceptanceByRecipe?.[recipeKey(recipe)]))
   return candidates.filter((candidate) => candidate.score > Number.NEGATIVE_INFINITY).sort((left, right) => right.score - left.score || left.recipe.id.localeCompare(right.recipe.id) || left.recipe.version.localeCompare(right.recipe.version))[0]
 }
 
@@ -73,6 +75,7 @@ export function scoreRecipe(ir: SlideIR, recipe: RecipeSpec, historicalAcceptanc
   if (ir.layoutIntent?.preferredRecipeIds?.includes(recipe.id)) { score += 40; reasons.push('preferred-by-layout-intent') }
   if (ir.layoutIntent?.avoidRecipeIds?.includes(recipe.id)) { score -= 80; reasons.push('avoided-by-layout-intent') }
   const capacity = matchBlocksToSlots(ir.blocks, recipe)
+  if (capacity.unmatched) return { recipe, score: Number.NEGATIVE_INFINITY, reasons: ['capacity-infeasible'] }
   score += capacity.matched * 5
   score -= capacity.unmatched * 12
   if (capacity.unmatched === 0) reasons.push('all-blocks-have-a-slot')
@@ -93,22 +96,32 @@ export function scoreRecipe(ir: SlideIR, recipe: RecipeSpec, historicalAcceptanc
   return { recipe, score, reasons }
 }
 
-export function matchBlocksToSlots(blocks: BlockIR[], recipe: RecipeSpec): { matched: number; unmatched: number; assignments: Array<{ block: BlockIR; slotKey: string }> } {
-  const counts = new Map<string, number>()
-  const assignments: Array<{ block: BlockIR; slotKey: string }> = []
-  let unmatched = 0
-  for (const block of blocks) {
-    const slot = recipe.slots.find((candidate) => candidate.accepts.includes(block.kind) && (candidate.maxCount === undefined || (counts.get(candidate.key) ?? 0) < candidate.maxCount))
-    if (!slot) { unmatched += 1; continue }
-    counts.set(slot.key, (counts.get(slot.key) ?? 0) + 1)
-    assignments.push({ block, slotKey: slot.key })
+export function matchBlocksToSlots(blocks: BlockIR[], recipe: RecipeSpec): { matched: number; unmatched: number; failure?: 'capacity' | 'budget'; assignments: Array<{ block: BlockIR; slotKey: string }> } {
+  // Bounded deterministic search, including lower bounds and linked block placement.
+  const counts = recipe.slots.map(() => 0)
+  const chosen = blocks.map(() => -1)
+  let visits = 0
+  const fits = (block: BlockIR, i: number) => recipe.slots[i].accepts.includes(block.kind)
+    && (recipe.slots[i].maxChars === undefined || blockTextLength(block.content) <= recipe.slots[i].maxChars!)
+  const minimum = (i: number) => Math.max(recipe.slots[i].required ? 1 : 0, recipe.slots[i].minCount ?? 0)
+  const search = (index: number): boolean => {
+    if (++visits > 100000) return false
+    if (recipe.slots.some((_, i) => counts[i] + blocks.slice(index).filter(b => fits(b, i)).length < minimum(i))) return false
+    if (index === blocks.length) return true
+    for (let i = 0; i < recipe.slots.length; i++) {
+      if (visits > 100000) return false
+      if (!fits(blocks[index], i) || counts[i] >= Math.min(recipe.slots[i].maxCount ?? 128, recipe.slots[i].repeat?.maxCount ?? 128)) continue
+      if (blocks.some((b, j) => j < index && ((b.keepTogetherWith ?? []).includes(blocks[index].key) || (blocks[index].keepTogetherWith ?? []).includes(b.key)) && chosen[j] !== i)) continue
+      chosen[index] = i; counts[i]++
+      if (search(index + 1)) return true
+      counts[i]--; chosen[index] = -1
+    }
+    return false
   }
-  for (const slot of recipe.slots) {
-    const minimum = slot.minCount ?? (slot.required ? 1 : 0)
-    const actual = counts.get(slot.key) ?? 0
-    if (actual < minimum) unmatched += minimum - actual
-  }
-  return { matched: assignments.length, unmatched, assignments }
+  const valid = blocks.length <= 128 && recipe.slots.length <= 128
+    && blocks.every(b => (b.keepTogetherWith ?? []).every(key => blocks.some(other => other.key === key))) && search(0)
+  const assignments = valid ? blocks.map((block, i) => ({ block, slotKey: recipe.slots[chosen[i]].key })) : []
+  return { matched: assignments.length, unmatched: valid ? 0 : Math.max(1, blocks.length), ...(valid ? {} : { failure: visits > 100000 ? 'budget' as const : 'capacity' as const }), assignments }
 }
 
 export function recipeCoverage(registry = new RecipeRegistry()): { declarative: number; controlled: number; ratio: number } {
@@ -120,12 +133,24 @@ export function recipeCoverage(registry = new RecipeRegistry()): { declarative: 
 
 /** Resolve the declarative constraint vocabulary into deterministic normalized zones. */
 export function resolveRecipeZones(recipe: RecipeSpec, canvas?: Pick<CanvasSpec, 'width' | 'height' | 'safeArea'>): LayoutZone[] {
+  const invalid = validateRecipeSpec(recipe)
+  if (invalid.length) throw new Error(`RECIPE_INVALID: ${invalid.map(i => i.message).join('; ')}`)
   const zones = recipe.zones.map((zone) => ({ ...zone }))
   const byId = new Map(zones.map((zone) => [zone.id, zone]))
   const selected = (ids: string[] | undefined) => (ids ?? []).map((id) => byId.get(id)).filter((zone): zone is LayoutZone => Boolean(zone))
   const all = (slotId: string) => slotId === '*' ? zones : selected([slotId])
   for (const constraint of recipe.constraints) applyConstraint(constraint, selected, all, byId, zones, canvas)
-  return zones.map(clampZone)
+  for (const zone of zones) assertFeasibleZone(zone)
+  // Re-check every final postcondition: later constraints cannot erase earlier ones.
+  for (const constraint of recipe.constraints) {
+    if (constraint.kind === 'padding' || constraint.kind === 'keep-together') continue
+    const copy = structuredClone(zones)
+    const map = new Map(copy.map(z => [z.id, z]))
+    applyConstraint(constraint, ids => (ids ?? []).map(id => map.get(id)!), id => id === '*' ? copy : [map.get(id)!], map, copy, canvas)
+    if (copy.some((z, i) => ['x', 'y', 'width', 'height'].some(k => Math.abs(z[k as 'x'] - zones[i][k as 'x']) > 1e-9))) throw new Error(`RECIPE_INFEASIBLE: conflicting ${constraint.kind}`)
+    if (constraint.kind === 'avoid-region' && intersectsZone(byId.get(constraint.slotId)!, constraint.region)) throw new Error('RECIPE_INFEASIBLE: avoid-region')
+  }
+  return zones
 }
 
 export function builtInRecipeSpecs(): RecipeSpec[] {
@@ -152,15 +177,15 @@ export function builtInRecipeSpecs(): RecipeSpec[] {
 function recipe(id: string, supports: SlidePurpose[], slots: RecipeSpec['slots'], zones: RecipeSpec['zones'], constraintKinds: string[]): RecipeSpec {
   return {
     id,
-    version: '1.0.0',
+    version: constraintKinds.some(k => ['grid', 'gap', 'baseline'].includes(k)) ? '1.1.0' : '1.0.0',
     supports,
     slots,
     zones,
     constraints: constraintKinds.flatMap((kind): RecipeSpec['constraints'] => {
       if (kind === 'safe-area') return [{ kind: 'safe-area', slotId: '*' }]
       if (kind === 'grid') return [{ kind: 'grid', slotIds: slots.filter((item) => item.key !== 'title').map((item) => item.key), columns: 3, gapX: 0.03, gapY: 0.04 }]
-      if (kind === 'gap') return [{ kind: 'gap', slotIds: slots.map((item) => item.key), axis: 'horizontal', value: 0.03 }]
-      if (kind === 'baseline') return [{ kind: 'baseline', slotIds: slots.map((item) => item.key) }]
+      if (kind === 'gap') return [{ kind: 'gap', slotIds: slots.filter(item => item.key !== 'title').map((item) => item.key), axis: 'horizontal', value: 0.03 }]
+      if (kind === 'baseline') return [] // Legacy declaration was a no-op; real text baselines require browser metrics.
       if (kind === 'avoid-region') return [{ kind: 'avoid-region', slotId: slots.find((item) => item.key === 'content')?.key ?? slots[0].key, region: { x: 0.58, y: 0.04, width: 0.38, height: 0.92 } }]
       return []
     }),
@@ -174,9 +199,11 @@ function slot(key: string, accepts: BlockIR['kind'][], required = false, minCoun
 function zone(id: string, x: number, y: number, width: number, height: number) { return { id, x, y, width, height } }
 function cloneSpec(spec: RecipeSpec): RecipeSpec { return structuredClone(spec) }
 function compareVersions(left: RecipeSpec, right: RecipeSpec): number { return left.version.localeCompare(right.version) }
-function blockTextLength(value: unknown): number { if (typeof value === 'string') return value.length; if (typeof value === 'number' || typeof value === 'boolean') return String(value).length; if (value && typeof value === 'object' && !Array.isArray(value)) return Object.values(value as Record<string, unknown>).reduce<number>((sum, item) => sum + blockTextLength(item), 0); return 0 }
+function blockTextLength(value: unknown): number { if (typeof value === 'string') return value.length; if (typeof value === 'number' || typeof value === 'boolean') return String(value).length; if (Array.isArray(value)) return value.reduce<number>((sum, item) => sum + blockTextLength(item), 0); if (value && typeof value === 'object' && !Array.isArray(value)) return Object.values(value as Record<string, unknown>).reduce<number>((sum, item) => sum + blockTextLength(item), 0); return 0 }
 
 function applyConstraint(constraint: LayoutConstraint, selected: (ids: string[] | undefined) => LayoutZone[], all: (id: string) => LayoutZone[], byId: Map<string, LayoutZone>, zones: LayoutZone[], canvas?: Pick<CanvasSpec, 'width' | 'height' | 'safeArea'>) {
+  if (constraint.kind === 'baseline') throw new Error('RECIPE_UNSUPPORTED: baseline requires measured text baselines')
+  if (constraint.kind === 'keep-together') return // One slide, atomic capacity; logical group emitted by compiler.
   if (constraint.kind === 'padding') {
     const zone = byId.get(constraint.zoneId)
     if (zone) { zone.x += constraint.left; zone.y += constraint.top; zone.width -= constraint.left + constraint.right; zone.height -= constraint.top + constraint.bottom }
@@ -213,7 +240,7 @@ function applyConstraint(constraint: LayoutConstraint, selected: (ids: string[] 
   if (constraint.kind === 'grid') {
     const target = selected(constraint.slotIds)
     if (target.length === 0) return
-    const minX = Math.min(...target.map((zone) => zone.x)); const minY = Math.min(...target.map((zone) => zone.y)); const maxX = Math.max(...target.map((zone) => zone.x + zone.width)); const maxY = Math.max(...target.map((zone) => zone.y + zone.height)); const columns = Math.max(1, constraint.columns); const rows = Math.ceil(target.length / columns); const width = Math.max(0.001, (maxX - minX - constraint.gapX * (columns - 1)) / columns); const height = Math.max(0.001, (maxY - minY - constraint.gapY * (rows - 1)) / rows)
+    const minX = Math.min(...target.map((zone) => zone.x)); const minY = Math.min(...target.map((zone) => zone.y)); const maxX = Math.max(...target.map((zone) => zone.x + zone.width)); const maxY = Math.max(...target.map((zone) => zone.y + zone.height)); const columns = Math.min(target.length, constraint.columns); const rows = Math.ceil(target.length / columns); const width = (maxX - minX - constraint.gapX * (columns - 1)) / columns; const height = (maxY - minY - constraint.gapY * (rows - 1)) / rows
     target.forEach((zone, index) => { const column = index % columns; const row = Math.floor(index / columns); zone.x = minX + column * (width + constraint.gapX); zone.y = minY + row * (height + constraint.gapY); zone.width = width; zone.height = height })
     return
   }
@@ -235,4 +262,21 @@ function alignmentValue(zones: LayoutZone[], mode: 'start' | 'center' | 'end', a
   return zones.reduce((sum, zone) => sum + (axis === 'x' ? zone.x + zone.width / 2 : zone.y + zone.height / 2), 0) / zones.length
 }
 function intersectsZone(left: LayoutZone, right: { x: number; y: number; width: number; height: number }): boolean { return left.x < right.x + right.width && left.x + left.width > right.x && left.y < right.y + right.height && left.y + left.height > right.y }
-function clampZone(zone: LayoutZone): LayoutZone { const width = Math.min(1, Math.max(0.001, zone.width)); const height = Math.min(1, Math.max(0.001, zone.height)); return { ...zone, width, height, x: Math.min(1 - width, Math.max(0, zone.x)), y: Math.min(1 - height, Math.max(0, zone.y)) } }
+export function assertFeasibleZone(zone: LayoutZone): void {
+  if (![zone.x, zone.y, zone.width, zone.height].every(Number.isFinite) || zone.width <= 0 || zone.height <= 0 || zone.x < -1e-9 || zone.y < -1e-9 || zone.x + zone.width > 1 + 1e-9 || zone.y + zone.height > 1 + 1e-9) throw new Error(`RECIPE_INFEASIBLE: zone ${zone.id}`)
+}
+
+/** Execution vocabulary v1: conditions are equality on these IR fields, never paths/code. */
+export const RECIPE_EXECUTION = Object.freeze({ version: '1.0', variants: ['density', 'purpose', 'visualStrategy'], rejectedConstraints: ['baseline'], constraints: ['align', 'stack', 'grid', 'gap', 'padding', 'min-size', 'max-size', 'aspect-ratio', 'keep-together', 'avoid-region', 'safe-area'], qualityRules: ['max-elements', 'min-font-size', 'max-overflow', 'required-reading-order'], maxBlocks: 128, maxSearchStates: 100000 })
+export function applyRecipeVariant(recipe: RecipeSpec, ir: SlideIR, variantId?: string): RecipeSpec {
+  const eligible = (recipe.variants ?? []).filter(v => Object.entries(v.when ?? {}).every(([k, value]) => {
+    if (!RECIPE_EXECUTION.variants.includes(k)) throw new Error(`RECIPE_UNSUPPORTED: variant condition ${k}`)
+    return ir[k as 'density'] === value
+  }))
+  const selected = variantId ? eligible.find(v => v.id === variantId) : eligible.length === 1 ? eligible[0] : undefined
+  if (variantId && !selected || !variantId && eligible.length > 1) throw new Error('RECIPE_VARIANT_CONFLICT: select one eligible variant')
+  const result = structuredClone(recipe)
+  if (selected) result.zones = result.zones.map(z => ({ ...z, ...selected.zoneOverrides?.[z.id] }))
+  result.zones.forEach(assertFeasibleZone)
+  return result
+}

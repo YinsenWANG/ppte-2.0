@@ -94,6 +94,7 @@ export interface ProtectedContentIR {
   preserve: Array<'content' | 'data' | 'style' | 'geometry' | 'asset'>
 }
 export interface RecipeSlot {
+  repeat?: { version: '1.0'; maxCount: number; columns: number; gapX: number; gapY: number }
   key: string
   accepts: BlockKind[]
   required?: boolean

@@ -1,7 +1,7 @@
 import { regenerationProtectedIds } from '../../design-system/src/index.js'
 import { canonicalHash, canonicalJsonString, cloneJson } from '../../canonical-json/src/index.js'
 import { validateCompiledSlideDraft, validatePresentationIR, validateSlideIR } from '../../schema/src/index.js'
-import { RecipeRegistry, matchBlocksToSlots, resolveRecipeZones, selectRecipe } from '../../layout-recipes/src/index.js'
+import { RecipeRegistry, applyRecipeVariant, assertFeasibleZone, matchBlocksToSlots, resolveRecipeZones, selectRecipe } from '../../layout-recipes/src/index.js'
 import { withErrorSemantics } from '../../schema/src/errors.js'
 import { measureTextLayout, type ResolvedTextStyle } from '../../validation/src/index.js'
 import type {
@@ -29,7 +29,7 @@ import type {
 const SLIDE_PURPOSES = ['cover', 'section', 'statement', 'explanation', 'comparison', 'metrics', 'chart', 'timeline', 'process', 'quote', 'summary', 'closing', 'custom'] as const
 const VISUAL_STRATEGIES = ['structured', 'hybrid', 'poster'] as const
 
-export const DEFAULT_COMPILER_VERSION = 'design-compiler-1.0.0'
+export const DEFAULT_COMPILER_VERSION = 'design-compiler-1.1.0'
 export const DEFAULT_FONT_METRICS_FINGERPRINT = 'reference-font-metrics-1'
 
 export interface AssetResolution {
@@ -39,11 +39,12 @@ export interface AssetResolution {
 }
 
 export interface CompileContext {
-  canvas: Pick<CanvasSpec, 'width' | 'height'>
+  canvas: Pick<CanvasSpec, 'width' | 'height' | 'safeArea'>
   theme?: ThemeDefinition
   recipes?: RecipeRegistry
   recipeId?: string
   recipeVersion?: string
+  variantId?: string
   seed?: string
   compilerVersion?: string
   fontMetricsFingerprint?: string
@@ -110,12 +111,19 @@ export class DesignCompiler {
     const registry = context.recipes ?? new RecipeRegistry()
     const selected = context.recipeId ? registry.get(context.recipeId, context.recipeVersion) : selectRecipe(ir, registry, { acceptanceByRecipe: context.historyAcceptance })
     if (!selected) return emptyDraft(ir, provenanceBase, [compilerIssue('RECIPE_MISSING', 'No compatible declarative Recipe was found.', '/layoutIntent')])
-    const recipe = 'recipe' in selected ? selected.recipe : selected
+    let recipe = 'recipe' in selected ? selected.recipe : selected
+    try { recipe = applyRecipeVariant(recipe, ir, context.variantId) }
+    catch (cause) { return emptyDraft(ir, provenanceBase, [compilerIssue('RECIPE_EXECUTION_REJECTED', String(cause), '/variants')]) }
+    if (![context.canvas.width, context.canvas.height].every(v => Number.isFinite(v) && v > 0)) return emptyDraft(ir, provenanceBase, [compilerIssue('RECIPE_INFEASIBLE', 'Canvas must be finite and positive.', '/canvas')])
     const assignment = matchBlocksToSlots(ir.blocks, recipe)
     const issues: ValidationIssue[] = []
     let drafts: ElementDraft[] = []
     const semanticKeyMap: Record<string, string> = {}
     const controlled = registry.getControlled(recipe.id, recipe.version)
+    if (!controlled && assignment.unmatched) return emptyDraft(ir, provenanceBase, [compilerIssue(assignment.failure === 'budget' ? 'RECIPE_SEARCH_LIMIT' : 'RECIPE_CAPACITY_EXCEEDED', 'RECIPE_CAPACITY_EXCEEDED: no complete assignment satisfies types, counts, maxChars and keepTogetherWith. Select another recipe or propose splitting the slide.', '/blocks')])
+    let resolvedZones: RecipeSpec['zones']
+    try { resolvedZones = resolveRecipeZones(recipe, context.canvas) }
+    catch (cause) { return emptyDraft(ir, provenanceBase, [compilerIssue('RECIPE_INFEASIBLE', String(cause), '/constraints')]) }
     if (controlled) {
       try {
         const output = controlled.compile(cloneJson({ slideIR: ir, recipe, canvas: context.canvas, ...(context.theme ? { theme: context.theme } : {}) }))
@@ -133,16 +141,18 @@ export class DesignCompiler {
         issues.push(compilerIssue('CONTROLLED_RECIPE_FAILED', cause instanceof Error ? cause.message : String(cause), '/elementDrafts'))
       }
     } else {
-      if (assignment.unmatched > 0) issues.push(compilerIssue('RECIPE_SLOT_UNAVAILABLE', `${assignment.unmatched} block(s) could not be assigned to Recipe slots.`, '/blocks'))
-      const slotZones = new Map(resolveRecipeZones(recipe, context.canvas).map((zone) => [zone.id, zone]))
+      const slotZones = new Map(resolvedZones.map((zone) => [zone.id, zone]))
       const slotGroups = new Map<string, typeof assignment.assignments>()
       for (const item of assignment.assignments) addToMap(slotGroups, item.slotKey, item)
       for (const item of assignment.assignments) {
         const group = slotGroups.get(item.slotKey) ?? [item]
         const index = group.indexOf(item)
         const slot = recipe.slots.find((candidate) => candidate.key === item.slotKey)
-        const zone = slotZones.get(item.slotKey) ?? firstResolvedZone(slotZones)
-        const frame = toCanvasFrame(expandZone(zone, group.length, index, ir.layoutIntent?.direction), context.canvas)
+        const zone = slotZones.get(item.slotKey)!
+        const normalizedFrame = expandZone(zone, group.length, index, ir.layoutIntent?.direction, slot?.repeat)
+        try { assertFeasibleZone({ ...normalizedFrame, id: item.slotKey }) }
+        catch (cause) { return emptyDraft(ir, provenanceBase, [compilerIssue('RECIPE_CAPACITY_EXCEEDED', String(cause), '/blocks')]) }
+        const frame = toCanvasFrame(normalizedFrame, context.canvas)
         const draft = blockToDraft(ir, item.block, frame, slot?.styleRef, context)
         if (draft) {
           drafts.push(draft)
@@ -177,14 +187,16 @@ export class DesignCompiler {
       slideKey: ir.slideKey,
       slide: slideDraft(ir),
       elementDrafts: drafts,
-      groups: [],
+      groups: controlled ? [] : recipeGroups(ir, recipe, assignment.assignments),
       readingOrder,
       semanticKeyMap,
       assetIds: drafts.flatMap((item) => { const data = recordData(item.data); return typeof data.assetId === 'string' ? [data.assetId] : [] }),
       validationIssues: issues,
       provenance: { ...provenanceBase, recipeId: recipe.id, recipeVersion: recipe.version },
     }
-    draft.validationIssues.push(...validateCompiledSlideDraft(draft), ...qualityIssuesForDraft(recipe, drafts, context))
+    draft.validationIssues.push(...validateCompiledSlideDraft(draft), ...qualityIssuesForDraft(recipe, drafts, context, readingOrder))
+    for (const block of controlled ? [] : ir.blocks) if (!drafts.some(d => d.sourceBlockKey === block.key)) draft.validationIssues.push(compilerIssue('RECIPE_CONTENT_MISSING', `Block ${block.key} was not emitted.`, '/blocks'))
+    for (const d of drafts) if (![d.frame.x, d.frame.y, d.frame.width, d.frame.height].every(Number.isFinite) || d.frame.width <= 0 || d.frame.height <= 0 || d.frame.x < 0 || d.frame.y < 0 || d.frame.x + d.frame.width > context.canvas.width + 1e-7 || d.frame.y + d.frame.height > context.canvas.height + 1e-7) draft.validationIssues.push(compilerIssue('RECIPE_INFEASIBLE', 'Draft outside canvas.', '/elementDrafts'))
     draft.validationIssues = uniqueIssues(draft.validationIssues)
     return draft
   }
@@ -211,6 +223,7 @@ export function compilePresentation(ir: PresentationIR, context: CompilePresenta
 
 /** Convert a draft to a semantic Slide without persisting the IR or Recipe. */
 export function materializeSlideDraft(draft: CompiledSlideDraft, slideId: string, canvas: Pick<CanvasSpec, 'width' | 'height'>): Slide {
+  if (draft.validationIssues.some(i => i.severity === 'error') || draft.elementDrafts.some(d => d.role !== 'artwork' && d.role !== 'background' && !draft.readingOrder.includes(d.draftId)) || validateCompiledSlideDraft(draft).some(i => i.severity === 'error')) throw new Error('RECIPE_DRAFT_REJECTED: resolve compilation errors before materialization')
   const elements = Object.fromEntries(draft.elementDrafts.map((item) => [item.draftId, materializeElementDraft(item, draft)]))
   const readingOrder = draft.readingOrder.filter((id) => Boolean(elements[id]))
   return {
@@ -218,7 +231,7 @@ export function materializeSlideDraft(draft: CompiledSlideDraft, slideId: string
     name: draft.slideKey,
     rootOrder: draft.elementDrafts.map((item) => item.draftId),
     elements,
-    groups: {},
+    groups: Object.fromEntries(draft.groups.map(g => [g.draftId, { id: g.draftId, memberIds: [...g.memberDraftIds] }])),
     readingOrder,
     visualStrategy: draft.slide.visualStrategy,
     semantic: { purpose: draft.slide.purpose, keyMessage: draft.slide.message, slideIrDigest: draft.provenance.slideIrDigest, ...(draft.slide.sourceIds ? { sourceIds: cloneJson(draft.slide.sourceIds) } : {}) },
@@ -551,8 +564,13 @@ function emptyDraft(ir: unknown, provenance: CompiledSlideDraft['provenance'], i
 }
 
 function addToMap<T>(map: Map<string, T[]>, key: string, value: T) { const values = map.get(key) ?? []; values.push(value); map.set(key, values) }
-function firstResolvedZone(zones: Map<string, RecipeSpec['zones'][number]>): RecipeSpec['zones'][number] { return zones.values().next().value ?? { id: 'fallback', x: 0.08, y: 0.08, width: 0.84, height: 0.84 } }
-function expandZone(zone: RecipeSpec['zones'][number], count: number, index: number, direction?: 'horizontal' | 'vertical'): Frame { const columns = direction === 'vertical' ? 1 : Math.min(3, Math.max(1, count)); const rows = Math.ceil(count / columns); const gap = 0.03; const width = (zone.width - gap * (columns - 1)) / columns; const height = (zone.height - gap * (rows - 1)) / rows; return { x: zone.x + (index % columns) * (width + gap), y: zone.y + Math.floor(index / columns) * (height + gap), width, height } }
+function expandZone(zone: RecipeSpec['zones'][number], count: number, index: number, direction?: 'horizontal' | 'vertical', repeat?: RecipeSpec['slots'][number]['repeat']): Frame {
+  const columns = repeat ? Math.min(repeat.columns, count) : direction === 'vertical' ? 1 : Math.min(3, Math.max(1, count))
+  const rows = Math.ceil(count / columns)
+  const gapX = repeat?.gapX ?? 0.03, gapY = repeat?.gapY ?? 0.03
+  const width = (zone.width - gapX * (columns - 1)) / columns, height = (zone.height - gapY * (rows - 1)) / rows
+  return { x: zone.x + index % columns * (width + gapX), y: zone.y + Math.floor(index / columns) * (height + gapY), width, height }
+}
 function toCanvasFrame(frame: Frame, canvas: Pick<CanvasSpec, 'width' | 'height'>): Frame { const normalized = [frame.x, frame.y, frame.width, frame.height].every((value) => value >= 0 && value <= 1); return normalized ? { x: frame.x * canvas.width, y: frame.y * canvas.height, width: frame.width * canvas.width, height: frame.height * canvas.height } : frame }
 function artworkFrame(placement: NonNullable<SlideIR['artworkIntent']>['placement'], canvas: Pick<CanvasSpec, 'width' | 'height'>): Frame { if (placement === 'side') return { x: canvas.width * 0.56, y: canvas.height * 0.04, width: canvas.width * 0.40, height: canvas.height * 0.92 }; if (placement === 'center') return { x: canvas.width * 0.20, y: canvas.height * 0.16, width: canvas.width * 0.60, height: canvas.height * 0.68 }; return { x: 0, y: 0, width: canvas.width, height: canvas.height } }
 function roleForBlock(kind: SlideIR['blocks'][number]['kind']): Element['role'] { if (kind === 'heading') return 'title'; if (kind === 'source') return 'source'; if (kind === 'metric') return 'metric'; if (kind === 'image') return 'image'; if (kind === 'chart') return 'chart'; if (kind === 'cta') return 'cta'; return 'body' }
@@ -564,9 +582,15 @@ function defaultStyleForRole(role: Element['role'], context: CompileContext): st
   return preferred.find((candidate) => Object.prototype.hasOwnProperty.call(bucket, candidate)) ?? Object.keys(bucket).sort()[0]
 }
 
-function qualityIssuesForDraft(recipe: RecipeSpec, drafts: ElementDraft[], context: CompileContext): ValidationIssue[] {
-  const rule = recipe.qualityRules?.find((candidate) => candidate.kind === 'max-overflow')
-  if (!rule || typeof rule.value !== 'number') return []
+function qualityIssuesForDraft(recipe: RecipeSpec, drafts: ElementDraft[], context: CompileContext, readingOrder: string[]): ValidationIssue[] {
+  const rule = recipe.qualityRules?.filter(candidate => candidate.kind === 'max-overflow').sort((a, b) => Number(a.value) - Number(b.value))[0]
+  const issues: ValidationIssue[] = []
+  for (const r of recipe.qualityRules ?? []) {
+    if (r.kind === 'max-elements' && drafts.length > Number(r.value)) issues.push(compilerIssue('QUALITY_MAX_ELEMENTS', 'Element capacity exceeded.', '/elementDrafts'))
+    if (r.kind === 'min-font-size') for (const d of drafts) if (d.kind === 'text' && compilerTextStyle(recordData(d.data), context).fontSize < Number(r.value)) issues.push(compilerIssue('QUALITY_MIN_FONT_SIZE', 'Resolved font is below the recipe minimum; no automatic shrinking.', '/elementDrafts'))
+    if (r.kind === 'required-reading-order' && r.value && (new Set(readingOrder).size !== readingOrder.length || drafts.some(d => d.role !== 'artwork' && d.role !== 'background' && !readingOrder.includes(d.draftId)))) issues.push(compilerIssue('QUALITY_READING_ORDER', 'Every content draft requires an identity in reading order.', '/readingOrder'))
+  }
+  if (!rule || typeof rule.value !== 'number') return issues
   const overflows = drafts.flatMap((draft) => {
     if (draft.kind !== 'text') return []
     const data = recordData(draft.data)
@@ -577,8 +601,8 @@ function qualityIssuesForDraft(recipe: RecipeSpec, drafts: ElementDraft[], conte
     const measurement = measureTextLayout(text, draft.frame, compilerTextStyle(data, context))
     return measurement.overflowX || measurement.overflowY ? [{ draft, measurement }] : []
   })
-  if (overflows.length <= rule.value) return []
-  return overflows.map(({ draft, measurement }) => compilerIssue('QUALITY_OVERFLOW', `Text draft ${draft.draftId} exceeds its materialized frame under the declared font metrics (${measurement.lines} line(s), ${roundQualityNumber(measurement.contentHeight)} height). The selected Recipe allows ${rule.value} overflow(s).`, `/elementDrafts/${safeId(draft.draftId)}`))
+  if (overflows.length <= rule.value) return issues
+  return issues.concat(overflows.map(({ draft, measurement }) => compilerIssue('QUALITY_OVERFLOW', `Text draft ${draft.draftId} exceeds its materialized frame under the declared font metrics (${measurement.lines} line(s), ${roundQualityNumber(measurement.contentHeight)} height). The selected Recipe allows ${rule.value} overflow(s).`, `/elementDrafts/${safeId(draft.draftId)}`)))
 }
 
 function compilerTextStyle(data: Record<string, any>, context: CompileContext): ResolvedTextStyle {
@@ -615,17 +639,17 @@ function blockText(block: SlideIR['blocks'][number]): string {
     const label = typeof record.label === 'string' ? record.label : ''
     const value = record.value === undefined ? '' : String(record.value)
     const unit = typeof record.unit === 'string' ? record.unit : ''
-    if (label || value || unit) return [label, value ? `${value}${unit}` : ''].filter(Boolean).join(' ')
+    if (label || value || unit) { const extra = Object.fromEntries(Object.entries(record).filter(([key]) => !['label', 'value', 'unit'].includes(key))); return [label, value ? `${value}${unit}` : '', Object.keys(extra).length ? canonicalJsonString(extra) : ''].filter(Boolean).join(' ') }
     return canonicalJsonString(content)
   }
-  return block.kind === 'heading' ? block.key : ''
+  return content === undefined ? (block.kind === 'heading' ? block.key : '') : canonicalJsonString(content)
 }
 function contentAssetId(content: unknown): string | undefined { return isRecord(content) && typeof content.assetId === 'string' ? content.assetId : undefined }
 function richText(value: string, id: string): RichTextDocument { return { paragraphs: [{ id: `${id}:paragraph`, runs: [{ id: `${id}:run`, text: value }] }] } }
 function digest(value: unknown): string { try { return `sha256-${canonicalHash(value)}` } catch { return 'sha256-invalid-ir' } }
 function jsonData(value: unknown): ElementDraft['data'] { return value as ElementDraft['data'] }
 function draftId(slideKey: string, blockKey: string): string { return `draft:${safeId(slideKey)}:${safeId(blockKey)}` }
-function safeId(value: string): string { return value.replace(/[^A-Za-z0-9_-]/g, '_') }
+function safeId(value: string): string { return value.replace(/[^A-Za-z0-9_-]/g, char => `~${char.charCodeAt(0).toString(16)}~`) }
 function compilerIssue(code: string, message: string, path: string): ValidationIssue { return withErrorSemantics({ code, severity: 'error', message, path, recovery: 'Adjust the IR or provide the missing local asset and preview again.' }) }
 function uniqueIssues(issues: ValidationIssue[]): ValidationIssue[] { const seen = new Set<string>(); return issues.filter((issue) => { const key = `${issue.code}|${issue.path ?? ''}|${issue.message}`; if (seen.has(key)) return false; seen.add(key); return true }) }
 function isRecord(value: unknown): value is Record<string, any> { return Boolean(value) && typeof value === 'object' && !Array.isArray(value) }
@@ -642,3 +666,16 @@ function blockSemanticRefs(block: SlideIR['blocks'][number]): SemanticRefs | und
 function dataSemanticRefs(data: Record<string, any>): SemanticRefs | undefined { const refs = isRecord(data.semanticRefs) ? data.semanticRefs : undefined; if (!refs) return undefined; const factIds = Array.isArray(refs.factIds) ? refs.factIds.filter((item): item is string => typeof item === 'string') : []; const sourceIds = Array.isArray(refs.sourceIds) ? refs.sourceIds.filter((item): item is string => typeof item === 'string') : []; return factIds.length || sourceIds.length ? { ...(factIds.length ? { factIds } : {}), ...(sourceIds.length ? { sourceIds } : {}) } : undefined }
 function intersects(left: Frame, right: Frame): boolean { return left.x < right.x + right.width && left.x + left.width > right.x && left.y < right.y + right.height && left.y + left.height > right.y }
 function scaleRegion(region: Frame, frame: Frame): Frame { return region.x <= 1 && region.y <= 1 && region.width <= 1 && region.height <= 1 ? { x: frame.x + region.x * frame.width, y: frame.y + region.y * frame.height, width: region.width * frame.width, height: region.height * frame.height } : region }
+
+function recipeGroups(ir: SlideIR, recipe: RecipeSpec, assignments: Array<{ block: SlideIR['blocks'][number]; slotKey: string }>): CompiledSlideDraft['groups'] {
+  const sets = ir.blocks.filter(b => b.keepTogetherWith?.length).map(b => new Set([b.key, ...b.keepTogetherWith!]))
+  for (const c of recipe.constraints) if (c.kind === 'keep-together') sets.push(new Set(assignments.filter(a => c.slotIds.includes(a.slotKey)).map(a => a.block.key)))
+  for (let i = 0; i < sets.length; i++) for (let j = i + 1; j < sets.length;) {
+    if ([...sets[j]].some(k => sets[i].has(k))) { for (const k of sets[j]) sets[i].add(k); sets.splice(j, 1); j = i + 1 }
+    else j++
+  }
+  return sets.filter(s => s.size > 1).map(s => {
+    const keys = [...s].sort()
+    return { draftId: `group:${safeId(ir.slideKey)}:${safeId(keys[0])}`, memberDraftIds: keys.map(k => draftId(ir.slideKey, k)) }
+  })
+}
