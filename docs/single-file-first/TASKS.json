@@ -399,13 +399,197 @@
       }
     },
     {
-      "id": "S03", "title": "修复编辑组合操作并还原上下文 UI", "status": "planned", "dependsOn": ["S01"],
-      "targetAreas": ["packages/html-editor/src/commands.ts", "packages/html-editor/src/workspace.ts", "packages/html-player/src/index.ts", "tests/html-editor.test.ts", "tests/html-player.test.ts"],
-      "addresses": ["F02", "F03", "F04", "F05", "H03 设计还原", "R01", "R02"],
-      "deliverables": ["新增页唯一稳定 slide identity", "不触碰保护对象的局部页插入与历史", "继承合理页面比例与设计上下文", "真实背景属性与复杂值状态", "可折叠侧栏、画布缩放、上下文格式工具与控制柄、表格单元格文字选择"],
-      "acceptance": ["连续新增两页后每次只放映当前页，保存前后和重开均成立", "锁定标题时可以添加无关页，撤销重做不修改保护对象", "class/Grid/Flex/容器单位样稿新增后比例、编辑和 PDF 可用", "背景纯色/渐变/透明继承显示正确，不因查看属性更改内容", "通过实际鼠标键盘选择单元格并设置文字格式", "缩放/折叠/刷新不丢焦点、选区或输入法状态"],
-      "requiredEvidence": ["F02-F05-regressions", "prototype-implementation-map", "contextual-ui-screenshots"], "evidence": null
+      "id": "S03",
+      "title": "修复编辑组合操作并还原上下文 UI",
+      "status": "partial",
+      "dependsOn": [
+        "S01"
+      ],
+      "targetAreas": [
+        "packages/html-editor/src/commands.ts",
+        "packages/html-editor/src/workspace.ts",
+        "packages/html-player/src/index.ts",
+        "tests/html-editor.test.ts",
+        "tests/html-player.test.ts"
+      ],
+      "addresses": [
+        "F02",
+        "F03",
+        "F04",
+        "F05",
+        "H03 设计还原",
+        "R01",
+        "R02"
+      ],
+      "deliverables": [
+        "新增页唯一稳定 slide identity",
+        "不触碰保护对象的局部页插入与历史",
+        "继承合理页面比例与设计上下文",
+        "真实背景属性与复杂值状态",
+        "可折叠侧栏、画布缩放、上下文格式工具与控制柄、表格单元格文字选择"
+      ],
+      "acceptance": [
+        "连续新增两页后每次只放映当前页，保存前后和重开均成立",
+        "锁定标题时可以添加无关页，撤销重做不修改保护对象",
+        "class/Grid/Flex/容器单位样稿新增后比例、编辑和 PDF 可用",
+        "背景纯色/渐变/透明继承显示正确，不因查看属性更改内容",
+        "通过实际鼠标键盘选择单元格并设置文字格式",
+        "缩放/折叠/刷新不丢焦点、选区或输入法状态"
+      ],
+      "requiredEvidence": [
+        "F02-F05-regressions",
+        "prototype-implementation-map",
+        "contextual-ui-screenshots"
+      ],
+      "evidence": {
+        "implementationCommit": "ef3ceda9d326c396856aca6fceeb82308310c031",
+        "report": "docs/single-file-first/evidence/s03/REPORT.md",
+        "primaryAcceptanceFile": "docs/single-file-first/evidence/s03/验收入口.ppte.html",
+        "verification": {
+          "typecheck": "docs/single-file-first/evidence/s03/verification/typecheck.log",
+          "build": "docs/single-file-first/evidence/s03/verification/build.log",
+          "test": "docs/single-file-first/evidence/s03/verification/test.log",
+          "result": "docs/single-file-first/evidence/s03/verification/result.json",
+          "passed": 65,
+          "failed": 0,
+          "addedTests": 2,
+          "removedTests": 0,
+          "existingAssertionsModified": 0
+        },
+        "statusByLayer": {
+          "code": "implemented within documented native class/Grid/Flex/container-unit fixture scope",
+          "automation": "passed: full suite 65/65 including two new S03 file journeys",
+          "realBrowser": "partial: installed Chrome 152 headless file URL, actual download/reopen and PDF passed; Safari blocked, native picker/IME pending",
+          "humanConfirmation": "pending: no target-user/prototype/OS IME acceptance"
+        },
+        "acceptance": [
+          {
+            "criterion": "连续新增两页后每次只放映当前页，保存前后和重开均成立",
+            "commit": "ef3ceda9d326c396856aca6fceeb82308310c031",
+            "test": "tests/single-file-editing.test.ts",
+            "journey": "F02-F05 file UI",
+            "files": [
+              "docs/single-file-first/evidence/s03/regressions.json",
+              "docs/single-file-first/evidence/s03/verification/test.log"
+            ],
+            "code": "implemented",
+            "automation": "passed",
+            "realBrowser": "Chrome headless passed; native original-file save and Safari pending",
+            "humanConfirmation": "pending"
+          },
+          {
+            "criterion": "锁定标题时可以添加无关页，撤销重做不修改保护对象",
+            "commit": "ef3ceda9d326c396856aca6fceeb82308310c031",
+            "test": "tests/single-file-editing.test.ts",
+            "journey": "F02-F05 file UI",
+            "files": [
+              "docs/single-file-first/evidence/s03/regressions.json",
+              "docs/single-file-first/evidence/s03/verification/test.log"
+            ],
+            "code": "implemented",
+            "automation": "passed",
+            "realBrowser": "Chrome headless passed; Safari pending",
+            "humanConfirmation": "pending"
+          },
+          {
+            "criterion": "class/Grid/Flex/容器单位样稿新增后比例、编辑和 PDF 可用",
+            "commit": "ef3ceda9d326c396856aca6fceeb82308310c031",
+            "test": "tests/single-file-editing.test.ts",
+            "journey": "F02-F05 file UI",
+            "files": [
+              "docs/single-file-first/evidence/s03/regressions.json",
+              "docs/single-file-first/evidence/s03/verification/test.log"
+            ],
+            "code": "implemented",
+            "automation": "passed",
+            "realBrowser": "Chrome headless passed; Safari pending",
+            "humanConfirmation": "pending"
+          },
+          {
+            "criterion": "背景纯色/渐变/透明继承显示正确，不因查看属性更改内容",
+            "commit": "ef3ceda9d326c396856aca6fceeb82308310c031",
+            "test": "tests/single-file-editing.test.ts",
+            "journey": "F02-F05 file UI",
+            "files": [
+              "docs/single-file-first/evidence/s03/regressions.json",
+              "docs/single-file-first/evidence/s03/verification/test.log"
+            ],
+            "code": "implemented",
+            "automation": "passed",
+            "realBrowser": "Chrome headless passed; Safari pending",
+            "humanConfirmation": "pending"
+          },
+          {
+            "criterion": "通过实际鼠标键盘选择单元格并设置文字格式",
+            "commit": "ef3ceda9d326c396856aca6fceeb82308310c031",
+            "test": "tests/single-file-editing.test.ts",
+            "journey": "contextual UI",
+            "files": [
+              "docs/single-file-first/evidence/s03/contextual.json",
+              "docs/single-file-first/evidence/s03/verification/test.log"
+            ],
+            "code": "implemented",
+            "automation": "passed",
+            "realBrowser": "Chrome headless passed; Safari pending",
+            "humanConfirmation": "pending"
+          },
+          {
+            "criterion": "缩放/折叠/刷新不丢焦点、选区或输入法状态",
+            "commit": "ef3ceda9d326c396856aca6fceeb82308310c031",
+            "test": "tests/single-file-editing.test.ts",
+            "journey": "contextual UI",
+            "files": [
+              "docs/single-file-first/evidence/s03/contextual.json",
+              "docs/single-file-first/evidence/s03/verification/test.log"
+            ],
+            "code": "implemented",
+            "automation": "passed",
+            "realBrowser": "Chrome headless passed; OS IME and Safari pending",
+            "humanConfirmation": "pending"
+          }
+        ],
+        "requiredEvidence": {
+          "F02-F05-regressions": {
+            "commit": "ef3ceda9d326c396856aca6fceeb82308310c031",
+            "tests": [
+              "tests/single-file-editing.test.ts",
+              "tests/html-editor.test.ts",
+              "tests/html-player.test.ts"
+            ],
+            "files": [
+              "docs/single-file-first/evidence/s03/regressions.json",
+              "docs/single-file-first/evidence/s03/slides.pdf",
+              "docs/single-file-first/evidence/s03/verification/test.log"
+            ],
+            "status": "Chrome headless automation passed; native acceptance partial"
+          },
+          "prototype-implementation-map": {
+            "commit": "ef3ceda9d326c396856aca6fceeb82308310c031",
+            "file": "docs/single-file-first/evidence/s03/prototype-implementation-map.md",
+            "status": "implementation mapped; human fidelity approval pending"
+          },
+          "contextual-ui-screenshots": {
+            "commit": "ef3ceda9d326c396856aca6fceeb82308310c031",
+            "files": [
+              "docs/single-file-first/evidence/s03/cell-context.png",
+              "docs/single-file-first/evidence/s03/shape-handles.png",
+              "docs/single-file-first/evidence/s03/background-transparent.png",
+              "docs/single-file-first/evidence/s03/contextual.json"
+            ],
+            "status": "actual Chrome product captures; not human signoff"
+          }
+        },
+        "pending": [
+          "Safari WebDriver session not created: enable Allow remote automation in Safari Settings; see docs/single-file-first/evidence/s03/safari.json",
+          "Native original-file picker/authorization and native print dialog not operated; actual complete download/reopen is verified, not original-file confirmation.",
+          "OS Chinese IME not exercised; synthetic composition event regression only.",
+          "Human prototype/design usability confirmation and target-user acceptance pending; continuous native canvas and one size handle do not claim pixel-identical prototype fidelity.",
+          "Arbitrary CSS contexts and body-as-slide insertion are not universally supported; detailed boundaries in report.",
+          "S01 dependency remains partial; no closure of F01 or historical R01/R02/R05/R06 beyond documented S03 fixture evidence."
+        ]
+      }
     },
+
     {
       "id": "S04", "title": "测量并优化生成与编辑性能", "status": "planned", "dependsOn": ["S00"],
       "targetAreas": ["scripts/html-benchmark.mjs", "packages/html-editor/src/workspace.ts", "packages/html-editor/src/save.ts", "packages/html-editor/src/commands.ts", "packages/html-document/src/resources.ts"],
