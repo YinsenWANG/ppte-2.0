@@ -2203,7 +2203,7 @@
       "milestone": "M3",
       "priority": "P1",
       "title": "表格原生 PPTX 与逐能力导出",
-      "status": "planned",
+      "status": "done",
       "effort": "L",
       "ownerRole": "导出 / 表格",
       "dependsOn": [
@@ -2233,7 +2233,59 @@
         "A17"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        {
+          "commit": "ff68af1740d38292ac21ac76297b41f051af00ea",
+          "tests": [
+            "tests/pptx-table-native.test.ts"
+          ],
+          "documentation": [
+            "docs/evolution/evidence/F03.md"
+          ],
+          "criteria": {
+            "1": "Namespace-aware package parsing proves real DrawingML table cells with editable text bodies, no picture/text-shape substitutes, exact visible typed content and retained typed source metadata; snapshot revision is unchanged.",
+            "2": "Rectangular-merge, dimension/style, header/caption/downgrade and fractional-axis/multiple-table tests verify merge continuations, exact EMU extents, fills, basic typography/alignment, numeric formats, Unicode and covered-cell values. Unsupported properties are reported by path.",
+            "3": "Adapter output is verified before nativeTable is assigned. Negative tests reject changed content/style/merge/geometry, substitutes and malformed exports; forecasts, hidden/empty/legacy/custom tables and stale revisions never earn the flag. Bundled and returned reports match. JSON Schema requires proof and semantic target; client status remains unverified."
+          },
+          "verification": {
+            "typecheck": "pass",
+            "build": "pass",
+            "commands": [
+              "pnpm typecheck",
+              "pnpm build",
+              "pnpm test",
+              "pnpm blackbox:final"
+            ],
+            "tests": {
+              "baseline": 327,
+              "final": 336,
+              "delta": 9,
+              "passed": 336,
+              "failed": 0,
+              "skipped": 0
+            },
+            "blackbox": {
+              "baseline": {
+                "green": 70,
+                "red": 0
+              },
+              "final": {
+                "green": 70,
+                "red": 0
+              },
+              "newReds": 0
+            },
+            "json": "TASKS.json parsed successfully",
+            "signedCommit": true
+          },
+          "remainingRisks": [
+            "PowerPoint/Keynote/LibreOffice opening, editing, re-save and visual/font validation remain explicitly unverified for Q01; python-pptx exploration is library evidence only.",
+            "Unsupported styles/transforms and rich-text formatting degrade with explicit property paths; captions add a reported native row.",
+            "Source metadata retains covered values and raw scalar types; Office tables expose editable display text, not spreadsheet numeric formulas. Source metadata preservation after Office re-save is unverified.",
+            "Empty/v1 tables retain fallbacks; XML-invalid text, unrepresentable dimensions and more than 1000 columns fail export."
+          ]
+        }
+      ]
     },
     {
       "id": "F04",
