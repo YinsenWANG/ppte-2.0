@@ -1,0 +1,735 @@
+{
+  "status": "partial",
+  "historicalAudit": "docs/audits/2026-09-06-html-first-6091c9a/REPORT.md",
+  "basisCommit": "fa5f2f83a06a64cfa3dcd48aa138e114288b27cd",
+  "entries": [
+    {
+      "id": "用户反馈 1",
+      "status": "partial",
+      "fixCommits": [
+        {
+          "task": "S01",
+          "commit": "ec215cd75f91ad6cbb5e567b612043117ee8ea22"
+        },
+        {
+          "task": "S02",
+          "commit": "7a26828c9d4e9c551a20f6c3857cb554ce74f514"
+        },
+        {
+          "task": "S07",
+          "commit": "2e1a332c4c0161ecc863d1223c7f64543a70e6e9"
+        }
+      ],
+      "codeImplementation": "scoped implementation exists; see task report; no new product code in S08",
+      "automation": {
+        "status": "passed-regression-scope",
+        "tests": [
+          "tests/single-file-entry.test.ts",
+          "tests/single-file-save.test.ts",
+          "tests/single-file-journey.test.ts"
+        ],
+        "currentLog": "docs/single-file-first/evidence/s08/verification/test.log"
+      },
+      "realBrowser": {
+        "status": "partial",
+        "scope": "Installed Chrome headless automation where applicable; contract/Skill checks are not browser journeys. Safari/native pending."
+      },
+      "humanConfirmation": {
+        "status": "pending",
+        "reason": "原生授权、Safari、独立无 Node 目标机"
+      },
+      "remaining": "原生授权、Safari、独立无 Node 目标机",
+      "originalEvidence": [
+        "docs/single-file-first/evidence/s01/journey.json",
+        "docs/single-file-first/evidence/s02/actual-download-reopen.json",
+        "docs/single-file-first/evidence/s07/journey.json"
+      ]
+    },
+    {
+      "id": "用户反馈 2",
+      "status": "partial",
+      "fixCommits": [
+        {
+          "task": "S05",
+          "commit": "2b4131f84eebe2b2681353907f7ffac669740287"
+        }
+      ],
+      "codeImplementation": "scoped implementation exists; see task report; no new product code in S08",
+      "automation": {
+        "status": "passed-regression-scope",
+        "tests": [
+          "tests/single-file-contract.test.ts"
+        ],
+        "currentLog": "docs/single-file-first/evidence/s08/verification/test.log"
+      },
+      "realBrowser": {
+        "status": "partial",
+        "scope": "Installed Chrome headless automation where applicable; contract/Skill checks are not browser journeys. Safari/native pending."
+      },
+      "humanConfirmation": {
+        "status": "pending",
+        "reason": "负责人及两名目标用户九对审美评价"
+      },
+      "remaining": "负责人及两名目标用户九对审美评价",
+      "originalEvidence": [
+        "docs/single-file-first/evidence/s05/skill.diff",
+        "docs/single-file-first/evidence/s05/verification/probe.json"
+      ]
+    },
+    {
+      "id": "用户反馈 3",
+      "status": "partial",
+      "fixCommits": [
+        {
+          "task": "S04",
+          "commit": "4f2b8493af65596eb1563080abb4be7575a42ab5"
+        },
+        {
+          "task": "S06",
+          "commit": "c5fbb6c7c6bad2b8ee7fc2c7a31a17e43e15f735"
+        }
+      ],
+      "codeImplementation": "scoped implementation exists; see task report; no new product code in S08",
+      "automation": {
+        "status": "passed-regression-scope",
+        "tests": [
+          "tests/single-file-performance.test.ts",
+          "tests/single-file-performance-evidence.test.ts"
+        ],
+        "currentLog": "docs/single-file-first/evidence/s08/verification/test.log"
+      },
+      "realBrowser": {
+        "status": "partial",
+        "scope": "Installed Chrome headless automation where applicable; contract/Skill checks are not browser journeys. Safari/native pending."
+      },
+      "humanConfirmation": {
+        "status": "pending",
+        "reason": "输入/翻页未达标；同模型遥测和真实低性能设备缺失"
+      },
+      "remaining": "输入/翻页未达标；同模型遥测和真实低性能设备缺失",
+      "originalEvidence": [
+        "docs/single-file-first/evidence/s04/comparison.json",
+        "docs/single-file-first/evidence/s04/phase-and-token-telemetry.json"
+      ]
+    },
+    {
+      "id": "用户反馈 4",
+      "status": "partial",
+      "fixCommits": [
+        {
+          "task": "S05",
+          "commit": "2b4131f84eebe2b2681353907f7ffac669740287"
+        },
+        {
+          "task": "S06",
+          "commit": "c5fbb6c7c6bad2b8ee7fc2c7a31a17e43e15f735"
+        }
+      ],
+      "codeImplementation": "scoped implementation exists; see task report; no new product code in S08",
+      "automation": {
+        "status": "passed-regression-scope",
+        "tests": [
+          "tests/single-file-media.test.ts"
+        ],
+        "currentLog": "docs/single-file-first/evidence/s08/verification/test.log"
+      },
+      "realBrowser": {
+        "status": "partial",
+        "scope": "Installed Chrome headless automation where applicable; contract/Skill checks are not browser journeys. Safari/native pending."
+      },
+      "humanConfirmation": {
+        "status": "pending",
+        "reason": "真实用户图批、人工语义裁切；大媒体按需解码工作仍未完成"
+      },
+      "remaining": "真实用户图批、人工语义裁切；大媒体按需解码工作仍未完成",
+      "originalEvidence": [
+        "docs/single-file-first/evidence/s05/mixed-image-selection-record.md",
+        "docs/single-file-first/evidence/s06/journey.json"
+      ]
+    },
+    {
+      "id": "F01",
+      "status": "partial",
+      "fixCommits": [
+        {
+          "task": "S01",
+          "commit": "ec215cd75f91ad6cbb5e567b612043117ee8ea22"
+        }
+      ],
+      "codeImplementation": "scoped implementation exists; see task report; no new product code in S08",
+      "automation": {
+        "status": "passed-regression-scope",
+        "tests": [
+          "tests/single-file-entry.test.ts"
+        ],
+        "currentLog": "docs/single-file-first/evidence/s08/verification/test.log"
+      },
+      "realBrowser": {
+        "status": "partial",
+        "scope": "Installed Chrome headless automation where applicable; contract/Skill checks are not browser journeys. Safari/native pending."
+      },
+      "humanConfirmation": {
+        "status": "pending",
+        "reason": "Safari 和人工首次发现入口"
+      },
+      "remaining": "Safari 和人工首次发现入口",
+      "originalEvidence": [
+        "docs/single-file-first/evidence/s01/journey.json"
+      ]
+    },
+    {
+      "id": "F02",
+      "status": "partial",
+      "fixCommits": [
+        {
+          "task": "S03",
+          "commit": "ef3ceda9d326c396856aca6fceeb82308310c031"
+        }
+      ],
+      "codeImplementation": "scoped implementation exists; see task report; no new product code in S08",
+      "automation": {
+        "status": "passed-regression-scope",
+        "tests": [
+          "tests/single-file-editing.test.ts"
+        ],
+        "currentLog": "docs/single-file-first/evidence/s08/verification/test.log"
+      },
+      "realBrowser": {
+        "status": "partial",
+        "scope": "Installed Chrome headless automation where applicable; contract/Skill checks are not browser journeys. Safari/native pending."
+      },
+      "humanConfirmation": {
+        "status": "pending",
+        "reason": "原生保存授权、Safari 和人工确认"
+      },
+      "remaining": "原生保存授权、Safari 和人工确认",
+      "originalEvidence": [
+        "docs/single-file-first/evidence/s03/regressions.json"
+      ]
+    },
+    {
+      "id": "F03",
+      "status": "partial",
+      "fixCommits": [
+        {
+          "task": "S03",
+          "commit": "ef3ceda9d326c396856aca6fceeb82308310c031"
+        }
+      ],
+      "codeImplementation": "scoped implementation exists; see task report; no new product code in S08",
+      "automation": {
+        "status": "passed-regression-scope",
+        "tests": [
+          "tests/single-file-editing.test.ts"
+        ],
+        "currentLog": "docs/single-file-first/evidence/s08/verification/test.log"
+      },
+      "realBrowser": {
+        "status": "partial",
+        "scope": "Installed Chrome headless automation where applicable; contract/Skill checks are not browser journeys. Safari/native pending."
+      },
+      "humanConfirmation": {
+        "status": "pending",
+        "reason": "Safari 和人工保护/撤销旅程"
+      },
+      "remaining": "Safari 和人工保护/撤销旅程",
+      "originalEvidence": [
+        "docs/single-file-first/evidence/s03/regressions.json"
+      ]
+    },
+    {
+      "id": "F04",
+      "status": "partial",
+      "fixCommits": [
+        {
+          "task": "S03",
+          "commit": "ef3ceda9d326c396856aca6fceeb82308310c031"
+        }
+      ],
+      "codeImplementation": "scoped implementation exists; see task report; no new product code in S08",
+      "automation": {
+        "status": "passed-regression-scope",
+        "tests": [
+          "tests/single-file-editing.test.ts"
+        ],
+        "currentLog": "docs/single-file-first/evidence/s08/verification/test.log"
+      },
+      "realBrowser": {
+        "status": "partial",
+        "scope": "Installed Chrome headless automation where applicable; contract/Skill checks are not browser journeys. Safari/native pending."
+      },
+      "humanConfirmation": {
+        "status": "pending",
+        "reason": "任意复杂作者 CSS、Safari、原生打印和人工确认"
+      },
+      "remaining": "任意复杂作者 CSS、Safari、原生打印和人工确认",
+      "originalEvidence": [
+        "docs/single-file-first/evidence/s03/regressions.json",
+        "docs/single-file-first/evidence/s03/slides.pdf"
+      ]
+    },
+    {
+      "id": "F05",
+      "status": "partial",
+      "fixCommits": [
+        {
+          "task": "S03",
+          "commit": "ef3ceda9d326c396856aca6fceeb82308310c031"
+        }
+      ],
+      "codeImplementation": "scoped implementation exists; see task report; no new product code in S08",
+      "automation": {
+        "status": "passed-regression-scope",
+        "tests": [
+          "tests/single-file-editing.test.ts"
+        ],
+        "currentLog": "docs/single-file-first/evidence/s08/verification/test.log"
+      },
+      "realBrowser": {
+        "status": "partial",
+        "scope": "Installed Chrome headless automation where applicable; contract/Skill checks are not browser journeys. Safari/native pending."
+      },
+      "humanConfirmation": {
+        "status": "pending",
+        "reason": "Safari 和人工属性体验"
+      },
+      "remaining": "Safari 和人工属性体验",
+      "originalEvidence": [
+        "docs/single-file-first/evidence/s03/regressions.json"
+      ]
+    },
+    {
+      "id": "H00",
+      "status": "partial",
+      "fixCommits": [
+        {
+          "task": "S00",
+          "commit": "eff56d33b8b1bae19fd0fb56be4f4a3256ad7833"
+        },
+        {
+          "task": "S04",
+          "commit": "4f2b8493af65596eb1563080abb4be7575a42ab5"
+        }
+      ],
+      "codeImplementation": "scoped implementation exists; see task report; no new product code in S08",
+      "automation": {
+        "status": "passed-regression-scope",
+        "tests": [
+          "tests/html-first-baseline.test.ts"
+        ],
+        "currentLog": "docs/single-file-first/evidence/s08/verification/test.log"
+      },
+      "realBrowser": {
+        "status": "partial",
+        "scope": "Installed Chrome headless automation where applicable; contract/Skill checks are not browser journeys. Safari/native pending."
+      },
+      "humanConfirmation": {
+        "status": "pending",
+        "reason": "受控同模型基线缺失"
+      },
+      "remaining": "受控同模型基线缺失",
+      "originalEvidence": [
+        "docs/single-file-first/evidence/s00/old-new-criteria-map.md",
+        "docs/single-file-first/evidence/s04/phase-and-token-telemetry.json"
+      ]
+    },
+    {
+      "id": "H01",
+      "status": "partial",
+      "fixCommits": [
+        {
+          "task": "S07",
+          "commit": "2e1a332c4c0161ecc863d1223c7f64543a70e6e9"
+        }
+      ],
+      "codeImplementation": "scoped implementation exists; see task report; no new product code in S08",
+      "automation": {
+        "status": "passed-regression-scope",
+        "tests": [
+          "tests/html-document.test.ts"
+        ],
+        "currentLog": "docs/single-file-first/evidence/s08/verification/test.log"
+      },
+      "realBrowser": {
+        "status": "partial",
+        "scope": "Installed Chrome headless automation where applicable; contract/Skill checks are not browser journeys. Safari/native pending."
+      },
+      "humanConfirmation": {
+        "status": "pending",
+        "reason": "Safari 与人工保真确认"
+      },
+      "remaining": "Safari 与人工保真确认",
+      "originalEvidence": [
+        "docs/single-file-first/evidence/s07/journey.json",
+        "docs/single-file-first/evidence/s07/pdf-inspection.json"
+      ]
+    },
+    {
+      "id": "H02",
+      "status": "partial",
+      "fixCommits": [
+        {
+          "task": "S02",
+          "commit": "7a26828c9d4e9c551a20f6c3857cb554ce74f514"
+        },
+        {
+          "task": "S07",
+          "commit": "2e1a332c4c0161ecc863d1223c7f64543a70e6e9"
+        }
+      ],
+      "codeImplementation": "scoped implementation exists; see task report; no new product code in S08",
+      "automation": {
+        "status": "passed-regression-scope",
+        "tests": [
+          "tests/single-file-save.test.ts"
+        ],
+        "currentLog": "docs/single-file-first/evidence/s08/verification/test.log"
+      },
+      "realBrowser": {
+        "status": "partial",
+        "scope": "Installed Chrome headless automation where applicable; contract/Skill checks are not browser journeys. Safari/native pending."
+      },
+      "humanConfirmation": {
+        "status": "pending",
+        "reason": "原生 picker 授权/撤销/再授权，Safari"
+      },
+      "remaining": "原生 picker 授权/撤销/再授权，Safari",
+      "originalEvidence": [
+        "docs/single-file-first/evidence/s02/original-file-hashes.json",
+        "docs/single-file-first/evidence/s07/native-records.json"
+      ]
+    },
+    {
+      "id": "H03",
+      "status": "partial",
+      "fixCommits": [
+        {
+          "task": "S03",
+          "commit": "ef3ceda9d326c396856aca6fceeb82308310c031"
+        }
+      ],
+      "codeImplementation": "scoped implementation exists; see task report; no new product code in S08",
+      "automation": {
+        "status": "passed-regression-scope",
+        "tests": [
+          "tests/single-file-editing.test.ts"
+        ],
+        "currentLog": "docs/single-file-first/evidence/s08/verification/test.log"
+      },
+      "realBrowser": {
+        "status": "partial",
+        "scope": "Installed Chrome headless automation where applicable; contract/Skill checks are not browser journeys. Safari/native pending."
+      },
+      "humanConfirmation": {
+        "status": "pending",
+        "reason": "原型还原人评、真实系统输入法与 Safari"
+      },
+      "remaining": "原型还原人评、真实系统输入法与 Safari",
+      "originalEvidence": [
+        "docs/single-file-first/evidence/s03/prototype-implementation-map.md",
+        "docs/single-file-first/evidence/s03/contextual.json"
+      ]
+    },
+    {
+      "id": "H04",
+      "status": "partial",
+      "fixCommits": [
+        {
+          "task": "S03",
+          "commit": "ef3ceda9d326c396856aca6fceeb82308310c031"
+        },
+        {
+          "task": "S07",
+          "commit": "2e1a332c4c0161ecc863d1223c7f64543a70e6e9"
+        }
+      ],
+      "codeImplementation": "scoped implementation exists; see task report; no new product code in S08",
+      "automation": {
+        "status": "passed-regression-scope",
+        "tests": [
+          "tests/html-player.test.ts",
+          "tests/single-file-journey.test.ts"
+        ],
+        "currentLog": "docs/single-file-first/evidence/s08/verification/test.log"
+      },
+      "realBrowser": {
+        "status": "partial",
+        "scope": "Installed Chrome headless automation where applicable; contract/Skill checks are not browser journeys. Safari/native pending."
+      },
+      "humanConfirmation": {
+        "status": "pending",
+        "reason": "Safari、原生打印与人工全屏"
+      },
+      "remaining": "Safari、原生打印与人工全屏",
+      "originalEvidence": [
+        "docs/single-file-first/evidence/s07/journey.json",
+        "docs/single-file-first/evidence/s07/pdf-inspection.json"
+      ]
+    },
+    {
+      "id": "H05",
+      "status": "partial",
+      "fixCommits": [
+        {
+          "task": "S07",
+          "commit": "2e1a332c4c0161ecc863d1223c7f64543a70e6e9"
+        }
+      ],
+      "codeImplementation": "scoped implementation exists; see task report; no new product code in S08",
+      "automation": {
+        "status": "passed-regression-scope",
+        "tests": [
+          "tests/html-package.test.ts"
+        ],
+        "currentLog": "docs/single-file-first/evidence/s08/verification/test.log"
+      },
+      "realBrowser": {
+        "status": "partial",
+        "scope": "Installed Chrome headless automation where applicable; contract/Skill checks are not browser journeys. Safari/native pending."
+      },
+      "humanConfirmation": {
+        "status": "pending",
+        "reason": "跨设备人工使用确认；旧候选通过不继承为本轮全通过"
+      },
+      "remaining": "跨设备人工使用确认；旧候选通过不继承为本轮全通过",
+      "originalEvidence": [
+        "docs/single-file-first/evidence/s07/package/pack.json",
+        "docs/single-file-first/evidence/s07/package/recovery.json"
+      ]
+    },
+    {
+      "id": "H06",
+      "status": "partial",
+      "fixCommits": [
+        {
+          "task": "S04",
+          "commit": "4f2b8493af65596eb1563080abb4be7575a42ab5"
+        },
+        {
+          "task": "S05",
+          "commit": "2b4131f84eebe2b2681353907f7ffac669740287"
+        }
+      ],
+      "codeImplementation": "scoped implementation exists; see task report; no new product code in S08",
+      "automation": {
+        "status": "passed-regression-scope",
+        "tests": [
+          "tests/single-file-performance-evidence.test.ts"
+        ],
+        "currentLog": "docs/single-file-first/evidence/s08/verification/test.log"
+      },
+      "realBrowser": {
+        "status": "partial",
+        "scope": "Installed Chrome headless automation where applicable; contract/Skill checks are not browser journeys. Safari/native pending."
+      },
+      "humanConfirmation": {
+        "status": "pending",
+        "reason": "九对比较、人评和真实设备"
+      },
+      "remaining": "九对比较、人评和真实设备",
+      "originalEvidence": [
+        "docs/single-file-first/evidence/s04/comparison.json",
+        "docs/single-file-first/evidence/s05/human-content-and-crop-review.md"
+      ]
+    },
+    {
+      "id": "R01",
+      "status": "partial",
+      "fixCommits": [
+        {
+          "task": "S03",
+          "commit": "ef3ceda9d326c396856aca6fceeb82308310c031"
+        },
+        {
+          "task": "S07",
+          "commit": "2e1a332c4c0161ecc863d1223c7f64543a70e6e9"
+        }
+      ],
+      "codeImplementation": "scoped implementation exists; see task report; no new product code in S08",
+      "automation": {
+        "status": "passed-regression-scope",
+        "tests": [
+          "tests/html-player.test.ts"
+        ],
+        "currentLog": "docs/single-file-first/evidence/s08/verification/test.log"
+      },
+      "realBrowser": {
+        "status": "partial",
+        "scope": "Installed Chrome headless automation where applicable; contract/Skill checks are not browser journeys. Safari/native pending."
+      },
+      "humanConfirmation": {
+        "status": "pending",
+        "reason": "Safari 和人工放映"
+      },
+      "remaining": "Safari 和人工放映",
+      "originalEvidence": [
+        "docs/single-file-first/evidence/s07/journey.json"
+      ]
+    },
+    {
+      "id": "R02",
+      "status": "partial",
+      "fixCommits": [
+        {
+          "task": "S03",
+          "commit": "ef3ceda9d326c396856aca6fceeb82308310c031"
+        }
+      ],
+      "codeImplementation": "scoped implementation exists; see task report; no new product code in S08",
+      "automation": {
+        "status": "passed-regression-scope",
+        "tests": [
+          "tests/single-file-editing.test.ts"
+        ],
+        "currentLog": "docs/single-file-first/evidence/s08/verification/test.log"
+      },
+      "realBrowser": {
+        "status": "partial",
+        "scope": "Installed Chrome headless automation where applicable; contract/Skill checks are not browser journeys. Safari/native pending."
+      },
+      "humanConfirmation": {
+        "status": "pending",
+        "reason": "人评、原型体验和系统 IME"
+      },
+      "remaining": "人评、原型体验和系统 IME",
+      "originalEvidence": [
+        "docs/single-file-first/evidence/s03/contextual.json",
+        "docs/single-file-first/evidence/s03/prototype-implementation-map.md"
+      ]
+    },
+    {
+      "id": "R03",
+      "status": "partial",
+      "fixCommits": [
+        {
+          "task": "S05",
+          "commit": "2b4131f84eebe2b2681353907f7ffac669740287"
+        }
+      ],
+      "codeImplementation": "scoped implementation exists; see task report; no new product code in S08",
+      "automation": {
+        "status": "passed-regression-scope",
+        "tests": [
+          "tests/single-file-contract.test.ts"
+        ],
+        "currentLog": "docs/single-file-first/evidence/s08/verification/test.log"
+      },
+      "realBrowser": {
+        "status": "partial",
+        "scope": "Installed Chrome headless automation where applicable; contract/Skill checks are not browser journeys. Safari/native pending."
+      },
+      "humanConfirmation": {
+        "status": "pending",
+        "reason": "九对盲评、负责人及两名目标用户；Skill 已实现不代表质量通过"
+      },
+      "remaining": "九对盲评、负责人及两名目标用户；Skill 已实现不代表质量通过",
+      "originalEvidence": [
+        "docs/single-file-first/evidence/s05/human-content-and-crop-review.md"
+      ]
+    },
+    {
+      "id": "R04",
+      "status": "partial",
+      "fixCommits": [
+        {
+          "task": "S04",
+          "commit": "4f2b8493af65596eb1563080abb4be7575a42ab5"
+        }
+      ],
+      "codeImplementation": "scoped implementation exists; see task report; no new product code in S08",
+      "automation": {
+        "status": "passed-regression-scope",
+        "tests": [
+          "tests/single-file-performance-evidence.test.ts"
+        ],
+        "currentLog": "docs/single-file-first/evidence/s08/verification/test.log"
+      },
+      "realBrowser": {
+        "status": "partial",
+        "scope": "Installed Chrome headless automation where applicable; contract/Skill checks are not browser journeys. Safari/native pending."
+      },
+      "humanConfirmation": {
+        "status": "pending",
+        "reason": "输入/翻页不达标；tokens、端到端时间、实机缺失"
+      },
+      "remaining": "输入/翻页不达标；tokens、端到端时间、实机缺失",
+      "originalEvidence": [
+        "docs/single-file-first/evidence/s04/comparison.json",
+        "docs/single-file-first/evidence/s04/phase-and-token-telemetry.json"
+      ]
+    },
+    {
+      "id": "R05",
+      "status": "partial",
+      "fixCommits": [
+        {
+          "task": "S02",
+          "commit": "7a26828c9d4e9c551a20f6c3857cb554ce74f514"
+        },
+        {
+          "task": "S07",
+          "commit": "2e1a332c4c0161ecc863d1223c7f64543a70e6e9"
+        }
+      ],
+      "codeImplementation": "scoped implementation exists; see task report; no new product code in S08",
+      "automation": {
+        "status": "passed-regression-scope",
+        "tests": [
+          "tests/single-file-save.test.ts",
+          "tests/single-file-journey.test.ts"
+        ],
+        "currentLog": "docs/single-file-first/evidence/s08/verification/test.log"
+      },
+      "realBrowser": {
+        "status": "partial",
+        "scope": "Installed Chrome headless automation where applicable; contract/Skill checks are not browser journeys. Safari/native pending."
+      },
+      "humanConfirmation": {
+        "status": "pending",
+        "reason": "Safari、原生授权和打印；Office 范围退休"
+      },
+      "remaining": "Safari、原生授权和打印；Office 范围退休",
+      "originalEvidence": [
+        "docs/single-file-first/evidence/s07/safari.json",
+        "docs/single-file-first/evidence/s07/native-records.json"
+      ]
+    },
+    {
+      "id": "R06",
+      "status": "partial",
+      "fixCommits": [
+        {
+          "task": "S02",
+          "commit": "7a26828c9d4e9c551a20f6c3857cb554ce74f514"
+        },
+        {
+          "task": "S07",
+          "commit": "2e1a332c4c0161ecc863d1223c7f64543a70e6e9"
+        }
+      ],
+      "codeImplementation": "scoped implementation exists; see task report; no new product code in S08",
+      "automation": {
+        "status": "passed-regression-scope",
+        "tests": [
+          "tests/html-package.test.ts",
+          "tests/html-save.test.ts"
+        ],
+        "currentLog": "docs/single-file-first/evidence/s08/verification/test.log"
+      },
+      "realBrowser": {
+        "status": "partial",
+        "scope": "Installed Chrome headless automation where applicable; contract/Skill checks are not browser journeys. Safari/native pending."
+      },
+      "humanConfirmation": {
+        "status": "pending",
+        "reason": "跨浏览器真实授权和人工恢复确认"
+      },
+      "remaining": "跨浏览器真实授权和人工恢复确认",
+      "originalEvidence": [
+        "docs/single-file-first/evidence/s07/package/recovery.json",
+        "docs/single-file-first/evidence/s02/original-file-hashes.json"
+      ]
+    }
+  ],
+  "note": "New S08 regression run verifies scoped assertions only. Old done is never promoted to final acceptance."
+}

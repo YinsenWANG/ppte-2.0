@@ -1,0 +1,24 @@
+{
+  "status": "pending",
+  "reason": "Only the development host is available; no separate real low-performance device or frozen reference machine was provided. CPU throttling was not substituted.",
+  "device": null,
+  "samples": null,
+  "developmentHost": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  "priorDevelopmentObservations": "docs/single-file-first/evidence/s04/comparison.json",
+  "priorThresholds": {
+    "inputP95Ms": 133.5,
+    "inputLimitMs": 50,
+    "inputPassed": false,
+    "turnP95Ms": 133.59999990463257,
+    "turnLimitMs": 100,
+    "turnPassed": false,
+    "saveP95Ms": 852.8000001907349,
+    "saveLimitMs": 1500,
+    "saveEngineeringPassed": true,
+    "nativeSavePassed": null
+  },
+  "protocol": "docs/single-file-first/evidence/s08/collection-protocol.md"
+}

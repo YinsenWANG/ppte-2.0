@@ -1201,7 +1201,7 @@
     {
       "id": "S08",
       "title": "总反馈闭环与人工验收回交",
-      "status": "planned",
+      "status": "partial",
       "dependsOn": [
         "S05",
         "S07"
@@ -1237,7 +1237,99 @@
         "real-low-performance-device",
         "final-single-file"
       ],
-      "evidence": null
+      "evidence": {
+        "report": "docs/audits/2026-09-06-single-file-s08/REPORT.md",
+        "primaryAcceptanceFile": "docs/single-file-first/evidence/s08/delivery/把作品带走.ppte.html",
+        "statusByLayer": {
+          "codeImplementation": "implemented: closure mapping, final sample and acceptance probe; upstream implementation limitations remain",
+          "automation": "passed: typecheck/build and 72 tests; separate final file probe passed; existing assertions unchanged",
+          "realBrowser": "partial: installed Chrome 152 headless offline file journey passed; Safari/native picker/IME/print and independent no-Node device pending",
+          "humanConfirmation": "pending: owner and two target users have not provided review; no real low-performance device"
+        },
+        "verification": "docs/single-file-first/evidence/s08/verification/result.json",
+        "acceptance": [
+          {
+            "index": 1,
+            "status": "pending",
+            "evidence": [
+              "docs/single-file-first/evidence/s08/controlled-nine-pairs.json",
+              "docs/single-file-first/evidence/s08/collection-protocol.md",
+              "docs/single-file-first/evidence/s08/authoring-record.md"
+            ],
+            "reason": "0 controlled pairs; provider identity, end-to-end phases and usage receipts unavailable; first/failure sample drafts retained but are not controlled measurements"
+          },
+          {
+            "index": 2,
+            "status": "pending",
+            "evidence": [
+              "docs/single-file-first/evidence/s08/controlled-nine-pairs.json",
+              "docs/single-file-first/evidence/s08/real-user-feedback.json",
+              "docs/single-file-first/evidence/s08/collection-protocol.md"
+            ],
+            "reason": "No blind ratings; fact/crop/save vetoes unassessed, not false; image group separate and pending"
+          },
+          {
+            "index": 3,
+            "status": "recorded-honestly",
+            "evidence": [
+              "docs/single-file-first/evidence/s08/real-low-performance-device.json",
+              "docs/single-file-first/evidence/s08/real-user-feedback.json",
+              "docs/single-file-first/evidence/s08/controlled-nine-pairs.json",
+              "docs/single-file-first/evidence/s08/verification/safari.json"
+            ],
+            "reason": "Pending records are not passing device/browser/human proof"
+          },
+          {
+            "index": 4,
+            "status": "recorded",
+            "evidence": [
+              "docs/single-file-first/evidence/s08/feedback-closure-matrix.json",
+              "docs/single-file-first/evidence/s08/feedback-closure-matrix.md"
+            ],
+            "reason": "22 rows map four feedback items, F01-F05, H00-H06 and R01-R06; no old status inherited"
+          },
+          {
+            "index": 5,
+            "status": "partial",
+            "evidence": [
+              "docs/single-file-first/evidence/s08/final-single-file.json",
+              "docs/single-file-first/evidence/s08/delivery/把作品带走.ppte.html",
+              "docs/single-file-first/evidence/s08/authoring-record.md"
+            ],
+            "reason": "Actual file delivered and Chrome offline/download/fresh-process reopen passed; user receipt/confirmation pending; two correction rounds exceed Skill one-correction fast path; no final completion claim"
+          }
+        ],
+        "requiredEvidence": {
+          "feedback-closure-matrix": [
+            "docs/single-file-first/evidence/s08/feedback-closure-matrix.json"
+          ],
+          "controlled-nine-pairs": [
+            "docs/single-file-first/evidence/s08/controlled-nine-pairs.json"
+          ],
+          "real-user-feedback": [
+            "docs/single-file-first/evidence/s08/real-user-feedback.json"
+          ],
+          "real-low-performance-device": [
+            "docs/single-file-first/evidence/s08/real-low-performance-device.json"
+          ],
+          "final-single-file": [
+            "docs/single-file-first/evidence/s08/final-single-file.json"
+          ]
+        },
+        "limitations": [
+          "S05/S07 dependencies remain partial; no upstream final acceptance closed",
+          "S04 input and page-turn p95 targets failed on prior development measurements",
+          "S06 on-demand media decoding/memory implementation incomplete; user-photo semantics unverified",
+          "New text-only sample had two local corrections; not a controlled run or proof of one-correction fast path",
+          "No provider telemetry, nine-pair human ratings, real low-performance device, Safari/native or separate no-Node user evidence"
+        ],
+        "testChanges": {
+          "frameworkTestsAdded": 0,
+          "frameworkTestsRemoved": 0,
+          "existingAssertionsChanged": 0,
+          "standaloneAcceptanceProbesAdded": 1
+        }
+      }
     }
   ]
 }

@@ -1,0 +1,145 @@
+{
+  "status": "pending",
+  "observedPairs": 0,
+  "reason": "No controlled provider invocation, verified model/reasoning identity or per-run usage receipts available in this session. This new four-slide sample is not a controlled run.",
+  "historicalManifest": "docs/html-first/evidence/h00/manifest.json",
+  "historicalManifestSha256": "7328a0c311a7c8941700b6c442859cbabdd1277a12b12327e46cca0ec8f83792",
+  "modelVerification": "pending; do not infer provider identity from launcher or reuse old requested model as verified",
+  "pairs": [
+    {
+      "id": "cherry:1",
+      "material": "docs/html-first/evidence/h00/materials/cherry-readme.md",
+      "materialSha256": "e775f21999c1bf39e7b7dcf00bedb693c5cd28d0f059bd153fdaf18535b52ef4",
+      "prompt": "面向开源贡献者，用这份固定 README 制作十二页中文演示稿：产品、生态、贡献入口、共创计划、社区与企业版边界。不得虚构发布日期、增长数字或把路线图说成已上线。",
+      "status": "pending",
+      "direct": null,
+      "enhanced": null,
+      "blindReviews": [],
+      "factVeto": null,
+      "cropVeto": null,
+      "saveVeto": null
+    },
+    {
+      "id": "cherry:2",
+      "material": "docs/html-first/evidence/h00/materials/cherry-readme.md",
+      "materialSha256": "e775f21999c1bf39e7b7dcf00bedb693c5cd28d0f059bd153fdaf18535b52ef4",
+      "prompt": "面向开源贡献者，用这份固定 README 制作十二页中文演示稿：产品、生态、贡献入口、共创计划、社区与企业版边界。不得虚构发布日期、增长数字或把路线图说成已上线。",
+      "status": "pending",
+      "direct": null,
+      "enhanced": null,
+      "blindReviews": [],
+      "factVeto": null,
+      "cropVeto": null,
+      "saveVeto": null
+    },
+    {
+      "id": "cherry:3",
+      "material": "docs/html-first/evidence/h00/materials/cherry-readme.md",
+      "materialSha256": "e775f21999c1bf39e7b7dcf00bedb693c5cd28d0f059bd153fdaf18535b52ef4",
+      "prompt": "面向开源贡献者，用这份固定 README 制作十二页中文演示稿：产品、生态、贡献入口、共创计划、社区与企业版边界。不得虚构发布日期、增长数字或把路线图说成已上线。",
+      "status": "pending",
+      "direct": null,
+      "enhanced": null,
+      "blindReviews": [],
+      "factVeto": null,
+      "cropVeto": null,
+      "saveVeto": null
+    },
+    {
+      "id": "product:1",
+      "material": "docs/html-first/evidence/h00/materials/ppte-product.md",
+      "materialSha256": "8375911c80504abd3e0abe0a7bbfa0c6c978550d7737738fa2a71097f615d704",
+      "prompt": "面向演示稿作者，用固定方案制作十二页产品介绍。强调一个 HTML、直接创作、编辑保存、重开与放映；所有规划能力标为设计目标，不虚报已支持。",
+      "status": "pending",
+      "direct": null,
+      "enhanced": null,
+      "blindReviews": [],
+      "factVeto": null,
+      "cropVeto": null,
+      "saveVeto": null
+    },
+    {
+      "id": "product:2",
+      "material": "docs/html-first/evidence/h00/materials/ppte-product.md",
+      "materialSha256": "8375911c80504abd3e0abe0a7bbfa0c6c978550d7737738fa2a71097f615d704",
+      "prompt": "面向演示稿作者，用固定方案制作十二页产品介绍。强调一个 HTML、直接创作、编辑保存、重开与放映；所有规划能力标为设计目标，不虚报已支持。",
+      "status": "pending",
+      "direct": null,
+      "enhanced": null,
+      "blindReviews": [],
+      "factVeto": null,
+      "cropVeto": null,
+      "saveVeto": null
+    },
+    {
+      "id": "product:3",
+      "material": "docs/html-first/evidence/h00/materials/ppte-product.md",
+      "materialSha256": "8375911c80504abd3e0abe0a7bbfa0c6c978550d7737738fa2a71097f615d704",
+      "prompt": "面向演示稿作者，用固定方案制作十二页产品介绍。强调一个 HTML、直接创作、编辑保存、重开与放映；所有规划能力标为设计目标，不虚报已支持。",
+      "status": "pending",
+      "direct": null,
+      "enhanced": null,
+      "blindReviews": [],
+      "factVeto": null,
+      "cropVeto": null,
+      "saveVeto": null
+    },
+    {
+      "id": "data:1",
+      "material": "docs/html-first/evidence/h00/materials/dependency-report.md",
+      "materialSha256": "dfc9a6991442c9a3dafdde3aa7ea20398fe69c9ca81d2da251b5b2844d7a2fcd",
+      "prompt": "面向维护者，用固定依赖盘点制作十二页汇报。保留真实原生表格和数值，解释统计口径、旧 CLI 可达链、候选复用与退休边界。不把静态边数说成性能。",
+      "status": "pending",
+      "direct": null,
+      "enhanced": null,
+      "blindReviews": [],
+      "factVeto": null,
+      "cropVeto": null,
+      "saveVeto": null
+    },
+    {
+      "id": "data:2",
+      "material": "docs/html-first/evidence/h00/materials/dependency-report.md",
+      "materialSha256": "dfc9a6991442c9a3dafdde3aa7ea20398fe69c9ca81d2da251b5b2844d7a2fcd",
+      "prompt": "面向维护者，用固定依赖盘点制作十二页汇报。保留真实原生表格和数值，解释统计口径、旧 CLI 可达链、候选复用与退休边界。不把静态边数说成性能。",
+      "status": "pending",
+      "direct": null,
+      "enhanced": null,
+      "blindReviews": [],
+      "factVeto": null,
+      "cropVeto": null,
+      "saveVeto": null
+    },
+    {
+      "id": "data:3",
+      "material": "docs/html-first/evidence/h00/materials/dependency-report.md",
+      "materialSha256": "dfc9a6991442c9a3dafdde3aa7ea20398fe69c9ca81d2da251b5b2844d7a2fcd",
+      "prompt": "面向维护者，用固定依赖盘点制作十二页汇报。保留真实原生表格和数值，解释统计口径、旧 CLI 可达链、候选复用与退休边界。不把静态边数说成性能。",
+      "status": "pending",
+      "direct": null,
+      "enhanced": null,
+      "blindReviews": [],
+      "factVeto": null,
+      "cropVeto": null,
+      "saveVeto": null
+    }
+  ],
+  "imageComparison": {
+    "status": "pending",
+    "observedPairs": 0,
+    "reason": "No real user image batch or controlled visual-input timing/token receipts; S05/S06 proxy evidence is separate, not a tenth measured pair.",
+    "runs": []
+  },
+  "metrics": {
+    "hotEndToEndRatio": null,
+    "tokenRatio": null,
+    "humanNotInferiorPairs": null
+  },
+  "thresholds": {
+    "hotEndToEndRatioMax": 1.25,
+    "tokenRatioMax": 1.2,
+    "humanNotInferiorMin": 6,
+    "requiredPairs": 9
+  },
+  "protocol": "docs/single-file-first/evidence/s08/collection-protocol.md"
+}

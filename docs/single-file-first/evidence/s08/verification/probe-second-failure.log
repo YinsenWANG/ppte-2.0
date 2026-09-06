@@ -1,0 +1,22 @@
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
++ [
++   '修改属于你，保存状态也应说清楚。'
++ ]
+- []
+
+    at file:///private/tmp/ppte6/docs/single-file-first/evidence/s08/verify.mjs:26:46 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: [ '修改属于你，保存状态也应说清楚。' ],
+  expected: [],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.23.2

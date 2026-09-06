@@ -1,0 +1,32 @@
+{
+  "status": "pending",
+  "reason": "No owner or target-user review session/response supplied; no messages sent to other people. Agent screenshot inspection is not human feedback.",
+  "reviewers": [
+    {
+      "role": "负责人",
+      "identity": null,
+      "status": "pending",
+      "rawResponse": null,
+      "ratings": null,
+      "vetoes": null
+    },
+    {
+      "role": "目标用户 1",
+      "identity": null,
+      "status": "pending",
+      "rawResponse": null,
+      "ratings": null,
+      "vetoes": null
+    },
+    {
+      "role": "目标用户 2",
+      "identity": null,
+      "status": "pending",
+      "rawResponse": null,
+      "ratings": null,
+      "vetoes": null
+    }
+  ],
+  "historicalFeedback": "Four user feedback items and ea260ce audit remain valid historical input; not new blind-review votes.",
+  "protocol": "docs/single-file-first/evidence/s08/collection-protocol.md"
+}

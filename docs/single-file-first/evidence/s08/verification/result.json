@@ -1,0 +1,23 @@
+{
+  "checks": [
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "elapsedSeconds": 0.9814820289611816,
+      "log": "docs/single-file-first/evidence/s08/verification/typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "exitCode": 0,
+      "elapsedSeconds": 1.1118199825286865,
+      "log": "docs/single-file-first/evidence/s08/verification/build.log"
+    },
+    {
+      "command": "pnpm test",
+      "exitCode": 0,
+      "elapsedSeconds": 32.03192496299744,
+      "log": "docs/single-file-first/evidence/s08/verification/test.log"
+    }
+  ],
+  "status": "passed"
+}

@@ -1,0 +1,75 @@
+{
+  "status": "passed-automation",
+  "timestamp": "2026-09-06T14:28:21.693Z",
+  "file": "docs/single-file-first/evidence/s08/delivery/把作品带走.ppte.html",
+  "sha256": "36626d1098dd5d64ced99db16acb0e089629ba7c7f8bb4a1ba5a4d397169250e",
+  "bytes": 313598,
+  "slides": 4,
+  "browser": "152.0.7977.76",
+  "headless": true,
+  "offline": true,
+  "isolatedCopy": true,
+  "sourceAccessRequired": false,
+  "downloadReopenedInFreshBrowser": true,
+  "originalUnchanged": true,
+  "updatedSha256": "31d5c50cf34c7af88e53759aa59bb2d7e7a34528766fbf4acc7b4e5f523144e7",
+  "visible": [
+    [
+      true,
+      false,
+      false,
+      false
+    ],
+    [
+      false,
+      true,
+      false,
+      false
+    ],
+    [
+      false,
+      false,
+      true,
+      false
+    ],
+    [
+      false,
+      false,
+      false,
+      true
+    ]
+  ],
+  "bounds": [
+    {
+      "slide": 1,
+      "violations": []
+    },
+    {
+      "slide": 2,
+      "violations": []
+    },
+    {
+      "slide": 3,
+      "violations": []
+    },
+    {
+      "slide": 4,
+      "violations": []
+    }
+  ],
+  "screenshots": [
+    "page-1.png",
+    "page-2.png",
+    "page-3.png",
+    "page-4.png"
+  ],
+  "requests": [
+    "file:///var/folders/00/4ydbn_v17qs1pwsgy6lj2x700000gn/T/ppte-s08-final-KqQJr3/%E6%8A%8A%E4%BD%9C%E5%93%81%E5%B8%A6%E8%B5%B0.ppte.html",
+    "file:///private/tmp/ppte6/docs/single-file-first/evidence/s08/verification/updated.ppte.html"
+  ],
+  "errors": [],
+  "nativePicker": "pending: explicit download only; no mock picker",
+  "safari": "pending: not exercised by this probe",
+  "noNodeDevice": "pending: development host has Node",
+  "human": "pending"
+}
