@@ -1,0 +1,28 @@
+✖ F02 A13/A21 real Host and file Portable table selection, paste, styles, structure, save/reopen/undo journey (3071.135083ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3250.906792
+
+✖ failing tests:
+
+test at dist/tests/table-editing-journey.test.js:168:1
+✖ F02 A13/A21 real Host and file Portable table selection, paste, styles, structure, save/reopen/undo journey (3071.135083ms)
+  AssertionError [ERR_ASSERTION]: {"observation":{"focused":false,"connected":false,"active":"单元格值","liveFocused":true},"events":[{"event":"focusin","width":700,"target":"单元格值","active":"单元格值"},{"event":"resize","width":700,"active":"单元格值"},{"event":"focusout","width":700,"target":"单元格值","active":null},{"event":"focusin","width":700,"target":"单元格值","active":"单元格值"},{"event":"resize","width":700,"active":"单元格值"},{"event":"focusout","width":1600,"target":"单元格值","active":null},{"event":"focusin","width":1600,"target":"单元格值","active":"单元格值"},{"event":"resize","width":1600,"active":"单元格值"},{"event":"focusout","width":1600,"target":"单元格值","active":null},{"event":"focusin","width":1600,"target":"单元格值","active":"单元格值"},{"event":"focusout","width":700,"target":"单元格值","active":null},{"event":"focusin","width":700,"target":"单元格值","active":"单元格值"},{"event":"resize","width":700,"active":"单元格值"},{"event":"focusout","width":700,"target":"单元格值","active":null},{"event":"focusin","width":700,"target":"单元格值","active":"单元格值"},{"event":"focusout","width":1600,"target":"单元格值","active":null},{"event":"focusin","width":1600,"target":"单元格值","active":"单元格值"},{"event":"resize","width":1600,"active":"单元格值"},{"event":"focusout","width":1600,"target":"单元格值","active":null},{"event":"focusin","width":1600,"target":"单元格值","active":"单元格值"}]}
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///private/tmp/ppte5/dist/tests/table-editing-journey.test.js:272:28)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

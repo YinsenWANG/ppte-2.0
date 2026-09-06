@@ -1,0 +1,14 @@
+✔ F02 A13 TSV preserves spaces, blanks, CRLF, Chinese and long numbers; rejects ragged, overflow and merged boundaries atomically (23.099375ms)
+✔ F02 A13 rectangle selection and keyboard navigation skip covered cells and clamp edges (0.225417ms)
+✔ F02 A13 structure retains untouched cell identities and fact/source references; referenced deletion rejected; empty table can grow (17.2725ms)
+✔ F02 A13 Portable profile permissions, locks, presentation guard, style rendering and checkpoint undo (17.791792ms)
+✔ F02 A21 table rerenders retain keyboard focus, draft selection and navigation without stealing outside focus (151.175ms)
+✔ F02 A13/A21 real Host and file Portable table selection, paste, styles, structure, save/reopen/undo journey (5524.198666ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5911.3435

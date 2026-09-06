@@ -1,0 +1,22 @@
+✔ H03 acceptance 2/3: viewport changes retain focused format control, selection and original DOM without edits (1217.308959ms)
+✔ H03 acceptance 1: real object selection, empty/multiple/mixed contextual shell and screenshots (2314.134083ms)
+✔ H03 acceptance 2: computed normal text contrast >=4.5, visible keyboard focus and keyboard object/format path (580.919834ms)
+✔ H03 acceptance 3: local text/range history preserves sibling identity, native Grid/Flex strategies and protected Agent hash (1153.328417ms)
+✔ H03 acceptance 4: original-file reopen retains text, range style, layout, media, table/background/lock; errors retain work (3063.1855ms)
+✔ H03 native typing history, atomic multi-edit failure, table cell and page insertion history (1034.570959ms)
+✔ H03 original-file persisted range formatting and keyboard/pointer layout; clean preview returns to edit (1899.170791ms)
+✔ H03 guarded SVG replacement, protected native input, composition events coalesce and hash race rejects (453.409583ms)
+✔ F02 A13 TSV preserves spaces, blanks, CRLF, Chinese and long numbers; rejects ragged, overflow and merged boundaries atomically (26.906959ms)
+✔ F02 A13 rectangle selection and keyboard navigation skip covered cells and clamp edges (0.231959ms)
+✔ F02 A13 structure retains untouched cell identities and fact/source references; referenced deletion rejected; empty table can grow (18.276667ms)
+✔ F02 A13 Portable profile permissions, locks, presentation guard, style rendering and checkpoint undo (18.853792ms)
+✔ F02 A21 table rerenders retain keyboard focus, draft selection and navigation without stealing outside focus (176.626125ms)
+✔ F02 A13/A21 real Host and file Portable table selection, paste, styles, structure, save/reopen/undo journey (3692.336375ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11896.864584

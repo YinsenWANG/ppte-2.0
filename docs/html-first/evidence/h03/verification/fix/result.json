@@ -1,0 +1,177 @@
+{
+  "task": "H03",
+  "status": "done",
+  "implementationCommit": "4f1838f7df7d6a1fdcac7e6a59f1a6984cb524e5",
+  "fixImplementationCommit": "bec13dc14f4f01e09211d513dfaa90e8c8d3cedd",
+  "authorityCommit": "bbcd46bde2c608b5a56e617f316c5dcb5534857e",
+  "recordedAt": "2026-09-06T11:01:56.674861+00:00",
+  "environment": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "nodeBefore": "22.23.2",
+    "nodeReproducedAndFinal": "24.19.0",
+    "pnpm": "11.22.0"
+  },
+  "commands": [
+    {
+      "command": "PATH=/opt/homebrew/bin:$PATH pnpm typecheck",
+      "exitCode": 0,
+      "log": "typecheck.log"
+    },
+    {
+      "command": "PATH=/opt/homebrew/bin:$PATH pnpm build",
+      "exitCode": 0,
+      "log": "build.log"
+    },
+    {
+      "command": "PATH=/opt/homebrew/bin:$PATH pnpm test",
+      "exitCode": 0,
+      "log": "test.log"
+    }
+  ],
+  "tests": {
+    "before": 433,
+    "after": 434,
+    "added": 1,
+    "removed": 0,
+    "passed": 434,
+    "failed": 0,
+    "skipped": 0,
+    "h03Passed": 8,
+    "focusedPassed": 14
+  },
+  "acceptance": [
+    {
+      "criterion": "三种对象选择和空/多选/混合值有统一样式；无原始表单墙",
+      "status": "passed",
+      "commit": "bec13dc14f4f01e09211d513dfaa90e8c8d3cedd",
+      "tests": [
+        "dist/tests/html-editor.test.js: H03 acceptance 1: real object selection, empty/multiple/mixed contextual shell and screenshots"
+      ],
+      "log": "docs/html-first/evidence/h03/verification/fix/test.log"
+    },
+    {
+      "criterion": "普通文字对比度至少 4.5:1、键盘可达、焦点清晰",
+      "status": "passed",
+      "commit": "bec13dc14f4f01e09211d513dfaa90e8c8d3cedd",
+      "tests": [
+        "dist/tests/html-editor.test.js: H03 acceptance 2: computed normal text contrast >=4.5, visible keyboard focus and keyboard object/format path",
+        "dist/tests/html-editor.test.js: H03 acceptance 2/3: viewport changes retain focused format control, selection and original DOM without edits"
+      ],
+      "log": "docs/html-first/evidence/h03/verification/fix/test.log"
+    },
+    {
+      "criterion": "修改一句话不重建整页；Grid/Flex 重排不偷偷 absolute 化",
+      "status": "passed",
+      "commit": "bec13dc14f4f01e09211d513dfaa90e8c8d3cedd",
+      "tests": [
+        "dist/tests/html-editor.test.js: H03 acceptance 3: local text/range history preserves sibling identity, native Grid/Flex strategies and protected Agent hash",
+        "dist/tests/html-editor.test.js: H03 native typing history, atomic multi-edit failure, table cell and page insertion history",
+        "dist/tests/html-editor.test.js: H03 original-file persisted range formatting and keyboard/pointer layout; clean preview returns to edit",
+        "dist/tests/html-editor.test.js: H03 guarded SVG replacement, protected native input, composition events coalesce and hash race rejects",
+        "dist/tests/html-editor.test.js: H03 acceptance 2/3: viewport changes retain focused format control, selection and original DOM without edits"
+      ],
+      "log": "docs/html-first/evidence/h03/verification/fix/test.log"
+    },
+    {
+      "criterion": "保存重开保持内容、格式、布局、资源与锁定；操作失败不假成功",
+      "status": "passed",
+      "commit": "bec13dc14f4f01e09211d513dfaa90e8c8d3cedd",
+      "tests": [
+        "dist/tests/html-editor.test.js: H03 acceptance 4: original-file reopen retains text, range style, layout, media, table/background/lock; errors retain work",
+        "dist/tests/html-editor.test.js: H03 original-file persisted range formatting and keyboard/pointer layout; clean preview returns to edit",
+        "dist/tests/html-editor.test.js: H03 guarded SVG replacement, protected native input, composition events coalesce and hash race rejects"
+      ],
+      "log": "docs/html-first/evidence/h03/verification/fix/test.log"
+    }
+  ],
+  "reproduction": {
+    "defaultNode22": {
+      "passed": 433,
+      "failed": 0,
+      "log": "node22-before.log"
+    },
+    "node24": {
+      "passed": 432,
+      "failed": 1,
+      "log": "node24-before.log",
+      "failure": "dist/tests/table-editing-journey.test.js: F02 A13/A21 real Host and file Portable table selection, paste, styles, structure, save/reopen/undo journey"
+    },
+    "instrumentedFailure": {
+      "log": "resize-detached.log",
+      "patch": "resize-probe.patch",
+      "patchBase": "bc55a83",
+      "observation": {
+        "focused": false,
+        "connected": false,
+        "active": "单元格值",
+        "liveFocused": true
+      }
+    },
+    "fixedStress": {
+      "log": "resize-stress-fixed.log",
+      "patch": "resize-stress.patch",
+      "additionalViewportChanges": 40,
+      "passed": 6,
+      "failed": 0,
+      "temporaryProbeNotInFinalTests": true
+    }
+  },
+  "contrast": {
+    "checkedLabels": 25,
+    "minimum": 8.079967076562946,
+    "target": 4.5
+  },
+  "newFiles": [
+    "tests/helpers/browser-viewport.ts",
+    "docs/html-first/evidence/h03/FIX.md",
+    "docs/html-first/evidence/h03/verification/fix/build.log",
+    "docs/html-first/evidence/h03/verification/fix/contrast.json",
+    "docs/html-first/evidence/h03/verification/fix/focused-before.log",
+    "docs/html-first/evidence/h03/verification/fix/focused.log",
+    "docs/html-first/evidence/h03/verification/fix/imports-and-drafts.json",
+    "docs/html-first/evidence/h03/verification/fix/node22-before.log",
+    "docs/html-first/evidence/h03/verification/fix/node24-before.log",
+    "docs/html-first/evidence/h03/verification/fix/resize-detached.log",
+    "docs/html-first/evidence/h03/verification/fix/resize-probe.patch",
+    "docs/html-first/evidence/h03/verification/fix/resize-stress-fixed.log",
+    "docs/html-first/evidence/h03/verification/fix/resize-stress.patch",
+    "docs/html-first/evidence/h03/verification/fix/test.log",
+    "docs/html-first/evidence/h03/verification/fix/typecheck.log",
+    "docs/html-first/evidence/h03/verification/fix/result.json"
+  ],
+  "remaining": [
+    "H02 remains partial: Safari remote automation and native file-picker authorization/revocation journeys are still unverified. H03 Chrome headless evidence is not Safari or human acceptance.",
+    "H04 full presentation/media/fullscreen/presenter/PDF acceptance remains planned; only current-slide clean preview and Escape return are exercised here.",
+    "Complex SVG is edited/replaced as a whole; single basic primitive fill is supported. Generic arbitrary CSS/SVG decomposition is not promised.",
+    "Agent patch accepts text and validated style only, rejects unsupported fields, and refuses ancestor edits containing protected objects.",
+    "Undo/redo history is session-local; durable content, styling, resource bytes and lock flags are persisted, not the history stack.",
+    "Composition-event coalescing is tested with explicit synthetic events; no new real Chinese IME or human blind-review claim. H00/H06 evidence remains pending."
+  ],
+  "scope": {
+    "legacyProductChanged": false,
+    "legacyAssertionsRemovedOrWeakened": false,
+    "newInvocationGraph": "imports-and-drafts.json",
+    "test": "dist/tests/html-document.test.js: H01 acceptance 4",
+    "blackboxOrReleaseScriptsChanged": false,
+    "pipelineInputsPreserved": "artifacts/h03/pipeline-input/"
+  },
+  "gitSigning": "GPG signed with signoff; git verify-commit passed",
+  "push": false,
+  "artifactHashes": {
+    "FIX.md": "ffc379ad8ec66441f4f5a4f422050fd5f3c2bedb49b2e9cd7d300194d79549ac",
+    "verification/fix/build.log": "a407c25ea5e8744df48069502086fb92705639956542ae99b29e85c59f5bcbeb",
+    "verification/fix/contrast.json": "a71f7d0864d0fac010f76d68bdaf7eac6ccd82b56e59858c466298baa59504bd",
+    "verification/fix/focused-before.log": "c05d2e3c1739030240f882ef47f1d84c0704ade471cbad87fa90ce4b84b2c511",
+    "verification/fix/focused.log": "56e705c1a7c7798b21133dbf77386578689d84416a45cd50aedd1d3c847c93f7",
+    "verification/fix/imports-and-drafts.json": "fe6df52edd4f6d3185c480c994bd56d11f9a31ee1f6de3c5f14481ad599035f0",
+    "verification/fix/node22-before.log": "e7876d6842ed662761fd332f959a6518b0b520fd363c731d19649e3d7b0e01b2",
+    "verification/fix/node24-before.log": "98f3d530b2debfba1388f631ba5b37104f541813cfa4671623276061a22423bd",
+    "verification/fix/resize-detached.log": "77a8fff35a70dd2636c96aa61b031c5598fbce99f5b79b14bca155f740b54202",
+    "verification/fix/resize-probe.patch": "8a52b0316f8c872bc4ad98763835537a5fa94308b843fb056a5fee424d947f5f",
+    "verification/fix/resize-stress-fixed.log": "46fb77e5acdd78256d98606e6d490088e8b85c0e2a5326d74430e45c1080cf1a",
+    "verification/fix/resize-stress.patch": "630f9c12ec612e5cc634a76f91392ff22993c7589fa1dcf9f18ae08eb995288e",
+    "verification/fix/test.log": "69ac947049108fb5be6ebf916b182c96b37e9edf8c2c399b67fb0e6dc9425090",
+    "verification/fix/typecheck.log": "4d383a112120e549ce76c8ce4a77dc036412e53696ce34be42ee6a5e8f607928"
+  }
+}

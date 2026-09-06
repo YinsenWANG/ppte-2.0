@@ -1,0 +1,2614 @@
+$ pnpm build && node --test dist/tests/*.test.js
+$ node scripts/build-html.mjs && node scripts/build-portable.mjs && tsc -p tsconfig.build.json
+TAP version 13
+# Subtest: F05 A16 step/slide boundaries are independent, sparse, stable by slideId and noncycling
+ok 1 - F05 A16 step/slide boundaries are independent, sparse, stable by slideId and noncycling
+  ---
+  duration_ms: 1.348375
+  type: 'test'
+  ...
+# Subtest: F05 A17 unsupported fields survive Engine commit, undo/redo, save/reopen and have precise static reports
+ok 2 - F05 A17 unsupported fields survive Engine commit, undo/redo, save/reopen and have precise static reports
+  ---
+  duration_ms: 120.061834
+  type: 'test'
+  ...
+# Subtest: F05 A06/A16 browser executes effects, timing and directions; reduced motion, edit and print preserve content
+ok 3 - F05 A06/A16 browser executes effects, timing and directions; reduced motion, edit and print preserve content
+  ---
+  duration_ms: 656.301125
+  type: 'test'
+  ...
+# Subtest: F05 animation controls commit typed operations and preview without document changes
+ok 4 - F05 animation controls commit typed operations and preview without document changes
+  ---
+  duration_ms: 572.969375
+  type: 'test'
+  ...
+# Subtest: F05 all transition directions, push outgoing motion and bounded unsupported effects execute honestly
+ok 5 - F05 all transition directions, push outgoing motion and bounded unsupported effects execute honestly
+  ---
+  duration_ms: 3090.021666
+  type: 'test'
+  ...
+# Subtest: F05 Host config and playback use the same animation and independent navigation contract
+ok 6 - F05 Host config and playback use the same animation and independent navigation contract
+  ---
+  duration_ms: 3852.266417
+  type: 'test'
+  ...
+# Subtest: identity binds actual runtime and history while ignoring build timestamp
+ok 7 - identity binds actual runtime and history while ignoring build timestamp
+  ---
+  duration_ms: 296.415917
+  type: 'test'
+  ...
+# Subtest: same-document old runtime cannot be reused; versioned delivery preserves both artifacts
+ok 8 - same-document old runtime cannot be reused; versioned delivery preserves both artifacts
+  ---
+  duration_ms: 1037.313084
+  type: 'test'
+  ...
+# Subtest: redo-only history changes artifact identity without changing the document revision
+ok 9 - redo-only history changes artifact identity without changing the document revision
+  ---
+  duration_ms: 125.461875
+  type: 'test'
+  ...
+# Subtest: A05 identity binds every actual component and excludes generation time
+ok 10 - A05 identity binds every actual component and excludes generation time
+  ---
+  duration_ms: 981.526208
+  type: 'test'
+  ...
+# Subtest: A05 audit checks resource declarations even when identity is recomputed
+ok 11 - A05 audit checks resource declarations even when identity is recomputed
+  ---
+  duration_ms: 328.29625
+  type: 'test'
+  ...
+# Subtest: A05 old API errors on stale identity while explicit new flow creates and reuses real copy
+ok 12 - A05 old API errors on stale identity while explicit new flow creates and reuses real copy
+  ---
+  duration_ms: 592.052833
+  type: 'test'
+  ...
+# Subtest: A05 short digest collisions and dangling symlinks create fresh sibling without clobber
+ok 13 - A05 short digest collisions and dangling symlinks create fresh sibling without clobber
+  ---
+  duration_ms: 419.050375
+  type: 'test'
+  ...
+# Subtest: A05 conflicting legacy flags reject and confirmed replacement retains recoverable exact bytes
+ok 14 - A05 conflicting legacy flags reject and confirmed replacement retains recoverable exact bytes
+  ---
+  duration_ms: 170.237
+  type: 'test'
+  ...
+# Subtest: A19 root version, CLI, Portable and byte-derived build manifest agree; old profiles remain
+ok 15 - A19 root version, CLI, Portable and byte-derived build manifest agree; old profiles remain
+  ---
+  duration_ms: 687.252292
+  type: 'test'
+  ...
+# Subtest: A05 atomic publication retries a writer arriving after target preflight
+ok 16 - A05 atomic publication retries a writer arriving after target preflight
+  ---
+  duration_ms: 268.472292
+  type: 'test'
+  ...
+# Subtest: A19 staged distributable carries root version and exact build manifest
+ok 17 - A19 staged distributable carries root version and exact build manifest
+  ---
+  duration_ms: 3493.52775
+  type: 'test'
+  ...
+# Subtest: A05 embedded font bytes are audited independently of a recomputed identity
+ok 18 - A05 embedded font bytes are audited independently of a recomputed identity
+  ---
+  duration_ms: 78.61325
+  type: 'test'
+  ...
+# Subtest: D07 criterion 1: ten fixed briefs cover five categories and two uses with sourced answers, licensed bytes and versioned journeys
+ok 19 - D07 criterion 1: ten fixed briefs cover five categories and two uses with sourced answers, licensed bytes and versioned journeys
+  ---
+  duration_ms: 53.0075
+  type: 'test'
+  ...
+# Subtest: D07 criterion 2 A14 A17: each quality line independently blocks candidate failure despite other passes
+ok 20 - D07 criterion 2 A14 A17: each quality line independently blocks candidate failure despite other passes
+  ---
+  duration_ms: 206.111125
+  type: 'test'
+  ...
+# Subtest: D07 criterion 2 A14: overlap allowances are directional and recipe/page scoped; screenshots remain required
+ok 21 - D07 criterion 2 A14: overlap allowances are directional and recipe/page scoped; screenshots remain required
+  ---
+  duration_ms: 28.242083
+  type: 'test'
+  ...
+# Subtest: D07 criterion 2 A17: every identity domain and missing/tampered retained artifacts invalidate evidence
+ok 22 - D07 criterion 2 A17: every identity domain and missing/tampered retained artifacts invalidate evidence
+  ---
+  duration_ms: 175.024459
+  type: 'test'
+  ...
+# Subtest: D07 criterion 3 A21: forty runs require the same agent/material/seed/budget/environment and two repetitions
+ok 23 - D07 criterion 3 A21: forty runs require the same agent/material/seed/budget/environment and two repetitions
+  ---
+  duration_ms: 350.470583
+  type: 'test'
+  ...
+# Subtest: D07 criterion 3 A21: real timing fields, owner plus two users, failures and repair trends are mandatory
+ok 24 - D07 criterion 3 A21: real timing fields, owner plus two users, failures and repair trends are mandatory
+  ---
+  duration_ms: 187.275209
+  type: 'test'
+  ...
+# Subtest: D07 criterion 4 A21: stage selection defers M3 table without counting or blocking G2, and requires it at M3
+ok 25 - D07 criterion 4 A21: stage selection defers M3 table without counting or blocking G2, and requires it at M3
+  ---
+  duration_ms: 87.805666
+  type: 'test'
+  ...
+# Subtest: D07 criterion 4 A17 A21: checked report recomputes honestly; empty submissions cannot close G2
+ok 26 - D07 criterion 4 A17 A21: checked report recomputes honestly; empty submissions cannot close G2
+  ---
+  duration_ms: 78.42625
+  type: 'test'
+  ...
+# Subtest: D07 gate rejects weakened quality/stage manifests and overwritten originals
+ok 27 - D07 gate rejects weakened quality/stage manifests and overwritten originals
+  ---
+  duration_ms: 64.047625
+  type: 'test'
+  ...
+# Subtest: D07 evidence CLI checks actual bytes and rejects tampering, fake PNG, missing files and escaped paths
+ok 28 - D07 evidence CLI checks actual bytes and rejects tampering, fake PNG, missing files and escaped paths
+  ---
+  duration_ms: 1190.360459
+  type: 'test'
+  ...
+# Subtest: D07 criterion 3: invalid or duplicate human sessions never count as passes or repair comparisons
+ok 29 - D07 criterion 3: invalid or duplicate human sessions never count as passes or repair comparisons
+  ---
+  duration_ms: 81.631959
+  type: 'test'
+  ...
+# Subtest: D07 criterion 3: blank failure descriptions cannot stand in for actual recorded failures
+ok 30 - D07 criterion 3: blank failure descriptions cannot stand in for actual recorded failures
+  ---
+  duration_ms: 28.746084
+  type: 'test'
+  ...
+# Subtest: P03 criterion 1: all seven incremental indexes equal full rebuild across edits, undo, redo and failed commits
+ok 31 - P03 criterion 1: all seven incremental indexes equal full rebuild across edits, undo, redo and failed commits
+  ---
+  duration_ms: 114.138792
+  type: 'test'
+  ...
+# Subtest: P03 criterion 1: randomized reference/group/asset mutations and injected partial failure rebuild safely
+ok 32 - P03 criterion 1: randomized reference/group/asset mutations and injected partial failure rebuild safely
+  ---
+  duration_ms: 10.6135
+  type: 'test'
+  ...
+# Subtest: P03 criterion 2: immutable input, unique identity, native proposal and single-use consumption
+ok 33 - P03 criterion 2: immutable input, unique identity, native proposal and single-use consumption
+  ---
+  duration_ms: 1.269417
+  type: 'test'
+  ...
+# Subtest: P03 criteria 2/3: out-of-order, changed revision/input, forged envelopes and late consumption never publish stale output
+ok 34 - P03 criteria 2/3: out-of-order, changed revision/input, forged envelopes and late consumption never publish stale output
+  ---
+  duration_ms: 5.604417
+  type: 'test'
+  ...
+# Subtest: P03 criteria 2/3: running/queued/pre-abort, timeout, backpressure, executor failure and close release resources
+ok 35 - P03 criteria 2/3: running/queued/pre-abort, timeout, backpressure, executor failure and close release resources
+  ---
+  duration_ms: 17.220917
+  type: 'test'
+  ...
+# Subtest: P03 criterion 3: controller commits invalidate proposals and file close disposes owned work; Engine rejects stale transactions
+ok 36 - P03 criterion 3: controller commits invalidate proposals and file close disposes owned work; Engine rejects stale transactions
+  ---
+  duration_ms: 5.396667
+  type: 'test'
+  ...
+# Subtest: P03 criteria 2/3: real Chromium native/Worker total costs use pinned fixtures and retain raw samples
+ok 37 - P03 criteria 2/3: real Chromium native/Worker total costs use pinned fixtures and retain raw samples
+  ---
+  duration_ms: 10106.360042
+  type: 'test'
+  ...
+# Subtest: P03 criterion 1: pinned 12/30/100-page corpora update one slide and match the full oracle
+ok 38 - P03 criterion 1: pinned 12/30/100-page corpora update one slide and match the full oracle
+  ---
+  duration_ms: 1629.515833
+  type: 'test'
+  ...
+# Subtest: canonical JSON sorts object keys and implements SHA-256
+ok 39 - canonical JSON sorts object keys and implements SHA-256
+  ---
+  duration_ms: 13.789625
+  type: 'test'
+  ...
+# Subtest: runtime validation catches identity and group violations without mutating input
+ok 40 - runtime validation catches identity and group violations without mutating input
+  ---
+  duration_ms: 2.01825
+  type: 'test'
+  ...
+# Subtest: Q01 A17: required real Safari and other targets cannot be satisfied by WebKit automation
+ok 41 - Q01 A17: required real Safari and other targets cannot be satisfied by WebKit automation
+  ---
+  duration_ms: 885.706208
+  type: 'test'
+  ...
+# Subtest: Q01 A17: Office open/edit/resave, each native object and visual are independent requirements
+ok 42 - Q01 A17: Office open/edit/resave, each native object and visual are independent requirements
+  ---
+  duration_ms: 11334.044833
+  type: 'test'
+  ...
+# Subtest: Q01 A17: every ArtifactIdentity component invalidates old client reports
+ok 43 - Q01 A17: every ArtifactIdentity component invalidates old client reports
+  ---
+  duration_ms: 5292.666125
+  type: 'test'
+  ...
+# Subtest: Q01 A17/A21: unverified, missing, failed, duplicate and unverifiable evidence never pass
+ok 44 - Q01 A17/A21: unverified, missing, failed, duplicate and unverifiable evidence never pass
+  ---
+  duration_ms: 6952.35925
+  type: 'test'
+  ...
+# Subtest: Q01 A17: changed matrix, incomplete protocol and undeclared clients block acceptance
+ok 45 - Q01 A17: changed matrix, incomplete protocol and undeclared clients block acceptance
+  ---
+  duration_ms: 2808.486209
+  type: 'test'
+  ...
+# Subtest: Q01 A19/A21: published matrix retains unverified manual release scope and executable journey references
+ok 46 - Q01 A19/A21: published matrix retains unverified manual release scope and executable journey references
+  ---
+  duration_ms: 1.125625
+  type: 'test'
+  ...
+# Subtest: D03 A14 hard constraints beat preference; deterministic seed, variants and bounded deck rhythm
+ok 47 - D03 A14 hard constraints beat preference; deterministic seed, variants and bounded deck rhythm
+  ---
+  duration_ms: 35.445542
+  type: 'test'
+  ...
+# Subtest: D03 A17 required output contracts reject unsupported, absent and unverified mappings before scoring
+ok 48 - D03 A17 required output contracts reject unsupported, absent and unverified mappings before scoring
+  ---
+  duration_ms: 0.884083
+  type: 'test'
+  ...
+# Subtest: D03 A14/A17 no browser stays unverified; structured reasons and identity reject stale reports
+ok 49 - D03 A14/A17 no browser stays unverified; structured reasons and identity reject stale reports
+  ---
+  duration_ms: 2.89625
+  type: 'test'
+  ...
+# Subtest: D03 A14 split proposals preserve linked blocks; evaluation and beam budgets stop without partial drafts
+ok 50 - D03 A14 split proposals preserve linked blocks; evaluation and beam budgets stop without partial drafts
+  ---
+  duration_ms: 1.121625
+  type: 'test'
+  ...
+# Subtest: D03 A17 measurement failure, stale evidence and timeout never count as visual success
+ok 51 - D03 A17 measurement failure, stale evidence and timeout never count as visual success
+  ---
+  duration_ms: 12.132458
+  type: 'test'
+  ...
+# Subtest: D03 A14/A17/A20 actual pinned font DOM measurements, screenshots, failures and 30 capacity samples per deck size
+ok 52 - D03 A14/A17/A20 actual pinned font DOM measurements, screenshots, failures and 30 capacity samples per deck size
+  ---
+  duration_ms: 280371.041375
+  type: 'test'
+  ...
+# Subtest: delivery policy has one editable default and a 20 MiB artifact SLO
+ok 53 - delivery policy has one editable default and a 20 MiB artifact SLO
+  ---
+  duration_ms: 0.366583
+  type: 'test'
+  ...
+# Subtest: delivery policy rejects viewer and does not silently downgrade large artifacts
+ok 54 - delivery policy rejects viewer and does not silently downgrade large artifacts
+  ---
+  duration_ms: 0.45025
+  type: 'test'
+  ...
+# Subtest: deliver_presentation is same-revision idempotent, sibling-only, and no-clobber
+ok 55 - deliver_presentation is same-revision idempotent, sibling-only, and no-clobber
+  ---
+  duration_ms: 806.716625
+  type: 'test'
+  ...
+# Subtest: delivery fault points leave no half-file and preserve an old sibling
+ok 56 - delivery fault points leave no half-file and preserve an old sibling
+  ---
+  duration_ms: 521.607541
+  type: 'test'
+  ...
+# Subtest: all four Portable profiles keep their explicit editability boundary
+ok 57 - all four Portable profiles keep their explicit editability boundary
+  ---
+  duration_ms: 271.120458
+  type: 'test'
+  ...
+# Subtest: delivery rejects an unconfirmed replacement and arbitrary output paths
+ok 58 - delivery rejects an unconfirmed replacement and arbitrary output paths
+  ---
+  duration_ms: 0.28525
+  type: 'test'
+  ...
+# Subtest: D05 criterion 1: Host, Portable and Skill share finite recipe controls; CSS, code and unknown paths rejected
+ok 59 - D05 criterion 1: Host, Portable and Skill share finite recipe controls; CSS, code and unknown paths rejected
+  ---
+  duration_ms: 33.828334
+  type: 'test'
+  ...
+# Subtest: D05 criteria 2/3: four columns to three keeps the fourth item, IDs, facts, reading order and current text; stale IR cannot overwrite
+ok 60 - D05 criteria 2/3: four columns to three keeps the fourth item, IDs, facts, reading order and current text; stale IR cannot overwrite
+  ---
+  duration_ms: 27.76125
+  type: 'test'
+  ...
+# Subtest: D05 criterion 2: bound reflow preserves manual additions, local formatting, crop/assets and authoritative locks
+ok 61 - D05 criterion 2: bound reflow preserves manual additions, local formatting, crop/assets and authoritative locks
+  ---
+  duration_ms: 28.902125
+  type: 'test'
+  ...
+# Subtest: D05 criterion 2: invalid/missing binding identities and changed recipe digest never guess; explicit rebuild repairs metadata
+ok 62 - D05 criterion 2: invalid/missing binding identities and changed recipe digest never guess; explicit rebuild repairs metadata
+  ---
+  duration_ms: 4.961042
+  type: 'test'
+  ...
+# Subtest: D05 criterion 3: insufficient capacity returns a proposal and no transaction; geometry and theme never rewrite content
+ok 63 - D05 criterion 3: insufficient capacity returns a proposal and no transaction; geometry and theme never rewrite content
+  ---
+  duration_ms: 0.530375
+  type: 'test'
+  ...
+# Subtest: D05 criteria 2/3: theme/font changes preserve edited text and local overrides; protected global theme is rejected
+ok 64 - D05 criteria 2/3: theme/font changes preserve edited text and local overrides; protected global theme is rejected
+  ---
+  duration_ms: 5.275458
+  type: 'test'
+  ...
+# Subtest: D05 dual entry protection sequence: preview is read-only, commits match, stale previews fail, undo/redo reopen without recipe pack
+ok 65 - D05 dual entry protection sequence: preview is read-only, commits match, stale previews fail, undo/redo reopen without recipe pack
+  ---
+  duration_ms: 40.281791
+  type: 'test'
+  ...
+# Subtest: D05 Portable browser: schema controls preview/cancel/accept through Core and survive undo and save/reopen
+ok 66 - D05 Portable browser: schema controls preview/cancel/accept through Core and survive undo and save/reopen
+  ---
+  duration_ms: 1211.820417
+  type: 'test'
+  ...
+# Subtest: D05 Host browser: RecipeStudio shares columns, stages geometry and theme separately, and accepts reviewed edits
+ok 67 - D05 Host browser: RecipeStudio shares columns, stages geometry and theme separately, and accepts reviewed edits
+  ---
+  duration_ms: 3695.048708
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 business × cover: real geometry, capacity, semantic content and deterministic sizes
+ok 68 - D04 A14 criteria 1/2/3 business × cover: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 12.249916
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 business × section: real geometry, capacity, semantic content and deterministic sizes
+ok 69 - D04 A14 criteria 1/2/3 business × section: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 7.764333
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 business × statement: real geometry, capacity, semantic content and deterministic sizes
+ok 70 - D04 A14 criteria 1/2/3 business × statement: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 2.701958
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 business × metrics: real geometry, capacity, semantic content and deterministic sizes
+ok 71 - D04 A14 criteria 1/2/3 business × metrics: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 4.38725
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 business × explanation: real geometry, capacity, semantic content and deterministic sizes
+ok 72 - D04 A14 criteria 1/2/3 business × explanation: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 4.936666
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 business × comparison: real geometry, capacity, semantic content and deterministic sizes
+ok 73 - D04 A14 criteria 1/2/3 business × comparison: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 2.322209
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 business × process: real geometry, capacity, semantic content and deterministic sizes
+ok 74 - D04 A14 criteria 1/2/3 business × process: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 4.565833
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 business × closing: real geometry, capacity, semantic content and deterministic sizes
+ok 75 - D04 A14 criteria 1/2/3 business × closing: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 8.401083
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 swiss × cover: real geometry, capacity, semantic content and deterministic sizes
+ok 76 - D04 A14 criteria 1/2/3 swiss × cover: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 3.299709
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 swiss × section: real geometry, capacity, semantic content and deterministic sizes
+ok 77 - D04 A14 criteria 1/2/3 swiss × section: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 2.519917
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 swiss × statement: real geometry, capacity, semantic content and deterministic sizes
+ok 78 - D04 A14 criteria 1/2/3 swiss × statement: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 4.197209
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 swiss × metrics: real geometry, capacity, semantic content and deterministic sizes
+ok 79 - D04 A14 criteria 1/2/3 swiss × metrics: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 7.118458
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 swiss × explanation: real geometry, capacity, semantic content and deterministic sizes
+ok 80 - D04 A14 criteria 1/2/3 swiss × explanation: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 26.036791
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 swiss × comparison: real geometry, capacity, semantic content and deterministic sizes
+ok 81 - D04 A14 criteria 1/2/3 swiss × comparison: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 19.020208
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 swiss × process: real geometry, capacity, semantic content and deterministic sizes
+ok 82 - D04 A14 criteria 1/2/3 swiss × process: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 5.625792
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 swiss × closing: real geometry, capacity, semantic content and deterministic sizes
+ok 83 - D04 A14 criteria 1/2/3 swiss × closing: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 3.023458
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 editorial × cover: real geometry, capacity, semantic content and deterministic sizes
+ok 84 - D04 A14 criteria 1/2/3 editorial × cover: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 2.296875
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 editorial × section: real geometry, capacity, semantic content and deterministic sizes
+ok 85 - D04 A14 criteria 1/2/3 editorial × section: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 5.54175
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 editorial × statement: real geometry, capacity, semantic content and deterministic sizes
+ok 86 - D04 A14 criteria 1/2/3 editorial × statement: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 16.864
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 editorial × metrics: real geometry, capacity, semantic content and deterministic sizes
+ok 87 - D04 A14 criteria 1/2/3 editorial × metrics: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 2.963292
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 editorial × explanation: real geometry, capacity, semantic content and deterministic sizes
+ok 88 - D04 A14 criteria 1/2/3 editorial × explanation: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 2.041958
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 editorial × comparison: real geometry, capacity, semantic content and deterministic sizes
+ok 89 - D04 A14 criteria 1/2/3 editorial × comparison: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 8.671666
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 editorial × process: real geometry, capacity, semantic content and deterministic sizes
+ok 90 - D04 A14 criteria 1/2/3 editorial × process: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 2.257083
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 editorial × closing: real geometry, capacity, semantic content and deterministic sizes
+ok 91 - D04 A14 criteria 1/2/3 editorial × closing: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 3.361292
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 launch × cover: real geometry, capacity, semantic content and deterministic sizes
+ok 92 - D04 A14 criteria 1/2/3 launch × cover: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 2.040291
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 launch × section: real geometry, capacity, semantic content and deterministic sizes
+ok 93 - D04 A14 criteria 1/2/3 launch × section: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 5.215375
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 launch × statement: real geometry, capacity, semantic content and deterministic sizes
+ok 94 - D04 A14 criteria 1/2/3 launch × statement: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 1.937416
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 launch × metrics: real geometry, capacity, semantic content and deterministic sizes
+ok 95 - D04 A14 criteria 1/2/3 launch × metrics: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 14.963375
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 launch × explanation: real geometry, capacity, semantic content and deterministic sizes
+ok 96 - D04 A14 criteria 1/2/3 launch × explanation: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 2.1065
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 launch × comparison: real geometry, capacity, semantic content and deterministic sizes
+ok 97 - D04 A14 criteria 1/2/3 launch × comparison: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 2.229375
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 launch × process: real geometry, capacity, semantic content and deterministic sizes
+ok 98 - D04 A14 criteria 1/2/3 launch × process: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 3.631875
+  type: 'test'
+  ...
+# Subtest: D04 A14 criteria 1/2/3 launch × closing: real geometry, capacity, semantic content and deterministic sizes
+ok 99 - D04 A14 criteria 1/2/3 launch × closing: real geometry, capacity, semantic content and deterministic sizes
+  ---
+  duration_ms: 1.974958
+  type: 'test'
+  ...
+# Subtest: D04 criteria 1/2 versioned manifests, all 96 samples/previews, 12 pressure pages, asset digests and licenses are real
+ok 100 - D04 criteria 1/2 versioned manifests, all 96 samples/previews, 12 pressure pages, asset digests and licenses are real
+  ---
+  duration_ms: 627.017041
+  type: 'test'
+  ...
+# Subtest: D04 A15/A17 criterion 3 business: Operation Engine edit/undo/redo/checkpoint and fresh process without packs opens and exports
+ok 101 - D04 A15/A17 criterion 3 business: Operation Engine edit/undo/redo/checkpoint and fresh process without packs opens and exports
+  ---
+  duration_ms: 491.561875
+  type: 'test'
+  ...
+# Subtest: D04 A15/A17 criterion 3 swiss: Operation Engine edit/undo/redo/checkpoint and fresh process without packs opens and exports
+ok 102 - D04 A15/A17 criterion 3 swiss: Operation Engine edit/undo/redo/checkpoint and fresh process without packs opens and exports
+  ---
+  duration_ms: 597.137833
+  type: 'test'
+  ...
+# Subtest: D04 A15/A17 criterion 3 editorial: Operation Engine edit/undo/redo/checkpoint and fresh process without packs opens and exports
+ok 103 - D04 A15/A17 criterion 3 editorial: Operation Engine edit/undo/redo/checkpoint and fresh process without packs opens and exports
+  ---
+  duration_ms: 461.544333
+  type: 'test'
+  ...
+# Subtest: D04 A15/A17 criterion 3 launch: Operation Engine edit/undo/redo/checkpoint and fresh process without packs opens and exports
+ok 104 - D04 A15/A17 criterion 3 launch: Operation Engine edit/undo/redo/checkpoint and fresh process without packs opens and exports
+  ---
+  duration_ms: 409.827167
+  type: 'test'
+  ...
+# Subtest: D04 A14/A17 criterion 4 G2 all normal/boundary and Chinese/chart/Table v1 pressure pages actually render with pinned fonts offline
+ok 105 - D04 A14/A17 criterion 4 G2 all normal/boundary and Chinese/chart/Table v1 pressure pages actually render with pinned fonts offline
+  ---
+  duration_ms: 13133.654875
+  type: 'test'
+  ...
+# Subtest: D04 criterion 3 pinned sample font accepts layout controls and rejects uncovered visible glyphs without fallback
+ok 106 - D04 criterion 3 pinned sample font accepts layout controls and rejects uncovered visible glyphs without fallback
+  ---
+  duration_ms: 7.781375
+  type: 'test'
+  ...
+# Subtest: D01 criterion 1 reuses PresentationIR, RecipeSpec and ThemeDefinition without a second content tree
+ok 107 - D01 criterion 1 reuses PresentationIR, RecipeSpec and ThemeDefinition without a second content tree
+  ---
+  duration_ms: 20.874458
+  type: 'test'
+  ...
+# Subtest: D01 criterion 2 brand/recipe errors and aesthetic suggestions remain distinct
+ok 108 - D01 criterion 2 brand/recipe errors and aesthetic suggestions remain distinct
+  ---
+  duration_ms: 0.586875
+  type: 'test'
+  ...
+# Subtest: D01 criterion 3 canonical digest, trust and exact old-version resolution fail closed
+ok 109 - D01 criterion 3 canonical digest, trust and exact old-version resolution fail closed
+  ---
+  duration_ms: 2.561291
+  type: 'test'
+  ...
+# Subtest: D01 criterion 3 parameter whitelist rejects scripts, CSS, paths, unknown and invalid values
+ok 110 - D01 criterion 3 parameter whitelist rejects scripts, CSS, paths, unknown and invalid values
+  ---
+  duration_ms: 0.576041
+  type: 'test'
+  ...
+# Subtest: D01 criterion 3 licenses are per resource and unknown/AGPL licenses need explicit policy
+ok 111 - D01 criterion 3 licenses are per resource and unknown/AGPL licenses need explicit policy
+  ---
+  duration_ms: 2.253542
+  type: 'test'
+  ...
+# Subtest: D01 criterion 3 Chinese pressure fixtures and capability claims cannot masquerade as measured exports
+ok 112 - D01 criterion 3 Chinese pressure fixtures and capability claims cannot masquerade as measured exports
+  ---
+  duration_ms: 5.131459
+  type: 'test'
+  ...
+# Subtest: D01 criterion 4 slotRefs and fingerprints detect duplicated or stale recipe structure
+ok 113 - D01 criterion 4 slotRefs and fingerprints detect duplicated or stale recipe structure
+  ---
+  duration_ms: 3.674917
+  type: 'test'
+  ...
+# Subtest: D01 criterion 4 current object policies and page anchors are authoritative; IR only adds
+ok 114 - D01 criterion 4 current object policies and page anchors are authoritative; IR only adds
+  ---
+  duration_ms: 1.9335
+  type: 'test'
+  ...
+# Subtest: D01 criterion 4 stale IR cannot overwrite anchored content during an Operation Engine replacement
+ok 115 - D01 criterion 4 stale IR cannot overwrite anchored content during an Operation Engine replacement
+  ---
+  duration_ms: 18.617541
+  type: 'test'
+  ...
+# Subtest: D01 schemas validate examples with the real JSON Schema validator and reject executable/double content fields
+ok 116 - D01 schemas validate examples with the real JSON Schema validator and reject executable/double content fields
+  ---
+  duration_ms: 165.349875
+  type: 'test'
+  ...
+# (node:67062) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: E01 pure planners bundle for a platform without DOM, React or filesystem and preserve the interaction facade
+ok 117 - E01 pure planners bundle for a platform without DOM, React or filesystem and preserve the interaction facade
+  ---
+  duration_ms: 65.517459
+  type: 'test'
+  ...
+# Subtest: E01 Host/Portable/CLI planners share Core revision, scope, lock guards and history
+ok 118 - E01 Host/Portable/CLI planners share Core revision, scope, lock guards and history
+  ---
+  duration_ms: 30.749667
+  type: 'test'
+  ...
+# Subtest: E01 policy applies to preview, registered commands, facades and history in readonly modes
+ok 119 - E01 policy applies to preview, registered commands, facades and history in readonly modes
+  ---
+  duration_ms: 5.600958
+  type: 'test'
+  ...
+# Subtest: E01 a mixed locked selection is rejected atomically including unlocked members
+ok 120 - E01 a mixed locked selection is rejected atomically including unlocked members
+  ---
+  duration_ms: 1.94275
+  type: 'test'
+  ...
+# Subtest: E01 one command queue deduplicates in-flight draft epochs and blocks reentrant facade writes
+ok 121 - E01 one command queue deduplicates in-flight draft epochs and blocks reentrant facade writes
+  ---
+  duration_ms: 5.996583
+  type: 'test'
+  ...
+# Subtest: E01 failed/composing/stale drafts retain input and prevent dependent undo, save, page and mode effects
+ok 122 - E01 failed/composing/stale drafts retain input and prevent dependent undo, save, page and mode effects
+  ---
+  duration_ms: 5.493834
+  type: 'test'
+  ...
+# Subtest: E01 replacing or cancelling an epoch cannot commit an obsolete flush
+ok 123 - E01 replacing or cancelling an epoch cannot commit an obsolete flush
+  ---
+  duration_ms: 1.62225
+  type: 'test'
+  ...
+# Subtest: E01 disposal releases subscriptions/resources/transients and cancels queued work
+ok 124 - E01 disposal releases subscriptions/resources/transients and cancels queued work
+  ---
+  duration_ms: 1.373041
+  type: 'test'
+  ...
+# Subtest: E01 legacy synchronous draft boundary blocks undo and retains drafts on failures
+ok 125 - E01 legacy synchronous draft boundary blocks undo and retains drafts on failures
+  ---
+  duration_ms: 3.429792
+  type: 'test'
+  ...
+# Subtest: E01 shared text planner preserves semantic runs and rejects stale input from either facade
+ok 126 - E01 shared text planner preserves semantic runs and rejects stale input from either facade
+  ---
+  duration_ms: 15.6245
+  type: 'test'
+  ...
+# Subtest: E01 DOM resources release listeners and handles once, including registration after disposal
+ok 127 - E01 DOM resources release listeners and handles once, including registration after disposal
+  ---
+  duration_ms: 0.33325
+  type: 'test'
+  ...
+# Subtest: E01 flush then undo annotates the journal at each actual Core write
+ok 128 - E01 flush then undo annotates the journal at each actual Core write
+  ---
+  duration_ms: 3.765792
+  type: 'test'
+  ...
+# Subtest: E01 asynchronous save boundaries hold the queue and report failures without running dependent effects
+ok 129 - E01 asynchronous save boundaries hold the queue and report failures without running dependent effects
+  ---
+  duration_ms: 1.131334
+  type: 'test'
+  ...
+# Subtest: E07 A08 legacy plain-text signatures preserve marks, reject stale revisions and share Core undo
+ok 130 - E07 A08 legacy plain-text signatures preserve marks, reject stale revisions and share Core undo
+  ---
+  duration_ms: 70.076083
+  type: 'test'
+  ...
+# Subtest: E07 A06/A08/A11/A21 identical Host and file Portable keyboard, edit, undo, save, reopen, present, export journey
+ok 131 - E07 A06/A08/A11/A21 identical Host and file Portable keyboard, edit, undo, save, reopen, present, export journey
+  ---
+  duration_ms: 8154.913417
+  type: 'test'
+  ...
+# Subtest: E07 migrated inspector properties delegate to shared planner and browser migration example states enterEdit preconditions
+ok 132 - E07 migrated inspector properties delegate to shared planner and browser migration example states enterEdit preconditions
+  ---
+  duration_ms: 0.824
+  type: 'test'
+  ...
+# Subtest: C01 A01: frozen absent-background loss reproduces; current serialized checkpoint undo/redo restores exact revisions
+ok 133 - C01 A01: frozen absent-background loss reproduces; current serialized checkpoint undo/redo restores exact revisions
+  ---
+  duration_ms: 37.212083
+  type: 'test'
+  ...
+# Subtest: C01 A03: immutable legal 1.0 checkpoint opens without migration or revision changes
+ok 134 - C01 A03: immutable legal 1.0 checkpoint opens without migration or revision changes
+  ---
+  duration_ms: 2.015542
+  type: 'test'
+  ...
+# Subtest: C01 A03: frozen incorrect inverse is rejected without modifying snapshot or evidence
+ok 135 - C01 A03: frozen incorrect inverse is rejected without modifying snapshot or evidence
+  ---
+  duration_ms: 3.763875
+  type: 'test'
+  ...
+# Subtest: C01 A05: independently stored identity-less HTML is never reused or overwritten by delivery
+ok 136 - C01 A05: independently stored identity-less HTML is never reused or overwritten by delivery
+  ---
+  duration_ms: 358.1735
+  type: 'test'
+  ...
+# Subtest: C01 provenance: every public original and frozen measurement has verified SHA256, source, environment and expected result
+ok 137 - C01 provenance: every public original and frozen measurement has verified SHA256, source, environment and expected result
+  ---
+  duration_ms: 2.213542
+  type: 'test'
+  ...
+# Subtest: C01 A20: versioned E02 budget locks current profile limits and statistically complete real-browser baseline
+ok 138 - C01 A20: versioned E02 budget locks current profile limits and statistically complete real-browser baseline
+  ---
+  duration_ms: 1.174125
+  type: 'test'
+  ...
+# Subtest: GA-A Compatibility Profile has native, migration, read-only, and reject paths
+ok 139 - GA-A Compatibility Profile has native, migration, read-only, and reject paths
+  ---
+  duration_ms: 2.026125
+  type: 'test'
+  ...
+# Subtest: data-only migration preserves content, materializes flat groups, and is deterministic
+ok 140 - data-only migration preserves content, materializes flat groups, and is deterministic
+  ---
+  duration_ms: 14.702292
+  type: 'test'
+  ...
+# Subtest: the public error contract carries impact, safety, save, and recovery semantics
+ok 141 - the public error contract carries impact, safety, save, and recovery semantics
+  ---
+  duration_ms: 1.152833
+  type: 'test'
+  ...
+# Subtest: checkpoint fault points preserve the prior checkpoint unless replacement completed
+ok 142 - checkpoint fault points preserve the prior checkpoint unless replacement completed
+  ---
+  duration_ms: 59.626416
+  type: 'test'
+  ...
+# Subtest: journal truncation, checksum, base, and required-asset faults stop safely
+ok 143 - journal truncation, checksum, base, and required-asset faults stop safely
+  ---
+  duration_ms: 51.318541
+  type: 'test'
+  ...
+# Subtest: GA-B chart contract renders and chart data operations reverse exactly
+ok 144 - GA-B chart contract renders and chart data operations reverse exactly
+  ---
+  duration_ms: 22.390333
+  type: 'test'
+  ...
+# Subtest: Fact consistency spans pages and updates text plus chart through one reversible Transaction
+ok 145 - Fact consistency spans pages and updates text plus chart through one reversible Transaction
+  ---
+  duration_ms: 38.354
+  type: 'test'
+  ...
+# Subtest: Portable numeric Fact Quick Fix and Agent sync remain explicit, scoped, and reversible
+ok 146 - Portable numeric Fact Quick Fix and Agent sync remain explicit, scoped, and reversible
+  ---
+  duration_ms: 43.207875
+  type: 'test'
+  ...
+# Subtest: Review accepts selected chart changes, requires explicit conflict resolution, and supports two-way fallback
+ok 147 - Review accepts selected chart changes, requires explicit conflict resolution, and supports two-way fallback
+  ---
+  duration_ms: 48.161084
+  type: 'test'
+  ...
+# Subtest: GA-B revised-copy patch and Image PPTX carry deterministic capabilities and no silent asset drop
+ok 148 - GA-B revised-copy patch and Image PPTX carry deterministic capabilities and no silent asset drop
+  ---
+  duration_ms: 6346.883875
+  type: 'test'
+  ...
+# Subtest: Legacy migration imports GA-B chart and semantic references only under the explicit GA-B profile
+ok 149 - Legacy migration imports GA-B chart and semantic references only under the explicit GA-B profile
+  ---
+  duration_ms: 2.347208
+  type: 'test'
+  ...
+# Subtest: GA-C Area and Donut charts render, reverse, and keep the GA-B boundary explicit
+ok 150 - GA-C Area and Donut charts render, reverse, and keep the GA-B boundary explicit
+  ---
+  duration_ms: 54.580875
+  type: 'test'
+  ...
+# Subtest: Controlled Table, Code, and Equation Widgets use host registry rendering and reversible props
+ok 151 - Controlled Table, Code, and Equation Widgets use host registry rendering and reversible props
+  ---
+  duration_ms: 28.654375
+  type: 'test'
+  ...
+# Subtest: Poster artwork uses safe metadata, one reversible transaction, and explicit Profile boundaries
+ok 152 - Poster artwork uses safe metadata, one reversible transaction, and explicit Profile boundaries
+  ---
+  duration_ms: 11.980792
+  type: 'test'
+  ...
+# Subtest: Portable Light Edit covers crop, Chart Data, Move, Resize, undo, save, and offline bundle audit
+ok 153 - Portable Light Edit covers crop, Chart Data, Move, Resize, undo, save, and offline bundle audit
+  ---
+  duration_ms: 218.394083
+  type: 'test'
+  ...
+# Subtest: Semantic PPTX compiles mappings, keeps text editable, exposes degradation, and never silently drops assets
+ok 154 - Semantic PPTX compiles mappings, keeps text editable, exposes degradation, and never silently drops assets
+  ---
+  duration_ms: 15.45375
+  type: 'test'
+  ...
+# Subtest: Legacy migration admits GA-C Area/Donut and controlled Widgets only under the GA-C target
+ok 155 - Legacy migration admits GA-C Area/Donut and controlled Widgets only under the GA-C target
+  ---
+  duration_ms: 4.113708
+  type: 'test'
+  ...
+# Subtest: absent background survives serialized inverse, both checkpoint writers and redo-only history
+ok 156 - absent background survives serialized inverse, both checkpoint writers and redo-only history
+  ---
+  duration_ms: 75.781208
+  type: 'test'
+  ...
+# Subtest: metadata presence is preserved through fixed-seed set/unset sequences
+ok 157 - metadata presence is preserved through fixed-seed set/unset sequences
+  ---
+  duration_ms: 4.520167
+  type: 'test'
+  ...
+# Subtest: unset rejects structure, duplicates, overlapping fields and out-of-scope changes without writes
+ok 158 - unset rejects structure, duplicates, overlapping fields and out-of-scope changes without writes
+  ---
+  duration_ms: 0.7195
+  type: 'test'
+  ...
+# Subtest: background removal survives review patch serialization and rejects a downgraded protocol
+ok 159 - background removal survives review patch serialization and rejects a downgraded protocol
+  ---
+  duration_ms: 16.389542
+  type: 'test'
+  ...
+# Subtest: new protocol journal upgrades atomically and node session checkpoints infer persisted history
+ok 160 - new protocol journal upgrades atomically and node session checkpoints infer persisted history
+  ---
+  duration_ms: 59.028083
+  type: 'test'
+  ...
+# Subtest: lossy floating-point inverse is rejected before the recovery journal or document changes
+ok 161 - lossy floating-point inverse is rejected before the recovery journal or document changes
+  ---
+  duration_ms: 1.585708
+  type: 'test'
+  ...
+# Subtest: edit descriptor is complete, immutable and registered in the JSON schema; capabilities include old readers
+ok 162 - edit descriptor is complete, immutable and registered in the JSON schema; capabilities include old readers
+  ---
+  duration_ms: 0.391584
+  type: 'test'
+  ...
+# Subtest: compatibility accounts for inverse-only and redo-only semantic capabilities
+ok 163 - compatibility accounts for inverse-only and redo-only semantic capabilities
+  ---
+  duration_ms: 1.220708
+  type: 'test'
+  ...
+# Subtest: empty and absent overrides, including nested path removal, restore their exact presence
+ok 164 - empty and absent overrides, including nested path removal, restore their exact presence
+  ---
+  duration_ms: 10.5575
+  type: 'test'
+  ...
+# Subtest: Core refuses forged or changed proof bindings and never trusts caller preview revisions
+ok 165 - Core refuses forged or changed proof bindings and never trusts caller preview revisions
+  ---
+  duration_ms: 11.541084
+  type: 'test'
+  ...
+# Subtest: ordinary legacy checkpoint remains protocol 1.0 and preview does not authorize a later changed transaction
+ok 166 - ordinary legacy checkpoint remains protocol 1.0 and preview does not authorize a later changed transaction
+  ---
+  duration_ms: 6.298
+  type: 'test'
+  ...
+# Subtest: group creation distinguishes absent and empty collections through durable inverses
+ok 167 - group creation distinguishes absent and empty collections through durable inverses
+  ---
+  duration_ms: 2.297208
+  type: 'test'
+  ...
+# Subtest: every optional slide metadata key restores absence and explicit values after JSON serialization
+ok 168 - every optional slide metadata key restores absence and explicit values after JSON serialization
+  ---
+  duration_ms: 8.227291
+  type: 'test'
+  ...
+# Subtest: transaction JSON schema and TypeScript share the exact patch/unset whitelist
+ok 169 - transaction JSON schema and TypeScript share the exact patch/unset whitelist
+  ---
+  duration_ms: 3.949917
+  type: 'test'
+  ...
+# Subtest: assessment keeps only the verified contiguous suffix and never mutates history
+ok 170 - assessment keeps only the verified contiguous suffix and never mutates history
+  ---
+  duration_ms: 72.5275
+  type: 'test'
+  ...
+# Subtest: repair saves a verified new copy and report while preserving source and journal byte for byte
+ok 171 - repair saves a verified new copy and report while preserving source and journal byte for byte
+  ---
+  duration_ms: 132.051875
+  type: 'test'
+  ...
+# Subtest: redo assessment preserves only the reachable prefix of the redo stack
+ok 172 - redo assessment preserves only the reachable prefix of the redo stack
+  ---
+  duration_ms: 12.367167
+  type: 'test'
+  ...
+# Subtest: history rebuild requires an exact base and exact final snapshot
+ok 173 - history rebuild requires an exact base and exact final snapshot
+  ---
+  duration_ms: 18.784583
+  type: 'test'
+  ...
+# Subtest: A03/A04 shared diagnosis exposes valid, absent, invalid and unsupported without trusting damaged history checksums
+ok 174 - A03/A04 shared diagnosis exposes valid, absent, invalid and unsupported without trusting damaged history checksums
+  ---
+  duration_ms: 37.598958
+  type: 'test'
+  ...
+# Subtest: A04 unknown operations and malformed redo are diagnostic; incomplete content cannot become a recovered project
+ok 175 - A04 unknown operations and malformed redo are diagnostic; incomplete content cannot become a recovered project
+  ---
+  duration_ms: 44.211709
+  type: 'test'
+  ...
+# Subtest: A04 exact rebuild rejects wrong document identity and every incorrect recorded intermediate revision
+ok 176 - A04 exact rebuild rejects wrong document identity and every incorrect recorded intermediate revision
+  ---
+  duration_ms: 15.071792
+  type: 'test'
+  ...
+# Subtest: A04 repair failures and actual process crashes preserve original, sidecar and CAS at all publication stages
+ok 177 - A04 repair failures and actual process crashes preserve original, sidecar and CAS at all publication stages
+  ---
+  duration_ms: 479.920333
+  type: 'test'
+  ...
+# Subtest: A03/A04 CLI diagnoses then saves a separate recovery package and report
+ok 178 - A03/A04 CLI diagnoses then saves a separate recovery package and report
+  ---
+  duration_ms: 330.107458
+  type: 'test'
+  ...
+# Subtest: A04 real browser recoverySessionId isolates original tail/base and rejects quota, missing resources and corrupt snapshots
+ok 179 - A04 real browser recoverySessionId isolates original tail/base and rejects quota, missing resources and corrupt snapshots
+  ---
+  duration_ms: 353.030417
+  type: 'test'
+  ...
+# Subtest: A04 Host offers read-only inspection and separate downloads, with incomplete files restricted to diagnosis
+ok 180 - A04 Host offers read-only inspection and separate downloads, with incomplete files restricted to diagnosis
+  ---
+  duration_ms: 3947.122416
+  type: 'test'
+  ...
+# Subtest: A04 generated Portable shows read-only diagnostics for incomplete resources and invalid history
+ok 181 - A04 generated Portable shows read-only diagnostics for incomplete resources and invalid history
+  ---
+  duration_ms: 628.214334
+  type: 'test'
+  ...
+# Subtest: text replacement retains untouched paragraph identity and marks across Unicode insert/delete
+ok 182 - text replacement retains untouched paragraph identity and marks across Unicode insert/delete
+  ---
+  duration_ms: 23.735042
+  type: 'test'
+  ...
+# Subtest: Host persists edits/undo/redo, rejects stale tabs, retains marks, moves groups, and reviews conflicts
+ok 183 - Host persists edits/undo/redo, rejects stale tabs, retains marks, moves groups, and reviews conflicts
+  ---
+  duration_ms: 7215.456458
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 1: native Grid/Flex/SVG/font hierarchy and nested resources retain computed layout and exact pixels
+ok 184 - H01 acceptance 1: native Grid/Flex/SVG/font hierarchy and nested resources retain computed layout and exact pixels
+  ---
+  duration_ms: 817.023959
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 1: deterministic IDs reserve author identities, repair duplicates and preserve nested template escaping
+ok 185 - H01 acceptance 1: deterministic IDs reserve author identities, repair duplicates and preserve nested template escaping
+  ---
+  duration_ms: 99.606042
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 2: 100 actual browser serialize/write/close/reopen cycles retain one payload and no editing residue
+ok 186 - H01 acceptance 2: 100 actual browser serialize/write/close/reopen cycles retain one payload and no editing residue
+  ---
+  duration_ms: 20580.083208
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 2: sanitizer reports executable content; runtime sandbox/CSP block independent script/event/network/navigation attempts
+ok 187 - H01 acceptance 2: sanitizer reports executable content; runtime sandbox/CSP block independent script/event/network/navigation attempts
+  ---
+  duration_ms: 450.878667
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 2: safe serialization fails closed for executable CSS, SVG data, remote resource and malformed metadata
+ok 188 - H01 acceptance 2: safe serialization fails closed for executable CSS, SVG data, remote resource and malformed metadata
+  ---
+  duration_ms: 36.696833
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 3: offline CLI with no PATH/keys/browser writes exactly one HTML and <=1KB summary
+ok 189 - H01 acceptance 3: offline CLI with no PATH/keys/browser writes exactly one HTML and <=1KB summary
+  ---
+  duration_ms: 323.447167
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 3: rejection creates no output; local resource root, symlinks, missing resources and import cycles fail explicitly
+ok 190 - H01 acceptance 3: rejection creates no output; local resource root, symlinks, missing resources and import cycles fail explicitly
+  ---
+  duration_ms: 170.968083
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 4: actual bundled CLI/runtime import graphs exclude old representations; all three H00 drafts enhance directly
+ok 191 - H01 acceptance 4: actual bundled CLI/runtime import graphs exclude old representations; all three H00 drafts enhance directly
+  ---
+  duration_ms: 233.085958
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 1/3: embedded SVG references preserve fragment identity and diagnostics obey byte limits
+ok 192 - H01 acceptance 1/3: embedded SVG references preserve fragment identity and diagnostics obey byte limits
+  ---
+  duration_ms: 115.853417
+  type: 'test'
+  ...
+# Subtest: H03 acceptance 1: real object selection, empty/multiple/mixed contextual shell and screenshots
+ok 193 - H03 acceptance 1: real object selection, empty/multiple/mixed contextual shell and screenshots
+  ---
+  duration_ms: 3056.684125
+  type: 'test'
+  ...
+# Subtest: H03 acceptance 2: computed normal text contrast >=4.5, visible keyboard focus and keyboard object/format path
+ok 194 - H03 acceptance 2: computed normal text contrast >=4.5, visible keyboard focus and keyboard object/format path
+  ---
+  duration_ms: 1482.661584
+  type: 'test'
+  ...
+# Subtest: H03 acceptance 3: local text/range history preserves sibling identity, native Grid/Flex strategies and protected Agent hash
+ok 195 - H03 acceptance 3: local text/range history preserves sibling identity, native Grid/Flex strategies and protected Agent hash
+  ---
+  duration_ms: 1851.258375
+  type: 'test'
+  ...
+# Subtest: H03 acceptance 4: original-file reopen retains text, range style, layout, media, table/background/lock; errors retain work
+ok 196 - H03 acceptance 4: original-file reopen retains text, range style, layout, media, table/background/lock; errors retain work
+  ---
+  duration_ms: 3683.497959
+  type: 'test'
+  ...
+# Subtest: H03 native typing history, atomic multi-edit failure, table cell and page insertion history
+ok 197 - H03 native typing history, atomic multi-edit failure, table cell and page insertion history
+  ---
+  duration_ms: 1485.348291
+  type: 'test'
+  ...
+# Subtest: H03 original-file persisted range formatting and keyboard/pointer layout; clean preview returns to edit
+ok 198 - H03 original-file persisted range formatting and keyboard/pointer layout; clean preview returns to edit
+  ---
+  duration_ms: 2825.716167
+  type: 'test'
+  ...
+# Subtest: H03 guarded SVG replacement, protected native input, composition events coalesce and hash race rejects
+ok 199 - H03 guarded SVG replacement, protected native input, composition events coalesce and hash race rejects
+  ---
+  duration_ms: 1381.799666
+  type: 'test'
+  ...
+# Subtest: H00 acceptance 1: frozen positive HTML contract excludes retired formats and IR pipeline
+ok 200 - H00 acceptance 1: frozen positive HTML contract excludes retired formats and IR pipeline
+  ---
+  duration_ms: 3.02225
+  type: 'test'
+  ...
+# Subtest: H00 acceptance 2: real fixed materials, all nine pairs and cold/hot missing data stay pending
+ok 201 - H00 acceptance 2: real fixed materials, all nine pairs and cold/hot missing data stay pending
+  ---
+  duration_ms: 59.517542
+  type: 'test'
+  ...
+# Subtest: H00 acceptance 2: missing timings/tokens, changed model/materials, omitted runs and fake success fail
+ok 202 - H00 acceptance 2: missing timings/tokens, changed model/materials, omitted runs and fake success fail
+  ---
+  duration_ms: 17.308666
+  type: 'test'
+  ...
+# Subtest: H00 acceptance 2: observed failures are retained, never repaired away or silently excluded
+ok 203 - H00 acceptance 2: observed failures are retained, never repaired away or silently excluded
+  ---
+  duration_ms: 6.3455
+  type: 'test'
+  ...
+# Subtest: H00 acceptance 2: artifact bytes must exist inside evidence root including symlink resolution
+ok 204 - H00 acceptance 2: artifact bytes must exist inside evidence root including symlink resolution
+  ---
+  duration_ms: 38.414584
+  type: 'test'
+  ...
+# Subtest: H00 acceptance 2: capture records actual subprocess time/bytes/failure and refuses overwrite
+ok 205 - H00 acceptance 2: capture records actual subprocess time/bytes/failure and refuses overwrite
+  ---
+  duration_ms: 75.999917
+  type: 'test'
+  ...
+# Subtest: H00 retained exploratory HTML has twelve pages, no runtime/network and real data table; not timing evidence
+ok 206 - H00 retained exploratory HTML has twelve pages, no runtime/network and real data table; not timing evidence
+  ---
+  duration_ms: 1.583208
+  type: 'test'
+  ...
+# Subtest: H00 dependency inventory preserves evidence of live retired dependencies without declaring retirement
+ok 207 - H00 dependency inventory preserves evidence of live retired dependencies without declaring retirement
+  ---
+  duration_ms: 1.390209
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 1: original path autosave, close/reopen and service restart preserve text with no download
+ok 208 - H02 acceptance 1: original path autosave, close/reopen and service restart preserve text with no download
+  ---
+  duration_ms: 3068.499792
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 2: OS read-only, ENOSPC fault, interrupted replace retain original and recoverable version
+ok 209 - H02 acceptance 2: OS read-only, ENOSPC fault, interrupted replace retain original and recoverable version
+  ---
+  duration_ms: 323.39425
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 2: two services/windows serialize one winner and detect external Agent edits at replace
+ok 210 - H02 acceptance 2: two services/windows serialize one winner and detect external Agent edits at replace
+  ---
+  duration_ms: 295.024083
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 2: kill process before rename, restart recovers stale lock and preserves original
+ok 211 - H02 acceptance 2: kill process before rename, restart recovers stale lock and preserves original
+  ---
+  duration_ms: 488.133167
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 2/3: browser two-window conflict keeps draft; explicit reread and retry after network failure
+ok 212 - H02 acceptance 2/3: browser two-window conflict keeps draft; explicit reread and retry after network failure
+  ---
+  duration_ms: 3327.726834
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 3: IME does not save half composition; 800ms pause and delayed acknowledgement remain dirty/saving
+ok 213 - H02 acceptance 3: IME does not save half composition; 800ms pause and delayed acknowledgement remain dirty/saving
+  ---
+  duration_ms: 2288.749291
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 2/3: two real windows retain the failed draft after the other file save is acknowledged
+ok 214 - H02 acceptance 2/3: two real windows retain the failed draft after the other file save is acknowledged
+  ---
+  duration_ms: 2497.647208
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 2/3: a delayed acknowledgement never deletes another window recovery draft
+ok 215 - H02 acceptance 2/3: a delayed acknowledgement never deletes another window recovery draft
+  ---
+  duration_ms: 0.808
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 3: edits during in-flight save remain queued; draft base matching, quotas and copied identity
+ok 216 - H02 acceptance 3: edits during in-flight save remain queued; draft base matching, quotas and copied identity
+  ---
+  duration_ms: 0.714667
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 2/3: File System Access permission revoked, conflict, failed close and confirmation (API contract test)
+ok 217 - H02 acceptance 2/3: File System Access permission revoked, conflict, failed close and confirmation (API contract test)
+  ---
+  duration_ms: 3.585458
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 4: loopback bind, hostile Origin/Host, no token, traversal, arbitrary fields and unsafe content rejected
+ok 218 - H02 acceptance 4: loopback bind, hostile Origin/Host, no token, traversal, arbitrary fields and unsafe content rejected
+  ---
+  duration_ms: 140.499042
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 5: real installed Chrome file URL shows limitation, keeps draft and never claims file save
+ok 219 - H02 acceptance 5: real installed Chrome file URL shows limitation, keeps draft and never claims file save
+  ---
+  duration_ms: 2669.398708
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 5: Safari actual WebDriver journey or explicit blocked evidence (not simulated Safari)
+ok 220 - H02 acceptance 5: Safari actual WebDriver journey or explicit blocked evidence (not simulated Safari)
+  ---
+  duration_ms: 272.400792
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 1/4: packaged npm install exposes ppte edit, stable restart URL and multiple file mappings
+ok 221 - H02 acceptance 1/4: packaged npm install exposes ppte edit, stable restart URL and multiple file mappings
+  ---
+  duration_ms: 2321.152375
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 2: history bounded by count and rejected restoration paths never write
+ok 222 - H02 acceptance 2: history bounded by count and rejected restoration paths never write
+  ---
+  duration_ms: 1189.129166
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 2: actual bounded full disk returns ENOSPC without replacing original (macOS HFS+)
+ok 223 - H02 acceptance 2: actual bounded full disk returns ENOSPC without replacing original (macOS HFS+)
+  ---
+  duration_ms: 8128.24175
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 2/3: failed-save draft survives page close, restores on matching file base and flushes to original
+ok 224 - H02 acceptance 2/3: failed-save draft survives page close, restores on matching file base and flushes to original
+  ---
+  duration_ms: 2261.9135
+  type: 'test'
+  ...
+# Subtest: direct edits keep instance and semantic identity; explicit replacements carry lineage
+ok 225 - direct edits keep instance and semantic identity; explicit replacements carry lineage
+  ---
+  duration_ms: 1.175583
+  type: 'test'
+  ...
+# Subtest: replacement lineage cycles are rejected
+ok 226 - replacement lineage cycles are rejected
+  ---
+  duration_ms: 0.375625
+  type: 'test'
+  ...
+# Subtest: E06 A12 shared preparation validates MIME, signature, hash, decode, dimensions, limits and cancellation without objects
+ok 227 - E06 A12 shared preparation validates MIME, signature, hash, decode, dimensions, limits and cancellation without objects
+  ---
+  duration_ms: 21.616084
+  type: 'test'
+  ...
+# Subtest: E06 A12 image insertion is one atomic operation-engine transaction; shared asset reuse and locked replacement undo safely
+ok 228 - E06 A12 image insertion is one atomic operation-engine transaction; shared asset reuse and locked replacement undo safely
+  ---
+  duration_ms: 25.614791
+  type: 'test'
+  ...
+# Subtest: E06 A12 crop previews are transient, bounded and cancellable; replacement preserves identity, frame and crop
+ok 229 - E06 A12 crop previews are transient, bounded and cancellable; replacement preserves identity, frame and crop
+  ---
+  duration_ms: 7.729625
+  type: 'test'
+  ...
+# Subtest: E06 A04 complete resource retention includes document, undo, redo, journal, drafts and jobs; only unreferenced bytes collect
+ok 230 - E06 A04 complete resource retention includes document, undo, redo, journal, drafts and jobs; only unreferenced bytes collect
+  ---
+  duration_ms: 0.87875
+  type: 'test'
+  ...
+# Subtest: E06 A04 insert → undo → Node/browser checkpoint → offline reopen → redo retains verified image bytes
+ok 231 - E06 A04 insert → undo → Node/browser checkpoint → offline reopen → redo retains verified image bytes
+  ---
+  duration_ms: 102.726583
+  type: 'test'
+  ...
+# Subtest: E06 A12 real offline browser file, paste and drop use decoded CAS imports; crop pointer cancellation and save/redo survive
+ok 232 - E06 A12 real offline browser file, paste and drop use decoded CAS imports; crop pointer cancellation and save/redo survive
+  ---
+  duration_ms: 1113.83725
+  type: 'test'
+  ...
+# Subtest: E06 A04 Host quota/decode/cancel failures leave no half object; all import sources and crop survive source save/reopen
+ok 233 - E06 A04 Host quota/decode/cancel failures leave no half object; all import sources and crop survive source save/reopen
+  ---
+  duration_ms: 4797.33475
+  type: 'test'
+  ...
+# Subtest: P02 criterion 1: dirty slides/elements match full rendering, including reorder, removal, theme and resource changes
+ok 234 - P02 criterion 1: dirty slides/elements match full rendering, including reorder, removal, theme and resource changes
+  ---
+  duration_ms: 26.63675
+  type: 'test'
+  ...
+# Subtest: P02 criterion 3: thumbnail invalidation is local; 100-page window is bounded and full export preserves order
+ok 235 - P02 criterion 3: thumbnail invalidation is local; 100-page window is bounded and full export preserves order
+  ---
+  duration_ms: 1055.762375
+  type: 'test'
+  ...
+# Subtest: P02 criterion 1: real DOM preserves unrelated pages, composing text and media position; forced rollback restores geometry
+ok 236 - P02 criterion 1: real DOM preserves unrelated pages, composing text and media position; forced rollback restores geometry
+  ---
+  duration_ms: 319.78575
+  type: 'test'
+  ...
+# Subtest: P02 criterion 2: digest URL/font reuse, changed bytes, retry, release and late font failures
+ok 237 - P02 criterion 2: digest URL/font reuse, changed bytes, retry, release and late font failures
+  ---
+  duration_ms: 299.949959
+  type: 'test'
+  ...
+# Subtest: P02 criteria 1/3: offline Portable Engine edit preserves neighbour and thumbnails; navigation, undo and print see all pages
+ok 238 - P02 criteria 1/3: offline Portable Engine edit preserves neighbour and thumbnails; navigation, undo and print see all pages
+  ---
+  duration_ms: 1525.988292
+  type: 'test'
+  ...
+# Subtest: P02 criteria 1/3: Host keeps active surface singular, neighbours stable, thumbnails cached and print complete
+ok 239 - P02 criteria 1/3: Host keeps active surface singular, neighbours stable, thumbnails cached and print complete
+  ---
+  duration_ms: 1910.702542
+  type: 'test'
+  ...
+# Subtest: F04 A12 CAS preparation and Engine validation reject bad MIME, bytes, metadata and dangling references atomically
+ok 240 - F04 A12 CAS preparation and Engine validation reject bad MIME, bytes, metadata and dangling references atomically
+  ---
+  duration_ms: 138.118167
+  type: 'test'
+  ...
+# Subtest: F04 A12 import undo/checkpoint/reopen/redo retains CAS; explicit local v1 migration preserves identity and undo
+ok 241 - F04 A12 import undo/checkpoint/reopen/redo retains CAS; explicit local v1 migration preserves identity and undo
+  ---
+  duration_ms: 30.567042
+  type: 'test'
+  ...
+# Subtest: F04 A16/A20 two real offline file videos load metadata, manually play/pause/end/replay, resume after navigation and release
+ok 242 - F04 A16/A20 two real offline file videos load metadata, manually play/pause/end/replay, resume after navigation and release
+  ---
+  duration_ms: 4383.247792
+  type: 'test'
+  ...
+# Subtest: F04 A16 real decode failure, metadata mismatch and rejected play promises are visible
+ok 243 - F04 A16 real decode failure, metadata mismatch and rejected play promises are visible
+  ---
+  duration_ms: 1174.125417
+  type: 'test'
+  ...
+# Subtest: F04 A17 PDF/PNG/image PPTX/semantic PPTX use the specified poster and truthfully report static video
+ok 244 - F04 A17 PDF/PNG/image PPTX/semantic PPTX use the specified poster and truthfully report static video
+  ---
+  duration_ms: 3582.876917
+  type: 'test'
+  ...
+# Subtest: F04 A16 directory verifies manifest/template/media on open, plays on loopback offline, rejects file and tampering
+ok 245 - F04 A16 directory verifies manifest/template/media on open, plays on loopback offline, rejects file and tampering
+  ---
+  duration_ms: 3302.510541
+  type: 'test'
+  ...
+# Subtest: F04 A20 frozen 20 MiB HTML / 128 MiB import budgets and 20 cold/warm startup samples
+ok 246 - F04 A20 frozen 20 MiB HTML / 128 MiB import budgets and 20 cold/warm startup samples
+  ---
+  duration_ms: 8112.793709
+  type: 'test'
+  ...
+# Subtest: F04 A20 real decodable MP4 capacity samples retain the standard threshold and explicit large-file opt-in
+ok 247 - F04 A20 real decodable MP4 capacity samples retain the standard threshold and explicit large-file opt-in
+  ---
+  duration_ms: 69712.201
+  type: 'test'
+  ...
+# Subtest: F04 A12/A16 Host offline file imports through Engine, plays without gestures, pauses on exit and saves retained video
+ok 248 - F04 A12/A16 Host offline file imports through Engine, plays without gestures, pauses on exit and saves retained video
+  ---
+  duration_ms: 2077.451875
+  type: 'test'
+  ...
+# Subtest: C06: candidate discovery requires exactly one real archive, independent of npm stdout metadata
+ok 249 - C06: candidate discovery requires exactly one real archive, independent of npm stdout metadata
+  ---
+  duration_ms: 3.527166
+  type: 'test'
+  ...
+# Subtest: C06 A19: clean tarball native Skill compiles, previews, commits, reopens, undoes/redoes and delivers offline without MCP or model keys
+ok 250 - C06 A19: clean tarball native Skill compiles, previews, commits, reopens, undoes/redoes and delivers offline without MCP or model keys
+  ---
+  duration_ms: 3364.400291
+  type: 'test'
+  ...
+# Subtest: C06 A01/A03/A04/A05/A06: M0 failure fixtures and compatibility regressions pass for the packaged build
+ok 251 - C06 A01/A03/A04/A05/A06: M0 failure fixtures and compatibility regressions pass for the packaged build
+  ---
+  duration_ms: 22124.529708
+  type: 'test'
+  ...
+# Subtest: C06: release evidence distinguishes Git push, candidate tarball, npm publication and temporary Skill installation
+ok 252 - C06: release evidence distinguishes Git push, candidate tarball, npm publication and temporary Skill installation
+  ---
+  duration_ms: 76.975458
+  type: 'test'
+  ...
+# Subtest: E04 A08 whole-box font and paragraph changes preserve runs and unrelated paragraph fields
+ok 253 - E04 A08 whole-box font and paragraph changes preserve runs and unrelated paragraph fields
+  ---
+  duration_ms: 54.4355
+  type: 'test'
+  ...
+# Subtest: E04 A11 mixed values use effective presets and one atomic multi-object transaction
+ok 254 - E04 A11 mixed values use effective presets and one atomic multi-object transaction
+  ---
+  duration_ms: 4.381
+  type: 'test'
+  ...
+# Subtest: E04 A11 locked member, narrowed scope and unsupported selection reject the whole edit
+ok 255 - E04 A11 locked member, narrowed scope and unsupported selection reject the whole edit
+  ---
+  duration_ms: 4.040042
+  type: 'test'
+  ...
+# Subtest: E04 A12 background inheritance differs from none and restores exact state through serialized history
+ok 256 - E04 A12 background inheritance differs from none and restores exact state through serialized history
+  ---
+  duration_ms: 31.142625
+  type: 'test'
+  ...
+# Subtest: E04 existing shape operations render fill and stroke and reject undeclared properties
+ok 257 - E04 existing shape operations render fill and stroke and reject undeclared properties
+  ---
+  duration_ms: 4.420583
+  type: 'test'
+  ...
+# Subtest: E04 typed insertion chooses supported shape types and preserves reading order through undo
+ok 258 - E04 typed insertion chooses supported shape types and preserves reading order through undo
+  ---
+  duration_ms: 26.324041
+  type: 'test'
+  ...
+# Subtest: E04 Host planner and Portable Core produce identical edits and policy refusals
+ok 259 - E04 Host planner and Portable Core produce identical edits and policy refusals
+  ---
+  duration_ms: 8.813292
+  type: 'test'
+  ...
+# Subtest: E04 shape kind has typed validation, exact inverse, export and checkpoint support including redo-only compatibility
+ok 260 - E04 shape kind has typed validation, exact inverse, export and checkpoint support including redo-only compatibility
+  ---
+  duration_ms: 1785.867917
+  type: 'test'
+  ...
+# Subtest: E04 clearing background requires permission and stays within the exact background path
+ok 261 - E04 clearing background requires permission and stays within the exact background path
+  ---
+  duration_ms: 2.184459
+  type: 'test'
+  ...
+# Subtest: E04 stroke color changes preserve each selected shape width and other stroke settings
+ok 262 - E04 stroke color changes preserve each selected shape width and other stroke settings
+  ---
+  duration_ms: 4.458625
+  type: 'test'
+  ...
+# Subtest: E04 both browser panels route shape, background and keyboard insertion through Core
+ok 263 - E04 both browser panels route shape, background and keyboard insertion through Core
+  ---
+  duration_ms: 6254.848083
+  type: 'test'
+  ...
+# Subtest: E05 A11 100 pointer moves commit once, every cancellation and zero displacement commit nothing
+ok 264 - E05 A11 100 pointer moves commit once, every cancellation and zero displacement commit nothing
+  ---
+  duration_ms: 47.18825
+  type: 'test'
+  ...
+# Subtest: E05 A11 screen conversion at 50/100/200 percent yields identical multi-selection move resize and rotation
+ok 265 - E05 A11 screen conversion at 50/100/200 percent yields identical multi-selection move resize and rotation
+  ---
+  duration_ms: 57.182416
+  type: 'test'
+  ...
+# Subtest: E05 A11 resize keeps image aspect by default, explicit unlock and whole-box text styles stay intact
+ok 266 - E05 A11 resize keeps image aspect by default, explicit unlock and whole-box text styles stay intact
+  ---
+  duration_ms: 21.864792
+  type: 'test'
+  ...
+# Subtest: E05 A11 locked member, narrowed group scope, invalid geometry and stale session are atomic
+ok 267 - E05 A11 locked member, narrowed group scope, invalid geometry and stale session are atomic
+  ---
+  duration_ms: 6.360917
+  type: 'test'
+  ...
+# Subtest: E05 A11 snap affects only targets, uses pixel threshold, and align/distribute expose canvas or selection
+ok 268 - E05 A11 snap affects only targets, uses pixel threshold, and align/distribute expose canvas or selection
+  ---
+  duration_ms: 6.157125
+  type: 'test'
+  ...
+# Subtest: E05 A11 same planner across Host/Portable handles geometry, layers, flat groups and persisted undo redo
+ok 269 - E05 A11 same planner across Host/Portable handles geometry, layers, flat groups and persisted undo redo
+  ---
+  duration_ms: 135.1895
+  type: 'test'
+  ...
+# Subtest: E05 A11 rotated resize follows local axes and pins the opposite corner; zero rotation is a no-op
+ok 270 - E05 A11 rotated resize follows local axes and pins the opposite corner; zero rotation is a no-op
+  ---
+  duration_ms: 2.584959
+  type: 'test'
+  ...
+# Subtest: E05 A11 actual Host and file Portable pointer and keyboard journeys preserve one history boundary
+ok 271 - E05 A11 actual Host and file Portable pointer and keyboard journeys preserve one history boundary
+  ---
+  duration_ms: 19316.644584
+  type: 'test'
+  ...
+# Subtest: E05 A11 layer steps preserve selected relative order and never reorder reading order
+ok 272 - E05 A11 layer steps preserve selected relative order and never reorder reading order
+  ---
+  duration_ms: 19.375709
+  type: 'test'
+  ...
+# Subtest: every Stable Core operation has positive, inverse, and stale-base conflict evidence
+ok 273 - every Stable Core operation has positive, inverse, and stale-base conflict evidence
+  ---
+  duration_ms: 216.75725
+  type: 'test'
+  ...
+# Subtest: human move, agent text replacement, structural diff, undo, and redo share one engine
+ok 274 - human move, agent text replacement, structural diff, undo, and redo share one engine
+  ---
+  duration_ms: 122.846792
+  type: 'test'
+  ...
+# Subtest: Change Contract rejects a second object before commit and preserves the snapshot
+ok 275 - Change Contract rejects a second object before commit and preserves the snapshot
+  ---
+  duration_ms: 5.465666
+  type: 'test'
+  ...
+# Subtest: flat group move and resize materialize member frames without changing text style
+ok 276 - flat group move and resize materialize member frames without changing text style
+  ---
+  duration_ms: 14.472791
+  type: 'test'
+  ...
+# Subtest: operation inverse restores a text replacement and stale base is a conflict
+ok 277 - operation inverse restores a text replacement and stale base is a conflict
+  ---
+  duration_ms: 4.725917
+  type: 'test'
+  ...
+# Subtest: P01 criterion 1: Node microbenchmarks name the computation, never a browser interaction
+ok 278 - P01 criterion 1: Node microbenchmarks name the computation, never a browser interaction
+  ---
+  duration_ms: 1.436708
+  type: 'test'
+  ...
+# Subtest: P01 criterion 1: reproducible 12/30/100-page fixtures validate and build the actual Portable entry
+ok 279 - P01 criterion 1: reproducible 12/30/100-page fixtures validate and build the actual Portable entry
+  ---
+  duration_ms: 3602.30675
+  type: 'test'
+  ...
+# Subtest: P01 criterion 2: frozen resources and statistically complete separated browser evidence
+ok 280 - P01 criterion 2: frozen resources and statistically complete separated browser evidence
+  ---
+  duration_ms: 3.196125
+  type: 'test'
+  ...
+# Subtest: P01 criterion 2: changed resources and missing browser/corpus evidence are rejected
+ok 281 - P01 criterion 2: changed resources and missing browser/corpus evidence are rejected
+  ---
+  duration_ms: 1.327416
+  type: 'test'
+  ...
+# Subtest: P01 criterion 3: p95 retains the tail, raw samples and count; invalid and small samples fail
+ok 282 - P01 criterion 3: p95 retains the tail, raw samples and count; invalid and small samples fail
+  ---
+  duration_ms: 0.313084
+  type: 'test'
+  ...
+# Subtest: P01 criterion 3: budgets cannot inflate and averages cannot replace measured p95
+ok 283 - P01 criterion 3: budgets cannot inflate and averages cannot replace measured p95
+  ---
+  duration_ms: 0.743125
+  type: 'test'
+  ...
+# Subtest: P01 criterion 3: unmeasured physical devices, IME, Host and real-resource capacity cannot close A20
+ok 284 - P01 criterion 3: unmeasured physical devices, IME, Host and real-resource capacity cannot close A20
+  ---
+  duration_ms: 1.741667
+  type: 'test'
+  ...
+# Subtest: P01 criterion 1: live offline file entry paints an Engine edit, navigates and undoes exactly
+ok 285 - P01 criterion 1: live offline file entry paints an Engine edit, navigates and undoes exactly
+  ---
+  duration_ms: 2170.118584
+  type: 'test'
+  ...
+# Subtest: checkpoint is a self-contained ZIP and atomic failure leaves the previous file openable
+ok 286 - checkpoint is a self-contained ZIP and atomic failure leaves the previous file openable
+  ---
+  duration_ms: 97.236375
+  type: 'test'
+  ...
+# Subtest: journal replays committed transactions after an interrupted checkpoint and rejects a corrupt tail
+ok 287 - journal replays committed transactions after an interrupted checkpoint and rejects a corrupt tail
+  ---
+  duration_ms: 64.117041
+  type: 'test'
+  ...
+# Subtest: SIGKILL during the temp-file window leaves the prior checkpoint readable
+ok 288 - SIGKILL during the temp-file window leaves the prior checkpoint readable
+  ---
+  duration_ms: 161.3455
+  type: 'test'
+  ...
+# Subtest: portable slideshow separates editing, supports fullscreen refusal and exit, and survives save
+ok 289 - portable slideshow separates editing, supports fullscreen refusal and exit, and survives save
+  ---
+  duration_ms: 1433.707333
+  type: 'test'
+  ...
+# Subtest: F03 A13 real editable DrawingML cells preserve typed display, Unicode and source values
+ok 290 - F03 A13 real editable DrawingML cells preserve typed display, Unicode and source values
+  ---
+  duration_ms: 108.141667
+  type: 'test'
+  ...
+# Subtest: F03 A13 rectangular merge topology, exact frame dimensions and basic cell styles
+ok 291 - F03 A13 rectangular merge topology, exact frame dimensions and basic cell styles
+  ---
+  duration_ms: 66.87
+  type: 'test'
+  ...
+# Subtest: F03 A13 headers and caption survive; unsupported styles and rich text downgrade by property
+ok 292 - F03 A13 headers and caption survive; unsupported styles and rich text downgrade by property
+  ---
+  duration_ms: 72.420375
+  type: 'test'
+  ...
+# Subtest: F03 A17 nativeTable requires emitted validated output; forecasts, legacy, empty and hidden tables never claim it
+ok 293 - F03 A17 nativeTable requires emitted validated output; forecasts, legacy, empty and hidden tables never claim it
+  ---
+  duration_ms: 12.939791
+  type: 'test'
+  ...
+# Subtest: F03 A17 verifier rejects label substitutions, missing cells, altered numbers, dimensions and merge flags
+ok 294 - F03 A17 verifier rejects label substitutions, missing cells, altered numbers, dimensions and merge flags
+  ---
+  duration_ms: 2.486625
+  type: 'test'
+  ...
+# Subtest: F03 A17 capability schema registers adapter proof and explicit unverified clients
+ok 295 - F03 A17 capability schema registers adapter proof and explicit unverified clients
+  ---
+  duration_ms: 109.695542
+  type: 'test'
+  ...
+# Subtest: F03 invalid tables and unrepresentable XML/dimensions fail without native proof
+ok 296 - F03 invalid tables and unrepresentable XML/dimensions fail without native proof
+  ---
+  duration_ms: 3.623625
+  type: 'test'
+  ...
+# Subtest: F03 multiple tables and fractional axis weights preserve exact frame sums
+ok 297 - F03 multiple tables and fractional axis weights preserve exact frame sums
+  ---
+  duration_ms: 70.544791
+  type: 'test'
+  ...
+# Subtest: F03 native adapter does not depend on fallback assets or widget policy claims
+ok 298 - F03 native adapter does not depend on fallback assets or widget policy claims
+  ---
+  duration_ms: 4.557041
+  type: 'test'
+  ...
+# Subtest: a failed draft flush never enters presentation and rejected drafts can be retried
+ok 299 - a failed draft flush never enters presentation and rejected drafts can be retried
+  ---
+  duration_ms: 36.604791
+  type: 'test'
+  ...
+# Subtest: previous from the first positive animation step returns to step zero on the same page
+ok 300 - previous from the first positive animation step returns to step zero on the same page
+  ---
+  duration_ms: 0.246791
+  type: 'test'
+  ...
+# Subtest: F06 A16 monotonic timer pause/reset and visual tools are transient
+ok 301 - F06 A16 monotonic timer pause/reset and visual tools are transient
+  ---
+  duration_ms: 0.630542
+  type: 'test'
+  ...
+# Subtest: F06 A16 version/session/token/source/origin and malformed sequence validation
+ok 302 - F06 A16 version/session/token/source/origin and malformed sequence validation
+  ---
+  duration_ms: 0.972792
+  type: 'test'
+  ...
+# Subtest: F06 A16 dropped data/ACK, duplicates, out-of-order and disconnect converge without losing rapid commands
+ok 303 - F06 A16 dropped data/ACK, duplicates, out-of-order and disconnect converge without losing rapid commands
+  ---
+  duration_ms: 0.398708
+  type: 'test'
+  ...
+# Subtest: F06 snapshot coalescing, bounded command queue, dispose and fresh-session replay rejection
+ok 304 - F06 snapshot coalescing, bounded command queue, dispose and fresh-session replay rejection
+  ---
+  duration_ms: 0.246
+  type: 'test'
+  ...
+# Subtest: F06 A06/A16/A21 generated file Portable tools, denied fullscreen, opaque-origin fallback and note isolation
+ok 305 - F06 A06/A16/A21 generated file Portable tools, denied fullscreen, opaque-origin fallback and note isolation
+  ---
+  duration_ms: 2493.348833
+  type: 'test'
+  ...
+# Subtest: F06 A06/A16/A21 HTTP Host and Portable real presenter window ACK/source, popup denial, close and reconnect
+ok 306 - F06 A06/A16/A21 HTTP Host and Portable real presenter window ACK/source, popup denial, close and reconnect
+  ---
+  duration_ms: 21382.03575
+  type: 'test'
+  ...
+# Subtest: CLI compiles actual source facts, previews, rejects stale edits, persists undo/redo across processes, and delivers
+ok 307 - CLI compiles actual source facts, previews, rejects stale edits, persists undo/redo across processes, and delivers
+  ---
+  duration_ms: 1916.924625
+  type: 'test'
+  ...
+# Subtest: CLI writers serialize, modified preview receipts and out-of-scope transactions cannot commit
+ok 308 - CLI writers serialize, modified preview receipts and out-of-scope transactions cannot commit
+  ---
+  duration_ms: 731.423792
+  type: 'test'
+  ...
+# Subtest: Authoring rejects malformed designs and overflowing content before altering the source document
+ok 309 - Authoring rejects malformed designs and overflowing content before altering the source document
+  ---
+  duration_ms: 11.241333
+  type: 'test'
+  ...
+# Subtest: Browser portable enforces Core locks, edits arbitrary chart cells visibly, validates crop, and reopens Undo history
+ok 310 - Browser portable enforces Core locks, edits arbitrary chart cells visibly, validates crop, and reopens Undo history
+  ---
+  duration_ms: 2007.268917
+  type: 'test'
+  ...
+# Subtest: Fast equality and path diffs preserve canonical JSON semantics
+ok 311 - Fast equality and path diffs preserve canonical JSON semantics
+  ---
+  duration_ms: 0.683791
+  type: 'test'
+  ...
+# Subtest: native CLI patch embeds image bytes and remains reversible across process restarts
+ok 312 - native CLI patch embeds image bytes and remains reversible across process restarts
+  ---
+  duration_ms: 989.597917
+  type: 'test'
+  ...
+# Subtest: R1 finding 7: slide metadata updates are typed, reversible, and stale revisions conflict
+ok 313 - R1 finding 7: slide metadata updates are typed, reversible, and stale revisions conflict
+  ---
+  duration_ms: 103.796208
+  type: 'test'
+  ...
+# Subtest: R1 finding 8: selected regeneration replaces only the selection; redesign_others is explicit and reversible
+ok 314 - R1 finding 8: selected regeneration replaces only the selection; redesign_others is explicit and reversible
+  ---
+  duration_ms: 51.651792
+  type: 'test'
+  ...
+# Subtest: R1 finding 9: regeneration inherits policy, references, and local properties; RichText ids do not fake anchor conflicts
+ok 315 - R1 finding 9: regeneration inherits policy, references, and local properties; RichText ids do not fake anchor conflicts
+  ---
+  duration_ms: 55.709958
+  type: 'test'
+  ...
+# Subtest: R1 finding 10: supplied Agent IR is validated and mixed GA-B/GA-C blocks receive Recipe slots
+ok 316 - R1 finding 10: supplied Agent IR is validated and mixed GA-B/GA-C blocks receive Recipe slots
+  ---
+  duration_ms: 19.245375
+  type: 'test'
+  ...
+# Subtest: R1 finding 12: measured Fit succeeds, inverse restores overflow, and Commit returns preview warnings
+ok 317 - R1 finding 12: measured Fit succeeds, inverse restores overflow, and Commit returns preview warnings
+  ---
+  duration_ms: 12.609333
+  type: 'test'
+  ...
+# Subtest: R1 finding 13: semantic image replacement consumes asset budget and reverses exactly
+ok 318 - R1 finding 13: semantic image replacement consumes asset budget and reverses exactly
+  ---
+  duration_ms: 7.31075
+  type: 'test'
+  ...
+# Subtest: R1 finding 14: Fact sync requires a unique prior display and is reversible
+ok 319 - R1 finding 14: Fact sync requires a unique prior display and is reversible
+  ---
+  duration_ms: 12.580834
+  type: 'test'
+  ...
+# Subtest: R1 findings 5 and 6: lock inverse is controlled while locked element/group edits conflict
+ok 320 - R1 findings 5 and 6: lock inverse is controlled while locked element/group edits conflict
+  ---
+  duration_ms: 25.763833
+  type: 'test'
+  ...
+# Subtest: R1 support: selection replacement keeps reading order without a broad slide.setReadingOrder
+ok 321 - R1 support: selection replacement keeps reading order without a broad slide.setReadingOrder
+  ---
+  duration_ms: 0.51925
+  type: 'test'
+  ...
+# Subtest: duplicateSlide deeply rekeys page-local identities and keeps references local
+ok 322 - duplicateSlide deeply rekeys page-local identities and keeps references local
+  ---
+  duration_ms: 46.315333
+  type: 'test'
+  ...
+# Subtest: duplicateSlide transaction shape uses sourceSlideId/newSlideId without a legacy slideId
+ok 323 - duplicateSlide transaction shape uses sourceSlideId/newSlideId without a legacy slideId
+  ---
+  duration_ms: 4.289458
+  type: 'test'
+  ...
+# Subtest: typed notes/transition/animation operations are reversible and presenter uses declared steps
+ok 324 - typed notes/transition/animation operations are reversible and presenter uses declared steps
+  ---
+  duration_ms: 17.963334
+  type: 'test'
+  ...
+# Subtest: R3 infers one minimum profile for file-format and Portable checkpoints
+ok 325 - R3 infers one minimum profile for file-format and Portable checkpoints
+  ---
+  duration_ms: 261.055959
+  type: 'test'
+  ...
+# Subtest: R3 file:// Quick Fix imports, edits, saves, and reopens the semantic document
+ok 326 - R3 file:// Quick Fix imports, edits, saves, and reopens the semantic document
+  ---
+  duration_ms: 1264.30925
+  type: 'test'
+  ...
+# Subtest: R3 file:// Light Edit commits crop, Chart Data, and geometry operations
+ok 327 - R3 file:// Light Edit commits crop, Chart Data, and geometry operations
+  ---
+  duration_ms: 2045.169291
+  type: 'test'
+  ...
+# Subtest: R3 full Portable file:// editing, save/reopen, presentation, IME guard, and font dedupe
+ok 328 - R3 full Portable file:// editing, save/reopen, presentation, IME guard, and font dedupe
+  ---
+  duration_ms: 1608.263584
+  type: 'test'
+  ...
+# Subtest: Host recovery discovers a non-default Journal and restores Undo history
+ok 329 - Host recovery discovers a non-default Journal and restores Undo history
+  ---
+  duration_ms: 211.0235
+  type: 'test'
+  ...
+# Subtest: Host recovery exposes isolated prompt, discard, and save-as outcomes
+ok 330 - Host recovery exposes isolated prompt, discard, and save-as outcomes
+  ---
+  duration_ms: 88.233125
+  type: 'test'
+  ...
+# Subtest: R6 delete-versus-any-modify is a conflict and revised deletion is explicit
+ok 331 - R6 delete-versus-any-modify is a conflict and revised deletion is explicit
+  ---
+  duration_ms: 88.424625
+  type: 'test'
+  ...
+# Subtest: R6 unsupported changed fields are explicit capability gaps, never fake empty review
+ok 332 - R6 unsupported changed fields are explicit capability gaps, never fake empty review
+  ---
+  duration_ms: 8.477167
+  type: 'test'
+  ...
+# Subtest: R6 paragraph style uses a typed reversible Operation and style permission
+ok 333 - R6 paragraph style uses a typed reversible Operation and style permission
+  ---
+  duration_ms: 44.679584
+  type: 'test'
+  ...
+# Subtest: R6 stale Patch returns semantic Compare and direct application verifies head revision
+ok 334 - R6 stale Patch returns semantic Compare and direct application verifies head revision
+  ---
+  duration_ms: 111.438834
+  type: 'test'
+  ...
+# Subtest: R6 Patch infers GA-C from content and permits literal data strings
+ok 335 - R6 Patch infers GA-C from content and permits literal data strings
+  ---
+  duration_ms: 50.098792
+  type: 'test'
+  ...
+# Subtest: R6 Override Debt denominator is the complete typed style surface
+ok 336 - R6 Override Debt denominator is the complete typed style surface
+  ---
+  duration_ms: 0.235583
+  type: 'test'
+  ...
+# Subtest: D02 A14 legacy cover golden remains identical apart from compiler version
+ok 337 - D02 A14 legacy cover golden remains identical apart from compiler version
+  ---
+  duration_ms: 11.687459
+  type: 'test'
+  ...
+# Subtest: D02 A14 matching reserves restricted slots, honors required/min/max and maxChars at boundaries
+ok 338 - D02 A14 matching reserves restricted slots, honors required/min/max and maxChars at boundaries
+  ---
+  duration_ms: 0.992083
+  type: 'test'
+  ...
+# Subtest: D02 A14 variants apply equality predicates, reject conflicts, unknown conditions and invalid overrides
+ok 339 - D02 A14 variants apply equality predicates, reject conflicts, unknown conditions and invalid overrides
+  ---
+  duration_ms: 2.447875
+  type: 'test'
+  ...
+# Subtest: D02 A14 all quality rules execute with pass, boundary and failure cases
+ok 340 - D02 A14 all quality rules execute with pass, boundary and failure cases
+  ---
+  duration_ms: 16.838417
+  type: 'test'
+  ...
+# Subtest: D02 A14 keepTogetherWith is a capacity relation and flat groups survive materialization
+ok 341 - D02 A14 keepTogetherWith is a capacity relation and flat groups survive materialization
+  ---
+  duration_ms: 1.084208
+  type: 'test'
+  ...
+# Subtest: D02 A14 versioned repeat uses declared columns, preserves array content and stable content-key IDs
+ok 342 - D02 A14 versioned repeat uses declared columns, preserves array content and stable content-key IDs
+  ---
+  duration_ms: 2.261375
+  type: 'test'
+  ...
+# Subtest: D02 A14 constraints reject impossible final geometry without clamp and baseline explicitly rejects
+ok 343 - D02 A14 constraints reject impossible final geometry without clamp and baseline explicitly rejects
+  ---
+  duration_ms: 3.342833
+  type: 'test'
+  ...
+# Subtest: D02 A14 alignment, stack, gap and grid execute and detect capacity conflicts
+ok 344 - D02 A14 alignment, stack, gap and grid execute and detect capacity conflicts
+  ---
+  duration_ms: 0.344584
+  type: 'test'
+  ...
+# Subtest: D02 A14 search and registry have deterministic hard budgets; unsupported syntax is rejected
+ok 345 - D02 A14 search and registry have deterministic hard budgets; unsupported syntax is rejected
+  ---
+  duration_ms: 280.401583
+  type: 'test'
+  ...
+# Subtest: D02 A14 registry snapshots cannot mutate execution and corrected built-ins have explicit versions
+ok 346 - D02 A14 registry snapshots cannot mutate execution and corrected built-ins have explicit versions
+  ---
+  duration_ms: 1.494791
+  type: 'test'
+  ...
+# Subtest: Q02 criterion 1: stage gate rejects incomplete, missing and unevidenced tasks and unresolved client blockers
+ok 347 - Q02 criterion 1: stage gate rejects incomplete, missing and unevidenced tasks and unresolved client blockers
+  ---
+  duration_ms: 4.987333
+  type: 'test'
+  ...
+# Subtest: Q02 criterion 2: retention fails closed on missing inputs, collisions, tampering and unsafe paths
+ok 348 - Q02 criterion 2: retention fails closed on missing inputs, collisions, tampering and unsafe paths
+  ---
+  duration_ms: 8.091375
+  type: 'test'
+  ...
+# Subtest: Q02 criterion 3: all four independent action records require explicit scope and evidence for pass
+ok 349 - Q02 criterion 3: all four independent action records require explicit scope and evidence for pass
+  ---
+  duration_ms: 0.426042
+  type: 'test'
+  ...
+# Subtest: Q02 criteria 1/2/3 A03/A04/A05/A19: reproducible tarball, real old-runtime rollback and retained versioned HTML upgrade
+ok 350 - Q02 criteria 1/2/3 A03/A04/A05/A19: reproducible tarball, real old-runtime rollback and retained versioned HTML upgrade
+  ---
+  duration_ms: 17113.247458
+  type: 'test'
+  ...
+# Subtest: Q02 criterion 1: release check exits blocked and detects changed build and corrupt retained evidence
+ok 351 - Q02 criterion 1: release check exits blocked and detects changed build and corrupt retained evidence
+  ---
+  duration_ms: 42.611166
+  type: 'test'
+  ...
+# Subtest: renderer browser computed-style and screenshot golden preserve slide-space geometry
+ok 352 - renderer browser computed-style and screenshot golden preserve slide-space geometry
+  ---
+  duration_ms: 1043.983958
+  type: 'test'
+  ...
+# Subtest: renderer emits only derived deterministic primitives and escapes text
+ok 353 - renderer emits only derived deterministic primitives and escapes text
+  ---
+  duration_ms: 4.305458
+  type: 'test'
+  ...
+# Subtest: renderer materializes image crop/style and every Stable Core shape primitive
+ok 354 - renderer materializes image crop/style and every Stable Core shape primitive
+  ---
+  duration_ms: 0.539417
+  type: 'test'
+  ...
+# Subtest: selection, hit testing, and image drag remain transient until pointer-up
+ok 355 - selection, hit testing, and image drag remain transient until pointer-up
+  ---
+  duration_ms: 0.727791
+  type: 'test'
+  ...
+# Subtest: IME adapter keeps composition local and produces one replace transaction after composition
+ok 356 - IME adapter keeps composition local and produces one replace transaction after composition
+  ---
+  duration_ms: 8.681209
+  type: 'test'
+  ...
+# Subtest: D06 A19 help and schema register all executable design commands and retain legacy tools
+ok 357 - D06 A19 help and schema register all executable design commands and retain legacy tools
+  ---
+  duration_ms: 2.500208
+  type: 'test'
+  ...
+# Subtest: D06 A15 fixed material: index → bounded candidates → selected recipes → representatives → full deck via Core
+ok 358 - D06 A15 fixed material: index → bounded candidates → selected recipes → representatives → full deck via Core
+  ---
+  duration_ms: 4375.636334
+  type: 'test'
+  ...
+# Subtest: D06 A15 A17 two local repair rounds preserve preview semantics; third round and failed plans cannot apply
+ok 359 - D06 A15 A17 two local repair rounds preserve preview semantics; third round and failed plans cannot apply
+  ---
+  duration_ms: 1473.896208
+  type: 'test'
+  ...
+# Subtest: D06 A19 native subprocess runs offline without model/MCP and reports errors with nonzero exit
+ok 360 - D06 A19 native subprocess runs offline without model/MCP and reports errors with nonzero exit
+  ---
+  duration_ms: 2103.69875
+  type: 'test'
+  ...
+# Subtest: flat groups reject duplicate membership and explicit text scaling is reversible
+ok 361 - flat groups reject duplicate membership and explicit text scaling is reversible
+  ---
+  duration_ms: 18.491833
+  type: 'test'
+  ...
+# Subtest: Text Fit is explicit and cannot increase font size; image bounds are validated
+ok 362 - Text Fit is explicit and cannot increase font size; image bounds are validated
+  ---
+  duration_ms: 2.776875
+  type: 'test'
+  ...
+# Subtest: explicit replacement transactions preserve semantic identity through lineage
+ok 363 - explicit replacement transactions preserve semantic identity through lineage
+  ---
+  duration_ms: 15.138791
+  type: 'test'
+  ...
+# Subtest: fact display synchronization is explicit and reversible
+ok 364 - fact display synchronization is explicit and reversible
+  ---
+  duration_ms: 1.301458
+  type: 'test'
+  ...
+# Subtest: optional default fields use explicit unset inverses and preserve the exact revision
+ok 365 - optional default fields use explicit unset inverses and preserve the exact revision
+  ---
+  duration_ms: 6.15275
+  type: 'test'
+  ...
+# Subtest: Session exposes bounded revision history and redo replays a rebased transaction
+ok 366 - Session exposes bounded revision history and redo replays a rebased transaction
+  ---
+  duration_ms: 51.780084
+  type: 'test'
+  ...
+# Subtest: history byte policy bounds the same undo surface as the count policy
+ok 367 - history byte policy bounds the same undo surface as the count policy
+  ---
+  duration_ms: 5.09575
+  type: 'test'
+  ...
+# Subtest: a failed journal append does not advance the committed revision
+ok 368 - a failed journal append does not advance the committed revision
+  ---
+  duration_ms: 4.646208
+  type: 'test'
+  ...
+# Subtest: journal records result revisions and refuses a mismatched tail
+ok 369 - journal records result revisions and refuses a mismatched tail
+  ---
+  duration_ms: 15.855833
+  type: 'test'
+  ...
+# Subtest: committed asset changes carry required CAS hashes into the journal
+ok 370 - committed asset changes carry required CAS hashes into the journal
+  ---
+  duration_ms: 24.878291
+  type: 'test'
+  ...
+# Subtest: CAS-backed checkpoint is self-contained and carries recent history
+ok 371 - CAS-backed checkpoint is self-contained and carries recent history
+  ---
+  duration_ms: 25.297583
+  type: 'test'
+  ...
+# Subtest: direct checkpoint rejects missing CAS or asset bytes
+ok 372 - direct checkpoint rejects missing CAS or asset bytes
+  ---
+  duration_ms: 1.353708
+  type: 'test'
+  ...
+# Subtest: CAS detects a corrupted blob instead of returning unverified bytes
+ok 373 - CAS detects a corrupted blob instead of returning unverified bytes
+  ---
+  duration_ms: 6.887792
+  type: 'test'
+  ...
+# Subtest: fixed-seed operation fuzz sequence keeps Stable Core valid and reverses exactly
+ok 374 - fixed-seed operation fuzz sequence keeps Stable Core valid and reverses exactly
+  ---
+  duration_ms: 88.387708
+  type: 'test'
+  ...
+# Subtest: reference renderer output is deterministic for the contract deck golden
+ok 375 - reference renderer output is deterministic for the contract deck golden
+  ---
+  duration_ms: 4.934542
+  type: 'test'
+  ...
+# Subtest: Style Preset resolves tokens before typed overrides and reports override debt
+ok 376 - Style Preset resolves tokens before typed overrides and reports override debt
+  ---
+  duration_ms: 1.119834
+  type: 'test'
+  ...
+# Subtest: typed style and Text v1 boundaries are diagnosed
+ok 377 - typed style and Text v1 boundaries are diagnosed
+  ---
+  duration_ms: 2.281125
+  type: 'test'
+  ...
+# Subtest: semantic resolution refuses ambiguity and replacement carries the prior business key
+ok 378 - semantic resolution refuses ambiguity and replacement carries the prior business key
+  ---
+  duration_ms: 0.633458
+  type: 'test'
+  ...
+# Subtest: embedded subset coverage rejects new CJK text without silent fallback
+ok 379 - embedded subset coverage rejects new CJK text without silent fallback
+  ---
+  duration_ms: 0.385583
+  type: 'test'
+  ...
+# Subtest: C05 shared steps include same-page zero and previous-page final step
+ok 380 - C05 shared steps include same-page zero and previous-page final step
+  ---
+  duration_ms: 1.673083
+  type: 'test'
+  ...
+# Subtest: C05 rejected flush and stale fullscreen completion cannot change a newer mode
+ok 381 - C05 rejected flush and stale fullscreen completion cannot change a newer mode
+  ---
+  duration_ms: 0.263791
+  type: 'test'
+  ...
+# Subtest: C05 generated file Portable clean mode, IME flush, API guards and late fullscreen
+ok 382 - C05 generated file Portable clean mode, IME flush, API guards and late fullscreen
+  ---
+  duration_ms: 1089.670542
+  type: 'test'
+  ...
+# Subtest: C05 Host clean mode, IME flush, API guards and late fullscreen
+ok 383 - C05 Host clean mode, IME flush, API guards and late fullscreen
+  ---
+  duration_ms: 3910.551459
+  type: 'test'
+  ...
+# Subtest: F02 A13 TSV preserves spaces, blanks, CRLF, Chinese and long numbers; rejects ragged, overflow and merged boundaries atomically
+ok 384 - F02 A13 TSV preserves spaces, blanks, CRLF, Chinese and long numbers; rejects ragged, overflow and merged boundaries atomically
+  ---
+  duration_ms: 78.056792
+  type: 'test'
+  ...
+# Subtest: F02 A13 rectangle selection and keyboard navigation skip covered cells and clamp edges
+ok 385 - F02 A13 rectangle selection and keyboard navigation skip covered cells and clamp edges
+  ---
+  duration_ms: 0.448958
+  type: 'test'
+  ...
+# Subtest: F02 A13 structure retains untouched cell identities and fact/source references; referenced deletion rejected; empty table can grow
+ok 386 - F02 A13 structure retains untouched cell identities and fact/source references; referenced deletion rejected; empty table can grow
+  ---
+  duration_ms: 104.64675
+  type: 'test'
+  ...
+# Subtest: F02 A13 Portable profile permissions, locks, presentation guard, style rendering and checkpoint undo
+ok 387 - F02 A13 Portable profile permissions, locks, presentation guard, style rendering and checkpoint undo
+  ---
+  duration_ms: 50.219208
+  type: 'test'
+  ...
+# Subtest: F02 A21 table rerenders retain keyboard focus, draft selection and navigation without stealing outside focus
+ok 388 - F02 A21 table rerenders retain keyboard focus, draft selection and navigation without stealing outside focus
+  ---
+  duration_ms: 359.016709
+  type: 'test'
+  ...
+# Subtest: F02 A13/A21 real Host and file Portable table selection, paste, styles, structure, save/reopen/undo journey
+ok 389 - F02 A13/A21 real Host and file Portable table selection, paste, styles, structure, save/reopen/undo journey
+  ---
+  duration_ms: 7812.779958
+  type: 'test'
+  ...
+# Subtest: F01 A13 explicit v1 migration preserves scalar types, header/caption/element identity and source bytes
+ok 390 - F01 A13 explicit v1 migration preserves scalar types, header/caption/element identity and source bytes
+  ---
+  duration_ms: 39.178458
+  type: 'test'
+  ...
+# Subtest: F01 A13 all typed operations preserve untouched IDs and serialized inverses restore exact revisions
+ok 391 - F01 A13 all typed operations preserve untouched IDs and serialized inverses restore exact revisions
+  ---
+  duration_ms: 148.655042
+  type: 'test'
+  ...
+# Subtest: F01 A13 typed display, text consistency and rectangular merges retain covered values in HTML/SVG
+ok 392 - F01 A13 typed display, text consistency and rectangular merges retain covered values in HTML/SVG
+  ---
+  duration_ms: 20.085458
+  type: 'test'
+  ...
+# Subtest: F01 A13 malformed models cannot bypass validation through props, restore, element/slide insertion or checkpoint
+ok 393 - F01 A13 malformed models cannot bypass validation through props, restore, element/slide insertion or checkpoint
+  ---
+  duration_ms: 9.054417
+  type: 'test'
+  ...
+# Subtest: F01 A13 cell fact/source identities survive merge/move and every reference deletion requires impact review
+ok 394 - F01 A13 cell fact/source identities survive merge/move and every reference deletion requires impact review
+  ---
+  duration_ms: 41.110584
+  type: 'test'
+  ...
+# Subtest: F01 A03 complete registered descriptor and history/inverse/redo/patch minimum profile declarations
+ok 395 - F01 A03 complete registered descriptor and history/inverse/redo/patch minimum profile declarations
+  ---
+  duration_ms: 6.819375
+  type: 'test'
+  ...
+# Subtest: F01 A03/A13 Host and Portable checkpoints retain exact migration/merge/value history and redo-only tables
+ok 396 - F01 A03/A13 Host and Portable checkpoints retain exact migration/merge/value history and redo-only tables
+  ---
+  duration_ms: 85.245208
+  type: 'test'
+  ...
+# Subtest: F01 A03 typed table patch codec preserves operations, declarations and replay
+ok 397 - F01 A03 typed table patch codec preserves operations, declarations and replay
+  ---
+  duration_ms: 20.2705
+  type: 'test'
+  ...
+# Subtest: F01 A13 seeded generated value/axis sequences undo and redo without identity drift
+ok 398 - F01 A13 seeded generated value/axis sequences undo and redo without identity drift
+  ---
+  duration_ms: 295.113917
+  type: 'test'
+  ...
+# Subtest: F01 A03 literal JSON Schema validates v2 document, typed transactions, manifest and descriptor
+ok 399 - F01 A03 literal JSON Schema validates v2 document, typed transactions, manifest and descriptor
+  ---
+  duration_ms: 1287.266792
+  type: 'test'
+  ...
+# Subtest: E02 native: identical Chinese/selection/paste corpus, explicit gaps, Core-only history
+ok 400 - E02 native: identical Chinese/selection/paste corpus, explicit gaps, Core-only history
+  ---
+  duration_ms: 618.717584
+  type: 'test'
+  ...
+# Subtest: E02 prosemirror: identical Chinese/selection/paste corpus, explicit gaps, Core-only history
+ok 401 - E02 prosemirror: identical Chinese/selection/paste corpus, explicit gaps, Core-only history
+  ---
+  duration_ms: 444.160542
+  type: 'test'
+  ...
+# Subtest: E02 both kernel outputs retain a rejected draft and cancel without a canonical write
+ok 402 - E02 both kernel outputs retain a rejected draft and cancel without a canonical write
+  ---
+  duration_ms: 2.812625
+  type: 'test'
+  ...
+# Subtest: E02 selected production bundles exclude the experiment, PM/history/cloud and a second canvas model
+ok 403 - E02 selected production bundles exclude the experiment, PM/history/cloud and a second canvas model
+  ---
+  duration_ms: 102.779083
+  type: 'test'
+  ...
+# Subtest: E02 measurement evidence obeys frozen C01 sample counts, budgets and source identity
+ok 404 - E02 measurement evidence obeys frozen C01 sample counts, budgets and source identity
+  ---
+  duration_ms: 5.931125
+  type: 'test'
+  ...
+# (node:68929) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: E03 exact marks, reverse/cross-paragraph/mixed/collapsed ranges, split IDs and UTF-16 position map
+ok 405 - E03 exact marks, reverse/cross-paragraph/mixed/collapsed ranges, split IDs and UTF-16 position map
+  ---
+  duration_ms: 14.554083
+  type: 'test'
+  ...
+# Subtest: E03 marks survive Operation Engine undo/redo and archive reopen with exact IDs
+ok 406 - E03 marks survive Operation Engine undo/redo and archive reopen with exact IDs
+  ---
+  duration_ms: 125.797125
+  type: 'test'
+  ...
+# Subtest: E03 composition, burst boundary, rejected flush, conflict and overlapping saves retain draft with only Core history
+ok 407 - E03 composition, burst boundary, rejected flush, conflict and overlapping saves retain draft with only Core history
+  ---
+  duration_ms: 15.908042
+  type: 'test'
+  ...
+# Subtest: E03 DOM selection roundtrip rejects stale revision/root, grapheme snaps and retains active node during unrelated reconcile
+ok 408 - E03 DOM selection roundtrip rejects stale revision/root, grapheme snaps and retains active node during unrelated reconcile
+  ---
+  duration_ms: 310.466042
+  type: 'test'
+  ...
+# Subtest: E03 Portable real browser range-format, IME dedup, retained focus, history and rich paste journey
+ok 409 - E03 Portable real browser range-format, IME dedup, retained focus, history and rich paste journey
+  ---
+  duration_ms: 1251.516541
+  type: 'test'
+  ...
+# Subtest: E03 Host real browser range-format, IME dedup, retained focus, history and rich paste journey
+ok 410 - E03 Host real browser range-format, IME dedup, retained focus, history and rich paste journey
+  ---
+  duration_ms: 3818.439958
+  type: 'test'
+  ...
+# Subtest: E08 A08 inheritance, explicit mixed values, clear, reverse/cross-paragraph/caret ranges and stable IDs
+ok 411 - E08 A08 inheritance, explicit mixed values, clear, reverse/cross-paragraph/caret ranges and stable IDs
+  ---
+  duration_ms: 17.316083
+  type: 'test'
+  ...
+# Subtest: E08 A03 registered complete profile, all literal mark readers and schema sites reject malformed overrides
+ok 412 - E08 A03 registered complete profile, all literal mark readers and schema sites reject malformed overrides
+  ---
+  duration_ms: 14.048333
+  type: 'test'
+  ...
+# Subtest: E08 A03/A08 both checkpoint writers retain marks and exact undo/redo, including redo-only and inverse-only profile requirements
+ok 413 - E08 A03/A08 both checkpoint writers retain marks and exact undo/redo, including redo-only and inverse-only profile requirements
+  ---
+  duration_ms: 106.169667
+  type: 'test'
+  ...
+# Subtest: E08 A03 patch inference, serialized roundtrip and old target rejection preserve source identity
+ok 414 - E08 A03 patch inference, serialized roundtrip and old target rejection preserve source identity
+  ---
+  duration_ms: 24.7225
+  type: 'test'
+  ...
+# Subtest: E08 A08/A17 the shared resolver drives per-run coverage, reference measurement, HTML, SVG and native PPTX properties
+ok 415 - E08 A08/A17 the shared resolver drives per-run coverage, reference measurement, HTML, SVG and native PPTX properties
+  ---
+  duration_ms: 4.80275
+  type: 'test'
+  ...
+# Subtest: E08 A03 legacy documents retain their layout, schema/profile and source bytes on save
+ok 416 - E08 A03 legacy documents retain their layout, schema/profile and source bytes on save
+  ---
+  duration_ms: 5.152083
+  type: 'test'
+  ...
+# Subtest: E08 A08/A17 Portable browser range font controls, mixed/clear, caret, save/reopen and measured pixels
+ok 417 - E08 A08/A17 Portable browser range font controls, mixed/clear, caret, save/reopen and measured pixels
+  ---
+  duration_ms: 1440.12075
+  type: 'test'
+  ...
+# Subtest: E08 A08/A17 Host browser range font controls, mixed/clear, caret, save/reopen and measured pixels
+ok 418 - E08 A08/A17 Host browser range font controls, mixed/clear, caret, save/reopen and measured pixels
+  ---
+  duration_ms: 4040.196041
+  type: 'test'
+  ...
+# Subtest: E08 A17 real browser PDF/PNG paths render run font overrides and preserve report identity
+ok 419 - E08 A17 real browser PDF/PNG paths render run font overrides and preserve report identity
+  ---
+  duration_ms: 2360.469458
+  type: 'test'
+  ...
+# Subtest: E08 A03/A13 literal JSON Schema readers validate new document/transaction/profile/report and frozen old readers reject new properties
+ok 420 - E08 A03/A13 literal JSON Schema readers validate new document/transaction/profile/report and frozen old readers reject new properties
+  ---
+  duration_ms: 751.410458
+  type: 'test'
+  ...
+# Subtest: E08 A03 schema verification retains all existing operation kinds and the complete legacy profile example
+ok 421 - E08 A03 schema verification retains all existing operation kinds and the complete legacy profile example
+  ---
+  duration_ms: 917.39875
+  type: 'test'
+  ...
+# Subtest: Portable Viewer is self-contained, offline, and carries origin/capability metadata
+ok 422 - Portable Viewer is self-contained, offline, and carries origin/capability metadata
+  ---
+  duration_ms: 227.861375
+  type: 'test'
+  ...
+# Subtest: Quick Fix uses the operation engine for text/image, rejects Viewer edits, and undoes exactly
+ok 423 - Quick Fix uses the operation engine for text/image, rejects Viewer edits, and undoes exactly
+  ---
+  duration_ms: 160.9125
+  type: 'test'
+  ...
+# Subtest: Glyph Coverage is explicit for embedded subsets and never silently falls back
+ok 424 - Glyph Coverage is explicit for embedded subsets and never silently falls back
+  ---
+  duration_ms: 2.233208
+  type: 'test'
+  ...
+# Subtest: Three-way Reviewer separates independent fields and blocks same-field conflicts
+ok 425 - Three-way Reviewer separates independent fields and blocks same-field conflicts
+  ---
+  duration_ms: 29.377917
+  type: 'test'
+  ...
+# Subtest: Revised Copy patch round-trips, imports new assets, and rejects replay/base mismatch
+ok 426 - Revised Copy patch round-trips, imports new assets, and rejects replay/base mismatch
+  ---
+  duration_ms: 20.765416
+  type: 'test'
+  ...
+# Subtest: PDF/PNG baseline exports always report degradation explicitly and emit valid signatures
+ok 427 - PDF/PNG baseline exports always report degradation explicitly and emit valid signatures
+  ---
+  duration_ms: 2783.171625
+  type: 'test'
+  ...
+# Subtest: Slide IR, Presentation IR, Recipe, deterministic compiler, and Macro contracts are bounded
+ok 428 - Slide IR, Presentation IR, Recipe, deterministic compiler, and Macro contracts are bounded
+  ---
+  duration_ms: 20.581542
+  type: 'test'
+  ...
+# Subtest: Agent query, preview, commit, confirmation, scope, and actual mutation budgets share Session
+ok 429 - Agent query, preview, commit, confirmation, scope, and actual mutation budgets share Session
+  ---
+  duration_ms: 34.879375
+  type: 'test'
+  ...
+# Subtest: regeneration and layout tools preview only; artwork metadata is rendered and checked
+ok 430 - regeneration and layout tools preview only; artwork metadata is rendered and checked
+  ---
+  duration_ms: 19.057416
+  type: 'test'
+  ...
+# Subtest: a new session is saved and an Operation Engine commit exposes a pending checkpoint
+ok 431 - a new session is saved and an Operation Engine commit exposes a pending checkpoint
+  ---
+  duration_ms: 74.130833
+  type: 'test'
+  ...
+# Subtest: an injected checkpoint failure preserves the pending state and committed content
+ok 432 - an injected checkpoint failure preserves the pending state and committed content
+  ---
+  duration_ms: 30.746
+  type: 'test'
+  ...
+# Subtest: journal autosave and explicit checkpoint converge on the same snapshot
+ok 433 - journal autosave and explicit checkpoint converge on the same snapshot
+  ---
+  duration_ms: 43.311792
+  type: 'test'
+  ...
+1..433
+# tests 433
+# suites 0
+# pass 433
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 280840.265958
