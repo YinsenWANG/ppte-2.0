@@ -1,0 +1,257 @@
+[
+  {
+    "tag": "SECTION",
+    "text": "DESIGN 2026HTML is the canvasGrid composition, fluid Flex rhythm and native SVG remain editable source.RepresentationValueNative HTML42%One fileNative SVGNested CSS resources",
+    "rect": [
+      0,
+      0,
+      960,
+      640
+    ],
+    "display": "grid",
+    "font": "16px Arial, sans-serif",
+    "color": "rgb(244, 247, 249)",
+    "background": "rgba(0, 0, 0, 0)",
+    "grid": "472.516px 363.484px",
+    "gap": "28px",
+    "fill": "rgb(0, 0, 0)"
+  },
+  {
+    "tag": "DIV",
+    "text": "DESIGN 2026HTML is the canvasGrid composition, fluid Flex rhythm and native SVG remain editable source.RepresentationValueNative HTML42%One file",
+    "rect": [
+      48,
+      48,
+      472.515625,
+      544
+    ],
+    "display": "flex",
+    "font": "16px Arial, sans-serif",
+    "color": "rgb(244, 247, 249)",
+    "background": "rgba(0, 0, 0, 0)",
+    "grid": "none",
+    "gap": "18px",
+    "fill": "rgb(0, 0, 0)"
+  },
+  {
+    "tag": "SPAN",
+    "text": "DESIGN 2026",
+    "rect": [
+      48,
+      48,
+      472.515625,
+      14
+    ],
+    "display": "block",
+    "font": "14px Fixture, monospace",
+    "color": "rgb(244, 247, 249)",
+    "background": "rgba(0, 0, 0, 0)",
+    "grid": "none",
+    "gap": "normal",
+    "fill": "rgb(0, 0, 0)"
+  },
+  {
+    "tag": "H1",
+    "text": "HTML is the canvas",
+    "rect": [
+      48,
+      80,
+      472.515625,
+      48.75
+    ],
+    "display": "block",
+    "font": "700 46px / 48.76px Arial, sans-serif",
+    "color": "rgb(98, 228, 202)",
+    "background": "rgba(0, 0, 0, 0)",
+    "grid": "none",
+    "gap": "normal",
+    "fill": "rgb(0, 0, 0)"
+  },
+  {
+    "tag": "P",
+    "text": "Grid composition, fluid Flex rhythm and native SVG remain editable source.",
+    "rect": [
+      48,
+      146.75,
+      472.515625,
+      56
+    ],
+    "display": "block",
+    "font": "20px / 28px Arial, sans-serif",
+    "color": "rgb(244, 247, 249)",
+    "background": "rgba(0, 0, 0, 0)",
+    "grid": "none",
+    "gap": "normal",
+    "fill": "rgb(0, 0, 0)"
+  },
+  {
+    "tag": "TABLE",
+    "text": "RepresentationValueNative HTML42%",
+    "rect": [
+      48,
+      220.75,
+      472.515625,
+      78
+    ],
+    "display": "table",
+    "font": "16px Arial, sans-serif",
+    "color": "rgb(244, 247, 249)",
+    "background": "rgba(0, 0, 0, 0)",
+    "grid": "none",
+    "gap": "normal",
+    "fill": "rgb(0, 0, 0)"
+  },
+  {
+    "tag": "TD",
+    "text": "Native HTML",
+    "rect": [
+      48,
+      259.25,
+      325.203125,
+      39
+    ],
+    "display": "table-cell",
+    "font": "16px Arial, sans-serif",
+    "color": "rgb(244, 247, 249)",
+    "background": "rgba(0, 0, 0, 0)",
+    "grid": "none",
+    "gap": "normal",
+    "fill": "rgb(0, 0, 0)"
+  },
+  {
+    "tag": "TD",
+    "text": "42%",
+    "rect": [
+      373.203125,
+      259.25,
+      147.3125,
+      39
+    ],
+    "display": "table-cell",
+    "font": "16px Arial, sans-serif",
+    "color": "rgb(244, 247, 249)",
+    "background": "rgba(0, 0, 0, 0)",
+    "grid": "none",
+    "gap": "normal",
+    "fill": "rgb(0, 0, 0)"
+  },
+  {
+    "tag": "SPAN",
+    "text": "One file",
+    "rect": [
+      48,
+      316.75,
+      472.515625,
+      34
+    ],
+    "display": "block",
+    "font": "16px Arial, sans-serif",
+    "color": "rgb(244, 247, 249)",
+    "background": "rgba(0, 0, 0, 0)",
+    "grid": "none",
+    "gap": "normal",
+    "fill": "rgb(0, 0, 0)"
+  },
+  {
+    "tag": "DIV",
+    "text": "Native SVGNested CSS resources",
+    "rect": [
+      548.515625,
+      48,
+      363.484375,
+      544
+    ],
+    "display": "flex",
+    "font": "16px Arial, sans-serif",
+    "color": "rgb(244, 247, 249)",
+    "background": "rgba(0, 0, 0, 0)",
+    "grid": "none",
+    "gap": "20px",
+    "fill": "rgb(0, 0, 0)"
+  },
+  {
+    "tag": "IMG",
+    "text": "",
+    "rect": [
+      548.515625,
+      145.5,
+      150,
+      72
+    ],
+    "display": "block",
+    "font": "16px Arial, sans-serif",
+    "color": "rgb(244, 247, 249)",
+    "background": "rgba(0, 0, 0, 0)",
+    "grid": "none",
+    "gap": "normal",
+    "fill": "rgb(0, 0, 0)"
+  },
+  {
+    "tag": "svg",
+    "text": "Native SVG",
+    "rect": [
+      548.515625,
+      237.5,
+      363.484375,
+      180
+    ],
+    "display": "block",
+    "font": "16px Arial, sans-serif",
+    "color": "rgb(244, 247, 249)",
+    "background": "rgba(0, 0, 0, 0)",
+    "grid": "none",
+    "gap": "normal",
+    "fill": "rgb(0, 0, 0)"
+  },
+  {
+    "tag": "rect",
+    "text": "",
+    "rect": [
+      578.2578125,
+      257.5,
+      280,
+      120
+    ],
+    "display": "inline",
+    "font": "16px Arial, sans-serif",
+    "color": "rgb(244, 247, 249)",
+    "background": "rgba(0, 0, 0, 0)",
+    "grid": "none",
+    "gap": "normal",
+    "fill": "url(\"#g\")"
+  },
+  {
+    "tag": "text",
+    "text": "Native SVG",
+    "rect": [
+      604.2578125,
+      296.5,
+      167.171875,
+      36
+    ],
+    "display": "block",
+    "font": "32px Arial, sans-serif",
+    "color": "rgb(244, 247, 249)",
+    "background": "rgba(0, 0, 0, 0)",
+    "grid": "none",
+    "gap": "normal",
+    "fill": "rgb(19, 35, 50)"
+  },
+  {
+    "tag": "P",
+    "text": "Nested CSS resources",
+    "rect": [
+      548.515625,
+      455.5,
+      199.078125,
+      21
+    ],
+    "display": "block",
+    "font": "18px Arial, sans-serif",
+    "color": "rgb(244, 247, 249)",
+    "background": "rgba(0, 0, 0, 0)",
+    "grid": "none",
+    "gap": "normal",
+    "fill": "rgb(0, 0, 0)"
+  }
+]

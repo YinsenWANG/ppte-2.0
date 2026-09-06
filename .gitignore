@@ -14,3 +14,5 @@ artifacts/
 packages/portable-runtime/src/browser-bundle.ts
 
 packages/editor-dom/src/presenter-window-bundle.ts
+
+packages/html-document/src/runtime-bundle.ts

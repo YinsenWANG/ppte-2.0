@@ -1,0 +1,1 @@
+$ node scripts/build-html.mjs && node scripts/build-portable.mjs && tsc --noEmit

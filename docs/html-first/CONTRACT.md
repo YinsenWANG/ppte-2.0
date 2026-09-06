@@ -10,3 +10,9 @@
 - 新核心和默认交付不要求 PPTX/PPT/Office/ODP/Keynote、`.ppte`、CAS、Portable profiles、Presentation IR 或 Recipe。机器合同中的 `retired` 是禁止进入新目标的范围，不是新格式要求，也不是当前代码已删除的声明。
 
 PLAN §4.2 的隔离、安全序列化和 CSP 要求继续有效，具体封装仍由 H01 实测后冻结；本轮没有提前选定未经验证的 runtime 结构。PLAN §5 的保存协议及 §8 性能目标不变。
+
+## H01 封装实测后的局部冻结
+
+持久文稿采用一个 inert template 内的转义 HTML 文本，保留完整 head/body、CSS 与嵌套模板；不再附内容 JSON 镜像。parse5 在 Node 与可信浏览器 runtime 中共用 inert 解析和清理；同源 iframe 仅授予 `allow-same-origin`，不给脚本权限，并在 head 首节点注入拒绝内容脚本/网络的 CSP。可信父运行时使用脚本哈希 CSP。资源由 Node 按授权真实目录内嵌，异常和不支持形式明确失败。
+
+实测依据见 [H01 报告](evidence/h01/README.md)：增强前后实际像素/布局相等；100 次生产序列化、测试程序写回原路径、关页重开不累积模板和临时编辑状态。这不替代 H02 保存适配器或真实浏览器授权/自动保存验收。

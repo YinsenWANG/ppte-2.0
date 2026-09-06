@@ -7,9 +7,9 @@
   "type": "module",
   "packageManager": "pnpm@11.22.0",
   "scripts": {
-    "build": "node scripts/build-portable.mjs && tsc -p tsconfig.build.json",
+    "build": "node scripts/build-html.mjs && node scripts/build-portable.mjs && tsc -p tsconfig.build.json",
     "host:build": "pnpm --dir apps/host build",
-    "typecheck": "node scripts/build-portable.mjs && tsc --noEmit",
+    "typecheck": "node scripts/build-html.mjs && node scripts/build-portable.mjs && tsc --noEmit",
     "test": "pnpm build && node --test dist/tests/*.test.js",
     "validate": "python scripts/validate.py && bash scripts/ci-guards.sh",
     "e2e:vertical-slice": "pnpm build && node dist/apps/contract-deck/index.js --e2e",
@@ -27,7 +27,9 @@
     "package:pack": "pnpm package:stage && npm pack ./artifacts/npm-package --pack-destination artifacts",
     "experiment:text-kernel": "pnpm build && node scripts/text-kernel-poc.mjs",
     "benchmark:authoring": "node scripts/authoring-benchmark.mjs",
-    "release:check": "node scripts/release-check.mjs"
+    "release:check": "node scripts/release-check.mjs",
+    "html:build": "node scripts/build-html.mjs && tsc -p tsconfig.build.json",
+    "html:cli": "node dist/apps/html-cli/index.js"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
@@ -36,7 +38,10 @@
     "@vitejs/plugin-react": "^5.0.2",
     "esbuild": "^0.28.2",
     "fflate": "^0.8.3",
+    "parse5": "7.3.0",
     "playwright": "^1.55.0",
+    "postcss": "8.5.6",
+    "postcss-value-parser": "4.2.0",
     "prosemirror-model": "1.25.11",
     "prosemirror-state": "1.4.4",
     "prosemirror-view": "1.42.3",

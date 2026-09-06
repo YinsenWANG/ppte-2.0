@@ -26,9 +26,18 @@ importers:
       fflate:
         specifier: ^0.8.3
         version: 0.8.3
+      parse5:
+        specifier: 7.3.0
+        version: 7.3.0
       playwright:
         specifier: ^1.55.0
         version: 1.62.1
+      postcss:
+        specifier: 8.5.6
+        version: 8.5.6
+      postcss-value-parser:
+        specifier: 4.2.0
+        version: 4.2.0
       prosemirror-model:
         specifier: 1.25.11
         version: 1.25.11
@@ -54,6 +63,8 @@ importers:
   apps/contract-deck: {}
 
   apps/host: {}
+
+  apps/html-cli: {}
 
   apps/mcp: {}
 
@@ -92,6 +103,18 @@ importers:
   packages/file-format: {}
 
   packages/geometry: {}
+
+  packages/html-document:
+    dependencies:
+      parse5:
+        specifier: 7.3.0
+        version: 7.3.0
+      postcss:
+        specifier: 8.5.6
+        version: 8.5.6
+      postcss-value-parser:
+        specifier: 4.2.0
+        version: 4.2.0
 
   packages/importer-legacy: {}
 
@@ -591,6 +614,10 @@ packages:
   electron-to-chromium@1.5.420:
     resolution: {integrity: sha512-2yD6XreGusOfNV+dUcvipJEXc3n/n7fgr7996aszTG+YY5E4mqM4tOq/3uhP129cazL9YHbVWSpc79ePotWtPA==}
 
+  entities@6.0.1:
+    resolution: {integrity: sha512-aN97NXWF6AWBTahfVOIrB/NShkzi5H7F9r1s9mD3cDj4Ko5f2qhhVoYMibXF7GlLveb/D2ioWay8lxI97Ven3g==}
+    engines: {node: '>=0.12'}
+
   esbuild@0.28.2:
     resolution: {integrity: sha512-HKVLS8dvII+xoKW9kmqxbRKrnWEXfJJr/FZhhJmiqIB0e053QNYFqOBouTMO/k5sID4MvCiUCvv8b9M4h32wIA==}
     engines: {node: '>=18'}
@@ -657,6 +684,9 @@ packages:
   orderedmap@2.1.1:
     resolution: {integrity: sha512-TvAWxi0nDe1j/rtMcWcIj94+Ffe6n7zhow33h40SKxmsmozs6dz/e+EajymfoFcHd7sxNn8yHM8839uixMOV6g==}
 
+  parse5@7.3.0:
+    resolution: {integrity: sha512-IInvU7fabl34qmi9gY8XOVxhYyMyuH2xUNpb2q8/Y+7552KlejkRvqvD19nMoUW/uQGGbqNpA6Tufu5FL5BZgw==}
+
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
 
@@ -674,8 +704,15 @@ packages:
     engines: {node: '>=20'}
     hasBin: true
 
+  postcss-value-parser@4.2.0:
+    resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
+
   postcss@8.5.26:
     resolution: {integrity: sha512-u82N74LFzG8ca+dD8puPnplTXoGH4fTPpVGuIbt36G3qvNlkvfD0lEAZSxaly3KX8TS/L1A1gsCEmvKmBcVbkQ==}
+    engines: {node: ^10 || ^12 || >=14}
+
+  postcss@8.5.6:
+    resolution: {integrity: sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg==}
     engines: {node: ^10 || ^12 || >=14}
 
   prosemirror-model@1.25.11:
@@ -1140,6 +1177,8 @@ snapshots:
 
   electron-to-chromium@1.5.420: {}
 
+  entities@6.0.1: {}
+
   esbuild@0.28.2:
     optionalDependencies:
       '@esbuild/aix-ppc64': 0.28.2
@@ -1203,6 +1242,10 @@ snapshots:
 
   orderedmap@2.1.1: {}
 
+  parse5@7.3.0:
+    dependencies:
+      entities: 6.0.1
+
   picocolors@1.1.1: {}
 
   picomatch@4.0.7: {}
@@ -1215,7 +1258,15 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.2
 
+  postcss-value-parser@4.2.0: {}
+
   postcss@8.5.26:
+    dependencies:
+      nanoid: 3.3.18
+      picocolors: 1.1.1
+      source-map-js: 1.2.1
+
+  postcss@8.5.6:
     dependencies:
       nanoid: 3.3.18
       picocolors: 1.1.1
