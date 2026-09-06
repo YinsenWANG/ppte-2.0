@@ -1,0 +1,30 @@
+{
+  "status": "pending",
+  "pending": [
+    "model configuration has not been verified by provider telemetry",
+    "cold installation measurement",
+    "hot installation measurement",
+    "cherry:1:direct",
+    "cherry:1:enhanced",
+    "cherry:2:direct",
+    "cherry:2:enhanced",
+    "cherry:3:direct",
+    "cherry:3:enhanced",
+    "product:1:direct",
+    "product:1:enhanced",
+    "product:2:direct",
+    "product:2:enhanced",
+    "product:3:direct",
+    "product:3:enhanced",
+    "data:1:direct",
+    "data:1:enhanced",
+    "data:2:direct",
+    "data:2:enhanced",
+    "data:3:direct",
+    "data:3:enhanced"
+  ],
+  "errors": [],
+  "observedRuns": 0,
+  "failures": [],
+  "note": "Recorded is evidence completeness, not H06 speed/aesthetic/browser acceptance. Raw telemetry still requires review."
+}

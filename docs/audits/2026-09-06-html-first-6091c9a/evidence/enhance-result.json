@@ -1,0 +1,10 @@
+{
+  "elapsedMs": 60.836666,
+  "exitCode": 0,
+  "stdout": "{\"ok\":true,\"path\":\"/Users/xinmingwong/.codex/.chatgpt-projects/g-p-6a9ad11768b48191abe2e30ff63650a5/cherry-html-6091c9a/deliverable/Cherry-Studio-开源之路.html\",\"pages\":12,\"bytes\":317540,\"mediaBytes\":0,\"visual\":\"unverified\"}\n",
+  "stderr": "",
+  "correctionRounds": 1,
+  "outputBytes": 317540,
+  "gzipBytes": 93019,
+  "sourceBytes": 18039
+}

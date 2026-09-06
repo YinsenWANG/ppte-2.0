@@ -1,0 +1,242 @@
+{
+  "browser": "152.0.7977.76",
+  "viewport": {
+    "width": 1280,
+    "height": 800
+  },
+  "rawPixelParity": [
+    {
+      "page": 1,
+      "identical": true,
+      "rawHash": "431f9f4b333454b11233d231f01c46b777fa328aa6835811d879056a07637c9d",
+      "enhancedHash": "431f9f4b333454b11233d231f01c46b777fa328aa6835811d879056a07637c9d"
+    },
+    {
+      "page": 2,
+      "identical": true,
+      "rawHash": "a32f95ed124191d97faa3a837ff744a442d4001117d523bf66b6b426526b19ff",
+      "enhancedHash": "a32f95ed124191d97faa3a837ff744a442d4001117d523bf66b6b426526b19ff"
+    },
+    {
+      "page": 3,
+      "identical": true,
+      "rawHash": "7fdd5d35f0f9c3e2d99acd5dbaae86c19484db96bf571320331d2a41cce64aec",
+      "enhancedHash": "7fdd5d35f0f9c3e2d99acd5dbaae86c19484db96bf571320331d2a41cce64aec"
+    },
+    {
+      "page": 4,
+      "identical": true,
+      "rawHash": "a7d50758ad1cbc92ca46743fc75e97d950e45b3de3f6765ca5368d4b36fc5f64",
+      "enhancedHash": "a7d50758ad1cbc92ca46743fc75e97d950e45b3de3f6765ca5368d4b36fc5f64"
+    },
+    {
+      "page": 5,
+      "identical": true,
+      "rawHash": "d47c33221ee084e193978eaa8e7b914d1b792dbf40d0bd98067b7e2d09c2a96e",
+      "enhancedHash": "d47c33221ee084e193978eaa8e7b914d1b792dbf40d0bd98067b7e2d09c2a96e"
+    },
+    {
+      "page": 6,
+      "identical": true,
+      "rawHash": "852b22cb6a4fc375d2286fbc2eeedbd9ca52d288e23626a9c3b23ab5a57e6e64",
+      "enhancedHash": "852b22cb6a4fc375d2286fbc2eeedbd9ca52d288e23626a9c3b23ab5a57e6e64"
+    },
+    {
+      "page": 7,
+      "identical": true,
+      "rawHash": "d71f4b6d79c0419af196443853596de48054f52ba97ff0dac8db4d4b826c1d92",
+      "enhancedHash": "d71f4b6d79c0419af196443853596de48054f52ba97ff0dac8db4d4b826c1d92"
+    },
+    {
+      "page": 8,
+      "identical": true,
+      "rawHash": "38a01ca2540c29675e4912e69c6fda149188ade506ebefa6b9ec083990adb916",
+      "enhancedHash": "38a01ca2540c29675e4912e69c6fda149188ade506ebefa6b9ec083990adb916"
+    },
+    {
+      "page": 9,
+      "identical": true,
+      "rawHash": "91b7f74778b591b00cc5427763d4c1525c17f27c7f4db566f72e0b81ce697b78",
+      "enhancedHash": "91b7f74778b591b00cc5427763d4c1525c17f27c7f4db566f72e0b81ce697b78"
+    },
+    {
+      "page": 10,
+      "identical": true,
+      "rawHash": "899bf935159d285113bfa0be793590888ec00e2861ae4e853a59334f038b8bb4",
+      "enhancedHash": "899bf935159d285113bfa0be793590888ec00e2861ae4e853a59334f038b8bb4"
+    },
+    {
+      "page": 11,
+      "identical": true,
+      "rawHash": "d2d24bf8e6bca27356f5d9a216f16eb6b4cc3a6b3d054acf808614d10ff65cbd",
+      "enhancedHash": "d2d24bf8e6bca27356f5d9a216f16eb6b4cc3a6b3d054acf808614d10ff65cbd"
+    },
+    {
+      "page": 12,
+      "identical": true,
+      "rawHash": "7cb5be5ed5b8d71e17a8c587b78f3f971ac83cfd363f714a924340026d3ed385",
+      "enhancedHash": "7cb5be5ed5b8d71e17a8c587b78f3f971ac83cfd363f714a924340026d3ed385"
+    }
+  ],
+  "errors": [],
+  "notes": [],
+  "directFileControls": {
+    "barDisplay": "none",
+    "buttons": [
+      {
+        "text": "编辑 / 保存",
+        "opacity": "0"
+      }
+    ],
+    "state": "unauthorized"
+  },
+  "layout": [
+    {
+      "page": 1,
+      "width": 1280,
+      "height": 720,
+      "overflow": []
+    },
+    {
+      "page": 2,
+      "width": 1280,
+      "height": 720,
+      "overflow": []
+    },
+    {
+      "page": 3,
+      "width": 1280,
+      "height": 720,
+      "overflow": []
+    },
+    {
+      "page": 4,
+      "width": 1280,
+      "height": 720,
+      "overflow": []
+    },
+    {
+      "page": 5,
+      "width": 1280,
+      "height": 720,
+      "overflow": []
+    },
+    {
+      "page": 6,
+      "width": 1280,
+      "height": 720,
+      "overflow": []
+    },
+    {
+      "page": 7,
+      "width": 1280,
+      "height": 720,
+      "overflow": []
+    },
+    {
+      "page": 8,
+      "width": 1280,
+      "height": 720,
+      "overflow": []
+    },
+    {
+      "page": 9,
+      "width": 1280,
+      "height": 720,
+      "overflow": []
+    },
+    {
+      "page": 10,
+      "width": 1280,
+      "height": 720,
+      "overflow": []
+    },
+    {
+      "page": 11,
+      "width": 1280,
+      "height": 720,
+      "overflow": []
+    },
+    {
+      "page": 12,
+      "width": 1280,
+      "height": 720,
+      "overflow": []
+    }
+  ],
+  "originalFileSave": {
+    "confirmed": true,
+    "elapsedWithDebounceMs": 891.068792,
+    "initialHash": "0a5ca2c808cfdcec6c1fb0e2533891e34e6ffcb7754fd652bbd9c6bee322ba3b",
+    "savedHash": "3a7e6ef2aa48b8297ba20ceda5aec63adc28350c995d76986c514ea44cd0a32b",
+    "reopenConfirmed": true
+  },
+  "presentation": {
+    "editable": 0,
+    "barDisplay": "none",
+    "root": "\n#ppte-player[hidden]{display:none}body:has(#ppte-player:not([hidden]))>#ppte-frame{position:fixed!important;inset:0!important;margin:0!important;width:100%!important;height:100%!important}\nbody:has(#ppte-player:not([hidden]))>[data-ppte-transient]:not(#ppte-player){display:none!important}\n#ppte-player-controls{position:fixed;z-index:500;bottom:16px;left:50%;transform:translateX(-50%);background:#20242c;color:white;border-radius:12px;padding:8px;display:flex;gap:8px;opacity:0;pointer-events:none}\n#ppte-player-controls[data-visible]{opacity:1;pointer-events:auto}#ppte-player button{font:14px system-ui;padding:8px;border-radius:6px;border:0;color:#20242c;background:#fff}#ppte-player button:focus-visible{outline:3px solid #7194ff;outline-offset:3px}\n#ppte-black{display:none;position:fixed;inset:0;background:#000;z-index:9999}#ppte-player[data-black] #ppte-black{display:block}#ppte-player[data-black] #ppte-player-controls{display:none}\n上一页下一步黑屏 / 恢复演讲者视图退出放映",
+    "afterEscape": {
+      "workspace": true
+    }
+  },
+  "tableCellSelected": "表格",
+  "addPage": {
+    "pages": 13,
+    "last": "<section data-ppte-slide=\"\" data-ppte-id=\"3f8206a7-c8bf-4b2c-aeb7-3e7a29f8b7d6\" data-ppte-editor-focus=\"\"><h1 data-ppte-id=\"81dba03c-d289-46af-b094-3bfcf6af3940\" contenteditable=\"true\" data-ppte-editor-focus=\"\">新的一页</h1></section>",
+    "dimensions": [
+      {
+        "width": 992,
+        "height": 558
+      },
+      {
+        "width": 992,
+        "height": 558
+      },
+      {
+        "width": 992,
+        "height": 558
+      },
+      {
+        "width": 992,
+        "height": 558
+      },
+      {
+        "width": 992,
+        "height": 558
+      },
+      {
+        "width": 992,
+        "height": 558
+      },
+      {
+        "width": 992,
+        "height": 558
+      },
+      {
+        "width": 992,
+        "height": 558
+      },
+      {
+        "width": 992,
+        "height": 558
+      },
+      {
+        "width": 992,
+        "height": 558
+      },
+      {
+        "width": 992,
+        "height": 558
+      },
+      {
+        "width": 992,
+        "height": 558
+      },
+      {
+        "width": 992,
+        "height": 76.765625
+      }
+    ],
+    "feedback": ""
+  }
+}

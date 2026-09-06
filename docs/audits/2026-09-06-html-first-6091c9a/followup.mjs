@@ -1,0 +1,32 @@
+import { chromium } from 'playwright';
+import { startEditor } from '../../../dist/packages/html-save/src/index.js';
+import { copyFile, writeFile } from 'node:fs/promises';
+import { spawnSync } from 'node:child_process';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+const base=resolve('artifacts/independent-review');const file=base+'/followup-copy.html';
+await copyFile(resolve(dirname(fileURLToPath(import.meta.url)),'sample/Cherry-Studio-开源之路.html'),file);
+const server=await startEditor(file,{cacheDir:base+'/cache'});
+const browser=await chromium.launch({channel:'chrome',headless:true});
+const page=await browser.newPage({viewport:{width:1440,height:1000}});page.setDefaultTimeout(10000);
+const result={};
+try{
+await page.goto(server.url);await page.waitForFunction(()=>window.PPTeSave?.state==='saved'&&window.PPTeEditor);
+await page.evaluate(()=>window.PPTePrint.prepare());
+await page.pdf({path:base+'/twelve-pages.pdf',preferCSSPageSize:true,printBackground:true});
+await page.evaluate(()=>window.PPTePrint.restore());
+await writeFile(base+'/inspect.swift',`import Foundation\nimport PDFKit\nlet d=PDFDocument(url:URL(fileURLWithPath:CommandLine.arguments[1]))!\nlet pages=(0..<d.pageCount).map { i -> [String:Any] in let p=d.page(at:i)!;let b=p.bounds(for:.mediaBox);return ["text":p.string ?? "", "width":b.width,"height":b.height] }\nprint(String(data:try! JSONSerialization.data(withJSONObject:pages),encoding:.utf8)!)\n`);
+const pdf=spawnSync('swift',[base+'/inspect.swift',base+'/twelve-pages.pdf'],{encoding:'utf8'});result.pdf=pdf.status===0?JSON.parse(pdf.stdout):{error:pdf.stderr};
+const title=page.frameLocator('#ppte-frame').locator('h1').first();await title.click();
+await page.getByRole('button',{name:'保护对象',exact:true}).click();
+await page.getByRole('button',{name:'添加页',exact:true}).click();
+result.lockedObjectAddPage=await page.evaluate(()=>({pages:window.PPTeHTML.contentDocument.querySelectorAll('[data-ppte-slide]').length,feedback:document.querySelector('#ppte-feedback').textContent}));
+await page.screenshot({path:base+'/locked-add-page.png'});
+await page.getByRole('button',{name:'解除保护',exact:true}).click();
+await page.getByRole('button',{name:'添加页',exact:true}).click();await page.getByRole('button',{name:'添加页',exact:true}).click();
+await page.getByRole('button',{name:'第 13 页',exact:true}).click();
+await page.getByRole('button',{name:'放映',exact:true}).click();
+result.twoNewPages=await page.evaluate(()=>[...window.PPTeHTML.contentDocument.querySelectorAll('[data-ppte-slide]')].map((n,i)=>({page:i+1,slideId:n.dataset.ppteSlide,display:n.ownerDocument.defaultView.getComputedStyle(n).display})).filter(x=>x.display!=='none'));
+await page.screenshot({path:base+'/two-new-pages-present.png'});await page.keyboard.press('Escape');
+}catch(e){result.error=String(e.stack);process.exitCode=1;}finally{await writeFile(base+'/followup-result.json',JSON.stringify(result,null,2));await browser.close();await server.close();}
+console.log(JSON.stringify(result,null,2));

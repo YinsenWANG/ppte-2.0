@@ -1,0 +1,16 @@
+{
+  "auditedCommit": "6091c9a73e75b2a51b00bef19b61d58e2dbf52a1",
+  "planCommit": "bbcd46bde2c608b5a56e617f316c5dcb5534857e",
+  "recordedAt": "2026-09-06T12:24:36.398Z",
+  "platform": "darwin",
+  "arch": "arm64",
+  "node": "v26.5.0",
+  "os": "macOS 27.0 (26A5425a)",
+  "chrome": "152.0.7977.76",
+  "runtimeVersion": "ppte-html@1.0.0-html.0",
+  "packageSha256": "0b1f497570bdbcb2fa1e31300ddc62d9f51007b54421f613219cbb465764efab",
+  "sampleSha256": "0a5ca2c808cfdcec6c1fb0e2533891e34e6ffcb7754fd652bbd9c6bee322ba3b",
+  "modelTimingAndTokens": "not measured; this audit is not H06",
+  "productChanges": false,
+  "artifactCorrectionRounds": 1
+}

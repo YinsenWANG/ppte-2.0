@@ -1,0 +1,80 @@
+{
+  "pdf": [
+    {
+      "width": 744,
+      "height": 419.03998,
+      "text": "O P E N S O U\nR C E F I E L D N O T E S / 2 0 2 6\nCherry Studio\n开源之路。\n从一个桌面入口，\n走向一场持续的共同创造。\nCHERRY STUDIO · 开源观察 01 / 12"
+    },
+    {
+      "text": "0 1 / T H E E V E R Y D AY P R\nO B L E M\n模型越来越多。\n工作，不该越来越碎。\n真正的门槛，往往不在第一次对话，\n而在第十次切换。\n不同模型、不同资料、不同任务。\n一个统一的工作入口，\n让注\n意力回到问题本身。\n这是本稿的产品观察，非官方定位引文。\n模型\n资料\n一个入口\n任务\n观点：减少切换，比增加入口更重要 02 / 12",
+      "height": 419.03998,
+      "width": 744
+    },
+    {
+      "text": "0 2 / A C O\nM M\nO N W O\nR K S P A C E\n把选择权，\n留给使用者。\n云端模型与本地模型，\n都能进入同一工作空间。\n支持 Windows、mac\nOS、Linux。\n本地模型可通过\nOllama、L\nM Studio 接入。\n依据：官方 README。\n来源 01 · 官方功能说明 工作\n助\n手\n产品研究\n写作伙伴\n代码讨\n论\nCHERRY STUDIO / 概念示意\n新的一次探索\n从问题开始。\n帮我梳理这个开源项目，\n从\n产品、代码和社区三个角度。\n云端模型 本地模型\n此图为功能概念图，并非真实软件截图。\n03 / 12",
+      "width": 744,
+      "height": 419.03998
+    },
+    {
+      "text": "0 3 / A P U B L I C T I M E L I N E\n开源，是一条持续向前的路。\n2024.05\n2025 / Q3\n仓库的起点\nGitHub 仓库创建于\n2024 年 5 月 24 日。\n仓库创建时间 ≠ 首次产品发布。\n共同创造的邀请\nREADME 记录的首期\n社区共创季。\n从使用工具，走向参与产品。\n来源 01 / 03 / 04 · 历史节点 2026.09\n版本继续迭代\nv2.0.12 于\n2026 年 9 月 4 日发布。\n以已核验版本为观察切片。\n04 / 12",
+      "height": 419.03998,
+      "width": 744
+    },
+    {
+      "width": 744,
+      "text": "0 4 / I N T E R E S T I S O N LY T H E B E G I N N I N G\n关注度是一种邀请。\n长期信任，要靠体验兑现。\n51,459\n4,917\n关注\nGitHub Stars GitHub Forks\n分支\n快照：2026-09-05。Stars 与 Forks 不是活跃用\n户数，也不能替代质量评价。\n来源 04 · GitHub 仓库元数据 05 / 12",
+      "height": 419.03998
+    },
+    {
+      "text": "0 5 / T H E R E L E A S E A S A L E N S\n好\n的迭代，\n常常发生在细节里。\nv2.0.12 / 2026.09.04\n01 让设置更容易找到 设置搜索支持中文与拼音。\n02 珍惜已经生成的内容 流式响应异常时，\n保留已接收的部分内容。\n03 给失败一个继续的机会 改进可重试错误与富内容预览。\n来源 03 · 版本说明概括；不代表完整变更列表 06 / 12",
+      "width": 744,
+      "height": 419.03998
+    },
+    {
+      "text": "0 6 / C O N TR I B U T I O N I S P L U\nR A L\n贡献，不只有写代码。\n你的优势 可以带来的贡献一个具体起点\n善\n于观察 发现问题，补充清晰的复现步骤把一次困惑写成可验证的问题\n擅长表达 改进说明、文档与使用示例 修好让新人卡住的一段文字\n关心体验 提出设计与交互建议 说明场景、代价与期望结果\n愿意动\n手 修复缺陷，参与代码讨\n论 从范围明\n确的小改动\n开始\n参与类别参考官方贡献指南；“具体起点”为本稿建议。\n来源 02 · CONTRIBUTING 07 / 12",
+      "height": 419.03998,
+      "width": 744
+    },
+    {
+      "height": 419.03998,
+      "width": 744,
+      "text": "0 7 / A S M A L L , C O\nM P L E T E L O O P\n让一份贡献，真正到达用\n户。\n01\n→ 02\n描述问题\n带上场景、环\n境\n先建立共同理解。\n、复现步骤，\n聚焦改动\n一次解决一个清楚的问题，\n方便讨\n论，也方便验证。\n→ 03\n接受评审\n解释取舍，回应反馈，\n在协作\n中完\n方案。\n善\n→ 04\n验证体验\n回到真实使用场景，\n确认问题得到解决。\n以上为通用协作建议；具体提交规则以仓库贡献指南为准。\n从一个小问题，完成一次有始有终的协作 08 / 12"
+    },
+    {
+      "width": 744,
+      "height": 419.03998,
+      "text": "0 8 / W H AT K E E P S I T G O I N G\n开放的代码，\n还需要开放的协作。\n让问题能被\n看见，\n让贡献能被接住，\n让改进能被验证。\n这是对可持续开源的观察与期待。\n长期主义 · 把一次参与变成持续反馈 产品\n工程\n社区\n09 / 12"
+    },
+    {
+      "width": 744,
+      "text": "0 9 / T H E QU E S T I O N S A H E A D\n下一程，值得持续追问。\n? 能力更多时，能否依然简单？\n新功能应当帮\n助完成任务，而非不断增加选择负担。\n? 模型更强时，体验是否更可靠？\n失败恢复、信息保留与一致性，仍决定日常信任。\n? 社区更大时，新人还能轻松参与吗？\n明\n确的入口、及时的反馈与可理解\n的协作规则，同样重要。\n观察问题，不是对官方路线图的转述 10 / 12",
+      "height": 419.03998
+    },
+    {
+      "width": 744,
+      "height": 419.03998,
+      "text": "1 0 / Y O U\nR N E X T C O N TR I B U T I O N\n开源之路，\n从“我在使用”，\n走向“我也参与”。\n试用一次 · 记录一个问题 · 完成一份小贡献\nCherryHQ / cherry-studio\n把这次观看，变成下一次行动 11 / 12"
+    },
+    {
+      "width": 744,
+      "height": 419.03998,
+      "text": "S O U\nR C E N O T E S / R E A D I N G L I S T\n事实有出处，观点有边界。\n01 · 官方项目与功能\n产品能力、支持平台、模型接入与社区共创季。\ngithub.com/CherryHQ/cherry-studio\n02 · 官方贡献指南\n参与方式与贡献流程。执行时以仓库现行规则\n为准。\ngithub.com/CherryHQ/cherry-studio/blob/main/CONTRIBUTING.md\n03 · v2.0.12 版本说明\n发布于 2026-09-04，本稿选取部分体验改进。\ngithub.com/CherryHQ/cherry-studio/releases/tag/v2.0.12\n04 · GitHub 元数据快照\n2026-09-05：Stars 51,459 / Forks 4,917。\n仓库创建时间：2024-05-24。\napi.github.com/repos/CherryHQ/cherry-studio\n本稿使用此前已核验的官方资料与快照，不将历史数字表述为实时数据。\n概念界面与樱桃图形为\n原创示意；产品观察、参与建议与展望均为本稿分析。\nCHERRY STUDIO · 开源之路 / PPTe HTM\nL-first 实机评审稿 12 / 12"
+    }
+  ],
+  "lockedObjectAddPage": {
+    "pages": 12,
+    "feedback": "操作未完成 · Error: OBJECT_PROTECTED"
+  },
+  "twoNewPages": [
+    {
+      "page": 13,
+      "slideId": "",
+      "display": "block"
+    },
+    {
+      "page": 14,
+      "slideId": "",
+      "display": "block"
+    }
+  ]
+}
