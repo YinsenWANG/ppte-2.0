@@ -61,7 +61,7 @@ test('H05 acceptance 4: isolated install, reusable skill and overwrite refusal p
  for(const [name,bytes]of Object.entries(originals))writeFileSync(join(user,name),bytes);
  const unsafeStage=spawnSync(process.execPath,['scripts/stage-package.mjs',user],{encoding:'utf8'});assert.notEqual(unsafeStage.status,0);
  const skill=join(root,'agent/skill');assert.equal(JSON.parse(run(process.execPath,[bin,'skill-install','--out',skill])).ok,true);
- const skillBytes=readFileSync(join(skill,'SKILL.md'));assert.ok(skillBytes.length<6500);assert.match(skillBytes.toString(),/ppte enhance/);assert.match(skillBytes.toString(),/ppte edit/);
+ const skillBytes=readFileSync(join(skill,'SKILL.md'));assert.deepEqual(skillBytes,readFileSync('skills/ppte/SKILL.md'),'installed Skill must match repository byte-for-byte');assert.ok(skillBytes.length<6500);assert.match(skillBytes.toString(),/ppte enhance/);assert.match(skillBytes.toString(),/ppte edit/);
  const again=spawnSync(process.execPath,[bin,'skill-install','--out',skill],{encoding:'utf8'});assert.notEqual(again.status,0);assert.deepEqual(readFileSync(join(skill,'SKILL.md')),skillBytes);
  for(const name of ['old.html','current.html']){
   const r=spawnSync(process.execPath,[bin,'enhance',join(user,'old.html'),'--out',join(user,name)],{encoding:'utf8'});assert.notEqual(r.status,0);

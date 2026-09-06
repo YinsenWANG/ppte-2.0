@@ -1,0 +1,23 @@
+{
+  "status": "pending",
+  "nativePicker": {
+    "status": "pending",
+    "reason": "No OS file picker selection or authorization/revocation/regrant interaction executed. Chrome API presence is not permission."
+  },
+  "nativeIME": {
+    "status": "pending",
+    "reason": "No operating system Chinese IME interaction. Existing composition events are synthetic contracts."
+  },
+  "nativePrintDialog": {
+    "status": "pending",
+    "reason": "Chrome page.pdf is automated PDF output, not operating system print dialog."
+  },
+  "noNodeTarget": {
+    "status": "pending",
+    "reason": "Development host contains Node and PPTe. Offline file requests and static browser dependency graph establish no service requirement, not separate device acceptance."
+  },
+  "human": {
+    "status": "pending",
+    "reason": "No reviewer confirmation collected."
+  }
+}

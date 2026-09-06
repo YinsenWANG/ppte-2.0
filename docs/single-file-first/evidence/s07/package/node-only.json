@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "externalProcessGuard": true,
+  "networkGuard": true,
+  "pathHasNoTools": true,
+  "runtimeDependencies": [],
+  "summary": {
+    "ok": true,
+    "path": "/var/folders/00/4ydbn_v17qs1pwsgy6lj2x700000gn/T/h05-7HEiMu/isolated/作品.html",
+    "pages": 1,
+    "bytes": 307507,
+    "mediaBytes": 0,
+    "visual": "unverified"
+  }
+}

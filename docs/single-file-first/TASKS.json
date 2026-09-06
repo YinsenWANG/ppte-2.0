@@ -1027,7 +1027,7 @@
     {
       "id": "S07",
       "title": "直开路径整体验证与轻量分发",
-      "status": "planned",
+      "status": "partial",
       "dependsOn": [
         "S02",
         "S03",
@@ -1073,7 +1073,130 @@
         "pdf-and-media-verification",
         "tarball-and-no-service-checks"
       ],
-      "evidence": null
+      "evidence": {
+        "report": "docs/single-file-first/evidence/s07/REPORT.md",
+        "implementationCommit": null,
+        "codeImplementation": {
+          "status": "implemented",
+          "paths": [
+            "scripts/release-check.mjs",
+            "scripts/verify-journey-pdf.swift",
+            "tests/single-file-journey.test.ts",
+            "tests/html-package.test.ts"
+          ]
+        },
+        "automation": {
+          "status": "passed",
+          "tests": 72,
+          "added": 1,
+          "removed": 0,
+          "strengthened": 1,
+          "logs": [
+            "docs/single-file-first/evidence/s07/verification/typecheck.log",
+            "docs/single-file-first/evidence/s07/verification/build.log",
+            "docs/single-file-first/evidence/s07/verification/test.log",
+            "docs/single-file-first/evidence/s07/verification/release.log"
+          ]
+        },
+        "realBrowser": {
+          "chrome": "installed Chrome 152.0.7977.76 headless file journey passed",
+          "safari": "pending: WebDriver session not created; Allow remote automation disabled"
+        },
+        "humanConfirmation": {
+          "status": "pending",
+          "reason": "No native picker/IME/print dialog, no separate no-Node device, no reviewer confirmation"
+        },
+        "acceptance": [
+          {
+            "index": 1,
+            "status": "partial",
+            "evidence": [
+              "docs/single-file-first/evidence/s07/journey.json",
+              "docs/single-file-first/evidence/s07/review.ppte.html"
+            ],
+            "pending": "Safari full file journey and human UI"
+          },
+          {
+            "index": 2,
+            "status": "partial",
+            "evidence": [
+              "tests/html-player.test.ts",
+              "docs/single-file-first/evidence/s07/player",
+              "docs/single-file-first/evidence/s07/verification/test.log"
+            ],
+            "pending": "Safari and native full screen interaction"
+          },
+          {
+            "index": 3,
+            "status": "partial",
+            "evidence": [
+              "docs/single-file-first/evidence/s07/pdf-inspection.json",
+              "docs/single-file-first/evidence/s07/journey.pdf",
+              "docs/single-file-first/evidence/s07/print.png"
+            ],
+            "pending": "Safari native printing and human real-media content review"
+          },
+          {
+            "index": 4,
+            "status": "partial",
+            "evidence": [
+              "docs/single-file-first/evidence/s07/native-records.json",
+              "docs/single-file-first/evidence/s07/safari.json",
+              "docs/single-file-first/evidence/s07/save"
+            ],
+            "pending": "Native picker authorization/revocation/regrant, OS IME and print dialog"
+          },
+          {
+            "index": 5,
+            "status": "partial",
+            "evidence": [
+              "docs/single-file-first/evidence/s07/journey.json",
+              "docs/single-file-first/evidence/s07/package/node-only.json"
+            ],
+            "pending": "Separate target device with no Node installed"
+          },
+          {
+            "index": 6,
+            "status": "passed-automation",
+            "evidence": [
+              "docs/single-file-first/evidence/s07/package/sizes.json",
+              "docs/single-file-first/evidence/s07/media-size.json"
+            ]
+          }
+        ],
+        "requiredEvidence": {
+          "actual-browser-journeys": [
+            "docs/single-file-first/evidence/s07/journey.json",
+            "docs/single-file-first/evidence/s07/safari.json"
+          ],
+          "native-permission-and-ime-records": [
+            "docs/single-file-first/evidence/s07/native-records.json",
+            "docs/single-file-first/evidence/s07/save/original-file-hashes.json"
+          ],
+          "pdf-and-media-verification": [
+            "docs/single-file-first/evidence/s07/pdf-inspection.json",
+            "docs/single-file-first/evidence/s07/journey.pdf",
+            "docs/single-file-first/evidence/s07/media-size.json"
+          ],
+          "tarball-and-no-service-checks": [
+            "docs/single-file-first/evidence/s07/package/candidate.tgz",
+            "docs/single-file-first/evidence/s07/package/dependency-graph.json",
+            "docs/single-file-first/evidence/s07/package/pack.json",
+            "docs/single-file-first/evidence/s07/package/node-only.json",
+            "docs/single-file-first/evidence/s07/journey.json"
+          ]
+        },
+        "regressions": {
+          "F01": "tests/single-file-entry.test.ts",
+          "F02-F05": "tests/single-file-editing.test.ts",
+          "R01/R02/R05/R06": "tests/html-player.test.ts, tests/html-editor.test.ts, tests/html-package.test.ts; native and human gaps retained",
+          "R03/R04": "pending unchanged: human review, model telemetry and low-performance real device"
+        },
+        "limitations": [
+          "S02/S03/S04/S06 partial acceptance remains; automated release gate is not final user acceptance",
+          "PDF pixel and text evidence is a synthetic two-slide fixture; real-photo semantics pending"
+        ]
+      }
     },
     {
       "id": "S08",

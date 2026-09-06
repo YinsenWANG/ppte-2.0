@@ -1,0 +1,2991 @@
+{
+  "cli": {
+    "inputs": {
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/unicode.js": {
+        "bytes": 2989,
+        "imports": [],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/error-codes.js": {
+        "bytes": 4746,
+        "imports": [],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/tokenizer/preprocessor.js": {
+        "bytes": 7021,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/unicode.js",
+            "kind": "import-statement",
+            "original": "../common/unicode.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/error-codes.js",
+            "kind": "import-statement",
+            "original": "../common/error-codes.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/token.js": {
+        "bytes": 834,
+        "imports": [],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/generated/decode-data-html.js": {
+        "bytes": 47771,
+        "imports": [],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/generated/decode-data-xml.js": {
+        "bytes": 325,
+        "imports": [],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/decode-codepoint.js": {
+        "bytes": 2098,
+        "imports": [],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/decode.js": {
+        "bytes": 20168,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/generated/decode-data-html.js",
+            "kind": "import-statement",
+            "original": "./generated/decode-data-html.js"
+          },
+          {
+            "path": "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/generated/decode-data-xml.js",
+            "kind": "import-statement",
+            "original": "./generated/decode-data-xml.js"
+          },
+          {
+            "path": "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/decode-codepoint.js",
+            "kind": "import-statement",
+            "original": "./decode-codepoint.js"
+          },
+          {
+            "path": "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/generated/decode-data-html.js",
+            "kind": "import-statement",
+            "original": "./generated/decode-data-html.js"
+          },
+          {
+            "path": "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/generated/decode-data-xml.js",
+            "kind": "import-statement",
+            "original": "./generated/decode-data-xml.js"
+          },
+          {
+            "path": "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/decode-codepoint.js",
+            "kind": "import-statement",
+            "original": "./decode-codepoint.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/html.js": {
+        "bytes": 17554,
+        "imports": [],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/tokenizer/index.js": {
+        "bytes": 98124,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/tokenizer/preprocessor.js",
+            "kind": "import-statement",
+            "original": "./preprocessor.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/unicode.js",
+            "kind": "import-statement",
+            "original": "../common/unicode.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/token.js",
+            "kind": "import-statement",
+            "original": "../common/token.js"
+          },
+          {
+            "path": "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/decode.js",
+            "kind": "import-statement",
+            "original": "entities/decode"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/error-codes.js",
+            "kind": "import-statement",
+            "original": "../common/error-codes.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/html.js",
+            "kind": "import-statement",
+            "original": "../common/html.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/parser/open-element-stack.js": {
+        "bytes": 10918,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/html.js",
+            "kind": "import-statement",
+            "original": "../common/html.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/parser/formatting-element-list.js": {
+        "bytes": 4301,
+        "imports": [],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/tree-adapters/default.js": {
+        "bytes": 5232,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/html.js",
+            "kind": "import-statement",
+            "original": "../common/html.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/doctype.js": {
+        "bytes": 4661,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/html.js",
+            "kind": "import-statement",
+            "original": "./html.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/foreign-content.js": {
+        "bytes": 6299,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/html.js",
+            "kind": "import-statement",
+            "original": "./html.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/parser/index.js": {
+        "bytes": 107124,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/tokenizer/index.js",
+            "kind": "import-statement",
+            "original": "../tokenizer/index.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/parser/open-element-stack.js",
+            "kind": "import-statement",
+            "original": "./open-element-stack.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/parser/formatting-element-list.js",
+            "kind": "import-statement",
+            "original": "./formatting-element-list.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/tree-adapters/default.js",
+            "kind": "import-statement",
+            "original": "../tree-adapters/default.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/doctype.js",
+            "kind": "import-statement",
+            "original": "../common/doctype.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/foreign-content.js",
+            "kind": "import-statement",
+            "original": "../common/foreign-content.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/error-codes.js",
+            "kind": "import-statement",
+            "original": "../common/error-codes.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/unicode.js",
+            "kind": "import-statement",
+            "original": "../common/unicode.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/html.js",
+            "kind": "import-statement",
+            "original": "../common/html.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/token.js",
+            "kind": "import-statement",
+            "original": "../common/token.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/escape.js": {
+        "bytes": 4081,
+        "imports": [],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/serializer/index.js": {
+        "bytes": 5269,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/html.js",
+            "kind": "import-statement",
+            "original": "../common/html.js"
+          },
+          {
+            "path": "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/escape.js",
+            "kind": "import-statement",
+            "original": "entities/escape"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/tree-adapters/default.js",
+            "kind": "import-statement",
+            "original": "../tree-adapters/default.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/index.js": {
+        "bytes": 1355,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/parser/index.js",
+            "kind": "import-statement",
+            "original": "./parser/index.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/tree-adapters/default.js",
+            "kind": "import-statement",
+            "original": "./tree-adapters/default.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/parser/index.js",
+            "kind": "import-statement",
+            "original": "./parser/index.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/serializer/index.js",
+            "kind": "import-statement",
+            "original": "./serializer/index.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/error-codes.js",
+            "kind": "import-statement",
+            "original": "./common/error-codes.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/foreign-content.js",
+            "kind": "import-statement",
+            "original": "./common/foreign-content.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/html.js",
+            "kind": "import-statement",
+            "original": "./common/html.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/token.js",
+            "kind": "import-statement",
+            "original": "./common/token.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/tokenizer/index.js",
+            "kind": "import-statement",
+            "original": "./tokenizer/index.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/picocolors@1.1.1/node_modules/picocolors/picocolors.js": {
+        "bytes": 2663,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/tokenize.js": {
+        "bytes": 6538,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/terminal-highlight.js": {
+        "bytes": 1399,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/picocolors@1.1.1/node_modules/picocolors/picocolors.js",
+            "kind": "require-call",
+            "original": "picocolors"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/tokenize.js",
+            "kind": "require-call",
+            "original": "./tokenize"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/css-syntax-error.js": {
+        "bytes": 3402,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/picocolors@1.1.1/node_modules/picocolors/picocolors.js",
+            "kind": "require-call",
+            "original": "picocolors"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/terminal-highlight.js",
+            "kind": "require-call",
+            "original": "./terminal-highlight"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/stringifier.js": {
+        "bytes": 8220,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/stringify.js": {
+        "bytes": 213,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/stringifier.js",
+            "kind": "require-call",
+            "original": "./stringifier"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/symbols.js": {
+        "bytes": 91,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/node.js": {
+        "bytes": 10719,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/css-syntax-error.js",
+            "kind": "require-call",
+            "original": "./css-syntax-error"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/stringifier.js",
+            "kind": "require-call",
+            "original": "./stringifier"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/stringify.js",
+            "kind": "require-call",
+            "original": "./stringify"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/symbols.js",
+            "kind": "require-call",
+            "original": "./symbols"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/comment.js": {
+        "bytes": 203,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/node.js",
+            "kind": "require-call",
+            "original": "./node"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/declaration.js": {
+        "bytes": 495,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/node.js",
+            "kind": "require-call",
+            "original": "./node"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/container.js": {
+        "bytes": 10647,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/comment.js",
+            "kind": "require-call",
+            "original": "./comment"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/declaration.js",
+            "kind": "require-call",
+            "original": "./declaration"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/node.js",
+            "kind": "require-call",
+            "original": "./node"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/symbols.js",
+            "kind": "require-call",
+            "original": "./symbols"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/at-rule.js": {
+        "bytes": 471,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/container.js",
+            "kind": "require-call",
+            "original": "./container"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/document.js": {
+        "bytes": 654,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/container.js",
+            "kind": "require-call",
+            "original": "./container"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/nanoid@3.3.18/node_modules/nanoid/non-secure/index.cjs": {
+        "bytes": 518,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/base64.js": {
+        "bytes": 1540,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/base64-vlq.js": {
+        "bytes": 4714,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/base64.js",
+            "kind": "require-call",
+            "original": "./base64"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/util.js": {
+        "bytes": 15403,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/array-set.js": {
+        "bytes": 3197,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/util.js",
+            "kind": "require-call",
+            "original": "./util"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/mapping-list.js": {
+        "bytes": 2339,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/util.js",
+            "kind": "require-call",
+            "original": "./util"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/source-map-generator.js": {
+        "bytes": 14933,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/base64-vlq.js",
+            "kind": "require-call",
+            "original": "./base64-vlq"
+          },
+          {
+            "path": "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/util.js",
+            "kind": "require-call",
+            "original": "./util"
+          },
+          {
+            "path": "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/array-set.js",
+            "kind": "require-call",
+            "original": "./array-set"
+          },
+          {
+            "path": "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/mapping-list.js",
+            "kind": "require-call",
+            "original": "./mapping-list"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/binary-search.js": {
+        "bytes": 4249,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/quick-sort.js": {
+        "bytes": 4068,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/source-map-consumer.js": {
+        "bytes": 41580,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/util.js",
+            "kind": "require-call",
+            "original": "./util"
+          },
+          {
+            "path": "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/binary-search.js",
+            "kind": "require-call",
+            "original": "./binary-search"
+          },
+          {
+            "path": "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/array-set.js",
+            "kind": "require-call",
+            "original": "./array-set"
+          },
+          {
+            "path": "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/base64-vlq.js",
+            "kind": "require-call",
+            "original": "./base64-vlq"
+          },
+          {
+            "path": "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/quick-sort.js",
+            "kind": "require-call",
+            "original": "./quick-sort"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/source-node.js": {
+        "bytes": 13808,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/source-map-generator.js",
+            "kind": "require-call",
+            "original": "./source-map-generator"
+          },
+          {
+            "path": "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/util.js",
+            "kind": "require-call",
+            "original": "./util"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/source-map.js": {
+        "bytes": 405,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/source-map-generator.js",
+            "kind": "require-call",
+            "original": "./lib/source-map-generator"
+          },
+          {
+            "path": "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/source-map-consumer.js",
+            "kind": "require-call",
+            "original": "./lib/source-map-consumer"
+          },
+          {
+            "path": "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/source-node.js",
+            "kind": "require-call",
+            "original": "./lib/source-node"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/previous-map.js": {
+        "bytes": 3984,
+        "imports": [
+          {
+            "path": "fs",
+            "kind": "require-call",
+            "external": true
+          },
+          {
+            "path": "path",
+            "kind": "require-call",
+            "external": true
+          },
+          {
+            "path": "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/source-map.js",
+            "kind": "require-call",
+            "original": "source-map-js"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/input.js": {
+        "bytes": 6752,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/nanoid@3.3.18/node_modules/nanoid/non-secure/index.cjs",
+            "kind": "require-call",
+            "original": "nanoid/non-secure"
+          },
+          {
+            "path": "path",
+            "kind": "require-call",
+            "external": true
+          },
+          {
+            "path": "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/source-map.js",
+            "kind": "require-call",
+            "original": "source-map-js"
+          },
+          {
+            "path": "url",
+            "kind": "require-call",
+            "external": true
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/css-syntax-error.js",
+            "kind": "require-call",
+            "original": "./css-syntax-error"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/previous-map.js",
+            "kind": "require-call",
+            "original": "./previous-map"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/terminal-highlight.js",
+            "kind": "require-call",
+            "original": "./terminal-highlight"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/root.js": {
+        "bytes": 1239,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/container.js",
+            "kind": "require-call",
+            "original": "./container"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/list.js": {
+        "bytes": 1227,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/rule.js": {
+        "bytes": 569,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/container.js",
+            "kind": "require-call",
+            "original": "./container"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/list.js",
+            "kind": "require-call",
+            "original": "./list"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/fromJSON.js": {
+        "bytes": 1506,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/at-rule.js",
+            "kind": "require-call",
+            "original": "./at-rule"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/comment.js",
+            "kind": "require-call",
+            "original": "./comment"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/declaration.js",
+            "kind": "require-call",
+            "original": "./declaration"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/input.js",
+            "kind": "require-call",
+            "original": "./input"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/previous-map.js",
+            "kind": "require-call",
+            "original": "./previous-map"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/root.js",
+            "kind": "require-call",
+            "original": "./root"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/rule.js",
+            "kind": "require-call",
+            "original": "./rule"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/map-generator.js": {
+        "bytes": 9721,
+        "imports": [
+          {
+            "path": "path",
+            "kind": "require-call",
+            "external": true
+          },
+          {
+            "path": "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/source-map.js",
+            "kind": "require-call",
+            "original": "source-map-js"
+          },
+          {
+            "path": "url",
+            "kind": "require-call",
+            "external": true
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/input.js",
+            "kind": "require-call",
+            "original": "./input"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/parser.js": {
+        "bytes": 14852,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/at-rule.js",
+            "kind": "require-call",
+            "original": "./at-rule"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/comment.js",
+            "kind": "require-call",
+            "original": "./comment"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/declaration.js",
+            "kind": "require-call",
+            "original": "./declaration"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/root.js",
+            "kind": "require-call",
+            "original": "./root"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/rule.js",
+            "kind": "require-call",
+            "original": "./rule"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/tokenize.js",
+            "kind": "require-call",
+            "original": "./tokenize"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/parse.js": {
+        "bytes": 1147,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/container.js",
+            "kind": "require-call",
+            "original": "./container"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/input.js",
+            "kind": "require-call",
+            "original": "./input"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/parser.js",
+            "kind": "require-call",
+            "original": "./parser"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/warning.js": {
+        "bytes": 739,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/result.js": {
+        "bytes": 738,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/warning.js",
+            "kind": "require-call",
+            "original": "./warning"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/warn-once.js": {
+        "bytes": 256,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/lazy-result.js": {
+        "bytes": 13562,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/container.js",
+            "kind": "require-call",
+            "original": "./container"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/document.js",
+            "kind": "require-call",
+            "original": "./document"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/map-generator.js",
+            "kind": "require-call",
+            "original": "./map-generator"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/parse.js",
+            "kind": "require-call",
+            "original": "./parse"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/result.js",
+            "kind": "require-call",
+            "original": "./result"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/root.js",
+            "kind": "require-call",
+            "original": "./root"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/stringify.js",
+            "kind": "require-call",
+            "original": "./stringify"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/symbols.js",
+            "kind": "require-call",
+            "original": "./symbols"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/warn-once.js",
+            "kind": "require-call",
+            "original": "./warn-once"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/no-work-result.js": {
+        "bytes": 2624,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/map-generator.js",
+            "kind": "require-call",
+            "original": "./map-generator"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/parse.js",
+            "kind": "require-call",
+            "original": "./parse"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/result.js",
+            "kind": "require-call",
+            "original": "./result"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/stringify.js",
+            "kind": "require-call",
+            "original": "./stringify"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/warn-once.js",
+            "kind": "require-call",
+            "original": "./warn-once"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/processor.js": {
+        "bytes": 1738,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/document.js",
+            "kind": "require-call",
+            "original": "./document"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/lazy-result.js",
+            "kind": "require-call",
+            "original": "./lazy-result"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/no-work-result.js",
+            "kind": "require-call",
+            "original": "./no-work-result"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/root.js",
+            "kind": "require-call",
+            "original": "./root"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/postcss.js": {
+        "bytes": 2898,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/at-rule.js",
+            "kind": "require-call",
+            "original": "./at-rule"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/comment.js",
+            "kind": "require-call",
+            "original": "./comment"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/container.js",
+            "kind": "require-call",
+            "original": "./container"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/css-syntax-error.js",
+            "kind": "require-call",
+            "original": "./css-syntax-error"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/declaration.js",
+            "kind": "require-call",
+            "original": "./declaration"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/document.js",
+            "kind": "require-call",
+            "original": "./document"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/fromJSON.js",
+            "kind": "require-call",
+            "original": "./fromJSON"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/input.js",
+            "kind": "require-call",
+            "original": "./input"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/lazy-result.js",
+            "kind": "require-call",
+            "original": "./lazy-result"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/list.js",
+            "kind": "require-call",
+            "original": "./list"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/node.js",
+            "kind": "require-call",
+            "original": "./node"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/parse.js",
+            "kind": "require-call",
+            "original": "./parse"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/processor.js",
+            "kind": "require-call",
+            "original": "./processor"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/result.js",
+            "kind": "require-call",
+            "original": "./result.js"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/root.js",
+            "kind": "require-call",
+            "original": "./root"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/rule.js",
+            "kind": "require-call",
+            "original": "./rule"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/stringify.js",
+            "kind": "require-call",
+            "original": "./stringify"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/warning.js",
+            "kind": "require-call",
+            "original": "./warning"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/postcss.mjs": {
+        "bytes": 980,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/postcss.js",
+            "kind": "import-statement",
+            "original": "./postcss.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/parse.js": {
+        "bytes": 8344,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/walk.js": {
+        "bytes": 425,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/stringify.js": {
+        "bytes": 1185,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/unit.js": {
+        "bytes": 2283,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/index.js": {
+        "bytes": 607,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/parse.js",
+            "kind": "require-call",
+            "original": "./parse"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/walk.js",
+            "kind": "require-call",
+            "original": "./walk"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/stringify.js",
+            "kind": "require-call",
+            "original": "./stringify"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/unit.js",
+            "kind": "require-call",
+            "original": "./unit"
+          }
+        ],
+        "format": "cjs"
+      },
+      "packages/html-document/src/content.ts": {
+        "bytes": 8189,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/index.js",
+            "kind": "import-statement",
+            "original": "parse5"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/postcss.mjs",
+            "kind": "import-statement",
+            "original": "postcss"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/index.js",
+            "kind": "import-statement",
+            "original": "postcss-value-parser"
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/html-document/src/resources.ts": {
+        "bytes": 7598,
+        "imports": [
+          {
+            "path": "node:fs/promises",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node:crypto",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node:path",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/index.js",
+            "kind": "import-statement",
+            "original": "parse5"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/postcss.mjs",
+            "kind": "import-statement",
+            "original": "postcss"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/index.js",
+            "kind": "import-statement",
+            "original": "postcss-value-parser"
+          },
+          {
+            "path": "packages/html-document/src/content.ts",
+            "kind": "import-statement",
+            "original": "./content.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/html-document/src/runtime-bundle.ts": {
+        "bytes": 319126,
+        "imports": [],
+        "format": "esm"
+      },
+      "packages/html-document/src/media-table.ts": {
+        "bytes": 4289,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/index.js",
+            "kind": "import-statement",
+            "original": "parse5"
+          },
+          {
+            "path": "packages/html-document/src/content.ts",
+            "kind": "import-statement",
+            "original": "./content.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/html-document/src/index.ts": {
+        "bytes": 4442,
+        "imports": [
+          {
+            "path": "node:crypto",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/index.js",
+            "kind": "import-statement",
+            "original": "parse5"
+          },
+          {
+            "path": "packages/html-document/src/content.ts",
+            "kind": "import-statement",
+            "original": "./content.js"
+          },
+          {
+            "path": "packages/html-document/src/resources.ts",
+            "kind": "import-statement",
+            "original": "./resources.js"
+          },
+          {
+            "path": "packages/html-document/src/runtime-bundle.ts",
+            "kind": "import-statement",
+            "original": "./runtime-bundle.js"
+          },
+          {
+            "path": "packages/html-document/src/media-table.ts",
+            "kind": "import-statement",
+            "original": "./media-table.js"
+          },
+          {
+            "path": "packages/html-document/src/content.ts",
+            "kind": "import-statement",
+            "original": "./content.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/html-save/src/index.ts": {
+        "bytes": 8250,
+        "imports": [
+          {
+            "path": "node:crypto",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node:http",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node:fs/promises",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node:path",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node:os",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "packages/html-document/src/index.ts",
+            "kind": "import-statement",
+            "original": "../../html-document/src/index.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "apps/html-cli/index.ts": {
+        "bytes": 5531,
+        "imports": [
+          {
+            "path": "node:fs",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node:fs/promises",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node:path",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node:url",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "packages/html-save/src/index.ts",
+            "kind": "import-statement",
+            "original": "../../packages/html-save/src/index.js"
+          },
+          {
+            "path": "node:child_process",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "packages/html-document/src/index.ts",
+            "kind": "import-statement",
+            "original": "../../packages/html-document/src/index.js"
+          }
+        ],
+        "format": "esm"
+      }
+    },
+    "outputs": {
+      "../../../var/folders/00/4ydbn_v17qs1pwsgy6lj2x700000gn/T/h05-7HEiMu/stage/ppte.js": {
+        "imports": [
+          {
+            "path": "fs",
+            "kind": "require-call",
+            "external": true
+          },
+          {
+            "path": "path",
+            "kind": "require-call",
+            "external": true
+          },
+          {
+            "path": "path",
+            "kind": "require-call",
+            "external": true
+          },
+          {
+            "path": "url",
+            "kind": "require-call",
+            "external": true
+          },
+          {
+            "path": "path",
+            "kind": "require-call",
+            "external": true
+          },
+          {
+            "path": "url",
+            "kind": "require-call",
+            "external": true
+          },
+          {
+            "path": "node:fs",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node:fs/promises",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node:path",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node:url",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node:crypto",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node:http",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node:fs/promises",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node:path",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node:os",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node:crypto",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node:fs/promises",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node:crypto",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node:path",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node:child_process",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
+        "exports": [
+          "runHTMLCli",
+          "summary"
+        ],
+        "entryPoint": "apps/html-cli/index.ts",
+        "inputs": {
+          "node_modules/.pnpm/picocolors@1.1.1/node_modules/picocolors/picocolors.js": {
+            "bytesInOutput": 1981
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/tokenize.js": {
+            "bytesInOutput": 2102
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/terminal-highlight.js": {
+            "bytesInOutput": 698
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/css-syntax-error.js": {
+            "bytesInOutput": 1561
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/stringifier.js": {
+            "bytesInOutput": 4138
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/stringify.js": {
+            "bytesInOutput": 114
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/symbols.js": {
+            "bytesInOutput": 98
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/node.js": {
+            "bytesInOutput": 4945
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/comment.js": {
+            "bytesInOutput": 140
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/declaration.js": {
+            "bytesInOutput": 288
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/container.js": {
+            "bytesInOutput": 5334
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/at-rule.js": {
+            "bytesInOutput": 313
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/document.js": {
+            "bytesInOutput": 294
+          },
+          "node_modules/.pnpm/nanoid@3.3.18/node_modules/nanoid/non-secure/index.cjs": {
+            "bytesInOutput": 302
+          },
+          "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/base64.js": {
+            "bytesInOutput": 362
+          },
+          "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/base64-vlq.js": {
+            "bytesInOutput": 552
+          },
+          "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/util.js": {
+            "bytesInOutput": 4240
+          },
+          "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/array-set.js": {
+            "bytesInOutput": 1045
+          },
+          "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/mapping-list.js": {
+            "bytesInOutput": 637
+          },
+          "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/source-map-generator.js": {
+            "bytesInOutput": 4956
+          },
+          "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/binary-search.js": {
+            "bytesInOutput": 447
+          },
+          "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/quick-sort.js": {
+            "bytesInOutput": 503
+          },
+          "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/source-map-consumer.js": {
+            "bytesInOutput": 12116
+          },
+          "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/lib/source-node.js": {
+            "bytesInOutput": 3596
+          },
+          "node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/source-map.js": {
+            "bytesInOutput": 136
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/previous-map.js": {
+            "bytesInOutput": 2303
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/input.js": {
+            "bytesInOutput": 3215
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/root.js": {
+            "bytesInOutput": 681
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/list.js": {
+            "bytesInOutput": 436
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/rule.js": {
+            "bytesInOutput": 380
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/fromJSON.js": {
+            "bytesInOutput": 684
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/map-generator.js": {
+            "bytesInOutput": 5622
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/parser.js": {
+            "bytesInOutput": 7398
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/parse.js": {
+            "bytesInOutput": 675
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/warning.js": {
+            "bytesInOutput": 474
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/result.js": {
+            "bytesInOutput": 470
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/warn-once.js": {
+            "bytesInOutput": 136
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/lazy-result.js": {
+            "bytesInOutput": 7043
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/no-work-result.js": {
+            "bytesInOutput": 1498
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/processor.js": {
+            "bytesInOutput": 992
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/postcss.js": {
+            "bytesInOutput": 1266
+          },
+          "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/parse.js": {
+            "bytesInOutput": 2913
+          },
+          "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/walk.js": {
+            "bytesInOutput": 194
+          },
+          "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/stringify.js": {
+            "bytesInOutput": 501
+          },
+          "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/unit.js": {
+            "bytesInOutput": 788
+          },
+          "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/index.js": {
+            "bytesInOutput": 327
+          },
+          "apps/html-cli/index.ts": {
+            "bytesInOutput": 3952
+          },
+          "packages/html-save/src/index.ts": {
+            "bytesInOutput": 5031
+          },
+          "packages/html-document/src/index.ts": {
+            "bytesInOutput": 2523
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/unicode.js": {
+            "bytesInOutput": 1565
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/error-codes.js": {
+            "bytesInOutput": 4001
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/tokenizer/preprocessor.js": {
+            "bytesInOutput": 2827
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/token.js": {
+            "bytesInOutput": 417
+          },
+          "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/generated/decode-data-html.js": {
+            "bytesInOutput": 47190
+          },
+          "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/decode-codepoint.js": {
+            "bytesInOutput": 605
+          },
+          "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/decode.js": {
+            "bytesInOutput": 4652
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/html.js": {
+            "bytesInOutput": 8381
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/tokenizer/index.js": {
+            "bytesInOutput": 45738
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/parser/open-element-stack.js": {
+            "bytesInOutput": 5214
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/parser/formatting-element-list.js": {
+            "bytesInOutput": 1633
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/tree-adapters/default.js": {
+            "bytesInOutput": 2346
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/doctype.js": {
+            "bytesInOutput": 3081
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/foreign-content.js": {
+            "bytesInOutput": 3563
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/parser/index.js": {
+            "bytesInOutput": 46675
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/index.js": {
+            "bytesInOutput": 37
+          },
+          "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/escape.js": {
+            "bytesInOutput": 519
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/serializer/index.js": {
+            "bytesInOutput": 1635
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/postcss.mjs": {
+            "bytesInOutput": 525
+          },
+          "packages/html-document/src/content.ts": {
+            "bytesInOutput": 4445
+          },
+          "packages/html-document/src/resources.ts": {
+            "bytesInOutput": 4183
+          },
+          "packages/html-document/src/runtime-bundle.ts": {
+            "bytesInOutput": 314453
+          },
+          "packages/html-document/src/media-table.ts": {
+            "bytesInOutput": 2699
+          }
+        },
+        "bytes": 607757
+      }
+    }
+  },
+  "runtime": {
+    "inputs": {
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/unicode.js": {
+        "bytes": 2989,
+        "imports": [],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/error-codes.js": {
+        "bytes": 4746,
+        "imports": [],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/tokenizer/preprocessor.js": {
+        "bytes": 7021,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/unicode.js",
+            "kind": "import-statement",
+            "original": "../common/unicode.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/error-codes.js",
+            "kind": "import-statement",
+            "original": "../common/error-codes.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/token.js": {
+        "bytes": 834,
+        "imports": [],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/generated/decode-data-html.js": {
+        "bytes": 47771,
+        "imports": [],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/generated/decode-data-xml.js": {
+        "bytes": 325,
+        "imports": [],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/decode-codepoint.js": {
+        "bytes": 2098,
+        "imports": [],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/decode.js": {
+        "bytes": 20168,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/generated/decode-data-html.js",
+            "kind": "import-statement",
+            "original": "./generated/decode-data-html.js"
+          },
+          {
+            "path": "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/generated/decode-data-xml.js",
+            "kind": "import-statement",
+            "original": "./generated/decode-data-xml.js"
+          },
+          {
+            "path": "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/decode-codepoint.js",
+            "kind": "import-statement",
+            "original": "./decode-codepoint.js"
+          },
+          {
+            "path": "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/generated/decode-data-html.js",
+            "kind": "import-statement",
+            "original": "./generated/decode-data-html.js"
+          },
+          {
+            "path": "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/generated/decode-data-xml.js",
+            "kind": "import-statement",
+            "original": "./generated/decode-data-xml.js"
+          },
+          {
+            "path": "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/decode-codepoint.js",
+            "kind": "import-statement",
+            "original": "./decode-codepoint.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/html.js": {
+        "bytes": 17554,
+        "imports": [],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/tokenizer/index.js": {
+        "bytes": 98124,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/tokenizer/preprocessor.js",
+            "kind": "import-statement",
+            "original": "./preprocessor.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/unicode.js",
+            "kind": "import-statement",
+            "original": "../common/unicode.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/token.js",
+            "kind": "import-statement",
+            "original": "../common/token.js"
+          },
+          {
+            "path": "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/decode.js",
+            "kind": "import-statement",
+            "original": "entities/decode"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/error-codes.js",
+            "kind": "import-statement",
+            "original": "../common/error-codes.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/html.js",
+            "kind": "import-statement",
+            "original": "../common/html.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/parser/open-element-stack.js": {
+        "bytes": 10918,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/html.js",
+            "kind": "import-statement",
+            "original": "../common/html.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/parser/formatting-element-list.js": {
+        "bytes": 4301,
+        "imports": [],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/tree-adapters/default.js": {
+        "bytes": 5232,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/html.js",
+            "kind": "import-statement",
+            "original": "../common/html.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/doctype.js": {
+        "bytes": 4661,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/html.js",
+            "kind": "import-statement",
+            "original": "./html.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/foreign-content.js": {
+        "bytes": 6299,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/html.js",
+            "kind": "import-statement",
+            "original": "./html.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/parser/index.js": {
+        "bytes": 107124,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/tokenizer/index.js",
+            "kind": "import-statement",
+            "original": "../tokenizer/index.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/parser/open-element-stack.js",
+            "kind": "import-statement",
+            "original": "./open-element-stack.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/parser/formatting-element-list.js",
+            "kind": "import-statement",
+            "original": "./formatting-element-list.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/tree-adapters/default.js",
+            "kind": "import-statement",
+            "original": "../tree-adapters/default.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/doctype.js",
+            "kind": "import-statement",
+            "original": "../common/doctype.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/foreign-content.js",
+            "kind": "import-statement",
+            "original": "../common/foreign-content.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/error-codes.js",
+            "kind": "import-statement",
+            "original": "../common/error-codes.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/unicode.js",
+            "kind": "import-statement",
+            "original": "../common/unicode.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/html.js",
+            "kind": "import-statement",
+            "original": "../common/html.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/token.js",
+            "kind": "import-statement",
+            "original": "../common/token.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/escape.js": {
+        "bytes": 4081,
+        "imports": [],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/serializer/index.js": {
+        "bytes": 5269,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/html.js",
+            "kind": "import-statement",
+            "original": "../common/html.js"
+          },
+          {
+            "path": "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/escape.js",
+            "kind": "import-statement",
+            "original": "entities/escape"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/tree-adapters/default.js",
+            "kind": "import-statement",
+            "original": "../tree-adapters/default.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/index.js": {
+        "bytes": 1355,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/parser/index.js",
+            "kind": "import-statement",
+            "original": "./parser/index.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/tree-adapters/default.js",
+            "kind": "import-statement",
+            "original": "./tree-adapters/default.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/parser/index.js",
+            "kind": "import-statement",
+            "original": "./parser/index.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/serializer/index.js",
+            "kind": "import-statement",
+            "original": "./serializer/index.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/error-codes.js",
+            "kind": "import-statement",
+            "original": "./common/error-codes.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/foreign-content.js",
+            "kind": "import-statement",
+            "original": "./common/foreign-content.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/html.js",
+            "kind": "import-statement",
+            "original": "./common/html.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/token.js",
+            "kind": "import-statement",
+            "original": "./common/token.js"
+          },
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/tokenizer/index.js",
+            "kind": "import-statement",
+            "original": "./tokenizer/index.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/picocolors@1.1.1/node_modules/picocolors/picocolors.browser.js": {
+        "bytes": 598,
+        "imports": [],
+        "format": "cjs"
+      },
+      "(disabled):node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/terminal-highlight": {
+        "bytes": 0,
+        "imports": []
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/css-syntax-error.js": {
+        "bytes": 3402,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/picocolors@1.1.1/node_modules/picocolors/picocolors.browser.js",
+            "kind": "require-call",
+            "original": "picocolors"
+          },
+          {
+            "path": "(disabled):node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/terminal-highlight",
+            "kind": "require-call",
+            "original": "./terminal-highlight"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/stringifier.js": {
+        "bytes": 8220,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/stringify.js": {
+        "bytes": 213,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/stringifier.js",
+            "kind": "require-call",
+            "original": "./stringifier"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/symbols.js": {
+        "bytes": 91,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/node.js": {
+        "bytes": 10719,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/css-syntax-error.js",
+            "kind": "require-call",
+            "original": "./css-syntax-error"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/stringifier.js",
+            "kind": "require-call",
+            "original": "./stringifier"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/stringify.js",
+            "kind": "require-call",
+            "original": "./stringify"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/symbols.js",
+            "kind": "require-call",
+            "original": "./symbols"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/comment.js": {
+        "bytes": 203,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/node.js",
+            "kind": "require-call",
+            "original": "./node"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/declaration.js": {
+        "bytes": 495,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/node.js",
+            "kind": "require-call",
+            "original": "./node"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/container.js": {
+        "bytes": 10647,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/comment.js",
+            "kind": "require-call",
+            "original": "./comment"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/declaration.js",
+            "kind": "require-call",
+            "original": "./declaration"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/node.js",
+            "kind": "require-call",
+            "original": "./node"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/symbols.js",
+            "kind": "require-call",
+            "original": "./symbols"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/at-rule.js": {
+        "bytes": 471,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/container.js",
+            "kind": "require-call",
+            "original": "./container"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/document.js": {
+        "bytes": 654,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/container.js",
+            "kind": "require-call",
+            "original": "./container"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/nanoid@3.3.18/node_modules/nanoid/non-secure/index.cjs": {
+        "bytes": 518,
+        "imports": [],
+        "format": "cjs"
+      },
+      "(disabled):path": {
+        "bytes": 0,
+        "imports": []
+      },
+      "(disabled):node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/source-map.js": {
+        "bytes": 0,
+        "imports": []
+      },
+      "(disabled):url": {
+        "bytes": 0,
+        "imports": []
+      },
+      "(disabled):fs": {
+        "bytes": 0,
+        "imports": []
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/previous-map.js": {
+        "bytes": 3984,
+        "imports": [
+          {
+            "path": "(disabled):fs",
+            "kind": "require-call",
+            "original": "fs"
+          },
+          {
+            "path": "(disabled):path",
+            "kind": "require-call",
+            "original": "path"
+          },
+          {
+            "path": "(disabled):node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/source-map.js",
+            "kind": "require-call",
+            "original": "source-map-js"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/input.js": {
+        "bytes": 6752,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/nanoid@3.3.18/node_modules/nanoid/non-secure/index.cjs",
+            "kind": "require-call",
+            "original": "nanoid/non-secure"
+          },
+          {
+            "path": "(disabled):path",
+            "kind": "require-call",
+            "original": "path"
+          },
+          {
+            "path": "(disabled):node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/source-map.js",
+            "kind": "require-call",
+            "original": "source-map-js"
+          },
+          {
+            "path": "(disabled):url",
+            "kind": "require-call",
+            "original": "url"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/css-syntax-error.js",
+            "kind": "require-call",
+            "original": "./css-syntax-error"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/previous-map.js",
+            "kind": "require-call",
+            "original": "./previous-map"
+          },
+          {
+            "path": "(disabled):node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/terminal-highlight",
+            "kind": "require-call",
+            "original": "./terminal-highlight"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/root.js": {
+        "bytes": 1239,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/container.js",
+            "kind": "require-call",
+            "original": "./container"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/list.js": {
+        "bytes": 1227,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/rule.js": {
+        "bytes": 569,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/container.js",
+            "kind": "require-call",
+            "original": "./container"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/list.js",
+            "kind": "require-call",
+            "original": "./list"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/fromJSON.js": {
+        "bytes": 1506,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/at-rule.js",
+            "kind": "require-call",
+            "original": "./at-rule"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/comment.js",
+            "kind": "require-call",
+            "original": "./comment"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/declaration.js",
+            "kind": "require-call",
+            "original": "./declaration"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/input.js",
+            "kind": "require-call",
+            "original": "./input"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/previous-map.js",
+            "kind": "require-call",
+            "original": "./previous-map"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/root.js",
+            "kind": "require-call",
+            "original": "./root"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/rule.js",
+            "kind": "require-call",
+            "original": "./rule"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/map-generator.js": {
+        "bytes": 9721,
+        "imports": [
+          {
+            "path": "(disabled):path",
+            "kind": "require-call",
+            "original": "path"
+          },
+          {
+            "path": "(disabled):node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/source-map.js",
+            "kind": "require-call",
+            "original": "source-map-js"
+          },
+          {
+            "path": "(disabled):url",
+            "kind": "require-call",
+            "original": "url"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/input.js",
+            "kind": "require-call",
+            "original": "./input"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/tokenize.js": {
+        "bytes": 6538,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/parser.js": {
+        "bytes": 14852,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/at-rule.js",
+            "kind": "require-call",
+            "original": "./at-rule"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/comment.js",
+            "kind": "require-call",
+            "original": "./comment"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/declaration.js",
+            "kind": "require-call",
+            "original": "./declaration"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/root.js",
+            "kind": "require-call",
+            "original": "./root"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/rule.js",
+            "kind": "require-call",
+            "original": "./rule"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/tokenize.js",
+            "kind": "require-call",
+            "original": "./tokenize"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/parse.js": {
+        "bytes": 1147,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/container.js",
+            "kind": "require-call",
+            "original": "./container"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/input.js",
+            "kind": "require-call",
+            "original": "./input"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/parser.js",
+            "kind": "require-call",
+            "original": "./parser"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/warning.js": {
+        "bytes": 739,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/result.js": {
+        "bytes": 738,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/warning.js",
+            "kind": "require-call",
+            "original": "./warning"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/warn-once.js": {
+        "bytes": 256,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/lazy-result.js": {
+        "bytes": 13562,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/container.js",
+            "kind": "require-call",
+            "original": "./container"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/document.js",
+            "kind": "require-call",
+            "original": "./document"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/map-generator.js",
+            "kind": "require-call",
+            "original": "./map-generator"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/parse.js",
+            "kind": "require-call",
+            "original": "./parse"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/result.js",
+            "kind": "require-call",
+            "original": "./result"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/root.js",
+            "kind": "require-call",
+            "original": "./root"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/stringify.js",
+            "kind": "require-call",
+            "original": "./stringify"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/symbols.js",
+            "kind": "require-call",
+            "original": "./symbols"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/warn-once.js",
+            "kind": "require-call",
+            "original": "./warn-once"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/no-work-result.js": {
+        "bytes": 2624,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/map-generator.js",
+            "kind": "require-call",
+            "original": "./map-generator"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/parse.js",
+            "kind": "require-call",
+            "original": "./parse"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/result.js",
+            "kind": "require-call",
+            "original": "./result"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/stringify.js",
+            "kind": "require-call",
+            "original": "./stringify"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/warn-once.js",
+            "kind": "require-call",
+            "original": "./warn-once"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/processor.js": {
+        "bytes": 1738,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/document.js",
+            "kind": "require-call",
+            "original": "./document"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/lazy-result.js",
+            "kind": "require-call",
+            "original": "./lazy-result"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/no-work-result.js",
+            "kind": "require-call",
+            "original": "./no-work-result"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/root.js",
+            "kind": "require-call",
+            "original": "./root"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/postcss.js": {
+        "bytes": 2898,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/at-rule.js",
+            "kind": "require-call",
+            "original": "./at-rule"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/comment.js",
+            "kind": "require-call",
+            "original": "./comment"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/container.js",
+            "kind": "require-call",
+            "original": "./container"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/css-syntax-error.js",
+            "kind": "require-call",
+            "original": "./css-syntax-error"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/declaration.js",
+            "kind": "require-call",
+            "original": "./declaration"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/document.js",
+            "kind": "require-call",
+            "original": "./document"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/fromJSON.js",
+            "kind": "require-call",
+            "original": "./fromJSON"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/input.js",
+            "kind": "require-call",
+            "original": "./input"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/lazy-result.js",
+            "kind": "require-call",
+            "original": "./lazy-result"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/list.js",
+            "kind": "require-call",
+            "original": "./list"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/node.js",
+            "kind": "require-call",
+            "original": "./node"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/parse.js",
+            "kind": "require-call",
+            "original": "./parse"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/processor.js",
+            "kind": "require-call",
+            "original": "./processor"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/result.js",
+            "kind": "require-call",
+            "original": "./result.js"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/root.js",
+            "kind": "require-call",
+            "original": "./root"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/rule.js",
+            "kind": "require-call",
+            "original": "./rule"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/stringify.js",
+            "kind": "require-call",
+            "original": "./stringify"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/warning.js",
+            "kind": "require-call",
+            "original": "./warning"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/postcss.mjs": {
+        "bytes": 980,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/postcss.js",
+            "kind": "import-statement",
+            "original": "./postcss.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/parse.js": {
+        "bytes": 8344,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/walk.js": {
+        "bytes": 425,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/stringify.js": {
+        "bytes": 1185,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/unit.js": {
+        "bytes": 2283,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/index.js": {
+        "bytes": 607,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/parse.js",
+            "kind": "require-call",
+            "original": "./parse"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/walk.js",
+            "kind": "require-call",
+            "original": "./walk"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/stringify.js",
+            "kind": "require-call",
+            "original": "./stringify"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/unit.js",
+            "kind": "require-call",
+            "original": "./unit"
+          }
+        ],
+        "format": "cjs"
+      },
+      "packages/html-document/src/content.ts": {
+        "bytes": 8189,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/index.js",
+            "kind": "import-statement",
+            "original": "parse5"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/postcss.mjs",
+            "kind": "import-statement",
+            "original": "postcss"
+          },
+          {
+            "path": "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/index.js",
+            "kind": "import-statement",
+            "original": "postcss-value-parser"
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/html-document/src/media-table.ts": {
+        "bytes": 4289,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/index.js",
+            "kind": "import-statement",
+            "original": "parse5"
+          },
+          {
+            "path": "packages/html-document/src/content.ts",
+            "kind": "import-statement",
+            "original": "./content.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/html-player/src/index.ts": {
+        "bytes": 11569,
+        "imports": [
+          {
+            "path": "packages/html-document/src/content.ts",
+            "kind": "import-statement",
+            "original": "../../html-document/src/content.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/html-print/src/index.ts": {
+        "bytes": 4337,
+        "imports": [],
+        "format": "esm"
+      },
+      "packages/html-editor/src/save.ts": {
+        "bytes": 7044,
+        "imports": [],
+        "format": "esm"
+      },
+      "packages/html-editor/src/media-history.ts": {
+        "bytes": 1342,
+        "imports": [],
+        "format": "esm"
+      },
+      "packages/html-editor/src/commands.ts": {
+        "bytes": 17284,
+        "imports": [
+          {
+            "path": "packages/html-document/src/content.ts",
+            "kind": "import-statement",
+            "original": "../../html-document/src/content.js"
+          },
+          {
+            "path": "packages/html-editor/src/save.ts",
+            "kind": "import-statement",
+            "original": "./save.js"
+          },
+          {
+            "path": "packages/html-editor/src/media-history.ts",
+            "kind": "import-statement",
+            "original": "./media-history.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/html-editor/src/workspace.ts": {
+        "bytes": 35346,
+        "imports": [
+          {
+            "path": "packages/html-player/src/index.ts",
+            "kind": "import-statement",
+            "original": "../../html-player/src/index.js"
+          },
+          {
+            "path": "packages/html-print/src/index.ts",
+            "kind": "import-statement",
+            "original": "../../html-print/src/index.js"
+          },
+          {
+            "path": "packages/html-editor/src/commands.ts",
+            "kind": "import-statement",
+            "original": "./commands.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/html-editor/src/index.ts": {
+        "bytes": 13521,
+        "imports": [
+          {
+            "path": "packages/html-document/src/media-table.ts",
+            "kind": "import-statement",
+            "original": "../../html-document/src/media-table.js"
+          },
+          {
+            "path": "packages/html-editor/src/workspace.ts",
+            "kind": "import-statement",
+            "original": "./workspace.js"
+          },
+          {
+            "path": "packages/html-editor/src/save.ts",
+            "kind": "import-statement",
+            "original": "./save.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/html-document/src/runtime.ts": {
+        "bytes": 3641,
+        "imports": [
+          {
+            "path": "packages/html-document/src/content.ts",
+            "kind": "import-statement",
+            "original": "./content.js"
+          },
+          {
+            "path": "packages/html-document/src/media-table.ts",
+            "kind": "import-statement",
+            "original": "./media-table.js"
+          },
+          {
+            "path": "packages/html-editor/src/index.ts",
+            "kind": "import-statement",
+            "original": "../../html-editor/src/index.js"
+          }
+        ],
+        "format": "esm"
+      }
+    },
+    "outputs": {
+      "runtime.js": {
+        "imports": [],
+        "exports": [],
+        "entryPoint": "packages/html-document/src/runtime.ts",
+        "inputs": {
+          "node_modules/.pnpm/picocolors@1.1.1/node_modules/picocolors/picocolors.browser.js": {
+            "bytesInOutput": 897
+          },
+          "(disabled):node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/terminal-highlight": {
+            "bytesInOutput": 158
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/css-syntax-error.js": {
+            "bytesInOutput": 3860
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/stringifier.js": {
+            "bytesInOutput": 10028
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/stringify.js": {
+            "bytesInOutput": 412
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/symbols.js": {
+            "bytesInOutput": 285
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/node.js": {
+            "bytesInOutput": 12834
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/comment.js": {
+            "bytesInOutput": 419
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/declaration.js": {
+            "bytesInOutput": 732
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/container.js": {
+            "bytesInOutput": 13146
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/at-rule.js": {
+            "bytesInOutput": 745
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/document.js": {
+            "bytesInOutput": 877
+          },
+          "node_modules/.pnpm/nanoid@3.3.18/node_modules/nanoid/non-secure/index.cjs": {
+            "bytesInOutput": 793
+          },
+          "(disabled):path": {
+            "bytesInOutput": 72
+          },
+          "(disabled):node_modules/.pnpm/source-map-js@1.2.1/node_modules/source-map-js/source-map.js": {
+            "bytesInOutput": 153
+          },
+          "(disabled):url": {
+            "bytesInOutput": 70
+          },
+          "(disabled):fs": {
+            "bytesInOutput": 68
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/previous-map.js": {
+            "bytesInOutput": 4672
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/input.js": {
+            "bytesInOutput": 8117
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/root.js": {
+            "bytesInOutput": 1698
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/list.js": {
+            "bytesInOutput": 1689
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/rule.js": {
+            "bytesInOutput": 850
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/fromJSON.js": {
+            "bytesInOutput": 1974
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/map-generator.js": {
+            "bytesInOutput": 11824
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/tokenize.js": {
+            "bytesInOutput": 7749
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/parser.js": {
+            "bytesInOutput": 18060
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/parse.js": {
+            "bytesInOutput": 1295
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/warning.js": {
+            "bytesInOutput": 1080
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/result.js": {
+            "bytesInOutput": 1096
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/warn-once.js": {
+            "bytesInOutput": 428
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/lazy-result.js": {
+            "bytesInOutput": 16324
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/no-work-result.js": {
+            "bytesInOutput": 3400
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/processor.js": {
+            "bytesInOutput": 2119
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/postcss.js": {
+            "bytesInOutput": 3419
+          },
+          "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/parse.js": {
+            "bytesInOutput": 9325
+          },
+          "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/walk.js": {
+            "bytesInOutput": 651
+          },
+          "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/stringify.js": {
+            "bytesInOutput": 1533
+          },
+          "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/unit.js": {
+            "bytesInOutput": 2680
+          },
+          "node_modules/.pnpm/postcss-value-parser@4.2.0/node_modules/postcss-value-parser/lib/index.js": {
+            "bytesInOutput": 884
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/unicode.js": {
+            "bytesInOutput": 3058
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/error-codes.js": {
+            "bytesInOutput": 4805
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/tokenizer/preprocessor.js": {
+            "bytesInOutput": 5138
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/token.js": {
+            "bytesInOutput": 840
+          },
+          "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/generated/decode-data-html.js": {
+            "bytesInOutput": 47274
+          },
+          "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/decode-codepoint.js": {
+            "bytesInOutput": 1346
+          },
+          "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/decode.js": {
+            "bytesInOutput": 13591
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/html.js": {
+            "bytesInOutput": 17620
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/tokenizer/index.js": {
+            "bytesInOutput": 88231
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/parser/open-element-stack.js": {
+            "bytesInOutput": 10198
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/parser/formatting-element-list.js": {
+            "bytesInOutput": 3794
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/tree-adapters/default.js": {
+            "bytesInOutput": 4878
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/doctype.js": {
+            "bytesInOutput": 4552
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/common/foreign-content.js": {
+            "bytesInOutput": 6263
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/parser/index.js": {
+            "bytesInOutput": 94926
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/index.js": {
+            "bytesInOutput": 78
+          },
+          "node_modules/.pnpm/entities@6.0.1/node_modules/entities/dist/esm/escape.js": {
+            "bytesInOutput": 1213
+          },
+          "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5/dist/serializer/index.js": {
+            "bytesInOutput": 3751
+          },
+          "node_modules/.pnpm/postcss@8.5.6/node_modules/postcss/lib/postcss.mjs": {
+            "bytesInOutput": 1238
+          },
+          "packages/html-document/src/content.ts": {
+            "bytesInOutput": 7885
+          },
+          "packages/html-document/src/media-table.ts": {
+            "bytesInOutput": 4049
+          },
+          "packages/html-player/src/index.ts": {
+            "bytesInOutput": 11949
+          },
+          "packages/html-print/src/index.ts": {
+            "bytesInOutput": 4529
+          },
+          "packages/html-editor/src/save.ts": {
+            "bytesInOutput": 6945
+          },
+          "packages/html-editor/src/media-history.ts": {
+            "bytesInOutput": 1237
+          },
+          "packages/html-editor/src/commands.ts": {
+            "bytesInOutput": 15529
+          },
+          "packages/html-editor/src/workspace.ts": {
+            "bytesInOutput": 34043
+          },
+          "packages/html-editor/src/index.ts": {
+            "bytesInOutput": 13875
+          },
+          "packages/html-document/src/runtime.ts": {
+            "bytesInOutput": 3469
+          }
+        },
+        "bytes": 569189
+      }
+    }
+  }
+}
