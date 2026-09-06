@@ -42,3 +42,5 @@ Use the smallest requested scope. Both human and Agent modifications pass throug
 The standalone HTML is an editable local copy, not a live connection to the source. Use the review/patch tools to reconcile revised copies; do not claim cloud sync or multiplayer collaboration. MCP remains an optional adapter only for hosts that require typed MCP tools and cannot execute a CLI.
 
 For candidate installation, independent release status, history recovery and rollback, read [M0 migration notes](references/m0-migration.md).
+
+For staged evolution candidates, read [release migration and rollback](references/release-migration.md). Keep Git, npm, local installation and HTML upgrade results separate; a blocked release gate must remain visible even when candidate tests pass.

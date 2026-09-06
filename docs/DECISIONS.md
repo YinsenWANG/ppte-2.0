@@ -570,3 +570,21 @@ The 0.6 release report's 16-group/62-case figure is historical. The repair
 inventory is 17 groups/65 cases before delivery and 18 groups/69 cases after
 the four delivery cases. This count correction does not change any frozen
 semantic or archive contract.
+
+## 2026-09-06 — Q02 promotion and rollback evidence
+
+Stage promotion checks all G0–G4 task statuses and commit/test evidence, with
+Q02 itself excluded from its pre-completion dependency check. Q01 client
+blockers remain authoritative; automated green tests cannot close manual or
+physical-device acceptance. The release manifest stays blocked until the
+remaining D07/P01/Q01 acceptance is completed. A local candidate does not imply
+Git push, npm publication, persistent runtime/Skill installation or HTML upgrade.
+
+Packaging includes the current compatibility descriptors and build identity in
+`release-policy.json`; that policy is not release approval. Retention uses an
+exclusive new directory, byte-verified copies, a receipt and an INCOMPLETE marker
+on failure. It never rewrites document profiles. Runtime rollback selects a
+retained old tarball and a compatible old project copy; the new project and
+runtime remain retained. Existing HTML upgrades explicitly produce versioned
+copies and preserve the original. C06's retained candidate is used as an actual
+historical runtime fixture without claiming it was a published npm version.

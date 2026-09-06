@@ -1,0 +1,78 @@
+{
+  "version": "q02-retention-v1",
+  "automaticDowngrade": false,
+  "files": [
+    {
+      "role": "source",
+      "file": "source.retained",
+      "sha256": "60bad8ff3f00c24af2584ba62b19e6b8212129933c8df8fe145bf12c8cdced8f",
+      "bytes": 4203
+    },
+    {
+      "role": "sourceProfile",
+      "file": "sourceProfile.retained",
+      "sha256": "f101b5789bfbf84c4e151062e5efbbcc10ef9ee9964605a426a9bd114d1d5a8f",
+      "bytes": 1562
+    },
+    {
+      "role": "oldTarball",
+      "file": "oldTarball.retained",
+      "sha256": "3ebf2cf8d727577681ff062102e4a3e1abc02bfa31544f62a88c14dda7840a53",
+      "bytes": 984922
+    },
+    {
+      "role": "oldBuild",
+      "file": "oldBuild.retained",
+      "sha256": "acf4c5e2ccb05a59910953be49d3ec245b32a8e5048bffd9b606561c4c58e59a",
+      "bytes": 131
+    },
+    {
+      "role": "oldReport",
+      "file": "oldReport.retained",
+      "sha256": "1a51306daf021ea3fe0594cd3e4ca2a0df7c503352215d88a04193d593beb237",
+      "bytes": 42155
+    },
+    {
+      "role": "candidateTarball",
+      "file": "candidateTarball.retained",
+      "sha256": "affad6208d43c9e19958fc9e3b85bdc92995e9e4923a4337ea04ce8dd2bd0b61",
+      "bytes": 1447317
+    },
+    {
+      "role": "candidateBuild",
+      "file": "candidateBuild.retained",
+      "sha256": "8fd010a66da7dfdc2cfe278b3dd2e42187903172f32cb478bea9c9f42db6d9d1",
+      "bytes": 131
+    },
+    {
+      "role": "candidateReport",
+      "file": "candidateReport.retained",
+      "sha256": "88c2cd5d114443fa402f94d0a2f0458f1a96f061f11fd42662529505c2084417",
+      "bytes": 3511
+    },
+    {
+      "role": "oldHtml",
+      "file": "oldHtml.retained",
+      "sha256": "305f1d3ba1e7c769db1e411ef6458ada121165fcff6f4fa26c10df83c91c8dd1",
+      "bytes": 322710
+    },
+    {
+      "role": "upgradedHtml",
+      "file": "upgradedHtml.retained",
+      "sha256": "d23f618fc6d9727bb439ed8379d8b0eef9a5b6cc1869ace9cae065bb1a2606f2",
+      "bytes": 530151
+    },
+    {
+      "role": "newProfileProject",
+      "file": "newProfileProject.retained",
+      "sha256": "4386566d887f4e8d11f49bbbb5db2b9381eb2525f5dce163684eeca10fa8166e",
+      "bytes": 4208
+    },
+    {
+      "role": "rollbackProject",
+      "file": "rollbackProject.retained",
+      "sha256": "60bad8ff3f00c24af2584ba62b19e6b8212129933c8df8fe145bf12c8cdced8f",
+      "bytes": 4203
+    }
+  ]
+}

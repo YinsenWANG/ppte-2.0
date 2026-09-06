@@ -1,0 +1,119 @@
+{
+  "version": "q02-release-manifest-v1",
+  "task": "Q02",
+  "status": "blocked",
+  "buildManifest": {
+    "applicationVersion": "0.9.0-next.0",
+    "runtimeBuildId": "be2a4f326d318e1e5e9e4ee977bb45cd61a7e9ce89283e621b36fba93f526e3f"
+  },
+  "stageBlockers": [
+    "D07: partial",
+    "P01: partial",
+    "Q01: partial",
+    "Q01 clients: unverified",
+    "Q01: No retained actual Safari or Office open/edit/resave/visual observations for this build.",
+    "Q01: No complete A21 human panel; D07 remains partial."
+  ],
+  "actions": {
+    "git": {
+      "status": "not-run",
+      "scope": "push/tag prohibited by task; local commit recorded separately",
+      "evidence": []
+    },
+    "npm": {
+      "status": "not-run",
+      "scope": "publication blocked by release acceptance",
+      "evidence": []
+    },
+    "localInstall": {
+      "status": "pass",
+      "scope": "temporary isolated old/candidate npm and native Skill installation; persistent user installation not-run",
+      "evidence": [
+        "docs/evolution/quality/q02-drill-report.json",
+        "docs/evolution/quality/q02-retention-receipt.json"
+      ]
+    },
+    "htmlUpgrade": {
+      "status": "pass",
+      "scope": "synthetic legacy-profile fixture, explicit versioned copy; user HTML upgrade not-run",
+      "evidence": [
+        "docs/evolution/quality/q02-drill-report.json",
+        "docs/evolution/quality/q02-retention-receipt.json"
+      ]
+    }
+  },
+  "evidenceFiles": [
+    {
+      "path": "docs/evolution/quality/q02-drill-report.json",
+      "sha256": "88c2cd5d114443fa402f94d0a2f0458f1a96f061f11fd42662529505c2084417"
+    },
+    {
+      "path": "docs/evolution/quality/q02-retention-receipt.json",
+      "sha256": "362b9c79a1e948c8c565890f29ccdba53f3f6b32a92e910933323cfdc51eb508"
+    },
+    {
+      "path": "tests/fixtures/evolution/q02/provenance.json",
+      "sha256": "de244c2fd90ea62ab223547993deb88c9fd391697dcfe08446ea05fea15c7dbd"
+    },
+    {
+      "path": "tests/fixtures/evolution/q02/old-runtime.tgz",
+      "sha256": "3ebf2cf8d727577681ff062102e4a3e1abc02bfa31544f62a88c14dda7840a53"
+    },
+    {
+      "path": "tests/fixtures/evolution/q02/old-report.json",
+      "sha256": "1a51306daf021ea3fe0594cd3e4ca2a0df7c503352215d88a04193d593beb237"
+    },
+    {
+      "path": "docs/evolution/quality/q02-native-report.json",
+      "sha256": "8c2772cfd4dc73b103beffe87555d2cc8111d96d8736749794b540b44eae56e8"
+    }
+  ],
+  "automaticDowngrade": false,
+  "candidate": {
+    "name": "ppte-cli",
+    "version": "0.9.0-next.0",
+    "sha256": "affad6208d43c9e19958fc9e3b85bdc92995e9e4923a4337ea04ce8dd2bd0b61",
+    "tarball": "artifacts/q02-drill-final/candidateTarball.retained",
+    "buildManifest": {
+      "applicationVersion": "0.9.0-next.0",
+      "runtimeBuildId": "be2a4f326d318e1e5e9e4ee977bb45cd61a7e9ce89283e621b36fba93f526e3f"
+    },
+    "reproducibility": "two npm packs of the same staged bytes match SHA-256; build timestamps and source edits are not claimed reproducible",
+    "nativeJourneyReport": "docs/evolution/quality/q02-native-report.json"
+  },
+  "retention": {
+    "directory": "artifacts/q02-drill-final",
+    "receipt": "docs/evolution/quality/q02-retention-receipt.json",
+    "oldTarballProvenance": "tests/fixtures/evolution/q02/provenance.json",
+    "automaticDowngrade": false,
+    "scope": "Synthetic legacy project, real retained C06 candidate; no user projects or installed user runtimes modified."
+  },
+  "criteria": {
+    "1": {
+      "status": "blocked",
+      "evidence": [
+        "tests/release-candidate.test.ts",
+        "tests/npm-native-skill.test.ts"
+      ],
+      "gap": "D07/P01/Q01 remain partial; real clients, physical-device performance and A21 human panel missing."
+    },
+    "2": {
+      "status": "pass",
+      "evidence": [
+        "tests/release-candidate.test.ts",
+        "tests/history-repair.test.ts"
+      ],
+      "result": "Retained originals, old/candidate tarballs and build manifests, source profile, reports and both HTML copies. Actual old reader restores legacy revision and rejects new schema without mutation."
+    },
+    "3": {
+      "status": "pass",
+      "evidence": [
+        "tests/release-candidate.test.ts"
+      ],
+      "result": "Git/npm not-run; isolated temporary local installation and synthetic versioned HTML upgrade pass. User installations and user HTML not-run."
+    }
+  },
+  "verification": {
+    "status": "pending-final-suite"
+  }
+}

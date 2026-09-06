@@ -6,6 +6,7 @@ import {
   rmSync,
   chmodSync,
 } from "node:fs";
+import { listCompatibilityProfiles } from "../dist/packages/compatibility/src/index.js";
 // Optional destinations let verification stage isolated builds concurrently.
 const root = process.argv[2] ?? "artifacts/npm-package";
 const hostDirectory = process.argv[3] ?? "apps/host/dist";
@@ -24,6 +25,15 @@ cpSync("examples", `${root}/examples`, { recursive: true });
 cpSync("README-AGENT.md", `${root}/README.md`);
 cpSync("LICENSE", `${root}/LICENSE`);
 cpSync("artifacts/build-manifest.json", `${root}/build-manifest.json`);
+writeFileSync(`${root}/release-policy.json`, JSON.stringify({
+  version: 'q02-release-policy-v1',
+  buildManifest: JSON.parse(readFileSync('artifacts/build-manifest.json', 'utf8')),
+  profiles: listCompatibilityProfiles(),
+  automaticDowngrade: false,
+  htmlUpgrade: 'explicit-versioned-copy',
+  migrationNotes: 'skills/ppte/references/release-migration.md',
+  publication: 'Packaging is not publication or release acceptance.',
+}, null, 2) + '\n');
 const repo = JSON.parse(readFileSync("package.json", "utf8"));
 writeFileSync(
   `${root}/package.json`,

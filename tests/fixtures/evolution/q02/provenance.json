@@ -1,0 +1,9 @@
+{
+  "source": "Retained /tmp/c06-fix-candidate candidate, produced by C06; local candidate, never claimed as published npm release.",
+  "commit": "7b32b000776842c3924b805ef759255dc13e4cef",
+  "sha256": "3ebf2cf8d727577681ff062102e4a3e1abc02bfa31544f62a88c14dda7840a53",
+  "applicationVersion": "0.9.0-next.0",
+  "runtimeBuildId": "1498765a8e827ac7991f0009361bb371e814d9ce42e22346d3d0400284eb6d96",
+  "license": "Apache-2.0",
+  "historicalReport": "old-report.json"
+}

@@ -1,0 +1,91 @@
+{
+  "task": "Q02",
+  "status": "pass",
+  "releaseAcceptance": "blocked",
+  "environment": {
+    "node": "v22.23.2",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "buildManifest": {
+    "applicationVersion": "0.9.0-next.0",
+    "runtimeBuildId": "be2a4f326d318e1e5e9e4ee977bb45cd61a7e9ce89283e621b36fba93f526e3f"
+  },
+  "oldBuildManifest": {
+    "applicationVersion": "0.9.0-next.0",
+    "runtimeBuildId": "1498765a8e827ac7991f0009361bb371e814d9ce42e22346d3d0400284eb6d96"
+  },
+  "candidateSha256": "affad6208d43c9e19958fc9e3b85bdc92995e9e4923a4337ea04ce8dd2bd0b61",
+  "reproduciblePack": true,
+  "offline": "Node network APIs blocked after installation; negative probe passed; no model keys or MCP",
+  "source": {
+    "sha256": "60bad8ff3f00c24af2584ba62b19e6b8212129933c8df8fe145bf12c8cdced8f",
+    "revision": "sha256-8ddbfd1e63204bf2cfa86fc10f14a82bbf14fb0bf471e7c3e29ef525c21a1873",
+    "profile": "ppte-2.0-ga-a.1"
+  },
+  "rollback": {
+    "status": "pass",
+    "automaticDowngrade": false,
+    "restoredRevision": "sha256-8ddbfd1e63204bf2cfa86fc10f14a82bbf14fb0bf471e7c3e29ef525c21a1873",
+    "rejectedProfile": "ppte-2.1-table.1",
+    "rejectedSourceSha256": "4386566d887f4e8d11f49bbbb5db2b9381eb2525f5dce163684eeca10fa8166e",
+    "diagnostic": {
+      "ok": false,
+      "issues": [
+        {
+          "code": "CHECKPOINT_FAILED",
+          "message": "CHECKPOINT_FAILED: unsupported manifest format or schema version",
+          "severity": "error"
+        }
+      ]
+    }
+  },
+  "html": {
+    "status": "pass",
+    "oldSha256": "305f1d3ba1e7c769db1e411ef6458ada121165fcff6f4fa26c10df83c91c8dd1",
+    "newSha256": "d23f618fc6d9727bb439ed8379d8b0eef9a5b6cc1869ace9cae065bb1a2606f2",
+    "artifactIdentity": {
+      "version": 1,
+      "digest": "5d5f11b2f7cd44bf5c64d1a3f0d150b6d5e672417f1602376f76892feb0c5248",
+      "components": {
+        "document": "8ddbfd1e63204bf2cfa86fc10f14a82bbf14fb0bf471e7c3e29ef525c21a1873",
+        "runtime": "be2a4f326d318e1e5e9e4ee977bb45cd61a7e9ce89283e621b36fba93f526e3f",
+        "renderer": "7a0cfb4f8f11920ab8e035126520456501061b05c7b65f9cfb9390feab076361",
+        "shell": "4529a2dd879e3e964626d95c047a71a58d181276793976960da7ad31bbca1e58",
+        "resources": "9abb6f5b222c6f7551cffb974146b28783502bcb74ed83f8246484e522d828d9",
+        "fonts": "306d87605b0e24f72bd925c9a504431d644413a682eebc783e0bb52c9cc9b3fc",
+        "history": "655b9cb6b1c19bece14af8c65c1584b14b64dda2fa786fe7b5c258ec7e8ea227",
+        "capabilities": "502f4c8e87bff96e0f2aa1f18e66d96a00b6df073ee1c836abdd7586755ebedc",
+        "compatibility": "1a24d2eef682c949ae70842ca2cda72862f977932cbd2d2c3e0092999351b4f1",
+        "configuration": "677dc35993bbac6373fbf0b61b2b970ce7848a3ac006746231b5cacdac727cd5"
+      }
+    },
+    "distinctPath": true
+  },
+  "actions": {
+    "git": {
+      "status": "not-run",
+      "scope": "push/tag prohibited by task; local commit recorded separately",
+      "evidence": []
+    },
+    "npm": {
+      "status": "not-run",
+      "scope": "publication blocked by release acceptance",
+      "evidence": []
+    },
+    "localInstall": {
+      "status": "pass",
+      "scope": "temporary isolated old/candidate npm and native Skill installation; persistent user installation not-run",
+      "evidence": [
+        "receipt.json"
+      ]
+    },
+    "htmlUpgrade": {
+      "status": "pass",
+      "scope": "synthetic legacy-profile fixture, explicit versioned copy; user HTML upgrade not-run",
+      "evidence": [
+        "receipt.json"
+      ]
+    }
+  }
+}

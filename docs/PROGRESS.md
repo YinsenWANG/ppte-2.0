@@ -663,3 +663,17 @@ reported from its fresh verification run; typecheck/test/validate claims in
 this paragraph refer to the historical release baseline.
 Frozen boundaries unchanged: no CRDT, no multi-user, no nested Groups, no
 Run-level font styling. See docs/RELEASE_v0.6.0.md.
+
+## 2026-09-06 — Q02 staged candidate and rollback (partial)
+
+Implemented release policy packaging, a fail-closed release check, independent
+Git/npm/local-install/HTML action records, and a retained real C06-tarball
+rollback drill. New node:test coverage verifies reproducible tarball bytes,
+actual old/new clean installs, Skill conflict protection, versioned HTML copies,
+old-reader schema rejection, source preservation and evidence integrity.
+
+Release acceptance remains blocked by D07/P01/Q01 partial status, actual client
+and physical-device evidence, and the A21 human panel. No push, npm publication,
+persistent user installation or user HTML upgrade was performed. See
+[evidence and remaining work](evolution/quality/Q02.md) and
+[release manifest](evolution/quality/release-manifest.json).
