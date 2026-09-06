@@ -1256,7 +1256,8 @@
               "docs/single-file-first/evidence/s08/collection-protocol.md",
               "docs/single-file-first/evidence/s08/authoring-record.md"
             ],
-            "reason": "0 controlled pairs; provider identity, end-to-end phases and usage receipts unavailable; first/failure sample drafts retained but are not controlled measurements"
+            "reason": "0 controlled pairs; provider identity, end-to-end phases and usage receipts unavailable; first/failure sample drafts retained but are not controlled measurements",
+            "commit": "bfe142cde4ed91546279d5751c9aa540778e1c5c"
           },
           {
             "index": 2,
@@ -1266,7 +1267,8 @@
               "docs/single-file-first/evidence/s08/real-user-feedback.json",
               "docs/single-file-first/evidence/s08/collection-protocol.md"
             ],
-            "reason": "No blind ratings; fact/crop/save vetoes unassessed, not false; image group separate and pending"
+            "reason": "No blind ratings; fact/crop/save vetoes unassessed, not false; image group separate and pending",
+            "commit": "bfe142cde4ed91546279d5751c9aa540778e1c5c"
           },
           {
             "index": 3,
@@ -1277,7 +1279,8 @@
               "docs/single-file-first/evidence/s08/controlled-nine-pairs.json",
               "docs/single-file-first/evidence/s08/verification/safari.json"
             ],
-            "reason": "Pending records are not passing device/browser/human proof"
+            "reason": "Pending records are not passing device/browser/human proof",
+            "commit": "bfe142cde4ed91546279d5751c9aa540778e1c5c"
           },
           {
             "index": 4,
@@ -1286,7 +1289,8 @@
               "docs/single-file-first/evidence/s08/feedback-closure-matrix.json",
               "docs/single-file-first/evidence/s08/feedback-closure-matrix.md"
             ],
-            "reason": "22 rows map four feedback items, F01-F05, H00-H06 and R01-R06; no old status inherited"
+            "reason": "22 rows map four feedback items, F01-F05, H00-H06 and R01-R06; no old status inherited",
+            "commit": "bfe142cde4ed91546279d5751c9aa540778e1c5c"
           },
           {
             "index": 5,
@@ -1296,7 +1300,8 @@
               "docs/single-file-first/evidence/s08/delivery/把作品带走.ppte.html",
               "docs/single-file-first/evidence/s08/authoring-record.md"
             ],
-            "reason": "Actual file delivered and Chrome offline/download/fresh-process reopen passed; user receipt/confirmation pending; two correction rounds exceed Skill one-correction fast path; no final completion claim"
+            "reason": "Actual file delivered and Chrome offline/download/fresh-process reopen passed; user receipt/confirmation pending; two correction rounds exceed Skill one-correction fast path; no final completion claim",
+            "commit": "bfe142cde4ed91546279d5751c9aa540778e1c5c"
           }
         ],
         "requiredEvidence": {
@@ -1328,7 +1333,8 @@
           "frameworkTestsRemoved": 0,
           "existingAssertionsChanged": 0,
           "standaloneAcceptanceProbesAdded": 1
-        }
+        },
+        "implementationCommit": "bfe142cde4ed91546279d5751c9aa540778e1c5c"
       }
     }
   ]
