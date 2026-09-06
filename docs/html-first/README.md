@@ -1,4 +1,6 @@
-# 新的有效方案：HTML-first
+# HTML-first 历史方案与保留要求
+
+> 当前入口、命名与保存合同以 [single-file-first 1.1](../single-file-first/PLAN.md) 和 [S00 合同](CONTRACT.md) 为准：默认 `.ppte.html`、`file://`，loopback 推荐已退休。下文及旧 PLAN 的历史决策只在不冲突时继续有效；旧验收状态不表示新方案通过。
 
 用户对真实成品提出六项根本性反馈后，本目录成为下一阶段实施依据。旧 evolution 方案保留历史，不能继续把 PPTX/Office、`.ppte` 多文件交付和固定配方链路作为新版本目标。
 

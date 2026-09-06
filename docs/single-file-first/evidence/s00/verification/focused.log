@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: S00 frozen current contract rejects weakened requirements and cross-version relabelling
+ok 1 - S00 frozen current contract rejects weakened requirements and cross-version relabelling
+  ---
+  duration_ms: 0.655917
+  type: 'test'
+  ...
+# Subtest: S00 version changes cannot promote the historical baseline or bypass missing telemetry
+ok 2 - S00 version changes cannot promote the historical baseline or bypass missing telemetry
+  ---
+  duration_ms: 11.487209
+  type: 'test'
+  ...
+# Subtest: S00 active instructions and actual CLI help agree on delivery and disclose migration
+ok 3 - S00 active instructions and actual CLI help agree on delivery and disclose migration
+  ---
+  duration_ms: 89.714625
+  type: 'test'
+  ...
+# Subtest: S00 no new runtime or dependency requirement and historical bytes stay unchanged
+ok 4 - S00 no new runtime or dependency requirement and historical bytes stay unchanged
+  ---
+  duration_ms: 37.215125
+  type: 'test'
+  ...
+# Subtest: S00 real enhancement supports both extensions and refuses to rewrite existing user files
+ok 5 - S00 real enhancement supports both extensions and refuses to rewrite existing user files
+  ---
+  duration_ms: 194.087709
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 365.470208

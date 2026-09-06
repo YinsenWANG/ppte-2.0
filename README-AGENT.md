@@ -2,10 +2,12 @@
 
 > Active development handoff: [single-file-first 1.1](docs/single-file-first/HANDOFF.md), [plan](docs/single-file-first/PLAN.md), [tasks](docs/single-file-first/TASKS.json). These are pending implementation requirements from user review plus audit `ea260ce`, and override conflicting default-service instructions below. The target is direct use of one `.ppte.html`; do not claim that the existing candidate has already completed this plan.
 
-Write ordinary HTML/CSS, enhance it once, deliver **one HTML**. The HTML is the
-work, editable source and presentation entry. Use Node.js 22 or newer. Basic
-generation has no runtime npm dependencies, browser download, Python, Office,
-model key or MCP service. This candidate is not a registry publication.
+Write ordinary HTML/CSS, enhance it once, deliver **one `作品.ppte.html`**.
+Default use is **file://**: the file is the work, editor and presenter; readers
+require only a supported browser, no Node, installation, network or service.
+Node.js 22 or newer is needed only for authoring with the CLI. Basic generation
+has no runtime npm dependencies, browser download, Python, Office, model key or
+MCP service. This candidate is not a registry publication.
 
 ## Independent installation (once)
 
@@ -26,8 +28,7 @@ Skill installation refuses to overwrite an existing directory.
 ## One-file workflow
 
 ```sh
-ppte enhance /workspace/draft.html --out /user/作品.html
-ppte edit /user/作品.html
+ppte enhance /workspace/draft.html --out /user/作品.ppte.html
 ```
 
 Keep drafts and source media in the workspace. Enhancement embeds authorized
@@ -35,12 +36,25 @@ local resources, preserves native CSS, and refuses existing output files.
 No PDF or sidecar is produced. The summary reports visual checks as unverified;
 use already available browser tools for optional layout inspection.
 
-`edit` opens the same HTML in a loopback editor bound to its original path.
-Keep the process running. Edits autosave after about 800 ms of inactivity;
-“已保存到原文件” requires a successful write. Stop and repeat the same command to
-reopen the original; the session link rotates. Directly opening HTML supports
-reading and clean presentation. Without file write permission, browser drafts
-are not original-file saves. Native Safari/file-picker journeys remain pending.
+Open `/user/作品.ppte.html` directly in a supported browser (file://).
+Existing `.html` remains readable; this naming convention is not a new ZIP/IR
+format and does not rename existing files.
+
+Original-file autosave requires actual writable-file authorization, not just API
+presence. Confirm a write only after close and readback verification. Without an
+API or when permission is denied, the contract requires complete editing and a
+complete updated-file download. Drafts/downloads are never saved to the original;
+download initiation means “已生成更新文件；原文件未覆盖”, not confirmed download to disk.
+Cancellation, conflicts and storage failures must retain edits and disclose the
+limitation. Browser storage is a convenience, not a reliable original-file copy.
+
+The loopback recommendation is retired; a service must not become the fallback
+for missing browser permissions. **S01/S02 pending:** the current legacy
+`ppte edit FILE [--no-open] [--port=PORT]` still starts loopback. Its planned
+replacement opens the file in the default browser and exits. Direct-open controls
+and capability-based save UX are not yet accepted. Do not present legacy service
+journeys as proof of this contract. Safari and native file-picker journeys remain
+pending, as does human confirmation.
 
 ## Optional PDF
 
@@ -53,10 +67,15 @@ Playwright, Chrome and macOS Swift/PDFKit; it is not an install prerequisite.
 
 ## Recovery and rollback
 
-Save conflicts stop writes: reread the disk version or preserve your draft
-before retrying. The editor's recovery versions live in the application cache
-(`~/.local/share/ppte-html`); use “恢复上一版本” through the recovery UI. Never delete that cache before recovering work.
-No interruption or power-loss guarantee beyond the recorded H02 tests is implied.
+Under the new contract, conflicts stop writes: retain/download current edits or
+explicitly reread the disk version. A copied/moved file must not silently restore
+another file's draft. Reopening must check actual permission again. S02 will
+verify these direct-file recovery paths; no power-loss guarantee is implied.
+
+For users recovering work from the **legacy optional service only**, its recovery
+versions remain in `~/.local/share/ppte-html`; use “恢复上一版本” through that legacy
+UI and keep the cache until recovery is complete. This migration note does not
+make the service or its cache a prerequisite for using new files.
 
 To roll back the candidate, stop its editor and restore your previous command
 alias and Agent skill selection. You can retain or remove only the isolated

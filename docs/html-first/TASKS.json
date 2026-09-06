@@ -652,5 +652,13 @@
       ]
     }
   ],
-  "reviewDisposition": "docs/html-first/REVIEW_DISPOSITION.md"
+  "reviewDisposition": "docs/html-first/REVIEW_DISPOSITION.md",
+  "historicalContractNote": "planVersion/defaultDeliverable and H00–H06 records below are immutable historical criteria, not current delivery instructions.",
+  "currentContract": {
+    "version": "single-file-first-1.1",
+    "path": "CONTRACT.md",
+    "defaultDeliverable": "one .ppte.html",
+    "defaultUseEntry": "file://",
+    "tasks": "../single-file-first/TASKS.json"
+  }
 }

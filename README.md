@@ -1,13 +1,28 @@
-# PPTe HTML-first
+# PPTe single-file-first
 
-Create a presentation as native HTML/CSS, deliver one self-contained HTML,
-edit it with `ppte edit 作品.html`, and autosave back to the original file.
-Open that file again to read or present; PDF is an explicit browser print action.
+Deliver one self-contained `作品.ppte.html`: the work, editor and presenter in
+one file. The default use entry is **file://**, opened directly in a supported
+browser, without Node, installation, network or a running service for readers.
+Existing `.html` files remain readable and are never automatically rewritten.
+PDF is an explicit browser print action.
 
-See [installation, workflow and recovery](README-AGENT.md) and the authoritative
-[HTML-first plan](docs/html-first/README.md). This is a local candidate, not an
-npm publication. H00/H02/H04/H06 retain their documented real-browser and human
-verification gaps; packaging does not close those gaps.
+Original-file autosave requires actual browser write authorization. Without it,
+the contract requires full editing and a complete updated-file download;
+a draft or download must never be called saved to the original file.
+The former loopback recommendation is retired, including as a required fallback.
+
+**Implementation status:** S00 freezes this contract; S01/S02 direct-open controls,
+`ppte edit` open-and-exit behavior and capability-based save UX remain pending.
+The current legacy `ppte edit` still starts a service. Do not use that path as
+single-file acceptance evidence. Safari, native picker and human acceptance are
+pending; the new contract does not certify those capabilities.
+
+See [installation, workflow and recovery](README-AGENT.md), the authoritative
+[single-file-first plan](docs/single-file-first/PLAN.md),
+[tasks](docs/single-file-first/TASKS.json) and [contract](docs/html-first/CONTRACT.md).
+This is a local candidate, not an npm publication.
+
+Development and release verification (not required to open a delivered file):
 
 ```sh
 pnpm install --frozen-lockfile

@@ -7,7 +7,9 @@ import { pathToFileURL } from 'node:url';
 import { gzipSync } from 'node:zlib';
 import { spawnSync } from 'node:child_process';
 const moduleUrl = pathToFileURL(resolve('scripts/html-benchmark.mjs')).href;
-const { CONTRACT, validateContract, evaluate, hash, artifact, capture } = await import(moduleUrl);
+const { H00_CONTRACT: CONTRACT, validateContract: validateVersionedContract, evaluate, hash, artifact, capture } = await import(moduleUrl);
+// All existing H00 assertions still run against their original frozen version.
+const validateContract = (contract: unknown) => validateVersionedContract(contract, CONTRACT.version);
 const root = 'docs/html-first/evidence/h00';
 const manifest = JSON.parse(readFileSync(join(root, 'manifest.json'), 'utf8'));
 const baseline = JSON.parse(readFileSync(join(root, 'baseline.json'), 'utf8'));

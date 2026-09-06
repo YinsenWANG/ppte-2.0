@@ -1,0 +1,61 @@
+{
+  "task": "S00",
+  "basisCommit": "9856db3cef4da0d6ea6aca5a46b7039a166b995c",
+  "implementationCommit": null,
+  "environment": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "node": "v22.23.2",
+    "pnpm": "11.22.0"
+  },
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "log": "typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "exitCode": 0,
+      "log": "build.log"
+    },
+    {
+      "command": "pnpm test",
+      "exitCode": 0,
+      "log": "test.log"
+    },
+    {
+      "command": "node --test dist/tests/single-file-contract.test.js",
+      "exitCode": 0,
+      "log": "focused.log"
+    }
+  ],
+  "tests": {
+    "before": 53,
+    "added": 5,
+    "removed": 0,
+    "weakenedAssertions": 0,
+    "passed": 58,
+    "failed": 0,
+    "skipped": 0
+  },
+  "historicalFilesVerified": 492,
+  "statusByLayer": {
+    "code": {
+      "status": "passed",
+      "scope": "Versioned contract, active documentation, CLI help and Skill migration guidance"
+    },
+    "automation": {
+      "status": "passed",
+      "tests": 58,
+      "log": "docs/single-file-first/evidence/s00/verification/test.log"
+    },
+    "realBrowser": {
+      "status": "pending",
+      "reason": "No new S00 direct-file acceptance journey; Safari/native picker/no-Node target are S01/S02/S07 work. Existing Chrome automation is not native picker acceptance."
+    },
+    "human": {
+      "status": "pending",
+      "reason": "No human reviewer session; model telemetry and real low-performance-device measurements also remain pending in subsequent tasks."
+    }
+  }
+}

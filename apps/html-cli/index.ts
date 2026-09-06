@@ -8,7 +8,14 @@ import { spawn } from 'node:child_process';
 import { enhanceHTML } from '../../packages/html-document/src/index.js';
 
 export async function runHTMLCli(args: string[]) {
-  if (args.length === 0 || args[0] === '--help') return {ok:true,commands:['ppte enhance input.html --out 作品.html','ppte edit 作品.html [--no-open] [--port=PORT]','ppte skill-install --out DIRECTORY'],pdf:'Open HTML → More → Export PDF. Browser print is optional; generation requires only Node.js.'};
+  if (args.length === 0 || args[0] === '--help') return {
+    ok:true, contract:'single-file-first-1.1',
+    commands:['ppte enhance input.html --out 作品.ppte.html','ppte skill-install --out DIRECTORY'],
+    entry:'Open 作品.ppte.html directly (file://). Readers require no Node or service. Existing .html remains readable.',
+    save:'Original-file autosave requires actual write authorization; otherwise download a complete updated file. Draft/download is not saved to the original.',
+    migration:'S01/S02 pending: direct-open controls and save UX are not yet accepted. Legacy ppte edit FILE [--no-open] [--port=PORT] still starts loopback; its recommendation is retired. Target: open file and exit.',
+    pdf:'Optional browser print: More → Export PDF. Node.js is for authoring only.',
+  };
   if (args[0] === 'skill-install') {
     if(args.length!==3 || args[1]!=='--out')throw Error('USAGE: ppte skill-install --out DIRECTORY');
     const out=resolve(args[2]);
@@ -33,7 +40,7 @@ export async function runHTMLCli(args: string[]) {
     process.once('SIGTERM',()=>void editor.close());process.once('SIGINT',()=>void editor.close());
     return {ok:true,url:editor.url,path:file,hint:'Keep this process running. Restart with the same command and open its new session link.'};
   }
-  if (args.length !== 4 || args[0] !== 'enhance' || args[2] !== '--out' || !/\.html$/i.test(args[3])) throw Error('USAGE: ppte enhance input.html --out 作品.html');
+  if (args.length !== 4 || args[0] !== 'enhance' || args[2] !== '--out' || !/\.html$/i.test(args[3])) throw Error('USAGE: ppte enhance input.html --out 作品.ppte.html');
   const input = resolve(args[1]), output = resolve(args[3]);
   if (input === output) throw Error('OUTPUT_MUST_BE_NEW');
   const result = await enhanceHTML(await readFile(input, 'utf8'), { root: dirname(input), base: dirname(input) });

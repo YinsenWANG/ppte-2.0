@@ -11,11 +11,96 @@
   "saveContract": "Direct-open editing is always available on supported browsers. Original-file autosave requires actual writable-handle authorization; otherwise provide a complete updated-file download and never claim original-file save.",
   "tasks": [
     {
-      "id": "S00", "title": "冻结并统一单文件使用合同", "status": "planned", "dependsOn": [],
-      "targetAreas": ["README.md", "README-AGENT.md", "docs/html-first/CONTRACT.md", "docs/html-first/TASKS.json", "scripts/html-benchmark.mjs", "tests/html-first-baseline.test.ts"],
-      "deliverables": ["统一 .ppte.html 默认命名、file:// 默认使用和能力分级保存", "旧 loopback 推荐策略显式退休，旧 .html 仍可读取", "更新合同版本及相关断言，保留旧快照和新旧映射"],
-      "acceptance": ["文档、CLI 帮助、Skill 和测试不再相互矛盾", "没有新 MCP/Office/QuickJS/Electron 或常驻服务要求", "版本改变不伪造旧基线已通过，既有样稿与用户文件不被改写"],
-      "requiredEvidence": ["contract-diff", "old-new-criteria-map"], "evidence": null
+      "id": "S00",
+      "title": "冻结并统一单文件使用合同",
+      "status": "partial",
+      "dependsOn": [],
+      "targetAreas": [
+        "README.md",
+        "README-AGENT.md",
+        "docs/html-first/CONTRACT.md",
+        "docs/html-first/TASKS.json",
+        "scripts/html-benchmark.mjs",
+        "tests/html-first-baseline.test.ts"
+      ],
+      "deliverables": [
+        "统一 .ppte.html 默认命名、file:// 默认使用和能力分级保存",
+        "旧 loopback 推荐策略显式退休，旧 .html 仍可读取",
+        "更新合同版本及相关断言，保留旧快照和新旧映射"
+      ],
+      "acceptance": [
+        "文档、CLI 帮助、Skill 和测试不再相互矛盾",
+        "没有新 MCP/Office/QuickJS/Electron 或常驻服务要求",
+        "版本改变不伪造旧基线已通过，既有样稿与用户文件不被改写"
+      ],
+      "requiredEvidence": [
+        "contract-diff",
+        "old-new-criteria-map"
+      ],
+      "evidence": {
+        "scope": "Contract freeze only; S01/S02 runtime and native journeys are not certified.",
+        "implementationCommit": null,
+        "report": "docs/single-file-first/evidence/s00/REPORT.md",
+        "requiredEvidence": {
+          "contract-diff": "docs/single-file-first/evidence/s00/contract-diff.md",
+          "old-new-criteria-map": "docs/single-file-first/evidence/s00/old-new-criteria-map.md"
+        },
+        "verification": "docs/single-file-first/evidence/s00/verification/result.json",
+        "acceptance": [
+          {
+            "criterion": "文档、CLI 帮助、Skill 和测试不再相互矛盾",
+            "status": "passed",
+            "tests": [
+              "tests/single-file-contract.test.ts",
+              "tests/html-first-baseline.test.ts"
+            ],
+            "evidence": "docs/single-file-first/evidence/s00/old-new-criteria-map.md",
+            "log": "docs/single-file-first/evidence/s00/verification/test.log"
+          },
+          {
+            "criterion": "没有新 MCP/Office/QuickJS/Electron 或常驻服务要求",
+            "status": "passed",
+            "tests": [
+              "tests/single-file-contract.test.ts",
+              "tests/html-first-baseline.test.ts"
+            ],
+            "evidence": "docs/single-file-first/evidence/s00/old-new-criteria-map.md",
+            "log": "docs/single-file-first/evidence/s00/verification/test.log"
+          },
+          {
+            "criterion": "版本改变不伪造旧基线已通过，既有样稿与用户文件不被改写",
+            "status": "passed",
+            "tests": [
+              "tests/single-file-contract.test.ts",
+              "tests/html-first-baseline.test.ts"
+            ],
+            "evidence": "docs/single-file-first/evidence/s00/old-new-criteria-map.md",
+            "log": "docs/single-file-first/evidence/s00/verification/test.log"
+          }
+        ],
+        "statusByLayer": {
+          "code": {
+            "status": "passed",
+            "scope": "Versioned contract, active documentation, CLI help and Skill migration guidance"
+          },
+          "automation": {
+            "status": "passed",
+            "tests": 58,
+            "log": "docs/single-file-first/evidence/s00/verification/test.log"
+          },
+          "realBrowser": {
+            "status": "pending",
+            "reason": "No new S00 direct-file acceptance journey; Safari/native picker/no-Node target are S01/S02/S07 work. Existing Chrome automation is not native picker acceptance."
+          },
+          "human": {
+            "status": "pending",
+            "reason": "No human reviewer session; model telemetry and real low-performance-device measurements also remain pending in subsequent tasks."
+          }
+        },
+        "remaining": [
+          "Signed implementation commit reference will be recorded in the evidence closure commit."
+        ]
+      }
     },
     {
       "id": "S01", "title": "单 HTML 独立阅读、编辑与放映入口", "status": "planned", "dependsOn": ["S00"],

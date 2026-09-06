@@ -8,7 +8,7 @@ import { spawnSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 
 export const hash = bytes => createHash('sha256').update(bytes).digest('hex');
-export const CONTRACT = {
+export const H00_CONTRACT = {
   version: 'html-first-1.0', authorityCommit: 'bbcd46bde2c608b5a56e617f316c5dcb5534857e',
   defaultDeliverables: ['html'], optionalExports: ['pdf'],
   representation: 'DOM/CSS', requiredAttributes: ['data-ppte-slide', 'data-ppte-id'],
@@ -17,8 +17,22 @@ export const CONTRACT = {
   saveSuccess: 'original-file-write-confirmed', draftIsSaved: false,
   retired: ['PPTX', 'PPT', 'Office', 'ODP', 'Keynote', '.ppte', 'CAS', 'Portable profiles', 'Presentation IR', 'Recipe'],
 };
-export function validateContract(contract) {
-  if (JSON.stringify(contract) !== JSON.stringify(CONTRACT)) throw Error('HTML contract differs from frozen H00 contract');
+// Version selection is explicit: historical evidence must never be relabelled as S00.
+export const CONTRACT = {
+  ...H00_CONTRACT,
+  version: 'single-file-first-1.1', authorityCommit: '9856db3cef4da0d6ea6aca5a46b7039a166b995c',
+  defaultDeliverables: ['ppte.html'], readableExtensions: ['.html', '.ppte.html'],
+  defaultUseEntry: 'file://', readerRequirements: ['supported-browser'],
+  defaultPipeline: ['author-html', 'enhance', 'static-check', 'optional-visual-check', 'deliver-ppte.html'],
+  saveSuccess: 'original-file-write-close-and-readback-confirmed',
+  originalFileAutosave: 'actual-writable-handle-authorization-required',
+  fallback: 'complete-updated-ppte.html-download', downloadIsSaved: false,
+  requiredService: false, loopbackRecommendation: 'retired',
+  editCommandTarget: 'open-file-and-exit',
+};
+export function validateContract(contract, version = CONTRACT.version) {
+  const expected = version === H00_CONTRACT.version ? H00_CONTRACT : version === CONTRACT.version ? CONTRACT : null;
+  if (!expected || JSON.stringify(contract) !== JSON.stringify(expected)) throw Error('HTML contract differs from selected frozen contract');
 }
 export function artifact(root, ref) {
   if (!ref || typeof ref.path !== 'string' || isAbsolute(ref.path)) throw Error('missing/absolute artifact');
@@ -32,10 +46,10 @@ export function artifact(root, ref) {
 const finite = n => typeof n === 'number' && Number.isFinite(n) && n >= 0;
 const integer = n => finite(n) && Number.isInteger(n);
 const phases = ['installation', 'research', 'generation', 'tool', 'correction', 'total'];
-export function evaluate(manifest, evidence, root) {
+export function evaluate(manifest, evidence, root, contractVersion = H00_CONTRACT.version) {
   const pending = [], errors = [];
   try {
-    validateContract(manifest.contract);
+    validateContract(manifest.contract, contractVersion);
     if (manifest.version !== 1 || manifest.repetitions !== 3 || manifest.materials.length !== 3) throw Error('three materials / three pairs required');
     if (new Set(manifest.materials.map(m => m.id)).size !== 3) throw Error('duplicate material');
     for (const m of manifest.materials) {
