@@ -1,0 +1,31 @@
+{
+  "runtime": {
+    "rawBytes": 287678,
+    "gzipBytes": 83659
+  },
+  "decks": [
+    {
+      "name": "cherry",
+      "pages": 12,
+      "rawBytes": 301744,
+      "gzipBytes": 87923,
+      "mediaBytes": 0
+    },
+    {
+      "name": "product",
+      "pages": 12,
+      "rawBytes": 301392,
+      "gzipBytes": 87762,
+      "mediaBytes": 0
+    },
+    {
+      "name": "data",
+      "pages": 12,
+      "rawBytes": 302430,
+      "gzipBytes": 87970,
+      "mediaBytes": 0
+    }
+  ],
+  "tarballBytes": 182704,
+  "unpackedBytes": 708381
+}

@@ -1,13 +1,25 @@
 #!/usr/bin/env node
 import { realpathSync } from 'node:fs';
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, cp, readdir } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { startEditor, digest } from '../../packages/html-save/src/index.js';
 import { spawn } from 'node:child_process';
 import { enhanceHTML } from '../../packages/html-document/src/index.js';
 
 export async function runHTMLCli(args: string[]) {
+  if (args.length === 0 || args[0] === '--help') return {ok:true,commands:['ppte enhance input.html --out 作品.html','ppte edit 作品.html [--no-open] [--port=PORT]','ppte skill-install --out DIRECTORY'],pdf:'Open HTML → More → Export PDF. Browser print is optional; generation requires only Node.js.'};
+  if (args[0] === 'skill-install') {
+    if(args.length!==3 || args[1]!=='--out')throw Error('USAGE: ppte skill-install --out DIRECTORY');
+    const out=resolve(args[2]);
+    const here=dirname(fileURLToPath(import.meta.url));
+    let source=resolve(here,'skills/ppte');
+    try {await readdir(source);} catch {source=resolve(here,'../../../skills/ppte');}
+    // Exclusive directory creation protects existing user skills, including symlinks.
+    await mkdir(dirname(out),{recursive:true});await mkdir(out);
+    for(const name of await readdir(source)) await cp(resolve(source,name),resolve(out,name),{recursive:true,errorOnExist:true,force:false});
+    return {ok:true,path:out,hint:'Installed once; reuse for future presentations. Existing skills are never overwritten.'};
+  }
   if(args[0] === 'edit') {
     if(!args[1] || args.slice(2).some(x=>x!=='--no-open' && !/^--port=\d+$/.test(x)))throw Error('USAGE: ppte edit file.html [--no-open] [--port=PORT]');
     const file=resolve(args[1]);
@@ -21,7 +33,7 @@ export async function runHTMLCli(args: string[]) {
     process.once('SIGTERM',()=>void editor.close());process.once('SIGINT',()=>void editor.close());
     return {ok:true,url:editor.url,path:file,hint:'Keep this process running. Restart with the same command and open its new session link.'};
   }
-  if (args.length !== 4 || args[0] !== 'enhance' || args[2] !== '--out' || !/\.html$/i.test(args[3])) throw Error('USAGE: ppte-html enhance input.html --out 作品.html');
+  if (args.length !== 4 || args[0] !== 'enhance' || args[2] !== '--out' || !/\.html$/i.test(args[3])) throw Error('USAGE: ppte enhance input.html --out 作品.html');
   const input = resolve(args[1]), output = resolve(args[3]);
   if (input === output) throw Error('OUTPUT_MUST_BE_NEW');
   const result = await enhanceHTML(await readFile(input, 'utf8'), { root: dirname(input), base: dirname(input) });

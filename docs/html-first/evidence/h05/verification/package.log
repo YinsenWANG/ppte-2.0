@@ -1,0 +1,24 @@
+$ pnpm package:stage && npm pack ./artifacts/npm-package --pack-destination artifacts
+$ pnpm build && node scripts/stage-package.mjs
+$ node scripts/build-html.mjs --clean && tsc -p tsconfig.build.json
+/private/tmp/ppte5/artifacts/npm-package
+npm notice
+npm notice 📦  ppte-html@1.0.0-html.0
+npm notice Tarball Contents
+npm notice 11.2kB LICENSE
+npm notice 3.7kB README.md
+npm notice 106.0kB dependency-graph.json
+npm notice 375B package.json
+npm notice 583.7kB ppte.js
+npm notice 3.4kB skills/ppte/SKILL.md
+npm notice Tarball Details
+npm notice name: ppte-html
+npm notice version: 1.0.0-html.0
+npm notice filename: ppte-html-1.0.0-html.0.tgz
+npm notice package size: 182.7 kB
+npm notice unpacked size: 708.3 kB
+npm notice shasum: 33242aad62ad9b8b8b2ae8b6d7424af2927e8816
+npm notice integrity: sha512-jk9cCA36xNWfi[...]YLHNFwciw+FAw==
+npm notice total files: 6
+npm notice
+ppte-html-1.0.0-html.0.tgz

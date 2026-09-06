@@ -1,89 +1,69 @@
-# PPTe: Skill + npm CLI
+# PPTe HTML-first candidate
 
-The recommended integration is the native `ppte` Skill plus a file-based CLI. The existing host Agent reads materials and writes Presentation IR; PPTe compiles, validates, previews, commits and delivers deterministically. It does not start another Agent, store model credentials, listen on a port, or require an MCP daemon.
+Write ordinary HTML/CSS, enhance it once, deliver **one HTML**. The HTML is the
+work, editable source and presentation entry. Use Node.js 22 or newer. Basic
+generation has no runtime npm dependencies, browser download, Python, Office,
+model key or MCP service. This candidate is not a registry publication.
 
-## Build and install
+## Independent installation (once)
 
-```sh
-pnpm install --frozen-lockfile
-pnpm package:pack
-npm install -g ./artifacts/ppte-cli-*.tgz
-ppte --help
-```
-
-The tarball is locally installable. It has **not** been published to the npm registry; do not run `npx ppte-cli` against an unrelated public package. `npm exec --package=/absolute/path/ppte-cli-<version>.tgz -- ppte --help` is an alternative to global installation.
-
-Install the same native skill in the directory your Agent scans, for example:
+Build in this checkout: `pnpm install --frozen-lockfile && pnpm package:pack`.
+Install the exact local tarball into a separate directory; keep your current
+installation and its skill unchanged:
 
 ```sh
-ppte skill-install --out ~/.codex/skills/ppte
-# Claude Code example:
-ppte skill-install --out ~/.claude/skills/ppte
+npm install --prefix "$HOME/.local/ppte-html-candidate" --offline --ignore-scripts /absolute/path/ppte-html-1.0.0-html.0.tgz
+"$HOME/.local/ppte-html-candidate/node_modules/.bin/ppte" --help
+"$HOME/.local/ppte-html-candidate/node_modules/.bin/ppte" skill-install --out "$HOME/.codex/skills/ppte-html-candidate"
 ```
 
-Other hosts can use the same SKILL.md when they support native skills and local shell execution. Configure their documented skill directory; MCP remains available when the host only exposes MCP tools. Live end-to-end runs in each named Agent client are a separate integration gate.
+Use this absolute command or a shell alias for `ppte`; do not replace the old
+global executable. Point your Agent at the installed skill once and reuse it.
+Skill installation refuses to overwrite an existing directory.
 
-## File workflow
+## One-file workflow
 
 ```sh
-ppte compile design.json --out presentation.ppte
-ppte inspect presentation.ppte
-ppte preview presentation.ppte --transaction edit.json --out review.json
-ppte commit presentation.ppte --preview review.json
-ppte deliver presentation.ppte
-ppte host --out editor.html
+ppte enhance /workspace/draft.html --out /user/作品.html
+ppte edit /user/作品.html
 ```
 
-The primary deliverable is `presentation.editable.ppte.html`: open in a browser, edit, save an editable copy, reopen. `.ppte` remains the semantic source project and opens in the Host. The CLI gives exact paths and roles in its JSON response.
+Keep drafts and source media in the workspace. Enhancement embeds authorized
+local resources, preserves native CSS, and refuses existing output files.
+No PDF or sidecar is produced. The summary reports visual checks as unverified;
+use already available browser tools for optional layout inspection.
 
-`ppte schema presentation`, `ppte schema slide`, `ppte schema transaction` and `ppte schema query_elements` provide contracts. Use `--args file.json` for tool arguments. Preview is read-only; commit binds the preview to both the transaction and current revision. Concurrent writers receive `PROJECT_BUSY`; stale previews receive `REVISION_CONFLICT`. Undo/redo persist in the project between CLI processes.
+`edit` opens the same HTML in a loopback editor bound to its original path.
+Keep the process running. Edits autosave after about 800 ms of inactivity;
+“已保存到原文件” requires a successful write. Stop and repeat the same command to
+reopen the original; the session link rotates. Directly opening HTML supports
+reading and clean presentation. Without file write permission, browser drafts
+are not original-file saves. Native Safari/file-picker journeys remain pending.
 
-Compilation, validation, editing and HTML delivery require only Node and the package's small runtime dependency. PDF/PNG and raster PPTX exports additionally need Playwright and Chromium:
+## Optional PDF
 
-```sh
-npx playwright install chromium
-ppte export presentation.ppte --format pdf --out presentation.pdf
-```
+Open the HTML in an installed browser, choose More → Export PDF, and use the
+browser print dialog. This toolchain is separate from Node-only generation.
+No automated PDF dependency is installed with the package. The repository's
+`node --test dist/tests/html-player.test.js` separately exercises actual Chrome
+printing and macOS PDFKit page/text inspection. It requires development
+Playwright, Chrome and macOS Swift/PDFKit; it is not an install prerequisite.
 
-## Optional MCP adapter
+## Recovery and rollback
 
-MCP is retained for clients that expose MCP tools but cannot invoke a shell. It shares the same Core and file adapter. A client configuration can still launch:
+Save conflicts stop writes: reread the disk version or preserve your draft
+before retrying. The editor's recovery versions live in the application cache
+(`~/.local/share/ppte-html`); use “恢复上一版本” through the recovery UI. Never delete that cache before recovering work.
+No interruption or power-loss guarantee beyond the recorded H02 tests is implied.
 
-```json
-{"command":"node","args":["/absolute/checkout/dist/apps/mcp/index.js","/absolute/path/presentation.ppte"]}
-```
+To roll back the candidate, stop its editor and restore your previous command
+alias and Agent skill selection. You can retain or remove only the isolated
+candidate install directory. This does not rewrite HTML or delete user files.
+Already generated HTML retains its embedded runtime; reinstalling a package does
+not upgrade it. Back up a work before requesting explicit changes to that work.
 
-Use `--readonly` to remove mutation tools. A writable MCP session detects when another client changes its file and rejects stale mutations; reopen the session to inspect the new revision. The CLI has no persistent session and reopens the source each time.
-
-| Decision | Skill + CLI | stdio MCP |
-|---|---|---|
-| Setup | Install package and native skill | Configure a server in each host |
-| Discovery | CLI help, JSON schemas, skill references | Typed tool discovery in the client |
-| Lifetime | Short process per invocation | Usually a child process per session |
-| State | Versioned project, persisted history, preview receipt | In-memory session plus checkpoints |
-| Permissions | Host shell permissions plus Core scope/contract | Client tool permissions plus Core scope/contract |
-| Best fit | Local file authoring and batch workflows | MCP-only hosts and repeated low-latency calls |
-
-A Skill is guidance, not an access-control boundary. Validation, locks, scopes and revisions are enforced by the executable. The CLI removes a transport dependency; it does not replace the browser editor needed for manual changes.
-
-## Review, recovery and layout editing
-
-```sh
-ppte validate presentation.ppte
-ppte diff presentation.ppte --revised revised.ppte --base original.ppte
-ppte patch-create original.ppte --revised revised.ppte --out changes.ppte.patch
-ppte patch-preview presentation.ppte --patch changes.ppte.patch --out patch-review.json
-ppte commit presentation.ppte --preview patch-review.json --confirmed
-```
-
-Patch receipts bind their embedded resource bytes as well as the transaction. An adjacent `.ppte.cas` directory retains content-addressed bytes required by recovery and undo; keep it together with the project and its journal while editing. A stale patch is rejected; use the Host's three-way Review panel to resolve divergent versions.
-
-The offline Host persists the active project's base/resources in IndexedDB and checksummed edits in localStorage before committing. Refresh restores edits and undo/redo. Its footer distinguishes browser recovery protection from a saved project file. Browser storage is local to this editor URL/profile; clearing it removes recovery protection. Save the `.ppte` or editable HTML for transfer. A damaged recovery record is preserved and opens read-only rather than being silently discarded.
-
-Host tools include group move/resize, alignment/distribution, text marks and presets, page order/delete, image replacement, layout/re-design preview, and field-level revised-copy review. Embedded fonts are mounted; actual browser text bounds provide overflow diagnostics and an explicit fit action. The non-browser compiler continues to use deterministic reference font metrics; exports must still be visually checked with their actual fonts.
-
-Layout Studio edits data-only zones/constraints, saves immutable local versions, imports/exports recipes, and runs text-length/CJK/metric/image-ratio samples with rendered previews and downloadable diagnostic/draft snapshots. Load an earlier report to detect changed draft hashes. Local acceptance counts record only confirmed applications in that browser; they are not global user-quality statistics. A case with no source image does not establish image-ratio coverage.
-
-See `docs/PRODUCT_COMPLETION_2026-09-05.md` for the completed audit work, evidence and explicit integration boundaries.
-
-Run `ppte --version` to record the installed application version. Packaging reads the root `package.json`; `build-manifest.json` records that version and a SHA-256 digest of the embedded runtime. Portable copies include the same information. These content digests detect changes; they do not authenticate the publisher. Confirmed replacement retains the previous editable HTML at `.previous` (or a numbered sibling) for recovery.
+Legacy tools remain at Git commit `7c1a6c46676566e346edc2af24974752d4288897`
+and under `archive/legacy` for historical inspection. For a complete runnable
+legacy environment, create a separate detached checkout at that commit and use
+its installation instructions. Existing legacy projects stay with that tool;
+they are not opened, migrated, removed or rewritten by this candidate.

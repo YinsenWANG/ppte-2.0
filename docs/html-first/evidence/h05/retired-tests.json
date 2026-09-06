@@ -1,0 +1,306 @@
+{
+  "basisCommit": "033460300ac21cd62359ca0aa550b5bff1aed67c",
+  "reason": "Scope retirement under REVIEW_DISPOSITION: no active HTML imports; original assertions preserved byte-for-byte outside new build. Not passed or repaired.",
+  "files": [
+    {
+      "original": "tests/animation-step-contract.test.ts",
+      "archive": "archive/legacy/tests/animation-step-contract.test.ts",
+      "sha256": "9de58174b60ce8b3dad89e7da89273c729748d90d9abc960dc1e81095d895e35"
+    },
+    {
+      "original": "tests/artifact-identity.test.ts",
+      "archive": "archive/legacy/tests/artifact-identity.test.ts",
+      "sha256": "e7fbc6fe60d2eab4d713e29099f2a0a716c3bef4a72fff1b19ed92c8086b1558"
+    },
+    {
+      "original": "tests/authoring-benchmark.test.ts",
+      "archive": "archive/legacy/tests/authoring-benchmark.test.ts",
+      "sha256": "adf59823a80411f9ff281fde24fb88dd41ab047d12ca824304e2440777052cab"
+    },
+    {
+      "original": "tests/background-job-contract.test.ts",
+      "archive": "archive/legacy/tests/background-job-contract.test.ts",
+      "sha256": "e4b4094120f4c6b2b1fab35f22279755ea8e584ad91ef3091e09d38188284ec3"
+    },
+    {
+      "original": "tests/canonical-validation.test.ts",
+      "archive": "archive/legacy/tests/canonical-validation.test.ts",
+      "sha256": "f1e7c49d856a035ba02947a595a5abec8ade48a4c03f8cf021c062c580990b36"
+    },
+    {
+      "original": "tests/client-acceptance.test.ts",
+      "archive": "archive/legacy/tests/client-acceptance.test.ts",
+      "sha256": "b68e54112a8b577a87f39688cc278149168b8161ffacfa740c00c35dfc79a724"
+    },
+    {
+      "original": "tests/deck-layout-planning.test.ts",
+      "archive": "archive/legacy/tests/deck-layout-planning.test.ts",
+      "sha256": "eaac243bda493873ffdbb2e9d90fd8e2e4b5b7441f498b465772ae09639900ef"
+    },
+    {
+      "original": "tests/delivery-policy.test.ts",
+      "archive": "archive/legacy/tests/delivery-policy.test.ts",
+      "sha256": "1be38cb42e3b563d8109fa3acc167acbfacf30f16895c8b611c9b335b2c740e9"
+    },
+    {
+      "original": "tests/delivery.test.ts",
+      "archive": "archive/legacy/tests/delivery.test.ts",
+      "sha256": "1b649e3cd36ea0290164350260778bd99ba39230c7e0491669cffa5de8b4cb7b"
+    },
+    {
+      "original": "tests/design-edit-protection.test.ts",
+      "archive": "archive/legacy/tests/design-edit-protection.test.ts",
+      "sha256": "bf0ec9bb4d3e949a8c9ccac6aa17777ee4a7b581e12614b1cdfdae903407f4f3"
+    },
+    {
+      "original": "tests/design-pack-coverage.test.ts",
+      "archive": "archive/legacy/tests/design-pack-coverage.test.ts",
+      "sha256": "eb68fea325bc4fc540fbd4fb43aec23397dd1da8805e4c54ab62ba015410bd8a"
+    },
+    {
+      "original": "tests/design-system-contract.test.ts",
+      "archive": "archive/legacy/tests/design-system-contract.test.ts",
+      "sha256": "1cb0c1729a0ec281f799bd0d50822bf0dd76081212d252e3ed97a82996dd4e27"
+    },
+    {
+      "original": "tests/editor-controller.test.ts",
+      "archive": "archive/legacy/tests/editor-controller.test.ts",
+      "sha256": "91ee748a9759c16ea0949fe5f1a37f12796c866ab36919f4d790ff5192dab623"
+    },
+    {
+      "original": "tests/editor-parity-journey.test.ts",
+      "archive": "archive/legacy/tests/editor-parity-journey.test.ts",
+      "sha256": "888d787621c5790189a7123aba87d4263a976a5548cb5a176d35175ee392aeb1"
+    },
+    {
+      "original": "tests/evolution-baseline.test.ts",
+      "archive": "archive/legacy/tests/evolution-baseline.test.ts",
+      "sha256": "1066bc26073d28fc34bd3ebb88773bf891f30be381085e506c8a02014beee96a"
+    },
+    {
+      "original": "tests/ga-a-stabilization.test.ts",
+      "archive": "archive/legacy/tests/ga-a-stabilization.test.ts",
+      "sha256": "5d9d83e7360cc1c83f6400cc598f7a3425da6f0f2a28ceadd8c0c10ca4042852"
+    },
+    {
+      "original": "tests/ga-b.test.ts",
+      "archive": "archive/legacy/tests/ga-b.test.ts",
+      "sha256": "6daef10647322bad4754357f4807ebfe77b6cadbf9e0aa7c55792e31a20d9758"
+    },
+    {
+      "original": "tests/ga-c.test.ts",
+      "archive": "archive/legacy/tests/ga-c.test.ts",
+      "sha256": "08b5765a6ec26c56f177beef49718156903aa92e9dbbb2fcec652d01546f71ec"
+    },
+    {
+      "original": "tests/history-inverse-roundtrip.test.ts",
+      "archive": "archive/legacy/tests/history-inverse-roundtrip.test.ts",
+      "sha256": "cf04ff5be16726b72dcb24a714dbff5f360e87d7f0581376c913b18d312cbacc"
+    },
+    {
+      "original": "tests/history-repair.test.ts",
+      "archive": "archive/legacy/tests/history-repair.test.ts",
+      "sha256": "764f6f6e5b6d4f606ee3f6f8f5ed257187f04f9950f4427741b6033c5bd85ef7"
+    },
+    {
+      "original": "tests/host-completion.test.ts",
+      "archive": "archive/legacy/tests/host-completion.test.ts",
+      "sha256": "d7558242b9ac91103810ba710305241c6cc8dac4cd203a567532a618f2bf9991"
+    },
+    {
+      "original": "tests/identity.test.ts",
+      "archive": "archive/legacy/tests/identity.test.ts",
+      "sha256": "9f7d251167d5f8c872355e6c8c1e7c40e0e998ea492f38865e9779f5acfd9a46"
+    },
+    {
+      "original": "tests/image-editing-journey.test.ts",
+      "archive": "archive/legacy/tests/image-editing-journey.test.ts",
+      "sha256": "74a876f162a949a7e33775e9f2de77b8779eb122446f3ca1f58276a2335214ce"
+    },
+    {
+      "original": "tests/incremental-rendering.test.ts",
+      "archive": "archive/legacy/tests/incremental-rendering.test.ts",
+      "sha256": "c73b1285510d93558e0ce9bf3718d2a52784d4733c460e7db412ee5d6e79e343"
+    },
+    {
+      "original": "tests/media-playback-journey.test.ts",
+      "archive": "archive/legacy/tests/media-playback-journey.test.ts",
+      "sha256": "4b0cef81b169e6be767efa300832d4e48873837793fabf28ee305cbd4aa95153"
+    },
+    {
+      "original": "tests/npm-native-skill.test.ts",
+      "archive": "archive/legacy/tests/npm-native-skill.test.ts",
+      "sha256": "882416675c6c10c30775596df9d309fa0d36439d47e8e13337b1dcb83095a42e"
+    },
+    {
+      "original": "tests/object-properties.test.ts",
+      "archive": "archive/legacy/tests/object-properties.test.ts",
+      "sha256": "a8245cf35833a93d2f1a7e65e72bb0b98d8bc7974f58acbbe962e2d18910ed3a"
+    },
+    {
+      "original": "tests/object-transform.test.ts",
+      "archive": "archive/legacy/tests/object-transform.test.ts",
+      "sha256": "5df02ea0f96ac60062d9f12ff886ce78bc63870a6cd82a6c8fa83ea72fdcd512"
+    },
+    {
+      "original": "tests/operation-matrix.test.ts",
+      "archive": "archive/legacy/tests/operation-matrix.test.ts",
+      "sha256": "27f5b23041d42da86a169d397cd30413bab48aaf30c52934c2b7660221dd0cc9"
+    },
+    {
+      "original": "tests/operations-contract.test.ts",
+      "archive": "archive/legacy/tests/operations-contract.test.ts",
+      "sha256": "0dbeaa1b664ee6f6d06d1673cbc25d316dad040a01b6eeb4216417e2b7bf32e2"
+    },
+    {
+      "original": "tests/performance-browser.test.ts",
+      "archive": "archive/legacy/tests/performance-browser.test.ts",
+      "sha256": "17c8dd6f4f8b8a64bcffc5139b9d65e700e1e2a111980f24c9bad3e050a94c4f"
+    },
+    {
+      "original": "tests/persistence.test.ts",
+      "archive": "archive/legacy/tests/persistence.test.ts",
+      "sha256": "7a1dc30501166b39200e0d5165636d6afaf58bee6825c75815f4c1af1ee5e034"
+    },
+    {
+      "original": "tests/portable-presentation.test.ts",
+      "archive": "archive/legacy/tests/portable-presentation.test.ts",
+      "sha256": "08c9fb352f7af2bdeb0bfef29130b3a70ae0cb27fec41bde721293b4ea45fcc3"
+    },
+    {
+      "original": "tests/pptx-table-native.test.ts",
+      "archive": "archive/legacy/tests/pptx-table-native.test.ts",
+      "sha256": "56cf1556e6e4d51a3957190c1952854aba3aa99e660c571b7e460ab5da4a6fd3"
+    },
+    {
+      "original": "tests/presentation-controller.test.ts",
+      "archive": "archive/legacy/tests/presentation-controller.test.ts",
+      "sha256": "8c25c8869d4f4530c8e835c3309792dfa7b786952c908e38343cf225913568ef"
+    },
+    {
+      "original": "tests/presenter-tools.test.ts",
+      "archive": "archive/legacy/tests/presenter-tools.test.ts",
+      "sha256": "d854e7fe3d5b2f8ea896e68744754926f7a72274228bd7f9c986ce1d7fb0f012"
+    },
+    {
+      "original": "tests/product-workflows.test.ts",
+      "archive": "archive/legacy/tests/product-workflows.test.ts",
+      "sha256": "609f2875627905587ac4438f250243589610313e336edfbfc56b0d7f61c631b4"
+    },
+    {
+      "original": "tests/r1-agent-editing.test.ts",
+      "archive": "archive/legacy/tests/r1-agent-editing.test.ts",
+      "sha256": "d9950d18c66a4a285f0e6208791948030f353775f0c4af2f6794b2b63bbfe1e7"
+    },
+    {
+      "original": "tests/r2-semantic-operations.test.ts",
+      "archive": "archive/legacy/tests/r2-semantic-operations.test.ts",
+      "sha256": "d366715a4e56560154a9e9e7ea69b45f01ef6603c33d76bf43faf1da14ce7403"
+    },
+    {
+      "original": "tests/r3-portable.test.ts",
+      "archive": "archive/legacy/tests/r3-portable.test.ts",
+      "sha256": "7960961628736b89cbaeb15dc376abbb88f08db90713bbdac4756611b5a7ccbd"
+    },
+    {
+      "original": "tests/r5-recovery.test.ts",
+      "archive": "archive/legacy/tests/r5-recovery.test.ts",
+      "sha256": "fef8d626a67453c6c46d214602fb9b266aeb23b2424e61e1522aefdee98b0959"
+    },
+    {
+      "original": "tests/r6-review-patch.test.ts",
+      "archive": "archive/legacy/tests/r6-review-patch.test.ts",
+      "sha256": "0e7ce4504c1d203b58129b7a89799f3d8b523fce48a7db8e946ba25841322651"
+    },
+    {
+      "original": "tests/recipe-execution-contract.test.ts",
+      "archive": "archive/legacy/tests/recipe-execution-contract.test.ts",
+      "sha256": "3390213b677dcb09eced05e626632fa87d43d46a193a1ac2407239ca7f2eaa01"
+    },
+    {
+      "original": "tests/release-candidate.test.ts",
+      "archive": "archive/legacy/tests/release-candidate.test.ts",
+      "sha256": "b4bcf08620457f2abcc459956a19e421ccd8ee13d28f10912c4a942024cc11bc"
+    },
+    {
+      "original": "tests/renderer-browser-golden.test.ts",
+      "archive": "archive/legacy/tests/renderer-browser-golden.test.ts",
+      "sha256": "ae46fe51e7aac8059f3b66ce1cf2c843cc44fd54dc9f071157470597de81f845"
+    },
+    {
+      "original": "tests/renderer-editor.test.ts",
+      "archive": "archive/legacy/tests/renderer-editor.test.ts",
+      "sha256": "68e48f61601a00f802dae3a5ff9c7ba7b6050e999ba7f870a18a9cda37241083"
+    },
+    {
+      "original": "tests/skill-design-workflow.test.ts",
+      "archive": "archive/legacy/tests/skill-design-workflow.test.ts",
+      "sha256": "db3cd1110a9c217c1bf3ef087b1d41ccd4fb8a78aa66a9b17bce8abe09d766cb"
+    },
+    {
+      "original": "tests/stable-core-operations.test.ts",
+      "archive": "archive/legacy/tests/stable-core-operations.test.ts",
+      "sha256": "cf23868d75645ac723fe42dbff8f91c4a807e68d4341fa0d5c4ff5683d500c39"
+    },
+    {
+      "original": "tests/stable-core-persistence.test.ts",
+      "archive": "archive/legacy/tests/stable-core-persistence.test.ts",
+      "sha256": "ce5e5beb70a25b35c5c6a3fe8745f1f01d8bb17d4ca474695b94f0c67d1cf8a7"
+    },
+    {
+      "original": "tests/stable-core-property-golden.test.ts",
+      "archive": "archive/legacy/tests/stable-core-property-golden.test.ts",
+      "sha256": "8ea2dcf92fb8269a12525cdc964a48a3a8e3ae61ce2ab8cb70013f99f408d39e"
+    },
+    {
+      "original": "tests/stable-core-schema.test.ts",
+      "archive": "archive/legacy/tests/stable-core-schema.test.ts",
+      "sha256": "5e47044c37f8166ad03fb08c222a78df8056554f9235ea5d972577c6a01a5fba"
+    },
+    {
+      "original": "tests/surface-mode-contract.test.ts",
+      "archive": "archive/legacy/tests/surface-mode-contract.test.ts",
+      "sha256": "ad958c6e29d8d077b74a15fd2bf5f9e1b145e3b09632b19ce511170276adf0f3"
+    },
+    {
+      "original": "tests/table-editing-journey.test.ts",
+      "archive": "archive/legacy/tests/table-editing-journey.test.ts",
+      "sha256": "8646ced3226dd4d9dd831abfa4f90e217c0cfd894204cfe62ec387c9d7e6bf37"
+    },
+    {
+      "original": "tests/table-v2-contract.test.ts",
+      "archive": "archive/legacy/tests/table-v2-contract.test.ts",
+      "sha256": "aafcfb90d8bad5aee376138c3a2c64a18eff247ea4b3cb2315c391c4d2395e99"
+    },
+    {
+      "original": "tests/text-kernel-poc.test.ts",
+      "archive": "archive/legacy/tests/text-kernel-poc.test.ts",
+      "sha256": "ad3e9baa421c1479552960ddedae51724c46977519d3c247fec04a1152102a8c"
+    },
+    {
+      "original": "tests/text-range-editing.test.ts",
+      "archive": "archive/legacy/tests/text-range-editing.test.ts",
+      "sha256": "169074b95ff96de3d519d63415c05267fb184772d0d6fcf38f248a1535829650"
+    },
+    {
+      "original": "tests/text-run-style-profile.test.ts",
+      "archive": "archive/legacy/tests/text-run-style-profile.test.ts",
+      "sha256": "1a9145d23a283111f60da9ecb9f77f22e2dfec91459fc6aeb77fba03cdc693ac"
+    },
+    {
+      "original": "tests/week11-16.test.ts",
+      "archive": "archive/legacy/tests/week11-16.test.ts",
+      "sha256": "db01226e55b0cef48cc836885874b08330b32f761c85cb83c2defd6c9e214875"
+    },
+    {
+      "original": "tests/week7-13-contract.test.ts",
+      "archive": "archive/legacy/tests/week7-13-contract.test.ts",
+      "sha256": "6302d78e18c31fefcbc42009c1c7b25d31e4300a098a87eb29fa4927e35160a8"
+    },
+    {
+      "original": "tests/working-clean.test.ts",
+      "archive": "archive/legacy/tests/working-clean.test.ts",
+      "sha256": "41510ccf59bc692bd48e38fb84b11c754ece556de3749f30eb12b8c7c61e1097"
+    }
+  ]
+}

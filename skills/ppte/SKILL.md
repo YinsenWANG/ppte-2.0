@@ -8,7 +8,7 @@ metadata:
 
 Use the current Agent to understand materials, verify facts and write ordinary HTML/CSS. Do not start an MCP server. No second model, model key, Python, Office tool or browser installation is required for static generation.
 
-In this H01 checkout use `node /path/to/ppte/dist/apps/html-cli/index.js enhance /workspace/draft.html --out /user/作品.html` after the repository build. The new command is also available via `pnpm html:cli`. The legacy installed `ppte` command is not yet the HTML-first release; NPM distribution switches in H05. Do not send new work through its legacy compile/design/deliver commands.
+Use the installed `ppte enhance /workspace/draft.html --out /user/作品.html`. Install the candidate and this skill once following README.md; reuse them on subsequent requests. Do not install browsers or fonts during ordinary generation.
 
 1. Read the actual materials using the Agent's existing tools. Preserve facts, citations and meaningful text. Consider at most two style directions, choose one, then write the complete HTML directly. Continue directly within existing user authorization; making the presentation authorizes routine design choices.
 2. Use native Grid, Flex, typography, gradients, SVG, images and tables. Mark pages with `data-ppte-slide`; otherwise the whole body becomes one page. Optionally supply stable `data-ppte-id` values; the program deterministically fills missing IDs. Keep text as text. Do not turn the design into a layout recipe or another presentation representation.
@@ -17,6 +17,6 @@ In this H01 checkout use `node /path/to/ppte/dist/apps/html-cli/index.js enhance
 5. When browser tools are already available, inspect the full presentation for overflow and layout. Otherwise report visual verification as unverified. Perform at most two automatic local repair rounds as an absolute ceiling; the HTML-first path allows at most one necessary correction and then reports remaining issues. Never delete facts or shrink all text to satisfy a gate.
 6. Return only `作品.html`. Do not automatically deliver reports, PDF, ZIP, an editor copy or project sidecars. This file already contains the trusted viewing runtime and its single persistent source template.
 
-H01 provides native enhancement, isolated reading and safe serialization. It does not yet implement original-file autosave, editing controls or the full presentation/PDF UI. Do not describe serialization, cache or a downloaded copy as saving the original file. H02/H03/H04 implement those stages. Preserve selected-node IDs, author CSS, source notes and locked content when making requested HTML changes.
+For editing, run `ppte edit /user/作品.html`: the loopback service binds the original file, autosaves after an input pause, and retains recovery versions in the application cache. Keep the process running. Only a confirmed file write means saved. Direct file opening supports reading/presentation; without file write permission edits are drafts until explicitly saved. PDF is optional through More → Export PDF using browser printing. Do not claim untested Safari or native file-picker behavior as verified.
 
-The older files in `references/` document the historical release only. They are retained for historical tests and are not the instructions for new HTML-first generation.
+Preserve selected-node IDs, author CSS, source notes and locked content when making requested HTML changes. Never regenerate a whole deck to change one sentence. Existing HTML is not upgraded automatically; enhancement refuses to overwrite any existing output.
