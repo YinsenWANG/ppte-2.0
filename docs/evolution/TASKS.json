@@ -1943,6 +1943,31 @@
               "result": "Stage selection, M3 deferral and fail-closed G2 evidence reporting implemented. Checked-in G2 remains blocked; this does not complete human acceptance."
             }
           ]
+        },
+        {
+          "kind": "evidence-validator-audit",
+          "baselineCommit": "efaa5c5f0d84d1533e0148060fd48eca81004941",
+          "tests": [
+            "tests/authoring-benchmark.test.ts"
+          ],
+          "sourceSha256": {
+            "packages/reviewer/src/authoring-benchmark.ts": "ab9acf552be2693d04adc61790069b5af3f9abf13884f2f2fcfa5daf8b95c587",
+            "scripts/authoring-benchmark.mjs": "e53e9d1774d8b81e549db60ba897564d6ffa3b63d64f66b6aef36fc1437f0653",
+            "tests/authoring-benchmark.test.ts": "adf59823a80411f9ff281fde24fb88dd41ab047d12ca824304e2440777052cab"
+          },
+          "verification": "docs/evolution/quality/d07-audit-verification.json",
+          "report": "docs/evolution/quality/benchmark-report.json",
+          "criteria": {
+            "1": "Existing ten fixed materials, answers and versioned scripts retained; criterion 1 fixture test.",
+            "2": "Independent quality lines, directional overlaps and identity-bound screenshot tests retained; CLI regression now rejects disguised non-PNG symlink evidence. Actual visual calibration remains missing.",
+            "3": "New regression tests exclude invalid/duplicate/unknown human records from pass and repair totals and reject blank failure/repair descriptions; no actual human evidence or paired generations supplied.",
+            "4": "Stage tests retain M3 table deferral without passes or G2 blocking; absent/unverified applicable evidence still blocks G2."
+          },
+          "remainingGaps": [
+            "Forty retained same-Agent baseline/candidate generations have not been executed.",
+            "Project owner and at least two target users have not supplied timed review sessions, failure logs or repair comparisons.",
+            "Actual visual overlap/screenshot calibration and selected format/Office client evidence are outstanding; G2 remains blocked."
+          ]
         }
       ],
       "remainingGaps": [

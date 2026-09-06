@@ -209,6 +209,14 @@ test('D07 evidence CLI checks actual bytes and rejects tampering, fake PNG, miss
     assert.equal(invoke().code, 1, 'hash-matching non-PNG is still rejected')
     writeFileSync(screenshot.path, png)
     screenshot.sha256 = createHash('sha256').update(png).digest('hex')
+    const screenshotPath = screenshot.path
+    const disguised = save('not-an-image.txt', Buffer.from('not PNG bytes'))
+    const disguisedLink = join(directory, 'disguised.png')
+    symlinkSync('not-an-image.txt', disguisedLink)
+    screenshot.path = disguisedLink; screenshot.sha256 = disguised.sha256
+    assert.equal(invoke().code, 1, 'PNG claim cannot bypass signature validation through a symlink')
+    screenshot.path = screenshotPath
+    screenshot.sha256 = createHash('sha256').update(png).digest('hex')
     const external = join(outside, 'external.png'); writeFileSync(external, png)
     const link = join(directory, 'escape.png'); symlinkSync(external, link)
     screenshot.path = link
@@ -227,4 +235,34 @@ test('D07 evidence CLI checks actual bytes and rejects tampering, fake PNG, miss
     rmSync(directory, { recursive: true, force: true })
     rmSync(outside, { recursive: true, force: true })
   }
+})
+
+
+test('D07 criterion 3: invalid or duplicate human sessions never count as passes or repair comparisons', () => {
+  for (const mutate of [
+    (s: BenchmarkSubmission) => { s.humanReviews[0].evidence = [] },
+    (s: BenchmarkSubmission) => { s.humanReviews[0].elapsedMs = -1 },
+    (s: BenchmarkSubmission) => { s.humanReviews[0].repairOperations = ['   '] },
+    (s: BenchmarkSubmission) => { s.humanReviews.push(structuredClone(s.humanReviews[0])) },
+  ]) {
+    const submission = syntheticSubmission(); mutate(submission)
+    const result = evaluate(submission)
+    assert.equal(result.status, 'blocked')
+    assert.equal(result.humanPassed, 539, 'invalid sessions and all duplicate copies are excluded')
+    assert.equal(result.repairComparisons.length, 29, 'incomplete timing cannot support improvement')
+  }
+  const submission = syntheticSubmission()
+  submission.humanReviews.push({ ...submission.humanReviews[0], reviewerId: 'unknown-person' })
+  const result = evaluate(submission)
+  assert.equal(result.status, 'blocked')
+  assert.equal(result.humanPassed, 540, 'unknown reviewer cannot inflate pass count')
+})
+
+test('D07 criterion 3: blank failure descriptions cannot stand in for actual recorded failures', () => {
+  const submission = syntheticSubmission()
+  submission.humanReviews[0].status = 'fail'
+  submission.humanReviews[0].failures = [' ']
+  assert.equal(evaluate(submission).status, 'blocked')
+  submission.humanReviews[0].failures = ['Observed inability to save baseline output']
+  assert.equal(evaluate(submission).status, 'pass', 'described baseline failures remain comparable')
 })

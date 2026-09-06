@@ -135,14 +135,29 @@ export function evaluateAuthoringBenchmark(manifest: BenchmarkManifest, submissi
       (!submission.runs.some(r => r.id === review.runId) || !reviewers.some(r => r.id === review.reviewerId)))) block('unknown-human-review-reference')
   }
   let humanPassed = 0
+  const validReviews = new Set<BenchmarkHumanReview>()
+  const sessionKey = (review: BenchmarkHumanReview) => {
+    const run = submission.runs.find(r => r.id === review.runId)
+    return JSON.stringify([run?.taskId, run?.side, review.reviewerId, review.scriptId])
+  }
+  const sessionCounts = new Map<string, number>()
+  for (const review of applicableReviews) {
+    const key = sessionKey(review)
+    sessionCounts.set(key, (sessionCounts.get(key) ?? 0) + 1)
+  }
   for (const review of applicableReviews) {
     const candidate = submission.runs.find(r => r.id === review.runId)?.side === 'candidate'
-    if (!['pass', 'fail'].includes(review.status) || (candidate && review.status !== 'pass') ||
+    if (!submission.runs.some(r => r.id === review.runId) || !reviewers.some(r => r.id === review.reviewerId) ||
+      sessionCounts.get(sessionKey(review)) !== 1 || !review.failures.every(nonempty) || !review.repairOperations.every(nonempty) ||
+      !['pass', 'fail'].includes(review.status) || (candidate && review.status !== 'pass') ||
       (review.status === 'fail' && !review.failures.length) || (review.status === 'pass' && review.failures.length) || !duration(review.elapsedMs) || !duration(review.repairMs) ||
       review.repairMs > review.elapsedMs || !Number.isInteger(review.helpCount) || review.helpCount === null || review.helpCount < 0 ||
       (review.repairMs > 0 && !review.repairOperations.length) || !evidence(review.evidence) ||
       review.scriptVersion !== required.find(s => s.id === review.scriptId)?.version) block(`human:${review.runId}:${review.reviewerId}:${review.scriptId}:incomplete-or-failed`)
-    else if (review.status === 'pass') humanPassed++
+    else {
+      validReviews.add(review)
+      if (review.status === 'pass') humanPassed++
+    }
   }
   const repairComparisons: { taskId: string; reviewerId: string; baselineMs: number; candidateMs: number }[] = []
   for (const task of manifest.tasks) for (const reviewer of reviewers) {
@@ -152,7 +167,7 @@ export function evaluateAuthoringBenchmark(manifest: BenchmarkManifest, submissi
       const runs = submission.runs.filter(r => r.taskId === task.id && r.side === side).map(r => r.id)
       const matches = applicableReviews.filter(r => runs.includes(r.runId) && r.reviewerId === reviewer.id && r.scriptId === script.id)
       // One timed session per person/task/script/side, attached to one of the retained repetitions.
-      if (matches.length !== 1 || !duration(matches[0]?.repairMs)) { complete = false; block(`human:${task.id}:${reviewer.id}:${side}:${script.id}:missing-or-duplicate`) }
+      if (matches.length !== 1 || !validReviews.has(matches[0])) { complete = false; block(`human:${task.id}:${reviewer.id}:${side}:${script.id}:missing-or-duplicate`) }
       else totals[index] += matches[0].repairMs!
     }
     if (complete) {

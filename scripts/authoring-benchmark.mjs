@@ -17,7 +17,7 @@ try {
     const rel = relative(root, path)
     if (rel.startsWith('..') || isAbsolute(rel)) return false
     const bytes = readFileSync(path)
-    if (/\.png$/i.test(path) && !bytes.subarray(0, 8).equals(Buffer.from([137,80,78,71,13,10,26,10]))) return false
+    if (/\.png$/i.test(artifact.path) && !bytes.subarray(0, 8).equals(Buffer.from([137,80,78,71,13,10,26,10]))) return false
     return createHash('sha256').update(bytes).digest('hex') === artifact.sha256
   })
   process.stdout.write(JSON.stringify(result, null, 2) + '\n')

@@ -1,0 +1,98 @@
+{
+  "task": "D07",
+  "status": "partial",
+  "baselineCommit": "efaa5c5f0d84d1533e0148060fd48eca81004941",
+  "sourceSha256": {
+    "packages/reviewer/src/authoring-benchmark.ts": "ab9acf552be2693d04adc61790069b5af3f9abf13884f2f2fcfa5daf8b95c587",
+    "scripts/authoring-benchmark.mjs": "e53e9d1774d8b81e549db60ba897564d6ffa3b63d64f66b6aef36fc1437f0653",
+    "tests/authoring-benchmark.test.ts": "adf59823a80411f9ff281fde24fb88dd41ab047d12ca824304e2440777052cab"
+  },
+  "environment": {
+    "node": "v22.23.2",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm build",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm test",
+      "exitCode": 0,
+      "counts": {
+        "tests": 359,
+        "pass": 359,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "command": "pnpm blackbox:final",
+      "exitCode": 0,
+      "green": 70,
+      "red": 0
+    }
+  ],
+  "baselineTests": {
+    "tests": 357,
+    "pass": 357,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "testCountDelta": 2,
+  "focusedTests": {
+    "tests": 12,
+    "pass": 12,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "regressionBeforeFix": {
+    "tests": 12,
+    "pass": 10,
+    "fail": 2,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "earlierCandidateAttempt": {
+    "command": "pnpm test",
+    "exitCode": 1,
+    "counts": {
+      "tests": 359,
+      "pass": 358,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "failure": "F05 browser animation startTime comparison: expected null, observed 310.7209999579936. No assertion changed; complete suite rerun passed.",
+    "context": "Baseline and first candidate test suites overlapped; final retry ran without the baseline suite."
+  },
+  "blackbox": {
+    "start": "docs/evolution/quality/d07-audit-blackbox-start.json",
+    "final": "docs/evolution/quality/d07-audit-blackbox-final.json",
+    "baselineGreen": 70,
+    "baselineRed": 0,
+    "finalGreen": 70,
+    "finalRed": 0,
+    "newReds": []
+  },
+  "tests": [
+    "tests/authoring-benchmark.test.ts"
+  ],
+  "g2": "blocked",
+  "humanEvidenceAdded": false,
+  "remainingGaps": [
+    "Execute and retain 40 actual generations: baseline and candidate, ten tasks, two fixed seeds, same pinned Agent and budget.",
+    "Collect owner and at least two target-user sessions, real elapsed/help/repair measurements, failures, originals and repaired artifacts.",
+    "Calibrate visual hierarchy/density/composition/asset-purpose/rhythm with page/object PNG evidence and directional recipe overlap checks.",
+    "Bind actual HTML editing/presentation, PDF, image PPTX and semantic PPTX observations to each artifact identity; Office remains unverified until actually opened.",
+    "Demonstrate consistent paired human repair-time improvement without candidate task regressions; automated contract tests do not fulfill this evidence."
+  ]
+}

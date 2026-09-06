@@ -141,5 +141,18 @@
     "tests/authoring-benchmark.test.ts",
     "scripts/blackbox-gates.mjs:review-patch:D07-evidence"
   ],
-  "verification": "docs/evolution/quality/d07-verification.json"
+  "verification": "docs/evolution/quality/d07-verification.json",
+  "currentAudit": {
+    "baselineCommit": "efaa5c5f0d84d1533e0148060fd48eca81004941",
+    "executor": "Codex automated evidence-validator audit; not a human reviewer",
+    "changes": [
+      "Exclude invalid, unknown and duplicate human sessions from pass counts and repair comparisons.",
+      "Reject blank failure descriptions and repair operations.",
+      "Validate PNG signatures using the submitted screenshot path even when it is a symlink."
+    ],
+    "verification": "docs/evolution/quality/d07-audit-verification.json",
+    "humanEvidenceAdded": false,
+    "taskStatus": "partial",
+    "g2": "blocked"
+  }
 }
