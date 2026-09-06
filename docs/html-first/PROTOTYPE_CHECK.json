@@ -1,0 +1,12 @@
+{
+  "scope": "Design prototype only; no product implementation or real saving",
+  "browser": "153.0.8010.12",
+  "checked": [
+    "desktop rendering",
+    "draft vs file status",
+    "failure status",
+    "read/edit switch",
+    "clean present/escape"
+  ],
+  "pageErrors": []
+}

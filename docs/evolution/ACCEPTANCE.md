@@ -1,5 +1,7 @@
 # PPTe 下一阶段验收矩阵
 
+> **历史方案：范围已被用户调整。** 后续开发以 [HTML-first 重设计](../html-first/PLAN.md) 和 [新任务清单](../html-first/TASKS.json) 为准；本文件保留原验收记录，不再要求 PPTX/Office、多文件交付或旧生成链路。
+
 版本 1.0 · 2026-09-05 · 全部为待执行的验收规格，不是测试结果。
 
 本矩阵与 [实施方案](./IMPLEMENTATION_PLAN.md)、[任务清单](./TASKS.json) 配套。每条测试报告使用固定的 Axx 编号；不得因测试尚未实现而将其标为通过。执行前固定 fixture digest、应用版本、runtime buildId、操作/文档 profile 和浏览器/设备。

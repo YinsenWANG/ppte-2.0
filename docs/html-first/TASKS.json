@@ -1,0 +1,180 @@
+{
+  "planVersion": "html-first-1.0",
+  "status": "planned",
+  "supersedes": "docs/evolution/TASKS.json for future implementation scope",
+  "basisCommit": "4aee9da597ceef29df30f22a65f5bafc9f2bc354",
+  "defaultDeliverable": "one .html",
+  "optionalExport": "PDF",
+  "tasks": [
+    {
+      "id": "H00",
+      "title": "冻结 HTML 合同与直接生成基线",
+      "status": "planned",
+      "dependsOn": [],
+      "targetAreas": [
+        "docs/html-first",
+        "scripts/html-benchmark.mjs（新）"
+      ],
+      "deliverables": [
+        "固定三份真实材料、模型与推理配置、页数和资源；留存直接 HTML 首稿",
+        "盘点旧包依赖与 import graph，列出删除和可复用模块",
+        "在真实 Chrome、Safari 上验证 file URL、授权写入、本地服务及重开行为"
+      ],
+      "acceptance": [
+        "合同不含 PPTX/Office 和新 .ppte 格式要求",
+        "基线记录冷/热耗时、tokens、失败和实际文件；缺数据保持 pending"
+      ]
+    },
+    {
+      "id": "H01",
+      "title": "HTML 原生增强与单文件交付",
+      "status": "planned",
+      "dependsOn": [
+        "H00"
+      ],
+      "targetAreas": [
+        "packages/html-document（新）",
+        "apps/html-cli（新）",
+        "skills/ppte"
+      ],
+      "deliverables": [
+        "支持 Agent 输出普通 HTML/CSS，确定性添加页面/对象 ID",
+        "可信 runtime、内容 iframe、单份持久模板和安全序列化",
+        "静态 HTML 生成不需要浏览器、Python、模型密钥或 MCP",
+        "资源内嵌在程序侧完成；命令返回不超过约 1 KB 摘要"
+      ],
+      "acceptance": [
+        "CSS Grid/Flex/SVG/字体层级增强前后保真，覆盖嵌套样式和资源",
+        "一百次保存重开不累积副本或编辑状态；脚本/事件注入不执行",
+        "默认用户输出目录仅新增作品.html；未请求时不输出 PDF/ZIP/编辑器/ppte",
+        "代表内容不经旧 IR、Recipe、Core 或 Portable 转换"
+      ]
+    },
+    {
+      "id": "H02",
+      "title": "原文件保存、自动保存与恢复",
+      "status": "planned",
+      "dependsOn": [
+        "H01"
+      ],
+      "targetAreas": [
+        "packages/html-save（新）",
+        "apps/html-cli（新）",
+        "packages/html-editor（新）"
+      ],
+      "deliverables": [
+        "ppte edit file.html 提供可安装使用的 loopback 编辑/保存入口",
+        "绑定文件、冲突检查、串行保存、临时写入替换、版本恢复",
+        "浏览器 File System Access 适配，实际能力探测和首次授权流程",
+        "IME 收口、800 ms 停顿保存、明确状态、草稿恢复与失败重试"
+      ],
+      "acceptance": [
+        "原路径编辑关闭重开及进程重启保留修改；不是打开下载副本才生效",
+        "磁盘满/只读/权限撤回/中断/双窗口/外部 Agent 修改不静默丢失",
+        "只有文件写入确认后显示已保存，浏览器缓存单独标识",
+        "loopback 之外不可访问，跨站/无令牌/路径穿越写入被拒绝",
+        "Safari 本地编辑路径实测；file 直开受限行为也实测并明确展示"
+      ]
+    },
+    {
+      "id": "H03",
+      "title": "统一设计过的 UI 与日常编辑",
+      "status": "planned",
+      "dependsOn": [
+        "H02"
+      ],
+      "targetAreas": [
+        "packages/html-editor（新）",
+        "docs/html-first/UI_PROTOTYPE.html"
+      ],
+      "deliverables": [
+        "先按原型实现顶栏、缩略图、画布、浮动格式栏和上下文面板",
+        "完成文字/选区格式、图片/形状、背景、基础表格和对象锁定",
+        "DOM 局部撤销重做；绝对定位与 Grid/Flex 用不同变换策略",
+        "Agent 局部编辑使用稳定 ID 和 expected hash，保留人工保护对象"
+      ],
+      "acceptance": [
+        "三种对象选择和空/多选/混合值有统一样式；无原始表单墙",
+        "普通文字对比度至少 4.5:1、键盘可达、焦点清晰",
+        "修改一句话不重建整页；Grid/Flex 重排不偷偷 absolute 化",
+        "保存重开保持内容、格式、布局、资源与锁定；操作失败不假成功"
+      ]
+    },
+    {
+      "id": "H04",
+      "title": "干净放映与按需 PDF",
+      "status": "planned",
+      "dependsOn": [
+        "H01",
+        "H03"
+      ],
+      "targetAreas": [
+        "packages/html-player（新）",
+        "packages/html-print（新）"
+      ],
+      "deliverables": [
+        "read/edit/present/presenter/print 共用内容及 UI 状态协调",
+        "闲置隐藏控件、键盘退出、真正黑屏、全屏失败仍可放映",
+        "原生视频离页暂停、逐步揭示和少量 CSS 翻页动画",
+        "按需浏览器 PDF；自动化导出依赖可选安装"
+      ],
+      "acceptance": [
+        "观众画面不含编辑控件、文本框虚线、常驻工具栏或下一页预览",
+        "Esc/全屏拒绝/媒体点击/黑屏恢复/弹窗受限均可用",
+        "PDF 一页一幻灯片，步骤全显，文字尽量可选，无 UI/裁切/空白多页",
+        "不自动生成 PDF，不存在 PPTX/PPT/ODP/Keynote 路径"
+      ]
+    },
+    {
+      "id": "H05",
+      "title": "移除旧关键路径并交付轻量 NPM 包",
+      "status": "planned",
+      "dependsOn": [
+        "H04"
+      ],
+      "targetAreas": [
+        "scripts/stage-package.mjs",
+        "package.json",
+        "apps/cli",
+        "packages/exporter-pptx",
+        "README-AGENT.md",
+        "skills/ppte"
+      ],
+      "deliverables": [
+        "实际移除 Office 适配、旧兼容测试/格式配置和默认分发依赖",
+        "新包不包含旧 .ppte/CAS/journal/Portable profiles/IR 核心链",
+        "精简 Skill；安装一次可复用；保留旧工具于归档版本",
+        "README 和产品入口统一为一个 HTML 与保存原文件"
+      ],
+      "acceptance": [
+        "静态依赖图和实际 npm tarball 双重检查，不能仅删菜单",
+        "无 Office/Python/浏览器安装仍可生成 HTML；PDF 工具链单独验证",
+        "候选 runtime <=250 KB gzip、轻资源 HTML <=1 MB 的目标提供实测",
+        "旧用户文件不被删除/重写；新候选有独立安装与恢复说明"
+      ]
+    },
+    {
+      "id": "H06",
+      "title": "同模型速度、审美和保存验收",
+      "status": "planned",
+      "dependsOn": [
+        "H05"
+      ],
+      "targetAreas": [
+        "scripts/html-benchmark.mjs（新）",
+        "docs/html-first/evidence（新）"
+      ],
+      "deliverables": [
+        "三份真实材料各三对，直接 HTML vs PPTe，全量留存首稿与失败",
+        "分别记录安装/研究/生成/工具/修正耗时及 tokens、重试和文件体积",
+        "负责人和两名目标使用者盲评；执行真实保存重开与 PDF/放映旅程"
+      ],
+      "acceptance": [
+        "热总耗时中位数 <=1.25x、tokens <=1.20x 直接 HTML 基线，报告尾部与失败",
+        "九对至少六对审美不逊于直接 HTML，事实/溢出/保存失败独立否决",
+        "不把缓存、模拟 UI、合成评审或自动化 Chromium 当作真实文件/用户/浏览器证明",
+        "全部达标后才能提出下一阶段；无真实用户/设备证据保持 pending"
+      ]
+    }
+  ]
+}
