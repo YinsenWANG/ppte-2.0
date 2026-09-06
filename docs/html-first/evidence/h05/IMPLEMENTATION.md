@@ -1,6 +1,8 @@
 # H05 — HTML-only installable candidate
 
 Authority: the four documents at `bbcd46bde2c608b5a56e617f316c5dcb5534857e`.
+Implementation commit: `b57fdc9f2354b5e6e49a356c0e5092fb72a77fb1` (GPG signed and signed off).
+
 Implementation base: `033460300ac21cd62359ca0aa550b5bff1aed67c`.
 
 H05's four packaging criteria are verified. This does not mark H04's pending

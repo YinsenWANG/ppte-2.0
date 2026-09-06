@@ -531,7 +531,7 @@
     {
       "id": "H05",
       "title": "移除旧关键路径并交付轻量 NPM 包",
-      "status": "planned",
+      "status": "done",
       "dependsOn": [
         "H04"
       ],
@@ -554,7 +554,77 @@
         "无 Office/Python/浏览器安装仍可生成 HTML；PDF 工具链单独验证",
         "候选 runtime <=250 KB gzip、轻资源 HTML <=1 MB 的目标提供实测",
         "旧用户文件不被删除/重写；新候选有独立安装与恢复说明"
-      ]
+      ],
+      "evidence": {
+        "authorityCommit": "bbcd46bde2c608b5a56e617f316c5dcb5534857e",
+        "implementationCommit": "b57fdc9f2354b5e6e49a356c0e5092fb72a77fb1",
+        "report": "docs/html-first/evidence/h05/IMPLEMENTATION.md",
+        "verification": "docs/html-first/evidence/h05/verification/result.json",
+        "sample": "docs/html-first/evidence/h05/verification/example.html",
+        "tarball": "docs/html-first/evidence/h05/verification/candidate.tgz",
+        "acceptance": [
+          {
+            "criterion": "静态依赖图和实际 npm tarball 双重检查，不能仅删菜单",
+            "status": "passed",
+            "commit": "b57fdc9f2354b5e6e49a356c0e5092fb72a77fb1",
+            "tests": [
+              "dist/tests/html-package.test.js: H05 acceptance 1: static CLI/runtime graph and actual installed npm tarball contain only HTML dependencies",
+              "dist/tests/html-package.test.js: H05 retirement: all historical test files remain byte-identical to the pre-H05 manifest"
+            ],
+            "log": "docs/html-first/evidence/h05/verification/test.log"
+          },
+          {
+            "criterion": "无 Office/Python/浏览器安装仍可生成 HTML；PDF 工具链单独验证",
+            "status": "passed",
+            "commit": "b57fdc9f2354b5e6e49a356c0e5092fb72a77fb1",
+            "tests": [
+              "dist/tests/html-package.test.js: H05 acceptance 2: offline installed CLI generates HTML with network and external processes forbidden",
+              "dist/tests/html-package.test.js: H05 acceptance 2: packaged HTML prints through separately available Chrome PDF toolchain",
+              "dist/tests/html-player.test.js: H04 acceptance 3: actual browser PDF has two sized pages, selectable revealed text, no editor UI and print restores content"
+            ],
+            "log": "docs/html-first/evidence/h05/verification/test.log"
+          },
+          {
+            "criterion": "候选 runtime <=250 KB gzip、轻资源 HTML <=1 MB 的目标提供实测",
+            "status": "passed",
+            "commit": "b57fdc9f2354b5e6e49a356c0e5092fb72a77fb1",
+            "tests": [
+              "dist/tests/html-package.test.js: H05 acceptance 3: candidate runtime <=250 KB gzip and three twelve-page light HTMLs <=1 MB measured"
+            ],
+            "log": "docs/html-first/evidence/h05/verification/test.log"
+          },
+          {
+            "criterion": "旧用户文件不被删除/重写；新候选有独立安装与恢复说明",
+            "status": "passed",
+            "commit": "b57fdc9f2354b5e6e49a356c0e5092fb72a77fb1",
+            "tests": [
+              "dist/tests/html-package.test.js: H05 acceptance 4: isolated install, reusable skill and overwrite refusal preserve existing user files",
+              "dist/tests/html-save.test.js: H02 acceptance 1/4: packaged npm install exposes ppte edit, stable restart URL and multiple file mappings"
+            ],
+            "log": "docs/html-first/evidence/h05/verification/test.log"
+          }
+        ],
+        "tests": {
+          "before": 439,
+          "retired": 392,
+          "retiredTestFiles": 60,
+          "existingActive": 47,
+          "added": 6,
+          "removedAssertions": 0,
+          "after": 53,
+          "passed": 53,
+          "failed": 0,
+          "skipped": 0,
+          "releasePassed": 11
+        },
+        "remaining": [
+          "H05 packaging acceptance is complete; H04 dependency still has pending actual Safari and native print-dialog journeys. H05 does not override that status.",
+          "H00/H02/H04/H06 controlled model, native browser/permission, human review and low-performance-device gaps remain unchanged.",
+          "GitHub-hosted execution of the updated CI workflow is not verified; local macOS gates passed.",
+          "Legacy assertions are archived unchanged, not repaired or counted as candidate passes; complete legacy tool checkout remains available in Git history.",
+          "No publication, push or current global install replacement performed."
+        ]
+      }
     },
     {
       "id": "H06",

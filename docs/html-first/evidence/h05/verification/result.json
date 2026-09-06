@@ -1,0 +1,86 @@
+{
+  "task": "H05",
+  "status": "passed",
+  "implementationCommit": "b57fdc9f2354b5e6e49a356c0e5092fb72a77fb1",
+  "recordedAt": "2026-09-06T11:46:21.882018+00:00",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "node": "v22.23.2",
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "log": "typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "log": "build.log"
+    },
+    {
+      "command": "pnpm test",
+      "status": "passed",
+      "log": "test.log"
+    },
+    {
+      "command": "pnpm package:pack",
+      "status": "passed",
+      "log": "package.log"
+    },
+    {
+      "command": "pnpm release:check",
+      "status": "passed",
+      "log": "release.log"
+    }
+  ],
+  "tests": {
+    "before": 439,
+    "retired": 392,
+    "retiredTestFiles": 60,
+    "existingActive": 47,
+    "added": 6,
+    "removedAssertions": 0,
+    "after": 53,
+    "passed": 53,
+    "failed": 0,
+    "skipped": 0,
+    "releasePassed": 11
+  },
+  "sizes": {
+    "runtime": {
+      "rawBytes": 287678,
+      "gzipBytes": 83659
+    },
+    "decks": [
+      {
+        "name": "cherry",
+        "pages": 12,
+        "rawBytes": 301744,
+        "gzipBytes": 87923,
+        "mediaBytes": 0
+      },
+      {
+        "name": "product",
+        "pages": 12,
+        "rawBytes": 301392,
+        "gzipBytes": 87762,
+        "mediaBytes": 0
+      },
+      {
+        "name": "data",
+        "pages": 12,
+        "rawBytes": 302430,
+        "gzipBytes": 87970,
+        "mediaBytes": 0
+      }
+    ],
+    "tarballBytes": 182704,
+    "unpackedBytes": 708381
+  },
+  "remaining": [
+    "H05 packaging acceptance is complete; H04 dependency still has pending actual Safari and native print-dialog journeys. H05 does not override that status.",
+    "H00/H02/H04/H06 controlled model, native browser/permission, human review and low-performance-device gaps remain unchanged.",
+    "GitHub-hosted execution of the updated CI workflow is not verified; local macOS gates passed.",
+    "Legacy assertions are archived unchanged, not repaired or counted as candidate passes; complete legacy tool checkout remains available in Git history.",
+    "No publication, push or current global install replacement performed."
+  ]
+}
