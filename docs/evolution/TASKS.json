@@ -2470,7 +2470,7 @@
       "milestone": "M3",
       "priority": "P1",
       "title": "现场工具与有恢复能力的双屏",
-      "status": "planned",
+      "status": "done",
       "effort": "L",
       "ownerRole": "放映 / 交互",
       "dependsOn": [
@@ -2502,7 +2502,26 @@
         "A21"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        {
+          "commit": "c8150ff1310770682c9fa7fe800f3db70797ebd4",
+          "tests": [
+            "tests/presenter-tools.test.ts"
+          ],
+          "criteria": {
+            "1": "Monotonic timer and real Host/Portable journeys verify page index, blackout without step change, laser, timing, decoded next-slide preview, unchanged revision/history and reset after exit/reopen.",
+            "2": "Version/session/token/source/origin/seq/ACK validation, dropped data/ACK, duplicate/out-of-order handling, queued command preservation and backpressure, stale session rejection; actual HTTP Host/Portable popup commands, disconnect/retry, close/reconnect and audience close/reopen.",
+            "3": "Speaker markers absent from entire audience body including serialized payload, present only in presenter snapshots; denied popup and file:// paths retain working single screen; exit restores Portable payload and notes."
+          },
+          "verification": "docs/evolution/quality/f06-verification.json",
+          "report": "docs/evolution/quality/F06.md",
+          "remainingRisks": [
+            "Manual A21 product-owner and two-target-user journeys",
+            "Physical dual monitors, real Safari and low-performance devices",
+            "Dual screen on file:// or opaque origins; single screen is tested and supported"
+          ]
+        }
+      ]
     },
     {
       "id": "P01",

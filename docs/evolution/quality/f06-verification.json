@@ -1,0 +1,70 @@
+{
+  "implementationCommit": "c8150ff1310770682c9fa7fe800f3db70797ebd4",
+  "signature": "valid GPG signature and Signed-off-by",
+  "environment": {
+    "node": "v22.23.2",
+    "platform": "darwin",
+    "arch": "arm64",
+    "browser": "151.0.7922.34",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "fixtureRevision": "sha256-ef358266951f952afaab21d6112ea467948f5e6148015a941842432686379911",
+    "fixture": "makeContractDocument + two-page fixture in tests/presenter-tools.test.ts",
+    "source": "public synthetic fixture; no user files",
+    "acceptanceIds": [
+      "A06",
+      "A16",
+      "A21"
+    ]
+  },
+  "buildManifest": {
+    "applicationVersion": "0.9.0-next.0",
+    "runtimeBuildId": "b1c9743968ceb9427f1e824c9072856173e500b1c7615286e2daf69a963d3c23"
+  },
+  "typecheck": "pass",
+  "build": "pass",
+  "test": {
+    "baseline": 351,
+    "passed": 357,
+    "delta": 6,
+    "failed": 0,
+    "skipped": 0,
+    "focused": 6,
+    "log": "docs/evolution/quality/f06-tests.tap"
+  },
+  "blackbox": {
+    "start": "docs/evolution/quality/f06-blackbox-start.json",
+    "final": "docs/evolution/quality/f06-blackbox-final.json",
+    "baselineGreen": 70,
+    "baselineRed": 0,
+    "green": 70,
+    "red": 0,
+    "newReds": []
+  },
+  "screenshots": [
+    "docs/evolution/quality/f06-host-audience.png",
+    "docs/evolution/quality/f06-host-presenter.png",
+    "docs/evolution/quality/f06-portable-audience.png",
+    "docs/evolution/quality/f06-portable-presenter.png"
+  ],
+  "sourceSha256": {
+    ".gitignore": "07ebcb35a1a60f90687fd830b2e00e3f446c062a072867965a3cb511ebc49d21",
+    "packages/editor-controller/src/presenter-channel.ts": "cca65d7556ac1b330d002adb209745efe053e397c0a3eff3cf42befa24143fcc",
+    "packages/editor-dom/src/presenter-tools.ts": "e1c5d33d64ed4a83709fce561208a6adb99bb8f2e585671b2f8eed74dab4a294",
+    "packages/editor-dom/src/presenter-window.ts": "065fe30e1e01fcd4620843f337133cd5ee2aaa999648a25c6d94ecb07260c75b",
+    "packages/editor-react/src/HostApp.tsx": "ec4f6b63b7e28a0acdf17f72056f2721d5e29f5907767509f00ff28094deb4fb",
+    "packages/portable-runtime/src/browser.ts": "6fc8a7669911d2f39ce1ccf666ad76584cde0cf6e72d2332f0c147fde8142a33",
+    "packages/portable-runtime/src/shared.ts": "baf93d12018365529871ee90baf8e41756135dc4ba07eef89c1ca46a144c8474",
+    "scripts/build-portable.mjs": "4daa92fabe724e42296e5b89f08396ebb6c787a83fdbc55402b6c29248ec9933",
+    "tests/presenter-tools.test.ts": "d854e7fe3d5b2f8ea896e68744754926f7a72274228bd7f9c986ce1d7fb0f012"
+  },
+  "unverified": [
+    "Manual A21 product-owner and two-target-user journeys",
+    "Physical dual monitors, real Safari and low-performance devices"
+  ],
+  "unsupported": [
+    "Dual screen on file:// or opaque origins; single screen is tested and supported"
+  ]
+}
