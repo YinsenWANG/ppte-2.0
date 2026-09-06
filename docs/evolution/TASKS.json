@@ -2593,7 +2593,7 @@
       "milestone": "M4",
       "priority": "P1",
       "title": "真实浏览器基准与预算校准",
-      "status": "planned",
+      "status": "partial",
       "effort": "M",
       "ownerRole": "性能 / 验收",
       "dependsOn": [
@@ -2622,7 +2622,67 @@
         "A20"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        {
+          "commit": "5757db8157cbaf77272c7d03614224febc53fc0a",
+          "tests": [
+            "tests/performance-browser.test.ts"
+          ],
+          "verification": "docs/evolution/quality/p01-verification.json",
+          "report": "docs/evolution/quality/P01.md",
+          "measurements": "docs/evolution/quality/p01-browser-reference.json",
+          "criteria": {
+            "1": {
+              "status": "partial",
+              "tests": [
+                "P01 criterion 1: Node microbenchmarks name the computation, never a browser interaction",
+                "P01 criterion 1: reproducible 12/30/100-page fixtures validate and build the actual Portable entry",
+                "P01 criterion 1: live offline file entry paints an Engine edit, navigates and undoes exactly"
+              ],
+              "result": "Node microbenchmarks renamed to actual computations. Real offline full-portable file entry sampled on pinned 12/30/100-page synthetic fixtures. Original Cherry and 50 MiB Host resource corpus remain unverified."
+            },
+            "2": {
+              "status": "partial",
+              "tests": [
+                "P01 criterion 2: frozen resources and statistically complete separated browser evidence",
+                "P01 criterion 2: changed resources and missing browser/corpus evidence are rejected"
+              ],
+              "result": "Machine/browser binary, viewport, font/resource/fixture/build hashes recorded; 20 cold and 20 warm samples per tier, 30 samples per separate interaction/media metric. Exact undo, save/reopen and drag commits pass. Lower-performance physical device, real Safari and physical input remain unverified."
+            },
+            "3": {
+              "status": "partial",
+              "tests": [
+                "P01 criterion 3: p95 retains the tail, raw samples and count; invalid and small samples fail",
+                "P01 criterion 3: budgets cannot inflate and averages cannot replace measured p95",
+                "P01 criterion 3: unmeasured physical devices, IME, Host and real-resource capacity cannot close A20"
+              ],
+              "result": "Versioned candidate thresholds and unmeasured scope frozen before sampling. Raw values/count/p50/p95/max retained; tests reject small/invalid samples, altered budgets, fabricated summaries and false acceptance. Whole-product physical-device calibration is not complete."
+            }
+          },
+          "testCountDelta": 8,
+          "blackbox": {
+            "startGreen": 70,
+            "startRed": 0,
+            "finalGreen": 71,
+            "finalRed": 0,
+            "newRedIds": []
+          }
+        }
+      ],
+      "remainingGaps": [
+        "12-page original Cherry material (not present in repository)",
+        "30-page 50 MiB real-resource Host corpus",
+        "Host .ppte open/save entry",
+        "Lower-performance physical device",
+        "Real Safari (Playwright WebKit is not Safari)",
+        "Physical Chinese IME and real pointer feedback",
+        "Single pointer-event input-to-paint latency",
+        "Unrelated DOM identity, text focus and playing media stability during edits",
+        "Memory peak/residual over at least 20 file/media disposal loops",
+        "OS disk-cache cold startup",
+        "Font subset missing-glyph fallback outside pinned content",
+        "Whole-product budget calibration; candidates are not release passes"
+      ]
     },
     {
       "id": "P02",
