@@ -845,7 +845,7 @@
     {
       "id": "S06",
       "title": "图片插入裁切与单文件媒体资源管理",
-      "status": "planned",
+      "status": "partial",
       "dependsOn": [
         "S02",
         "S03",
@@ -885,7 +885,144 @@
         "offline-reopen-media",
         "resource-lifecycle-and-size-results"
       ],
-      "evidence": null
+      "evidence": {
+        "report": "docs/single-file-first/evidence/s06/REPORT.md",
+        "primaryAcceptanceFile": "docs/single-file-first/evidence/s06/review.ppte.html",
+        "implementationCommit": "c5fbb6c7c6bad2b8ee7fc2c7a31a17e43e15f735",
+        "statusByLayer": {
+          "code": "partial: offline image operations, bounded interned history and opt-in file table implemented; on-demand media blob/decoder memory work pending",
+          "automation": "71 tests passed; 2 added, none removed or weakened; typecheck/build passed",
+          "realBrowser": "installed Chrome headless file:// observed; native picker/print and Safari not performed",
+          "human": "pending: no real mixed-image batch, subject/key-data review or reviewer signoff"
+        },
+        "requiredEvidence": {
+          "mixed-media-fixtures-and-hashes": {
+            "status": "partial: 12 synthetic raster fixtures and repository CC0 video; real photo/human review pending",
+            "files": [
+              "docs/single-file-first/evidence/s06/mixed-media-fixtures-and-hashes.json",
+              "docs/single-file-first/evidence/s06/human-review.md",
+              "docs/single-file-first/evidence/s06/review.ppte.html"
+            ],
+            "commit": "c5fbb6c7c6bad2b8ee7fc2c7a31a17e43e15f735"
+          },
+          "crop-before-after": {
+            "status": "Chrome headless file automation passed; subject/semantic human review pending",
+            "files": [
+              "docs/single-file-first/evidence/s06/crop-before.png",
+              "docs/single-file-first/evidence/s06/crop-after.png",
+              "docs/single-file-first/evidence/s06/journey.json"
+            ],
+            "commit": "c5fbb6c7c6bad2b8ee7fc2c7a31a17e43e15f735"
+          },
+          "offline-reopen-media": {
+            "status": "Chrome headless passed: sources deleted, offline download/reopen, video play/pause; native/Safari pending",
+            "files": [
+              "docs/single-file-first/evidence/s06/journey.json",
+              "docs/single-file-first/evidence/s06/review.ppte.html",
+              "docs/single-file-first/evidence/s06/verification/test.log"
+            ],
+            "commit": "c5fbb6c7c6bad2b8ee7fc2c7a31a17e43e15f735"
+          },
+          "resource-lifecycle-and-size-results": {
+            "status": "partial: file/history dedup and size/CDP heap measured; native decode memory and on-demand blob unimplemented",
+            "files": [
+              "docs/single-file-first/evidence/s06/baseline.json",
+              "docs/single-file-first/evidence/s06/resource-lifecycle-and-size-results.json",
+              "docs/single-file-first/evidence/s06/stress-table.ppte.html",
+              "docs/single-file-first/evidence/s06/verification/test.log"
+            ],
+            "commit": "c5fbb6c7c6bad2b8ee7fc2c7a31a17e43e15f735"
+          }
+        },
+        "acceptanceEvidence": [
+          {
+            "criterion": "混合至少 12 张真实授权图片实际制稿；选图、主体、关键数据由人核对",
+            "status": "pending: only synthetic fixtures available; no real mixed-photo composition or human review",
+            "paths": [
+              "docs/single-file-first/evidence/s06/mixed-media-fixtures-and-hashes.json",
+              "docs/single-file-first/evidence/s06/human-review.md",
+              "docs/single-file-first/evidence/s06/review.ppte.html"
+            ],
+            "commit": "c5fbb6c7c6bad2b8ee7fc2c7a31a17e43e15f735"
+          },
+          {
+            "criterion": "替换不同宽高比图片不误裁主体，撤销重做和保存重开保留资源与裁切",
+            "status": "Chrome automation passed: ratios, focus/reset, undo/redo, actual download/reopen; semantic/native review pending",
+            "paths": [
+              "docs/single-file-first/evidence/s06/crop-before.png",
+              "docs/single-file-first/evidence/s06/crop-after.png",
+              "docs/single-file-first/evidence/s06/journey.json",
+              "docs/single-file-first/evidence/s06/verification/test.log",
+              "tests/single-file-media.test.ts"
+            ],
+            "commit": "c5fbb6c7c6bad2b8ee7fc2c7a31a17e43e15f735"
+          },
+          {
+            "criterion": "移除原素材目录并断网后同一成品仍能显示/播放",
+            "status": "Chrome file automation passed for 13 images and CC0 video; other browsers/devices pending",
+            "paths": [
+              "docs/single-file-first/evidence/s06/journey.json",
+              "docs/single-file-first/evidence/s06/review.ppte.html",
+              "docs/single-file-first/evidence/s06/verification/test.log",
+              "tests/single-file-media.test.ts"
+            ],
+            "commit": "c5fbb6c7c6bad2b8ee7fc2c7a31a17e43e15f735"
+          },
+          {
+            "criterion": "保存文件不含临时 blob URL，资源引用失效/缺失明确失败",
+            "status": "automated pass: no temporary resource URLs in saved content, corrupt/missing table rejected and visible error",
+            "paths": [
+              "docs/single-file-first/evidence/s06/journey.json",
+              "docs/single-file-first/evidence/s06/verification/test.log",
+              "tests/single-file-media.test.ts"
+            ],
+            "commit": "c5fbb6c7c6bad2b8ee7fc2c7a31a17e43e15f735"
+          },
+          {
+            "criterion": "新资源表启用前验证旧 data URL 文件、重复保存体积、历史清理、打印与演讲者窗口",
+            "status": "partial: legacy, repeat size, history, print decode/PDF and speaker checked in Chrome; new table opt-in only, native/Safari/blob pending",
+            "paths": [
+              "docs/single-file-first/evidence/s06/journey.json",
+              "docs/single-file-first/evidence/s06/media.pdf",
+              "docs/single-file-first/evidence/s06/resource-lifecycle-and-size-results.json",
+              "docs/single-file-first/evidence/s06/verification/test.log",
+              "tests/single-file-media.test.ts"
+            ],
+            "commit": "c5fbb6c7c6bad2b8ee7fc2c7a31a17e43e15f735"
+          },
+          {
+            "criterion": "CSP 只扩大必要 img/media blob 能力，不放宽作者脚本或网络",
+            "status": "passed: CSP unchanged; no media blob created and no author script/network expansion",
+            "paths": [
+              "docs/single-file-first/evidence/s06/verification/test.log",
+              "docs/single-file-first/evidence/s06/REPORT.md",
+              "tests/single-file-media.test.ts"
+            ],
+            "commit": "c5fbb6c7c6bad2b8ee7fc2c7a31a17e43e15f735"
+          },
+          {
+            "criterion": "图片压力稿报告真实文件体积、解码与内存成本，不隐藏有损降质",
+            "status": "partial: actual file/gzip size, timing and CDP JS heap; native decoded memory/codec CPU/low-performance device unavailable",
+            "paths": [
+              "docs/single-file-first/evidence/s06/baseline.json",
+              "docs/single-file-first/evidence/s06/resource-lifecycle-and-size-results.json",
+              "docs/single-file-first/evidence/s06/REPORT.md",
+              "tests/single-file-media.test.ts"
+            ],
+            "commit": "c5fbb6c7c6bad2b8ee7fc2c7a31a17e43e15f735"
+          }
+        ],
+        "verification": "docs/single-file-first/evidence/s06/verification/result.json",
+        "pending": [
+          "No actual mixed batch of at least 12 authorized real images or human selection/subject/key-text/data/crop review; synthetic fixtures do not satisfy that acceptance.",
+          "On-demand media blob URLs, shared window ownership and decoder memory lifecycle are not implemented; opt-in table expands to legacy data URLs and stays non-default.",
+          "Native media decoded memory, full decode CPU cost and real low-performance device measurements unavailable; CDP heap and RGBA accounting are explicitly limited.",
+          "Safari, native original-file picker/authorization, native print dialog and human PDF readability have not been exercised.",
+          "CSS/SVG media are not table-deduplicated; arbitrary author parent masks can still clip content despite object-fit contain.",
+          "History limits cover step count and interned media string estimate, not total DOM/decoder memory; latest large transaction retained.",
+          "S02/S03/S05 remain partial. F01–F05 existing regressions pass in full suite but historical/native/human pending conditions are not closed."
+        ]
+      }
     },
     {
       "id": "S07",
