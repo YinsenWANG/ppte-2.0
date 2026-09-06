@@ -207,24 +207,24 @@
       "evidence": {
         "implementationCommit": "b85509c69f1542d7858e878bd592c2dcf20dd1bd",
         "authorityCommit": "bbcd46bde2c608b5a56e617f316c5dcb5534857e",
-        "report": "docs/html-first/evidence/h02/README.md",
-        "verification": "docs/html-first/evidence/h02/verification/result.json",
-        "sample": "docs/html-first/evidence/h02/example.html",
+        "report": "docs/html-first/evidence/h02/FIX.md",
+        "verification": "docs/html-first/evidence/h02/verification/fix/result.json",
+        "sample": "docs/html-first/evidence/h02/verification/fix/example.html",
         "acceptance": [
           {
             "criterion": "原路径编辑关闭重开及进程重启保留修改；不是打开下载副本才生效",
             "status": "passed",
-            "commit": "b85509c69f1542d7858e878bd592c2dcf20dd1bd",
+            "commit": "24fb1861fd57c378be1e8bb0acfe00d587467338",
             "tests": [
               "dist/tests/html-save.test.js: H02 acceptance 1: original path autosave, close/reopen and service restart preserve text with no download",
               "dist/tests/html-save.test.js: H02 acceptance 1/4: packaged npm install exposes ppte edit, stable restart URL and multiple file mappings"
             ],
-            "log": "docs/html-first/evidence/h02/verification/h02.tap"
+            "log": "docs/html-first/evidence/h02/verification/fix/focused.log"
           },
           {
             "criterion": "磁盘满/只读/权限撤回/中断/双窗口/外部 Agent 修改不静默丢失",
             "status": "partial",
-            "commit": "b85509c69f1542d7858e878bd592c2dcf20dd1bd",
+            "commit": "24fb1861fd57c378be1e8bb0acfe00d587467338",
             "tests": [
               "dist/tests/html-save.test.js: H02 acceptance 2: OS read-only, ENOSPC fault, interrupted replace retain original and recoverable version",
               "dist/tests/html-save.test.js: H02 acceptance 2: two services/windows serialize one winner and detect external Agent edits at replace",
@@ -233,54 +233,58 @@
               "dist/tests/html-save.test.js: H02 acceptance 2/3: File System Access permission revoked, conflict, failed close and confirmation (API contract test)",
               "dist/tests/html-save.test.js: H02 acceptance 2: history bounded by count and rejected restoration paths never write",
               "dist/tests/html-save.test.js: H02 acceptance 2: actual bounded full disk returns ENOSPC without replacing original (macOS HFS+)",
-              "dist/tests/html-save.test.js: H02 acceptance 2/3: failed-save draft survives page close, restores on matching file base and flushes to original"
+              "dist/tests/html-save.test.js: H02 acceptance 2/3: failed-save draft survives page close, restores on matching file base and flushes to original",
+              "dist/tests/html-save.test.js: H02 acceptance 2/3: a delayed acknowledgement never deletes another window recovery draft",
+              "dist/tests/html-save.test.js: H02 acceptance 2/3: two real windows retain the failed draft after the other file save is acknowledged"
             ],
-            "log": "docs/html-first/evidence/h02/verification/h02.tap"
+            "log": "docs/html-first/evidence/h02/verification/fix/focused.log"
           },
           {
             "criterion": "只有文件写入确认后显示已保存，浏览器缓存单独标识",
             "status": "passed",
-            "commit": "b85509c69f1542d7858e878bd592c2dcf20dd1bd",
+            "commit": "24fb1861fd57c378be1e8bb0acfe00d587467338",
             "tests": [
               "dist/tests/html-save.test.js: H02 acceptance 2/3: browser two-window conflict keeps draft; explicit reread and retry after network failure",
               "dist/tests/html-save.test.js: H02 acceptance 3: IME does not save half composition; 800ms pause and delayed acknowledgement remain dirty/saving",
               "dist/tests/html-save.test.js: H02 acceptance 3: edits during in-flight save remain queued; draft base matching, quotas and copied identity",
               "dist/tests/html-save.test.js: H02 acceptance 2/3: File System Access permission revoked, conflict, failed close and confirmation (API contract test)",
-              "dist/tests/html-save.test.js: H02 acceptance 2/3: failed-save draft survives page close, restores on matching file base and flushes to original"
+              "dist/tests/html-save.test.js: H02 acceptance 2/3: failed-save draft survives page close, restores on matching file base and flushes to original",
+              "dist/tests/html-save.test.js: H02 acceptance 2/3: a delayed acknowledgement never deletes another window recovery draft",
+              "dist/tests/html-save.test.js: H02 acceptance 2/3: two real windows retain the failed draft after the other file save is acknowledged"
             ],
-            "log": "docs/html-first/evidence/h02/verification/h02.tap"
+            "log": "docs/html-first/evidence/h02/verification/fix/focused.log"
           },
           {
             "criterion": "loopback 之外不可访问，跨站/无令牌/路径穿越写入被拒绝",
             "status": "passed",
-            "commit": "b85509c69f1542d7858e878bd592c2dcf20dd1bd",
+            "commit": "24fb1861fd57c378be1e8bb0acfe00d587467338",
             "tests": [
               "dist/tests/html-save.test.js: H02 acceptance 4: loopback bind, hostile Origin/Host, no token, traversal, arbitrary fields and unsafe content rejected",
               "dist/tests/html-save.test.js: H02 acceptance 1/4: packaged npm install exposes ppte edit, stable restart URL and multiple file mappings"
             ],
-            "log": "docs/html-first/evidence/h02/verification/h02.tap"
+            "log": "docs/html-first/evidence/h02/verification/fix/focused.log"
           },
           {
             "criterion": "Safari 本地编辑路径实测；file 直开受限行为也实测并明确展示",
             "status": "partial",
-            "commit": "b85509c69f1542d7858e878bd592c2dcf20dd1bd",
+            "commit": "24fb1861fd57c378be1e8bb0acfe00d587467338",
             "tests": [
               "dist/tests/html-save.test.js: H02 acceptance 5: real installed Chrome file URL shows limitation, keeps draft and never claims file save",
               "dist/tests/html-save.test.js: H02 acceptance 5: Safari actual WebDriver journey or explicit blocked evidence (not simulated Safari)"
             ],
-            "log": "docs/html-first/evidence/h02/verification/h02.tap"
+            "log": "docs/html-first/evidence/h02/verification/fix/focused.log"
           }
         ],
         "tests": {
           "before": 409,
-          "after": 424,
-          "added": 15,
+          "after": 426,
+          "added": 17,
           "removed": 0,
-          "passed": 424,
+          "passed": 426,
           "failed": 0,
           "skipped": 0,
-          "focusedPassed": 24,
-          "h02Passed": 15
+          "focusedPassed": 26,
+          "h02Passed": 17
         },
         "remaining": [
           "Safari 26.6.2 actual WebDriver rejected session creation because Allow remote automation is disabled; local save/reopen and file URL journeys remain unverified.",
@@ -288,8 +292,29 @@
           "No physical power-loss test or cross-OS durability claim; APFS normal saves, HFS+ ENOSPC and SIGKILL restart are verified.",
           "Uncooperative external processes can race between the final hash check and rename; neither portable filesystem APIs nor browser FSA supply atomic CAS with arbitrary external processes.",
           "Service restart requires its new token URL; explicit --port resolves collisions. No resident discovery daemon or persistent browser file handle.",
-          "H03/H04 UI, presentation and PDF acceptance remain open; H00/H06 controlled user/performance evidence remains open."
-        ]
+          "H03/H04 UI, presentation and PDF acceptance remain open; H00/H06 controlled user/performance evidence remains open.",
+          "Concurrent windows still share one recovery slot per file; conditional cleanup protects the reproduced delayed acknowledgement case, but retaining all simultaneous window histories and atomic cross-process localStorage CAS are not claimed."
+        ],
+        "fixImplementationCommit": "24fb1861fd57c378be1e8bb0acfe00d587467338",
+        "fixRound": {
+          "commit": "24fb1861fd57c378be1e8bb0acfe00d587467338",
+          "tests": {
+            "before": 424,
+            "after": 426,
+            "added": 2,
+            "removed": 0,
+            "passed": 426,
+            "failed": 0,
+            "skipped": 0
+          },
+          "npmVersionsVerified": [
+            "10.9.8",
+            "12.0.2"
+          ],
+          "rootCause": "npm 12 pack --json returns an object keyed by package name; the test incorrectly assumed an array. Separate delayed-acknowledgement regression reproduced recovery draft deletion across windows.",
+          "report": "docs/html-first/evidence/h02/FIX.md",
+          "verification": "docs/html-first/evidence/h02/verification/fix/result.json"
+        }
       }
     },
     {

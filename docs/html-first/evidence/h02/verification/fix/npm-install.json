@@ -1,0 +1,32 @@
+{
+  "status": "passed",
+  "package": {
+    "id": "ppte-html@0.1.0-h02",
+    "name": "ppte-html",
+    "version": "0.1.0-h02",
+    "size": 182229,
+    "unpackedSize": 804215,
+    "shasum": "fd3e397767ff48d522f8cbfa9acfe90514b83ea7",
+    "integrity": "sha512-LwMQ4CLvq6tIKL4BM0hyZvh/mEUPcN1A/B2Xske9kt3KEsCnxlGRL4HZ9k36heoS0yALYmNMTqbsQVIxmMtyKA==",
+    "filename": "ppte-html-0.1.0-h02.tgz",
+    "files": [
+      {
+        "path": "package.json",
+        "size": 175,
+        "mode": 420
+      },
+      {
+        "path": "ppte.js",
+        "size": 804040,
+        "mode": 493
+      }
+    ],
+    "entryCount": 2,
+    "bundled": []
+  },
+  "bin": "ppte",
+  "stablePort": true,
+  "rotatedSessionToken": true,
+  "originalWrite": true,
+  "multipleMapping": true
+}
