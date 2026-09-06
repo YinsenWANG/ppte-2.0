@@ -1,5 +1,7 @@
 # PPTe HTML-first candidate
 
+> Active development handoff: [single-file-first 1.1](docs/single-file-first/HANDOFF.md), [plan](docs/single-file-first/PLAN.md), [tasks](docs/single-file-first/TASKS.json). These are pending implementation requirements from user review plus audit `ea260ce`, and override conflicting default-service instructions below. The target is direct use of one `.ppte.html`; do not claim that the existing candidate has already completed this plan.
+
 Write ordinary HTML/CSS, enhance it once, deliver **one HTML**. The HTML is the
 work, editable source and presentation entry. Use Node.js 22 or newer. Basic
 generation has no runtime npm dependencies, browser download, Python, Office,

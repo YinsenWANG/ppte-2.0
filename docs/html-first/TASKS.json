@@ -1,5 +1,6 @@
 {
   "planVersion": "html-first-1.0",
+  "executionOverride": "../single-file-first/TASKS.json: user feedback overrides default service entry, filename, save UX and Skill scope; historical statuses below are not new-plan acceptance",
   "status": "partial",
   "supersedes": "docs/evolution/TASKS.json for future implementation scope",
   "basisCommit": "4aee9da597ceef29df30f22a65f5bafc9f2bc354",

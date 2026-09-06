@@ -1,5 +1,7 @@
 # PPTe 重设计：让 HTML 成为作品本身
 
+> 后续执行更新：用户实机反馈已汇总为 [single-file-first 1.1 总方案](../single-file-first/PLAN.md) 与 [任务清单](../single-file-first/TASKS.json)。其中默认直开 `.ppte.html`、服务不作为必要入口、分级保存、轻量审美和图片理解优先于本文冲突条款。本文保留作为历史设计依据，不代表后续方案已实现。
+
 版本：HTML-first 1.0 · 2026-09-06 · 状态：设计决策已确认，尚未实现。
 
 本方案来自用户对实际成品的六项反馈。它**替代** docs/evolution/IMPLEMENTATION_PLAN.md 的产品边界、生成架构、交付格式和发布门禁；旧文档、任务状态与审查保留为历史，不再要求远程开发继续完成旧 D07/P01/Q01/Q02 的全部范围。尤其不再做 PPTX 或 Office 验收。
