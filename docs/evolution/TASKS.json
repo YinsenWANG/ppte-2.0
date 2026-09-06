@@ -2292,7 +2292,7 @@
       "milestone": "M3",
       "priority": "P1",
       "title": "本地视频媒体管线和离线播放",
-      "status": "planned",
+      "status": "done",
       "effort": "L",
       "ownerRole": "资源 / 媒体 / 交付",
       "dependsOn": [
@@ -2332,7 +2332,50 @@
         "A20"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        {
+          "commit": "a62a0989982f4a2e35aee95ca9b01a63d0781e8b",
+          "tests": [
+            "tests/media-playback-journey.test.ts"
+          ],
+          "criteria": {
+            "1": "A12 preparation/Engine rejection, explicit v1 migration and checkpoint reopen/redo retain CAS metadata/poster; A16 browser checks actual Blob src/poster, dimensions/duration and visible decode/metadata/play rejection errors.",
+            "2": "Actual offline Chromium MP4/H.264 and WebM/VP9 file journeys test manual play/pause, navigation/resume, ended/replay and released URLs/src; Host import/presentation exit/save/undo/redo uses the shared controller. CSP media-src permits only blob.",
+            "3": "A20 freezes the existing 20 MiB complete HTML target with 10/16 MiB source boundary cases and explicit large-artifact opt-in; 40 startup and 60 media navigation samples are retained. Actual PDF/PNG/image PPTX/semantic PPTX exports validate specified poster and static capability reports.",
+            "4": "Exclusive directory publication includes index.html/manifest.json/template.html/media; actual loopback browser playback verifies bytes on open. Tampered media/template/manifest prevent startup; file:// directory is explicitly unsupported with self-contained HTML as the double-click alternative."
+          },
+          "verification": {
+            "typecheck": "pass",
+            "build": "pass",
+            "test": {
+              "before": 336,
+              "after": 345,
+              "delta": 9,
+              "passed": 345,
+              "failed": 0
+            },
+            "blackbox": {
+              "start": "docs/evolution/quality/f04-blackbox-start.json",
+              "final": "docs/evolution/quality/f04-blackbox-final.json",
+              "beforeGreen": 70,
+              "beforeRed": 0,
+              "green": 70,
+              "red": 0,
+              "newRed": [],
+              "exitCode": 0
+            }
+          },
+          "report": "docs/evolution/quality/F04.md",
+          "rawEvidence": "docs/evolution/quality/f04-verification.json",
+          "remainingRisks": [
+            "Directory playback requires loopback HTTP; directory file:// is intentionally unsupported. It reconstructs full HTML and is not streaming or a low-memory path.",
+            "Real Safari, low-performance physical hardware and physical audio output are unverified; codec support is limited to the two tested silent fixtures.",
+            "PDF/PPTX video is a declared static poster fallback; native Office video embedding/client fidelity is not claimed.",
+            "Grouped legacy v1 migration requires an explicit ungroup; unresolved sources are never fetched.",
+            "A crash during exclusive directory writing can leave an incomplete new directory; verified startup and successful publication results require all bytes."
+          ]
+        }
+      ]
     },
     {
       "id": "F05",
