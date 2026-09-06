@@ -1,5 +1,6 @@
 import { cleanContent } from '../../html-document/src/content.js';
 import { sha } from './save.js';
+import { MediaHistory } from './media-history.js';
 export const editable = 'h1,h2,h3,h4,h5,h6,p,li,td,th,figcaption,[data-ppte-kind="text"]';
 const clean = (e: Element) => {
     const c = e.cloneNode(true) as Element;
@@ -15,11 +16,13 @@ type Entry = {
     id: string;
     before: string;
     after: string;
-    insertion?: { parent: HTMLElement; previous: HTMLElement; node: HTMLElement };
+    insertion?: { parent: HTMLElement; previous: HTMLElement | null; node: HTMLElement };
 };
 export class Commands {
     undoStack: Entry[][] = [];
     redoStack: Entry[][] = [];
+    readonly mediaHistory = new MediaHistory();
+    historyTrimmed = false;
     private index = new Map<string, HTMLElement>();
     private observer: MutationObserver;
     constructor(public doc: Document, private changed: (ids: string[]) => void) {
@@ -62,10 +65,21 @@ export class Commands {
     record(entries: Entry[]) {
         const actual = entries.filter(e => e.before !== e.after);
         if (actual.length) {
-            this.undoStack.push(actual);
+            this.undoStack.push(actual.map(e => ({...e, before: this.mediaHistory.compact(e.before), after: this.mediaHistory.compact(e.after)})));
             this.redoStack = [];
+            this.pruneHistory();
             this.changed(actual.map(e => e.id));
         }
+    }
+    private pruneHistory() {
+        const retain = () => this.mediaHistory.retain(JSON.stringify([this.undoStack, this.redoStack]));
+        retain();
+        while (this.undoStack.length > 100 || this.mediaHistory.stats.estimatedStringBytes > 64 * 1024 * 1024 && this.undoStack.length > 1) {
+            this.undoStack.shift(); this.historyTrimmed = true; retain();
+        }
+    }
+    clearHistory() {
+        this.undoStack = []; this.redoStack = []; this.mediaHistory.retain('');
     }
     transaction(ids: string[], mutate: (n: HTMLElement) => void, unlock = false) {
         const nodes = [...new Set(ids)].map(id => this.node(id));
@@ -126,16 +140,16 @@ export class Commands {
         for (const e of entries) {
             if (e.insertion) {
                 const { parent, previous, node } = e.insertion;
-                if (!parent.isConnected || previous.parentElement !== parent || parent.closest('[data-ppte-locked="true"]') ||
-                    (redo ? node.isConnected : node.parentElement !== parent || this.protected(node) || snapshot(node) !== e.after))
+                if (!parent.isConnected || previous && previous.parentElement !== parent || parent.closest('[data-ppte-locked="true"]') ||
+                    (redo ? node.isConnected : node.parentElement !== parent || this.protected(node) || snapshot(node) !== this.mediaHistory.expand(e.after)))
                     throw Error('HISTORY_CONFLICT');
-            } else if (snapshot(this.node(e.id)) !== (redo ? e.before : e.after)) throw Error('HISTORY_CONFLICT');
+            } else if (snapshot(this.node(e.id)) !== this.mediaHistory.expand(redo ? e.before : e.after)) throw Error('HISTORY_CONFLICT');
         }
         for (const e of entries) {
             if (e.insertion) {
-                if (redo) e.insertion.previous.after(e.insertion.node);
+                if (redo) { if (e.insertion.previous) e.insertion.previous.after(e.insertion.node); else e.insertion.parent.prepend(e.insertion.node); }
                 else e.insertion.node.remove();
-            } else this.restore(this.node(e.id), redo ? e.after : e.before);
+            } else this.restore(this.node(e.id), this.mediaHistory.expand(redo ? e.after : e.before));
         }
         from.pop();
         to.push(entries);
@@ -208,28 +222,63 @@ export class Commands {
                     cell.setAttribute('data-ppte-id', `cell-${crypto.randomUUID()}`);
         });
     }
+    crop(ids: string[], fit: 'contain' | 'cover', x = 50, y = 50) {
+        if (!['contain', 'cover'].includes(fit) || ![x, y].every(v => Number.isFinite(v) && v >= 0 && v <= 100)) throw Error('INVALID_CROP');
+        this.transaction(ids, n => {
+            if (!['IMG', 'VIDEO'].includes(n.tagName)) throw Error('NOT_MEDIA');
+            n.style.setProperty('object-fit', fit, 'important');
+            n.style.setProperty('object-position', `${x}% ${y}%`, 'important');
+        });
+    }
+    private async readMedia(file: File, imageOnly = false) {
+        if (!/^(image\/(png|jpeg|webp|gif|avif)|video\/(mp4|webm))$/.test(file.type) || !file.size || imageOnly && !file.type.startsWith('image/')) throw Error('UNSUPPORTED_MEDIA');
+        if (file.size > 16 * 1024 * 1024) throw Error('MEDIA_LIMIT: 单个资源最多 16 MiB；原始像素不会自动压缩');
+        const src = await new Promise<string>((ok, no) => {
+            const r = new FileReader(); r.onload = () => ok(String(r.result)); r.onerror = no; r.readAsDataURL(file);
+        });
+        if (file.type.startsWith('image/')) { const image = new Image(); image.src = src; await image.decode(); }
+        return src;
+    }
+    async insertImage(slideId: string, file: File) {
+        const parent = this.node(slideId);
+        if (!parent.hasAttribute('data-ppte-slide')) throw Error('NOT_SLIDE');
+        if (parent.closest('[data-ppte-locked="true"]')) throw Error('OBJECT_PROTECTED');
+        const src = await this.readMedia(file, true);
+        if (this.node(slideId) !== parent || !parent.isConnected) throw Error('CONFLICT');
+        if (parent.closest('[data-ppte-locked="true"]')) throw Error('OBJECT_PROTECTED');
+        const image = this.doc.createElement('img');
+        image.dataset.ppteId = `image-${crypto.randomUUID()}`;
+        image.src = src; image.alt = '';
+        image.style.cssText = 'width:320px;height:240px;max-width:100%;object-fit:contain!important;object-position:50% 50%!important';
+        // A bounded insertion does not mutate protected siblings.
+        const previous = parent.lastElementChild as HTMLElement | null;
+        parent.append(image);
+        this.record([{id:image.dataset.ppteId, before:'', after:snapshot(image), insertion:{parent, previous, node:image}}]);
+        return image;
+    }
+    async poster(id: string, file: File) {
+        const n = this.node(id);
+        if (n.tagName !== 'VIDEO') throw Error('NOT_VIDEO');
+        if (this.protected(n)) throw Error('OBJECT_PROTECTED');
+        const original = snapshot(n), src = await this.readMedia(file, true);
+        if (snapshot(this.node(id)) !== original) throw Error('CONFLICT');
+        this.transaction([id], n => n.setAttribute('poster', src));
+    }
     async media(id: string, file: File) {
         const n = this.node(id);
-        if (!['IMG', 'VIDEO'].includes(n.tagName) || !/^image\/(png|jpeg|webp|gif)$|^video\/(mp4|webm)$/.test(file.type) || !file.size)
-            throw Error('UNSUPPORTED_MEDIA');
-        if (n.tagName === 'IMG' && !file.type.startsWith('image/') || n.tagName === 'VIDEO' && !file.type.startsWith('video/'))
-            throw Error('MEDIA_KIND_MISMATCH');
+        if (!['IMG', 'VIDEO'].includes(n.tagName)) throw Error('NOT_MEDIA');
+        if (n.tagName === 'IMG' && !file.type.startsWith('image/') || n.tagName === 'VIDEO' && !file.type.startsWith('video/')) throw Error('MEDIA_KIND_MISMATCH');
+        if (this.protected(n)) throw Error('OBJECT_PROTECTED');
         const original = snapshot(n);
-        const src = await new Promise<string>((ok, no) => {
-            const r = new FileReader();
-            r.onload = () => ok(String(r.result));
-            r.onerror = no;
-            r.readAsDataURL(file);
-        });
-        if (n.tagName === 'IMG') {
-            const image = new Image();
-            image.src = src;
-            await image.decode();
-        }
+        const src = await this.readMedia(file);
         if (snapshot(this.node(id)) !== original)
             throw Error('CONFLICT');
         this.transaction([id], n => {
             n.setAttribute('src', src);
+            n.style.setProperty('object-fit', 'contain', 'important');
+            n.style.setProperty('object-position', '50% 50%', 'important');
+            if (n.tagName === 'IMG') n.setAttribute('alt', '');
+            else n.removeAttribute('poster');
             n.removeAttribute('srcset');
             n.querySelectorAll('source').forEach(e => e.remove());
         });

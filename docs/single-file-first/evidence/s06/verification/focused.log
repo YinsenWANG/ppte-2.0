@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: S06 table: SHA-256 vectors, legacy identity, dedup, stable references, missing/corrupt resources, no CSP expansion
+ok 1 - S06 table: SHA-256 vectors, legacy identity, dedup, stable references, missing/corrupt resources, no CSP expansion
+  ---
+  duration_ms: 45.64175
+  type: 'test'
+  ...
+# Subtest: S06 file journey: mixed ratios, insert/replace/focus/reset, guarded history, download/reopen, print and speaker
+ok 2 - S06 file journey: mixed ratios, insert/replace/focus/reset, guarded history, download/reopen, print and speaker
+  ---
+  duration_ms: 2525.059458
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2784.855709

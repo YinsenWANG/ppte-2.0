@@ -128,6 +128,13 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         if (composing || panel.contains(document.activeElement) && document.activeElement?.tagName === 'INPUT') { positionTools(); return; }
         panel.replaceChildren();
         floating.replaceChildren();
+        const upload = field(panel, '插入本地图片', '', () => {});
+        upload.type = 'file'; upload.accept = 'image/png,image/jpeg,image/webp,image/gif,image/avif';
+        upload.onchange = () => { const file = upload.files?.[0]; const slide = doc.querySelectorAll<HTMLElement>('[data-ppte-slide]')[currentSlide];
+            if (file && slide) run(async () => { const image = await commands.insertImage(slide.dataset.ppteId!, file); selected = [image.dataset.ppteId!]; refresh(); });
+        };
+        if (commands.historyTrimmed) { const note = document.createElement('p'); note.textContent = '较早撤销记录已清理（最多 100 步 / 64 MiB 媒体字符串）；当前文件内容保留。'; panel.append(note); }
+
         const nodes = selectedNodes();
         const kind = nodes.length > 1 ? '多选' : !nodes.length ? '空选区' : nodes[0].matches('img,video') ? '图片 / 视频' : nodes[0].matches('svg,[data-ppte-kind="shape"]') ? '形状' : nodes[0].matches('table,td,th') ? '表格' : '文字';
         const heading = document.createElement('h3');
@@ -191,10 +198,24 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
                 input.accept = 'image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm';
                 input.onchange = () => {
                     if (input.files?.[0])
-                        run(() => commands.media(selected[0], input.files![0]));
+                        run(() => { input.blur(); return commands.media(selected[0], input.files![0]); });
                 };
-                button(floating, '完整显示', () => commands.style(selected, 'object-fit', 'contain'));
-                button(floating, '填充裁切', () => commands.style(selected, 'object-fit', 'cover'));
+                if (nodes[0].tagName === 'VIDEO') {
+                    const poster = field(s, '替换视频封面', '', () => {});
+                    poster.type = 'file'; poster.accept = 'image/png,image/jpeg,image/webp,image/gif,image/avif';
+                    poster.onchange = () => { if (poster.files?.[0]) run(() => { poster.blur(); return commands.poster(selected[0], poster.files![0]); }); };
+                }
+                button(floating, '完整显示', () => commands.crop(selected, 'contain'));
+                button(floating, '填充裁切', () => commands.crop(selected, 'cover'));
+                const position = doc.defaultView!.getComputedStyle(nodes[0]).objectPosition.split(' ');
+                const focus = (axis: number) => { const value = parseFloat(doc.defaultView!.getComputedStyle(nodes[0]).objectPosition.split(' ')[axis]); return Number.isFinite(value) ? value : 50; };
+                field(s, '水平焦点（0–100%）', String(parseFloat(position[0]) || 0), v => commands.crop(selected, common('object-fit') === 'cover' ? 'cover' : 'contain', Number(v), focus(1)));
+                field(s, '垂直焦点（0–100%）', String(parseFloat(position[1]) || 0), v => commands.crop(selected, common('object-fit') === 'cover' ? 'cover' : 'contain', focus(0), Number(v)));
+                button(floating, '重置裁切', () => commands.crop(selected, 'contain'));
+                if (nodes[0].tagName === 'IMG') field(s, '图片说明', nodes[0].getAttribute('alt') ?? '', v => commands.transaction(selected, n => n.setAttribute('alt', v)));
+                const note = document.createElement('p'); note.className = 'hint';
+                note.textContent = '保留原始像素；替换后完整显示并清空旧说明，请复核主体与关键文字。单个资源上限 16 MiB。'; s.append(note);
+
             }
             if (kind === '形状') {
                 field(s, '填充', common('fill'), v => commands.style(selected, 'fill', v));

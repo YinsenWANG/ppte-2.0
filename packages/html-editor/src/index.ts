@@ -1,3 +1,4 @@
+import { unpackMedia } from '../../html-document/src/media-table.js';
 import { workspace } from './workspace.js';
 import { SaveController, loopbackAdapter, fileAdapter, recoveryFingerprint, type Snapshot, type FileHandle } from './save.js';
 interface API {
@@ -74,7 +75,7 @@ export function installEditor(api: API) {
                     throw Error('PERMISSION_REVOKED');
                 const adapter = fileAdapter(handle, text => {
                     const inert = new DOMParser().parseFromString(text, 'text/html');
-                    return { content: api.normalize(inert.querySelector<HTMLTemplateElement>('#ppte-content')?.content.textContent ?? ''), metadata: JSON.parse(inert.querySelector('#ppte-metadata')!.textContent!), hash: '', fileKey: handle.name, name: handle.name };
+                    return { content: api.normalize(unpackMedia(inert.querySelector<HTMLTemplateElement>('#ppte-content')?.content.textContent ?? '', inert.querySelector('#ppte-media') ? JSON.parse(inert.querySelector('#ppte-media')!.textContent!) : undefined)), metadata: JSON.parse(inert.querySelector('#ppte-metadata')!.textContent!), hash: '', fileKey: handle.name, name: handle.name };
                 }, api.encode);
                 const target = await adapter.load();
                 if (target.metadata.documentId !== controller.base.metadata.documentId || target.content !== controller.base.content || target.metadata.saveRevision !== controller.base.metadata.saveRevision)

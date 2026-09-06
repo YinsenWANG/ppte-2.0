@@ -1,11 +1,15 @@
 import { cleanContent, frameContent } from './content.js';
+import { packMedia, unpackMedia } from './media-table.js';
 import { installEditor } from '../../html-editor/src/index.js';
 
 // Only build-owned code executes in the parent. Content never receives a script capability.
 const template = document.querySelector<HTMLTemplateElement>('#ppte-content')!;
 const frame = document.querySelector<HTMLIFrameElement>('#ppte-frame')!;
 const metadata = JSON.parse(document.querySelector('#ppte-metadata')!.textContent!);
-const initial = cleanContent(template.content.textContent ?? '');
+const mediaElement = document.querySelector('#ppte-media');
+let initial;
+try { initial = cleanContent(unpackMedia(template.content.textContent ?? '', mediaElement ? JSON.parse(mediaElement.textContent!) : undefined)); }
+catch (error) { const status = document.createElement('p'); status.textContent = '媒体资源加载失败：' + String(error); status.setAttribute('role', 'alert'); document.body.prepend(status); throw error; }
 frame.srcdoc = frameContent(initial.html);
 frame.addEventListener('load', () => {
   const doc = frame.contentDocument!;
@@ -26,9 +30,11 @@ function encode(value: string, revision: number, documentId = metadata.documentI
   const cleaned = cleanContent(value);
   if (cleaned.issues.length) throw Error('UNSAFE_CONTENT');
   value = cleaned.html;
+  const packed = metadata.mediaTable === 1 ? packMedia(value) : undefined;
   const shell = document.documentElement.cloneNode(true) as HTMLElement;
   shell.querySelectorAll('[data-ppte-transient]').forEach(e=>e.remove());
-  shell.querySelector<HTMLTemplateElement>('#ppte-content')!.content.replaceChildren(document.createTextNode(value));
+  shell.querySelector<HTMLTemplateElement>('#ppte-content')!.content.replaceChildren(document.createTextNode(packed?.content ?? value));
+  if (packed) shell.querySelector('#ppte-media')!.textContent = JSON.stringify(packed.table).replace(/</g, '\\u003c');
   const iframe=shell.querySelector('#ppte-frame')!;iframe.removeAttribute('srcdoc');iframe.removeAttribute('src');iframe.removeAttribute('style');
   shell.querySelector('#ppte-metadata')!.textContent=JSON.stringify({...metadata,documentId,saveRevision:revision}).replace(/</g,'\\u003c');
   return '<!doctype html>\n'+shell.outerHTML;

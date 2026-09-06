@@ -30,5 +30,5 @@ export function installPrint(frame: HTMLIFrameElement, hooks: { suspend(): void;
     }
     window.addEventListener('beforeprint',prepare);
     window.addEventListener('afterprint',restore);
-    return { prepare, restore, async print() { prepare();try {await document.fonts.ready;await Promise.all(Array.from(host!.children).flatMap(n=>Array.from(n.shadowRoot!.querySelectorAll('img'))).map(n=>n.decode().catch(()=>{})));window.print();} catch(e) {restore();throw e;} } };
+    return { prepare, restore, async print() { prepare();try {await document.fonts.ready;await Promise.all(Array.from(host!.children).flatMap(n=>Array.from(n.shadowRoot!.querySelectorAll('img'))).filter(n=>n.hasAttribute('src')).map(n=>n.decode().catch(()=>{throw Error('PRINT_MEDIA_DECODE_FAILED');})));window.print();} catch(e) {restore();throw e;} } };
 }

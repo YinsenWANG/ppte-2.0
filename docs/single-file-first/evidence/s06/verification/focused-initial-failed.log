@@ -1,0 +1,101 @@
+TAP version 13
+# Subtest: H01 acceptance 1: native Grid/Flex/SVG/font hierarchy and nested resources retain computed layout and exact pixels
+not ok 1 - H01 acceptance 1: native Grid/Flex/SVG/font hierarchy and nested resources retain computed layout and exact pixels
+  ---
+  duration_ms: 30233.712958
+  type: 'test'
+  location: '/private/tmp/ppte6/dist/tests/html-document.test.js:35:1'
+  failureType: 'testCodeFailure'
+  error: 'page.waitForFunction: Timeout 30000ms exceeded.'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TimeoutError'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/ppte6/dist/tests/html-document.test.js:45:21)
+  ...
+# Subtest: H01 acceptance 1: deterministic IDs reserve author identities, repair duplicates and preserve nested template escaping
+ok 2 - H01 acceptance 1: deterministic IDs reserve author identities, repair duplicates and preserve nested template escaping
+  ---
+  duration_ms: 74.685625
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 2: 100 actual browser serialize/write/close/reopen cycles retain one payload and no editing residue
+ok 3 - H01 acceptance 2: 100 actual browser serialize/write/close/reopen cycles retain one payload and no editing residue
+  ---
+  duration_ms: 9785.282917
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 2: sanitizer reports executable content; runtime sandbox/CSP block independent script/event/network/navigation attempts
+ok 4 - H01 acceptance 2: sanitizer reports executable content; runtime sandbox/CSP block independent script/event/network/navigation attempts
+  ---
+  duration_ms: 291.875709
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 2: safe serialization fails closed for executable CSS, SVG data, remote resource and malformed metadata
+ok 5 - H01 acceptance 2: safe serialization fails closed for executable CSS, SVG data, remote resource and malformed metadata
+  ---
+  duration_ms: 19.539459
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 3: offline CLI with no PATH/keys/browser writes exactly one HTML and <=1KB summary
+ok 6 - H01 acceptance 3: offline CLI with no PATH/keys/browser writes exactly one HTML and <=1KB summary
+  ---
+  duration_ms: 141.906333
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 3: rejection creates no output; local resource root, symlinks, missing resources and import cycles fail explicitly
+ok 7 - H01 acceptance 3: rejection creates no output; local resource root, symlinks, missing resources and import cycles fail explicitly
+  ---
+  duration_ms: 49.873
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 4: actual bundled CLI/runtime import graphs exclude old representations; all three H00 drafts enhance directly
+ok 8 - H01 acceptance 4: actual bundled CLI/runtime import graphs exclude old representations; all three H00 drafts enhance directly
+  ---
+  duration_ms: 70.396
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 1/3: embedded SVG references preserve fragment identity and diagnostics obey byte limits
+ok 9 - H01 acceptance 1/3: embedded SVG references preserve fragment identity and diagnostics obey byte limits
+  ---
+  duration_ms: 22.600208
+  type: 'test'
+  ...
+# Subtest: S06 table: SHA-256 vectors, legacy identity, dedup, stable references, missing/corrupt resources, no CSP expansion
+ok 10 - S06 table: SHA-256 vectors, legacy identity, dedup, stable references, missing/corrupt resources, no CSP expansion
+  ---
+  duration_ms: 51.084666
+  type: 'test'
+  ...
+# Subtest: S06 file journey: mixed ratios, insert/replace/focus/reset, guarded history, download/reopen, print and speaker
+ok 11 - S06 file journey: mixed ratios, insert/replace/focus/reset, guarded history, download/reopen, print and speaker
+  ---
+  duration_ms: 2507.705625
+  type: 'test'
+  ...
+# Subtest: S02 file entry: no API and denied permission actually download, reopen content/style/lock/media offline
+ok 12 - S02 file entry: no API and denied permission actually download, reopen content/style/lock/media offline
+  ---
+  duration_ms: 2038.380041
+  type: 'test'
+  ...
+# Subtest: S02 conflict remains latched through input; exported and confirmed revisions are independent
+ok 13 - S02 conflict remains latched through input; exported and confirmed revisions are independent
+  ---
+  duration_ms: 0.25475
+  type: 'test'
+  ...
+# Subtest: S02 file handle contract bridge: real file bytes, permission lifecycle, autosave, conflicts and delayed receipts
+ok 14 - S02 file handle contract bridge: real file bytes, permission lifecycle, autosave, conflicts and delayed receipts
+  ---
+  duration_ms: 5976.943
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 13
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 40912.611083

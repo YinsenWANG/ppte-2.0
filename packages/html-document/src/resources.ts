@@ -6,7 +6,7 @@ import postcss from 'postcss';
 import valueParser from 'postcss-value-parser';
 import { attr, elements, setText, textOf, dataAllowed } from './content.js';
 
-export interface ResourceOptions { root: string; base: string; assetMap?: Record<string, string>; maxBytes?: number; cacheContext?: string }
+export interface ResourceOptions { root: string; base: string; assetMap?: Record<string, string>; maxBytes?: number; cacheContext?: string; mediaTable?: boolean }
 const mime: Record<string, string> = { '.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.gif':'image/gif','.webp':'image/webp','.avif':'image/avif','.svg':'image/svg+xml','.woff':'font/woff','.woff2':'font/woff2','.ttf':'font/ttf','.otf':'font/otf','.mp4':'video/mp4','.webm':'video/webm','.mp3':'audio/mpeg','.ogg':'audio/ogg','.wav':'audio/wav' };
 // Process-local LRU: no handles, permission decisions, or visual interpretations.
 // Actual bytes are reread on each invocation; the digest, MIME, encoder version,

@@ -1,0 +1,115 @@
+{
+  "status": "synthetic engineering fixtures only; real authorized mixed-image/human acceptance pending",
+  "rasterSource": "Generated in tests/single-file-media.test.ts using Canvas; no third-party photographs",
+  "rasterFiles": [
+    {
+      "index": 0,
+      "width": 640,
+      "height": 240,
+      "mime": "image/png",
+      "bytes": 8328,
+      "sha256": "dd0dce8e0c24931c8cfc4fd147f0c15b82427514609a6306203e801d52e1acaa"
+    },
+    {
+      "index": 1,
+      "width": 240,
+      "height": 640,
+      "mime": "image/jpeg",
+      "bytes": 6115,
+      "sha256": "e394e4e92ad31fbf3376f480b71eded7a146d2621a29051dff2872cb1989205e"
+    },
+    {
+      "index": 2,
+      "width": 640,
+      "height": 240,
+      "mime": "image/webp",
+      "bytes": 2476,
+      "sha256": "5d4b84fd0de23a17fcd635ec68c44159a8587259f6c8a8be57ee3719f2028ccb"
+    },
+    {
+      "index": 3,
+      "width": 240,
+      "height": 640,
+      "mime": "image/png",
+      "bytes": 9894,
+      "sha256": "5563a30b6abce4bc24c59beca99ac19f2ae6727599860ac4c52d057688e0eb9a"
+    },
+    {
+      "index": 4,
+      "width": 640,
+      "height": 240,
+      "mime": "image/jpeg",
+      "bytes": 6337,
+      "sha256": "bdb748055fa728cfbcddaf7dd8625d443933be632b63371ec2c7f5227d14a2cb"
+    },
+    {
+      "index": 5,
+      "width": 240,
+      "height": 640,
+      "mime": "image/webp",
+      "bytes": 2500,
+      "sha256": "addcb61c448ac41d615b3b45477171ab893fb8e076838d6911ee5c3427704f4a"
+    },
+    {
+      "index": 6,
+      "width": 640,
+      "height": 240,
+      "mime": "image/png",
+      "bytes": 9075,
+      "sha256": "6827dd6d4889462d744d5e036c2782bcaddb451928fa25bdaeafeacd8b3dbe87"
+    },
+    {
+      "index": 7,
+      "width": 240,
+      "height": 640,
+      "mime": "image/jpeg",
+      "bytes": 6367,
+      "sha256": "d0b61c8058d856a1ab00ad5988894aab1437cd9bc6376b1afe50e0ecb32d207f"
+    },
+    {
+      "index": 8,
+      "width": 640,
+      "height": 240,
+      "mime": "image/webp",
+      "bytes": 2570,
+      "sha256": "88df39da3b1288168bd101ea57a5b221b8fa1dac0aa91653a1e057384ac60132"
+    },
+    {
+      "index": 9,
+      "width": 240,
+      "height": 640,
+      "mime": "image/png",
+      "bytes": 10772,
+      "sha256": "30b8650914868a331ea90712ed13bdfb1341d3936a4bcd4e511e363174fa838c"
+    },
+    {
+      "index": 10,
+      "width": 640,
+      "height": 240,
+      "mime": "image/jpeg",
+      "bytes": 6357,
+      "sha256": "178602eb5e6b4b910debd163384f8326d45d6021b654128e33e6ce89401bf333"
+    },
+    {
+      "index": 11,
+      "width": 240,
+      "height": 640,
+      "mime": "image/webp",
+      "bytes": 2518,
+      "sha256": "d97d41aa8c5d1a809bba14ee5270f119d693bc8d9bc45fbe68e99b1fa14b2403"
+    }
+  ],
+  "video": {
+    "sha256": "82a990b53d96742dab43ce4d678a0b2c4d55010901bd6f55c30290e8ff37144a",
+    "offlinePlay": true,
+    "leaveSlidePaused": true
+  },
+  "videoLicenseEvidence": "tests/fixtures/media/manifest.json",
+  "fileHashes": {
+    "review.ppte.html": "6bfa59db7cb694b305e857dae7d52eab92b4966fc58fd457f99773802e1feba4",
+    "stress-table.ppte.html": "9659bbd7cd9746007279c22dd91187954dc4cdb4e7963dc3b13f951a0365c859",
+    "crop-before.png": "7f3d20b46bc50167c2218ff90be1fe63b9f22758a9005fb7d65b7017cd053fab",
+    "crop-after.png": "a87d42d8ace02088cdeef0bdf783b7ce767484f4ff410f41bb855da5953fd3bc",
+    "media.pdf": "86f01e8db3dd4c1edaa9567dc430ffd778b86e049d30b1c1bdc13615b4a02c1e"
+  }
+}

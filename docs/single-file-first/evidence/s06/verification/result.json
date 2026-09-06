@@ -1,0 +1,42 @@
+{
+  "status": "passed",
+  "commands": [
+    "pnpm typecheck",
+    "pnpm build",
+    "pnpm test"
+  ],
+  "tests": {
+    "passed": 71,
+    "failed": 0,
+    "added": 2,
+    "removed": 0,
+    "weakenedAssertions": 0
+  },
+  "browser": "152.0.7977.76",
+  "nativePicker": "pending, not operated",
+  "Safari": "pending, not operated in S06",
+  "human": "pending, no reviewer",
+  "sourceHashes": {
+    "packages/html-document/src/index.ts": "df4c33747d2692e0482ba9e68a9bb0e61760e5c0cb859c27ca59033be260590d",
+    "packages/html-document/src/resources.ts": "8edaaf9c8d2ef3ab9faec338da5274fa531c0819088e8587f5b722e3f7c9b18e",
+    "packages/html-document/src/runtime.ts": "fafe864ed399d1cb3d8c2769362ae90580de2b6d939be8d2c4cca1cb295b57bf",
+    "packages/html-editor/src/commands.ts": "9d7b6eaec16075275327ba2e2dc3225940eb52f53c44013e341b5a2e4d83aecd",
+    "packages/html-editor/src/index.ts": "862b57ff4f85e3a8dbbab8a6e8f3ee90c9d0c01592d9e58526c1162571b374ca",
+    "packages/html-editor/src/workspace.ts": "f24af27bdde64a1f32c7ce13bb2974fed2a63b40b7fa7dcb8afca40c1a6c0380",
+    "packages/html-print/src/index.ts": "79a0f19205b12f7c5daf3bc456dda7ece8e20969f7930cd0a4259de074395fc8",
+    "packages/html-document/src/media-table.ts": "1258f28aac14477552a05b628988df748c8a74cd9e83fdbd2e9a97b116f6937a",
+    "packages/html-editor/src/media-history.ts": "b27350187a6a6a5b0f05f3ee26d2894e63aae7c1de6c5d919be74eb993a451d6",
+    "tests/single-file-media.test.ts": "7fba409604d79b517cf8ed0a24536ed9d06528a619e015981437eed39018cfd6",
+    "scripts/s06-media.mjs": "f191814f55a2f76723ab61007d44d5b965bfff7ac4e8eb77b028f2dc1d447aff"
+  },
+  "logs": [
+    "typecheck.log",
+    "build.log",
+    "test.log",
+    "focused.log"
+  ],
+  "priorFailuresRetained": [
+    "test-initial-failed.log",
+    "focused-initial-failed.log"
+  ]
+}
