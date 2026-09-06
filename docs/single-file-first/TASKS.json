@@ -663,14 +663,16 @@
             "paths": [
               "docs/single-file-first/evidence/s04/comparison.json",
               "docs/single-file-first/evidence/s04/resource-equivalence.json"
-            ]
+            ],
+            "commit": "4f2b8493af65596eb1563080abb4be7575a42ab5"
           },
           {
             "criterion": "原始模型遥测缺失时填 unavailable，不估算或编造",
             "status": "reporting passed; actual provider telemetry unavailable",
             "paths": [
               "docs/single-file-first/evidence/s04/phase-and-token-telemetry.json"
-            ]
+            ],
+            "commit": "4f2b8493af65596eb1563080abb4be7575a42ab5"
           },
           {
             "criterion": "12 页参考机输入 p95 <=50ms、翻页 p95 <=100ms、含防抖保存确认 p95 <=1.5s；采样量按 PLAN",
@@ -678,7 +680,8 @@
             "paths": [
               "docs/single-file-first/evidence/s04/before.json",
               "docs/single-file-first/evidence/s04/after.json"
-            ]
+            ],
+            "commit": "4f2b8493af65596eb1563080abb4be7575a42ab5"
           },
           {
             "criterion": "缓存改变资源字节/变换/需求时失效，权限校验不能被缓存绕过",
@@ -686,7 +689,8 @@
             "paths": [
               "tests/single-file-performance.test.ts",
               "docs/single-file-first/evidence/s04/verification/test.log"
-            ]
+            ],
+            "commit": "4f2b8493af65596eb1563080abb4be7575a42ab5"
           },
           {
             "criterion": "性能优化不减少事实/图片、不破坏冲突检测与恢复，不扩大未说明的丢稿窗口",
@@ -694,7 +698,8 @@
             "paths": [
               "docs/single-file-first/evidence/s04/REPORT.md",
               "docs/single-file-first/evidence/s04/verification/test.log"
-            ]
+            ],
+            "commit": "4f2b8493af65596eb1563080abb4be7575a42ab5"
           }
         ],
         "verification": "docs/single-file-first/evidence/s04/verification/result.json",
@@ -706,7 +711,8 @@
           "Long/image-deck latency, first-visible and detailed blocking/phase profiling pending.",
           "Visible-first idle thumbnails and asynchronous draft storage not implemented.",
           "Safari, native IME, original file-picker and human review pending; F01–F05 native status not closed."
-        ]
+        ],
+        "implementationCommit": "4f2b8493af65596eb1563080abb4be7575a42ab5"
       }
     },
     {
