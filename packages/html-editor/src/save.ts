@@ -1,7 +1,9 @@
 export type SaveState = 'saved' | 'dirty' | 'saving' | 'draft' | 'unauthorized' | 'conflict' | 'failed';
-export interface Snapshot { content: string; hash: string; metadata: {documentId: string; saveRevision: number}; fileKey: string; name: string }
+export interface Snapshot { content: string; hash: string; metadata: {documentId: string; saveRevision: number}; fileKey: string; name: string; recoveryHash?: string }
 export interface Adapter { authorize?():Promise<void>; load(): Promise<Snapshot>; write(expected: string, content: string): Promise<Snapshot> }
 export async function sha(text: string) { return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text))),b=>b.toString(16).padStart(2,'0')).join(''); }
+// Recovery compares canonical content and persisted revision; disk conflicts use full file bytes.
+export const recoveryFingerprint = (s: Pick<Snapshot, 'content' | 'metadata'>) => sha(JSON.stringify([s.metadata.documentId,s.metadata.saveRevision,s.content]));
 export function loopbackAdapter(token: string): Adapter {
   const call = async (route: string, data?: object) => {
     const response = await fetch(route,{method:data?'POST':'GET',headers:{Authorization:`Bearer ${token}`,...(data?{'Content-Type':'application/json'}:{})},...(data?{body:JSON.stringify(data)}:{})});
@@ -11,7 +13,7 @@ export function loopbackAdapter(token: string): Adapter {
 }
 export interface FileHandle { name: string; queryPermission(o:object):Promise<string>; requestPermission(o:object):Promise<string>; getFile():Promise<{text():Promise<string>}>; createWritable():Promise<{write(s:string):Promise<void>;close():Promise<void>;abort():Promise<void>}> }
 export function fileAdapter(handle: FileHandle, decode:(s:string)=>Snapshot, encode:(content:string,revision:number)=>string): Adapter {
-  const load = async () => { const text = await (await handle.getFile()).text(); return {...decode(text),hash:await sha(text),fileKey:handle.name,name:handle.name}; };
+  const load = async () => { const text = await (await handle.getFile()).text(); const decoded=decode(text); return {...decoded,hash:await sha(text),recoveryHash:await recoveryFingerprint(decoded),fileKey:handle.name,name:handle.name}; };
   return {load,async authorize(){if(await handle.requestPermission({mode:'readwrite'})!=='granted')throw Error('PERMISSION_REVOKED');}, async write(expected,content) {
     const perform = async () => {
       if (await handle.queryPermission({mode:'readwrite'}) !== 'granted') throw Error('PERMISSION_REVOKED');
@@ -28,21 +30,24 @@ export function fileAdapter(handle: FileHandle, decode:(s:string)=>Snapshot, enc
 }
 export interface Draft { documentId:string; base:string; revision:number; time:number; content:string }
 export class SaveController {
-  state: SaveState = 'unauthorized'; detail = ''; revision = 0; composing = false; dirty = false;
+  state: SaveState = 'unauthorized'; detail = ''; revision = 0; confirmedFileRevision: number | null = null; exportedRevision: number | null = null; draftAvailable = false; composing = false; dirty = false;
   private timer?: ReturnType<typeof setTimeout>; private running = false;
   private lastDraft?: string;
   constructor(public adapter:Adapter|undefined, public base:Snapshot, private content:()=>string, private notify:()=>void, private storage?: Pick<Storage,'getItem'|'setItem'|'removeItem'>, public key = '') {}
+  get dirtyRevision() { return this.revision; }
+  get busy() { return this.running; }
   set(state:SaveState,detail='') { this.state=state;this.detail=detail;this.notify(); }
   draft() {
     try {
       if (!this.storage) throw Error('草稿存储不可用');
-      const value=JSON.stringify({documentId:this.base.metadata.documentId,base:this.base.hash,revision:this.revision,time:Date.now(),content:this.content()} satisfies Draft);
-      this.storage.setItem(this.key,value);this.lastDraft=value;
+      const value=JSON.stringify({documentId:this.base.metadata.documentId,base:this.base.recoveryHash ?? this.base.hash,revision:this.revision,time:Date.now(),content:this.content()} satisfies Draft);
+      this.storage.setItem(this.key,value);this.lastDraft=value;this.draftAvailable=true;
     }
-    catch { this.detail='草稿存储不可用或配额已满；修改尚未写入文件';this.notify(); }
+    catch { this.draftAvailable=false;this.detail='草稿存储不可用或配额已满；修改尚未写入文件';this.notify(); }
   }
-  recover():Draft|undefined { try { const raw=this.storage?.getItem(this.key);if(!raw)return;const d=JSON.parse(raw);if(typeof d.content!=='string'||d.documentId!==this.base.metadata.documentId)throw Error();if(d.base!==this.base.hash){this.set('conflict','草稿基准已变化；可保留草稿或重新读取文件');}return d; }catch{this.set('failed','草稿不可读取');} }
-  change() { this.dirty=true;this.revision++;this.set(this.adapter?'dirty':'draft');if(!this.composing)this.schedule(); }
+  recover():Draft|undefined { try { const raw=this.storage?.getItem(this.key);if(!raw)return;const d=JSON.parse(raw);if(typeof d.content!=='string'||d.documentId!==this.base.metadata.documentId)throw Error();if(d.base!==(this.base.recoveryHash ?? this.base.hash)){this.set('conflict','草稿基准已变化；可保留草稿或重新读取文件');}return d; }catch{this.set('failed','草稿不可读取');} }
+  change() { this.dirty=true;this.revision++;if(this.state!=='conflict')this.set(this.adapter?'dirty':'draft');if(!this.composing)this.schedule(); }
+  exported(revision:number) { this.exportedRevision=revision;this.set(this.state,'已生成更新文件；原文件未覆盖（下载是否落盘由浏览器决定）'); }
   schedule() { clearTimeout(this.timer); this.draft(); this.timer=setTimeout(()=>void this.flush(),800); }
   composition(active:boolean) {this.composing=active;clearTimeout(this.timer);if(!active&&this.dirty)this.schedule();}
   async flush() {
@@ -50,7 +55,7 @@ export class SaveController {
     if(!this.adapter){this.draft();this.set('draft',this.detail);return;}
     this.running=true;const rev=this.revision;this.set('saving');
     try {
-      const next=await this.adapter.write(this.base.hash,this.content());this.base=next;
+      const next=await this.adapter.write(this.base.hash,this.content());this.base=next;this.confirmedFileRevision=rev;
       if(rev===this.revision){
         this.dirty=false;
         // Another window may have replaced this recovery entry while the file write

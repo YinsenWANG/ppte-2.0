@@ -1,0 +1,36 @@
+{
+  "recordedAt": "2026-09-06T13:27:12.812659+00:00",
+  "Chrome": {
+    "version": "152.0.7977.76",
+    "headless": true,
+    "observedCapabilities": {
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/152.0.0.0 Safari/537.36",
+      "secure": true,
+      "picker": "function",
+      "locks": true,
+      "protocol": "file:"
+    },
+    "actualDownloadReopen": "passed",
+    "nativePicker": "pending",
+    "nativeIME": "pending",
+    "permissionFailure": "injected, not native denial"
+  },
+  "Safari": {
+    "status": "blocked",
+    "evidence": "safari.json",
+    "version": "Included with Safari 26.6.2 (21624.5.1.11.3)\n",
+    "reason": {
+      "value": {
+        "error": "session not created",
+        "message": "Could not create a session: You must enable 'Allow remote automation' in the Developer section of Safari Settings to control Safari via WebDriver.",
+        "stacktrace": ""
+      }
+    }
+  },
+  "otherBrowsers": "pending; not tested",
+  "environment": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "node": "v22.23.2"
+  },
+  "noNodeTarget": "pending; development host has Node"
+}

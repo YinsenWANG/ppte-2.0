@@ -22,18 +22,22 @@ function content() {
   if(result.issues.length) throw Error('UNSAFE_CONTENT: '+JSON.stringify(result.issues));
   return result.html;
 }
-function encode(value: string, revision: number) {
+function encode(value: string, revision: number, documentId = metadata.documentId) {
+  const cleaned = cleanContent(value);
+  if (cleaned.issues.length) throw Error('UNSAFE_CONTENT');
+  value = cleaned.html;
   const shell = document.documentElement.cloneNode(true) as HTMLElement;
   shell.querySelectorAll('[data-ppte-transient]').forEach(e=>e.remove());
   shell.querySelector<HTMLTemplateElement>('#ppte-content')!.content.replaceChildren(document.createTextNode(value));
   const iframe=shell.querySelector('#ppte-frame')!;iframe.removeAttribute('srcdoc');iframe.removeAttribute('src');iframe.removeAttribute('style');
-  shell.querySelector('#ppte-metadata')!.textContent=JSON.stringify({...metadata,saveRevision:revision}).replace(/</g,'\\u003c');
+  shell.querySelector('#ppte-metadata')!.textContent=JSON.stringify({...metadata,documentId,saveRevision:revision}).replace(/</g,'\\u003c');
   return '<!doctype html>\n'+shell.outerHTML;
 }
 const api = {
   get contentDocument() { return frame.contentDocument; },
   get metadata() { return structuredClone(metadata); },
   content, encode,
+  normalize(value: string) { const result=cleanContent('<!doctype html>'+value.replace(/^<!doctype[^>]*>/i,''));if(result.issues.length)throw Error('UNSAFE_CONTENT');return result.html; },
   mount(value: string) { const cleaned=cleanContent(value);if(cleaned.issues.length)throw Error('UNSAFE_CONTENT');return new Promise<void>(done=>{frame.addEventListener('load',()=>done(),{once:true});frame.srcdoc=frameContent(cleaned.html);}); },
   serialize() { return encode(content(),metadata.saveRevision+1); }
 };

@@ -1,0 +1,17 @@
+{
+  "status": "pending",
+  "nativePickerExecuted": false,
+  "reason": "Chrome run was headless with injected picker/handle contracts. No human OS picker journey executed. Safari WebDriver session is blocked by disabled Allow remote automation.",
+  "automationEvidence": "original-file-hashes.json",
+  "pendingSteps": [
+    "Open the single file from file:// in supported browser",
+    "Choose current file in actual OS picker and grant write permission",
+    "Edit, wait for write confirmation, close and reopen same path; capture hashes",
+    "Cancel picker and verify retained edits",
+    "Revoke permission externally, verify retention and actual download, reauthorize and retry",
+    "Choose moved/copied/same-name files; verify target identity and no unintended overwrite",
+    "Two native windows and external modification conflict",
+    "Native IME and macOS Cmd+S, private browser storage failure"
+  ],
+  "humanConfirmation": "pending"
+}

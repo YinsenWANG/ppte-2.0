@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "commands": [
+    "pnpm typecheck",
+    "pnpm build",
+    "pnpm test"
+  ],
+  "exitCodes": [
+    0,
+    0,
+    0
+  ],
+  "tests": 63,
+  "passed": 63,
+  "failed": 0,
+  "addedTests": 3,
+  "removedTests": 0,
+  "existingAssertionsChanged": false,
+  "browserScope": "Installed Chrome headless; native picker/IME and Safari not certified"
+}

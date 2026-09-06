@@ -1,15 +1,17 @@
 import { workspace } from './workspace.js';
-import { SaveController, loopbackAdapter, fileAdapter, sha, type Snapshot, type FileHandle } from './save.js';
+import { SaveController, loopbackAdapter, fileAdapter, recoveryFingerprint, type Snapshot, type FileHandle } from './save.js';
 interface API {
     contentDocument: Document | null;
     metadata: any;
     serialize(): string;
     content(): string;
+    normalize(s: string): string;
     mount(s: string): Promise<void>;
-    encode(s: string, revision: number): string;
+    encode(s: string, revision: number, documentId?: string): string;
 }
 export function installEditor(api: API) {
     let controller: SaveController;
+    let boundFileName = '';
     let ui: ReturnType<typeof workspace>;
     let token = new URLSearchParams(location.hash.slice(1)).get('token');
     // Parent session storage permits reload; capabilities never enter serialized HTML or content.
@@ -45,7 +47,7 @@ export function installEditor(api: API) {
         const menu = bar.querySelector('details');
         if (menu && controller.state === 'conflict')
             menu.open = true;
-        status.textContent = names[controller.state] + (controller.detail ? '：' + controller.detail : '');
+        status.textContent = (controller.detail.startsWith('已生成') ? controller.detail : (controller.state === 'saved' && boundFileName ? '已保存到所选文件：' + boundFileName : names[controller.state]) + (controller.detail ? '：' + controller.detail : '')) + (controller.dirty && !controller.draftAvailable ? ' · 草稿恢复不可用；请保存或下载' : '');
     };
     const enable = () => {
         ui?.enable();
@@ -64,7 +66,7 @@ export function installEditor(api: API) {
             if (!controller.adapter) {
                 const picker = (window as any).showOpenFilePicker;
                 if (!isSecureContext || typeof picker !== 'function') {
-                    controller.set('unauthorized', '此浏览器不能覆盖原文件；请下载更新后的文件。');
+                    download();
                     return;
                 }
                 const [handle]: FileHandle[] = await picker({ multiple: false, types: [{ description: 'HTML', accept: { 'text/html': ['.html'] } }] });
@@ -72,29 +74,38 @@ export function installEditor(api: API) {
                     throw Error('PERMISSION_REVOKED');
                 const adapter = fileAdapter(handle, text => {
                     const inert = new DOMParser().parseFromString(text, 'text/html');
-                    return { content: inert.querySelector<HTMLTemplateElement>('#ppte-content')?.content.textContent ?? '', metadata: JSON.parse(inert.querySelector('#ppte-metadata')!.textContent!), hash: '', fileKey: handle.name, name: handle.name };
+                    return { content: api.normalize(inert.querySelector<HTMLTemplateElement>('#ppte-content')?.content.textContent ?? ''), metadata: JSON.parse(inert.querySelector('#ppte-metadata')!.textContent!), hash: '', fileKey: handle.name, name: handle.name };
                 }, api.encode);
                 const target = await adapter.load();
-                if (target.metadata.documentId !== controller.base.metadata.documentId || target.content !== controller.base.content)
+                if (target.metadata.documentId !== controller.base.metadata.documentId || target.content !== controller.base.content || target.metadata.saveRevision !== controller.base.metadata.saveRevision)
                     throw Error('CONFLICT: 所选文件不匹配打开时的内容');
+                boundFileName = handle.name;
                 controller.adapter = adapter;
                 controller.base = target;
             }
             await controller.adapter?.authorize?.();
             await controller.flush();
+            if (controller.state === 'unauthorized') download();
+            if (!controller.dirty) controller.set('saved', '已关联所选文件：' + controller.base.name);
         }
         catch (e) {
-            controller.set(String(e).includes('CONFLICT') ? 'conflict' : 'unauthorized', String(e));
+            const message = String(e);
+            controller.set(message.includes('CONFLICT') ? 'conflict' : 'unauthorized', message.includes('AbortError') ? '已取消选择；修改仍保留，可重试或下载更新文件。' : message);
+            if (message.includes('PERMISSION') || message.includes('NotAllowedError') || message.includes('SecurityError')) download();
         }
     })());
-    save.title = 'Cmd/Ctrl+S，失败后可重试';
+    save.title = '选择当前文件以启用自动保存；Cmd/Ctrl+S，失败后可重试';
     button('重新读取文件', () => void (async () => {
+        if (controller.busy || controller.composing) { controller.set(controller.state, '请等待保存或输入法组合完成后再重新读取。'); return; }
+        if (!controller.adapter) { controller.set(controller.state, '尚未关联文件；请保存授权或下载当前修改。'); return; }
         if (controller.dirty && !confirm('当前修改保留为草稿；重新读取磁盘文件？'))
             return;
         try {
             if (controller.dirty)
                 controller.draft();
+            const revision = controller.revision;
             const latest = await controller.adapter!.load();
+            if (revision !== controller.revision || controller.busy || controller.composing) { controller.set(controller.state, '读取期间有新修改；当前内容已保留，请重试。'); return; }
             controller.base = latest;
             controller.dirty = false;
             await api.mount(latest.content);
@@ -105,10 +116,11 @@ export function installEditor(api: API) {
         }
     })());
     button('恢复草稿', () => void (async () => {
+        if (controller.busy || controller.composing) { controller.set(controller.state, '请等待保存或输入法组合完成后再恢复草稿。'); return; }
         const d = controller.recover();
         if (!d)
             return;
-        if (d.base !== controller.base.hash) {
+        if (d.base !== (controller.base.recoveryHash ?? controller.base.hash)) {
             controller.set('conflict', '草稿与磁盘不同；请先复制保留草稿，再重新读取。');
             return;
         }
@@ -145,15 +157,20 @@ export function installEditor(api: API) {
                 controller.set('failed', String(e));
             }
         })());
-    button('下载更新后的文件', () => {
-        const url = URL.createObjectURL(new Blob([api.serialize()], { type: 'text/html' }));
+    const download = (newInstance = false) => {
+        if (controller.composing) { controller.set(controller.state, '请完成输入法组合后再下载；修改仍保留。'); return; }
+        const revision = controller.revision;
+        const url = URL.createObjectURL(new Blob([api.encode(api.content(), newInstance ? 0 : controller.base.metadata.saveRevision + 1, newInstance ? crypto.randomUUID().replace(/-/g, '') : undefined)], { type: 'text/html' }));
         const link = document.createElement('a');
         link.href = url;
         link.download = (document.title.replace(/[\\/:*?"<>|]/g, '_').replace(/(?:\.ppte)?\.html$/i, '') || '作品') + '.ppte.html';
         link.click();
         setTimeout(() => URL.revokeObjectURL(url), 30000);
-        controller.set(controller.state, '已生成更新文件；原文件未覆盖（下载是否落盘由浏览器决定）');
-    });
+        if (newInstance) controller.set(controller.state, '已生成新文件实例；当前原文件未覆盖。');
+        else controller.exported(revision);
+    };
+    button('下载更新后的文件', () => { try { download(); } catch (e) { controller.set('failed', String(e)); } });
+    button('另存为新文件', () => { try { download(true); } catch (e) { controller.set('failed', String(e)); } });
     document.body.append(bar);
     const frame = document.querySelector<HTMLIFrameElement>('#ppte-frame')!;
     ui = workspace(frame, bar, () => controller?.change());
@@ -165,13 +182,13 @@ export function installEditor(api: API) {
         catch {
         }
         const adapter = token && location.hostname === '127.0.0.1' ? loopbackAdapter(token) : undefined;
-        const base: Snapshot = adapter ? await adapter.load() : { content: api.content(), metadata: api.metadata, hash: crypto?.subtle ? await sha(api.content()) : api.content(), fileKey: location.href, name: document.title };
-        controller = new SaveController(adapter, base, () => api.content(), render, storage, `ppte-draft:${location.origin}:${base.fileKey}`);
+        const base: Snapshot = adapter ? await adapter.load() : { content: api.content(), metadata: api.metadata, hash: crypto?.subtle ? await recoveryFingerprint({ content: api.content(), metadata: api.metadata }) : JSON.stringify([api.metadata.documentId, api.metadata.saveRevision, api.content()]), fileKey: location.href, name: document.title };
+        controller = new SaveController(adapter, base, () => api.content(), render, storage, `ppte-draft:${location.origin}:${base.fileKey}:${base.metadata.documentId}`);
         controller.set(adapter ? 'saved' : 'unauthorized', adapter ? '' : '尚未关联写入文件；可编辑、授权保存或下载更新后的文件。');
         const draft = controller.recover();
-        if (draft && draft.base === base.hash) {
-            await api.mount(draft.content);
-            controller.change();
+        if (draft && draft.base === (base.recoveryHash ?? base.hash)) {
+            if (adapter) { await api.mount(draft.content); controller.change(); }
+            else controller.set('unauthorized', '发现匹配草稿；请在更多菜单中选择恢复草稿。尚未写入文件。');
         }
         if (adapter) {
             if (!draft && api.content() !== base.content)
