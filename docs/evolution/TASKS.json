@@ -2843,7 +2843,7 @@
       "milestone": "M4",
       "priority": "P0",
       "title": "浏览器、Office 与完整交付验收",
-      "status": "planned",
+      "status": "partial",
       "effort": "M",
       "ownerRole": "验收 / 导出",
       "dependsOn": [
@@ -2877,7 +2877,59 @@
         "A21"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        {
+          "commit": "3ce74e38e4f5d6ce8d8226254a2bfed2ffa13e3b",
+          "tests": [
+            "tests/client-acceptance.test.ts"
+          ],
+          "report": "docs/evolution/quality/Q01.md",
+          "matrix": "docs/evolution/quality/client-matrix.json",
+          "criteria": {
+            "1": {
+              "contract": "pass",
+              "acceptance": "unverified",
+              "evidence": "Required Safari and Chrome matrix; Q01 A17 test rejects Playwright WebKit as actual Safari evidence. Actual-client observations have not been executed/retained."
+            },
+            "2": {
+              "contract": "pass",
+              "acceptance": "unverified",
+              "evidence": "Q01 A17 tests independently require open/edit/resave, native text/shape/image/chart/table, text order and visual evidence; reject package inspection, unchanged resave and absent screenshots. LibreOffice Impress is a verification target, not verified support."
+            },
+            "3": {
+              "contract": "pass",
+              "evidence": "Q01 A17/A21 tests reject all non-pass statuses, stale matrix, every changed ArtifactIdentity component, forged identities, duplicates, unknown observations and missing/corrupt retained bytes. Blackbox Q01-client-evidence binds a real Portable identity and reports blocked with zero client passes."
+            }
+          },
+          "verification": {
+            "typecheck": "pass",
+            "build": "pass",
+            "test": {
+              "before": 381,
+              "after": 387,
+              "delta": 6,
+              "passed": 387,
+              "failed": 0,
+              "skipped": 0
+            },
+            "blackbox": {
+              "start": "docs/evolution/quality/q01-blackbox-start.json",
+              "final": "docs/evolution/quality/q01-blackbox-final.json",
+              "beforeGreen": 71,
+              "beforeRed": 0,
+              "green": 72,
+              "red": 0,
+              "newRed": []
+            }
+          },
+          "remainingRisks": [
+            "D07 remains partial; A21 product owner and two target users have not completed the M3 ten-task benchmark.",
+            "Actual Safari/Chrome entries and LibreOffice open/edit/resave/reopen, native-object and visual checks remain unverified. Installed applications are not acceptance evidence.",
+            "Client gate validates evidence structure, current identity and retained byte digests; callers must recompute delivery identity and bind input bytes. It cannot authenticate human actions or replace the independent A19/A21 release gates.",
+            "No PowerPoint/Keynote support claim; no GitHub push or npm publication performed."
+          ]
+        }
+      ]
     },
     {
       "id": "Q02",
