@@ -240,12 +240,163 @@
       }
     },
     {
-      "id": "S02", "title": "授权写回、自动保存与完整下载降级", "status": "planned", "dependsOn": ["S01"],
-      "targetAreas": ["packages/html-editor/src/save.ts", "packages/html-editor/src/index.ts", "packages/html-document/src/runtime.ts", "tests/html-save.test.ts"],
-      "addresses": ["用户反馈 1", "H02", "R05", "R06"],
-      "deliverables": ["保存动作按实际能力绑定文件或下载更新文件", "文件确认、导出 revision 与草稿状态分别表达", "真实文件选择授权、取消、撤销权限、再授权、冲突和失败保留", "下载文件包含当前内容、媒体与同一编辑运行时"],
-      "acceptance": ["实际支持路径从 file:// 授权后自动写回、关闭重开验证原路径内容", "无 API/拒绝权限时仍能编辑并实际下载，重新打开下载件保持内容、样式、锁与媒体", "状态不将下载发起/草稿缓存称为原文件已保存", "移动、复制、同名文件、双窗口、外部修改、配额满、私密浏览不误恢复或覆盖", "按键保存、原生 IME、保存中继续输入与迟到回执不丢内容", "不以必需 HTTP 服务补偿权限限制"],
-      "requiredEvidence": ["browser-version-capability-matrix", "native-picker-journey", "original-file-hashes", "actual-download-reopen", "failure-recovery-results"], "evidence": null
+      "id": "S02",
+      "title": "授权写回、自动保存与完整下载降级",
+      "status": "partial",
+      "dependsOn": [
+        "S01"
+      ],
+      "targetAreas": [
+        "packages/html-editor/src/save.ts",
+        "packages/html-editor/src/index.ts",
+        "packages/html-document/src/runtime.ts",
+        "tests/html-save.test.ts"
+      ],
+      "addresses": [
+        "用户反馈 1",
+        "H02",
+        "R05",
+        "R06"
+      ],
+      "deliverables": [
+        "保存动作按实际能力绑定文件或下载更新文件",
+        "文件确认、导出 revision 与草稿状态分别表达",
+        "真实文件选择授权、取消、撤销权限、再授权、冲突和失败保留",
+        "下载文件包含当前内容、媒体与同一编辑运行时"
+      ],
+      "acceptance": [
+        "实际支持路径从 file:// 授权后自动写回、关闭重开验证原路径内容",
+        "无 API/拒绝权限时仍能编辑并实际下载，重新打开下载件保持内容、样式、锁与媒体",
+        "状态不将下载发起/草稿缓存称为原文件已保存",
+        "移动、复制、同名文件、双窗口、外部修改、配额满、私密浏览不误恢复或覆盖",
+        "按键保存、原生 IME、保存中继续输入与迟到回执不丢内容",
+        "不以必需 HTTP 服务补偿权限限制"
+      ],
+      "requiredEvidence": [
+        "browser-version-capability-matrix",
+        "native-picker-journey",
+        "original-file-hashes",
+        "actual-download-reopen",
+        "failure-recovery-results"
+      ],
+      "evidence": {
+        "implementationCommit": "7a26828c9d4e9c551a20f6c3857cb554ce74f514",
+        "report": "docs/single-file-first/evidence/s02/REPORT.md",
+        "primaryFile": "docs/single-file-first/evidence/s02/sample.ppte.html",
+        "requiredEvidence": {
+          "browser-version-capability-matrix": "docs/single-file-first/evidence/s02/browser-version-capability-matrix.json",
+          "native-picker-journey": "docs/single-file-first/evidence/s02/native-picker-journey.json",
+          "original-file-hashes": "docs/single-file-first/evidence/s02/original-file-hashes.json",
+          "actual-download-reopen": "docs/single-file-first/evidence/s02/actual-download-reopen.json",
+          "failure-recovery-results": "docs/single-file-first/evidence/s02/failure-recovery-results.md"
+        },
+        "verification": "docs/single-file-first/evidence/s02/verification/result.json",
+        "acceptance": [
+          {
+            "criterion": "实际支持路径从 file:// 授权后自动写回、关闭重开验证原路径内容",
+            "status": "partial",
+            "scope": "Actual file I/O and file:// reopen tested with injected handle bridge; native OS picker and original-path authorization pending.",
+            "commit": "7a26828c9d4e9c551a20f6c3857cb554ce74f514",
+            "tests": [
+              "tests/single-file-save.test.ts",
+              "tests/html-save.test.ts"
+            ],
+            "evidence": "docs/single-file-first/evidence/s02/original-file-hashes.json",
+            "log": "docs/single-file-first/evidence/s02/verification/test.log"
+          },
+          {
+            "criterion": "无 API/拒绝权限时仍能编辑并实际下载，重新打开下载件保持内容、样式、锁与媒体",
+            "status": "partial",
+            "scope": "Installed Chrome actual download/reopen passed for injected absent API and denied permission; Safari native fallback pending.",
+            "commit": "7a26828c9d4e9c551a20f6c3857cb554ce74f514",
+            "tests": [
+              "tests/single-file-save.test.ts",
+              "tests/html-save.test.ts"
+            ],
+            "evidence": "docs/single-file-first/evidence/s02/actual-download-reopen.json",
+            "log": "docs/single-file-first/evidence/s02/verification/test.log"
+          },
+          {
+            "criterion": "状态不将下载发起/草稿缓存称为原文件已保存",
+            "status": "passed",
+            "scope": "Download revision and file confirmation are separate; dirty remains, unavailable draft storage is reported. Chrome automation passed.",
+            "commit": "7a26828c9d4e9c551a20f6c3857cb554ce74f514",
+            "tests": [
+              "tests/single-file-save.test.ts",
+              "tests/html-save.test.ts"
+            ],
+            "evidence": "docs/single-file-first/evidence/s02/actual-download-reopen.json",
+            "log": "docs/single-file-first/evidence/s02/verification/test.log"
+          },
+          {
+            "criterion": "移动、复制、同名文件、双窗口、外部修改、配额满、私密浏览不误恢复或覆盖",
+            "status": "partial",
+            "scope": "Copy isolation, mismatched same-name revision, external conflict, quota injection and existing two-window regression passed; native moved-file/private-browser/multi-handle journeys pending.",
+            "commit": "7a26828c9d4e9c551a20f6c3857cb554ce74f514",
+            "tests": [
+              "tests/single-file-save.test.ts",
+              "tests/html-save.test.ts"
+            ],
+            "evidence": "docs/single-file-first/evidence/s02/failure-recovery-results.md",
+            "log": "docs/single-file-first/evidence/s02/verification/test.log"
+          },
+          {
+            "criterion": "按键保存、原生 IME、保存中继续输入与迟到回执不丢内容",
+            "status": "partial",
+            "scope": "Control+S, edits during pending write, delayed acknowledgements and synthetic composition regression passed; native IME and actual macOS Cmd journey pending.",
+            "commit": "7a26828c9d4e9c551a20f6c3857cb554ce74f514",
+            "tests": [
+              "tests/single-file-save.test.ts",
+              "tests/html-save.test.ts"
+            ],
+            "evidence": "docs/single-file-first/evidence/s02/failure-recovery-results.md",
+            "log": "docs/single-file-first/evidence/s02/verification/test.log"
+          },
+          {
+            "criterion": "不以必需 HTTP 服务补偿权限限制",
+            "status": "passed",
+            "scope": "Offline file:// download/reopen has no HTTP requests. Test-only handle bridge does not enter the runtime. Independent no-Node target remains a later acceptance gap.",
+            "commit": "7a26828c9d4e9c551a20f6c3857cb554ce74f514",
+            "tests": [
+              "tests/single-file-save.test.ts",
+              "tests/html-save.test.ts"
+            ],
+            "evidence": "docs/single-file-first/evidence/s02/actual-download-reopen.json",
+            "log": "docs/single-file-first/evidence/s02/verification/test.log"
+          }
+        ],
+        "statusByLayer": {
+          "code": {
+            "status": "passed",
+            "commit": "7a26828c9d4e9c551a20f6c3857cb554ce74f514",
+            "scope": "Capability-dependent download/writeback, canonical binding validation, revision separation, recovery state and conflict retention; not a native permission certification."
+          },
+          "automation": {
+            "status": "passed",
+            "tests": 63,
+            "addedTests": 3,
+            "removedTests": 0,
+            "log": "docs/single-file-first/evidence/s02/verification/test.log"
+          },
+          "realBrowser": {
+            "status": "partial",
+            "evidence": "docs/single-file-first/evidence/s02/browser-version-capability-matrix.json",
+            "reason": "Installed Chrome headless actual file download/reopen passed; picker/handle injected for disk journey. Safari remote automation is disabled."
+          },
+          "human": {
+            "status": "pending",
+            "reason": "No native picker, IME, private browsing or manual review session executed."
+          }
+        },
+        "remaining": [
+          "Native picker authorization/cancel/revocation/reauthorization, same original path close/reopen and hashes pending.",
+          "Safari native save/download pending: WebDriver reports Allow remote automation disabled.",
+          "Native moved/copied/same-name-file selection, private browsing storage and native multi-window handle journeys pending.",
+          "Native IME and actual macOS Cmd+S pending; synthetic composition is not native evidence.",
+          "Browser digest check and write are not atomic CAS against arbitrary external processes.",
+          "F01 remains S01 partial; F02–F05 remain assigned to S03. R05/R06 native validation gaps are not closed."
+        ]
+      }
     },
     {
       "id": "S03", "title": "修复编辑组合操作并还原上下文 UI", "status": "planned", "dependsOn": ["S01"],
