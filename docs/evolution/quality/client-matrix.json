@@ -1,0 +1,92 @@
+{
+  "version": "q01-client-matrix-v1",
+  "status": "unverified",
+  "scope": "Release targets, not a claim of verified support. Every required client/entry/check must pass on the exact delivery identity.",
+  "clients": [
+    {
+      "id": "safari",
+      "application": "Safari",
+      "kind": "browser",
+      "required": true,
+      "entries": [
+        "host",
+        "file-single-html",
+        "file-offline-directory"
+      ],
+      "checks": [
+        "open",
+        "edit",
+        "resave",
+        "visual",
+        "journey"
+      ]
+    },
+    {
+      "id": "chrome",
+      "application": "Google Chrome",
+      "kind": "browser",
+      "required": true,
+      "entries": [
+        "host",
+        "file-single-html",
+        "file-offline-directory"
+      ],
+      "checks": [
+        "open",
+        "edit",
+        "resave",
+        "visual",
+        "journey"
+      ]
+    },
+    {
+      "id": "libreoffice",
+      "application": "LibreOffice Impress",
+      "kind": "office",
+      "required": true,
+      "entries": [
+        "pptx-semantic"
+      ],
+      "checks": [
+        "open",
+        "edit",
+        "resave",
+        "native-text",
+        "native-shape",
+        "native-image",
+        "native-chart",
+        "native-table",
+        "text-order",
+        "visual"
+      ]
+    }
+  ],
+  "notDeclared": [
+    "Microsoft PowerPoint",
+    "Apple Keynote",
+    "Firefox",
+    "Microsoft Edge"
+  ],
+  "observations": [],
+  "manualProtocol": {
+    "browser": "Use actual named application and version. Playwright WebKit is not Safari. Record screenshots/trace and all ten A21 tasks.",
+    "office": "Open the exported PPTX, edit text, shape, image, chart and table separately, save a new copy, reopen it, check text order. Retain original and changed PPTX bytes. Record visual screenshots separately from native edit evidence.",
+    "panel": "A21 requires product owner and at least two target users; apply the D07 benchmark at M3, all ten scripts, no deferred table task.",
+    "identity": "Recompute ArtifactIdentity from actual delivery, pin matrix digest and input bytes, verify retained evidence files. Old-build evidence is historical only."
+  },
+  "automatedJourneys": [
+    "tests/editor-parity-journey.test.ts",
+    "tests/table-editing-journey.test.ts",
+    "tests/media-playback-journey.test.ts",
+    "tests/npm-native-skill.test.ts",
+    "tests/skill-design-workflow.test.ts"
+  ],
+  "releaseBlockers": [
+    "No retained actual Safari or Office open/edit/resave/visual observations for this build.",
+    "No complete A21 human panel; D07 remains partial."
+  ],
+  "publication": {
+    "githubPush": "not-run",
+    "npmPublish": "not-run"
+  }
+}

@@ -1999,6 +1999,21 @@ register('review-patch', 'D07-evidence', 'Missing authoring evidence cannot clos
   return { contract: 'green', authoringGate: result.status, humanPassed: result.humanPassed, deferred: result.deferredScriptIds }
 })
 
+register('review-patch', 'Q01-client-evidence', 'Unverified clients cannot close release acceptance.', 'The published client matrix requires actual Safari and Office observations bound to the current artifact.', 'Missing client evidence blocks acceptance with zero passes; structural and browser automation gates do not imply manual acceptance', async (ctx) => {
+  const rt = await ctx.ensureRuntime()
+  const { evaluateClientAcceptance } = await import(pathToFileURL(join(ROOT, 'dist/packages/capability/src/index.js')).href)
+  const matrix = JSON.parse(readFileSync(join(ROOT, 'docs/evolution/quality/client-matrix.json'), 'utf8'))
+  const fixture = await import(pathToFileURL(join(ROOT, 'dist/apps/contract-deck/index.js')).href)
+  const { document, imageBytes } = fixture.makeContractDocument()
+  const built = rt.portable.buildPortable(document, { profile: 'full-portable', assetBytes: { asset_pixel: imageBytes } })
+  ctx.expectGate(built.ok, 'Q01 fixture delivery failed', built.issues)
+  const identity = rt.portable.decodePortable(built.html).artifactIdentity
+  const result = evaluateClientAcceptance(matrix, { version: 'q01-client-evidence-v1', matrixDigest: rt.canonical.canonicalHash(matrix), artifactIdentity: identity, observations: [] }, identity)
+  ctx.expectEqual(result.status, 'blocked', 'Missing actual-client evidence must block acceptance')
+  ctx.expectEqual(result.rows.filter(row => row.status === 'pass').length, 0, 'No fabricated client passes')
+  return { contract: 'green', clientAcceptance: result.status, artifactIdentity: identity, blockers: result.blockers }
+})
+
 register('review-patch', 'P01-performance-evidence', 'Partial browser calibration cannot close A20.', 'Synthetic Portable browser observations retain raw tail latency and explicitly unverified physical-device and Host coverage.', '20 cold/warm and 30 separate interaction samples for 12/30/100 pages; unmeasured scope stays unverified', async (ctx) => {
   const manifestBytes = readFileSync(join(ROOT, 'tests/fixtures/evolution/performance-manifest.json'))
   const manifest = JSON.parse(manifestBytes)

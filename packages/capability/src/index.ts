@@ -191,3 +191,5 @@ function baseStatus(element: Element, target: CapabilityTarget): CapabilityStatu
   if (target === 'png') return 'rasterized'
   return 'native'
 }
+
+export * from './client-acceptance.js'
