@@ -170,10 +170,10 @@ test('H01 acceptance 4: actual bundled CLI/runtime import graphs exclude old rep
   const graph=await build({entryPoints:['apps/html-cli/index.ts'],bundle:true,platform:'node',write:false,metafile:true,format:'esm'});
   const inputs=Object.keys(graph.metafile!.inputs);
   assert.ok(inputs.some(p => p.includes('html-document')));
-  assert.deepEqual(inputs.filter(p => /packages\//.test(p) && !p.includes('packages/html-document/')),[]);
+  assert.deepEqual(inputs.filter(p => /packages\//.test(p) && !/^packages\/(html-document|html-save|html-editor)\//.test(p)),[]);
   assert.ok(!inputs.some(p => /playwright|puppeteer|apps\/mcp/.test(p)));
   const runtime=await build({entryPoints:['packages/html-document/src/runtime.ts'],bundle:true,platform:'browser',write:false,metafile:true});
-  assert.deepEqual(Object.keys(runtime.metafile!.inputs).filter(p => /packages\//.test(p) && !p.includes('packages/html-document/')),[]);
+  assert.deepEqual(Object.keys(runtime.metafile!.inputs).filter(p => /packages\//.test(p) && !/^packages\/(html-document|html-editor)\//.test(p)),[]);
   const records=[];
   for (const name of ['cherry','product','data']) {
     const file=resolve(`docs/html-first/evidence/h00/drafts/${name}.html`);const raw=readFileSync(file,'utf8');

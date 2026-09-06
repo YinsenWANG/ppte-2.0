@@ -1,0 +1,11 @@
+{
+  "status": "blocked",
+  "version": "Included with Safari 26.6.2 (21624.5.1.11.3)\n",
+  "response": {
+    "value": {
+      "error": "session not created",
+      "message": "Could not create a session: You must enable 'Allow remote automation' in the Developer section of Safari Settings to control Safari via WebDriver.",
+      "stacktrace": ""
+    }
+  }
+}
