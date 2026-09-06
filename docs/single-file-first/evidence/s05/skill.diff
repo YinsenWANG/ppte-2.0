@@ -1,0 +1,26 @@
+diff --git a/README-AGENT.md b/README-AGENT.md
+index 7dedb3b..a85ee32 100644
+--- a/README-AGENT.md
++++ b/README-AGENT.md
+@@ -38,0 +39,12 @@ use already available browser tools for optional layout inspection.
++The [authoring skill](skills/ppte/SKILL.md) keeps aesthetics to a short reminder,
++with no prescribed template, palette, word count, layout or aesthetic-score gate.
++For image materials, use the current Agent's vision: view the supplied images,
++use labeled contact sheets for batches and inspect candidate originals, then
++briefly connect each selection to page intent and crop. Preserve key text and
++subjects and disclose unseen material or uncertainty. Use source images in the
++work, not contact-sheet tiles; unrelated attachments can remain unused. These
++working notes stay in the workspace, not the default user delivery. Text-only
++work skips this image branch and its preprocessing entirely. No additional
++model key or image tool installation is required. Agent inspection and browser
++checks do not constitute human content/crop approval; record these separately.
++
+diff --git a/skills/ppte/SKILL.md b/skills/ppte/SKILL.md
+index d931f51..7091a68 100644
+--- a/skills/ppte/SKILL.md
++++ b/skills/ppte/SKILL.md
+@@ -12,0 +13,4 @@ Use the installed `ppte enhance /workspace/draft.html --out /user/作品.ppte.ht
++Treat aesthetics as part of the work: make each page's focus clear, use restraint and whitespace, and establish hierarchy through size, position, weight and contrast. Attend to alignment, spacing, rhythm and balance; keep typography, color and graphic language coherent. Design freely for the content: these are reminders, not templates, fixed palette/word-count/layout rules or aesthetic-score rejection gates.
++
++When the user provides images, actually view and understand them with the current Agent's visual capability before selecting and laying them out; no extra model account or key is needed. For a larger batch, inspect a contact sheet with stable source labels, then inspect candidate originals and relevant text/chart details; visually inspect every image used. Match page intent to the subject, expression, key text and suitable crop; do not mechanically use all attachments. Keep a short, free-form selection note connecting intent, image content and crop, including what was not viewed and any uncertainty; filenames/OCR do not replace viewing and unclear facts must not be guessed. Preserve original pixels, important subjects and text, use originals rather than low-resolution contact-sheet tiles in the work, and recheck the rendered affected pages while keeping crops adjustable. If tools cannot show an image or important detail, record the gap instead of claiming verification. With text-only materials, skip image analysis, contact sheets and image-preprocessing installation entirely; reuse available tools when images are present.
++

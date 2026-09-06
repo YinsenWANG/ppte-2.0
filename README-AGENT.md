@@ -36,6 +36,18 @@ local resources, preserves native CSS, and refuses existing output files.
 No PDF or sidecar is produced. The summary reports visual checks as unverified;
 use already available browser tools for optional layout inspection.
 
+The [authoring skill](skills/ppte/SKILL.md) keeps aesthetics to a short reminder,
+with no prescribed template, palette, word count, layout or aesthetic-score gate.
+For image materials, use the current Agent's vision: view the supplied images,
+use labeled contact sheets for batches and inspect candidate originals, then
+briefly connect each selection to page intent and crop. Preserve key text and
+subjects and disclose unseen material or uncertainty. Use source images in the
+work, not contact-sheet tiles; unrelated attachments can remain unused. These
+working notes stay in the workspace, not the default user delivery. Text-only
+work skips this image branch and its preprocessing entirely. No additional
+model key or image tool installation is required. Agent inspection and browser
+checks do not constitute human content/crop approval; record these separately.
+
 Open `/user/作品.ppte.html` directly in a supported browser (file://).
 Existing `.html` remains readable; this naming convention is not a new ZIP/IR
 format and does not rename existing files.

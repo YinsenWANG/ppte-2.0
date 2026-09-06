@@ -1,0 +1,30 @@
+{
+  "provenance": "Repository-owned review screenshots; proxy exercise, no user image uploads supplied in this turn",
+  "items": [
+    {
+      "id": "I01",
+      "path": "docs/single-file-first/evidence/s01/read.png",
+      "sha256": "b4c651cafb6af5eec2ddc249ed1e69bcfb0ed9e2c029f44005f2db438c251328"
+    },
+    {
+      "id": "I02",
+      "path": "docs/single-file-first/evidence/s03/cell-context.png",
+      "sha256": "2519c8a04896f4fc146e67b5574b9c894c551ddca225b64eada964c592e88116"
+    },
+    {
+      "id": "I03",
+      "path": "docs/single-file-first/evidence/s03/shape-handles.png",
+      "sha256": "7ec9e7819e96716238975cdd517bc64b7dc2e064966557238303fab53f6bd4c5"
+    },
+    {
+      "id": "I04",
+      "path": "docs/html-first/evidence/h03/screenshots/image.png",
+      "sha256": "1010fff514f6fc9f7c3b1f783fa40c629b3839c52c2aa005c1861fc66004dec3"
+    },
+    {
+      "id": "I05",
+      "path": "docs/audits/2026-09-06-html-first-6091c9a/evidence/contact.png",
+      "sha256": "8a804ca3769ba5a0c6c72cbbf8e4c515a2c99c8b543da3be8b8a976936341429"
+    }
+  ]
+}

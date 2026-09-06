@@ -1,0 +1,72 @@
+{
+  "status": "passed",
+  "browser": "152.0.7977.76",
+  "headless": true,
+  "entry": "review.ppte.html via file://",
+  "sourceDirectoryRemoved": true,
+  "offline": true,
+  "requests": [
+    "file:///private/tmp/ppte6/docs/single-file-first/evidence/s05/review.ppte.html"
+  ],
+  "errors": [],
+  "images": [
+    {
+      "id": "I01",
+      "embeddedSha256": "b4c651cafb6af5eec2ddc249ed1e69bcfb0ed9e2c029f44005f2db438c251328",
+      "width": 1440,
+      "height": 1000,
+      "fit": "contain",
+      "position": "50% 50%",
+      "displayWidth": 1440,
+      "displayHeight": 1000
+    },
+    {
+      "id": "I02",
+      "embeddedSha256": "2519c8a04896f4fc146e67b5574b9c894c551ddca225b64eada964c592e88116",
+      "width": 1440,
+      "height": 1000,
+      "fit": "none",
+      "position": "0% 0%",
+      "displayWidth": 1440,
+      "displayHeight": 300
+    }
+  ],
+  "enhance": {
+    "ok": true,
+    "path": "/var/folders/00/4ydbn_v17qs1pwsgy6lj2x700000gn/T/ppte-s05-0XOmda/review.ppte.html",
+    "pages": 2,
+    "bytes": 944524,
+    "mediaBytes": 482148,
+    "visual": "unverified"
+  },
+  "fileSha256": "765b133fd624714526d317e96e68daa97212653c1be8b4333340d76dfdc98891",
+  "textRuns": [
+    {
+      "run": 1,
+      "elapsedMs": 50.02287500000011,
+      "summary": {
+        "ok": true,
+        "path": "/var/folders/00/4ydbn_v17qs1pwsgy6lj2x700000gn/T/ppte-s05-0XOmda/text-0.ppte.html",
+        "pages": 1,
+        "bytes": 299194,
+        "mediaBytes": 0,
+        "visual": "unverified"
+      },
+      "subprocessAndNetworkGuard": "passed"
+    },
+    {
+      "run": 2,
+      "elapsedMs": 49.3576250000001,
+      "summary": {
+        "ok": true,
+        "path": "/var/folders/00/4ydbn_v17qs1pwsgy6lj2x700000gn/T/ppte-s05-0XOmda/text-1.ppte.html",
+        "pages": 1,
+        "bytes": 299194,
+        "mediaBytes": 0,
+        "visual": "unverified"
+      },
+      "subprocessAndNetworkGuard": "passed"
+    }
+  ],
+  "limits": "CLI reuse only; Agent/model telemetry unavailable. No native picker, Safari, human review or user-upload fixture acceptance claimed."
+}

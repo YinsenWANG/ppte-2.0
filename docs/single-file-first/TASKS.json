@@ -718,7 +718,7 @@
     {
       "id": "S05",
       "title": "轻量审美提醒与图片理解工作流",
-      "status": "planned",
+      "status": "partial",
       "dependsOn": [
         "S00"
       ],
@@ -749,7 +749,89 @@
         "mixed-image-selection-record",
         "human-content-and-crop-review"
       ],
-      "evidence": null
+      "evidence": {
+        "report": "docs/single-file-first/evidence/s05/REPORT.md",
+        "primaryAcceptanceFile": "docs/single-file-first/evidence/s05/review.ppte.html",
+        "statusByLayer": {
+          "code": "implemented: two lightweight reminders and authoring guidance",
+          "automation": "passed: 69 existing tests, skill validation and standalone original-image/offline/text-only probe",
+          "realBrowser": "installed Chrome headless file:// proxy exercise passed; Safari/native/user-device checks not performed",
+          "human": "pending: no human content/crop reviewer or user-upload batch"
+        },
+        "requiredEvidence": {
+          "skill-diff": {
+            "status": "recorded",
+            "files": [
+              "docs/single-file-first/evidence/s05/skill.diff",
+              "docs/single-file-first/evidence/s05/verification/skill-validation.log"
+            ]
+          },
+          "mixed-image-selection-record": {
+            "status": "partial: real Agent viewing and generated proxy deck; actual user-upload batch unavailable",
+            "files": [
+              "docs/single-file-first/evidence/s05/mixed-image-selection-record.md",
+              "docs/single-file-first/evidence/s05/inputs.json",
+              "docs/single-file-first/evidence/s05/contact.png",
+              "docs/single-file-first/evidence/s05/source.html",
+              "docs/single-file-first/evidence/s05/review.ppte.html",
+              "docs/single-file-first/evidence/s05/page-1.png",
+              "docs/single-file-first/evidence/s05/page-2.png",
+              "docs/single-file-first/evidence/s05/verification/probe.json"
+            ]
+          },
+          "human-content-and-crop-review": {
+            "status": "pending: no human review received",
+            "files": [
+              "docs/single-file-first/evidence/s05/human-content-and-crop-review.md"
+            ]
+          }
+        },
+        "acceptanceEvidence": [
+          {
+            "criterion": "没有新增固定模板、配色/字数/版式规则或美学分数拒绝机制",
+            "status": "implemented; diff reviewed, no new design gate",
+            "paths": [
+              "docs/single-file-first/evidence/s05/skill.diff"
+            ]
+          },
+          {
+            "criterion": "每张使用图实际视觉查看，未查看部分和不确定事实如实记录",
+            "status": "proxy exercise observed; actual user uploads pending",
+            "paths": [
+              "docs/single-file-first/evidence/s05/mixed-image-selection-record.md"
+            ]
+          },
+          {
+            "criterion": "不机械使用全部附件，不用低清联系表裁块替代原图",
+            "status": "proxy exercise passed: 2 of 5 selected, exact source bytes embedded",
+            "paths": [
+              "docs/single-file-first/evidence/s05/verification/probe.json"
+            ]
+          },
+          {
+            "criterion": "只使用当前 Agent 的视觉能力，不要求用户额外模型密钥",
+            "status": "observed current Agent view_image only; no extra key or model",
+            "paths": [
+              "docs/single-file-first/evidence/s05/mixed-image-selection-record.md"
+            ]
+          },
+          {
+            "criterion": "文本-only 热路径没有图片分析空转或预处理依赖安装",
+            "status": "CLI reuse probe passed; Agent/provider telemetry unavailable",
+            "paths": [
+              "docs/single-file-first/evidence/s05/verification/probe.json"
+            ]
+          }
+        ],
+        "verification": "docs/single-file-first/evidence/s05/verification/result.json",
+        "pending": [
+          "No uploaded user image batch in this turn; repository screenshot proxy is not acceptance for real mixed user materials or S06 twelve-image requirement.",
+          "Human content, subject, key text/data and crop review has not occurred; Agent visual inspection is not human approval.",
+          "Safari, native file picker, target-device readability and low-performance device not exercised in S05.",
+          "No provider model/token/call telemetry; CLI times do not prove end-to-end Agent performance.",
+          "F01–F05 and R03 historical conclusions remain unchanged; no closure outside S05 scope."
+        ]
+      }
     },
     {
       "id": "S06",
