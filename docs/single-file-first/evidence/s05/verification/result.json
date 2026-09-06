@@ -39,5 +39,6 @@
     "newStandaloneProbes": 1
   },
   "human": "pending: no review or uploaded user images",
-  "realBrowser": "Chrome headless automation only; see probe.json"
+  "realBrowser": "Chrome headless automation only; see probe.json",
+  "implementationCommit": "2b4131f84eebe2b2681353907f7ffac669740287"
 }

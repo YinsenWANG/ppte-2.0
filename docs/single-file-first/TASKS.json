@@ -764,7 +764,8 @@
             "files": [
               "docs/single-file-first/evidence/s05/skill.diff",
               "docs/single-file-first/evidence/s05/verification/skill-validation.log"
-            ]
+            ],
+            "commit": "2b4131f84eebe2b2681353907f7ffac669740287"
           },
           "mixed-image-selection-record": {
             "status": "partial: real Agent viewing and generated proxy deck; actual user-upload batch unavailable",
@@ -777,13 +778,15 @@
               "docs/single-file-first/evidence/s05/page-1.png",
               "docs/single-file-first/evidence/s05/page-2.png",
               "docs/single-file-first/evidence/s05/verification/probe.json"
-            ]
+            ],
+            "commit": "2b4131f84eebe2b2681353907f7ffac669740287"
           },
           "human-content-and-crop-review": {
             "status": "pending: no human review received",
             "files": [
               "docs/single-file-first/evidence/s05/human-content-and-crop-review.md"
-            ]
+            ],
+            "commit": "2b4131f84eebe2b2681353907f7ffac669740287"
           }
         },
         "acceptanceEvidence": [
@@ -792,35 +795,40 @@
             "status": "implemented; diff reviewed, no new design gate",
             "paths": [
               "docs/single-file-first/evidence/s05/skill.diff"
-            ]
+            ],
+            "commit": "2b4131f84eebe2b2681353907f7ffac669740287"
           },
           {
             "criterion": "每张使用图实际视觉查看，未查看部分和不确定事实如实记录",
             "status": "proxy exercise observed; actual user uploads pending",
             "paths": [
               "docs/single-file-first/evidence/s05/mixed-image-selection-record.md"
-            ]
+            ],
+            "commit": "2b4131f84eebe2b2681353907f7ffac669740287"
           },
           {
             "criterion": "不机械使用全部附件，不用低清联系表裁块替代原图",
             "status": "proxy exercise passed: 2 of 5 selected, exact source bytes embedded",
             "paths": [
               "docs/single-file-first/evidence/s05/verification/probe.json"
-            ]
+            ],
+            "commit": "2b4131f84eebe2b2681353907f7ffac669740287"
           },
           {
             "criterion": "只使用当前 Agent 的视觉能力，不要求用户额外模型密钥",
             "status": "observed current Agent view_image only; no extra key or model",
             "paths": [
               "docs/single-file-first/evidence/s05/mixed-image-selection-record.md"
-            ]
+            ],
+            "commit": "2b4131f84eebe2b2681353907f7ffac669740287"
           },
           {
             "criterion": "文本-only 热路径没有图片分析空转或预处理依赖安装",
             "status": "CLI reuse probe passed; Agent/provider telemetry unavailable",
             "paths": [
               "docs/single-file-first/evidence/s05/verification/probe.json"
-            ]
+            ],
+            "commit": "2b4131f84eebe2b2681353907f7ffac669740287"
           }
         ],
         "verification": "docs/single-file-first/evidence/s05/verification/result.json",
@@ -830,7 +838,8 @@
           "Safari, native file picker, target-device readability and low-performance device not exercised in S05.",
           "No provider model/token/call telemetry; CLI times do not prove end-to-end Agent performance.",
           "F01–F05 and R03 historical conclusions remain unchanged; no closure outside S05 scope."
-        ]
+        ],
+        "implementationCommit": "2b4131f84eebe2b2681353907f7ffac669740287"
       }
     },
     {
