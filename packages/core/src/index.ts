@@ -1,3 +1,4 @@
+import { IncrementalDerivedIndexes } from './derived-indexes.js'
 import { validateHistoryChain } from './history.js'
 export { assessHistory, validateHistoryChain, type HistoryAssessment } from './history.js'
 import { canonicalHash, canonicalJsonString, canonicalRevision, cloneJson, deepFreeze } from '../../canonical-json/src/index.js'
@@ -100,7 +101,7 @@ export class PpteSession {
   private readonly listeners = new Set<(event: SessionEvent) => void>()
   private readonly history: HistoryEntry[] = []
   private readonly redoStack: HistoryEntry[] = []
-  private readonly indexes: DerivedIndexes
+  private readonly indexes: IncrementalDerivedIndexes
   private saveState: SaveState
   private readonly historyLimit: number
   private readonly historyBytesLimit: number
@@ -123,7 +124,7 @@ export class PpteSession {
     this.saveState = options.initialSaveState ?? 'saved'
     this.historyLimit = validHistoryLimit(options.historyLimit ?? document.policies?.maxHistoryEntries ?? 200, 'historyLimit')
     this.historyBytesLimit = validHistoryLimit(options.historyBytesLimit ?? document.policies?.maxHistoryBytes ?? Number.MAX_SAFE_INTEGER, 'historyBytesLimit')
-    this.indexes = buildDerivedIndexes(this.document)
+    this.indexes = new IncrementalDerivedIndexes(this.document)
     const history = options.history ?? restoreContext?.historyEntries ?? historyEntriesFromTransactions(options.recentTransactions)
     if (history?.length) this.restoreHistory(history)
     const redo = options.redoHistory ?? restoreContext?.redoHistoryEntries ?? []
@@ -156,8 +157,12 @@ export class PpteSession {
   }
 
   getDerivedIndexes(): DerivedIndexes {
-    return this.indexes
+    return this.indexes.snapshot()
   }
+
+  rebuildDerivedIndexes(): void { this.indexes.reset() }
+
+  getIndexStats() { return { ...this.indexes.stats } }
 
   getHistory(): ReadonlyArray<HistoryEntry> {
     return deepFreeze(cloneJson(this.history))
@@ -360,14 +365,7 @@ export class PpteSession {
     this.snapshot = undefined
     this.document = applied.document
     this.revision = afterRevision
-    this.indexes.slideByElement.clear()
-    this.indexes.groupByElement.clear()
-    this.indexes.assetRefCount.clear()
-    this.indexes.semanticKeyIndex.clear()
-    this.indexes.factRefIndex.clear()
-    this.indexes.sourceRefIndex.clear()
-    this.indexes.roleIndex.clear()
-    rebuildIndexes(this.document, this.indexes)
+    this.indexes.update(this.document)
     if (recordHistory) {
       this.history.push({ transaction: cloneJson(durableTransaction), inverse, beforeRevision, afterRevision })
       while (this.history.length > this.historyLimit || (this.historyBytesLimit !== Number.MAX_SAFE_INTEGER && this.history.length > 0 && historyBytes(this.history) > this.historyBytesLimit)) this.history.shift()

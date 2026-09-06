@@ -1,3 +1,5 @@
+import { BackgroundJobs } from './background-jobs.js'
+export * from './background-jobs.js'
 import type { PpteSession, SessionEvent } from '../../core/src/index.js'
 import type { CommitResult, PreviewResult, Transaction, ValidationIssue } from '../../schema/src/index.js'
 import { cloneJson } from '../../canonical-json/src/index.js'
@@ -41,6 +43,12 @@ export class EditorController {
       }
       for (const listener of this.listeners) { try { listener(event) } catch { /* observers cannot reject a committed edit */ } }
     })
+  }
+  createBackgroundJobs(): BackgroundJobs {
+    const jobs = new BackgroundJobs(() => this.session.getRevision())
+    const release = this.session.subscribe(event => { if (event.type !== 'previewed' && event.type !== 'checkpointed') jobs.invalidate() })
+    this.own(() => { release(); jobs.dispose() })
+    return jobs
   }
   getState() { return { revision: this.session.getRevision(), selection: this.selection && cloneJson(this.selection), draft: this.draft && cloneJson(this.draft), mode: this.presentation.isPresenting ? 'present' : 'edit' } }
   setSelection(selection: SelectionState): void { if (!this.disposed) this.selection = cloneJson(selection) }

@@ -1,0 +1,72 @@
+{
+  "task": "P03",
+  "baselineCommit": "e587892145dd212ad606cd5fd5eb172851b46095",
+  "commands": {
+    "pnpm typecheck": "passed",
+    "pnpm build": "passed",
+    "pnpm test": "passed",
+    "pnpm blackbox:final": "passed",
+    "git diff --check": "passed"
+  },
+  "baselineTests": {
+    "tests": 373,
+    "pass": 372,
+    "fail": 1,
+    "cancelled": 0,
+    "skipped": 0,
+    "logSha256": "d6aa406b59650fee7b4a48ab993725dc6e184cc1bbe722907732408330ad324d"
+  },
+  "baselineNotes": [
+    "Initial baseline: existing F02 narrow Portable table-focus assertion failed once; isolated task-start rerun of tests/table-editing-journey.test.ts passed 6/6.",
+    "An intermediate isolated test attempt used a node_modules symlink and was invalidated by pnpm dependency setup errors. Dependencies were then installed locally with the frozen lockfile; the isolated baseline blackbox passed."
+  ],
+  "finalTests": {
+    "tests": 381,
+    "pass": 381,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "logSha256": "3753101ae892ef210cb504d02ea60f22a869c7dc2c6986e90503abd9898bb1ae"
+  },
+  "testCountDelta": 8,
+  "blackbox": {
+    "baseline": {
+      "green": 71,
+      "red": 0,
+      "redCases": []
+    },
+    "final": {
+      "green": 71,
+      "red": 0,
+      "redCases": []
+    },
+    "newRedCases": []
+  },
+  "testFile": "tests/background-job-contract.test.ts",
+  "testNames": [
+    "P03 criterion 1: all seven incremental indexes equal full rebuild across edits, undo, redo and failed commits",
+    "P03 criterion 1: randomized reference/group/asset mutations and injected partial failure rebuild safely",
+    "P03 criterion 2: immutable input, unique identity, native proposal and single-use consumption",
+    "P03 criteria 2/3: out-of-order, changed revision/input, forged envelopes and late consumption never publish stale output",
+    "P03 criteria 2/3: running/queued/pre-abort, timeout, backpressure, executor failure and close release resources",
+    "P03 criterion 3: controller commits invalidate proposals and file close disposes owned work; Engine rejects stale transactions",
+    "P03 criteria 2/3: real Chromium native/Worker total costs use pinned fixtures and retain raw samples",
+    "P03 criterion 1: pinned 12/30/100-page corpora update one slide and match the full oracle"
+  ],
+  "measurement": "docs/evolution/quality/p03-job-costs.json",
+  "report": "docs/evolution/quality/P03.md",
+  "remainingRisks": [
+    "No production Worker migration: measured Worker total cost exceeds native for all pinned corpora.",
+    "Native computation cannot be interrupted mid-call; results are checked for deadline/cancellation/freshness after return.",
+    "Broader A20 physical-device, real Safari, physical IME and other P01 gaps remain unverified."
+  ],
+  "addedFiles": [
+    "packages/core/src/derived-indexes.ts",
+    "packages/editor-controller/src/background-jobs.ts",
+    "tests/background-job-contract.test.ts",
+    "scripts/p03-job-benchmark.mjs",
+    "docs/evolution/quality/P03.md",
+    "docs/evolution/quality/p03-job-costs.json",
+    "docs/evolution/quality/p03-verification.json"
+  ]
+}
