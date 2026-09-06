@@ -171,8 +171,6 @@ export function installEditor(api: API) {
     };
     document.body.append(launch);
     ui = workspace(frame, bar, () => controller?.change());
-    bar.hidden = false;
-    bar.style.display = 'flex';
     const initialize = async () => {
         let storage: Storage | undefined;
         try {
