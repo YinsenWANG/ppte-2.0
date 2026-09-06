@@ -15,6 +15,7 @@ type Entry = {
     id: string;
     before: string;
     after: string;
+    insertion?: { parent: HTMLElement; previous: HTMLElement; node: HTMLElement };
 };
 export class Commands {
     undoStack: Entry[][] = [];
@@ -59,6 +60,27 @@ export class Commands {
             this.restore(this.node(e.id), e.after);
         this.record(entries);
     }
+    insertSlide(reference: string) {
+        const previous = this.node(reference), parent = previous.parentElement!;
+        if (!previous.hasAttribute('data-ppte-slide') || previous.tagName === 'BODY' || !parent) throw Error('PAGE_INSERT_UNSUPPORTED');
+        if (parent.closest('[data-ppte-locked="true"]')) throw Error('OBJECT_PROTECTED');
+        const computed = this.doc.defaultView!.getComputedStyle(previous);
+        const n = this.doc.createElement(previous.tagName);
+        n.className = previous.className;
+        n.style.cssText = previous.style.cssText;
+        // Preserve native class/custom-property layout, but give blank content a measured canvas.
+        for (const property of ['width', 'height', 'box-sizing', 'background', 'color', 'font-family', 'container-type', 'container-name'])
+            n.style.setProperty(property, computed.getPropertyValue(property));
+        n.dataset.ppteId = `slide-${crypto.randomUUID()}`;
+        n.dataset.ppteSlide = n.dataset.ppteId;
+        const title = this.doc.createElement('h1');
+        title.dataset.ppteId = `text-${crypto.randomUUID()}`;
+        title.textContent = '新的一页';
+        n.append(title);
+        previous.after(n);
+        this.record([{ id: n.dataset.ppteId, before: '', after: snapshot(n), insertion: { parent, previous, node: n } }]);
+        return n;
+    }
     restore(n: HTMLElement, html: string) {
         const t = this.doc.createElement('template');
         t.innerHTML = html;
@@ -76,11 +98,20 @@ export class Commands {
         const entries = from.at(-1);
         if (!entries)
             return;
-        for (const e of entries)
-            if (snapshot(this.node(e.id)) !== (redo ? e.before : e.after))
-                throw Error('HISTORY_CONFLICT');
-        for (const e of entries)
-            this.restore(this.node(e.id), redo ? e.after : e.before);
+        for (const e of entries) {
+            if (e.insertion) {
+                const { parent, previous, node } = e.insertion;
+                if (!parent.isConnected || previous.parentElement !== parent || parent.closest('[data-ppte-locked="true"]') ||
+                    (redo ? node.isConnected : node.parentElement !== parent || this.protected(node) || snapshot(node) !== e.after))
+                    throw Error('HISTORY_CONFLICT');
+            } else if (snapshot(this.node(e.id)) !== (redo ? e.before : e.after)) throw Error('HISTORY_CONFLICT');
+        }
+        for (const e of entries) {
+            if (e.insertion) {
+                if (redo) e.insertion.previous.after(e.insertion.node);
+                else e.insertion.node.remove();
+            } else this.restore(this.node(e.id), redo ? e.after : e.before);
+        }
         from.pop();
         to.push(entries);
         this.changed();

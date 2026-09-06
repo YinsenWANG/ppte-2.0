@@ -1,0 +1,173 @@
+{
+  "browser": "152.0.7977.76",
+  "entry": "file://",
+  "network": [],
+  "presentation": [
+    {
+      "index": 1,
+      "visible": [
+        1
+      ]
+    },
+    {
+      "index": 2,
+      "visible": [
+        2
+      ]
+    },
+    {
+      "index": 4,
+      "visible": [
+        4
+      ]
+    },
+    {
+      "index": 4,
+      "visible": [
+        4
+      ]
+    },
+    {
+      "index": 0,
+      "visible": [
+        0
+      ]
+    },
+    {
+      "index": 1,
+      "visible": [
+        1
+      ]
+    },
+    {
+      "index": 2,
+      "visible": [
+        2
+      ]
+    },
+    {
+      "index": 3,
+      "visible": [
+        3
+      ]
+    },
+    {
+      "index": 4,
+      "visible": [
+        4
+      ]
+    },
+    {
+      "index": 5,
+      "visible": [
+        5
+      ]
+    }
+  ],
+  "pdf": [
+    {
+      "width": 960,
+      "height": 540,
+      "text": false
+    },
+    {
+      "width": 960,
+      "height": 540,
+      "text": false
+    },
+    {
+      "width": 960,
+      "height": 540,
+      "text": false
+    },
+    {
+      "width": 960,
+      "height": 540,
+      "text": false
+    },
+    {
+      "width": 960,
+      "height": 540,
+      "text": true
+    },
+    {
+      "width": 960,
+      "height": 540,
+      "text": false
+    }
+  ],
+  "pdfParsed": [
+    {
+      "height": 404.88,
+      "text": "Protected title Grid context",
+      "width": 720
+    },
+    {
+      "height": 404.88,
+      "text": "新的一页",
+      "width": 720
+    },
+    {
+      "width": 720,
+      "text": "新的一页",
+      "height": 404.88
+    },
+    {
+      "width": 720,
+      "text": "Gradient\nAlpha beta 42",
+      "height": 404.88
+    },
+    {
+      "width": 720,
+      "height": 404.88,
+      "text": "Added Flex"
+    },
+    {
+      "width": 720,
+      "height": 404.88,
+      "text": "Transparent"
+    }
+  ],
+  "identity": [
+    {
+      "id": "one",
+      "object": "one",
+      "width": 960,
+      "height": 540,
+      "display": "grid",
+      "titleSize": "44px"
+    },
+    {
+      "id": "slide-619716c3-7714-477f-971e-2e2ba14383f9",
+      "object": "slide-619716c3-7714-477f-971e-2e2ba14383f9",
+      "width": 960,
+      "height": 540,
+      "display": "grid",
+      "titleSize": "44px"
+    },
+    {
+      "id": "slide-c5917783-a725-4426-b30f-d69ac450f7f6",
+      "object": "slide-c5917783-a725-4426-b30f-d69ac450f7f6",
+      "width": 960,
+      "height": 540,
+      "display": "grid",
+      "titleSize": "44px"
+    },
+    {
+      "id": "two",
+      "object": "two",
+      "width": 960,
+      "height": 540,
+      "display": "flex",
+      "titleSize": "44px"
+    },
+    {
+      "id": "three",
+      "object": "three",
+      "width": 960,
+      "height": 540,
+      "display": "block",
+      "titleSize": "44px"
+    }
+  ]
+}

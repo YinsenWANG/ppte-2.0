@@ -1,0 +1,49 @@
+TAP version 13
+# Subtest: S03 F02-F05 file UI: protected local insert/history, unique identity, native context, background, download/reopen and PDF
+not ok 1 - S03 F02-F05 file UI: protected local insert/history, unique identity, native context, background, download/reopen and PDF
+  ---
+  duration_ms: 8398.033167
+  type: 'test'
+  location: '/private/tmp/ppte6/dist/tests/single-file-editing.test.js:28:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(results.pdf.some((n) => n.text))
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte6/dist/tests/single-file-editing.test.js:109:16)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: S03 contextual UI: real cell mouse/keyboard range format, collapse/zoom focus, handles and composition refresh
+not ok 2 - S03 contextual UI: real cell mouse/keyboard range format, collapse/zoom focus, handles and composition refresh
+  ---
+  duration_ms: 30966.3585
+  type: 'test'
+  location: '/private/tmp/ppte6/dist/tests/single-file-editing.test.js:120:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    locator.textContent: Timeout 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('#ppte-frame').contentFrame().locator('[data-ppte-id=cell]').locator('span')[22m
+    
+  code: 'ERR_TEST_FAILURE'
+  name: 'TimeoutError'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/ppte6/dist/tests/single-file-editing.test.js:137:49)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 39592.138875

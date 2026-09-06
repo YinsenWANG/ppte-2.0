@@ -31,7 +31,7 @@ body:has(#ppte-player:not([hidden]))>[data-ppte-transient]:not(#ppte-player){dis
         const list = slides(), n = list[index], size = sizes[index];
         if (!n || !size) return;
         const scale = Math.min(frame.clientWidth / size.width, frame.clientHeight / size.height);
-        const selector = `[data-ppte-slide="${CSS.escape(n.dataset.ppteSlide!)}"]`;
+        const selector = `[data-ppte-id="${CSS.escape(n.dataset.ppteId!)}"]`;
         const steps = Array.from(n.querySelectorAll<HTMLElement>('[data-ppte-step]'));
         css.textContent = `html,body{margin:0!important;padding:0!important;background:#000!important;overflow:hidden!important;width:100%!important;height:100%!important}body *{outline:none!important;caret-color:transparent!important}[data-ppte-slide]{display:none!important}${selector}{display:${size.display}!important;background-color:${size.background}!important;position:fixed!important;box-sizing:border-box!important;margin:0!important;left:${(frame.clientWidth-size.width*scale)/2}px!important;top:${(frame.clientHeight-size.height*scale)/2}px!important;width:${size.width}px!important;height:${size.height}px!important;min-height:0!important;transform:scale(${scale})!important;transform-origin:top left!important}[data-ppte-notes]:not([data-ppte-slide]){display:none!important}`;
         steps.slice(step).forEach(n => { css!.textContent += `[data-ppte-id="${CSS.escape(n.dataset.ppteId!)}"]{visibility:hidden!important}`; });

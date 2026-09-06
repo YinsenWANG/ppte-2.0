@@ -1,0 +1,29 @@
+{
+  "recordedAt": "2026-09-06T13:38:37.237500+00:00",
+  "testedBaseCommit": "5ce38a16764a0751d793abfd5de644666195868f",
+  "changes": "S03 worktree; implementation commit mapped in TASKS.json in follow-up evidence commit",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "node": "v22.23.2",
+  "checks": {
+    "pnpm typecheck": "passed",
+    "pnpm build": "passed",
+    "pnpm test": {
+      "passed": 65,
+      "failed": 0
+    }
+  },
+  "code": "implemented for documented contexts",
+  "automation": "passed",
+  "realBrowser": {
+    "Chrome": "152.0.7977.76 headless, file URL, offline download/reopen and PDF",
+    "Safari": "blocked; see safari.json",
+    "nativePicker": "pending",
+    "nativeIME": "pending"
+  },
+  "humanConfirmation": "pending",
+  "testDelta": {
+    "added": 2,
+    "removed": 0,
+    "existingAssertionsModified": 0
+  }
+}

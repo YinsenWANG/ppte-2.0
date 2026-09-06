@@ -1,0 +1,38 @@
+TAP version 13
+# Subtest: S03 F02-F05 file UI: protected local insert/history, unique identity, native context, background, download/reopen and PDF
+not ok 1 - S03 F02-F05 file UI: protected local insert/history, unique identity, native context, background, download/reopen and PDF
+  ---
+  duration_ms: 5981.33425
+  type: 'test'
+  location: '/private/tmp/ppte6/dist/tests/single-file-editing.test.js:28:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(results.pdf.some((n) => n.text))
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte6/dist/tests/single-file-editing.test.js:109:16)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: S03 contextual UI: real cell mouse/keyboard range format, collapse/zoom focus, handles and composition refresh
+ok 2 - S03 contextual UI: real cell mouse/keyboard range format, collapse/zoom focus, handles and composition refresh
+  ---
+  duration_ms: 3050.286667
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 1
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9221.144125

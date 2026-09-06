@@ -1,0 +1,13 @@
+{
+  "browser": "152.0.7977.76",
+  "mouseKeyboardCell": true,
+  "focusSelection": true,
+  "composition": {
+    "interim": 0,
+    "final": 1,
+    "text": "中文"
+  },
+  "resizeUndo": true,
+  "nativeIME": "pending",
+  "humanReview": "pending"
+}
