@@ -1,3 +1,4 @@
+import { resizeViewport } from './helpers/browser-viewport.js'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {spawnSync} from 'node:child_process'
@@ -179,7 +180,7 @@ test('F02 A13/A21 real Host and file Portable table selection, paste, styles, st
     }else{assert.equal(await panel.getByRole('button',{name:'插入行',exact:true}).count(),0);assert.match(await panel.innerText(),/结构|行列/)}
     const revision=await page.evaluate(`${api}.getRevision()`)
     await page.screenshot({path:join(evidence,`${host?'host':'portable'}.png`)})
-    if(!host){await page.setViewportSize({width:700,height:1100});await panel.getByLabel('单元格值',{exact:true}).focus();assert.equal(await panel.getByLabel('单元格值',{exact:true}).evaluate(n=>n===n.ownerDocument.activeElement),true);await page.screenshot({path:join(evidence,'portable-narrow.png')});await page.setViewportSize({width:1600,height:1100})}
+    if(!host){await resizeViewport(page,{width:700,height:1100});await panel.getByLabel('单元格值',{exact:true}).focus();assert.equal(await panel.getByLabel('单元格值',{exact:true}).evaluate(n=>n===n.ownerDocument.activeElement),true);await page.screenshot({path:join(evidence,'portable-narrow.png')});await resizeViewport(page,{width:1600,height:1100})}
     const download=page.waitForEvent('download');await page.locator(host?'[data-ppte-action=save]':'[data-ppte-action=save-portable]').click();const saved=await download,savedPath=join(dir,host?'saved.ppte':'saved.html');await saved.saveAs(savedPath)
     if(host){await page.locator('[data-ppte-action=open]').setInputFiles(savedPath);await page.waitForFunction(()=>globalThis.document.querySelector('[data-ppte-status]')?.textContent?.includes('已打开 saved.ppte'))}else{await page.goto(pathToFileURL(savedPath).href);await page.waitForFunction(()=>Boolean((window as any).PPTEPortable))}
     assert.equal(await page.evaluate(`${api}.getRevision()`),revision)

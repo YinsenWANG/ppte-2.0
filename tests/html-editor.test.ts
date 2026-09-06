@@ -6,6 +6,7 @@ import { join, resolve } from 'node:path';
 import { chromium, type Page } from 'playwright';
 import { enhanceHTML, readEnhanced } from '../packages/html-document/src/index.js';
 import { startEditor } from '../packages/html-save/src/index.js';
+import { resizeViewport } from './helpers/browser-viewport.js';
 const evidence = resolve('artifacts/h03');
 const source = `<title>日常编辑 · HTML 原作</title><style>body{margin:32px;font:20px system-ui;color:#20252c;background:#f6f0e6}section{min-height:520px;position:relative}.grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}.flex{display:flex;gap:16px}svg{width:120px;height:90px}img{width:80px;height:80px}td{padding:8px;border:1px solid #666}h1{font-size:40px}h2{font-size:28px}</style><section data-ppte-slide data-ppte-id="slide"><h1 data-ppte-id="title">一句话保持原作</h1><div class="grid" data-ppte-id="grid"><p data-ppte-id="a">第一个句子</p><p data-ppte-id="b" style="color:#993344">第二个句子</p></div><div class="flex" data-ppte-id="flex"><img data-ppte-id="image" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII="><svg data-ppte-id="shape" viewBox="0 0 120 90"><rect width="120" height="90" fill="currentColor"/></svg></div><table data-ppte-id="table"><tr><td data-ppte-id="cell">数据</td><td>42</td></tr></table><div data-ppte-id="absolute" data-ppte-kind="shape" style="position:absolute;left:420px;top:350px;width:60px;height:60px;background:#993344"></div></section><section data-ppte-slide data-ppte-id="second"><h2>再次打开仍然是原作</h2></section>`;
 async function setup() {
@@ -28,6 +29,38 @@ async function setup() {
 async function select(page: Page, ids: string[]) {
     await page.evaluate(ids => (window as any).PPTeEditor.select(ids), ids);
 }
+test('H03 acceptance 2/3: viewport changes retain focused format control, selection and original DOM without edits', async () => {
+    const f = await setup();
+    try {
+        const { page } = f;
+        await select(page, ['title']);
+        const input = page.getByLabel('字号', { exact: true });
+        await input.focus();
+        const original = await input.elementHandle();
+        await input.evaluate(n => (n as HTMLInputElement).setSelectionRange(0, 2));
+        await page.evaluate(() => {
+            const c = (window as any).PPTeEditor.commands;
+            (window as any).resizeBaseline = { title: c.node('title'), slide: c.node('slide'), history: c.undoStack.length };
+        });
+        for (const width of [900, 1440, 900, 1440]) {
+            await resizeViewport(page, { width, height: 1000 });
+            // No refocus or assertion retry: resize must preserve keyboard ownership.
+            assert.deepEqual(await original!.evaluate(n => ({
+                connected: n.isConnected, focused: n === n.ownerDocument.activeElement,
+                start: (n as HTMLInputElement).selectionStart, end: (n as HTMLInputElement).selectionEnd,
+            })), { connected: true, focused: true, start: 0, end: 2 });
+            assert.equal(await page.evaluate(() => innerWidth), width);
+            assert.deepEqual(await page.evaluate(() => {
+                const c = (window as any).PPTeEditor.commands, before = (window as any).resizeBaseline;
+                return { title: c.node('title') === before.title, slide: c.node('slide') === before.slide, history: c.undoStack.length === before.history };
+            }), { title: true, slide: true, history: true });
+        }
+        await original!.dispose();
+    }
+    finally {
+        await f.close();
+    }
+});
 test('H03 acceptance 1: real object selection, empty/multiple/mixed contextual shell and screenshots', async () => {
     const f = await setup();
     try {
