@@ -1,6 +1,6 @@
 {
   "planVersion": "html-first-1.0",
-  "status": "planned",
+  "status": "partial",
   "supersedes": "docs/evolution/TASKS.json for future implementation scope",
   "basisCommit": "4aee9da597ceef29df30f22a65f5bafc9f2bc354",
   "defaultDeliverable": "one .html",
@@ -9,7 +9,7 @@
     {
       "id": "H00",
       "title": "冻结 HTML 合同与直接生成基线",
-      "status": "planned",
+      "status": "partial",
       "dependsOn": [],
       "targetAreas": [
         "docs/html-first",
@@ -23,7 +23,66 @@
       "acceptance": [
         "合同不含 PPTX/Office 和新 .ppte 格式要求",
         "基线记录冷/热耗时、tokens、失败和实际文件；缺数据保持 pending"
-      ]
+      ],
+      "evidence": {
+        "implementationCommit": "43d717c590c5c786567cfe33cff739a2932a6237",
+        "authorityCommit": "bbcd46bde2c608b5a56e617f316c5dcb5534857e",
+        "report": "docs/html-first/evidence/h00/README.md",
+        "verification": "docs/html-first/evidence/h00/verification/result.json",
+        "acceptance": [
+          {
+            "criterion": "合同不含 PPTX/Office 和新 .ppte 格式要求",
+            "status": "passed",
+            "commit": "43d717c590c5c786567cfe33cff739a2932a6237",
+            "tests": [
+              "dist/tests/html-first-baseline.test.js: H00 acceptance 1"
+            ],
+            "log": "docs/html-first/evidence/h00/verification/h00.tap",
+            "artifacts": [
+              "docs/html-first/CONTRACT.md",
+              "docs/html-first/evidence/h00/manifest.json"
+            ]
+          },
+          {
+            "criterion": "基线记录冷/热耗时、tokens、失败和实际文件；缺数据保持 pending",
+            "status": "partial",
+            "implementationStatus": "passed",
+            "measurementStatus": "pending",
+            "commit": "43d717c590c5c786567cfe33cff739a2932a6237",
+            "tests": [
+              "dist/tests/html-first-baseline.test.js: H00 acceptance 2 (five tests)"
+            ],
+            "log": "docs/html-first/evidence/h00/verification/h00.tap",
+            "artifacts": [
+              "docs/html-first/evidence/h00/baseline.json",
+              "docs/html-first/evidence/h00/baseline-report.json",
+              "docs/html-first/evidence/h00/drafts.json"
+            ],
+            "note": "Recorder and rejection/pending behavior tested against actual subprocess/files; formal cold/hot model timings, tokens and eighteen paired run slots remain pending. Exploratory drafts are explicitly uncontrolled."
+          }
+        ],
+        "tests": {
+          "before": 392,
+          "after": 400,
+          "added": 8,
+          "removed": 0,
+          "passed": 400,
+          "failed": 0,
+          "skipped": 0
+        },
+        "deliverableStatus": {
+          "fixedMaterialsAndControlledDrafts": "partial: three hashed materials, twelve pages, resource policy, requested model/reasoning and exploratory HTML retained; provider verification and controlled first drafts pending",
+          "dependencyInventory": "passed: 117 source files, 624 static edges, 86 old CLI reachable files; no retirement claimed",
+          "realChromeSafariJourneys": "partial: installed Chrome headless file URL probe observed; Safari WebDriver session rejected because remote automation disabled; permission/local save/reopen journeys pending"
+        },
+        "remaining": [
+          "Verify requested gpt-6-astra / medium against provider response and retain raw usage receipts.",
+          "Measure isolated cold install and hot environment; run three real materials x three direct/enhanced pairs with all original drafts and failures. Enhancement awaits H01.",
+          "Complete real Chrome and Safari file URL, file authorization, revocation and original-path close/reopen journeys; installed browser presence and automated Chrome are not acceptance.",
+          "Local service original-file write/reopen awaits H02; no cache or downloaded copy counted as successful saving.",
+          "R01/R02 and other retained user experience requirements remain open under their assigned stages."
+        ]
+      }
     },
     {
       "id": "H01",
