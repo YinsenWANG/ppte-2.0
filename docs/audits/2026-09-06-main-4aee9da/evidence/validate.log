@@ -1,0 +1,3 @@
+$ python scripts/validate.py && bash scripts/ci-guards.sh
+OK: 15 schemas/examples, semantic checks, operation parity, and markdown structure
+OK: source guard — no runtime Slidev/Markdown source or DOM reverse parsing (bounded legacy importer excluded)

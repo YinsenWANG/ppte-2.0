@@ -1,0 +1,55 @@
+{
+  "baseline": "4aee9da",
+  "browser": "151.0.7922.34",
+  "labels": [
+    {
+      "tag": "SUMMARY",
+      "text": "对象属性",
+      "foreground": "rgb(248, 250, 252)",
+      "background": "rgb(246, 247, 250)",
+      "contrast": 1.0238680392095878
+    },
+    {
+      "tag": "P",
+      "text": "选区格式",
+      "foreground": "rgb(248, 250, 252)",
+      "background": "rgb(246, 247, 250)",
+      "contrast": 1.0238680392095878
+    },
+    {
+      "tag": "LEGEND",
+      "text": "动画",
+      "foreground": "rgb(248, 250, 252)",
+      "background": "rgb(246, 247, 250)",
+      "contrast": 1.0238680392095878
+    },
+    {
+      "tag": "LABEL",
+      "text": "翻页效果",
+      "foreground": "rgb(248, 250, 252)",
+      "background": "rgb(246, 247, 250)",
+      "contrast": 1.0238680392095878
+    },
+    {
+      "tag": "LABEL",
+      "text": "翻页方向",
+      "foreground": "rgb(248, 250, 252)",
+      "background": "rgb(246, 247, 250)",
+      "contrast": 1.0238680392095878
+    },
+    {
+      "tag": "LABEL",
+      "text": "翻页时长 (ms)",
+      "foreground": "rgb(248, 250, 252)",
+      "background": "rgb(246, 247, 250)",
+      "contrast": 1.0238680392095878
+    },
+    {
+      "tag": "P",
+      "text": "支持 fade、slide-up、slide-left。scale / exit 保留为静态；时长和延迟最多 10000 ms。",
+      "foreground": "rgb(248, 250, 252)",
+      "background": "rgb(246, 247, 250)",
+      "contrast": 1.0238680392095878
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+✔ D01 criterion 1 reuses PresentationIR, RecipeSpec and ThemeDefinition without a second content tree (15.556333ms)
+✔ D01 criterion 2 brand/recipe errors and aesthetic suggestions remain distinct (0.268875ms)
+✔ D01 criterion 3 canonical digest, trust and exact old-version resolution fail closed (1.411125ms)
+✔ D01 criterion 3 parameter whitelist rejects scripts, CSS, paths, unknown and invalid values (0.824042ms)
+✔ D01 criterion 3 licenses are per resource and unknown/AGPL licenses need explicit policy (1.904ms)
+✔ D01 criterion 3 Chinese pressure fixtures and capability claims cannot masquerade as measured exports (1.800417ms)
+✔ D01 criterion 4 slotRefs and fingerprints detect duplicated or stale recipe structure (2.243458ms)
+✔ D01 criterion 4 current object policies and page anchors are authoritative; IR only adds (2.541125ms)
+✔ D01 criterion 4 stale IR cannot overwrite anchored content during an Operation Engine replacement (10.323917ms)
+✔ D01 schemas validate examples with the real JSON Schema validator and reject executable/double content fields (186.196125ms)
+✔ F03 A13 real editable DrawingML cells preserve typed display, Unicode and source values (63.15625ms)
+✔ F03 A13 rectangular merge topology, exact frame dimensions and basic cell styles (44.686375ms)
+✔ F03 A13 headers and caption survive; unsupported styles and rich text downgrade by property (41.055041ms)
+✔ F03 A17 nativeTable requires emitted validated output; forecasts, legacy, empty and hidden tables never claim it (7.998875ms)
+✔ F03 A17 verifier rejects label substitutions, missing cells, altered numbers, dimensions and merge flags (3.314417ms)
+✔ F03 A17 capability schema registers adapter proof and explicit unverified clients (81.149292ms)
+✔ F03 invalid tables and unrepresentable XML/dimensions fail without native proof (1.350084ms)
+✔ F03 multiple tables and fractional axis weights preserve exact frame sums (36.883041ms)
+✔ F03 native adapter does not depend on fallback assets or widget policy claims (2.599875ms)
+✔ F01 A13 explicit v1 migration preserves scalar types, header/caption/element identity and source bytes (25.624ms)
+✔ F01 A13 all typed operations preserve untouched IDs and serialized inverses restore exact revisions (64.280959ms)
+✔ F01 A13 typed display, text consistency and rectangular merges retain covered values in HTML/SVG (9.828375ms)
+✔ F01 A13 malformed models cannot bypass validation through props, restore, element/slide insertion or checkpoint (8.834125ms)
+✔ F01 A13 cell fact/source identities survive merge/move and every reference deletion requires impact review (17.871708ms)
+✔ F01 A03 complete registered descriptor and history/inverse/redo/patch minimum profile declarations (4.056208ms)
+✔ F01 A03/A13 Host and Portable checkpoints retain exact migration/merge/value history and redo-only tables (29.902708ms)
+✔ F01 A03 typed table patch codec preserves operations, declarations and replay (8.001917ms)
+✔ F01 A13 seeded generated value/axis sequences undo and redo without identity drift (99.358416ms)
+✔ F01 A03 literal JSON Schema validates v2 document, typed transactions, manifest and descriptor (825.768833ms)
+✔ E08 A08 inheritance, explicit mixed values, clear, reverse/cross-paragraph/caret ranges and stable IDs (14.819417ms)
+✔ E08 A03 registered complete profile, all literal mark readers and schema sites reject malformed overrides (9.293916ms)
+✔ E08 A03/A08 both checkpoint writers retain marks and exact undo/redo, including redo-only and inverse-only profile requirements (32.051ms)
+✔ E08 A03 patch inference, serialized roundtrip and old target rejection preserve source identity (10.150917ms)
+✔ E08 A08/A17 the shared resolver drives per-run coverage, reference measurement, HTML, SVG and native PPTX properties (4.408167ms)
+✔ E08 A03 legacy documents retain their layout, schema/profile and source bytes on save (4.520292ms)
+✔ E08 A08/A17 Portable browser range font controls, mixed/clear, caret, save/reopen and measured pixels (724.869083ms)
+✔ E08 A08/A17 Host browser range font controls, mixed/clear, caret, save/reopen and measured pixels (2081.459166ms)
+✔ E08 A17 real browser PDF/PNG paths render run font overrides and preserve report identity (1711.758ms)
+✔ E08 A03/A13 literal JSON Schema readers validate new document/transaction/profile/report and frozen old readers reject new properties (684.191625ms)
+✔ E08 A03 schema verification retains all existing operation kinds and the complete legacy profile example (926.822458ms)
+ℹ tests 40
+ℹ suites 0
+ℹ pass 40
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6469.381042

@@ -1,0 +1,60 @@
+{
+  "baseline": "4aee9da",
+  "browser": "151.0.7922.34",
+  "idleWaitMs": 3200,
+  "idle": {
+    "activeElement": "BODY",
+    "mode": "present",
+    "editableCount": 0,
+    "liveTools": {
+      "display": "flex",
+      "visibility": "visible",
+      "opacity": "1",
+      "buttons": [
+        "上一页",
+        "下一页",
+        "黑屏",
+        "激光笔",
+        "计时开始/暂停",
+        "计时归零",
+        "退出放映",
+        "演讲者窗口 / 重连"
+      ],
+      "rect": {
+        "x": 8,
+        "y": 944,
+        "width": 1424,
+        "height": 48
+      }
+    },
+    "blackoutVisible": false
+  },
+  "blackout": {
+    "activeElement": "BODY",
+    "mode": "present",
+    "editableCount": 0,
+    "liveTools": {
+      "display": "flex",
+      "visibility": "visible",
+      "opacity": "1",
+      "buttons": [
+        "上一页",
+        "下一页",
+        "黑屏",
+        "激光笔",
+        "计时开始/暂停",
+        "计时归零",
+        "退出放映",
+        "演讲者窗口 / 重连"
+      ],
+      "rect": {
+        "x": 8,
+        "y": 944,
+        "width": 1424,
+        "height": 48
+      }
+    },
+    "blackoutVisible": true
+  },
+  "expected": "Present controls hide without hover/focus; audience black screen does not leave a permanent toolbar."
+}

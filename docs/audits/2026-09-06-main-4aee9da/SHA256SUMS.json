@@ -1,0 +1,20 @@
+{
+  "REPORT.md": "c3ec2df93a5a23448189108fa52ca1bc611f7ab406ed4727b4e215e76fa6c0bb",
+  "TASK_MATRIX.md": "102e3c6b2c491354c8f63e2248be9548dc5db1148b1851588f0592ccff24fbe6",
+  "evidence/audit-environment.json": "45d4778d00343668294003d55dc600da2dfb746aae8bfc8ab3473e6644a9922b",
+  "evidence/blackbox.log": "e118c7d1dd6b1202c30c14dcfb458a04dac8672abd7806a9abfc819d72ba9261",
+  "evidence/build.log": "60ca46444de45fc682ae3a482a3992ab8dd7a618503d54c03c79c3f44488bba4",
+  "evidence/host-build.log": "f67b01d621d30107d0b7b41694f2c9efbf930e5b4de83427614f654a8662d305",
+  "evidence/host-contrast-probe.json": "578f09fc0e933e872b81eac44fc7edddaf6ccffa6ebc1c08744b6989bd7f87f0",
+  "evidence/host-properties-contrast.png": "fdc66ed839aaa41489c9c2a1aea7ba634f8ef4a91c20e26387a3f046a1c70823",
+  "evidence/present-blackout.png": "e838f362c9174d263fd3dd7e084a8a47e19fcd9e07b77a066e1520e6759f59d0",
+  "evidence/present-idle.png": "8bf2d4e074eaaca3ada640a712b38e376c305ead7c3722b3a72742f6514a8c89",
+  "evidence/presentation-probe.json": "10b536f1a1e8913526f04ae82f5357e36bfecdbd1b4994528b1c7eee6d29b470",
+  "evidence/release.log": "c52b21b2f253a0a58bab372e91173ab5c725e5d8a5b25c2b6f617328bddd3e68",
+  "evidence/retest.log": "31604ad128c902ace96a6723074b364083511d43bfa6face5c5127fdd7549dd6",
+  "evidence/tests.log": "413053e2224fe0ae9d6907a93fb7d1565ce54cdfc58e096e5e8780a914703c6e",
+  "evidence/typecheck.log": "a7149824f4d2e2b22a41ec34ca6b451f7ac9e9003b5167390eead15d29870e70",
+  "evidence/validate.log": "5abeb6295050e763631f9b8b09a3eca35306b5233d1e4e962668d1e5a1c6b71c",
+  "probe-host-contrast.mjs": "0ff6c2fc76869e2f9e83257bfac9ec0539048c611fa4873c4c0ea1763c59afa0",
+  "probe-presentation.mjs": "bb05b6787f4357291734eedf38f45e09d4e896a0cb8da35406026564a8d09876"
+}

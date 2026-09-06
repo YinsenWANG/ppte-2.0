@@ -1,0 +1,26 @@
+{
+  "auditedCommit": "4aee9da597ceef29df30f22a65f5bafc9f2bc354",
+  "planCommit": "b8c6d00fa3e0acec47db8d9c4f3d16f3719c25f4",
+  "platform": "macOS-27.0-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "node": "v26.5.0",
+  "pnpm": "11.22.0",
+  "testSummary": {
+    "firstRun": {
+      "total": 392,
+      "pass": 387,
+      "fail": 5
+    },
+    "rerunAffectedFilesWithPythonEnvironment": {
+      "total": 40,
+      "pass": 40,
+      "fail": 0
+    },
+    "interpretation": "All 392 cases have a passing observation across first run and environment-corrected rerun; not a second full-suite run."
+  },
+  "blackbox": {
+    "green": 72,
+    "red": 0
+  },
+  "productCodeModified": false
+}

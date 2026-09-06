@@ -1,0 +1,42 @@
+{
+  "ok": false,
+  "blockers": [
+    "D07: partial",
+    "P01: partial",
+    "Q01: partial",
+    "Q01 clients: unverified",
+    "Q01: No retained actual Safari or Office open/edit/resave/visual observations for this build.",
+    "Q01: No complete A21 human panel; D07 remains partial.",
+    "Q02 criterion 1: incomplete",
+    "Q02 retention: ENOENT: no such file or directory, lstat 'artifacts/q02-drill-final/source.retained'",
+    "Q02 manifest: blocked"
+  ],
+  "actions": {
+    "git": {
+      "status": "not-run",
+      "scope": "push/tag prohibited by task; local commit recorded separately",
+      "evidence": []
+    },
+    "npm": {
+      "status": "not-run",
+      "scope": "publication blocked by release acceptance",
+      "evidence": []
+    },
+    "localInstall": {
+      "status": "pass",
+      "scope": "temporary isolated old/candidate npm and native Skill installation; persistent user installation not-run",
+      "evidence": [
+        "docs/evolution/quality/q02-drill-report.json",
+        "docs/evolution/quality/q02-retention-receipt.json"
+      ]
+    },
+    "htmlUpgrade": {
+      "status": "pass",
+      "scope": "synthetic legacy-profile fixture, explicit versioned copy; user HTML upgrade not-run",
+      "evidence": [
+        "docs/evolution/quality/q02-drill-report.json",
+        "docs/evolution/quality/q02-retention-receipt.json"
+      ]
+    }
+  }
+}
