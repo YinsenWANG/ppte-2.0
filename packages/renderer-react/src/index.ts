@@ -48,14 +48,14 @@ export interface TargetedVisualDiff {
  * string adapter for the contract deck; an editor may mount the same
  * primitives into React/DOM without making that tree a document source.
  */
-export function renderSlideHtml(document: PpteDocument, slideId: string, options: RenderOptions = {}): string {
+export function renderSlideHtml(document: PpteDocument, slideId: string, options: RenderOptions = {}, elementRenderer = renderElement): string {
   const slide = document.slides[slideId]
   if (!slide) throw new Error(`SLIDE_MISSING: ${slideId}`)
   const background = paintCss(slide.background ?? document.canvas.defaultBackground, document)
   const children = slide.rootOrder
     .map((elementId) => slide.elements[elementId])
     .filter((element): element is Element => Boolean(element) && element.visible !== false)
-    .map((element) => renderElement(document, element, options))
+    .map((element) => elementRenderer(document, element, options))
     .join('')
   const diagnostics = options.includeDiagnostics ? `<meta data-ppte-revision="${escapeAttr(JSON.stringify(document.schemaVersion))}">` : ''
   const strategy = slide.visualStrategy ?? 'structured'
@@ -502,3 +502,46 @@ function hostScript(): string {
 function escapeHtml(value: string): string { return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;') }
 function escapeXml(value: string): string { return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&apos;') }
 function escapeAttr(value: string): string { return escapeHtml(value) }
+
+/** Snapshot-derived dirty sets: no revision-wide invalidation and no document writes. */
+export class IncrementalRenderCache {
+  private slides = new Map<string, {key:string; html:string}>()
+  private elements = new Map<string, {key:string; html:string}>()
+  readonly dirtySlides = new Set<string>()
+  readonly dirtyElements = new Set<string>()
+  begin(document:PpteDocument):void {
+    this.dirtySlides.clear(); this.dirtyElements.clear()
+    for(const id of this.slides.keys())if(!document.slides[id])this.slides.delete(id)
+    const live=new Set(document.slideOrder.flatMap(id=>Object.keys(document.slides[id].elements).map(e=>JSON.stringify([id,e]))))
+    for(const id of this.elements.keys())if(!live.has(id))this.elements.delete(id)
+  }
+  render(document:PpteDocument,id:string,options:RenderOptions={}):string {
+    const slide=document.slides[id]
+    // Only resources referenced by this page can invalidate it. Theme changes
+    // conservatively invalidate every page (tokens may be used at any depth).
+    const resources=(value:unknown):unknown=>{
+      const ids=new Set<string>()
+      const visit=(v:unknown):void=>{if(v&&typeof v==='object')for(const [k,c] of Object.entries(v)){if((k==='assetId'||k==='posterAssetId')&&typeof c==='string')ids.add(c);else visit(c)}}
+      visit(value);visit(document.theme)
+      for(const id of ids){const poster=document.assets[id]?.posterAssetId;if(poster)ids.add(poster)}
+      return [...ids].sort().map(i=>[i,document.assets[i]??null,options.assetSources?.[i]??null])
+    }
+    const common=[document.canvas,document.theme,options.editable??false,options.staticMedia??false,options.includeDiagnostics??false]
+    const key=canonicalJsonString([slide,common,resources(slide)])
+    const cached=this.slides.get(id)
+    if(cached?.key===key)return cached.html
+    this.dirtySlides.add(id)
+    const html=renderSlideHtml(document,id,options,(_doc,element,opts)=>{
+      const eid=JSON.stringify([id,element.id]),key=canonicalJsonString([element,common,resources(element)])
+      const cached=this.elements.get(eid)
+      if(cached?.key===key)return cached.html
+      this.dirtyElements.add(element.id)
+      const html=renderElement(document,element,opts);this.elements.set(eid,{key,html});return html
+    })
+    this.slides.set(id,{key,html});return html
+  }
+}
+export function slideWindow(document:PpteDocument,activeId:string):string[] {
+  const index=Math.max(0,document.slideOrder.indexOf(activeId))
+  return document.slideOrder.slice(Math.max(0,index-1),index+2)
+}

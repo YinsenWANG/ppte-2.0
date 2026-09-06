@@ -14,7 +14,7 @@ import { TextEditingSurface, reconcileTextSurface, type TextSurfacePort } from '
 import { EditorController } from '../../editor-controller/src/index.js'
 import { PresentationController } from '../../editor-controller/src/presentation.js'
 import {actualTextOverflow,fittedBrowserFont} from './text-measurement.js'
-import {poolBytes,resolveBytes,collectResourcePool,type ResourceBytes} from './resource-pool.js'
+import {BrowserResourceCache,poolBytes,resolveBytes,collectResourcePool,type ResourceBytes} from './resource-pool.js'
 import { ReviewPanel, type ReviewProject } from './ReviewPanel.js'
 import { RecipeStudio } from './RecipeStudio.js'
 import { builtInRecipeSpecs, RecipeRegistry } from '../../layout-recipes/src/index.js'
@@ -30,14 +30,18 @@ import { createEmptyDocument } from '../../authoring/src/default-document.js'
 export { createEmptyDocument } from '../../authoring/src/default-document.js'
 import { buildAuthoringTransaction, type AuthoringInput } from '../../authoring/src/index.js'
 import { PpteSession, type HistoryEntry } from '../../core/src/index.js'
-import { useLayoutEffect, useEffect, useMemo, useRef, useState, type ChangeEvent, type KeyboardEvent, type PointerEvent as ReactPointerEvent, type ReactElement } from 'react'
+import { memo, useLayoutEffect, useEffect, useMemo, useRef, useState, type ChangeEvent, type KeyboardEvent, type PointerEvent as ReactPointerEvent, type ReactElement } from 'react'
 import { canonicalJsonString, canonicalRevision, sha256HexBytes } from '../../canonical-json/src/index.js'
 import { buildDuplicateSlideOperation } from '../../operations/src/index.js'
 import { validateRuntimeDocument } from '../../validation/src/index.js'
 import { gotoSlide, nextSlide, previousSlide, advancePresenterState, retreatPresenterState, type PresenterAnimationState } from '../../portable-runtime/src/presenter-state.js'
-import { renderSlideHtml, type RenderOptions } from '../../renderer-react/src/index.js'
+import { IncrementalRenderCache, slideWindow, renderSlideHtml, type RenderOptions } from '../../renderer-react/src/index.js'
 import type { Asset, ImageElement, Operation, PpteDocument, TextElement, Transaction, ValidationIssue } from '../../schema/src/index.js'
 import { buildSelectionOverlay, type SelectionState } from './interaction.js'
+
+const ThumbnailSurface=memo(function ThumbnailSurface({html}:{html:string}) {
+  return <span className="ppte-thumbnail-surface" dangerouslySetInnerHTML={{__html:html}} />
+})
 
 export interface HostAppProps {
   initialDocument?: PpteDocument
@@ -127,17 +131,10 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     })()
   },[])
 
-  useEffect(()=>{
-    const urls:string[]=[];const faces:FontFace[]=[]
-    for(const [id,bytes] of Object.entries(fontBytes)){
-      const font=documentNode.fonts[id];if(!font)continue
-      const url=URL.createObjectURL(new Blob([blobBytes(bytes)]));urls.push(url)
-      const face=new FontFace(font.family,`url(${url})`,{weight:String(font.weight??400),style:font.style??'normal'});faces.push(face);
-      (document.fonts as FontFaceSet & {add(f:FontFace):void}).add(face)
-      void face.load().catch(()=>setStatus(`字体未加载：${font.family}，请检查字体资源`))
-    }
-    return()=>{faces.forEach(f=>(document.fonts as FontFaceSet & {delete(f:FontFace):void}).delete(f));urls.forEach(u=>URL.revokeObjectURL(u))}
-  },[fontBytes,fontSpecKey])
+  const resources=useRef(new BrowserResourceCache())
+  const slideCache=useRef(new IncrementalRenderCache())
+  const thumbnailCache=useRef(new IncrementalRenderCache())
+  useEffect(()=>()=>resources.current.dispose(),[])
 
   const activeSlideId = (presenting && presenterState.slideId && documentNode.slideOrder.includes(presenterState.slideId) ? presenterState.slideId : documentNode.slideOrder[activeSlideIndex]) ?? documentNode.slideOrder[0] ?? ''
   const activeSlide = documentNode.slides[activeSlideId]
@@ -145,17 +142,9 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
   const nextOperationId = (kind: string) => `host:${kind}:${++operationNumber.current}:${crypto.randomUUID()}`
 
   useEffect(() => {
-    const created: Record<string, string> = {}
-    const referenced=new Set<string>()
-    const visit=(value:unknown):void=>{if(value&&typeof value==='object')for(const [key,child] of Object.entries(value)){if(key==='assetId'&&typeof child==='string')referenced.add(child);else visit(child)}}
-    visit(documentNode.slides);visit(documentNode.theme)
-    for (const [assetId, bytes] of Object.entries(assetBytes)) {
-      const asset = documentNode.assets[assetId]
-      if (asset && !asset.mimeType.startsWith('video/') && referenced.has(assetId)) created[assetId] = URL.createObjectURL(new Blob([blobBytes(bytes)], { type: asset.mimeType }))
-    }
-    setAssetSources(created)
-    return () => Object.values(created).forEach((source) => URL.revokeObjectURL(source))
-  }, [assetBytes, assetSpecKey, documentNode.slides, documentNode.theme])
+    const sources=resources.current.syncDocument(documentNode,assetBytes,fontBytes)
+    setAssetSources(previous=>canonicalJsonString(previous)===canonicalJsonString(sources)?previous:sources)
+  }, [assetBytes, assetSpecKey, fontBytes, fontSpecKey, documentNode.slides, documentNode.theme])
 
   useEffect(() => {
     setNotesDraft(activeSlide?.notes?.speaker ?? '')
@@ -178,7 +167,10 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
   useEffect(()=>()=>mediaRef.current.player.dispose(),[])
   useEffect(()=>{if(!presenting)mediaRef.current.player.pauseAll()},[presenting])
   const renderOptions: RenderOptions = useMemo(() => ({ editable: storageReady && !presenting, assetSources }), [assetSources,storageReady,presenting])
-  const slideHtml = useMemo(() => activeSlideId ? renderSlideHtml(documentNode, activeSlideId, renderOptions) : '', [activeSlideId, documentNode, renderOptions])
+  const {slideHtml,neighbourHtml} = useMemo(() => {
+    slideCache.current.begin(documentNode)
+    return {slideHtml:activeSlideId?slideCache.current.render(documentNode,activeSlideId,renderOptions):'',neighbourHtml:slideWindow(documentNode,activeSlideId).filter(id=>id!==activeSlideId).map(id=>slideCache.current.render(documentNode,id,{...renderOptions,editable:false})).join('')}
+  }, [activeSlideId, documentNode, renderOptions])
   textPort.current = {
     colors:()=>sessionRef.current!.getDocument().theme.tokens.colors,
     fonts:()=>sessionRef.current!.getDocument().theme.tokens.fontFamilies,
@@ -189,6 +181,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     changed: (r: {ok:boolean;issues?:Array<{message:string}>}) => {if(!r.ok){setStatus(r.issues?.map(i=>i.message).join('; ')??'文字草稿已保留');if(r.issues?.some(i=>i.message.includes('Another editor')))for(const b of textSurface.current?.drafts.values()??[])textSurface.current?.showCanonical(b.elementId)}else if(pendingPresentation.current)togglePresenter()},
     canEdit: () => storageReady && presentation.canMutate,
   }
+  const reconciledEpoch=useRef(-1)
   useLayoutEffect(() => {
     const root=renderedRef.current!
     if(!textSurface.current)textSurface.current=new TextEditingSurface(root, {
@@ -196,11 +189,14 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     })
     textSurface.current.refresh()
     const surface=root.querySelector<HTMLElement>('.ppte-rendered-slide')!
-    reconcileTextSurface(surface,slideHtml,node=>textSurface.current!.protect(node)||mediaRef.current.player.protect(node,documentNode))
+    reconcileTextSurface(surface,slideHtml,node=>textSurface.current!.protect(node)||mediaRef.current.player.protect(node,documentNode),reconciledEpoch.current!==renderEpoch)
+    reconcileTextSurface(root.querySelector<HTMLElement>('.ppte-neighbour-slides')!,neighbourHtml,node=>mediaRef.current.player.protect(node,documentNode))
+    reconciledEpoch.current=renderEpoch
     if(mediaRef.current.session!==sessionRef.current){mediaRef.current.player.dispose();mediaRef.current={session:sessionRef.current,player:new MediaController()}}
+    surface.querySelectorAll<HTMLElement>('[data-ppte-slide-id]').forEach(n=>{n.style.display=n.dataset.ppteSlideId===activeSlideId?'block':'none'})
     mediaRef.current.player.setSlide(activeSlideId)
-    mediaRef.current.player.sync(surface,documentNode,assetBytes)
-  }, [slideHtml,renderEpoch])
+    mediaRef.current.player.sync(root,documentNode,assetBytes)
+  }, [slideHtml,neighbourHtml,renderEpoch,activeSlideId])
   useEffect(()=>()=>textSurface.current?.dispose(),[])
   const playback = useRef(new AnimationPlayback())
   useEffect(() => {
@@ -225,11 +221,15 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
   useLayoutEffect(() => {
     const surface = renderedRef.current
     if (!surface) return
-    if (activeSlide) playback.current.apply(surface, activeSlide, presenterState.step, presenting)
+    const activeNode=Array.from(surface.querySelectorAll<HTMLElement>('[data-ppte-slide-id]')).find(n=>n.dataset.ppteSlideId===activeSlideId)
+    if (activeSlide&&activeNode) playback.current.apply(activeNode, activeSlide, presenterState.step, presenting)
 
   })
 
-  const thumbnails = useMemo(() => documentNode.slideOrder.map((slideId) => ({ slideId, html: renderThumbnailHtml(documentNode, slideId, assetSources) })), [assetSources, documentNode])
+  const thumbnails = useMemo(() => {
+    thumbnailCache.current.begin(documentNode)
+    return documentNode.slideOrder.map(slideId=>({slideId,html:thumbnailCache.current.render(documentNode,slideId,{staticMedia:true,editable:false,assetSources}).replace(/\sdata-ppte-[a-z0-9-]+="[^"]*"/gi,'')}))
+  }, [assetSources, documentNode])
   const selectedOverlay = useMemo(() => buildSelectionOverlay(documentNode, { slideId: activeSlideId, elementIds: activeElementIds }), [activeElementIds, activeSlideId, documentNode])
 
   function syncSessionState(): void {
@@ -289,7 +289,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     if(node)cropCleanup.current=mountImageCrop(node,element,()=>canvasScale,crop=>commitOperations([{opId:nextOperationId('crop'),kind:'image.setCrop',slideId:activeSlideId,elementId:id,crop}],'图片已裁剪'))
   }
   function pointerInDu(event: ReactPointerEvent<HTMLDivElement>): { x: number; y: number } {
-    const slide = renderedRef.current?.querySelector<HTMLElement>('.ppte-slide')
+    const slide = renderedRef.current?.querySelector<HTMLElement>('.ppte-slide:not([style*="display: none"])')
     const rect = slide?.getBoundingClientRect()
     if (!rect) throw Error('INVALID_VIEWPORT')
     return screenToDu(event,rect,documentNode.canvas)
@@ -315,7 +315,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     try {
       const mode=event.ctrlKey||event.metaKey?event.altKey?'rotate':'resize':'move'
       const session=new TransformSession(documentNode,canonicalRevision(documentNode),activeSlideId,nextIds,pointerInDu(event),mode,event.shiftKey?false:undefined)
-      dragRef.current=new TransformPointer(session,event.pointerId,e=>screenToDu(e,renderedRef.current!.querySelector<HTMLElement>('.ppte-slide')!.getBoundingClientRect(),documentNode.canvas),setDragFrame,tx=>commitTransaction(tx,'对象变换已提交'),()=>{dragRef.current=undefined;setDragFrame(undefined)})
+      dragRef.current=new TransformPointer(session,event.pointerId,e=>screenToDu(e,renderedRef.current!.querySelector<HTMLElement>('.ppte-slide:not([style*="display: none"])')!.getBoundingClientRect(),documentNode.canvas),setDragFrame,tx=>commitTransaction(tx,'对象变换已提交'),()=>{dragRef.current=undefined;setDragFrame(undefined)})
       event.currentTarget.setPointerCapture(event.pointerId)
     }catch(error){cancelTransform();setStatus(String(error))}
   }
@@ -785,7 +785,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
       <details open data-ppte-pages-panel><summary>页面 · {documentNode.slideOrder.length}</summary>
       <div className="ppte-thumbnails" data-ppte-thumbnails>
         {thumbnails.map(({ slideId, html }, index) => <button type="button" className={`ppte-thumbnail${index === activeSlideIndex ? ' is-active' : ''}`} key={slideId} data-ppte-slide-index={index} aria-label={`Slide ${index + 1}`} onClick={() => { if (!controller().flushSync().ok) return; setActiveSlideIndex(index); setPresenterState({ slideIndex: index, step: 0 }) }}>
-          <span className="ppte-thumbnail-surface" dangerouslySetInnerHTML={{ __html: html }} /><span className="ppte-thumbnail-label">{index + 1} · {documentNode.slides[slideId]?.name ?? 'Untitled'}</span>
+          <ThumbnailSurface html={html} /><span className="ppte-thumbnail-label">{index + 1} · {documentNode.slides[slideId]?.name ?? 'Untitled'}</span>
         </button>)}
       </div></details>
     </aside>}
@@ -793,6 +793,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     <main className="ppte-host-main" data-ppte-stage onDragOver={event=>{if(presentation.canMutate)event.preventDefault()}} onPaste={event=>{const file=event.clipboardData.files[0];if(file&&presentation.canMutate){event.preventDefault();void importImageFile(file)}}} onDrop={event=>{event.preventDefault();const file=event.dataTransfer.files[0];if(file&&presentation.canMutate)void importImageFile(file)}} onPasteCapture={event => { if (!presentation.canMutate) event.preventDefault() }} onDropCapture={event => { if (!presentation.canMutate) event.preventDefault() }}>
       <div className="ppte-canvas-wrap" tabIndex={-1} style={{ aspectRatio: `${documentNode.canvas.width} / ${documentNode.canvas.height}`, ['--ppte-aspect' as string]: documentNode.canvas.width / documentNode.canvas.height }} ref={renderedRef} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={cancelTransform} onLostPointerCapture={cancelTransform} onDoubleClick={(event) => { if (!presentation.canMutate) return; const target = textTarget(event); if (target) { setSelection({slideId:activeSlideId,elementIds:[target.element.id],primaryElementId:target.element.id}); target.node.focus(); setStatus('文字编辑中 · compositionend 后提交') } }} onBeforeInput={event => { if (!presentation.canMutate) event.preventDefault() }} onPaste={event => { if (!presentation.canMutate) event.preventDefault() }} onDrop={event => { if (!presentation.canMutate) event.preventDefault() }}>
         <div className="ppte-rendered-slide" data-ppte-canvas-scale={canvasScale} style={{ ['--ppte-scale' as string]: canvasScale }} />
+        <div className="ppte-neighbour-slides" hidden inert />
         {!presenting && selectedOverlay.map((item) => {
           const frame = dragFrame?.[item.elementId]?.frame ?? item.frame
           return <div key={item.elementId} className={`ppte-selection-box${item.elementId === selection.primaryElementId ? ' is-primary' : ''}`} data-ppte-selection-id={item.elementId} style={{ left: frame.x * canvasScale, top: frame.y * canvasScale, width: frame.width * canvasScale, height: frame.height * canvasScale, transform:`rotate(${dragFrame?.[item.elementId]?.rotationDeg ?? activeSlide.elements[item.elementId].rotationDeg ?? 0}deg)` }} />

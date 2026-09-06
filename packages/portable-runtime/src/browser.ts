@@ -1,3 +1,5 @@
+import { BrowserResourceCache } from '../../editor-react/src/resource-pool.js'
+import { IncrementalRenderCache, slideWindow } from '../../renderer-react/src/index.js'
 import { mountPresenterTools } from '../../editor-dom/src/presenter-tools.js'
 import { renderAnimationControls } from '../../editor-dom/src/animation-controls.js'
 import { AnimationPlayback } from './animation-playback.js'
@@ -111,6 +113,10 @@ pagesPanel.append(pagesTitle, thumbnails); root.append(pagesPanel);
 const tableProperties = document.createElement('section'); tableProperties.dataset.ppteTableEditor = ''; propertiesPanel.append(tableProperties);
 const animationProperties = document.createElement('section'); animationProperties.dataset.ppteAnimationControls = ''; propertiesPanel.append(animationProperties);
 let thumbnailRevision = '';
+const resources=new BrowserResourceCache(),slideCache=new IncrementalRenderCache(),thumbnailCache=new IncrementalRenderCache();
+let sources:Record<string,string>={};
+let mountedKey='';
+dom.own(()=>resources.dispose());
 const designPanel = document.createElement('details');
 designPanel.dataset.ppteDesignPanel = '';
 if (runtime.profile === 'full-portable') {
@@ -169,30 +175,27 @@ const nodeFor = (id: string) =>
   ).find((n) => n.dataset.ppteElementId === id);
 function show(result?: { ok: boolean; issues?: Array<{ message: string }> }) {
   const state = runtime.presenterState();
+  updateCanvas();
   if(drag&&(drag.session.slideId!==state.slideId||drag.session.revision!==runtime.getRevision()))cancelTransform();
   pagesPanel.hidden = presenting;
   designPanel.hidden = presenting;
   if (thumbnailRevision !== runtime.getRevision()) {
     thumbnailRevision = runtime.getRevision();
-    thumbnails.replaceChildren();
+    thumbnailCache.begin(runtime.getDocument());
+    const previousButtons=new Map(Array.from(thumbnails.children).map(n=>[(n as HTMLElement).dataset.slideId,n as HTMLButtonElement]));
     runtime.getDocument().slideOrder.forEach((id, index) => {
-      const button = document.createElement('button'); button.type = 'button';
+      const button = previousButtons.get(id)??document.createElement('button');previousButtons.delete(id);button.dataset.slideId=id;button.type = 'button';
       button.dataset.ppteSlideIndex = String(index); button.setAttribute('aria-label', `Slide ${index + 1}`);
-      const preview = canvas.querySelector<HTMLElement>(`[data-ppte-slide-id="${id}"]`)?.cloneNode(true) as HTMLElement | undefined;
-      if (preview) {
-        preview.removeAttribute('data-ppte-slide-id'); preview.inert = true;
-        preview.querySelectorAll('video').forEach(video=>{const poster=document.createElement('span');poster.textContent='Video';video.closest('[data-ppte-media-container]')?.replaceWith(poster);if(video.isConnected)video.replaceWith(poster)});
-
-        preview.querySelectorAll('[contenteditable]').forEach(n => n.removeAttribute('contenteditable'));
-        preview.querySelectorAll('[data-ppte-element-id]').forEach(n => n.removeAttribute('data-ppte-element-id'));
-        preview.style.cssText = `position:absolute;left:0;top:0;display:block;transform:scale(${140/runtime.getDocument().canvas.width});transform-origin:top left;pointer-events:none`;
-        const surface = document.createElement('span'); surface.style.cssText = `display:block;position:relative;width:140px;height:${140*runtime.getDocument().canvas.height/runtime.getDocument().canvas.width}px;overflow:hidden`;
-        surface.append(preview); button.append(surface);
-      }
-      button.append(`${index + 1} · ${runtime.getDocument().slides[id].name ?? 'Untitled'}`);
+      const preview=document.createElement('span');
+      preview.style.cssText=`display:block;position:relative;width:140px;height:${140*runtime.getDocument().canvas.height/runtime.getDocument().canvas.width}px;overflow:hidden`;
+      preview.innerHTML=`<span style="display:block;transform:scale(${140/runtime.getDocument().canvas.width});transform-origin:top left">${thumbnailCache.render(runtime.getDocument(),id,{staticMedia:true,assetSources:sources}).replace(/\sdata-ppte-[a-z0-9-]+="[^"]*"/gi,'')}</span>`;
+      preview.inert=true;
+      const label=`${index + 1} · ${runtime.getDocument().slides[id].name ?? 'Untitled'}`;
+      if(button.firstElementChild?.innerHTML!==preview.innerHTML||button.lastChild?.textContent!==label)button.replaceChildren(preview,label);
       button.onclick = () => { runtime.setSlide(index); show(); };
-      thumbnails.append(button);
+      if(thumbnails.children[index]!==button)thumbnails.insertBefore(button,thumbnails.children[index]??null);
     });
+    previousButtons.forEach(button=>button.remove());
   }
   thumbnails.querySelectorAll('button').forEach((b,index)=>b.setAttribute('aria-current',String(index===state.slideIndex)));
   propertiesPanel.hidden = !editable || presenting;
@@ -250,32 +253,21 @@ function fit() {
   canvas.style.height = `${spec.height * scale}px`;
   show();
 }
+function updateCanvas(force=false) {
+  const doc=runtime.getDocument(),active=runtime.presenterState().slideId;
+  const key=`${runtime.getRevision()}:${active}:${presenting}`;
+  if(!force&&mountedKey===key)return;
+  const reset=force&&mountedKey===key;
+  mountedKey=key;
+  const assets=runtime.getAssetBytes();
+  sources=resources.syncDocument(doc,assets,runtime.getFontBytes());
+  textSurface.refresh();slideCache.begin(doc);
+  reconcileTextSurface(canvas,slideWindow(doc,active).map(id=>slideCache.render(doc,id,{editable:editable&&!presenting,assetSources:sources})).join(''),node=>textSurface.protect(node)||media.protect(node,doc),reset);
+  media.sync(canvas,doc,assets);
+}
 function render() {
-  cropCleanup?.(); cropCleanup=undefined;
-  const doc = runtime.getDocument();
-  const assets = runtime.getAssetBytes();
-  textSurface.refresh();
-  reconcileTextSurface(canvas, renderDocumentSurfaceHtml(doc, {
-    editable: editable && !presenting,
-    assetSources: Object.fromEntries(
-      Object.entries(assets).map(([id, data]) => [
-        id,
-        `data:${doc.assets[id]?.mimeType};base64,${base64(data)}`,
-      ]),
-    ),
-  }), node=>textSurface.protect(node)||media.protect(node,doc));
-  media.sync(canvas, doc, assets);
-  document.getElementById("ppte-portable-fonts")?.remove();
-  const fontStyle = document.createElement("style");
-  fontStyle.id = "ppte-portable-fonts";
-  fontStyle.textContent = Object.entries(runtime.getFontBytes())
-    .map(
-      ([id, data]) =>
-        `@font-face{font-family:${JSON.stringify(doc.fonts[id]?.family)};src:url(data:font/woff2;base64,${base64(data)})}`,
-    )
-    .join("\n");
-  document.head.append(fontStyle);
-  fit();
+  cropCleanup?.();cropCleanup=undefined;
+  updateCanvas(true);fit();
 }
 async function enterPresentation() {
   if (presenting) return { ok: true, issues: [] };
@@ -740,7 +732,14 @@ const api = {
     return r;
   },
 };
-dom.listen(window, 'beforeprint', () => playback.cancel());
+let printRoot:HTMLElement|undefined;
+const clearPrint=()=>{printRoot?.remove();printRoot=undefined};
+dom.listen(window, 'beforeprint', () => {
+  playback.cancel();clearPrint();printRoot=document.createElement('section');printRoot.dataset.pptePrintDocument='';
+  printRoot.innerHTML=renderDocumentSurfaceHtml(runtime.getDocument(),{editable:false,staticMedia:true,assetSources:sources});
+  document.body.append(printRoot);
+});
+dom.listen(window,'afterprint',clearPrint);dom.own(clearPrint);
 const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
 dom.listen(motion, 'change', () => show());
 const observer = new ResizeObserver(fit);

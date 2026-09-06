@@ -74,8 +74,10 @@ export function writeText(root:HTMLElement, content:RichTextDocument, colors:Rec
     return node
   }))
 }
+const reconciledMarkup = new WeakMap<Node,string>()
 /** Keyed, in-place reconciliation never detaches the active editor or its ancestors. */
-export function reconcileTextSurface(root:HTMLElement, html:string, protect:(node:HTMLElement)=>boolean=()=>false) {
+export function reconcileTextSurface(root:HTMLElement, html:string, protect:(node:HTMLElement)=>boolean=()=>false, force=false) {
+  if(force)root.querySelectorAll('*').forEach(node=>reconciledMarkup.delete(node))
   const template=root.ownerDocument.createElement('template');template.innerHTML=html
   const key=(n:Node)=>n instanceof HTMLElement?n.dataset.ppteElementId??n.dataset.ppteSlideId:undefined
   function sync(parent:Node, source:Node) {
@@ -86,6 +88,9 @@ export function reconcileTextSurface(root:HTMLElement, html:string, protect:(nod
       if(!old||old.nodeType!==next.nodeType||(old instanceof Element&&next instanceof Element&&old.tagName!==next.tagName)) {old=next.cloneNode(true);parent.insertBefore(old,cursor)}
       else if(old!==cursor)parent.insertBefore(old,cursor)
       if(old instanceof Element&&next instanceof Element) {
+        const markup=next.outerHTML
+        if(key(next)&&reconciledMarkup.get(old)===markup&&!(old instanceof HTMLElement&&protect(old))){cursor=old.nextSibling;continue}
+        reconciledMarkup.set(old,markup)
         {
           for(const attr of Array.from(old.attributes))if(!next.hasAttribute(attr.name))old.removeAttribute(attr.name)
           for(const attr of Array.from(next.attributes))if(old.getAttribute(attr.name)!==attr.value)old.setAttribute(attr.name,attr.value)
