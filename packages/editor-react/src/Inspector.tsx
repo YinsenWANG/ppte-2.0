@@ -1,3 +1,4 @@
+import { renderAnimationControls } from '../../editor-dom/src/animation-controls.js'
 import { renderTableEditor } from '../../editor-dom/src/table-selection.js'
 import { planTransform, type TransformCommand } from '../../editor-controller/src/transform-session.js'
 import { canonicalRevision } from '../../canonical-json/src/index.js'
@@ -27,6 +28,8 @@ export function Inspector({
   commitProperty?: (command: ObjectPropertyCommand) => boolean;
   commit: (operations: Operation[], reason?: string) => boolean;
 }): ReactElement {
+  const animationRoot = useRef<HTMLDivElement>(null)
+  useEffect(() => { if (animationRoot.current) renderAnimationControls(animationRoot.current, slide, ids, ops => commit(ops, '配置动画'), () => globalThis.document.querySelector('.ppte-rendered-slide .ppte-slide')) })
   const tableRoot = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const e = ids.length === 1 ? slide.elements[ids[0]] : undefined
@@ -82,7 +85,7 @@ export function Inspector({
   const frame=group?boundingFrame(group.memberIds.map(id=>slide.elements[id].frame)):element?.frame
   return (
     <section className="ppte-inspector" data-ppte-inspector>
-      <div ref={propertyRoot} data-ppte-object-properties />
+      <div ref={animationRoot} data-ppte-animation-controls /><div ref={propertyRoot} data-ppte-object-properties />
       <strong>{ids.length ? `${ids.length} 个对象` : "选择对象后调整"}</strong>
       {ids.length>1&&<fieldset><legend>对齐与分布</legend>{(['left','center-x','right','top','center-y','bottom'] as const).map((alignment)=><button key={alignment} onClick={()=>emit({kind:'layout.align',elementIds:ids,alignment,reference:'selection'})}>{({left:'左对齐','center-x':'水平居中',right:'右对齐',top:'顶对齐','center-y':'垂直居中',bottom:'底对齐'})[alignment]}</button>)}{(['horizontal','vertical'] as const).map(axis=><button key={axis} onClick={()=>emit({kind:'layout.distribute',elementIds:ids,axis,mode:'gaps'})}>{axis==='horizontal'?'水平等距':'垂直等距'}</button>)}</fieldset>}
       {group && (

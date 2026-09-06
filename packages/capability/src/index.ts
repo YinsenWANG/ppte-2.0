@@ -58,7 +58,24 @@ export function buildCapabilityReport(document: PpteDocument, target: Capability
   for (const slideId of document.slideOrder ?? []) {
     const slide = document.slides?.[slideId]
     if (!slide) continue
+    const playback = target === 'presenter' || target.startsWith('portable-')
+    const pointer = (value: string) => value.replaceAll('~','~0').replaceAll('/','~1')
+    const reportAnimation = (path: string, supported: boolean, reason: string, elementId?: string) => items.push({id:`animation:${path}`,slideId,elementId,status:playback && supported ? 'native' : 'static',sourcePath:path,reason:playback ? reason : 'Static complete content; animation is not exported.'})
+    const transitionPath = `/slides/${pointer(slideId)}/transition`
+    if (slide.transition) {
+      reportAnimation(transitionPath, true, 'none/fade/slide/push; all four directions; reduced motion preserves final state.')
+      if ((slide.transition.durationMs ?? 0) > 10000) reportAnimation(`${transitionPath}/durationMs`,false,'Preserved; playback duration is clamped to 10000 ms.')
+      if (slide.transition.direction && ['none','fade'].includes(slide.transition.type)) reportAnimation(`${transitionPath}/direction`,false,'Preserved; direction has no effect for none/fade.')
+    }
     for (const element of Object.values(slide.elements ?? {})) {
+      const path = `/slides/${pointer(slideId)}/elements/${pointer(element.id)}`
+      if (element.appearStep !== undefined) reportAnimation(`${path}/appearStep`,true,'Ordered reveal steps; edit/print show complete content.',element.id)
+      if (element.animation?.exit) reportAnimation(`${path}/animation/exit`,false,'Exit effects are retained but not executed.',element.id)
+      if (element.animation?.enter) {
+        const enter = element.animation.enter
+        reportAnimation(`${path}/animation/enter`,['fade','slide-up','slide-left'].includes(enter.type),'Only fade/slide-up/slide-left execute; scale is retained as static.',element.id)
+        for (const key of ['durationMs','delayMs'] as const) if ((enter[key] ?? 0) > 10000) reportAnimation(`${path}/animation/enter/${key}`,false,'Preserved; playback time is clamped to 10000 ms.',element.id)
+      }
       items.push(capabilityForElement(document, slideId, element, target))
     }
   }

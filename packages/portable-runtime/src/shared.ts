@@ -1,3 +1,4 @@
+import { ANIMATION_PRINT_CSS } from '../../portable-runtime/src/animation-playback.js'
 import { planVideo, type PreparedVideo } from '../../editor-controller/src/video-resource.js'
 import { editorShellCss } from '../../editor-dom/src/editor-shell.js'
 import { hashPool, requireAssetBytes, historyResourceEntries } from '../../file-format/src/resource-retention.js'
@@ -28,10 +29,10 @@ import { assertDocumentCompatibility, profileDescriptor, inferCompatibilityProfi
 import { PPTE_FORMAT, PPTE_FORMAT_VERSION } from '../../schema/src/index.js'
 import { withErrorSemantics } from '../../schema/src/errors.js'
 import type { Asset, AssetId, ChartData, Element, FontId, Frame, NormalizedRect, PpteDocument, PpteManifest, PortableOrigin, PortableProfile, Revision, RuntimeProfile, Transaction, ValidationIssue } from '../../schema/src/index.js'
-import { advancePresenterState, animationSteps, normalizePresenterState, retreatPresenterState, type PresenterAnimationState } from './presenter-state.js'
+import { gotoSlide, nextSlide, previousSlide, advancePresenterState, animationSteps, normalizePresenterState, retreatPresenterState, type PresenterAnimationState } from './presenter-state.js'
 import { runtimeBudgetFor, STANDARD_EDITABLE_SUFFIX } from './delivery-policy.js'
 
-export { advancePresenterState, animationSteps, normalizePresenterState, retreatPresenterState } from './presenter-state.js'
+export { gotoSlide, nextSlide, previousSlide, advancePresenterState, animationSteps, normalizePresenterState, retreatPresenterState } from './presenter-state.js'
 export type { PresenterAnimationState } from './presenter-state.js'
 export {
   assessDeliveryArtifact,
@@ -272,6 +273,7 @@ export class PortableRuntime {
   private readonly session: PpteSession
   private readonly assetBytes: Record<string, Uint8Array>
   private readonly fontBytes: Record<string, Uint8Array>
+  private slideId: string | undefined
   private slideIndex = 0
   private step = 0
   private lastTransaction?: Transaction
@@ -544,7 +546,8 @@ export class PortableRuntime {
 
   presenterState(): PresenterState {
     const document = this.session.getDocument()
-    const normalized = normalizePresenterState(document, { slideIndex: this.slideIndex, step: this.step })
+    const normalized = normalizePresenterState(document, { slideId: this.slideId, slideIndex: this.slideIndex, step: this.step })
+    this.slideId = document.slideOrder[normalized.slideIndex]
     this.slideIndex = normalized.slideIndex
     this.step = normalized.step
     const slideId = document.slideOrder[this.slideIndex] ?? document.slideOrder[0] ?? ''
@@ -555,7 +558,8 @@ export class PortableRuntime {
 
   next(): PresenterState {
     if (!this.controller.flushSync().ok) return this.presenterState()
-    const next = advancePresenterState(this.session.getDocument(), { slideIndex: this.slideIndex, step: this.step })
+    const next = advancePresenterState(this.session.getDocument(), { slideId: this.slideId, slideIndex: this.slideIndex, step: this.step })
+    this.slideId = this.session.getDocument().slideOrder[next.slideIndex]
     this.slideIndex = next.slideIndex
     this.step = next.step
     return this.presenterState()
@@ -563,7 +567,8 @@ export class PortableRuntime {
 
   previous(): PresenterState {
     if (!this.controller.flushSync().ok) return this.presenterState()
-    const previous = retreatPresenterState(this.session.getDocument(), { slideIndex: this.slideIndex, step: this.step })
+    const previous = retreatPresenterState(this.session.getDocument(), { slideId: this.slideId, slideIndex: this.slideIndex, step: this.step })
+    this.slideId = this.session.getDocument().slideOrder[previous.slideIndex]
     this.slideIndex = previous.slideIndex
     this.step = previous.step
     return this.presenterState()
@@ -572,7 +577,21 @@ export class PortableRuntime {
   setSlide(index: number): PresenterState {
     if (!this.controller.flushSync().ok) return this.presenterState()
     this.slideIndex = Math.max(0, Math.min(Math.floor(index), this.session.getDocument().slideOrder.length - 1))
+    this.slideId = this.session.getDocument().slideOrder[this.slideIndex]
     this.step = 0
+    return this.presenterState()
+  }
+
+  nextStep(): PresenterState { return this.next() }
+  previousStep(): PresenterState { return this.previous() }
+  nextSlide(): PresenterState { return this.navigateSlide(undefined, 0, 1) }
+  previousSlide(): PresenterState { return this.navigateSlide(undefined, 0, -1) }
+  gotoSlide(slideId: string, step = 0): PresenterState { return this.navigateSlide(slideId, step) }
+  private navigateSlide(command?: string, step = 0, direction = 0): PresenterState {
+    if (!this.controller.flushSync().ok) return this.presenterState()
+    const doc = this.session.getDocument(), current = this.presenterState()
+    const state = direction === 1 ? nextSlide(doc, current) : direction === -1 ? previousSlide(doc, current) : gotoSlide(doc, current, command!, step)
+    this.slideId = state.slideId; this.slideIndex = state.slideIndex; this.step = state.step
     return this.presenterState()
   }
 
@@ -626,7 +645,7 @@ function assembleHtml(document: PpteDocument, payload: PortablePayload, assetSou
 *{box-sizing:border-box}html,body{height:100%;background:#e9eaee;color:#292b35}#ppte-shell{height:100dvh;min-height:0;width:100%;grid-template-rows:auto minmax(0,1fr) auto}.ppte-toolbar{gap:12px;padding:12px 24px;background:#fff;border-bottom:1px solid #e2e3e8;position:relative}.ppte-brand{font-size:20px;letter-spacing:-.8px;margin-right:16px}.ppte-brand span{font-size:12px;font-weight:400;letter-spacing:0;color:#8a8d9b;margin-left:12px}.ppte-toolbar button,.ppte-file-label,.ppte-tools summary{font:500 13px/20px system-ui,sans-serif;min-height:36px;padding:8px 12px;border:0;border-radius:8px;background:transparent;color:#414452;cursor:pointer;white-space:nowrap;transition:background .15s}.ppte-toolbar button:hover,.ppte-file-label:hover,.ppte-tools summary:hover{background:#f0f1f5}.ppte-toolbar button:focus-visible,summary:focus-visible,.ppte-exit:focus-visible{outline:2px solid #e34461;outline-offset:3px}.ppte-tool-group{display:flex;gap:2px;border-right:1px solid #e5e6eb;padding-right:12px}.ppte-toolbar .ppte-primary{background:#e34461;color:white;padding:8px 20px;box-shadow:0 2px 5px #e3446120}.ppte-toolbar .ppte-primary:hover{background:#cb3451}.ppte-status{margin-right:auto;margin-left:0;color:#828591;font-size:12px}.ppte-tools{position:relative}.ppte-tools summary{list-style:none}.ppte-tools summary:after{content:'⌄';margin-left:10px}.ppte-tools summary::-webkit-details-marker{display:none}.ppte-tool-menu{position:absolute;right:0;top:46px;width:190px;padding:8px;background:white;border:1px solid #e5e6eb;border-radius:12px;box-shadow:0 12px 36px #25293920;display:grid;z-index:10}.ppte-tool-menu button,.ppte-file-label{text-align:left}.ppte-notes{background:#f7f8fa;color:#727682;max-height:100px;overflow:auto;padding:12px 24px;font-size:12px;line-height:1.6;border-top:1px solid #e2e3e8}.ppte-notes:empty{display:none}.ppte-stage{padding:24px;overflow:hidden}.ppte-canvas>.ppte-slide{box-shadow:0 8px 32px #25293922}#ppte-shell[data-ppte-mode=edit] [contenteditable=true]:hover{outline:1px dashed #e3446180}#ppte-shell[data-ppte-mode=edit] [contenteditable=true]:focus{outline:2px solid #e34461}.ppte-exit{display:none}#ppte-shell[data-ppte-mode=present]{position:fixed;inset:0;background:#000;grid-template-rows:minmax(0,1fr);z-index:100}#ppte-shell[data-ppte-mode=present] .ppte-toolbar,#ppte-shell[data-ppte-mode=present] .ppte-notes{display:none}#ppte-shell[data-ppte-mode=present] .ppte-stage{padding:0}#ppte-shell[data-ppte-mode=present] [data-ppte-element-id]{outline:none!important;cursor:default;user-select:none}#ppte-shell[data-ppte-mode=present] .ppte-slide{box-shadow:none}#ppte-shell[data-ppte-mode=present] .ppte-exit{display:block;position:absolute;right:20px;top:16px;z-index:20;background:#222b;color:#fff;border:1px solid #ffffff30;border-radius:20px;padding:9px 16px;opacity:0;cursor:pointer}#ppte-shell[data-ppte-mode=present] .ppte-exit:hover,#ppte-shell[data-ppte-mode=present] .ppte-exit:focus-visible{opacity:1}dialog{border:1px solid #e5e6eb;border-radius:16px;padding:28px;color:#292b35;box-shadow:0 24px 80px #0003;font:14px system-ui;max-width:90vw}dialog::backdrop{background:#1c203855}dialog input{margin:8px 0 16px 12px;border:1px solid #d9dbe3;border-radius:6px;padding:8px}dialog button{border:0;border-radius:8px;background:#eceef3;padding:10px 18px;margin-right:8px;cursor:pointer}dialog button[data-ppte-dialog-apply]{background:#e34461;color:white}@media(max-width:720px){.ppte-toolbar{padding:8px;gap:4px}.ppte-brand span,.ppte-status{display:none}.ppte-brand{margin-right:auto}.ppte-stage{padding:12px}}
 #ppte-shell:has([data-ppte-properties-panel]:not([hidden])){grid-template-columns:minmax(0,1fr) 300px}#ppte-shell:has([data-ppte-properties-panel]:not([hidden]))>.ppte-toolbar,#ppte-shell:has([data-ppte-properties-panel]:not([hidden]))>.ppte-notes,#ppte-shell>[aria-label="选区格式"]{grid-column:1/-1}#ppte-shell>[data-ppte-properties-panel]{grid-column:2;grid-row:2}#ppte-shell:has([data-ppte-properties-panel]:not([hidden]))>.ppte-stage{grid-column:1;grid-row:2}@media(max-width:720px){#ppte-shell:has([data-ppte-properties-panel]:not([hidden])){grid-template-columns:minmax(0,1fr)}#ppte-shell>[data-ppte-properties-panel]{grid-column:1;grid-row:auto;max-height:35vh}}
 #ppte-shell{grid-template-columns:164px minmax(0,1fr) 300px}#ppte-shell>.ppte-toolbar,#ppte-shell>.ppte-notes{grid-column:1/-1}#ppte-shell>[data-ppte-pages-panel]{grid-column:1;grid-row:2;overflow:auto;background:#f6f7fa;padding:8px}#ppte-shell>.ppte-stage,#ppte-shell:has([data-ppte-properties-panel]:not([hidden]))>.ppte-stage{grid-column:2;grid-row:2}#ppte-shell>[data-ppte-properties-panel]{grid-column:3;grid-row:2}#ppte-shell:has([data-ppte-properties-panel]:not([hidden])){grid-template-columns:164px minmax(0,1fr) 300px}[data-ppte-thumbnails]>button{display:block;margin:8px 0;padding:3px;border:1px solid #cbd5e1;background:white;color:#292b35}[data-ppte-thumbnails]>button[aria-current=true]{border:2px solid #e34461}#ppte-shell[data-ppte-mode=present]{grid-template-columns:1fr}#ppte-shell[data-ppte-mode=present]>.ppte-stage{grid-column:1;grid-row:1}@media(max-width:900px){#ppte-shell,#ppte-shell:has([data-ppte-properties-panel]:not([hidden])){height:auto;min-height:100dvh;grid-template-columns:164px minmax(0,1fr);grid-template-rows:auto minmax(300px,60vh) auto auto}#ppte-shell>[data-ppte-properties-panel]{grid-column:1/-1;grid-row:3;max-height:35vh}#ppte-shell[data-ppte-mode=present]{height:100dvh;grid-template-columns:1fr;grid-template-rows:1fr}}
-${editorShellCss}</style></head><body><div id="ppte-shell" class="ppte-${payload.origin.profile}" data-ppte-profile="${payload.origin.profile}" data-ppte-deliverable="${editable ? 'true' : 'false'}" data-ppte-deliverable-role="${editable ? 'editable-browser-copy' : 'read-only-preview'}"><div class="ppte-toolbar"><strong class="ppte-brand" title="PPTe ${css(payload.buildVersion ?? payload.origin.runtimeVersion)}">PPTe<span>演示文稿</span></strong><div class="ppte-tool-group"><button type="button" data-ppte-action="previous" aria-label="上一页">←</button><button type="button" data-ppte-action="next" aria-label="下一页">→</button></div><span class="ppte-status" data-ppte-status></span>${editingControls}<button type="button" class="ppte-primary" data-ppte-action="fullscreen">开始演示（全屏）</button></div><button type="button" class="ppte-exit" data-ppte-action="exit-present" aria-label="退出放映，返回编辑">退出放映 · Esc</button><main class="ppte-stage" data-ppte-stage><div class="ppte-canvas" data-ppte-canvas style="width:${document.canvas.width}px;height:${document.canvas.height}px">${rendered}</div></main><div class="ppte-notes" data-ppte-notes aria-live="polite"></div></div><script id="ppte-portable-payload" type="application/json">${payloadJson}</script><script id="ppte-runtime">${portableScript()}</script></body></html>`
+${editorShellCss}${ANIMATION_PRINT_CSS}</style></head><body><div id="ppte-shell" class="ppte-${payload.origin.profile}" data-ppte-profile="${payload.origin.profile}" data-ppte-deliverable="${editable ? 'true' : 'false'}" data-ppte-deliverable-role="${editable ? 'editable-browser-copy' : 'read-only-preview'}"><div class="ppte-toolbar"><strong class="ppte-brand" title="PPTe ${css(payload.buildVersion ?? payload.origin.runtimeVersion)}">PPTe<span>演示文稿</span></strong><div class="ppte-tool-group"><button type="button" data-ppte-action="previous" aria-label="上一页">←</button><button type="button" data-ppte-action="next" aria-label="下一页">→</button></div><span class="ppte-status" data-ppte-status></span>${editingControls}<button type="button" class="ppte-primary" data-ppte-action="fullscreen">开始演示（全屏）</button></div><button type="button" class="ppte-exit" data-ppte-action="exit-present" aria-label="退出放映，返回编辑">退出放映 · Esc</button><main class="ppte-stage" data-ppte-stage><div class="ppte-canvas" data-ppte-canvas style="width:${document.canvas.width}px;height:${document.canvas.height}px">${rendered}</div></main><div class="ppte-notes" data-ppte-notes aria-live="polite"></div></div><script id="ppte-portable-payload" type="application/json">${payloadJson}</script><script id="ppte-runtime">${portableScript()}</script></body></html>`
 }
 
 

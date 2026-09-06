@@ -1,3 +1,5 @@
+import { renderAnimationControls } from '../../editor-dom/src/animation-controls.js'
+import { AnimationPlayback } from './animation-playback.js'
 import { prepareVideo, decodeBrowserVideo } from '../../editor-controller/src/video-resource.js'
 import { MediaController } from './media-controller.js'
 import { renderTableEditor, rememberTableCell } from '../../editor-dom/src/table-selection.js'
@@ -61,6 +63,8 @@ const canvas = document.querySelector<HTMLElement>("[data-ppte-canvas]")!;
 const stage = document.querySelector<HTMLElement>("[data-ppte-stage]")!;
 const status = document.querySelector<HTMLElement>("[data-ppte-status]")!;
 const media = new MediaController();
+const playback = new AnimationPlayback();
+runtime.controller.own(()=>playback.dispose());
 runtime.controller.own(()=>media.dispose());
 const editable = runtime.profile !== "viewer";
 const advanced =
@@ -101,6 +105,7 @@ const pagesTitle = document.createElement('summary'); pagesTitle.textContent = '
 const thumbnails = document.createElement('div'); thumbnails.dataset.ppteThumbnails = '';
 pagesPanel.append(pagesTitle, thumbnails); root.append(pagesPanel);
 const tableProperties = document.createElement('section'); tableProperties.dataset.ppteTableEditor = ''; propertiesPanel.append(tableProperties);
+const animationProperties = document.createElement('section'); animationProperties.dataset.ppteAnimationControls = ''; propertiesPanel.append(animationProperties);
 let thumbnailRevision = '';
 const designPanel = document.createElement('details');
 designPanel.dataset.ppteDesignPanel = '';
@@ -190,6 +195,11 @@ function show(result?: { ok: boolean; issues?: Array<{ message: string }> }) {
   const tableTarget = runtime.getSelection().filter(t=>t.slideId===state.slideId);
   const tableElement = tableTarget.length===1?runtime.getDocument().slides[state.slideId].elements[tableTarget[0].elementId]:undefined;
   renderTableEditor(tableProperties,!presenting&&editable&&tableElement?.type==='component'?tableElement:undefined,state.slideId,false,ops=>{const result=runtime.editTable(ops); if(result.ok) change(result); return result.ok});
+  animationProperties.hidden = runtime.profile !== "full-portable" || presenting;
+  if (!animationProperties.hidden) renderAnimationControls(animationProperties, runtime.getDocument().slides[state.slideId], runtime.getSelection().filter(t=>t.slideId===state.slideId).map(t=>t.elementId), operations => {
+    if (!flush().ok) return false;
+    return change(runtime.commit({transactionId:`animation:${++sequence}`,actor:{id:'portable-user',type:'human'},createdAt:new Date().toISOString(),scope:{kind:'slide',slideIds:[state.slideId],permissions:['animation']},changeContract:{allowedOperationKinds:operations.map(o=>o.kind),maxChangedSlides:1},baseRevision:runtime.getRevision(),operations})).ok;
+  }, () => Array.from(canvas.querySelectorAll<HTMLElement>('.ppte-slide')).find(n=>n.dataset.ppteSlideId===state.slideId) ?? null);
   properties.hidden = runtime.profile !== "full-portable";
   if (!propertiesPanel.hidden && !properties.hidden) renderObjectProperties(properties, runtime.getDocument(), state.slideId, runtime.getSelection().filter(t=>t.slideId===state.slideId).map(t=>t.elementId), command => {
     if (!flush().ok) return;
@@ -199,26 +209,8 @@ function show(result?: { ok: boolean; issues?: Array<{ message: string }> }) {
     n.style.display =
       n.dataset.ppteSlideId === state.slideId ? "block" : "none";
     n.style.transform = `scale(${scale})`;
-    n.querySelectorAll<HTMLElement>("[data-ppte-appear-step]").forEach((e) => {
-      const visible = !presenting || Number(e.dataset.ppteAppearStep) <= state.step;
-      e.style.visibility = visible ? "visible" : "hidden";
-      e.style.animationName =
-        presenting && visible && e.dataset.ppteAnimationEnter
-          ? `ppte-enter-${e.dataset.ppteAnimationEnter}`
-          : "none";
-      e.style.animationDuration = `${Number(e.dataset.ppteAnimationDurationMs ?? 0)}ms`;
-      e.style.animationDelay = `${Number(e.dataset.ppteAnimationDelayMs ?? 0)}ms`;
-      e.style.animationTimingFunction = e.dataset.ppteAnimationEasing ?? "ease";
-      e.style.animationFillMode = "both";
-    });
-    if (
-      presenting && n.dataset.ppteTransitionType &&
-      n.dataset.ppteTransitionType !== "none"
-    ) {
-      n.style.animationName = `ppte-transition-${n.dataset.ppteTransitionType}`;
-      n.style.animationDuration = `${Number(n.dataset.ppteTransitionDurationMs ?? 0)}ms`;
-      n.style.animationFillMode = "both";
-    } else n.style.animationName = "none";
+    if (n.dataset.ppteSlideId === state.slideId) playback.apply(n, runtime.getDocument().slides[state.slideId], state.step, presenting);
+
   });
   canvas
     .querySelectorAll<HTMLElement>("[data-ppte-element-id]")
@@ -618,8 +610,9 @@ dom.listen(document, "keydown", (event) => {
   if (presenting) {
     if (event.key !== "Escape" && (event.target as HTMLElement).closest("a,button,video,audio,input,textarea,select")) return;
     if (event.key === "Escape") { event.preventDefault(); leavePresentation(); }
-    else if (["ArrowRight", "ArrowDown", "PageDown", " "].includes(event.key)) { event.preventDefault(); runtime.next(); show(); }
-    else if (["ArrowLeft", "ArrowUp", "PageUp"].includes(event.key)) { event.preventDefault(); runtime.previous(); show(); }
+    else if (event.key === "PageDown" || event.key === "PageUp") { event.preventDefault(); event.key === "PageDown" ? runtime.nextSlide() : runtime.previousSlide(); show(); }
+    else if (["ArrowRight", "ArrowDown", " "].includes(event.key)) { event.preventDefault(); runtime.next(); show(); }
+    else if (["ArrowLeft", "ArrowUp"].includes(event.key)) { event.preventDefault(); runtime.previous(); show(); }
     else if (event.key === "Home") { event.preventDefault(); runtime.setSlide(0); show(); }
     else if (event.key === "End") { event.preventDefault(); runtime.setSlide(runtime.getDocument().slideOrder.length - 1); show(); }
     else if ((event.ctrlKey || event.metaKey) && ["z", "y"].includes(event.key.toLowerCase())) event.preventDefault();
@@ -711,6 +704,11 @@ const api = {
   editTable: (operations: import('../../schema/src/index.js').Operation[]) => change(runtime.editTable(operations)),
   saveAsPortable,
   saveAsEditableCopy: saveAsPortable,
+  nextStep: () => { const r=runtime.nextStep(); show(); return r },
+  previousStep: () => { const r=runtime.previousStep(); show(); return r },
+  nextSlide: () => { const r=runtime.nextSlide(); show(); return r },
+  previousSlide: () => { const r=runtime.previousSlide(); show(); return r },
+  gotoSlide: (id: string, step = 0) => { const r=runtime.gotoSlide(id, step); show(); return r },
   next: () => {
     const r = runtime.next();
     show();
@@ -727,6 +725,9 @@ const api = {
     return r;
   },
 };
+dom.listen(window, 'beforeprint', () => playback.cancel());
+const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+dom.listen(motion, 'change', () => show());
 const observer = new ResizeObserver(fit);
 observer.observe(stage);
 dom.own(() => observer.disconnect());

@@ -141,6 +141,7 @@ export interface SlideSemanticSummary {
   sourceIds?: SourceId[]
 }
 
+/** Playback clamps timing to 0–10000 ms; original values remain serializable. */
 export interface SlideTransition {
   type: 'none' | 'fade' | 'slide' | 'push'
   durationMs?: number
@@ -263,6 +264,7 @@ export interface ElementAnimation {
   exit?: AnimationSpec
 }
 
+/** Runtime executes fade/slide-up/slide-left entrances; scale and exits are retained as static. */
 export interface AnimationSpec {
   type: 'fade' | 'slide-up' | 'slide-left' | 'scale'
   durationMs?: number

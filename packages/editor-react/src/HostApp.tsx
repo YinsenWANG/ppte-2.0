@@ -1,3 +1,4 @@
+import { ANIMATION_PRINT_CSS, AnimationPlayback } from '../../portable-runtime/src/animation-playback.js'
 import { MediaController } from '../../portable-runtime/src/media-controller.js'
 import { prepareVideo, decodeBrowserVideo, planVideo } from '../../editor-controller/src/video-resource.js'
 import { rememberTableCell } from '../../editor-dom/src/table-selection.js'
@@ -32,7 +33,7 @@ import { useLayoutEffect, useEffect, useMemo, useRef, useState, type ChangeEvent
 import { canonicalJsonString, canonicalRevision, sha256HexBytes } from '../../canonical-json/src/index.js'
 import { buildDuplicateSlideOperation } from '../../operations/src/index.js'
 import { validateRuntimeDocument } from '../../validation/src/index.js'
-import { advancePresenterState, retreatPresenterState, type PresenterAnimationState } from '../../portable-runtime/src/presenter-state.js'
+import { gotoSlide, nextSlide, previousSlide, advancePresenterState, retreatPresenterState, type PresenterAnimationState } from '../../portable-runtime/src/presenter-state.js'
 import { renderSlideHtml, type RenderOptions } from '../../renderer-react/src/index.js'
 import type { Asset, ImageElement, Operation, PpteDocument, TextElement, Transaction, ValidationIssue } from '../../schema/src/index.js'
 import { buildSelectionOverlay, type SelectionState } from './interaction.js'
@@ -137,7 +138,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     return()=>{faces.forEach(f=>(document.fonts as FontFaceSet & {delete(f:FontFace):void}).delete(f));urls.forEach(u=>URL.revokeObjectURL(u))}
   },[fontBytes,fontSpecKey])
 
-  const activeSlideId = documentNode.slideOrder[activeSlideIndex] ?? documentNode.slideOrder[0] ?? ''
+  const activeSlideId = (presenting && presenterState.slideId && documentNode.slideOrder.includes(presenterState.slideId) ? presenterState.slideId : documentNode.slideOrder[activeSlideIndex]) ?? documentNode.slideOrder[0] ?? ''
   const activeSlide = documentNode.slides[activeSlideId]
   const activeElementIds = selection.slideId === activeSlideId ? selection.elementIds.filter(id=>activeSlide?.elements[id]) : []
   const nextOperationId = (kind: string) => `host:${kind}:${++operationNumber.current}:${crypto.randomUUID()}`
@@ -157,7 +158,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
 
   useEffect(() => {
     setNotesDraft(activeSlide?.notes?.speaker ?? '')
-    setPresenterState((current) => ({ slideIndex: activeSlideIndex, step: activeSlideIndex === current.slideIndex ? current.step : 0 }))
+    setPresenterState((current) => ({ slideId: activeSlideId, slideIndex: activeSlideIndex, step: activeSlideId === current.slideId ? current.step : 0 }))
     if (selection.slideId !== activeSlideId) setSelection({ slideId: activeSlideId, elementIds: [] })
   }, [activeSlideId, activeSlideIndex, activeSlide?.notes?.speaker, selection.slideId])
 
@@ -200,27 +201,31 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     mediaRef.current.player.sync(surface,documentNode,assetBytes)
   }, [slideHtml,renderEpoch])
   useEffect(()=>()=>textSurface.current?.dispose(),[])
+  const playback = useRef(new AnimationPlayback())
+  useEffect(() => {
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const stop = () => playback.current.cancel()
+    motion.addEventListener('change', stop); window.addEventListener('beforeprint', stop)
+    return () => { motion.removeEventListener('change', stop); window.removeEventListener('beforeprint', stop); playback.current.dispose() }
+  }, [])
+  useEffect(() => {
+    let printRoot: HTMLElement | undefined
+    const after = () => { printRoot?.remove(); printRoot = undefined }
+    const before = () => {
+      after(); playback.current.cancel()
+      printRoot = document.createElement('section'); printRoot.dataset.pptePrintDocument = ''
+      printRoot.innerHTML = documentNode.slideOrder.map(id => renderSlideHtml(documentNode, id, {...renderOptions, editable:false})).join('')
+      document.body.append(printRoot)
+    }
+    window.addEventListener('beforeprint', before); window.addEventListener('afterprint', after)
+    return () => { window.removeEventListener('beforeprint', before); window.removeEventListener('afterprint', after); after() }
+  }, [documentNode, renderOptions])
   // Apply transient presentation steps after semantic DOM reconciliation.
   useLayoutEffect(() => {
     const surface = renderedRef.current
     if (!surface) return
-    for (const element of Array.from(surface.querySelectorAll<HTMLElement>('[data-ppte-appear-step]'))) {
-      const visible = !presenting || Number(element.dataset.ppteAppearStep) <= presenterState.step
-      element.style.visibility = visible ? 'visible' : 'hidden'
-      const animation = element.dataset.ppteAnimationEnter
-      element.style.animationName = visible && presenting && animation ? `ppte-enter-${animation}` : 'none'
-      element.style.animationDuration = `${Number(element.dataset.ppteAnimationDurationMs ?? 0)}ms`
-      element.style.animationDelay = `${Number(element.dataset.ppteAnimationDelayMs ?? 0)}ms`
-      element.style.animationTimingFunction = element.dataset.ppteAnimationEasing ?? 'ease'
-      element.style.animationFillMode = 'both'
-    }
-    const slide = surface.querySelector<HTMLElement>('.ppte-slide')
-    const transition = slide?.dataset.ppteTransitionType
-    if (slide && presenting && transition && transition !== 'none') {
-      slide.style.animationName = `ppte-transition-${transition}`
-      slide.style.animationDuration = `${Number(slide.dataset.ppteTransitionDurationMs ?? 0)}ms`
-      slide.style.animationFillMode = 'both'
-    } else if (slide) slide.style.animationName = 'none'
+    if (activeSlide) playback.current.apply(surface, activeSlide, presenterState.step, presenting)
+
   })
 
   const thumbnails = useMemo(() => documentNode.slideOrder.map((slideId) => ({ slideId, html: renderThumbnailHtml(documentNode, slideId, assetSources) })), [assetSources, documentNode])
@@ -327,16 +332,20 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     commitOperations([operation], '更新演讲备注')
   }
 
+  function jumpPresenter(forward: boolean): void {
+    const state = (forward ? nextSlide : previousSlide)(documentNode, {...presenterState, slideId: activeSlideId})
+    setPresenterState(state); setActiveSlideIndex(state.slideIndex)
+  }
   function nextPresenter(): void {
     if (!controller().flushSync().ok) return
-    const next = advancePresenterState(documentNode, presenterState)
+    const next = advancePresenterState(documentNode, {...presenterState, slideId: activeSlideId})
     setPresenterState(next)
     if (next.slideIndex !== activeSlideIndex) setActiveSlideIndex(next.slideIndex)
   }
 
   function previousPresenter(): void {
     if (!controller().flushSync().ok) return
-    const previous = retreatPresenterState(documentNode, presenterState)
+    const previous = retreatPresenterState(documentNode, {...presenterState, slideId: activeSlideId})
     setPresenterState(previous)
     if (previous.slideIndex !== activeSlideIndex) setActiveSlideIndex(previous.slideIndex)
   }
@@ -719,8 +728,14 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     const handle = (event: globalThis.KeyboardEvent) => {
       if (event.isComposing) return
       if (event.key !== 'Escape' && (event.target as HTMLElement).closest('a,button,video,audio,input,textarea,select')) return
-      if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(event.key)) { event.preventDefault(); event.stopPropagation(); nextPresenter() }
-      else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(event.key)) { event.preventDefault(); event.stopPropagation(); previousPresenter() }
+      if (['ArrowRight', 'ArrowDown', ' '].includes(event.key)) { event.preventDefault(); event.stopPropagation(); nextPresenter() }
+      else if (['ArrowLeft', 'ArrowUp'].includes(event.key)) { event.preventDefault(); event.stopPropagation(); previousPresenter() }
+      else if (event.key === 'Home' || event.key === 'End') {
+        event.preventDefault(); event.stopPropagation()
+        const id = event.key === 'Home' ? documentNode.slideOrder[0] : documentNode.slideOrder.at(-1)
+        if (id) { const state = gotoSlide(documentNode, presenterState, id); setPresenterState(state); setActiveSlideIndex(state.slideIndex) }
+      }
+      else if (event.key === 'PageDown' || event.key === 'PageUp') { event.preventDefault(); event.stopPropagation(); jumpPresenter(event.key === 'PageDown') }
       else if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); leavePresenter() }
       else if ((event.ctrlKey || event.metaKey) && ['z', 'y'].includes(event.key.toLowerCase())) { event.preventDefault(); event.stopPropagation() }
     }
@@ -729,7 +744,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
   }, [presenting, presenterState, documentNode])
 
   return <div className={`ppte-host-app${presenting ? ' is-presenting' : ''}`} data-ppte-host data-ppte-ready={storageReady} data-ppte-presenting={presenting} data-ppte-slide-count={documentNode.slideOrder.length} data-ppte-history-depth={historyDepth} data-ppte-redo-depth={redoDepth} data-ppte-presenter-slide={presenterState.slideIndex} data-ppte-presenter-step={presenterState.step} data-ppte-agent-generated={documentNode.metadata.source === 'generated'} onKeyDown={onKeyDown} tabIndex={-1}>
-    <style>{editorShellCss}</style><fieldset disabled={!storageReady} style={{display:"contents"}}>{!presenting && <header className="ppte-host-toolbar">
+    <style>{editorShellCss + ANIMATION_PRINT_CSS + '[data-ppte-print-document]{display:none}@media print{body:has([data-ppte-print-document]) [data-ppte-host]{display:none!important}[data-ppte-print-document]{display:block!important}}'}</style><fieldset disabled={!storageReady} style={{display:"contents"}}>{!presenting && <header className="ppte-host-toolbar">
       <div className="ppte-brand"><span className="ppte-brand-mark">P</span><span>PPTe Host</span></div>
       <button type="button" data-ppte-action="new" onClick={newDocument}>New</button>
       <label className="ppte-toolbar-label" title="先打开 PPTe Host，再选择 .ppte；系统双击关联尚未提供">打开 PPTe 项目 (.ppte)<input type="file" accept=".ppte,.json,application/json" data-ppte-action="open" onChange={openFile} /></label>
@@ -756,7 +771,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
         </button>)}
       </div></details>
     </aside>}
-    {presenting && <nav className="ppte-presenter-controls" aria-label="放映控制"><button onClick={previousPresenter} aria-label="上一页">←</button><span>{presenterState.slideIndex + 1} / {documentNode.slideOrder.length}</span><button onClick={nextPresenter} aria-label="下一页">→</button><button data-ppte-action="exit-present" onClick={togglePresenter}>退出放映</button></nav>}
+    {presenting && <nav className="ppte-presenter-controls" aria-label="放映控制"><button onClick={()=>jumpPresenter(false)} aria-label="上一页">←</button><span>{presenterState.slideIndex + 1} / {documentNode.slideOrder.length}</span><button onClick={()=>jumpPresenter(true)} aria-label="下一页">→</button><button data-ppte-action="exit-present" onClick={togglePresenter}>退出放映</button></nav>}
     <main className="ppte-host-main" data-ppte-stage onDragOver={event=>{if(presentation.canMutate)event.preventDefault()}} onPaste={event=>{const file=event.clipboardData.files[0];if(file&&presentation.canMutate){event.preventDefault();void importImageFile(file)}}} onDrop={event=>{event.preventDefault();const file=event.dataTransfer.files[0];if(file&&presentation.canMutate)void importImageFile(file)}} onPasteCapture={event => { if (!presentation.canMutate) event.preventDefault() }} onDropCapture={event => { if (!presentation.canMutate) event.preventDefault() }}>
       <div className="ppte-canvas-wrap" tabIndex={-1} style={{ aspectRatio: `${documentNode.canvas.width} / ${documentNode.canvas.height}`, ['--ppte-aspect' as string]: documentNode.canvas.width / documentNode.canvas.height }} ref={renderedRef} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={cancelTransform} onLostPointerCapture={cancelTransform} onDoubleClick={(event) => { if (!presentation.canMutate) return; const target = textTarget(event); if (target) { setSelection({slideId:activeSlideId,elementIds:[target.element.id],primaryElementId:target.element.id}); target.node.focus(); setStatus('文字编辑中 · compositionend 后提交') } }} onBeforeInput={event => { if (!presentation.canMutate) event.preventDefault() }} onPaste={event => { if (!presentation.canMutate) event.preventDefault() }} onDrop={event => { if (!presentation.canMutate) event.preventDefault() }}>
         <div className="ppte-rendered-slide" data-ppte-canvas-scale={canvasScale} style={{ ['--ppte-scale' as string]: canvasScale }} />
