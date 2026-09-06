@@ -1,0 +1,180 @@
+{
+  "task": "H02",
+  "status": "partial",
+  "implementationCommit": "b85509c69f1542d7858e878bd592c2dcf20dd1bd",
+  "authorityCommit": "bbcd46bde2c608b5a56e617f316c5dcb5534857e",
+  "recordedAt": "2026-09-06T09:39:09.178639+00:00",
+  "tests": {
+    "before": 409,
+    "after": 424,
+    "added": 15,
+    "removed": 0,
+    "passed": 424,
+    "failed": 0,
+    "skipped": 0,
+    "focusedPassed": 24,
+    "h02Passed": 15
+  },
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "log": "verification/typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "exitCode": 0,
+      "log": "verification/build.log"
+    },
+    {
+      "command": "node --test dist/tests/html-save.test.js dist/tests/html-document.test.js",
+      "exitCode": 0,
+      "log": "verification/h02.tap"
+    },
+    {
+      "command": "pnpm test",
+      "exitCode": 0,
+      "log": "verification/test.log"
+    }
+  ],
+  "packageValidation": "node:test H02 packaged npm install test runs stage-html.mjs, npm pack, isolated global install, installed ppte edit, original write, process restart and multiple file mapping",
+  "environment": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v22.23.2",
+    "chrome": {
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/152.0.0.0 Safari/537.36",
+      "url": "file:",
+      "secure": true,
+      "picker": "function",
+      "locks": true,
+      "state": "draft"
+    },
+    "safari": {
+      "status": "blocked",
+      "version": "Included with Safari 26.6.2 (21624.5.1.11.3)\n",
+      "response": {
+        "value": {
+          "error": "session not created",
+          "message": "Could not create a session: You must enable 'Allow remote automation' in the Developer section of Safari Settings to control Safari via WebDriver.",
+          "stacktrace": ""
+        }
+      }
+    },
+    "manualBrowserAcceptance": false
+  },
+  "runtime": {
+    "rawBytes": 254726,
+    "gzipBytes": 73522
+  },
+  "acceptance": [
+    {
+      "criterion": "原路径编辑关闭重开及进程重启保留修改；不是打开下载副本才生效",
+      "status": "passed",
+      "commit": "b85509c69f1542d7858e878bd592c2dcf20dd1bd",
+      "tests": [
+        "dist/tests/html-save.test.js: H02 acceptance 1: original path autosave, close/reopen and service restart preserve text with no download",
+        "dist/tests/html-save.test.js: H02 acceptance 1/4: packaged npm install exposes ppte edit, stable restart URL and multiple file mappings"
+      ],
+      "log": "docs/html-first/evidence/h02/verification/h02.tap"
+    },
+    {
+      "criterion": "磁盘满/只读/权限撤回/中断/双窗口/外部 Agent 修改不静默丢失",
+      "status": "partial",
+      "commit": "b85509c69f1542d7858e878bd592c2dcf20dd1bd",
+      "tests": [
+        "dist/tests/html-save.test.js: H02 acceptance 2: OS read-only, ENOSPC fault, interrupted replace retain original and recoverable version",
+        "dist/tests/html-save.test.js: H02 acceptance 2: two services/windows serialize one winner and detect external Agent edits at replace",
+        "dist/tests/html-save.test.js: H02 acceptance 2: kill process before rename, restart recovers stale lock and preserves original",
+        "dist/tests/html-save.test.js: H02 acceptance 2/3: browser two-window conflict keeps draft; explicit reread and retry after network failure",
+        "dist/tests/html-save.test.js: H02 acceptance 2/3: File System Access permission revoked, conflict, failed close and confirmation (API contract test)",
+        "dist/tests/html-save.test.js: H02 acceptance 2: history bounded by count and rejected restoration paths never write",
+        "dist/tests/html-save.test.js: H02 acceptance 2: actual bounded full disk returns ENOSPC without replacing original (macOS HFS+)",
+        "dist/tests/html-save.test.js: H02 acceptance 2/3: failed-save draft survives page close, restores on matching file base and flushes to original"
+      ],
+      "log": "docs/html-first/evidence/h02/verification/h02.tap"
+    },
+    {
+      "criterion": "只有文件写入确认后显示已保存，浏览器缓存单独标识",
+      "status": "passed",
+      "commit": "b85509c69f1542d7858e878bd592c2dcf20dd1bd",
+      "tests": [
+        "dist/tests/html-save.test.js: H02 acceptance 2/3: browser two-window conflict keeps draft; explicit reread and retry after network failure",
+        "dist/tests/html-save.test.js: H02 acceptance 3: IME does not save half composition; 800ms pause and delayed acknowledgement remain dirty/saving",
+        "dist/tests/html-save.test.js: H02 acceptance 3: edits during in-flight save remain queued; draft base matching, quotas and copied identity",
+        "dist/tests/html-save.test.js: H02 acceptance 2/3: File System Access permission revoked, conflict, failed close and confirmation (API contract test)",
+        "dist/tests/html-save.test.js: H02 acceptance 2/3: failed-save draft survives page close, restores on matching file base and flushes to original"
+      ],
+      "log": "docs/html-first/evidence/h02/verification/h02.tap"
+    },
+    {
+      "criterion": "loopback 之外不可访问，跨站/无令牌/路径穿越写入被拒绝",
+      "status": "passed",
+      "commit": "b85509c69f1542d7858e878bd592c2dcf20dd1bd",
+      "tests": [
+        "dist/tests/html-save.test.js: H02 acceptance 4: loopback bind, hostile Origin/Host, no token, traversal, arbitrary fields and unsafe content rejected",
+        "dist/tests/html-save.test.js: H02 acceptance 1/4: packaged npm install exposes ppte edit, stable restart URL and multiple file mappings"
+      ],
+      "log": "docs/html-first/evidence/h02/verification/h02.tap"
+    },
+    {
+      "criterion": "Safari 本地编辑路径实测；file 直开受限行为也实测并明确展示",
+      "status": "partial",
+      "commit": "b85509c69f1542d7858e878bd592c2dcf20dd1bd",
+      "tests": [
+        "dist/tests/html-save.test.js: H02 acceptance 5: real installed Chrome file URL shows limitation, keeps draft and never claims file save",
+        "dist/tests/html-save.test.js: H02 acceptance 5: Safari actual WebDriver journey or explicit blocked evidence (not simulated Safari)"
+      ],
+      "log": "docs/html-first/evidence/h02/verification/h02.tap"
+    }
+  ],
+  "remaining": [
+    "Safari 26.6.2 actual WebDriver rejected session creation because Allow remote automation is disabled; local save/reopen and file URL journeys remain unverified.",
+    "Real Chrome native picker authorization/revocation/reauthorization remains unverified; File System Access contract mocks are not real permission evidence.",
+    "No physical power-loss test or cross-OS durability claim; APFS normal saves, HFS+ ENOSPC and SIGKILL restart are verified.",
+    "Uncooperative external processes can race between the final hash check and rename; neither portable filesystem APIs nor browser FSA supply atomic CAS with arbitrary external processes.",
+    "Service restart requires its new token URL; explicit --port resolves collisions. No resident discovery daemon or persistent browser file handle.",
+    "H03/H04 UI, presentation and PDF acceptance remain open; H00/H06 controlled user/performance evidence remains open."
+  ],
+  "newFiles": [
+    "brief5-H02.md",
+    "docs/html-first/evidence/h02/README.md",
+    "docs/html-first/evidence/h02/chrome-capabilities.json",
+    "docs/html-first/evidence/h02/chrome-file-limitation.png",
+    "docs/html-first/evidence/h02/chrome-original-reopened.png",
+    "docs/html-first/evidence/h02/disk-full.json",
+    "docs/html-first/evidence/h02/example.html",
+    "docs/html-first/evidence/h02/npm-install.json",
+    "docs/html-first/evidence/h02/safari.json",
+    "docs/html-first/evidence/h02/verification/build.log",
+    "docs/html-first/evidence/h02/verification/h02.tap",
+    "docs/html-first/evidence/h02/verification/typecheck.log",
+    "packages/html-editor/package.json",
+    "packages/html-editor/src/index.ts",
+    "packages/html-editor/src/save.ts",
+    "packages/html-save/package.json",
+    "packages/html-save/src/index.ts",
+    "scripts/stage-html.mjs",
+    "tests/html-save.test.ts",
+    "docs/html-first/evidence/h02/imports-and-drafts.json",
+    "docs/html-first/evidence/h02/verification/test.log",
+    "docs/html-first/evidence/h02/verification/result.json"
+  ],
+  "gitSigning": "GPG signed implementation with Signed-off-by; no fallback needed",
+  "push": "not performed by this task",
+  "artifactHashes": {
+    "safari.json": "e8efc47b3eb563d7955d62e9d2de5d3c32d204a3f9c210ad7c657dde7e9eebec",
+    "chrome-capabilities.json": "c6878484caf5db83062766c9a38283ea217e98c007b4c3b204039a4e46d16d1f",
+    "README.md": "340a4ddfb04a753345ba98dc14b4cf81771b6a512d79da1d8834c539d6d92246",
+    "example.html": "32f98478bdcfe6b72a196ddf2983f6e157f7341359a3f400b9c200276a5b4196",
+    "imports-and-drafts.json": "e316c632bdfcb7ee161b0d0448a438a3a1e3d8aca7cb1069ca026a9dfcd3c483",
+    "npm-install.json": "c17542f51dcc71051397085973b33b9ba19dd07503e6e793bebab777f72e3d10",
+    "chrome-file-limitation.png": "48791d0697302a3b50cc478c81634172a7380bf5fa071c033a5c9a7af9d9dae8",
+    "chrome-original-reopened.png": "2451fb00599e46714aa0a7d1d2ceb46e6dacd485b87e443d3827870850e6e5c3",
+    "disk-full.json": "8f4d826261a82976462b928b10444dc7ae1ea627c06f52d8c7b5f3ea5bb04297",
+    "verification/test.log": "2fd97323ecd3d609aba5379c107ba12c410fbc53f063b3ddcb641049f0c28762",
+    "verification/typecheck.log": "4d383a112120e549ce76c8ce4a77dc036412e53696ce34be42ee6a5e8f607928",
+    "verification/h02.tap": "c52839192d719a12a7055de8cc50aca404a7be331eb557c598b4fe7d9274217d",
+    "verification/build.log": "a407c25ea5e8744df48069502086fb92705639956542ae99b29e85c59f5bcbeb"
+  }
+}
