@@ -1,0 +1,74 @@
+{
+  "task": "D07",
+  "status": "partial",
+  "baselineCommit": "47686aea0f93172ebe7b4a30c473a81e1f36e4d2",
+  "fix": "Await the entrance Animation.ready before comparing startTime; also require resize to retain the exact Animation object. Existing startTime equality assertion retained.",
+  "sourceSha256": {
+    "tests/animation-step-contract.test.ts": "9de58174b60ce8b3dad89e7da89273c729748d90d9abc960dc1e81095d895e35"
+  },
+  "reproduction": {
+    "path": "docs/evolution/quality/d07-fix-reproduction.txt",
+    "attempts": 4,
+    "failure": "Expected null startTime; observed 180.25700002908707 after resize.",
+    "baselineFullSuite": {
+      "tests": 359,
+      "pass": 359,
+      "fail": 0
+    }
+  },
+  "focusedVerification": {
+    "animationConsecutiveRuns": 20,
+    "animationPassed": 20,
+    "benchmarkTests": 12,
+    "benchmarkPassed": 12
+  },
+  "verification": {
+    "typecheck": "pass",
+    "build": "pass",
+    "test": {
+      "before": 359,
+      "after": 359,
+      "delta": 0,
+      "pass": 359,
+      "fail": 0
+    },
+    "blackbox": {
+      "start": "docs/evolution/quality/d07-fix-blackbox-start.json",
+      "final": "docs/evolution/quality/d07-fix-blackbox-final.json",
+      "beforeGreen": 70,
+      "beforeRed": 0,
+      "green": 70,
+      "red": 0,
+      "newReds": [],
+      "exitCode": 0
+    }
+  },
+  "criteria": {
+    "1": {
+      "status": "implemented",
+      "tests": "tests/authoring-benchmark.test.ts: criterion 1",
+      "evidence": "Ten fixed briefs, facts, licensed assets and versioned edit journeys."
+    },
+    "2": {
+      "status": "partial",
+      "tests": "tests/authoring-benchmark.test.ts: criterion 2 (three tests) and evidence CLI",
+      "evidence": "Four independent quality lines, directional recipe overlap and identity-bound screenshot evidence contracts pass; actual visual/client calibration remains absent."
+    },
+    "3": {
+      "status": "partial",
+      "tests": "tests/authoring-benchmark.test.ts: criterion 3 (four tests)",
+      "evidence": "Same-Agent/material/budget/repetition and real human timing/failure requirements are tested. Forty actual generations and owner plus two target-user sessions remain absent."
+    },
+    "4": {
+      "status": "implemented",
+      "tests": "tests/authoring-benchmark.test.ts: criterion 4 (two tests)",
+      "evidence": "M3 table is deferred at G2 without pass credit or blocking; missing/unverified applicable evidence prevents G2 closure."
+    }
+  },
+  "g2": "blocked",
+  "remainingGaps": [
+    "Forty retained baseline/candidate generations with pinned Agent, materials, budget and two seeds.",
+    "Real owner and two target-user sessions with elapsed/help/repair records and failures.",
+    "Visual calibration with actual page/object screenshots and format/client observations."
+  ]
+}

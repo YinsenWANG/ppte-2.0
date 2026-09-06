@@ -82,9 +82,15 @@ test('F05 A06/A16 browser executes effects, timing and directions; reduced motio
     const effect=await body.evaluate(n=>{const a=n.getAnimations()[0];return {time:a.effect!.getTiming(),frames:(a.effect as KeyframeEffect).getKeyframes()}})
     assert.equal(effect.time.duration,800);assert.equal(effect.time.delay,90);assert.equal(effect.time.easing,'linear');assert.equal(effect.frames[0].translate,'0px 16px')
     // Rendering the same step must not restart an entrance.
-    const start=await body.evaluate(n=>n.getAnimations()[0].startTime)
+    // Web Animations assigns startTime asynchronously. A pending animation's
+    // null -> timestamp transition is normal startup, not a resize restart.
+    const entrance=await body.evaluateHandle(n=>n.getAnimations()[0])
+    const start=await entrance.evaluate(async animation=>{await animation.ready;return animation.startTime})
+    assert.equal(typeof start,'number','entrance has started before comparing playback identity')
     await page.evaluate(()=>window.dispatchEvent(new Event('resize')))
+    assert.equal(await body.evaluate((n,animation)=>n.getAnimations()[0]===animation,entrance),true,'resize preserves the original entrance animation')
     assert.equal(await body.evaluate(n=>n.getAnimations()[0].startTime),start)
+    await entrance.dispose()
     await page.evaluate(()=>(globalThis as any).PPTEPortable.previousStep());assert.equal(await body.evaluate(n=>getComputedStyle(n).visibility),'hidden')
     await page.emulateMedia({reducedMotion:'reduce'})
     await page.evaluate(()=>(globalThis as any).PPTEPortable.nextStep());assert.equal(await body.evaluate(n=>getComputedStyle(n).visibility),'visible');assert.equal(await body.evaluate(n=>n.getAnimations().length),0)

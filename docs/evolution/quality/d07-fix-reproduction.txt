@@ -1,0 +1,86 @@
+Attempt 1
+TAP version 13
+# Subtest: F05 A06/A16 browser executes effects, timing and directions; reduced motion, edit and print preserve content
+ok 1 - F05 A06/A16 browser executes effects, timing and directions; reduced motion, edit and print preserve content
+  ---
+  duration_ms: 630.985834
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 977.469959
+Attempt 2
+TAP version 13
+# Subtest: F05 A06/A16 browser executes effects, timing and directions; reduced motion, edit and print preserve content
+ok 1 - F05 A06/A16 browser executes effects, timing and directions; reduced motion, edit and print preserve content
+  ---
+  duration_ms: 582.852125
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 953.788375
+Attempt 3
+TAP version 13
+# Subtest: F05 A06/A16 browser executes effects, timing and directions; reduced motion, edit and print preserve content
+ok 1 - F05 A06/A16 browser executes effects, timing and directions; reduced motion, edit and print preserve content
+  ---
+  duration_ms: 632.798792
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 994.633166
+Attempt 4
+TAP version 13
+# Subtest: F05 A06/A16 browser executes effects, timing and directions; reduced motion, edit and print preserve content
+not ok 1 - F05 A06/A16 browser executes effects, timing and directions; reduced motion, edit and print preserve content
+  ---
+  duration_ms: 437.952459
+  type: 'test'
+  location: '/private/tmp/ppte4/repo/dist/tests/animation-step-contract.test.js:72:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 180.25700002908707
+    - null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual: 180.25700002908707
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte4/repo/dist/tests/animation-step-contract.test.js:104:16)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 796.541084

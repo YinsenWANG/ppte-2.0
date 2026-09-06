@@ -1968,6 +1968,46 @@
             "Project owner and at least two target users have not supplied timed review sessions, failure logs or repair comparisons.",
             "Actual visual overlap/screenshot calibration and selected format/Office client evidence are outstanding; G2 remains blocked."
           ]
+        },
+        {
+          "kind": "gate-failure-fix",
+          "baselineCommit": "47686aea0f93172ebe7b4a30c473a81e1f36e4d2",
+          "tests": [
+            "tests/animation-step-contract.test.ts",
+            "tests/authoring-benchmark.test.ts"
+          ],
+          "sourceSha256": {
+            "tests/animation-step-contract.test.ts": "9de58174b60ce8b3dad89e7da89273c729748d90d9abc960dc1e81095d895e35"
+          },
+          "verification": "docs/evolution/quality/d07-fix-verification.json",
+          "reproduction": "docs/evolution/quality/d07-fix-reproduction.txt",
+          "criteria": {
+            "1": {
+              "status": "implemented",
+              "tests": "tests/authoring-benchmark.test.ts: criterion 1",
+              "evidence": "Ten fixed briefs, facts, licensed assets and versioned edit journeys."
+            },
+            "2": {
+              "status": "partial",
+              "tests": "tests/authoring-benchmark.test.ts: criterion 2 (three tests) and evidence CLI",
+              "evidence": "Four independent quality lines, directional recipe overlap and identity-bound screenshot evidence contracts pass; actual visual/client calibration remains absent."
+            },
+            "3": {
+              "status": "partial",
+              "tests": "tests/authoring-benchmark.test.ts: criterion 3 (four tests)",
+              "evidence": "Same-Agent/material/budget/repetition and real human timing/failure requirements are tested. Forty actual generations and owner plus two target-user sessions remain absent."
+            },
+            "4": {
+              "status": "implemented",
+              "tests": "tests/authoring-benchmark.test.ts: criterion 4 (two tests)",
+              "evidence": "M3 table is deferred at G2 without pass credit or blocking; missing/unverified applicable evidence prevents G2 closure."
+            }
+          },
+          "remainingGaps": [
+            "Forty retained baseline/candidate generations with pinned Agent, materials, budget and two seeds.",
+            "Real owner and two target-user sessions with elapsed/help/repair records and failures.",
+            "Visual calibration with actual page/object screenshots and format/client observations."
+          ]
         }
       ],
       "remainingGaps": [
