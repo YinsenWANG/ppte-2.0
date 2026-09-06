@@ -2382,7 +2382,7 @@
       "milestone": "M3",
       "priority": "P1",
       "title": "动画配置与正确步骤播放",
-      "status": "planned",
+      "status": "done",
       "effort": "M",
       "ownerRole": "放映 / 编辑器",
       "dependsOn": [
@@ -2415,7 +2415,55 @@
         "A17"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        {
+          "commit": "084ba0aa02cf37ab58a3380f025092f635add891",
+          "tests": [
+            "tests/animation-step-contract.test.ts"
+          ],
+          "report": "docs/evolution/quality/F05.md",
+          "criteria": {
+            "1": "Sparse step and independent slide/goto boundary tests, stable slideId after reorder, noncycling first/last commands, and real Host/Portable keyboard journeys.",
+            "2": "Real Chromium keyframes/timing for supported entrances and all transition types/directions, scaled push snapshots, duration clamping, typed Engine configuration, undo/redo and saved HTML field retention; source-path static capability reports for unimplemented fields and exports.",
+            "3": "Host/Portable edit/print visibility, Host full-document static print surface, reduced-motion identical step terminal visibility, no active effects, and isolated preview with unchanged revision."
+          },
+          "verification": {
+            "commands": [
+              "pnpm typecheck",
+              "pnpm build",
+              "pnpm test",
+              "pnpm blackbox:final"
+            ],
+            "typecheck": "pass",
+            "build": "pass",
+            "test": {
+              "before": 345,
+              "after": 351,
+              "delta": 6,
+              "passed": 351,
+              "failed": 0,
+              "skipped": 0
+            },
+            "blackbox": {
+              "start": "docs/evolution/quality/f05-blackbox-start.json",
+              "final": "docs/evolution/quality/f05-blackbox-final.json",
+              "beforeGreen": 70,
+              "beforeRed": 0,
+              "green": 70,
+              "red": 0,
+              "newRed": [],
+              "exitCode": 0
+            },
+            "signedCommit": true
+          },
+          "remainingRisks": [
+            "Real Safari/Office/physical-device validation remains Q01 work; browser evidence is Chromium automation.",
+            "PDF/PPTX animations are static; scale/exit are retained but not executed, timings above 10000 ms are retained and reported as clamped.",
+            "Push outgoing snapshots omit live media players/current video frames; existing MediaController owns playback lifecycle.",
+            "Animation configuration is exposed in Host and full-portable; other profiles retain their existing editing restrictions."
+          ]
+        }
+      ]
     },
     {
       "id": "F06",
