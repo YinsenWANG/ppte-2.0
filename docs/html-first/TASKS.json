@@ -87,7 +87,7 @@
     {
       "id": "H01",
       "title": "HTML 原生增强与单文件交付",
-      "status": "planned",
+      "status": "done",
       "dependsOn": [
         "H00"
       ],
@@ -107,7 +107,77 @@
         "一百次保存重开不累积副本或编辑状态；脚本/事件注入不执行",
         "默认用户输出目录仅新增作品.html；未请求时不输出 PDF/ZIP/编辑器/ppte",
         "代表内容不经旧 IR、Recipe、Core 或 Portable 转换"
-      ]
+      ],
+      "evidence": {
+        "implementationCommit": "eac37b343f1bc68f47f72699a431856ad814a46b",
+        "authorityCommit": "bbcd46bde2c608b5a56e617f316c5dcb5534857e",
+        "report": "docs/html-first/evidence/h01/README.md",
+        "verification": "docs/html-first/evidence/h01/verification/result.json",
+        "sample": "docs/html-first/evidence/h01/example.html",
+        "acceptance": [
+          {
+            "criterion": "CSS Grid/Flex/SVG/字体层级增强前后保真，覆盖嵌套样式和资源",
+            "status": "passed",
+            "commit": "eac37b343f1bc68f47f72699a431856ad814a46b",
+            "tests": [
+              "dist/tests/html-document.test.js: H01 acceptance 1: native Grid/Flex/SVG/font hierarchy and nested resources retain computed layout and exact pixels",
+              "dist/tests/html-document.test.js: H01 acceptance 1: deterministic IDs reserve author identities, repair duplicates and preserve nested template escaping",
+              "dist/tests/html-document.test.js: H01 acceptance 1/3: embedded SVG references preserve fragment identity and diagnostics obey byte limits"
+            ],
+            "log": "docs/html-first/evidence/h01/verification/h01.tap"
+          },
+          {
+            "criterion": "一百次保存重开不累积副本或编辑状态；脚本/事件注入不执行",
+            "status": "passed",
+            "commit": "eac37b343f1bc68f47f72699a431856ad814a46b",
+            "tests": [
+              "dist/tests/html-document.test.js: H01 acceptance 2: 100 actual browser serialize/write/close/reopen cycles retain one payload and no editing residue",
+              "dist/tests/html-document.test.js: H01 acceptance 2: sanitizer reports executable content; runtime sandbox/CSP block independent script/event/network/navigation attempts",
+              "dist/tests/html-document.test.js: H01 acceptance 2: safe serialization fails closed for executable CSS, SVG data, remote resource and malformed metadata"
+            ],
+            "log": "docs/html-first/evidence/h01/verification/h01.tap"
+          },
+          {
+            "criterion": "默认用户输出目录仅新增作品.html；未请求时不输出 PDF/ZIP/编辑器/ppte",
+            "status": "passed",
+            "commit": "eac37b343f1bc68f47f72699a431856ad814a46b",
+            "tests": [
+              "dist/tests/html-document.test.js: H01 acceptance 3: offline CLI with no PATH/keys/browser writes exactly one HTML and <=1KB summary",
+              "dist/tests/html-document.test.js: H01 acceptance 3: rejection creates no output; local resource root, symlinks, missing resources and import cycles fail explicitly",
+              "dist/tests/html-document.test.js: H01 acceptance 1/3: embedded SVG references preserve fragment identity and diagnostics obey byte limits"
+            ],
+            "log": "docs/html-first/evidence/h01/verification/h01.tap"
+          },
+          {
+            "criterion": "代表内容不经旧 IR、Recipe、Core 或 Portable 转换",
+            "status": "passed",
+            "commit": "eac37b343f1bc68f47f72699a431856ad814a46b",
+            "tests": [
+              "dist/tests/html-document.test.js: H01 acceptance 4: actual bundled CLI/runtime import graphs exclude old representations; all three H00 drafts enhance directly"
+            ],
+            "log": "docs/html-first/evidence/h01/verification/h01.tap"
+          }
+        ],
+        "tests": {
+          "before": 400,
+          "after": 409,
+          "added": 9,
+          "removed": 0,
+          "passed": 409,
+          "failed": 0,
+          "skipped": 0,
+          "focusedPassed": 9
+        },
+        "remainingH01": [],
+        "limitations": [
+          "H00 remains partial: controlled model timing/tokens and real Chrome/Safari journeys have not been supplied by H01.",
+          "100 cycles use production browser serialization and real file write/close/reopen via the test harness; product original-file save adapters, autosave/recovery/permission journeys remain H02.",
+          "Editing UI and full presentation/PDF behavior remain H03/H04; R01/R02 are not closed.",
+          "Unsupported resource/CSS/executable forms are explicitly diagnosed or rejected; arbitrary third-party web application conversion and cross-platform pixel identity are not claimed.",
+          "New invocation graphs exclude legacy modules; historical CLI/tarball remains until H05. No legacy Office/CAS/Portable repair or retirement of the whole existing distribution is claimed.",
+          "Automation here is Chromium, not manual browser/user acceptance or H06 controlled aesthetic/performance evidence."
+        ]
+      }
     },
     {
       "id": "H02",

@@ -1,0 +1,125 @@
+{
+  "task": "H01",
+  "status": "passed",
+  "implementationCommit": "eac37b343f1bc68f47f72699a431856ad814a46b",
+  "authorityCommit": "bbcd46bde2c608b5a56e617f316c5dcb5534857e",
+  "recordedAt": "2026-09-06T09:09:09.580Z",
+  "environment": {
+    "node": "v22.23.2",
+    "platform": "darwin",
+    "arch": "arm64",
+    "browser": "automated Playwright Chromium",
+    "browserVersion": "151.0.7922.34",
+    "manualChromeSafariAcceptance": false
+  },
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "log": "verification/typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "exitCode": 0,
+      "log": "verification/build.log"
+    },
+    {
+      "command": "node --test dist/tests/html-document.test.js",
+      "exitCode": 0,
+      "log": "verification/h01.tap"
+    },
+    {
+      "command": "pnpm test",
+      "exitCode": 0,
+      "log": "verification/test.log"
+    }
+  ],
+  "tests": {
+    "before": 400,
+    "after": 409,
+    "added": 9,
+    "removed": 0,
+    "passed": 409,
+    "failed": 0,
+    "skipped": 0,
+    "focusedPassed": 9
+  },
+  "runtime": {
+    "rawBytes": 243879,
+    "gzipBytes": 69711,
+    "sha256": "686a900a52dcb12051446306fd3fabc02c76ce77b354048eac31d43da9590273"
+  },
+  "fidelity": {
+    "exactScreenshotBytesEqual": true,
+    "screenshotSha256": "28ecac5a70178455df968d17683efbf641535071b6079d3b91ca8d4675957c74",
+    "record": "layout.json"
+  },
+  "serialization": {
+    "cycles": 100,
+    "revision": 100,
+    "record": "cycles.json",
+    "writer": "test harness writes production runtime serialization to the same file; not an H02 save adapter"
+  },
+  "representatives": [
+    {
+      "name": "cherry",
+      "pages": 12,
+      "bytes": 257945,
+      "gzipBytes": 73974
+    },
+    {
+      "name": "product",
+      "pages": 12,
+      "bytes": 257593,
+      "gzipBytes": 73811
+    },
+    {
+      "name": "data",
+      "pages": 12,
+      "bytes": 258631,
+      "gzipBytes": 74020
+    }
+  ],
+  "newFiles": [
+    "apps/html-cli/index.ts",
+    "apps/html-cli/package.json",
+    "docs/html-first/evidence/h01/README.md",
+    "docs/html-first/evidence/h01/after.png",
+    "docs/html-first/evidence/h01/before.png",
+    "docs/html-first/evidence/h01/cycles.json",
+    "docs/html-first/evidence/h01/example.html",
+    "docs/html-first/evidence/h01/imports-and-drafts.json",
+    "docs/html-first/evidence/h01/layout.json",
+    "docs/html-first/evidence/h01/verification/build.log",
+    "docs/html-first/evidence/h01/verification/h01.tap",
+    "docs/html-first/evidence/h01/verification/test.log",
+    "docs/html-first/evidence/h01/verification/typecheck.log",
+    "packages/html-document/package.json",
+    "packages/html-document/src/content.ts",
+    "packages/html-document/src/index.ts",
+    "packages/html-document/src/resources.ts",
+    "packages/html-document/src/runtime.ts",
+    "scripts/build-html.mjs",
+    "tests/fixtures/html-first/fixture.ttf",
+    "tests/fixtures/html-first/layout.html",
+    "tests/fixtures/html-first/mark.svg",
+    "tests/fixtures/html-first/styles/main.css",
+    "tests/fixtures/html-first/styles/nested.css",
+    "tests/html-document.test.ts",
+    "docs/html-first/evidence/h01/verification/result.json"
+  ],
+  "artifactHashes": {
+    "before.png": "28ecac5a70178455df968d17683efbf641535071b6079d3b91ca8d4675957c74",
+    "after.png": "28ecac5a70178455df968d17683efbf641535071b6079d3b91ca8d4675957c74",
+    "layout.json": "7562165944c72eaea213713e8847e3d3d4999e49e2201410d2a8e97ff0a7d4a8",
+    "cycles.json": "5b57881786c99a44fb0342335e7b052fc46c19af99c28bcf5b334e7eb3b622ae",
+    "imports-and-drafts.json": "e81eefce84e6eac1fa5352290c652c63c251c301f7f487f8c829877c6967e35e",
+    "example.html": "13502da4deae2fec5c10bc70332972ceb6c932f4a9f3737031f8a9cb9fbc33b9",
+    "verification/typecheck.log": "4d383a112120e549ce76c8ce4a77dc036412e53696ce34be42ee6a5e8f607928",
+    "verification/build.log": "a407c25ea5e8744df48069502086fb92705639956542ae99b29e85c59f5bcbeb",
+    "verification/h01.tap": "eeeb9b605b1c0208ae7f52d1340340b2864519abcd53fd9c7a96d65d47f8117c",
+    "verification/test.log": "f71f1fe66cc81cba78c8e38a2cb62bbac3cba40593f002fac34ddcd65f48a4aa"
+  },
+  "gitSigning": "GPG signed implementation; Signed-off-by included",
+  "push": "not performed by this task"
+}
