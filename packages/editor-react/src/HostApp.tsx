@@ -1,3 +1,4 @@
+import { mountPresenterTools, type PresenterToolsPort } from '../../editor-dom/src/presenter-tools.js'
 import { ANIMATION_PRINT_CSS, AnimationPlayback } from '../../portable-runtime/src/animation-playback.js'
 import { MediaController } from '../../portable-runtime/src/media-controller.js'
 import { prepareVideo, decodeBrowserVideo, planVideo } from '../../editor-controller/src/video-resource.js'
@@ -742,6 +743,23 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     window.addEventListener('keydown', handle, true)
     return () => window.removeEventListener('keydown', handle, true)
   }, [presenting, presenterState, documentNode])
+
+  const nextPreview = useMemo(()=>{
+    const id=documentNode.slideOrder[presenterState.slideIndex+1]
+    const sources=Object.fromEntries(Object.entries(assetBytes).map(([key,bytes])=>[key,`data:${documentNode.assets[key]?.mimeType};base64,${base64(bytes)}`]))
+    return id?`<div style="position:relative;width:320px;height:${320*documentNode.canvas.height/documentNode.canvas.width}px;overflow:hidden"><div style="transform:scale(${320/documentNode.canvas.width});transform-origin:top left">${renderThumbnailHtml(documentNode,id,sources)}</div></div>`:'末页'
+  },[documentNode,presenterState.slideIndex,assetBytes])
+  const livePort = useRef<PresenterToolsPort>(undefined!)
+  livePort.current = {
+    state:()=>({index:presenterState.slideIndex,count:documentNode.slideOrder.length,notes:activeSlide?.notes?.speaker??activeSlide?.notes?.handout??'',nextHtml:nextPreview}),
+    goto:index=>{const id=documentNode.slideOrder[index];if(id){const state=gotoSlide(documentNode,presenterState,id);setPresenterState(state);setActiveSlideIndex(state.slideIndex)}},
+    next:()=>jumpPresenter(true),previous:()=>jumpPresenter(false),exit:leavePresenter
+  }
+  useEffect(()=>{
+    if(!presenting||!renderedRef.current)return
+    const surface=renderedRef.current,root=surface.closest<HTMLElement>('[data-ppte-host]')!
+    return mountPresenterTools(root,surface,{state:()=>livePort.current.state(),goto:i=>livePort.current.goto(i),next:()=>livePort.current.next(),previous:()=>livePort.current.previous(),exit:()=>livePort.current.exit()})
+  },[presenting])
 
   return <div className={`ppte-host-app${presenting ? ' is-presenting' : ''}`} data-ppte-host data-ppte-ready={storageReady} data-ppte-presenting={presenting} data-ppte-slide-count={documentNode.slideOrder.length} data-ppte-history-depth={historyDepth} data-ppte-redo-depth={redoDepth} data-ppte-presenter-slide={presenterState.slideIndex} data-ppte-presenter-step={presenterState.step} data-ppte-agent-generated={documentNode.metadata.source === 'generated'} onKeyDown={onKeyDown} tabIndex={-1}>
     <style>{editorShellCss + ANIMATION_PRINT_CSS + '[data-ppte-print-document]{display:none}@media print{body:has([data-ppte-print-document]) [data-ppte-host]{display:none!important}[data-ppte-print-document]{display:block!important}}'}</style><fieldset disabled={!storageReady} style={{display:"contents"}}>{!presenting && <header className="ppte-host-toolbar">

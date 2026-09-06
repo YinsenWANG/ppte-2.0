@@ -1,3 +1,4 @@
+import { mountPresenterTools } from '../../editor-dom/src/presenter-tools.js'
 import { renderAnimationControls } from '../../editor-dom/src/animation-controls.js'
 import { AnimationPlayback } from './animation-playback.js'
 import { prepareVideo, decodeBrowserVideo } from '../../editor-controller/src/video-resource.js'
@@ -82,6 +83,9 @@ const textSurface = new TextEditingSurface(stage, {
 runtime.controller.own(()=>textSurface.dispose());
 dom.listen(window, 'pagehide', () => runtime.dispose(), { once: true });
 let presenting = false;
+const payloadNode=document.getElementById("ppte-portable-payload")!;
+let disposeLiveTools: (()=>void) | undefined;
+runtime.controller.own(()=>disposeLiveTools?.());
 let pendingPresentation = false;
 let scale = 1;
 let sequence = 0;
@@ -227,7 +231,7 @@ function show(result?: { ok: boolean; issues?: Array<{ message: string }> }) {
   root.dataset.ppteStep = String(state.step);
   document.documentElement.dataset.ppteRevision = runtime.getRevision();
   document.querySelector<HTMLElement>("[data-ppte-notes]")!.textContent =
-    state.notes?.speaker ?? state.notes?.handout ?? "";
+    presenting ? "" : state.notes?.speaker ?? state.notes?.handout ?? "";
   status.textContent =
     result?.ok === false
       ? (result.issues?.map((i) => i.message).join("; ") ?? "Edit failed")
@@ -283,6 +287,15 @@ async function enterPresentation() {
   cancelTransform();
   runtime.presentation.enter(() => ({ ok: true }));
   presenting = true;
+  payloadNode.remove();
+  disposeLiveTools?.();
+  let previewKey="",nextHtml="";
+  disposeLiveTools=mountPresenterTools(root,stage,{
+    state:()=>{const d=runtime.getDocument(),s=runtime.presenterState(),id=d.slideOrder[s.slideIndex+1],key=`${runtime.getRevision()}:${id}`;
+      if(previewKey!==key){previewKey=key;nextHtml=id?`<div style="position:relative;width:320px;height:${320*d.canvas.height/d.canvas.width}px;overflow:hidden"><div style="transform:scale(${320/d.canvas.width});transform-origin:top left">${renderSlideHtml(d,id,{editable:false,staticMedia:true,assetSources:Object.fromEntries(Object.entries(runtime.getAssetBytes()).map(([key,bytes])=>[key,`data:${d.assets[key]?.mimeType};base64,${base64(bytes)}`]))})}</div></div>`:'末页'}
+      return {index:s.slideIndex,count:d.slideOrder.length,notes:s.notes?.speaker??s.notes?.handout??'',nextHtml}},
+    goto:index=>{runtime.setSlide(index);show()},next:()=>{runtime.nextSlide();show()},previous:()=>{runtime.previousSlide();show()},exit:leavePresentation
+  });
   root.dataset.ppteMode = "present";
   root.querySelectorAll("details[open]").forEach(n => n.removeAttribute("open"));
   render();
@@ -297,7 +310,9 @@ function leavePresentation() {
   media.pauseAll();
   pendingPresentation = false;
   runtime.presentation.leave();
+  disposeLiveTools?.();disposeLiveTools=undefined;
   presenting = false;
+  if(!payloadNode.isConnected)document.body.append(payloadNode);
   root.dataset.ppteMode = "edit";
   cancelTransform();
   render();
