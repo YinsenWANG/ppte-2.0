@@ -1,0 +1,7 @@
+{
+  "kind": "installed-Safari-WebDriver-probe",
+  "countsAsHumanBrowserAcceptance": false,
+  "observations": [],
+  "error": "{\"error\":\"session not created\",\"message\":\"Could not create a session: You must enable 'Allow remote automation' in the Developer section of Safari Settings to control Safari via WebDriver.\",\"stacktrace\":\"\"}",
+  "driverLog": ""
+}

@@ -1,0 +1,196 @@
+{
+  "version": 1,
+  "manifestSha256": "ff9e4c74bbe7951b335d0bc573a023a60ec0a17c0849efc731b3876fe30e6e17",
+  "installation": {
+    "cold": {
+      "status": "pending",
+      "reason": "Existing node_modules; clean installation not measured."
+    },
+    "hot": {
+      "status": "pending",
+      "reason": "No controlled generation session yet."
+    }
+  },
+  "runs": [
+    {
+      "id": "cherry:1:direct",
+      "heat": "hot",
+      "status": "pending",
+      "reason": "No controlled provider invocation/usage receipt; H01 enhancement not implemented. Exploratory drafts do not count as measured runs.",
+      "timings": null,
+      "tokens": null,
+      "firstDraft": null,
+      "failures": null
+    },
+    {
+      "id": "cherry:1:enhanced",
+      "heat": "hot",
+      "status": "pending",
+      "reason": "No controlled provider invocation/usage receipt; H01 enhancement not implemented. Exploratory drafts do not count as measured runs.",
+      "timings": null,
+      "tokens": null,
+      "firstDraft": null,
+      "failures": null
+    },
+    {
+      "id": "cherry:2:direct",
+      "heat": "hot",
+      "status": "pending",
+      "reason": "No controlled provider invocation/usage receipt; H01 enhancement not implemented. Exploratory drafts do not count as measured runs.",
+      "timings": null,
+      "tokens": null,
+      "firstDraft": null,
+      "failures": null
+    },
+    {
+      "id": "cherry:2:enhanced",
+      "heat": "hot",
+      "status": "pending",
+      "reason": "No controlled provider invocation/usage receipt; H01 enhancement not implemented. Exploratory drafts do not count as measured runs.",
+      "timings": null,
+      "tokens": null,
+      "firstDraft": null,
+      "failures": null
+    },
+    {
+      "id": "cherry:3:direct",
+      "heat": "hot",
+      "status": "pending",
+      "reason": "No controlled provider invocation/usage receipt; H01 enhancement not implemented. Exploratory drafts do not count as measured runs.",
+      "timings": null,
+      "tokens": null,
+      "firstDraft": null,
+      "failures": null
+    },
+    {
+      "id": "cherry:3:enhanced",
+      "heat": "hot",
+      "status": "pending",
+      "reason": "No controlled provider invocation/usage receipt; H01 enhancement not implemented. Exploratory drafts do not count as measured runs.",
+      "timings": null,
+      "tokens": null,
+      "firstDraft": null,
+      "failures": null
+    },
+    {
+      "id": "product:1:direct",
+      "heat": "hot",
+      "status": "pending",
+      "reason": "No controlled provider invocation/usage receipt; H01 enhancement not implemented. Exploratory drafts do not count as measured runs.",
+      "timings": null,
+      "tokens": null,
+      "firstDraft": null,
+      "failures": null
+    },
+    {
+      "id": "product:1:enhanced",
+      "heat": "hot",
+      "status": "pending",
+      "reason": "No controlled provider invocation/usage receipt; H01 enhancement not implemented. Exploratory drafts do not count as measured runs.",
+      "timings": null,
+      "tokens": null,
+      "firstDraft": null,
+      "failures": null
+    },
+    {
+      "id": "product:2:direct",
+      "heat": "hot",
+      "status": "pending",
+      "reason": "No controlled provider invocation/usage receipt; H01 enhancement not implemented. Exploratory drafts do not count as measured runs.",
+      "timings": null,
+      "tokens": null,
+      "firstDraft": null,
+      "failures": null
+    },
+    {
+      "id": "product:2:enhanced",
+      "heat": "hot",
+      "status": "pending",
+      "reason": "No controlled provider invocation/usage receipt; H01 enhancement not implemented. Exploratory drafts do not count as measured runs.",
+      "timings": null,
+      "tokens": null,
+      "firstDraft": null,
+      "failures": null
+    },
+    {
+      "id": "product:3:direct",
+      "heat": "hot",
+      "status": "pending",
+      "reason": "No controlled provider invocation/usage receipt; H01 enhancement not implemented. Exploratory drafts do not count as measured runs.",
+      "timings": null,
+      "tokens": null,
+      "firstDraft": null,
+      "failures": null
+    },
+    {
+      "id": "product:3:enhanced",
+      "heat": "hot",
+      "status": "pending",
+      "reason": "No controlled provider invocation/usage receipt; H01 enhancement not implemented. Exploratory drafts do not count as measured runs.",
+      "timings": null,
+      "tokens": null,
+      "firstDraft": null,
+      "failures": null
+    },
+    {
+      "id": "data:1:direct",
+      "heat": "hot",
+      "status": "pending",
+      "reason": "No controlled provider invocation/usage receipt; H01 enhancement not implemented. Exploratory drafts do not count as measured runs.",
+      "timings": null,
+      "tokens": null,
+      "firstDraft": null,
+      "failures": null
+    },
+    {
+      "id": "data:1:enhanced",
+      "heat": "hot",
+      "status": "pending",
+      "reason": "No controlled provider invocation/usage receipt; H01 enhancement not implemented. Exploratory drafts do not count as measured runs.",
+      "timings": null,
+      "tokens": null,
+      "firstDraft": null,
+      "failures": null
+    },
+    {
+      "id": "data:2:direct",
+      "heat": "hot",
+      "status": "pending",
+      "reason": "No controlled provider invocation/usage receipt; H01 enhancement not implemented. Exploratory drafts do not count as measured runs.",
+      "timings": null,
+      "tokens": null,
+      "firstDraft": null,
+      "failures": null
+    },
+    {
+      "id": "data:2:enhanced",
+      "heat": "hot",
+      "status": "pending",
+      "reason": "No controlled provider invocation/usage receipt; H01 enhancement not implemented. Exploratory drafts do not count as measured runs.",
+      "timings": null,
+      "tokens": null,
+      "firstDraft": null,
+      "failures": null
+    },
+    {
+      "id": "data:3:direct",
+      "heat": "hot",
+      "status": "pending",
+      "reason": "No controlled provider invocation/usage receipt; H01 enhancement not implemented. Exploratory drafts do not count as measured runs.",
+      "timings": null,
+      "tokens": null,
+      "firstDraft": null,
+      "failures": null
+    },
+    {
+      "id": "data:3:enhanced",
+      "heat": "hot",
+      "status": "pending",
+      "reason": "No controlled provider invocation/usage receipt; H01 enhancement not implemented. Exploratory drafts do not count as measured runs.",
+      "timings": null,
+      "tokens": null,
+      "firstDraft": null,
+      "failures": null
+    }
+  ]
+}

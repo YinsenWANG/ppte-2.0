@@ -1,0 +1,32 @@
+{
+  "kind": "automated-installed-Google-Chrome-probe",
+  "countsAsHumanBrowserAcceptance": false,
+  "headless": true,
+  "observations": [
+    {
+      "draft": "cherry",
+      "protocol": "file:",
+      "slides": 12,
+      "secureContext": true,
+      "filePickerExposed": true,
+      "overflowSlides": 0
+    },
+    {
+      "draft": "product",
+      "protocol": "file:",
+      "slides": 12,
+      "secureContext": true,
+      "filePickerExposed": true,
+      "overflowSlides": 0
+    },
+    {
+      "draft": "data",
+      "protocol": "file:",
+      "slides": 12,
+      "secureContext": true,
+      "filePickerExposed": true,
+      "overflowSlides": 0
+    }
+  ],
+  "version": "152.0.7977.76"
+}

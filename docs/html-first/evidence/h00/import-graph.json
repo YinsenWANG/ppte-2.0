@@ -1,0 +1,4254 @@
+{
+  "basisCommit": "bbcd46bde2c608b5a56e617f316c5dcb5534857e",
+  "scope": "tracked apps/packages source; static edges include type-only markers; dynamic expressions and non-source assets need separate review",
+  "sourceFiles": 117,
+  "edges": [
+    {
+      "from": "apps/cli/index.ts",
+      "specifier": "../../packages/portable-runtime/src/index.js",
+      "to": "packages/portable-runtime/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/cli/index.ts",
+      "specifier": "../../packages/schema/src/version.js",
+      "to": "packages/schema/src/version.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/cli/index.ts",
+      "specifier": "../../packages/node-runtime/src/history-repair.js",
+      "to": "packages/node-runtime/src/history-repair.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/cli/index.ts",
+      "specifier": "../../packages/reviewer/src/index.js",
+      "to": "packages/reviewer/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/cli/index.ts",
+      "specifier": "../../packages/patch-format/src/codec.js",
+      "to": "packages/patch-format/src/codec.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/cli/index.ts",
+      "specifier": "../../packages/validation/src/index.js",
+      "to": "packages/validation/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/cli/index.ts",
+      "specifier": "../../packages/node-runtime/src/delivery.js",
+      "to": "packages/node-runtime/src/delivery.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/cli/index.ts",
+      "specifier": "../../packages/file-format/src/index.js",
+      "to": "packages/file-format/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/cli/index.ts",
+      "specifier": "node:fs",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "apps/cli/index.ts",
+      "specifier": "node:path",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "apps/cli/index.ts",
+      "specifier": "node:url",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "apps/cli/index.ts",
+      "specifier": "../../packages/canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/cli/index.ts",
+      "specifier": "../../packages/core/src/index.js",
+      "to": "packages/core/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/cli/index.ts",
+      "specifier": "../../packages/agent-tools/src/index.js",
+      "to": "packages/agent-tools/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/cli/index.ts",
+      "specifier": "../../packages/file-format/src/index.js",
+      "to": "packages/file-format/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/cli/index.ts",
+      "specifier": "../../packages/authoring/src/index.js",
+      "to": "packages/authoring/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/cli/index.ts",
+      "specifier": "../../packages/node-runtime/src/index.js",
+      "to": "packages/node-runtime/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/cli/index.ts",
+      "specifier": "../../packages/node-runtime/src/delivery.js",
+      "to": "packages/node-runtime/src/delivery.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/cli/index.ts",
+      "specifier": "../../packages/exporter-pdf/src/index.js",
+      "to": "packages/exporter-pdf/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/cli/index.ts",
+      "specifier": "../../packages/exporter-pptx/src/index.js",
+      "to": "packages/exporter-pptx/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/cli/index.ts",
+      "specifier": "../../packages/agent-tools/src/tool-schemas.js",
+      "to": "packages/agent-tools/src/tool-schemas.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/cli/index.ts",
+      "specifier": "../../packages/schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "apps/contract-deck/index.ts",
+      "specifier": "node:fs",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "apps/contract-deck/index.ts",
+      "specifier": "node:path",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "apps/contract-deck/index.ts",
+      "specifier": "node:os",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "apps/contract-deck/index.ts",
+      "specifier": "node:url",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "apps/contract-deck/index.ts",
+      "specifier": "node:zlib",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "apps/contract-deck/index.ts",
+      "specifier": "../../packages/canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/contract-deck/index.ts",
+      "specifier": "../../packages/core/src/index.js",
+      "to": "packages/core/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/contract-deck/index.ts",
+      "specifier": "../../packages/agent-tools/src/index.js",
+      "to": "packages/agent-tools/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/contract-deck/index.ts",
+      "specifier": "../../packages/editor-react/src/index.js",
+      "to": "packages/editor-react/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/contract-deck/index.ts",
+      "specifier": "../../packages/geometry/src/index.js",
+      "to": "packages/geometry/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/contract-deck/index.ts",
+      "specifier": "../../packages/renderer-react/src/index.js",
+      "to": "packages/renderer-react/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/contract-deck/index.ts",
+      "specifier": "../../packages/recovery-journal/src/index.js",
+      "to": "packages/recovery-journal/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/contract-deck/index.ts",
+      "specifier": "../../packages/file-format/src/index.js",
+      "to": "packages/file-format/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/contract-deck/index.ts",
+      "specifier": "../../packages/semantic-identity/src/index.js",
+      "to": "packages/semantic-identity/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/contract-deck/index.ts",
+      "specifier": "../../packages/portable-runtime/src/index.js",
+      "to": "packages/portable-runtime/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/contract-deck/index.ts",
+      "specifier": "../../packages/reviewer/src/index.js",
+      "to": "packages/reviewer/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/contract-deck/index.ts",
+      "specifier": "../../packages/patch-format/src/index.js",
+      "to": "packages/patch-format/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/contract-deck/index.ts",
+      "specifier": "../../packages/exporter-pdf/src/index.js",
+      "to": "packages/exporter-pdf/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/contract-deck/index.ts",
+      "specifier": "../../packages/exporter-pptx/src/index.js",
+      "to": "packages/exporter-pptx/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/contract-deck/index.ts",
+      "specifier": "../../packages/design-compiler/src/index.js",
+      "to": "packages/design-compiler/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/contract-deck/index.ts",
+      "specifier": "../../packages/widgets/src/index.js",
+      "to": "packages/widgets/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/contract-deck/index.ts",
+      "specifier": "../../packages/facts/src/index.js",
+      "to": "packages/facts/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/contract-deck/index.ts",
+      "specifier": "../../packages/validation/src/index.js",
+      "to": "packages/validation/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/contract-deck/index.ts",
+      "specifier": "../../packages/performance-budget/src/index.js",
+      "to": "packages/performance-budget/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/contract-deck/index.ts",
+      "specifier": "../../packages/core/src/index.js",
+      "to": "packages/core/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "apps/contract-deck/index.ts",
+      "specifier": "../../packages/schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "apps/host/src/main.tsx",
+      "specifier": "../../../packages/schema/src/version.js",
+      "to": "packages/schema/src/version.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/host/src/main.tsx",
+      "specifier": "react",
+      "to": "node_modules/.pnpm/@types+react@19.2.18/node_modules/@types/react/index.d.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/host/src/main.tsx",
+      "specifier": "react-dom/client",
+      "to": "node_modules/.pnpm/@types+react-dom@19.2.5_@types+react@19.2.18/node_modules/@types/react-dom/client.d.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/host/src/main.tsx",
+      "specifier": "../../../packages/editor-react/src/HostApp.js",
+      "to": "packages/editor-react/src/HostApp.tsx",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/host/src/main.tsx",
+      "specifier": "./host.css",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "apps/host/vite.config.js",
+      "specifier": "vite",
+      "to": "node_modules/.pnpm/vite@7.3.6_@types+node@22.20.1/node_modules/vite/dist/node/index.d.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/host/vite.config.js",
+      "specifier": "@vitejs/plugin-react",
+      "to": "node_modules/.pnpm/@vitejs+plugin-react@5.2.0_vite@7.3.6_@types+node@22.20.1_/node_modules/@vitejs/plugin-react/dist/index.d.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/host/vite.config.js",
+      "specifier": "node:fs",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "apps/host/vite.config.js",
+      "specifier": "node:url",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "apps/host/vite.config.js",
+      "specifier": "node:path",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "apps/mcp/delivery.ts",
+      "specifier": "../../packages/node-runtime/src/delivery.js",
+      "to": "packages/node-runtime/src/delivery.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/mcp/index.ts",
+      "specifier": "node:fs",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "apps/mcp/index.ts",
+      "specifier": "../../packages/node-runtime/src/index.js",
+      "to": "packages/node-runtime/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/mcp/index.ts",
+      "specifier": "node:url",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "apps/mcp/index.ts",
+      "specifier": "../../packages/canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/mcp/index.ts",
+      "specifier": "../../packages/core/src/index.js",
+      "to": "packages/core/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/mcp/index.ts",
+      "specifier": "../../packages/agent-tools/src/index.js",
+      "to": "packages/agent-tools/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/mcp/index.ts",
+      "specifier": "../../packages/file-format/src/index.js",
+      "to": "packages/file-format/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/mcp/index.ts",
+      "specifier": "../../packages/schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "apps/mcp/index.ts",
+      "specifier": "./protocol.js",
+      "to": "apps/mcp/protocol.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/mcp/index.ts",
+      "specifier": "./tool-schemas.js",
+      "to": "apps/mcp/tool-schemas.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/mcp/index.ts",
+      "specifier": "./delivery.js",
+      "to": "apps/mcp/delivery.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/mcp/index.ts",
+      "specifier": "../../packages/portable-runtime/src/index.js",
+      "to": "packages/portable-runtime/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "apps/mcp/protocol.ts",
+      "specifier": "node:readline",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "apps/mcp/tool-schemas.ts",
+      "specifier": "../../packages/agent-tools/src/tool-schemas.js",
+      "to": "packages/agent-tools/src/tool-schemas.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/agent-tools/src/design-workflow.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/agent-tools/src/design-workflow.ts",
+      "specifier": "../../authoring/src/index.js",
+      "to": "packages/authoring/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/agent-tools/src/design-workflow.ts",
+      "specifier": "../../layout-recipes/src/index.js",
+      "to": "packages/layout-recipes/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/agent-tools/src/design-workflow.ts",
+      "specifier": "../../design-compiler/src/deck-planning.js",
+      "to": "packages/design-compiler/src/deck-planning.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/agent-tools/src/design-workflow.ts",
+      "specifier": "../../design-system/src/index.js",
+      "to": "packages/design-system/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/agent-tools/src/design-workflow.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/agent-tools/src/index.ts",
+      "specifier": "../../design-compiler/src/design-edits.js",
+      "to": "packages/design-compiler/src/design-edits.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/agent-tools/src/index.ts",
+      "specifier": "../../design-compiler/src/current-document.js",
+      "to": "packages/design-compiler/src/current-document.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/agent-tools/src/index.ts",
+      "specifier": "../../design-compiler/src/current-document.js",
+      "to": "packages/design-compiler/src/current-document.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/agent-tools/src/index.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/agent-tools/src/index.ts",
+      "specifier": "../../diff/src/index.js",
+      "to": "packages/diff/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/agent-tools/src/index.ts",
+      "specifier": "../../reviewer/src/index.js",
+      "to": "packages/reviewer/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/agent-tools/src/index.ts",
+      "specifier": "../../core/src/index.js",
+      "to": "packages/core/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/agent-tools/src/index.ts",
+      "specifier": "../../design-compiler/src/index.js",
+      "to": "packages/design-compiler/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/agent-tools/src/index.ts",
+      "specifier": "../../macros/src/index.js",
+      "to": "packages/macros/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/agent-tools/src/index.ts",
+      "specifier": "../../layout-recipes/src/index.js",
+      "to": "packages/layout-recipes/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/agent-tools/src/index.ts",
+      "specifier": "../../renderer-react/src/index.js",
+      "to": "packages/renderer-react/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/agent-tools/src/index.ts",
+      "specifier": "../../validation/src/index.js",
+      "to": "packages/validation/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/agent-tools/src/index.ts",
+      "specifier": "../../schema/src/errors.js",
+      "to": "packages/schema/src/errors.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/agent-tools/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/agent-tools/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/agent-tools/src/index.ts",
+      "specifier": "./design-workflow.js",
+      "to": "packages/agent-tools/src/design-workflow.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/agent-tools/src/tool-schemas.ts",
+      "specifier": "./index.js",
+      "to": "packages/agent-tools/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/authoring/src/default-document.ts",
+      "specifier": "../../richtext-adapter/src/index.js",
+      "to": "packages/richtext-adapter/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/authoring/src/default-document.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/authoring/src/index.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/authoring/src/index.ts",
+      "specifier": "../../design-compiler/src/index.js",
+      "to": "packages/design-compiler/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/authoring/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/authoring/src/index.ts",
+      "specifier": "./default-document.js",
+      "to": "packages/authoring/src/default-document.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/canonical-json/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/capability/src/client-acceptance.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/capability/src/client-acceptance.ts",
+      "specifier": "../../schema/src/file-format.js",
+      "to": "packages/schema/src/file-format.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/capability/src/index.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/capability/src/index.ts",
+      "specifier": "../../charts/src/index.js",
+      "to": "packages/charts/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/capability/src/index.ts",
+      "specifier": "../../facts/src/index.js",
+      "to": "packages/facts/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/capability/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/capability/src/index.ts",
+      "specifier": "../../validation/src/index.js",
+      "to": "packages/validation/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/capability/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/capability/src/index.ts",
+      "specifier": "./client-acceptance.js",
+      "to": "packages/capability/src/client-acceptance.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/change-contract/src/index.ts",
+      "specifier": "../../widgets/src/table-model.js",
+      "to": "packages/widgets/src/table-model.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/change-contract/src/index.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/change-contract/src/index.ts",
+      "specifier": "../../schema/src/errors.js",
+      "to": "packages/schema/src/errors.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/change-contract/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/change-contract/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/charts/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/compatibility/src/index.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/compatibility/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/compatibility/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/compatibility/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/core/src/derived-indexes.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/core/src/derived-indexes.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/core/src/derived-indexes.ts",
+      "specifier": "./index.js",
+      "to": "packages/core/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/core/src/history.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/core/src/history.ts",
+      "specifier": "../../operations/src/index.js",
+      "to": "packages/operations/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/core/src/history.ts",
+      "specifier": "../../validation/src/index.js",
+      "to": "packages/validation/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/core/src/history.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/core/src/index.ts",
+      "specifier": "./derived-indexes.js",
+      "to": "packages/core/src/derived-indexes.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/core/src/index.ts",
+      "specifier": "./history.js",
+      "to": "packages/core/src/history.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/core/src/index.ts",
+      "specifier": "./history.js",
+      "to": "packages/core/src/history.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/core/src/index.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/core/src/index.ts",
+      "specifier": "../../diff/src/index.js",
+      "to": "packages/diff/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/core/src/index.ts",
+      "specifier": "../../operations/src/index.js",
+      "to": "packages/operations/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/core/src/index.ts",
+      "specifier": "../../change-contract/src/index.js",
+      "to": "packages/change-contract/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/core/src/index.ts",
+      "specifier": "../../validation/src/index.js",
+      "to": "packages/validation/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/core/src/index.ts",
+      "specifier": "../../reviewer/src/index.js",
+      "to": "packages/reviewer/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/core/src/index.ts",
+      "specifier": "../../patch-format/src/codec.js",
+      "to": "packages/patch-format/src/codec.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/core/src/index.ts",
+      "specifier": "../../schema/src/errors.js",
+      "to": "packages/schema/src/errors.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/core/src/index.ts",
+      "specifier": "../../schema/src/file-format.js",
+      "to": "packages/schema/src/file-format.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/core/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/design-compiler/src/browser-measurement.ts",
+      "specifier": "playwright",
+      "to": "node_modules/.pnpm/playwright@1.62.1/node_modules/playwright/index.d.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/design-compiler/src/browser-measurement.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/design-compiler/src/browser-measurement.ts",
+      "specifier": "../../renderer-react/src/index.js",
+      "to": "packages/renderer-react/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/design-compiler/src/browser-measurement.ts",
+      "specifier": "../../editor-react/src/text-measurement.js",
+      "to": "packages/editor-react/src/text-measurement.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/design-compiler/src/browser-measurement.ts",
+      "specifier": "./index.js",
+      "to": "packages/design-compiler/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/design-compiler/src/browser-measurement.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/design-compiler/src/browser-measurement.ts",
+      "specifier": "./deck-planning.js",
+      "to": "packages/design-compiler/src/deck-planning.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/design-compiler/src/current-document.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/design-compiler/src/current-document.ts",
+      "specifier": "../../renderer-react/src/index.js",
+      "to": "packages/renderer-react/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/design-compiler/src/current-document.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/design-compiler/src/deck-planning.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/design-compiler/src/deck-planning.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/design-compiler/src/deck-planning.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/design-compiler/src/deck-planning.ts",
+      "specifier": "../../layout-recipes/src/index.js",
+      "to": "packages/layout-recipes/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/design-compiler/src/deck-planning.ts",
+      "specifier": "./index.js",
+      "to": "packages/design-compiler/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/design-compiler/src/design-edits.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/design-compiler/src/design-edits.ts",
+      "specifier": "../../design-system/src/index.js",
+      "to": "packages/design-system/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/design-compiler/src/design-edits.ts",
+      "specifier": "../../layout-recipes/src/index.js",
+      "to": "packages/layout-recipes/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/design-compiler/src/design-edits.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/design-compiler/src/design-edits.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/design-compiler/src/design-edits.ts",
+      "specifier": "./index.js",
+      "to": "packages/design-compiler/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/design-compiler/src/design-edits.ts",
+      "specifier": "./current-document.js",
+      "to": "packages/design-compiler/src/current-document.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/design-compiler/src/index.ts",
+      "specifier": "../../design-system/src/index.js",
+      "to": "packages/design-system/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/design-compiler/src/index.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/design-compiler/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/design-compiler/src/index.ts",
+      "specifier": "../../layout-recipes/src/index.js",
+      "to": "packages/layout-recipes/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/design-compiler/src/index.ts",
+      "specifier": "../../schema/src/errors.js",
+      "to": "packages/schema/src/errors.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/design-compiler/src/index.ts",
+      "specifier": "../../validation/src/index.js",
+      "to": "packages/validation/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/design-compiler/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/design-compiler/src/index.ts",
+      "specifier": "./deck-planning.js",
+      "to": "packages/design-compiler/src/deck-planning.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/design-compiler/src/index.ts",
+      "specifier": "./deck-planning.js",
+      "to": "packages/design-compiler/src/deck-planning.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/design-compiler/src/index.ts",
+      "specifier": "./design-edits.js",
+      "to": "packages/design-compiler/src/design-edits.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/design-compiler/src/index.ts",
+      "specifier": "./design-edits.js",
+      "to": "packages/design-compiler/src/design-edits.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/design-system/src/index.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/design-system/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/design-system/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/diff/src/index.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/diff/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-controller/src/background-jobs.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-controller/src/commands.ts",
+      "specifier": "../../change-contract/src/index.js",
+      "to": "packages/change-contract/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-controller/src/commands.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-controller/src/commands.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-controller/src/index.ts",
+      "specifier": "./background-jobs.js",
+      "to": "packages/editor-controller/src/background-jobs.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-controller/src/index.ts",
+      "specifier": "./background-jobs.js",
+      "to": "packages/editor-controller/src/background-jobs.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-controller/src/index.ts",
+      "specifier": "../../core/src/index.js",
+      "to": "packages/core/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-controller/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-controller/src/index.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-controller/src/index.ts",
+      "specifier": "./mode.js",
+      "to": "packages/editor-controller/src/mode.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-controller/src/index.ts",
+      "specifier": "./policy.js",
+      "to": "packages/editor-controller/src/policy.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-controller/src/index.ts",
+      "specifier": "./commands.js",
+      "to": "packages/editor-controller/src/commands.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-controller/src/index.ts",
+      "specifier": "./selection.js",
+      "to": "packages/editor-controller/src/selection.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-controller/src/index.ts",
+      "specifier": "./commands.js",
+      "to": "packages/editor-controller/src/commands.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-controller/src/index.ts",
+      "specifier": "./selection.js",
+      "to": "packages/editor-controller/src/selection.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-controller/src/index.ts",
+      "specifier": "./policy.js",
+      "to": "packages/editor-controller/src/policy.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-controller/src/index.ts",
+      "specifier": "./mode.js",
+      "to": "packages/editor-controller/src/mode.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-controller/src/index.ts",
+      "specifier": "./object-commands.js",
+      "to": "packages/editor-controller/src/object-commands.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-controller/src/index.ts",
+      "specifier": "./transform-session.js",
+      "to": "packages/editor-controller/src/transform-session.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-controller/src/object-commands.ts",
+      "specifier": "./transform-session.js",
+      "to": "packages/editor-controller/src/transform-session.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-controller/src/object-commands.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-controller/src/object-commands.ts",
+      "specifier": "../../validation/src/index.js",
+      "to": "packages/validation/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-controller/src/object-commands.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-controller/src/policy.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-controller/src/presentation.ts",
+      "specifier": "../../editor-dom/src/index.js",
+      "to": "packages/editor-dom/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-controller/src/resource-port.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-controller/src/resource-port.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-controller/src/selection.ts",
+      "specifier": "../../geometry/src/index.js",
+      "to": "packages/geometry/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-controller/src/selection.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-controller/src/selection.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-controller/src/transform-session.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-controller/src/transform-session.ts",
+      "specifier": "../../geometry/src/index.js",
+      "to": "packages/geometry/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-controller/src/transform-session.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-controller/src/video-resource.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-controller/src/video-resource.ts",
+      "specifier": "../../schema/src/video.js",
+      "to": "packages/schema/src/video.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-controller/src/video-resource.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-dom/src/animation-controls.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-dom/src/animation-controls.ts",
+      "specifier": "../../portable-runtime/src/animation-playback.js",
+      "to": "packages/portable-runtime/src/animation-playback.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-dom/src/image-crop.ts",
+      "specifier": "../../editor-controller/src/resource-port.js",
+      "to": "packages/editor-controller/src/resource-port.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-dom/src/image-crop.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-dom/src/index.ts",
+      "specifier": "../../editor-controller/src/mode.js",
+      "to": "packages/editor-controller/src/mode.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-dom/src/index.ts",
+      "specifier": "./pointer.js",
+      "to": "packages/editor-dom/src/pointer.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-dom/src/object-properties.ts",
+      "specifier": "../../geometry/src/index.js",
+      "to": "packages/geometry/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-dom/src/object-properties.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-dom/src/object-properties.ts",
+      "specifier": "../../editor-controller/src/object-commands.js",
+      "to": "packages/editor-controller/src/object-commands.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-dom/src/object-properties.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-dom/src/pointer.ts",
+      "specifier": "../../editor-controller/src/transform-session.js",
+      "to": "packages/editor-controller/src/transform-session.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-dom/src/pointer.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-dom/src/presenter-tools.ts",
+      "specifier": "./presenter-window-bundle.js",
+      "to": "packages/editor-dom/src/presenter-window-bundle.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-dom/src/presenter-tools.ts",
+      "specifier": "../../editor-controller/src/presenter-channel.js",
+      "to": "packages/editor-controller/src/presenter-channel.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-dom/src/presenter-window.ts",
+      "specifier": "../../editor-controller/src/presenter-channel.js",
+      "to": "packages/editor-controller/src/presenter-channel.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-dom/src/table-selection.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-dom/src/table-selection.ts",
+      "specifier": "../../widgets/src/table-model.js",
+      "to": "packages/widgets/src/table-model.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-dom/src/text-selection.ts",
+      "specifier": "../../validation/src/index.js",
+      "to": "packages/validation/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-dom/src/text-selection.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-dom/src/text-selection.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-dom/src/text-selection.ts",
+      "specifier": "../../richtext-adapter/src/index.js",
+      "to": "packages/richtext-adapter/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-dom/src/text-selection.ts",
+      "specifier": "../../richtext-adapter/src/edit-buffer.js",
+      "to": "packages/richtext-adapter/src/edit-buffer.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-dom/src/text-selection.ts",
+      "specifier": "../../richtext-adapter/src/ranges.js",
+      "to": "packages/richtext-adapter/src/ranges.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-dom/src/text-selection.ts",
+      "specifier": "../../richtext-adapter/src/transforms.js",
+      "to": "packages/richtext-adapter/src/transforms.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../editor-dom/src/presenter-tools.js",
+      "to": "packages/editor-dom/src/presenter-tools.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../portable-runtime/src/animation-playback.js",
+      "to": "packages/portable-runtime/src/animation-playback.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../portable-runtime/src/media-controller.js",
+      "to": "packages/portable-runtime/src/media-controller.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../editor-controller/src/video-resource.js",
+      "to": "packages/editor-controller/src/video-resource.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../editor-dom/src/table-selection.js",
+      "to": "packages/editor-dom/src/table-selection.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../editor-dom/src/text-selection.js",
+      "to": "packages/editor-dom/src/text-selection.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../editor-dom/src/editor-shell.js",
+      "to": "packages/editor-dom/src/editor-shell.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../editor-dom/src/image-crop.js",
+      "to": "packages/editor-dom/src/image-crop.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../editor-controller/src/resource-port.js",
+      "to": "packages/editor-controller/src/resource-port.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../editor-controller/src/transform-session.js",
+      "to": "packages/editor-controller/src/transform-session.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../editor-dom/src/pointer.js",
+      "to": "packages/editor-dom/src/pointer.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../editor-controller/src/object-commands.js",
+      "to": "packages/editor-controller/src/object-commands.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../editor-dom/src/text-selection.js",
+      "to": "packages/editor-dom/src/text-selection.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../editor-controller/src/index.js",
+      "to": "packages/editor-controller/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../editor-controller/src/presentation.js",
+      "to": "packages/editor-controller/src/presentation.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "./text-measurement.js",
+      "to": "packages/editor-react/src/text-measurement.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "./resource-pool.js",
+      "to": "packages/editor-react/src/resource-pool.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "./ReviewPanel.js",
+      "to": "packages/editor-react/src/ReviewPanel.tsx",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "./RecipeStudio.js",
+      "to": "packages/editor-react/src/RecipeStudio.tsx",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../layout-recipes/src/index.js",
+      "to": "packages/layout-recipes/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../patch-format/src/codec.js",
+      "to": "packages/patch-format/src/codec.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "./recovery.js",
+      "to": "packages/editor-react/src/recovery.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "./Inspector.js",
+      "to": "packages/editor-react/src/Inspector.tsx",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../portable-runtime/src/shared.js",
+      "to": "packages/portable-runtime/src/shared.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../portable-runtime/src/browser-bundle.js",
+      "to": "packages/portable-runtime/src/browser-bundle.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../authoring/src/index.js",
+      "to": "packages/authoring/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../agent-tools/src/index.js",
+      "to": "packages/agent-tools/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../authoring/src/default-document.js",
+      "to": "packages/authoring/src/default-document.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../authoring/src/default-document.js",
+      "to": "packages/authoring/src/default-document.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../authoring/src/index.js",
+      "to": "packages/authoring/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../core/src/index.js",
+      "to": "packages/core/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "react",
+      "to": "node_modules/.pnpm/@types+react@19.2.18/node_modules/@types/react/index.d.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../operations/src/index.js",
+      "to": "packages/operations/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../validation/src/index.js",
+      "to": "packages/validation/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../portable-runtime/src/presenter-state.js",
+      "to": "packages/portable-runtime/src/presenter-state.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../renderer-react/src/index.js",
+      "to": "packages/renderer-react/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-react/src/HostApp.tsx",
+      "specifier": "./interaction.js",
+      "to": "packages/editor-react/src/interaction.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/Inspector.tsx",
+      "specifier": "../../editor-dom/src/animation-controls.js",
+      "to": "packages/editor-dom/src/animation-controls.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/Inspector.tsx",
+      "specifier": "../../editor-dom/src/table-selection.js",
+      "to": "packages/editor-dom/src/table-selection.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/Inspector.tsx",
+      "specifier": "../../editor-controller/src/transform-session.js",
+      "to": "packages/editor-controller/src/transform-session.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/Inspector.tsx",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/Inspector.tsx",
+      "specifier": "react",
+      "to": "node_modules/.pnpm/@types+react@19.2.18/node_modules/@types/react/index.d.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/Inspector.tsx",
+      "specifier": "../../editor-dom/src/object-properties.js",
+      "to": "packages/editor-dom/src/object-properties.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/Inspector.tsx",
+      "specifier": "../../editor-controller/src/object-commands.js",
+      "to": "packages/editor-controller/src/object-commands.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/Inspector.tsx",
+      "specifier": "../../geometry/src/index.js",
+      "to": "packages/geometry/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/Inspector.tsx",
+      "specifier": "../../richtext-adapter/src/index.js",
+      "to": "packages/richtext-adapter/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/Inspector.tsx",
+      "specifier": "../../validation/src/index.js",
+      "to": "packages/validation/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/Inspector.tsx",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-react/src/Inspector.tsx",
+      "specifier": "react",
+      "to": "node_modules/.pnpm/@types+react@19.2.18/node_modules/@types/react/index.d.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-react/src/RecipeStudio.tsx",
+      "specifier": "../../design-compiler/src/design-edits.js",
+      "to": "packages/design-compiler/src/design-edits.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/RecipeStudio.tsx",
+      "specifier": "react",
+      "to": "node_modules/.pnpm/@types+react@19.2.18/node_modules/@types/react/index.d.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/RecipeStudio.tsx",
+      "specifier": "../../layout-recipes/src/index.js",
+      "to": "packages/layout-recipes/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/RecipeStudio.tsx",
+      "specifier": "../../renderer-react/src/index.js",
+      "to": "packages/renderer-react/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/RecipeStudio.tsx",
+      "specifier": "../../design-compiler/src/index.js",
+      "to": "packages/design-compiler/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/RecipeStudio.tsx",
+      "specifier": "../../agent-tools/src/index.js",
+      "to": "packages/agent-tools/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/RecipeStudio.tsx",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/RecipeStudio.tsx",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-react/src/ReviewPanel.tsx",
+      "specifier": "react",
+      "to": "node_modules/.pnpm/@types+react@19.2.18/node_modules/@types/react/index.d.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/ReviewPanel.tsx",
+      "specifier": "../../reviewer/src/index.js",
+      "to": "packages/reviewer/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/ReviewPanel.tsx",
+      "specifier": "../../patch-format/src/codec.js",
+      "to": "packages/patch-format/src/codec.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/ReviewPanel.tsx",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-react/src/index.ts",
+      "specifier": "../../richtext-adapter/src/index.js",
+      "to": "packages/richtext-adapter/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/index.ts",
+      "specifier": "./interaction.js",
+      "to": "packages/editor-react/src/interaction.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/index.ts",
+      "specifier": "./interaction.js",
+      "to": "packages/editor-react/src/interaction.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-react/src/index.ts",
+      "specifier": "./HostApp.js",
+      "to": "packages/editor-react/src/HostApp.tsx",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/index.ts",
+      "specifier": "./HostApp.js",
+      "to": "packages/editor-react/src/HostApp.tsx",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-react/src/interaction.ts",
+      "specifier": "../../editor-controller/src/selection.js",
+      "to": "packages/editor-controller/src/selection.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/interaction.ts",
+      "specifier": "../../editor-controller/src/transform-session.js",
+      "to": "packages/editor-controller/src/transform-session.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/recovery.ts",
+      "specifier": "../../portable-runtime/src/shared.js",
+      "to": "packages/portable-runtime/src/shared.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/recovery.ts",
+      "specifier": "./resource-pool.js",
+      "to": "packages/editor-react/src/resource-pool.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/recovery.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/recovery.ts",
+      "specifier": "../../core/src/index.js",
+      "to": "packages/core/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/recovery.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-react/src/resource-pool.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/editor-react/src/resource-pool.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/editor-react/src/resource-pool.ts",
+      "specifier": "../../editor-controller/src/resource-port.js",
+      "to": "packages/editor-controller/src/resource-port.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/exporter-pdf/src/index.ts",
+      "specifier": "../../schema/src/video.js",
+      "to": "packages/schema/src/video.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/exporter-pdf/src/index.ts",
+      "specifier": "node:zlib",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/exporter-pdf/src/index.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/exporter-pdf/src/index.ts",
+      "specifier": "../../capability/src/index.js",
+      "to": "packages/capability/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/exporter-pdf/src/index.ts",
+      "specifier": "../../renderer-react/src/index.js",
+      "to": "packages/renderer-react/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/exporter-pdf/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/exporter-pdf/src/index.ts",
+      "specifier": "../../schema/src/errors.js",
+      "to": "packages/schema/src/errors.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/exporter-pdf/src/index.ts",
+      "specifier": "./reference-render.js",
+      "to": "packages/exporter-pdf/src/reference-render.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/exporter-pdf/src/reference-render.ts",
+      "specifier": "node:child_process",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/exporter-pdf/src/reference-render.ts",
+      "specifier": "node:module",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/exporter-pdf/src/reference-render.ts",
+      "specifier": "node:zlib",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/exporter-pdf/src/reference-render.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/exporter-pptx/src/index.ts",
+      "specifier": "../../schema/src/video.js",
+      "to": "packages/schema/src/video.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/exporter-pptx/src/index.ts",
+      "specifier": "./table.js",
+      "to": "packages/exporter-pptx/src/table.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/exporter-pptx/src/index.ts",
+      "specifier": "./table.js",
+      "to": "packages/exporter-pptx/src/table.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/exporter-pptx/src/index.ts",
+      "specifier": "../../validation/src/index.js",
+      "to": "packages/validation/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/exporter-pptx/src/index.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/exporter-pptx/src/index.ts",
+      "specifier": "../../capability/src/index.js",
+      "to": "packages/capability/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/exporter-pptx/src/index.ts",
+      "specifier": "../../archive/src/index.js",
+      "to": "packages/archive/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/exporter-pptx/src/index.ts",
+      "specifier": "../../renderer-react/src/index.js",
+      "to": "packages/renderer-react/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/exporter-pptx/src/index.ts",
+      "specifier": "../../charts/src/index.js",
+      "to": "packages/charts/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/exporter-pptx/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/exporter-pptx/src/index.ts",
+      "specifier": "../../schema/src/errors.js",
+      "to": "packages/schema/src/errors.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/exporter-pptx/src/index.ts",
+      "specifier": "../../exporter-pdf/src/reference-render.js",
+      "to": "packages/exporter-pdf/src/reference-render.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/exporter-pptx/src/table.ts",
+      "specifier": "../../schema/src/table.js",
+      "to": "packages/schema/src/table.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/exporter-pptx/src/table.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/facts/src/index.ts",
+      "specifier": "../../schema/src/table.js",
+      "to": "packages/schema/src/table.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/facts/src/index.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/facts/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/file-format/src/cas.ts",
+      "specifier": "node:fs",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/file-format/src/cas.ts",
+      "specifier": "node:path",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/file-format/src/cas.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/file-format/src/index.ts",
+      "specifier": "./resource-retention.js",
+      "to": "packages/file-format/src/resource-retention.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/file-format/src/index.ts",
+      "specifier": "../../portable-runtime/src/checkpoint-recovery.js",
+      "to": "packages/portable-runtime/src/checkpoint-recovery.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/file-format/src/index.ts",
+      "specifier": "../../core/src/history.js",
+      "to": "packages/core/src/history.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/file-format/src/index.ts",
+      "specifier": "node:fs",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/file-format/src/index.ts",
+      "specifier": "node:crypto",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/file-format/src/index.ts",
+      "specifier": "node:path",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/file-format/src/index.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/file-format/src/index.ts",
+      "specifier": "../../compatibility/src/index.js",
+      "to": "packages/compatibility/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/file-format/src/index.ts",
+      "specifier": "../../recovery-journal/src/index.js",
+      "to": "packages/recovery-journal/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/file-format/src/index.ts",
+      "specifier": "../../recovery-journal/src/index.js",
+      "to": "packages/recovery-journal/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/file-format/src/index.ts",
+      "specifier": "../../validation/src/index.js",
+      "to": "packages/validation/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/file-format/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/file-format/src/index.ts",
+      "specifier": "../../schema/src/file-format.js",
+      "to": "packages/schema/src/file-format.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/file-format/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/file-format/src/index.ts",
+      "specifier": "./cas.js",
+      "to": "packages/file-format/src/cas.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/file-format/src/index.ts",
+      "specifier": "../../portable-runtime/src/index.js",
+      "to": "packages/portable-runtime/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/file-format/src/index.ts",
+      "specifier": "../../portable-runtime/src/index.js",
+      "to": "packages/portable-runtime/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/file-format/src/index.ts",
+      "specifier": "../../fault-injection/src/index.js",
+      "to": "packages/fault-injection/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/file-format/src/index.ts",
+      "specifier": "./cas.js",
+      "to": "packages/file-format/src/cas.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/file-format/src/resource-retention.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/file-format/src/resource-retention.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/geometry/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/importer-legacy/src/index.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/importer-legacy/src/index.ts",
+      "specifier": "../../charts/src/index.js",
+      "to": "packages/charts/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/importer-legacy/src/index.ts",
+      "specifier": "../../compatibility/src/index.js",
+      "to": "packages/compatibility/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/importer-legacy/src/index.ts",
+      "specifier": "../../schema/src/errors.js",
+      "to": "packages/schema/src/errors.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/importer-legacy/src/index.ts",
+      "specifier": "../../validation/src/index.js",
+      "to": "packages/validation/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/importer-legacy/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/layout-recipes/src/design-packs.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/layout-recipes/src/design-packs.ts",
+      "specifier": "../../design-system/src/index.js",
+      "to": "packages/design-system/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/layout-recipes/src/design-packs.ts",
+      "specifier": "../../design-system/src/index.js",
+      "to": "packages/design-system/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/layout-recipes/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/layout-recipes/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/layout-recipes/src/index.ts",
+      "specifier": "./design-packs.js",
+      "to": "packages/layout-recipes/src/design-packs.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/layout-recipes/src/index.ts",
+      "specifier": "./design-packs.js",
+      "to": "packages/layout-recipes/src/design-packs.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/macros/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/macros/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/node-runtime/src/delivery.ts",
+      "specifier": "../../file-format/src/resource-retention.js",
+      "to": "packages/file-format/src/resource-retention.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/delivery.ts",
+      "specifier": "node:fs",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/delivery.ts",
+      "specifier": "node:path",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/delivery.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/delivery.ts",
+      "specifier": "../../core/src/index.js",
+      "to": "packages/core/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/node-runtime/src/delivery.ts",
+      "specifier": "../../archive/src/index.js",
+      "to": "packages/archive/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/delivery.ts",
+      "specifier": "../../portable-runtime/src/index.js",
+      "to": "packages/portable-runtime/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/delivery.ts",
+      "specifier": "../../schema/src/errors.js",
+      "to": "packages/schema/src/errors.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/delivery.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/node-runtime/src/delivery.ts",
+      "specifier": "./media-directory.js",
+      "to": "packages/node-runtime/src/media-directory.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/history-repair.ts",
+      "specifier": "../../portable-runtime/src/checkpoint-recovery.js",
+      "to": "packages/portable-runtime/src/checkpoint-recovery.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/history-repair.ts",
+      "specifier": "node:fs",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/history-repair.ts",
+      "specifier": "node:path",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/history-repair.ts",
+      "specifier": "node:crypto",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/history-repair.ts",
+      "specifier": "../../file-format/src/index.js",
+      "to": "packages/file-format/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/history-repair.ts",
+      "specifier": "../../core/src/index.js",
+      "to": "packages/core/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/index.ts",
+      "specifier": "node:fs",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/index.ts",
+      "specifier": "node:path",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/index.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/index.ts",
+      "specifier": "../../core/src/index.js",
+      "to": "packages/core/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/index.ts",
+      "specifier": "../../agent-tools/src/index.js",
+      "to": "packages/agent-tools/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/index.ts",
+      "specifier": "../../file-format/src/index.js",
+      "to": "packages/file-format/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/index.ts",
+      "specifier": "../../compatibility/src/index.js",
+      "to": "packages/compatibility/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/index.ts",
+      "specifier": "../../recovery-journal/src/index.js",
+      "to": "packages/recovery-journal/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/index.ts",
+      "specifier": "./delivery.js",
+      "to": "packages/node-runtime/src/delivery.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/node-runtime/src/media-directory.ts",
+      "specifier": "node:fs",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/media-directory.ts",
+      "specifier": "node:path",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/media-directory.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/media-directory.ts",
+      "specifier": "../../portable-runtime/src/index.js",
+      "to": "packages/portable-runtime/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/media-directory.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/node-runtime/src/release.ts",
+      "specifier": "node:crypto",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/release.ts",
+      "specifier": "node:fs",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/node-runtime/src/release.ts",
+      "specifier": "node:path",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/operations/src/index.ts",
+      "specifier": "../../schema/src/table.js",
+      "to": "packages/schema/src/table.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/operations/src/index.ts",
+      "specifier": "../../widgets/src/table-model.js",
+      "to": "packages/widgets/src/table-model.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/operations/src/index.ts",
+      "specifier": "../../schema/src/validation.js",
+      "to": "packages/schema/src/validation.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/operations/src/index.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/operations/src/index.ts",
+      "specifier": "../../charts/src/index.js",
+      "to": "packages/charts/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/operations/src/index.ts",
+      "specifier": "../../facts/src/index.js",
+      "to": "packages/facts/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/operations/src/index.ts",
+      "specifier": "../../validation/src/index.js",
+      "to": "packages/validation/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/operations/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/operations/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/operations/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/patch-format/src/codec.ts",
+      "specifier": "../../schema/src/validation.js",
+      "to": "packages/schema/src/validation.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/patch-format/src/codec.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/patch-format/src/codec.ts",
+      "specifier": "../../compatibility/src/index.js",
+      "to": "packages/compatibility/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/patch-format/src/codec.ts",
+      "specifier": "../../schema/src/errors.js",
+      "to": "packages/schema/src/errors.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/patch-format/src/codec.ts",
+      "specifier": "../../operations/src/index.js",
+      "to": "packages/operations/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/patch-format/src/codec.ts",
+      "specifier": "../../diff/src/index.js",
+      "to": "packages/diff/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/patch-format/src/codec.ts",
+      "specifier": "../../change-contract/src/index.js",
+      "to": "packages/change-contract/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/patch-format/src/codec.ts",
+      "specifier": "../../validation/src/index.js",
+      "to": "packages/validation/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/patch-format/src/codec.ts",
+      "specifier": "../../archive/src/index.js",
+      "to": "packages/archive/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/patch-format/src/codec.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/patch-format/src/codec.ts",
+      "specifier": "../../reviewer/src/index.js",
+      "to": "packages/reviewer/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/patch-format/src/index.ts",
+      "specifier": "node:fs",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/patch-format/src/index.ts",
+      "specifier": "node:path",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/patch-format/src/index.ts",
+      "specifier": "./codec.js",
+      "to": "packages/patch-format/src/codec.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/patch-format/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/patch-format/src/index.ts",
+      "specifier": "./codec.js",
+      "to": "packages/patch-format/src/codec.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/performance-budget/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/portable-runtime/src/animation-playback.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/portable-runtime/src/artifact-identity.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/artifact-identity.ts",
+      "specifier": "../../compatibility/src/index.js",
+      "to": "packages/compatibility/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/artifact-identity.ts",
+      "specifier": "./shared.js",
+      "to": "packages/portable-runtime/src/shared.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/portable-runtime/src/artifact-identity.ts",
+      "specifier": "../../schema/src/file-format.js",
+      "to": "packages/schema/src/file-format.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/portable-runtime/src/artifact-identity.ts",
+      "specifier": "../../schema/src/file-format.js",
+      "to": "packages/schema/src/file-format.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/portable-runtime/src/browser.ts",
+      "specifier": "../../editor-react/src/resource-pool.js",
+      "to": "packages/editor-react/src/resource-pool.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/browser.ts",
+      "specifier": "../../renderer-react/src/index.js",
+      "to": "packages/renderer-react/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/browser.ts",
+      "specifier": "../../editor-dom/src/presenter-tools.js",
+      "to": "packages/editor-dom/src/presenter-tools.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/browser.ts",
+      "specifier": "../../editor-dom/src/animation-controls.js",
+      "to": "packages/editor-dom/src/animation-controls.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/browser.ts",
+      "specifier": "./animation-playback.js",
+      "to": "packages/portable-runtime/src/animation-playback.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/browser.ts",
+      "specifier": "../../editor-controller/src/video-resource.js",
+      "to": "packages/editor-controller/src/video-resource.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/browser.ts",
+      "specifier": "./media-controller.js",
+      "to": "packages/portable-runtime/src/media-controller.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/browser.ts",
+      "specifier": "../../editor-dom/src/table-selection.js",
+      "to": "packages/editor-dom/src/table-selection.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/browser.ts",
+      "specifier": "../../design-compiler/src/design-edits.js",
+      "to": "packages/design-compiler/src/design-edits.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/browser.ts",
+      "specifier": "../../layout-recipes/src/index.js",
+      "to": "packages/layout-recipes/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/browser.ts",
+      "specifier": "../../renderer-react/src/index.js",
+      "to": "packages/renderer-react/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/browser.ts",
+      "specifier": "../../editor-dom/src/text-selection.js",
+      "to": "packages/editor-dom/src/text-selection.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/browser.ts",
+      "specifier": "../../editor-dom/src/editor-shell.js",
+      "to": "packages/editor-dom/src/editor-shell.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/browser.ts",
+      "specifier": "../../editor-dom/src/image-crop.js",
+      "to": "packages/editor-dom/src/image-crop.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/browser.ts",
+      "specifier": "../../editor-controller/src/resource-port.js",
+      "to": "packages/editor-controller/src/resource-port.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/browser.ts",
+      "specifier": "../../editor-controller/src/transform-session.js",
+      "to": "packages/editor-controller/src/transform-session.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/browser.ts",
+      "specifier": "../../editor-dom/src/pointer.js",
+      "to": "packages/editor-dom/src/pointer.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/browser.ts",
+      "specifier": "../../editor-dom/src/object-properties.js",
+      "to": "packages/editor-dom/src/object-properties.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/browser.ts",
+      "specifier": "../../editor-controller/src/object-commands.js",
+      "to": "packages/editor-controller/src/object-commands.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/browser.ts",
+      "specifier": "../../editor-dom/src/text-selection.js",
+      "to": "packages/editor-dom/src/text-selection.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/browser.ts",
+      "specifier": "../../editor-dom/src/index.js",
+      "to": "packages/editor-dom/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/browser.ts",
+      "specifier": "../../compatibility/src/index.js",
+      "to": "packages/compatibility/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/browser.ts",
+      "specifier": "./delivery-policy.js",
+      "to": "packages/portable-runtime/src/delivery-policy.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/browser.ts",
+      "specifier": "./shared.js",
+      "to": "packages/portable-runtime/src/shared.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/browser.ts",
+      "specifier": "../../renderer-react/src/index.js",
+      "to": "packages/renderer-react/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/browser.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/portable-runtime/src/checkpoint-recovery.ts",
+      "specifier": "../../file-format/src/resource-retention.js",
+      "to": "packages/file-format/src/resource-retention.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/checkpoint-recovery.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/checkpoint-recovery.ts",
+      "specifier": "../../archive/src/index.js",
+      "to": "packages/archive/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/checkpoint-recovery.ts",
+      "specifier": "../../core/src/history.js",
+      "to": "packages/core/src/history.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/checkpoint-recovery.ts",
+      "specifier": "../../schema/src/file-format.js",
+      "to": "packages/schema/src/file-format.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/checkpoint-recovery.ts",
+      "specifier": "../../compatibility/src/index.js",
+      "to": "packages/compatibility/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/checkpoint-recovery.ts",
+      "specifier": "../../validation/src/index.js",
+      "to": "packages/validation/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/checkpoint-recovery.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/portable-runtime/src/delivery-policy.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/portable-runtime/src/index.ts",
+      "specifier": "node:zlib",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/index.ts",
+      "specifier": "node:crypto",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/index.ts",
+      "specifier": "./browser-bundle.js",
+      "to": "packages/portable-runtime/src/browser-bundle.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/index.ts",
+      "specifier": "./shared.js",
+      "to": "packages/portable-runtime/src/shared.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/index.ts",
+      "specifier": "./shared.js",
+      "to": "packages/portable-runtime/src/shared.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/media-controller.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/media-controller.ts",
+      "specifier": "../../schema/src/video.js",
+      "to": "packages/schema/src/video.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/media-controller.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/portable-runtime/src/presenter-state.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "../../portable-runtime/src/animation-playback.js",
+      "to": "packages/portable-runtime/src/animation-playback.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "../../editor-controller/src/video-resource.js",
+      "to": "packages/editor-controller/src/video-resource.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "../../editor-dom/src/editor-shell.js",
+      "to": "packages/editor-dom/src/editor-shell.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "../../file-format/src/resource-retention.js",
+      "to": "packages/file-format/src/resource-retention.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "../../editor-controller/src/resource-port.js",
+      "to": "packages/editor-controller/src/resource-port.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "../../editor-controller/src/index.js",
+      "to": "packages/editor-controller/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "./checkpoint-recovery.js",
+      "to": "packages/portable-runtime/src/checkpoint-recovery.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "./artifact-identity.js",
+      "to": "packages/portable-runtime/src/artifact-identity.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "../../schema/src/version.js",
+      "to": "packages/schema/src/version.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "./artifact-identity.js",
+      "to": "packages/portable-runtime/src/artifact-identity.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "../../editor-controller/src/presentation.js",
+      "to": "packages/editor-controller/src/presentation.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "fflate",
+      "to": "node_modules/.pnpm/fflate@0.8.3/node_modules/fflate/lib/node.d.cts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "../../core/src/index.js",
+      "to": "packages/core/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "../../change-contract/src/index.js",
+      "to": "packages/change-contract/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "../../archive/src/index.js",
+      "to": "packages/archive/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "../../renderer-react/src/index.js",
+      "to": "packages/renderer-react/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "../../validation/src/index.js",
+      "to": "packages/validation/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "../../richtext-adapter/src/index.js",
+      "to": "packages/richtext-adapter/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "../../capability/src/index.js",
+      "to": "packages/capability/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "../../facts/src/index.js",
+      "to": "packages/facts/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "../../compatibility/src/index.js",
+      "to": "packages/compatibility/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "../../schema/src/errors.js",
+      "to": "packages/schema/src/errors.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "./presenter-state.js",
+      "to": "packages/portable-runtime/src/presenter-state.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "./delivery-policy.js",
+      "to": "packages/portable-runtime/src/delivery-policy.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "./presenter-state.js",
+      "to": "packages/portable-runtime/src/presenter-state.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "./presenter-state.js",
+      "to": "packages/portable-runtime/src/presenter-state.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "./delivery-policy.js",
+      "to": "packages/portable-runtime/src/delivery-policy.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/portable-runtime/src/shared.ts",
+      "specifier": "./delivery-policy.js",
+      "to": "packages/portable-runtime/src/delivery-policy.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/recovery-journal/src/index.ts",
+      "specifier": "node:fs",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/recovery-journal/src/index.ts",
+      "specifier": "node:path",
+      "to": null,
+      "typeOnly": false
+    },
+    {
+      "from": "packages/recovery-journal/src/index.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/recovery-journal/src/index.ts",
+      "specifier": "../../operations/src/index.js",
+      "to": "packages/operations/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/recovery-journal/src/index.ts",
+      "specifier": "../../diff/src/index.js",
+      "to": "packages/diff/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/recovery-journal/src/index.ts",
+      "specifier": "../../change-contract/src/index.js",
+      "to": "packages/change-contract/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/recovery-journal/src/index.ts",
+      "specifier": "../../validation/src/index.js",
+      "to": "packages/validation/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/recovery-journal/src/index.ts",
+      "specifier": "../../schema/src/errors.js",
+      "to": "packages/schema/src/errors.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/recovery-journal/src/index.ts",
+      "specifier": "../../compatibility/src/index.js",
+      "to": "packages/compatibility/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/recovery-journal/src/index.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/recovery-journal/src/index.ts",
+      "specifier": "../../schema/src/file-format.js",
+      "to": "packages/schema/src/file-format.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/recovery-journal/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/recovery-journal/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/renderer-react/src/index.ts",
+      "specifier": "../../portable-runtime/src/animation-playback.js",
+      "to": "packages/portable-runtime/src/animation-playback.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/renderer-react/src/index.ts",
+      "specifier": "../../schema/src/video.js",
+      "to": "packages/schema/src/video.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/renderer-react/src/index.ts",
+      "specifier": "../../validation/src/index.js",
+      "to": "packages/validation/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/renderer-react/src/index.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/renderer-react/src/index.ts",
+      "specifier": "../../charts/src/index.js",
+      "to": "packages/charts/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/renderer-react/src/index.ts",
+      "specifier": "../../widgets/src/index.js",
+      "to": "packages/widgets/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/renderer-react/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/reviewer/src/authoring-benchmark.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/reviewer/src/index.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/reviewer/src/index.ts",
+      "specifier": "../../compatibility/src/index.js",
+      "to": "packages/compatibility/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/reviewer/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/reviewer/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/reviewer/src/index.ts",
+      "specifier": "../../patch-format/src/codec.js",
+      "to": "packages/patch-format/src/codec.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/reviewer/src/index.ts",
+      "specifier": "./authoring-benchmark.js",
+      "to": "packages/reviewer/src/authoring-benchmark.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/richtext-adapter/src/edit-buffer.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/richtext-adapter/src/edit-buffer.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/richtext-adapter/src/edit-buffer.ts",
+      "specifier": "../../editor-controller/src/commands.js",
+      "to": "packages/editor-controller/src/commands.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/richtext-adapter/src/edit-buffer.ts",
+      "specifier": "./index.js",
+      "to": "packages/richtext-adapter/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/richtext-adapter/src/edit-buffer.ts",
+      "specifier": "./ranges.js",
+      "to": "packages/richtext-adapter/src/ranges.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/richtext-adapter/src/index.ts",
+      "specifier": "../../schema/src/validation.js",
+      "to": "packages/schema/src/validation.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/richtext-adapter/src/index.ts",
+      "specifier": "./ranges.js",
+      "to": "packages/richtext-adapter/src/ranges.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/richtext-adapter/src/index.ts",
+      "specifier": "./ranges.js",
+      "to": "packages/richtext-adapter/src/ranges.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/richtext-adapter/src/index.ts",
+      "specifier": "./transforms.js",
+      "to": "packages/richtext-adapter/src/transforms.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/richtext-adapter/src/index.ts",
+      "specifier": "./edit-buffer.js",
+      "to": "packages/richtext-adapter/src/edit-buffer.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/richtext-adapter/src/index.ts",
+      "specifier": "../../editor-controller/src/commands.js",
+      "to": "packages/editor-controller/src/commands.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/richtext-adapter/src/index.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/richtext-adapter/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/richtext-adapter/src/ranges.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/richtext-adapter/src/transforms.ts",
+      "specifier": "../../schema/src/validation.js",
+      "to": "packages/schema/src/validation.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/richtext-adapter/src/transforms.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/richtext-adapter/src/transforms.ts",
+      "specifier": "./index.js",
+      "to": "packages/richtext-adapter/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/richtext-adapter/src/transforms.ts",
+      "specifier": "./ranges.js",
+      "to": "packages/richtext-adapter/src/ranges.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/schema/src/file-format.ts",
+      "specifier": "./document.js",
+      "to": "packages/schema/src/document.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/schema/src/file-format.ts",
+      "specifier": "./operations.js",
+      "to": "packages/schema/src/operations.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/schema/src/index.ts",
+      "specifier": "./document.js",
+      "to": "packages/schema/src/document.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/schema/src/index.ts",
+      "specifier": "./operations.js",
+      "to": "packages/schema/src/operations.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/schema/src/index.ts",
+      "specifier": "./slide-ir.js",
+      "to": "packages/schema/src/slide-ir.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/schema/src/index.ts",
+      "specifier": "./slide-ir-validation.js",
+      "to": "packages/schema/src/slide-ir-validation.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/schema/src/index.ts",
+      "specifier": "./file-format.js",
+      "to": "packages/schema/src/file-format.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/schema/src/index.ts",
+      "specifier": "./validation.js",
+      "to": "packages/schema/src/validation.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/schema/src/index.ts",
+      "specifier": "./review.js",
+      "to": "packages/schema/src/review.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/schema/src/index.ts",
+      "specifier": "./errors.js",
+      "to": "packages/schema/src/errors.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/schema/src/index.ts",
+      "specifier": "./version.js",
+      "to": "packages/schema/src/version.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/schema/src/index.ts",
+      "specifier": "./table.js",
+      "to": "packages/schema/src/table.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/schema/src/index.ts",
+      "specifier": "./video.js",
+      "to": "packages/schema/src/video.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/schema/src/operations.ts",
+      "specifier": "./document.js",
+      "to": "packages/schema/src/document.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/schema/src/operations.ts",
+      "specifier": "./errors.js",
+      "to": "packages/schema/src/errors.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/schema/src/operations.ts",
+      "specifier": "./review.js",
+      "to": "packages/schema/src/review.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/schema/src/review.ts",
+      "specifier": "./document.js",
+      "to": "packages/schema/src/document.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/schema/src/review.ts",
+      "specifier": "./operations.js",
+      "to": "packages/schema/src/operations.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/schema/src/slide-ir-validation.ts",
+      "specifier": "./operations.js",
+      "to": "packages/schema/src/operations.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/schema/src/slide-ir-validation.ts",
+      "specifier": "./errors.js",
+      "to": "packages/schema/src/errors.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/schema/src/slide-ir-validation.ts",
+      "specifier": "./slide-ir.js",
+      "to": "packages/schema/src/slide-ir.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/schema/src/slide-ir.ts",
+      "specifier": "./document.js",
+      "to": "packages/schema/src/document.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/schema/src/slide-ir.ts",
+      "specifier": "./operations.js",
+      "to": "packages/schema/src/operations.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/schema/src/table.ts",
+      "specifier": "./validation.js",
+      "to": "packages/schema/src/validation.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/schema/src/table.ts",
+      "specifier": "./index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/schema/src/validation.ts",
+      "specifier": "./video.js",
+      "to": "packages/schema/src/video.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/schema/src/validation.ts",
+      "specifier": "./table.js",
+      "to": "packages/schema/src/table.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/schema/src/validation.ts",
+      "specifier": "./index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/schema/src/validation.ts",
+      "specifier": "./errors.js",
+      "to": "packages/schema/src/errors.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/schema/src/validation.ts",
+      "specifier": "../../charts/src/index.js",
+      "to": "packages/charts/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/schema/src/video.ts",
+      "specifier": "./document.js",
+      "to": "packages/schema/src/document.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/semantic-identity/src/index.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/semantic-identity/src/index.ts",
+      "specifier": "../../schema/src/errors.js",
+      "to": "packages/schema/src/errors.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/semantic-identity/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/validation/src/index.ts",
+      "specifier": "../../schema/src/table.js",
+      "to": "packages/schema/src/table.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/validation/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/validation/src/index.ts",
+      "specifier": "../../canonical-json/src/index.js",
+      "to": "packages/canonical-json/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/validation/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/validation/src/index.ts",
+      "specifier": "../../semantic-identity/src/index.js",
+      "to": "packages/semantic-identity/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/validation/src/index.ts",
+      "specifier": "../../facts/src/index.js",
+      "to": "packages/facts/src/index.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/validation/src/index.ts",
+      "specifier": "../../schema/src/errors.js",
+      "to": "packages/schema/src/errors.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/validation/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/widgets/src/index.ts",
+      "specifier": "../../schema/src/video.js",
+      "to": "packages/schema/src/video.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/widgets/src/index.ts",
+      "specifier": "../../schema/src/table.js",
+      "to": "packages/schema/src/table.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/widgets/src/index.ts",
+      "specifier": "./table-model.js",
+      "to": "packages/widgets/src/table-model.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/widgets/src/index.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/widgets/src/table-model.ts",
+      "specifier": "../../schema/src/index.js",
+      "to": "packages/schema/src/index.ts",
+      "typeOnly": true
+    },
+    {
+      "from": "packages/widgets/src/table-model.ts",
+      "specifier": "../../schema/src/table.js",
+      "to": "packages/schema/src/table.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/widgets/src/table-model.ts",
+      "specifier": "../../schema/src/table.js",
+      "to": "packages/schema/src/table.ts",
+      "typeOnly": false
+    },
+    {
+      "from": "packages/widgets/src/table-model.ts",
+      "specifier": "../../schema/src/table.js",
+      "to": "packages/schema/src/table.ts",
+      "typeOnly": true
+    }
+  ],
+  "computed": [],
+  "cliReachable": [
+    "apps/cli/index.ts",
+    "packages/agent-tools/src/design-workflow.ts",
+    "packages/agent-tools/src/index.ts",
+    "packages/agent-tools/src/tool-schemas.ts",
+    "packages/archive/src/index.ts",
+    "packages/authoring/src/default-document.ts",
+    "packages/authoring/src/index.ts",
+    "packages/canonical-json/src/index.ts",
+    "packages/capability/src/client-acceptance.ts",
+    "packages/capability/src/index.ts",
+    "packages/change-contract/src/index.ts",
+    "packages/charts/src/index.ts",
+    "packages/compatibility/src/index.ts",
+    "packages/core/src/derived-indexes.ts",
+    "packages/core/src/history.ts",
+    "packages/core/src/index.ts",
+    "packages/design-compiler/src/current-document.ts",
+    "packages/design-compiler/src/deck-planning.ts",
+    "packages/design-compiler/src/design-edits.ts",
+    "packages/design-compiler/src/index.ts",
+    "packages/design-system/src/index.ts",
+    "packages/diff/src/index.ts",
+    "packages/editor-controller/src/background-jobs.ts",
+    "packages/editor-controller/src/commands.ts",
+    "packages/editor-controller/src/index.ts",
+    "packages/editor-controller/src/mode.ts",
+    "packages/editor-controller/src/object-commands.ts",
+    "packages/editor-controller/src/policy.ts",
+    "packages/editor-controller/src/presentation.ts",
+    "packages/editor-controller/src/resource-port.ts",
+    "packages/editor-controller/src/selection.ts",
+    "packages/editor-controller/src/transform-session.ts",
+    "packages/editor-controller/src/video-resource.ts",
+    "packages/editor-dom/src/editor-shell.ts",
+    "packages/editor-dom/src/index.ts",
+    "packages/editor-dom/src/pointer.ts",
+    "packages/exporter-pdf/src/index.ts",
+    "packages/exporter-pdf/src/reference-render.ts",
+    "packages/exporter-pptx/src/index.ts",
+    "packages/exporter-pptx/src/table.ts",
+    "packages/facts/src/index.ts",
+    "packages/file-format/src/cas.ts",
+    "packages/file-format/src/index.ts",
+    "packages/file-format/src/resource-retention.ts",
+    "packages/geometry/src/index.ts",
+    "packages/layout-recipes/src/design-packs.ts",
+    "packages/layout-recipes/src/index.ts",
+    "packages/macros/src/index.ts",
+    "packages/node-runtime/src/delivery.ts",
+    "packages/node-runtime/src/history-repair.ts",
+    "packages/node-runtime/src/index.ts",
+    "packages/node-runtime/src/media-directory.ts",
+    "packages/operations/src/index.ts",
+    "packages/patch-format/src/codec.ts",
+    "packages/portable-runtime/src/animation-playback.ts",
+    "packages/portable-runtime/src/artifact-identity.ts",
+    "packages/portable-runtime/src/browser-bundle.ts",
+    "packages/portable-runtime/src/checkpoint-recovery.ts",
+    "packages/portable-runtime/src/delivery-policy.ts",
+    "packages/portable-runtime/src/index.ts",
+    "packages/portable-runtime/src/presenter-state.ts",
+    "packages/portable-runtime/src/shared.ts",
+    "packages/recovery-journal/src/index.ts",
+    "packages/renderer-react/src/index.ts",
+    "packages/reviewer/src/authoring-benchmark.ts",
+    "packages/reviewer/src/index.ts",
+    "packages/richtext-adapter/src/edit-buffer.ts",
+    "packages/richtext-adapter/src/index.ts",
+    "packages/richtext-adapter/src/ranges.ts",
+    "packages/richtext-adapter/src/transforms.ts",
+    "packages/schema/src/document.ts",
+    "packages/schema/src/errors.ts",
+    "packages/schema/src/file-format.ts",
+    "packages/schema/src/index.ts",
+    "packages/schema/src/operations.ts",
+    "packages/schema/src/review.ts",
+    "packages/schema/src/slide-ir-validation.ts",
+    "packages/schema/src/slide-ir.ts",
+    "packages/schema/src/table.ts",
+    "packages/schema/src/validation.ts",
+    "packages/schema/src/version.ts",
+    "packages/schema/src/video.ts",
+    "packages/semantic-identity/src/index.ts",
+    "packages/validation/src/index.ts",
+    "packages/widgets/src/index.ts",
+    "packages/widgets/src/table-model.ts"
+  ],
+  "packageManifests": [
+    {
+      "path": "apps/contract-deck/package.json",
+      "name": "@ppte/contract-deck",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "apps/host/package.json",
+      "name": "@ppte/host",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview"
+      }
+    },
+    {
+      "path": "apps/mcp/package.json",
+      "name": "@ppte/mcp",
+      "version": "0.6.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "package.json",
+      "name": "ppte",
+      "version": "0.9.0-next.0",
+      "private": true,
+      "description": "PPTe semantic presentation format and Stable Core reference runtime",
+      "license": "Apache-2.0",
+      "type": "module",
+      "packageManager": "pnpm@11.22.0",
+      "scripts": {
+        "build": "node scripts/build-portable.mjs && tsc -p tsconfig.build.json",
+        "host:build": "pnpm --dir apps/host build",
+        "typecheck": "node scripts/build-portable.mjs && tsc --noEmit",
+        "test": "pnpm build && node --test dist/tests/*.test.js",
+        "validate": "python scripts/validate.py && bash scripts/ci-guards.sh",
+        "e2e:vertical-slice": "pnpm build && node dist/apps/contract-deck/index.js --e2e",
+        "e2e:milestone": "pnpm build && node dist/apps/contract-deck/index.js --milestone",
+        "e2e:beta": "pnpm build && node dist/apps/contract-deck/index.js --beta",
+        "e2e:ga-a": "pnpm build && node dist/apps/contract-deck/index.js --ga-a",
+        "e2e:ga-b": "pnpm build && node dist/apps/contract-deck/index.js --ga-b",
+        "e2e:ga-c": "pnpm build && pnpm host:build && node scripts/blackbox-gates.mjs --milestone final",
+        "blackbox:final": "node scripts/blackbox-gates.mjs --milestone final",
+        "blackbox:report": "node scripts/blackbox-gates.mjs --report",
+        "perf:ga-a": "pnpm build && node dist/apps/contract-deck/index.js --ga-a",
+        "contract-deck": "pnpm build && node dist/apps/contract-deck/index.js",
+        "cli": "node dist/apps/cli/index.js",
+        "package:stage": "pnpm build && pnpm host:build && node scripts/stage-package.mjs",
+        "package:pack": "pnpm package:stage && npm pack ./artifacts/npm-package --pack-destination artifacts",
+        "experiment:text-kernel": "pnpm build && node scripts/text-kernel-poc.mjs",
+        "benchmark:authoring": "node scripts/authoring-benchmark.mjs",
+        "release:check": "node scripts/release-check.mjs"
+      },
+      "devDependencies": {
+        "@types/node": "^22.0.0",
+        "@types/react": "^19.1.10",
+        "@types/react-dom": "^19.1.7",
+        "@vitejs/plugin-react": "^5.0.2",
+        "esbuild": "^0.28.2",
+        "fflate": "^0.8.3",
+        "playwright": "^1.55.0",
+        "prosemirror-model": "1.25.11",
+        "prosemirror-state": "1.4.4",
+        "prosemirror-view": "1.42.3",
+        "react": "^19.1.1",
+        "react-dom": "^19.1.1",
+        "typescript": "^5.7.0",
+        "vite": "^7.1.3"
+      }
+    },
+    {
+      "path": "packages/agent-tools/package.json",
+      "name": "@ppte/agent-tools",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/archive/package.json",
+      "name": "@ppte/archive",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/canonical-json/package.json",
+      "name": "@ppte/canonical-json",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/capability/package.json",
+      "name": "@ppte/capability",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/change-contract/package.json",
+      "name": "@ppte/change-contract",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/charts/package.json",
+      "name": "@ppte/charts",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/compatibility/package.json",
+      "name": "@ppte/compatibility",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/core/package.json",
+      "name": "@ppte/core",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/design-compiler/package.json",
+      "name": "@ppte/design-compiler",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/design-system/package.json",
+      "name": "@ppte/design-system",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/diff/package.json",
+      "name": "@ppte/diff",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/editor-react/package.json",
+      "name": "@ppte/editor-react",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit",
+        "host:build": "pnpm --dir ../../apps/host build"
+      }
+    },
+    {
+      "path": "packages/exporter-pdf/package.json",
+      "name": "@ppte/exporter-pdf",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/exporter-pptx/package.json",
+      "name": "@ppte/exporter-pptx",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/facts/package.json",
+      "name": "@ppte/facts",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/fault-injection/package.json",
+      "name": "@ppte/fault-injection",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/file-format/package.json",
+      "name": "@ppte/file-format",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/geometry/package.json",
+      "name": "@ppte/geometry",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/importer-legacy/package.json",
+      "name": "@ppte/importer-legacy",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/layout-recipes/package.json",
+      "name": "@ppte/layout-recipes",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/macros/package.json",
+      "name": "@ppte/macros",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/operations/package.json",
+      "name": "@ppte/operations",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/patch-format/package.json",
+      "name": "@ppte/patch-format",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/performance-budget/package.json",
+      "name": "@ppte/performance-budget",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/portable-runtime/package.json",
+      "name": "@ppte/portable-runtime",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/recovery-journal/package.json",
+      "name": "@ppte/recovery-journal",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/renderer-react/package.json",
+      "name": "@ppte/renderer-react",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/reviewer/package.json",
+      "name": "@ppte/reviewer",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/richtext-adapter/package.json",
+      "name": "@ppte/richtext-adapter",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/schema/package.json",
+      "name": "@ppte/schema",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/semantic-identity/package.json",
+      "name": "@ppte/semantic-identity",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/validation/package.json",
+      "name": "@ppte/validation",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    },
+    {
+      "path": "packages/widgets/package.json",
+      "name": "@ppte/widgets",
+      "version": "0.1.0",
+      "private": true,
+      "type": "module",
+      "scripts": {
+        "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+      }
+    }
+  ]
+}

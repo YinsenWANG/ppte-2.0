@@ -1,0 +1,19 @@
+{
+  "status": "uncontrolled",
+  "author": "Current Codex session; direct HTML/CSS authored and serialized with local Python. No old renderer/IR used.",
+  "reason": "No isolated model call, verified reasoning configuration, per-draft tokens, cold/hot timings or human visual review. Not one of the eighteen benchmark runs. Read-only exploratory drafts; editing/save runtime absent.",
+  "artifacts": [
+    {
+      "path": "drafts/cherry.html",
+      "sha256": "48438718a88d33c68aeac0bdc19ec280ece462209c6ac46f7706d451c1090d4f"
+    },
+    {
+      "path": "drafts/product.html",
+      "sha256": "70ad04ddc8e0ba081b8b3b9afa188e2efbc7eae9cdc061a5c55a0f7bdb2bf47e"
+    },
+    {
+      "path": "drafts/data.html",
+      "sha256": "e2de827f4a361ccd1140bef772b99d3488e036780f998b158a0f1e7ac7a03bdf"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "status": "passed",
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "log": "typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "exitCode": 0,
+      "log": "build.log"
+    },
+    {
+      "command": "pnpm test",
+      "exitCode": 0,
+      "log": "test.log",
+      "tests": 400,
+      "passed": 400,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "node --test dist/tests/html-first-baseline.test.js",
+      "exitCode": 0,
+      "log": "h00.tap",
+      "tests": 8,
+      "passed": 8
+    },
+    {
+      "command": "node scripts/html-benchmark.mjs",
+      "exitCode": 2,
+      "meaning": "expected pending, not a passed benchmark",
+      "log": "../baseline-report.json"
+    },
+    {
+      "command": "node scripts/html-import-inventory.mjs + deepEqual retained snapshot",
+      "exitCode": 0,
+      "meaning": "fresh graph exactly matched frozen snapshot before implementation commit"
+    }
+  ],
+  "testsAdded": 8,
+  "testsRemoved": 0,
+  "existingTests": 392,
+  "blackboxReleaseScriptsChanged": false,
+  "notes": [
+    "Existing assertions unchanged. No retired-scope acceptance removed.",
+    "Installed Chrome headless observations are not manual browser acceptance. Safari session creation failed; original error retained.",
+    "Pre-existing pipeline control files remain untouched and are locally excluded through .git/info/exclude; no product ignore rules changed."
+  ]
+}

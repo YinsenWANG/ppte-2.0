@@ -1,0 +1,17 @@
+{
+  "observedAt": "2026-09-06T08:40:22.593Z",
+  "platform": "darwin",
+  "arch": "arm64",
+  "osRelease": "25.6.0",
+  "osVersion": "26.6.2",
+  "node": "v22.23.2",
+  "pnpm": "11.22.0",
+  "chrome": "152.0.7977.76",
+  "safari": "26.6.2",
+  "safaridriver": "Included with Safari 26.6.2 (21624.5.1.11.3)",
+  "requestedModel": "gpt-6-astra",
+  "requestedReasoning": "medium",
+  "configurationSource": "Observed current Codex process launch arguments; not provider response identity or usage evidence",
+  "installationMeasurement": "pending: existing environment; not a cold install",
+  "manualBrowserAcceptance": "pending"
+}

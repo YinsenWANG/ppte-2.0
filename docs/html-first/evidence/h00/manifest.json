@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "contract": {
+    "version": "html-first-1.0",
+    "authorityCommit": "bbcd46bde2c608b5a56e617f316c5dcb5534857e",
+    "defaultDeliverables": [
+      "html"
+    ],
+    "optionalExports": [
+      "pdf"
+    ],
+    "representation": "DOM/CSS",
+    "requiredAttributes": [
+      "data-ppte-slide",
+      "data-ppte-id"
+    ],
+    "metadata": [
+      "documentId",
+      "formatVersion",
+      "saveRevision",
+      "notes",
+      "sources",
+      "editConstraints"
+    ],
+    "defaultPipeline": [
+      "author-html",
+      "enhance",
+      "static-check",
+      "optional-visual-check",
+      "deliver-html"
+    ],
+    "saveSuccess": "original-file-write-confirmed",
+    "draftIsSaved": false,
+    "retired": [
+      "PPTX",
+      "PPT",
+      "Office",
+      "ODP",
+      "Keynote",
+      ".ppte",
+      "CAS",
+      "Portable profiles",
+      "Presentation IR",
+      "Recipe"
+    ]
+  },
+  "repetitions": 3,
+  "model": {
+    "model": "gpt-6-astra",
+    "reasoning": "medium",
+    "verification": "pending",
+    "note": "Pinned to observed Codex launcher requested model/reasoning configuration. Provider response identity and per-run usage receipts are not available; exploratory drafts are not controlled runs."
+  },
+  "fonts": [
+    "system-ui",
+    "PingFang SC",
+    "Microsoft YaHei",
+    "sans-serif"
+  ],
+  "materials": [
+    {
+      "id": "cherry",
+      "title": "Cherry Studio 开源之路",
+      "source": {
+        "path": "materials/cherry-readme.md",
+        "sha256": "e775f21999c1bf39e7b7dcf00bedb693c5cd28d0f059bd153fdaf18535b52ef4"
+      },
+      "provenance": "https://github.com/CherryHQ/cherry-studio/blob/67ca175cc833ba6a286464343f64ec1e426d443a/README.md",
+      "license": "AGPL-3.0 upstream README, retained as source material; no upstream images/fonts/code embedded",
+      "prompt": "面向开源贡献者，用这份固定 README 制作十二页中文演示稿：产品、生态、贡献入口、共创计划、社区与企业版边界。不得虚构发布日期、增长数字或把路线图说成已上线。",
+      "pages": 12,
+      "resourceTier": "light",
+      "resources": []
+    },
+    {
+      "id": "product",
+      "title": "PPTe HTML-first 产品介绍",
+      "source": {
+        "path": "materials/ppte-product.md",
+        "sha256": "8375911c80504abd3e0abe0a7bbfa0c6c978550d7737738fa2a71097f615d704"
+      },
+      "provenance": "git:bbcd46bde2c608b5a56e617f316c5dcb5534857e:docs/html-first/PLAN.md",
+      "license": "repository Apache-2.0",
+      "prompt": "面向演示稿作者，用固定方案制作十二页产品介绍。强调一个 HTML、直接创作、编辑保存、重开与放映；所有规划能力标为设计目标，不虚报已支持。",
+      "pages": 12,
+      "resourceTier": "light",
+      "resources": []
+    },
+    {
+      "id": "data",
+      "title": "PPTe 依赖现状汇报",
+      "source": {
+        "path": "materials/dependency-report.md",
+        "sha256": "dfc9a6991442c9a3dafdde3aa7ea20398fe69c9ca81d2da251b5b2844d7a2fcd"
+      },
+      "provenance": "git:bbcd46bde2c608b5a56e617f316c5dcb5534857e + retained import-graph.json",
+      "license": "repository Apache-2.0",
+      "prompt": "面向维护者，用固定依赖盘点制作十二页汇报。保留真实原生表格和数值，解释统计口径、旧 CLI 可达链、候选复用与退休边界。不把静态边数说成性能。",
+      "pages": 12,
+      "resourceTier": "light",
+      "resources": []
+    }
+  ]
+}
