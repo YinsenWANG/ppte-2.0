@@ -1,0 +1,66 @@
+{
+  "task": "P01",
+  "status": "partial",
+  "acceptance": "unverified",
+  "baselineCommit": "e8546e76a02ff3a5d92544e49cfed5228c8fffc4",
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm build",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm test",
+      "exitCode": 0,
+      "tests": 367,
+      "passed": 367,
+      "failed": 0,
+      "skipped": 0,
+      "addedTests": 8
+    },
+    {
+      "command": "pnpm blackbox:final",
+      "exitCode": 0,
+      "baselineGreen": 70,
+      "baselineRed": 0,
+      "finalGreen": 71,
+      "finalRed": 0,
+      "newRedIds": []
+    }
+  ],
+  "testCases": [
+    "P01 criterion 1: Node microbenchmarks name the computation, never a browser interaction",
+    "P01 criterion 1: reproducible 12/30/100-page fixtures validate and build the actual Portable entry",
+    "P01 criterion 2: frozen resources and statistically complete separated browser evidence",
+    "P01 criterion 2: changed resources and missing browser/corpus evidence are rejected",
+    "P01 criterion 3: p95 retains the tail, raw samples and count; invalid and small samples fail",
+    "P01 criterion 3: budgets cannot inflate and averages cannot replace measured p95",
+    "P01 criterion 3: unmeasured physical devices, IME, Host and real-resource capacity cannot close A20",
+    "P01 criterion 1: live offline file entry paints an Engine edit, navigates and undoes exactly"
+  ],
+  "sourceSha256": {
+    "scripts/perf-browser.mjs": "30d4fa9b56b4233cfcc788e6b15c3d24d8c2916a64a6e3442402a08c20d7c6c3",
+    "tests/fixtures/evolution/performance-manifest.json": "966f8b24f3243a6740a6a0a48e90ddedc699482a1bedd4c9bbadf609b6acdac2",
+    "tests/performance-browser.test.ts": "17c8dd6f4f8b8a64bcffc5139b9d65e700e1e2a111980f24c9bad3e050a94c4f",
+    "docs/evolution/quality/p01-browser-reference.json": "e0acd360d0050d315f79a527066a8d8211e085ff98fb60a8bd3f95a548403ceb"
+  },
+  "blackboxStart": "docs/evolution/quality/p01-blackbox-start.json",
+  "blackboxFinal": "docs/evolution/quality/p01-blackbox-final.json",
+  "remainingGaps": [
+    "12-page original Cherry material (not present in repository)",
+    "30-page 50 MiB real-resource Host corpus",
+    "Host .ppte open/save entry",
+    "Lower-performance physical device",
+    "Real Safari (Playwright WebKit is not Safari)",
+    "Physical Chinese IME and real pointer feedback",
+    "Single pointer-event input-to-paint latency",
+    "Unrelated DOM identity, text focus and playing media stability during edits",
+    "Memory peak/residual over at least 20 file/media disposal loops",
+    "OS disk-cache cold startup",
+    "Font subset missing-glyph fallback outside pinned content",
+    "Whole-product budget calibration; candidates are not release passes"
+  ]
+}

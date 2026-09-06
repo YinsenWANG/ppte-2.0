@@ -1999,6 +1999,27 @@ register('review-patch', 'D07-evidence', 'Missing authoring evidence cannot clos
   return { contract: 'green', authoringGate: result.status, humanPassed: result.humanPassed, deferred: result.deferredScriptIds }
 })
 
+register('review-patch', 'P01-performance-evidence', 'Partial browser calibration cannot close A20.', 'Synthetic Portable browser observations retain raw tail latency and explicitly unverified physical-device and Host coverage.', '20 cold/warm and 30 separate interaction samples for 12/30/100 pages; unmeasured scope stays unverified', async (ctx) => {
+  const manifestBytes = readFileSync(join(ROOT, 'tests/fixtures/evolution/performance-manifest.json'))
+  const manifest = JSON.parse(manifestBytes)
+  const report = JSON.parse(readFileSync(join(ROOT, 'docs/evolution/quality/p01-browser-reference.json'), 'utf8'))
+  ctx.expectEqual(report.manifestSha256, createHash('sha256').update(manifestBytes).digest('hex'), 'Performance protocol digest')
+  ctx.expectEqual(report.acceptance, 'unverified', 'Partial performance evidence must not close A20')
+  ctx.expectEqual(report.unverified, manifest.unverified, 'Unmeasured scopes must remain visible')
+  ctx.expectEqual(report.cases.map(c => c.pageCount), [12, 30, 100], 'Browser page tiers')
+  for (const c of report.cases) {
+    const metrics = { coldStartup: c.coldStartup, warmStartup: c.warmStartup, ...c.metrics }
+    for (const kind of ['coldStartup', 'warmStartup', 'engineTextCommitAndPaint', 'pageSwitch', 'undoAndPaint', 'redoAndPaint', 'saveCheckpoint', 'pointerDragAndPaint', 'mediaRoundTrip']) {
+      const metric = metrics[kind], sorted = [...metric.samplesMs].sort((a, b) => a - b)
+      ctx.expectGate(sorted.length >= (kind.endsWith('Startup') ? 20 : 30) && sorted.every(n => Number.isFinite(n) && n >= 0), 'Missing browser samples', { kind, count: sorted.length })
+      const rank = (sorted.length - 1) * .95, lower = Math.floor(rank), upper = Math.ceil(rank)
+      ctx.expectEqual(metric.p95Ms, sorted[lower] + (sorted[upper] - sorted[lower]) * (rank - lower), 'Tail latency must derive from raw samples')
+    }
+    ctx.expectGate(c.correctness.undoExact && c.correctness.saveExact && c.correctness.dragCommitted, 'Browser document correctness', c.correctness)
+  }
+  return { contract: 'green', acceptance: report.acceptance, measuredEntry: report.environment.entry, unverified: report.unverified }
+})
+
 function summarizeCase(spec, status, extra = {}) {
   return {
     id: spec.id,

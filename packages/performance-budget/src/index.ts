@@ -123,3 +123,22 @@ export function assertPerformanceBudget(metrics: readonly PerformanceMetric[], b
   const failed = [...metrics.filter((metric) => !metric.passed), ...bundles.filter((metric) => !metric.passed)]
   if (failed.length) throw new Error(`PERFORMANCE_BUDGET_FAILED: ${failed.map((metric) => 'p95Ms' in metric ? `${metric.name}=${metric.p95Ms.toFixed(1)}/${metric.budgetMs}ms` : `${metric.name}=${metric.bytes}/${metric.budgetBytes}bytes`).join(', ')}`)
 }
+
+/** A20 browser samples are never pooled across device, corpus, cache or action. */
+export function summarizeBrowserSamples(samplesMs: readonly number[], minimumSamples: number) {
+  if (!Number.isInteger(minimumSamples) || minimumSamples < 1) throw new Error('INVALID_SAMPLE_MINIMUM')
+  if (samplesMs.length < minimumSamples) throw new Error('INSUFFICIENT_BROWSER_SAMPLES')
+  if (samplesMs.some(value => !Number.isFinite(value) || value < 0)) throw new Error('INVALID_BROWSER_SAMPLE')
+  return { sampleCount: samplesMs.length, samplesMs: [...samplesMs], p50Ms: percentile(samplesMs, .5), p95Ms: percentile(samplesMs, .95), maxMs: Math.max(...samplesMs) }
+}
+
+/** These targets are frozen candidates, not a claim that any device passes. */
+export const P01_CANDIDATE_BUDGET = Object.freeze({
+  version: 'p01-candidate-v1',
+  coldStartupMs: 2000,
+  warmStartupMs: 2000,
+  pageSwitchMs: 100,
+  inputFeedbackMs: 50,
+  dragFeedbackMs: 50,
+  dragMaxPauseMs: 100,
+})

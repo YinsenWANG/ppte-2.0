@@ -257,10 +257,10 @@ export function runGAAStabilization(): Record<string, unknown> {
   let undoIndex = 0
   let redoIndex = 0
   const metrics = [
-    benchmark('open-to-interactive', () => { new PpteSession(document) }, GA_A_PERFORMANCE_BUDGET.openToInteractiveMs, 5),
-    benchmark('page-switch', () => { renderSlideHtml(document, lastSlide) }, GA_A_PERFORMANCE_BUDGET.pageSwitchMs, 5),
-    benchmark('selection', () => { hitTest(document, firstSlide, { x: 100, y: 100 }) }, GA_A_PERFORMANCE_BUDGET.selectionMs, 5),
-    benchmark('human-commit', () => {
+    benchmark('node-session-construction', () => { new PpteSession(document) }, GA_A_PERFORMANCE_BUDGET.openToInteractiveMs, 5),
+    benchmark('node-slide-html-generation', () => { renderSlideHtml(document, lastSlide) }, GA_A_PERFORMANCE_BUDGET.pageSwitchMs, 5),
+    benchmark('node-hit-test', () => { hitTest(document, firstSlide, { x: 100, y: 100 }) }, GA_A_PERFORMANCE_BUDGET.selectionMs, 5),
+    benchmark('node-geometry-transaction-commit', () => {
       const imageId = `${firstSlide}_image`
       const transaction: Transaction = {
         transactionId: `perf-human-${humanSequence}`,
@@ -275,28 +275,28 @@ export function runGAAStabilization(): Record<string, unknown> {
       }
       assert(humanSession.commit(transaction).ok, 'human commit benchmark')
     }, GA_A_PERFORMANCE_BUDGET.humanCommitMs, 5),
-    benchmark('text-commit', () => {
+    benchmark('node-text-transaction-commit', () => {
       const transaction = new MockAgent().createTextReplaceTransaction(document, textSession.getRevision(), firstSlide, `${firstSlide}_text_01`, text(`Measured capacity edit ${textSequence}`, `perf-text-${textSequence}`), `perf-text-${textSequence++}`)
       assert(textSession.commit(transaction).ok, 'text commit benchmark')
     }, GA_A_PERFORMANCE_BUDGET.textCommitMs, 5),
-    benchmark('journal-append', () => {
+    benchmark('node-journal-create-and-append', () => {
       const journalPath = join(mkdtempSync(join(tmpdir(), 'ppte-ga-a-journal-')), 'recovery.journal')
       const revision = canonicalRevision(document)
       const journal = new RecoveryJournal(journalPath, { journalVersion: '1', documentId: document.documentId, baseCheckpointRevision: revision, sessionId: 'ga-a-performance', createdAt: '2026-09-03T00:00:00.000Z' })
       const transaction = new MockAgent().createTextReplaceTransaction(document, revision, firstSlide, `${firstSlide}_text_01`, text('Journal measurement', 'perf-journal'), `perf-journal-${journalPath}`)
       journal.append(transaction)
     }, GA_A_PERFORMANCE_BUDGET.journalAppendMs, 5),
-    benchmark('undo', () => { assert(undoSessions[undoIndex++]?.undo().ok, 'undo benchmark') }, GA_A_PERFORMANCE_BUDGET.undoRedoMs, 5),
-    benchmark('redo', () => { assert(redoSessions[redoIndex++]?.redo().ok, 'redo benchmark') }, GA_A_PERFORMANCE_BUDGET.undoRedoMs, 5),
-    benchmark('checkpoint-50mb', () => {
+    benchmark('node-history-undo', () => { assert(undoSessions[undoIndex++]?.undo().ok, 'undo benchmark') }, GA_A_PERFORMANCE_BUDGET.undoRedoMs, 5),
+    benchmark('node-history-redo', () => { assert(redoSessions[redoIndex++]?.redo().ok, 'redo benchmark') }, GA_A_PERFORMANCE_BUDGET.undoRedoMs, 5),
+    benchmark('node-checkpoint-50mib-write', () => {
       const checkpointPath = join(mkdtempSync(join(tmpdir(), 'ppte-ga-a-checkpoint-')), 'capacity.ppte')
       writeCheckpoint(document, checkpointPath, { clean: true, assetBytes: { [IMAGE_ASSET_ID]: assetBytes }, timestamp: '2026-09-03T00:00:00.000Z' })
     }, GA_A_PERFORMANCE_BUDGET.checkpoint50MbMs, 3),
-    benchmark('portable-viewer-first-screen', () => {
+    benchmark('node-portable-viewer-build', () => {
       const result = createPortableViewer(document, { assetBytes: { [IMAGE_ASSET_ID]: assetBytes }, derivedAt: '2026-09-03T00:00:00.000Z' })
       assert(result.ok, `portable viewer: ${result.issues.map((issue) => issue.code).join(',')}`)
     }, GA_A_PERFORMANCE_BUDGET.portableViewerFirstScreenMs, 1),
-    benchmark('portable-quick-fix-first-screen', () => {
+    benchmark('node-portable-quick-fix-build', () => {
       const result = createPortableQuickFix(document, { assetBytes: { [IMAGE_ASSET_ID]: assetBytes }, derivedAt: '2026-09-03T00:00:00.000Z' })
       assert(result.ok, `portable quick fix: ${result.issues.map((issue) => issue.code).join(',')}`)
     }, GA_A_PERFORMANCE_BUDGET.portableQuickFixFirstScreenMs, 1),

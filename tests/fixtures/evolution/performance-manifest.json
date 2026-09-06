@@ -1,0 +1,78 @@
+{
+  "version": "p01-browser-v1",
+  "status": "frozen-candidate-protocol",
+  "candidateBudget": {
+    "version": "p01-candidate-v1",
+    "coldStartupMs": 2000,
+    "warmStartupMs": 2000,
+    "pageSwitchMs": 100,
+    "inputFeedbackMs": 50,
+    "dragFeedbackMs": 50,
+    "dragMaxPauseMs": 100
+  },
+  "protocol": {
+    "startupSamples": 20,
+    "interactionSamples": 30,
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "percentile": "linear interpolation at (n-1)*p; retain every raw value",
+    "cold": "fresh Chromium process and context; OS disk cache NOT cleared",
+    "warm": "reload same page/context after cold sample",
+    "startupClock": "navigation time origin through API ready, fonts.ready, image decode, video metadata, two animation frames and selection",
+    "input": "synthetic public Engine text commit through paint; NOT physical typing or IME",
+    "drag": "Playwright pointer gesture with 10 moves; gesture duration and rAF intervals separately; NOT single-event feedback latency",
+    "media": "muted play/pause, leave/return, metadata and two animation frames",
+    "save": "checkpoint build/download initiation; byte-exact reopened document checked outside timing; NOT filesystem flush",
+    "freezeRule": "Version budgets before measurement; never raise thresholds in response to failed samples. Compare only matching device/browser/resource/font/viewport/corpus/protocol pins. 100 pages is exploratory, not supported capacity."
+  },
+  "resources": [
+    {
+      "path": "design-packs/assets/noto-sans-sc-sample-1.woff2",
+      "sha256": "6d3ceafe90dafe95a6c6dd8260ef951c49f85d33bde36bc72d54118956d2f9fd"
+    },
+    {
+      "path": "tests/fixtures/media/blue-vp9.webm",
+      "sha256": "82a990b53d96742dab43ce4d678a0b2c4d55010901bd6f55c30290e8ff37144a"
+    },
+    {
+      "path": "design-packs/assets/font-1.json",
+      "sha256": "883ea47081e7becb231badd8edbcb164a27d82dcf82403a1477a0b13576496e6"
+    }
+  ],
+  "corpora": [
+    {
+      "pageCount": 12,
+      "fixtureRevision": "sha256-387dfb3c736316a870178898a0204c37c1e0df8360c5a86dd018e18326ebba89",
+      "source": "Deterministic synthetic contract corpus; 30 objects per page plus video, and charts in 100-page tier",
+      "assetPolicy": "Pinned tiny PNG and VP9 video; NOT the 50 MiB pressure corpus"
+    },
+    {
+      "pageCount": 30,
+      "fixtureRevision": "sha256-02981779e24357b55ae7336668e25f52c6e898d00762789c2c2bdf79c00b125a",
+      "source": "Deterministic synthetic contract corpus; 30 objects per page plus video, and charts in 100-page tier",
+      "assetPolicy": "Pinned tiny PNG and VP9 video; NOT the 50 MiB pressure corpus"
+    },
+    {
+      "pageCount": 100,
+      "fixtureRevision": "sha256-0100125ec749e16bcedbbf9acdf66db68743941bd200501503759e3fbf1298f8",
+      "source": "Deterministic synthetic contract corpus; 30 objects per page plus video, and charts in 100-page tier",
+      "assetPolicy": "Pinned tiny PNG and VP9 video; NOT the 50 MiB pressure corpus"
+    }
+  ],
+  "unverified": [
+    "12-page original Cherry material (not present in repository)",
+    "30-page 50 MiB real-resource Host corpus",
+    "Host .ppte open/save entry",
+    "Lower-performance physical device",
+    "Real Safari (Playwright WebKit is not Safari)",
+    "Physical Chinese IME and real pointer feedback",
+    "Single pointer-event input-to-paint latency",
+    "Unrelated DOM identity, text focus and playing media stability during edits",
+    "Memory peak/residual over at least 20 file/media disposal loops",
+    "OS disk-cache cold startup",
+    "Font subset missing-glyph fallback outside pinned content",
+    "Whole-product budget calibration; candidates are not release passes"
+  ]
+}
