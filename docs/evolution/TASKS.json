@@ -2689,7 +2689,7 @@
       "milestone": "M4",
       "priority": "P1",
       "title": "增量渲染、资源与缩略图缓存",
-      "status": "planned",
+      "status": "done",
       "effort": "L",
       "ownerRole": "渲染 / 编辑器",
       "dependsOn": [
@@ -2721,7 +2721,46 @@
         "A20"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        {
+          "commit": "4b7c71fcb71f64b493761d8152358129a34ec7ac",
+          "tests": [
+            "tests/incremental-rendering.test.ts"
+          ],
+          "verification": "docs/evolution/quality/p02-verification.json",
+          "report": "docs/evolution/quality/P02.md",
+          "criteria": {
+            "1": {
+              "status": "done",
+              "tests": [
+                "P02 criterion 1: dirty slides/elements match full rendering, including reorder, removal, theme and resource changes",
+                "P02 criterion 1: real DOM preserves unrelated pages, composing text and media position; forced rollback restores geometry",
+                "P02 criteria 1/3: offline Portable Engine edit preserves neighbour and thumbnails; navigation, undo and print see all pages",
+                "P02 criteria 1/3: Host keeps active surface singular, neighbours stable, thumbnails cached and print complete"
+              ]
+            },
+            "2": {
+              "status": "done",
+              "tests": [
+                "P02 criterion 2: digest URL/font reuse, changed bytes, retry, release and late font failures"
+              ],
+              "regressions": [
+                "tests/image-editing-journey.test.ts",
+                "tests/media-playback-journey.test.ts"
+              ]
+            },
+            "3": {
+              "status": "done",
+              "tests": [
+                "P02 criterion 3: thumbnail invalidation is local; 100-page window is bounded and full export preserves order",
+                "P02 criteria 1/3: offline Portable Engine edit preserves neighbour and thumbnails; navigation, undo and print see all pages",
+                "P02 criteria 1/3: Host keeps active surface singular, neighbours stable, thumbnails cached and print complete"
+              ]
+            }
+          },
+          "scope": "P02 implementation complete; A18/P03 and A20/P01 broader acceptance are not certified here."
+        }
+      ]
     },
     {
       "id": "P03",
