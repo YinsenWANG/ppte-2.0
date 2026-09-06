@@ -1,6 +1,6 @@
 {
   "planVersion": "single-file-first-1.1",
-  "status": "planned",
+  "status": "partial",
   "plan": "PLAN.md",
   "handoff": "HANDOFF.md",
   "basisCodeCommit": "6091c9a73e75b2a51b00bef19b61d58e2dbf52a1",
@@ -13,7 +13,7 @@
     {
       "id": "S00",
       "title": "冻结并统一单文件使用合同",
-      "status": "partial",
+      "status": "done",
       "dependsOn": [],
       "targetAreas": [
         "README.md",
@@ -39,7 +39,7 @@
       ],
       "evidence": {
         "scope": "Contract freeze only; S01/S02 runtime and native journeys are not certified.",
-        "implementationCommit": null,
+        "implementationCommit": "eff56d33b8b1bae19fd0fb56be4f4a3256ad7833",
         "report": "docs/single-file-first/evidence/s00/REPORT.md",
         "requiredEvidence": {
           "contract-diff": "docs/single-file-first/evidence/s00/contract-diff.md",
@@ -55,7 +55,8 @@
               "tests/html-first-baseline.test.ts"
             ],
             "evidence": "docs/single-file-first/evidence/s00/old-new-criteria-map.md",
-            "log": "docs/single-file-first/evidence/s00/verification/test.log"
+            "log": "docs/single-file-first/evidence/s00/verification/test.log",
+            "commit": "eff56d33b8b1bae19fd0fb56be4f4a3256ad7833"
           },
           {
             "criterion": "没有新 MCP/Office/QuickJS/Electron 或常驻服务要求",
@@ -65,7 +66,8 @@
               "tests/html-first-baseline.test.ts"
             ],
             "evidence": "docs/single-file-first/evidence/s00/old-new-criteria-map.md",
-            "log": "docs/single-file-first/evidence/s00/verification/test.log"
+            "log": "docs/single-file-first/evidence/s00/verification/test.log",
+            "commit": "eff56d33b8b1bae19fd0fb56be4f4a3256ad7833"
           },
           {
             "criterion": "版本改变不伪造旧基线已通过，既有样稿与用户文件不被改写",
@@ -75,7 +77,8 @@
               "tests/html-first-baseline.test.ts"
             ],
             "evidence": "docs/single-file-first/evidence/s00/old-new-criteria-map.md",
-            "log": "docs/single-file-first/evidence/s00/verification/test.log"
+            "log": "docs/single-file-first/evidence/s00/verification/test.log",
+            "commit": "eff56d33b8b1bae19fd0fb56be4f4a3256ad7833"
           }
         ],
         "statusByLayer": {
@@ -98,7 +101,7 @@
           }
         },
         "remaining": [
-          "Signed implementation commit reference will be recorded in the evidence closure commit."
+          "S00 contract acceptance is complete; product runtime, real-browser and human layers remain pending in S01–S08 as recorded."
         ]
       }
     },

@@ -1,7 +1,7 @@
 {
   "task": "S00",
   "basisCommit": "9856db3cef4da0d6ea6aca5a46b7039a166b995c",
-  "implementationCommit": null,
+  "implementationCommit": "eff56d33b8b1bae19fd0fb56be4f4a3256ad7833",
   "environment": {
     "platform": "macOS-26.6.2-arm64-arm-64bit",
     "node": "v22.23.2",
@@ -57,5 +57,7 @@
       "status": "pending",
       "reason": "No human reviewer session; model telemetry and real low-performance-device measurements also remain pending in subsequent tasks."
     }
-  }
+  },
+  "taskStatus": "done",
+  "scope": "S00 contract acceptance only; real-browser and human layers remain pending."
 }
