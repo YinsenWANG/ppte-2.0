@@ -1,0 +1,60 @@
+TAP version 13
+# Subtest: F02 A13 TSV preserves spaces, blanks, CRLF, Chinese and long numbers; rejects ragged, overflow and merged boundaries atomically
+ok 1 - F02 A13 TSV preserves spaces, blanks, CRLF, Chinese and long numbers; rejects ragged, overflow and merged boundaries atomically
+  ---
+  duration_ms: 31.711375
+  type: 'test'
+  ...
+# Subtest: F02 A13 rectangle selection and keyboard navigation skip covered cells and clamp edges
+ok 2 - F02 A13 rectangle selection and keyboard navigation skip covered cells and clamp edges
+  ---
+  duration_ms: 0.252167
+  type: 'test'
+  ...
+# Subtest: F02 A13 structure retains untouched cell identities and fact/source references; referenced deletion rejected; empty table can grow
+ok 3 - F02 A13 structure retains untouched cell identities and fact/source references; referenced deletion rejected; empty table can grow
+  ---
+  duration_ms: 19.340542
+  type: 'test'
+  ...
+# Subtest: F02 A13 Portable profile permissions, locks, presentation guard, style rendering and checkpoint undo
+ok 4 - F02 A13 Portable profile permissions, locks, presentation guard, style rendering and checkpoint undo
+  ---
+  duration_ms: 18.278459
+  type: 'test'
+  ...
+# Subtest: F02 A13/A21 real Host and file Portable table selection, paste, styles, structure, save/reopen/undo journey
+not ok 5 - F02 A13/A21 real Host and file Portable table selection, paste, styles, structure, save/reopen/undo journey
+  ---
+  duration_ms: 1670.672875
+  type: 'test'
+  location: '/private/tmp/ppte4/repo/dist/tests/table-editing-journey.test.js:126:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + {
+    +   fill: '#ffeeaa'
+    + }
+    - undefined
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  actual:
+    fill: '#ffeeaa'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte4/repo/dist/tests/table-editing-journey.test.js:169:20)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 4
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1948.861792

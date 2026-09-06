@@ -2143,6 +2143,58 @@
             "Safari and lower-performance physical devices",
             "F03 native Office export/client validation"
           ]
+        },
+        {
+          "commit": "4585a78d7c823868ca4f695dbd8fc9723c638815",
+          "tests": [
+            "tests/table-editing-journey.test.ts",
+            "tests/table-v2-contract.test.ts"
+          ],
+          "criteria": {
+            "1": "Portable profile/lock/presentation/checkpoint test and real Host/file Portable journey verify typed cell values and fills, Host row/column/merge controls, and explicit Portable restrictions.",
+            "2": "TSV edge-case and keyboard tests plus real clipboard, Shift+Arrow, Core keyboard undo and save/reopen journeys pass. Ragged, overflow and merge-boundary paste rejects before commit. Deterministic rerender regression proves cell keyboard ownership, navigation, draft selection and outside focus; original keyboard Undo assertions remain unchanged.",
+            "3": "Structural planner commits preserve complete unaffected cell records and fact/source lookup IDs through undo/redo; referenced deletion is rejected with the affected cell list. Browser insert/delete/move/resize also preserves untouched IDs."
+          },
+          "verification": {
+            "typecheck": "pass",
+            "build": "pass",
+            "tests": {
+              "before": 326,
+              "after": 327,
+              "delta": 1,
+              "originalF02Baseline": 321,
+              "totalF02Delta": 6,
+              "passed": 327,
+              "failed": 0,
+              "skipped": 0,
+              "testFile": "tests/table-editing-journey.test.ts",
+              "cases": [
+                "F02 A13 TSV preserves spaces, blanks, CRLF, Chinese and long numbers; rejects ragged, overflow and merged boundaries atomically",
+                "F02 A13 rectangle selection and keyboard navigation skip covered cells and clamp edges",
+                "F02 A13 structure retains untouched cell identities and fact/source references; referenced deletion rejected; empty table can grow",
+                "F02 A13 Portable profile permissions, locks, presentation guard, style rendering and checkpoint undo",
+                "F02 A21 table rerenders retain keyboard focus, draft selection and navigation without stealing outside focus",
+                "F02 A13/A21 real Host and file Portable table selection, paste, styles, structure, save/reopen/undo journey"
+              ]
+            },
+            "blackbox": {
+              "start": "docs/evolution/quality/f02-fix-blackbox-start.json",
+              "final": "docs/evolution/quality/f02-fix-blackbox-final.json",
+              "beforeGreen": 70,
+              "beforeRed": 0,
+              "green": 70,
+              "red": 0,
+              "newRed": []
+            }
+          },
+          "report": "docs/evolution/quality/F02.md",
+          "details": "docs/evolution/quality/f02-fix-verification.json",
+          "remainingRisks": [
+            "A21 product-owner and two target-user sessions",
+            "Physical IME",
+            "Safari and lower-performance physical devices",
+            "F03 native Office export/client validation"
+          ]
         }
       ]
     },

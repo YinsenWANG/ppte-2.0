@@ -1,0 +1,94 @@
+{
+  "commit": "4585a78d7c823868ca4f695dbd8fc9723c638815",
+  "tests": [
+    "tests/table-editing-journey.test.ts",
+    "tests/table-v2-contract.test.ts"
+  ],
+  "criteria": {
+    "1": "Portable profile/lock/presentation/checkpoint test and real Host/file Portable journey verify typed cell values and fills, Host row/column/merge controls, and explicit Portable restrictions.",
+    "2": "TSV edge-case and keyboard tests plus real clipboard, Shift+Arrow, Core keyboard undo and save/reopen journeys pass. Ragged, overflow and merge-boundary paste rejects before commit. Deterministic rerender regression proves cell keyboard ownership, navigation, draft selection and outside focus; original keyboard Undo assertions remain unchanged.",
+    "3": "Structural planner commits preserve complete unaffected cell records and fact/source lookup IDs through undo/redo; referenced deletion is rejected with the affected cell list. Browser insert/delete/move/resize also preserves untouched IDs."
+  },
+  "verification": {
+    "typecheck": "pass",
+    "build": "pass",
+    "tests": {
+      "before": 326,
+      "after": 327,
+      "delta": 1,
+      "originalF02Baseline": 321,
+      "totalF02Delta": 6,
+      "passed": 327,
+      "failed": 0,
+      "skipped": 0,
+      "testFile": "tests/table-editing-journey.test.ts",
+      "cases": [
+        "F02 A13 TSV preserves spaces, blanks, CRLF, Chinese and long numbers; rejects ragged, overflow and merged boundaries atomically",
+        "F02 A13 rectangle selection and keyboard navigation skip covered cells and clamp edges",
+        "F02 A13 structure retains untouched cell identities and fact/source references; referenced deletion rejected; empty table can grow",
+        "F02 A13 Portable profile permissions, locks, presentation guard, style rendering and checkpoint undo",
+        "F02 A21 table rerenders retain keyboard focus, draft selection and navigation without stealing outside focus",
+        "F02 A13/A21 real Host and file Portable table selection, paste, styles, structure, save/reopen/undo journey"
+      ]
+    },
+    "blackbox": {
+      "start": "docs/evolution/quality/f02-fix-blackbox-start.json",
+      "final": "docs/evolution/quality/f02-fix-blackbox-final.json",
+      "beforeGreen": 70,
+      "beforeRed": 0,
+      "green": 70,
+      "red": 0,
+      "newRed": []
+    }
+  },
+  "report": "docs/evolution/quality/F02.md",
+  "details": "docs/evolution/quality/f02-fix-verification.json",
+  "remainingRisks": [
+    "A21 product-owner and two target-user sessions",
+    "Physical IME",
+    "Safari and lower-performance physical devices",
+    "F03 native Office export/client validation"
+  ],
+  "taskId": "F02",
+  "signed": true,
+  "baselineCommit": "1b67b4088d7e204368bbabcea4e6f4636ce1f353",
+  "buildManifest": {
+    "applicationVersion": "0.9.0-next.0",
+    "runtimeBuildId": "85135ebe1c1efb5046aa4d1001dcc33366ba44569975c7243e3e560224bfe272"
+  },
+  "environment": {
+    "node": "v22.23.2",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "reproduction": {
+    "initialFullSuite": {
+      "passed": 326,
+      "failed": 0
+    },
+    "originalFocusedSuite": {
+      "passed": 4,
+      "failed": 1,
+      "log": "docs/evolution/quality/f02-fix-reproduction.tap"
+    },
+    "newRegressionAgainstOriginalSource": {
+      "passed": 0,
+      "failed": 1,
+      "log": "docs/evolution/quality/f02-fix-regression-before.tap"
+    },
+    "fixedFocusedSuite": {
+      "passed": 6,
+      "failed": 0,
+      "log": "docs/evolution/quality/f02-fix-focused-final.tap"
+    }
+  },
+  "sha256": {
+    "packages/editor-dom/src/table-selection.ts": "eb67e5198dcc9f53efc5bfaf80a9088422713f4a0e48bf20ddae5118e2e12526",
+    "tests/table-editing-journey.test.ts": "e351f0ce95daad0ad47055fcd3207cd7d60faaf801cf0e9245f8465c53852517",
+    "artifacts/f02/host-trace.zip": "6edc0f92275bf7c56558c0239634bafa9fc411ecabba1dadf82b40d47cbe5ab6",
+    "artifacts/f02/host.png": "f4859fa1d6a8c763206331af4ec4ca649d47fcb1e206bc4308225969f5f55158",
+    "artifacts/f02/portable-narrow.png": "50f55055a019e25283e09dab0ddc8422bb1892e0df496939677b550893cd1369",
+    "artifacts/f02/portable-trace.zip": "44d042b738d05977cb93c268460cb917622374f7c25bd51eb3cecc6426d3c4ca",
+    "artifacts/f02/portable.png": "266d0358b43f087d558a4188995b022ff821763fbfb29d4dd8d047262684add9"
+  }
+}

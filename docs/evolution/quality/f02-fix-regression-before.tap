@@ -1,0 +1,71 @@
+TAP version 13
+# Subtest: F02 A21 table rerenders retain keyboard focus, draft selection and navigation without stealing outside focus
+not ok 1 - F02 A21 table rerenders retain keyboard focus, draft selection and navigation without stealing outside focus
+  ---
+  duration_ms: 158.785542
+  type: 'test'
+  location: '/private/tmp/ppte4/repo/dist/tests/table-editing-journey.test.js:127:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      {
+    +   cellRetained: false,
+    -   cellRetained: true,
+        draft: {
+    +     end: 16,
+    +     focused: false,
+    +     start: 16,
+    -     end: 7,
+    -     focused: true,
+    -     start: 2,
+          value: 'unfinished draft'
+        },
+    +   historyTarget: false,
+    +   navigated: false,
+    -   historyTarget: true,
+    -   navigated: true,
+        outside: 'outside'
+      }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    cellRetained: true
+    historyTarget: true
+    navigated: true
+    draft:
+      focused: true
+      value: 'unfinished draft'
+      start: 2
+      end: 7
+    outside: 'outside'
+  actual:
+    cellRetained: false
+    historyTarget: false
+    navigated: false
+    draft:
+      focused: false
+      value: 'unfinished draft'
+      start: 16
+      end: 16
+    outside: 'outside'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte4/repo/dist/tests/table-editing-journey.test.js:162:16)
+    runNextTicks (node:internal/process/task_queues:64:5)
+    process.processImmediate (node:internal/timers:452:9)
+    process.callbackTrampoline (node:internal/async_hooks:130:17)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 365.626375
