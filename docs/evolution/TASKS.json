@@ -2767,7 +2767,7 @@
       "milestone": "M4",
       "priority": "P1",
       "title": "增量索引与可取消可信后台作业",
-      "status": "planned",
+      "status": "done",
       "effort": "L",
       "ownerRole": "Core / 性能",
       "dependsOn": [
@@ -2797,7 +2797,46 @@
         "A20"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        {
+          "commit": "0e0e389d3dd347aced0254c2f8c727358dd50b58",
+          "tests": [
+            "tests/background-job-contract.test.ts"
+          ],
+          "verification": "docs/evolution/quality/p03-verification.json",
+          "report": "docs/evolution/quality/P03.md",
+          "measurement": "docs/evolution/quality/p03-job-costs.json",
+          "criteria": {
+            "1": {
+              "status": "done",
+              "tests": [
+                "P03 criterion 1: all seven incremental indexes equal full rebuild across edits, undo, redo and failed commits",
+                "P03 criterion 1: randomized reference/group/asset mutations and injected partial failure rebuild safely",
+                "P03 criterion 1: pinned 12/30/100-page corpora update one slide and match the full oracle"
+              ]
+            },
+            "2": {
+              "status": "done",
+              "tests": [
+                "P03 criterion 2: immutable input, unique identity, native proposal and single-use consumption",
+                "P03 criteria 2/3: out-of-order, changed revision/input, forged envelopes and late consumption never publish stale output",
+                "P03 criteria 2/3: running/queued/pre-abort, timeout, backpressure, executor failure and close release resources",
+                "P03 criteria 2/3: real Chromium native/Worker total costs use pinned fixtures and retain raw samples"
+              ]
+            },
+            "3": {
+              "status": "done",
+              "tests": [
+                "P03 criteria 2/3: out-of-order, changed revision/input, forged envelopes and late consumption never publish stale output",
+                "P03 criteria 2/3: running/queued/pre-abort, timeout, backpressure, executor failure and close release resources",
+                "P03 criterion 3: controller commits invalidate proposals and file close disposes owned work; Engine rejects stale transactions",
+                "P03 criteria 2/3: real Chromium native/Worker total costs use pinned fixtures and retain raw samples"
+              ]
+            }
+          },
+          "scope": "P03 complete: incremental indexes and cancellable trusted job contracts verified; measured native/Worker total costs justify no production Worker migration. Broader A20/P01 physical-device and real-Safari gaps remain unverified."
+        }
+      ]
     },
     {
       "id": "Q01",
