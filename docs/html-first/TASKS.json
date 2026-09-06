@@ -320,7 +320,7 @@
     {
       "id": "H03",
       "title": "统一设计过的 UI 与日常编辑",
-      "status": "planned",
+      "status": "done",
       "dependsOn": [
         "H02"
       ],
@@ -339,7 +339,76 @@
         "普通文字对比度至少 4.5:1、键盘可达、焦点清晰",
         "修改一句话不重建整页；Grid/Flex 重排不偷偷 absolute 化",
         "保存重开保持内容、格式、布局、资源与锁定；操作失败不假成功"
-      ]
+      ],
+      "evidence": {
+        "authorityCommit": "bbcd46bde2c608b5a56e617f316c5dcb5534857e",
+        "implementationCommit": "4f1838f7df7d6a1fdcac7e6a59f1a6984cb524e5",
+        "report": "docs/html-first/evidence/h03/README.md",
+        "implementationNotes": "docs/html-first/evidence/h03/IMPLEMENTATION.md",
+        "verification": "docs/html-first/evidence/h03/verification/result.json",
+        "sample": "docs/html-first/evidence/h03/example.html",
+        "acceptance": [
+          {
+            "criterion": "三种对象选择和空/多选/混合值有统一样式；无原始表单墙",
+            "status": "passed",
+            "commit": "4f1838f7df7d6a1fdcac7e6a59f1a6984cb524e5",
+            "tests": [
+              "dist/tests/html-editor.test.js: H03 acceptance 1: real object selection, empty/multiple/mixed contextual shell and screenshots"
+            ],
+            "log": "docs/html-first/evidence/h03/verification/test.log"
+          },
+          {
+            "criterion": "普通文字对比度至少 4.5:1、键盘可达、焦点清晰",
+            "status": "passed",
+            "commit": "4f1838f7df7d6a1fdcac7e6a59f1a6984cb524e5",
+            "tests": [
+              "dist/tests/html-editor.test.js: H03 acceptance 2: computed normal text contrast >=4.5, visible keyboard focus and keyboard object/format path"
+            ],
+            "log": "docs/html-first/evidence/h03/verification/test.log"
+          },
+          {
+            "criterion": "修改一句话不重建整页；Grid/Flex 重排不偷偷 absolute 化",
+            "status": "passed",
+            "commit": "4f1838f7df7d6a1fdcac7e6a59f1a6984cb524e5",
+            "tests": [
+              "dist/tests/html-editor.test.js: H03 acceptance 3: local text/range history preserves sibling identity, native Grid/Flex strategies and protected Agent hash",
+              "dist/tests/html-editor.test.js: H03 native typing history, atomic multi-edit failure, table cell and page insertion history",
+              "dist/tests/html-editor.test.js: H03 original-file persisted range formatting and keyboard/pointer layout; clean preview returns to edit",
+              "dist/tests/html-editor.test.js: H03 guarded SVG replacement, protected native input, composition events coalesce and hash race rejects"
+            ],
+            "log": "docs/html-first/evidence/h03/verification/test.log"
+          },
+          {
+            "criterion": "保存重开保持内容、格式、布局、资源与锁定；操作失败不假成功",
+            "status": "passed",
+            "commit": "4f1838f7df7d6a1fdcac7e6a59f1a6984cb524e5",
+            "tests": [
+              "dist/tests/html-editor.test.js: H03 acceptance 4: original-file reopen retains text, range style, layout, media, table/background/lock; errors retain work",
+              "dist/tests/html-editor.test.js: H03 original-file persisted range formatting and keyboard/pointer layout; clean preview returns to edit",
+              "dist/tests/html-editor.test.js: H03 guarded SVG replacement, protected native input, composition events coalesce and hash race rejects"
+            ],
+            "log": "docs/html-first/evidence/h03/verification/test.log"
+          }
+        ],
+        "tests": {
+          "before": 426,
+          "after": 433,
+          "added": 7,
+          "removed": 0,
+          "passed": 433,
+          "failed": 0,
+          "skipped": 0,
+          "h03Passed": 7
+        },
+        "remaining": [
+          "H02 remains partial: Safari remote automation and native file-picker authorization/revocation journeys are still unverified. H03 Chrome headless evidence is not Safari or human acceptance.",
+          "H04 full presentation/media/fullscreen/presenter/PDF acceptance remains planned; only current-slide clean preview and Escape return are exercised here.",
+          "Complex SVG is edited/replaced as a whole; single basic primitive fill is supported. Generic arbitrary CSS/SVG decomposition is not promised.",
+          "Agent patch accepts text and validated style only, rejects unsupported fields, and refuses ancestor edits containing protected objects.",
+          "Undo/redo history is session-local; durable content, styling, resource bytes and lock flags are persisted, not the history stack.",
+          "Composition-event coalescing is tested with explicit synthetic events; no new real Chinese IME or human blind-review claim. H00/H06 evidence remains pending."
+        ]
+      }
     },
     {
       "id": "H04",

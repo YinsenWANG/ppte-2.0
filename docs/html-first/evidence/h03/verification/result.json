@@ -1,0 +1,131 @@
+{
+  "task": "H03",
+  "status": "done",
+  "implementationCommit": "4f1838f7df7d6a1fdcac7e6a59f1a6984cb524e5",
+  "recordedAt": "2026-09-06T10:33:39.959488+00:00",
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "log": "typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "exitCode": 0,
+      "log": "build.log"
+    },
+    {
+      "command": "pnpm test",
+      "exitCode": 0,
+      "log": "test.log"
+    }
+  ],
+  "tests": {
+    "before": 426,
+    "after": 433,
+    "added": 7,
+    "removed": 0,
+    "passed": 433,
+    "failed": 0,
+    "skipped": 0,
+    "h03Passed": 7
+  },
+  "acceptance": [
+    {
+      "criterion": "三种对象选择和空/多选/混合值有统一样式；无原始表单墙",
+      "status": "passed",
+      "commit": "4f1838f7df7d6a1fdcac7e6a59f1a6984cb524e5",
+      "tests": [
+        "dist/tests/html-editor.test.js: H03 acceptance 1: real object selection, empty/multiple/mixed contextual shell and screenshots"
+      ],
+      "log": "docs/html-first/evidence/h03/verification/test.log"
+    },
+    {
+      "criterion": "普通文字对比度至少 4.5:1、键盘可达、焦点清晰",
+      "status": "passed",
+      "commit": "4f1838f7df7d6a1fdcac7e6a59f1a6984cb524e5",
+      "tests": [
+        "dist/tests/html-editor.test.js: H03 acceptance 2: computed normal text contrast >=4.5, visible keyboard focus and keyboard object/format path"
+      ],
+      "log": "docs/html-first/evidence/h03/verification/test.log"
+    },
+    {
+      "criterion": "修改一句话不重建整页；Grid/Flex 重排不偷偷 absolute 化",
+      "status": "passed",
+      "commit": "4f1838f7df7d6a1fdcac7e6a59f1a6984cb524e5",
+      "tests": [
+        "dist/tests/html-editor.test.js: H03 acceptance 3: local text/range history preserves sibling identity, native Grid/Flex strategies and protected Agent hash",
+        "dist/tests/html-editor.test.js: H03 native typing history, atomic multi-edit failure, table cell and page insertion history",
+        "dist/tests/html-editor.test.js: H03 original-file persisted range formatting and keyboard/pointer layout; clean preview returns to edit",
+        "dist/tests/html-editor.test.js: H03 guarded SVG replacement, protected native input, composition events coalesce and hash race rejects"
+      ],
+      "log": "docs/html-first/evidence/h03/verification/test.log"
+    },
+    {
+      "criterion": "保存重开保持内容、格式、布局、资源与锁定；操作失败不假成功",
+      "status": "passed",
+      "commit": "4f1838f7df7d6a1fdcac7e6a59f1a6984cb524e5",
+      "tests": [
+        "dist/tests/html-editor.test.js: H03 acceptance 4: original-file reopen retains text, range style, layout, media, table/background/lock; errors retain work",
+        "dist/tests/html-editor.test.js: H03 original-file persisted range formatting and keyboard/pointer layout; clean preview returns to edit",
+        "dist/tests/html-editor.test.js: H03 guarded SVG replacement, protected native input, composition events coalesce and hash race rejects"
+      ],
+      "log": "docs/html-first/evidence/h03/verification/test.log"
+    }
+  ],
+  "browser": "Installed Google Chrome channel, headless, via Playwright; real loopback original-file I/O",
+  "contrast": {
+    "checkedLabels": 25,
+    "minimum": 8.079967076562946,
+    "target": 4.5
+  },
+  "remaining": [
+    "H02 remains partial: Safari remote automation and native file-picker authorization/revocation journeys are still unverified. H03 Chrome headless evidence is not Safari or human acceptance.",
+    "H04 full presentation/media/fullscreen/presenter/PDF acceptance remains planned; only current-slide clean preview and Escape return are exercised here.",
+    "Complex SVG is edited/replaced as a whole; single basic primitive fill is supported. Generic arbitrary CSS/SVG decomposition is not promised.",
+    "Agent patch accepts text and validated style only, rejects unsupported fields, and refuses ancestor edits containing protected objects.",
+    "Undo/redo history is session-local; durable content, styling, resource bytes and lock flags are persisted, not the history stack.",
+    "Composition-event coalescing is tested with explicit synthetic events; no new real Chinese IME or human blind-review claim. H00/H06 evidence remains pending."
+  ],
+  "gitSigning": "GPG signed with signoff",
+  "push": false,
+  "artifactHashes": {
+    "IMPLEMENTATION.md": "8b224aa624d4e0290c2551f1afd8e9bb6905ecad6a65af3be59b44c8a18250f6",
+    "README.md": "7b48bccf1287a712fa755c088816411bcda6b7fa11b9b6d12d2cbe7cdf49d77b",
+    "example.html": "65e6cba4bd30254b24cb73b3979dbc886c2af74ff4627ae4ee116c812f119051",
+    "screenshots/empty.png": "400273a499bb572b173b3ab4c6a4435f55f74c735d2b533ffae1eba782ca3e7d",
+    "screenshots/failed.png": "71b71c789d3fe4d1f8374334da15f2c820d862efdefa23ede59c4c826a3e8fcc",
+    "screenshots/image.png": "1010fff514f6fc9f7c3b1f783fa40c629b3839c52c2aa005c1861fc66004dec3",
+    "screenshots/keyboard-focus.png": "1c5811d033ad0245032fd09c7b0f0015721ef99296fcdf3bea39bdf602e48c75",
+    "screenshots/mixed.png": "f1822ac7cb0ffcaab00d27f8eaa944535e1618d8d94ad3fabf9148d3a6f6f869",
+    "screenshots/shape.png": "612764cf7a813e4303bbbc662ff40eb58ea132f8b6a0a4b899c8cb555c9d0285",
+    "screenshots/table.png": "6cf36ecca330aa75a4953cb324b8aaa91484d9d919778ac8625ddf524f3643d0",
+    "screenshots/title.png": "0d5005997d8624fbd0278454ce2ce38a0d0fb04bdb2d37293552fb023b94cd41",
+    "verification/build.log": "a407c25ea5e8744df48069502086fb92705639956542ae99b29e85c59f5bcbeb",
+    "verification/contrast.json": "a71f7d0864d0fac010f76d68bdaf7eac6ccd82b56e59858c466298baa59504bd",
+    "verification/test.log": "9aa6b703b95cc383195a9e2bed2f76d44c40ab6c133037255d472f885e1f2316",
+    "verification/typecheck.log": "4d383a112120e549ce76c8ce4a77dc036412e53696ce34be42ee6a5e8f607928"
+  },
+  "newFiles": [
+    "brief5-H03.md",
+    "docs/html-first/evidence/h03/IMPLEMENTATION.md",
+    "docs/html-first/evidence/h03/README.md",
+    "docs/html-first/evidence/h03/example.html",
+    "docs/html-first/evidence/h03/screenshots/empty.png",
+    "docs/html-first/evidence/h03/screenshots/failed.png",
+    "docs/html-first/evidence/h03/screenshots/image.png",
+    "docs/html-first/evidence/h03/screenshots/keyboard-focus.png",
+    "docs/html-first/evidence/h03/screenshots/mixed.png",
+    "docs/html-first/evidence/h03/screenshots/shape.png",
+    "docs/html-first/evidence/h03/screenshots/table.png",
+    "docs/html-first/evidence/h03/screenshots/title.png",
+    "docs/html-first/evidence/h03/verification/build.log",
+    "docs/html-first/evidence/h03/verification/contrast.json",
+    "docs/html-first/evidence/h03/verification/result.json",
+    "docs/html-first/evidence/h03/verification/test.log",
+    "docs/html-first/evidence/h03/verification/typecheck.log",
+    "packages/html-editor/src/commands.ts",
+    "packages/html-editor/src/workspace.ts",
+    "tests/html-editor.test.ts"
+  ]
+}
