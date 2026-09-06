@@ -1,0 +1,30 @@
+{
+  "implementationCommit": "ec215cd75f91ad6cbb5e567b612043117ee8ea22",
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "log": "typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "exitCode": 0,
+      "log": "build.log"
+    },
+    {
+      "command": "pnpm test",
+      "exitCode": 0,
+      "log": "test.log",
+      "tests": 60,
+      "passed": 60,
+      "failed": 0
+    }
+  ],
+  "previousAttempt": {
+    "passed": 59,
+    "failed": 1,
+    "log": "first-test.log",
+    "reason": "CLI error code mismatch; fixed implementation to preserve HTML_REQUIRED assertion."
+  },
+  "scope": "60 passing test cases include Safari blocked-evidence handling; this is not Safari or human acceptance."
+}

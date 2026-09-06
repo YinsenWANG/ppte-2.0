@@ -106,12 +106,138 @@
       }
     },
     {
-      "id": "S01", "title": "单 HTML 独立阅读、编辑与放映入口", "status": "planned", "dependsOn": ["S00"],
-      "targetAreas": ["packages/html-document/src/runtime.ts", "packages/html-editor/src/index.ts", "packages/html-editor/src/workspace.ts", "apps/html-cli/index.ts", "skills/ppte/SKILL.md", "tests/html-document.test.ts"],
-      "addresses": ["用户反馈 1", "F01"],
-      "deliverables": ["直开默认可见名称、状态、编辑、放映和保存入口", "编辑功能初始化不依赖 adapter/token/localhost", "ppte edit 仅打开文件并退出，旧服务不再隐式启动", "运行时、UI 与媒体均自包含，生成默认文件名使用 .ppte.html"],
-      "acceptance": ["在未安装 PPTe/Node 的目标环境断网直接打开成品，完成文字编辑、格式、撤销、放映与 Esc 返回", "网络日志没有 localhost/CDN/外部编辑器请求", "复制到另一目录后仍可使用，内容画布保持原生 CSS 保真", "阅读模式操作可见，放映模式无编辑器和常驻工具条"],
-      "requiredEvidence": ["real-file-url-journey", "network-log", "read-edit-present-screenshots", "no-node-target-environment"], "evidence": null
+      "id": "S01",
+      "title": "单 HTML 独立阅读、编辑与放映入口",
+      "status": "partial",
+      "dependsOn": [
+        "S00"
+      ],
+      "targetAreas": [
+        "packages/html-document/src/runtime.ts",
+        "packages/html-editor/src/index.ts",
+        "packages/html-editor/src/workspace.ts",
+        "apps/html-cli/index.ts",
+        "skills/ppte/SKILL.md",
+        "tests/html-document.test.ts"
+      ],
+      "addresses": [
+        "用户反馈 1",
+        "F01"
+      ],
+      "deliverables": [
+        "直开默认可见名称、状态、编辑、放映和保存入口",
+        "编辑功能初始化不依赖 adapter/token/localhost",
+        "ppte edit 仅打开文件并退出，旧服务不再隐式启动",
+        "运行时、UI 与媒体均自包含，生成默认文件名使用 .ppte.html"
+      ],
+      "acceptance": [
+        "在未安装 PPTe/Node 的目标环境断网直接打开成品，完成文字编辑、格式、撤销、放映与 Esc 返回",
+        "网络日志没有 localhost/CDN/外部编辑器请求",
+        "复制到另一目录后仍可使用，内容画布保持原生 CSS 保真",
+        "阅读模式操作可见，放映模式无编辑器和常驻工具条"
+      ],
+      "requiredEvidence": [
+        "real-file-url-journey",
+        "network-log",
+        "read-edit-present-screenshots",
+        "no-node-target-environment"
+      ],
+      "evidence": {
+        "implementationCommit": "ec215cd75f91ad6cbb5e567b612043117ee8ea22",
+        "report": "docs/single-file-first/evidence/s01/REPORT.md",
+        "verification": "docs/single-file-first/evidence/s01/verification/result.json",
+        "requiredEvidence": {
+          "real-file-url-journey": "docs/single-file-first/evidence/s01/journey.json",
+          "network-log": "docs/single-file-first/evidence/s01/network-log.json",
+          "read-edit-present-screenshots": "docs/single-file-first/evidence/s01/REPORT.md",
+          "no-node-target-environment": "docs/single-file-first/evidence/s01/no-node-target-environment.json"
+        },
+        "acceptance": [
+          {
+            "criterion": "在未安装 PPTe/Node 的目标环境断网直接打开成品，完成文字编辑、格式、撤销、放映与 Esc 返回",
+            "status": "partial",
+            "scope": "Installed Chrome headless automation; no human/Safari claim",
+            "commit": "ec215cd75f91ad6cbb5e567b612043117ee8ea22",
+            "tests": [
+              "tests/single-file-entry.test.ts"
+            ],
+            "evidence": [
+              "docs/single-file-first/evidence/s01/journey.json",
+              "docs/single-file-first/evidence/s01/no-node-target-environment.json"
+            ]
+          },
+          {
+            "criterion": "网络日志没有 localhost/CDN/外部编辑器请求",
+            "status": "passed",
+            "scope": "Installed Chrome headless automation; no human/Safari claim",
+            "commit": "ec215cd75f91ad6cbb5e567b612043117ee8ea22",
+            "tests": [
+              "tests/single-file-entry.test.ts"
+            ],
+            "evidence": [
+              "docs/single-file-first/evidence/s01/network-log.json"
+            ]
+          },
+          {
+            "criterion": "复制到另一目录后仍可使用，内容画布保持原生 CSS 保真",
+            "status": "passed",
+            "scope": "Installed Chrome headless automation; no human/Safari claim",
+            "commit": "ec215cd75f91ad6cbb5e567b612043117ee8ea22",
+            "tests": [
+              "tests/single-file-entry.test.ts",
+              "tests/html-document.test.ts"
+            ],
+            "evidence": [
+              "docs/single-file-first/evidence/s01/journey.json",
+              "docs/single-file-first/evidence/s01/canvas-layout.json",
+              "docs/single-file-first/evidence/s01/canvas-before.png",
+              "docs/single-file-first/evidence/s01/canvas-after.png"
+            ]
+          },
+          {
+            "criterion": "阅读模式操作可见，放映模式无编辑器和常驻工具条",
+            "status": "passed",
+            "scope": "Installed Chrome headless automation; no human/Safari claim",
+            "commit": "ec215cd75f91ad6cbb5e567b612043117ee8ea22",
+            "tests": [
+              "tests/single-file-entry.test.ts"
+            ],
+            "evidence": [
+              "docs/single-file-first/evidence/s01/read.png",
+              "docs/single-file-first/evidence/s01/edit.png",
+              "docs/single-file-first/evidence/s01/present.png",
+              "docs/single-file-first/evidence/s01/journey.json"
+            ]
+          }
+        ],
+        "statusByLayer": {
+          "code": {
+            "status": "passed",
+            "commit": "ec215cd75f91ad6cbb5e567b612043117ee8ea22",
+            "scope": "Visible self-contained file entry, edit/present/read transitions, complete download entry, CLI open-and-exit; advanced native save flows remain S02."
+          },
+          "automation": {
+            "status": "passed",
+            "tests": 60,
+            "log": "docs/single-file-first/evidence/s01/verification/test.log"
+          },
+          "realBrowser": {
+            "status": "partial",
+            "evidence": "docs/single-file-first/evidence/s01/journey.json",
+            "reason": "Installed Chrome 152 headless with actual file URLs passed; Safari session blocked, separate no-Node target unavailable."
+          },
+          "human": {
+            "status": "pending",
+            "reason": "No manual user journey or separate target environment confirmation."
+          }
+        },
+        "remaining": [
+          "Independent no-PPTe/no-Node offline target acceptance pending.",
+          "Safari native browser, real picker and manual confirmation pending; no headless equivalence claimed.",
+          "F02–F05 remain in S03 requiredEvidence F02-F05-regressions; S01 does not close them.",
+          "S02 still owns full save capability/revision/identity/permission lifecycle and failure recovery acceptance."
+        ]
+      }
     },
     {
       "id": "S02", "title": "授权写回、自动保存与完整下载降级", "status": "planned", "dependsOn": ["S01"],

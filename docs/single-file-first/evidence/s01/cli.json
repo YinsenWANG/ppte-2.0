@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "result": {
+    "ok": true,
+    "url": "file:///private/tmp/ppte6/artifacts/s01/cli%20space%20%E4%B8%AD%E6%96%87.html",
+    "path": "/private/tmp/ppte6/artifacts/s01/cli space 中文.html",
+    "hint": "Open this file directly. No PPTe service is running; original-file writes require browser authorization."
+  },
+  "serviceFlagRejected": true,
+  "listenGuard": true
+}

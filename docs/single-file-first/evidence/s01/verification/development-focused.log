@@ -1,0 +1,80 @@
+TAP version 13
+# Subtest: dist/tests/html-document.test.js
+not ok 1 - dist/tests/html-document.test.js
+  ---
+  duration_ms: 32097.259375
+  type: 'test'
+  location: '/private/tmp/ppte6/dist/tests/html-document.test.js:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: ~
+  signal: 'SIGKILL'
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: S00 frozen current contract rejects weakened requirements and cross-version relabelling
+ok 2 - S00 frozen current contract rejects weakened requirements and cross-version relabelling
+  ---
+  duration_ms: 0.771708
+  type: 'test'
+  ...
+# Subtest: S00 version changes cannot promote the historical baseline or bypass missing telemetry
+ok 3 - S00 version changes cannot promote the historical baseline or bypass missing telemetry
+  ---
+  duration_ms: 15.55175
+  type: 'test'
+  ...
+# Subtest: S00 active instructions and actual CLI help agree on delivery and disclose migration
+ok 4 - S00 active instructions and actual CLI help agree on delivery and disclose migration
+  ---
+  duration_ms: 110.595291
+  type: 'test'
+  ...
+# Subtest: S00 no new runtime or dependency requirement and historical bytes stay unchanged
+ok 5 - S00 no new runtime or dependency requirement and historical bytes stay unchanged
+  ---
+  duration_ms: 46.60475
+  type: 'test'
+  ...
+# Subtest: S00 real enhancement supports both extensions and refuses to rewrite existing user files
+ok 6 - S00 real enhancement supports both extensions and refuses to rewrite existing user files
+  ---
+  duration_ms: 279.66925
+  type: 'test'
+  ...
+# Subtest: S01 file URL: offline visible entry, native canvas, text/format/undo, present/Esc, copied file and complete download
+not ok 7 - S01 file URL: offline visible entry, native canvas, text/format/undo, present/Esc, copied file and complete download
+  ---
+  duration_ms: 4464.84225
+  type: 'test'
+  location: '/private/tmp/ppte6/dist/tests/single-file-entry.test.js:11:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte6/dist/tests/single-file-entry.test.js:61:20)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: S01 CLI edit exits with file URL, rejects service flags and leaves original bytes unchanged
+ok 8 - S01 CLI edit exits with file URL, rejects service flags and leaves original bytes unchanged
+  ---
+  duration_ms: 187.133208
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 6
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 32102.305667

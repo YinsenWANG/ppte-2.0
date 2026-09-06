@@ -1,0 +1,7 @@
+{
+  "status": "pending",
+  "reason": "No separate target computer or VM without PPTe/Node was available. Chrome headless ran on this development host; offline browser context and no service are verified, but PATH masking or browser automation cannot certify an uninstalled target.",
+  "host": "macOS-26.6.2-arm64-arm-64bit",
+  "node": "v22.23.2",
+  "requiredFollowup": "Copy only 作品.ppte.html to a machine without PPTe/Node, disconnect network, manually edit text, format, undo, present and press Esc; record OS/browser/version, screenshots and network trace."
+}

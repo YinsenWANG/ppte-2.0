@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "browser": "152.0.7977.76",
+  "channel": "chrome",
+  "headless": true,
+  "entry": "file:///private/tmp/ppte6/artifacts/s01/%E4%BD%9C%E5%93%81.ppte.html",
+  "copiedFile": "/private/tmp/ppte6/artifacts/s01/copied/作品.ppte.html",
+  "steps": [
+    "visible reading controls",
+    "offline text edit",
+    "italic format",
+    "undo format",
+    "present without editor or permanent toolbar",
+    "Escape restores edit",
+    "reading disables text editing",
+    "complete download and reopen"
+  ],
+  "noNodeTarget": {
+    "status": "pending",
+    "reason": "Actual Chrome browser automated from a development host with Node/PPTe installed; offline and no service do not prove a separate no-Node environment."
+  },
+  "human": "pending"
+}

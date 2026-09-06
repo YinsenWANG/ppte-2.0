@@ -1,0 +1,9 @@
+{
+  "offline": true,
+  "requests": [
+    "file:///private/tmp/ppte6/artifacts/s01/%E4%BD%9C%E5%93%81.ppte.html",
+    "file:///private/tmp/ppte6/artifacts/s01/copied/%E4%BD%9C%E5%93%81.ppte.html",
+    "file:///private/tmp/ppte6/artifacts/s01/download.ppte.html"
+  ],
+  "errors": []
+}
