@@ -1,3 +1,5 @@
+import { installPlayer } from '../../html-player/src/index.js';
+import { installPrint } from '../../html-print/src/index.js';
 import { Commands, editable, snapshot } from './commands.js';
 export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: () => void) {
     const style = document.createElement('style');
@@ -11,7 +13,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     root.innerHTML = '<aside id="ppte-pages" aria-label="幻灯片"></aside><aside id="ppte-properties" aria-label="对象属性"></aside><div id="ppte-floating" role="toolbar" aria-label="选区格式"></div><div id="ppte-feedback" aria-live="polite"></div>';
     document.body.append(root);
     const pages = root.querySelector<HTMLElement>('#ppte-pages')!, panel = root.querySelector<HTMLElement>('#ppte-properties')!, floating = root.querySelector<HTMLElement>('#ppte-floating')!, feedback = root.querySelector<HTMLElement>('#ppte-feedback')!;
-    let active = false, selected: string[] = [], commands: Commands, range: Range | null = null, currentSlide = 0, presenting = false;
+    let active = false, selected: string[] = [], commands: Commands, range: Range | null = null, currentSlide = 0;
     const report = (e: unknown) => {
         feedback.textContent = '操作未完成 · ' + String(e);
     };
@@ -271,10 +273,6 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         selected = [];
         range = null;
         const doc = commands.doc;
-        doc.addEventListener('keydown', e => {
-            if (presenting)
-                keys(e);
-        }, true);
         const css = doc.createElement('style');
         css.dataset.ppteTransient = '';
         css.textContent = '[data-ppte-editor-hidden]{display:none!important}[data-ppte-editor-selected]{outline:2px solid #335cff!important;outline-offset:4px}[data-ppte-editor-focus]:focus-visible,[contenteditable=true]:focus-visible{outline:3px solid #335cff!important;outline-offset:4px}';
@@ -326,10 +324,6 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         });
         doc.addEventListener('compositionend', record);
         doc.addEventListener('keydown', e => {
-            if (presenting) {
-                keys(e);
-                return;
-            }
             if (!active)
                 return;
             if (e.key === 'Tab' && !e.ctrlKey && !e.metaKey) {
@@ -389,17 +383,6 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         thumbs();
     }
     const keys = (e: KeyboardEvent) => {
-        if (e.key === 'Escape' && presenting) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            presenting = false;
-            commands.doc.querySelectorAll('[data-ppte-editor-hidden]').forEach(n => n.removeAttribute('data-ppte-editor-hidden'));
-            bar.style.display = 'flex';
-            active = true;
-            root.setAttribute('data-open', '');
-            refresh();
-            resize();
-        }
         if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') {
             e.preventDefault();
             run(() => commands.history(e.shiftKey));
@@ -424,25 +407,26 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         frame.style.width = '100%';
         refresh();
     });
-    button(bar, '放映', () => {
-        active = false;
-        presenting = true;
-        root.removeAttribute('data-open');
-        bar.style.display = 'none';
-        frame.style.marginLeft = '0';
-        frame.style.width = '100%';
-        frame.style.marginTop = '0';
-        frame.style.height = '100%';
-        const slides = Array.from(commands.doc.querySelectorAll<HTMLElement>('[data-ppte-slide]'));
-        slides.forEach((n, i) => {
-            if (i !== currentSlide)
-                n.setAttribute('data-ppte-editor-hidden', '');
-        });
-        slides[currentSlide]?.scrollIntoView();
-        refresh();
-    });
+    let wasActive = false;
+    const suspend = () => {
+        wasActive = active; active = false; root.removeAttribute('data-open');
+        bar.style.display = 'none'; refresh();
+    };
+    const resume = () => {
+        active = wasActive; bar.style.display = 'flex'; root.toggleAttribute('data-open', active);
+        refresh(); resize();
+        commands.doc.querySelectorAll('[data-ppte-slide]')[currentSlide]?.scrollIntoView();
+        if (active && selected[0]) commands.node(selected[0]).focus();
+    };
+    // Attach to the current document after editor initialization below.
+    let player: ReturnType<typeof installPlayer>;
+    button(bar, '放映', () => player.start());
     frame.addEventListener('load', attach);
     attach();
+    player = installPlayer(frame, { suspend, resume, current: () => currentSlide, moved: i => currentSlide = i });
+    const printing = installPrint(frame, { suspend, resume, exitPresentation: () => player.exit() });
+    button(more.lastElementChild as HTMLElement, '导出 PDF', () => printing.print());
+    Object.assign(window, { PPTePlayer: player, PPTePrint: printing });
     return { enable() {
             active = true;
             root.setAttribute('data-open', '');

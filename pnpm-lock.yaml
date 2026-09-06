@@ -118,6 +118,10 @@ importers:
 
   packages/html-editor: {}
 
+  packages/html-player: {}
+
+  packages/html-print: {}
+
   packages/html-save: {}
 
   packages/importer-legacy: {}

@@ -87,6 +87,7 @@ export function cleanContent(input: string, addIds = true, depth = 0) {
         report('CONTENT_URL_REMOVED', `${tag}.${name}`); return false;
       }
       if (['fill','stroke','filter','clip-path','mask','cursor'].includes(name) && /url/i.test(a.value)) { try { checkCss(`x{${name}:${a.value}}`, depth); } catch (e) { report('CONTENT_CSS_REJECTED', String(e)); return false; } }
+      if (name === 'style' && !a.value.trim()) return false; // Chromium leaves empty style attributes when contentEditable toggles.
       if (name === 'style') { try { checkCss(`x{${a.value}}`, depth); } catch (e) { report('CONTENT_CSS_REJECTED', String(e)); return false; } }
       return true;
     });
