@@ -589,46 +589,298 @@
         ]
       }
     },
-
     {
-      "id": "S04", "title": "测量并优化生成与编辑性能", "status": "planned", "dependsOn": ["S00"],
-      "targetAreas": ["scripts/html-benchmark.mjs", "packages/html-editor/src/workspace.ts", "packages/html-editor/src/save.ts", "packages/html-editor/src/commands.ts", "packages/html-document/src/resources.ts"],
-      "addresses": ["用户反馈 3", "H00", "H06", "R04"],
-      "deliverables": ["分阶段真实时间/token/调用计数，缓存命中与失效记录", "测量缩略图全量重建、同步草稿序列化、重复通知和重复资源编码", "按测量实现局部刷新、ID 索引、合并通知、revision 复用和有界缓存", "日常生成不执行全量仓库发布检查或重复安装"],
-      "acceptance": ["先保留改动前基线，再在相同输入、环境与质量下比较", "原始模型遥测缺失时填 unavailable，不估算或编造", "12 页参考机输入 p95 <=50ms、翻页 p95 <=100ms、含防抖保存确认 p95 <=1.5s；采样量按 PLAN", "缓存改变资源字节/变换/需求时失效，权限校验不能被缓存绕过", "性能优化不减少事实/图片、不破坏冲突检测与恢复，不扩大未说明的丢稿窗口"],
-      "requiredEvidence": ["before-after-traces", "phase-and-token-telemetry", "input-turn-save-samples", "cache-invalidation-tests"], "evidence": null
+      "id": "S04",
+      "title": "测量并优化生成与编辑性能",
+      "status": "partial",
+      "dependsOn": [
+        "S00"
+      ],
+      "targetAreas": [
+        "scripts/html-benchmark.mjs",
+        "packages/html-editor/src/workspace.ts",
+        "packages/html-editor/src/save.ts",
+        "packages/html-editor/src/commands.ts",
+        "packages/html-document/src/resources.ts"
+      ],
+      "addresses": [
+        "用户反馈 3",
+        "H00",
+        "H06",
+        "R04"
+      ],
+      "deliverables": [
+        "分阶段真实时间/token/调用计数，缓存命中与失效记录",
+        "测量缩略图全量重建、同步草稿序列化、重复通知和重复资源编码",
+        "按测量实现局部刷新、ID 索引、合并通知、revision 复用和有界缓存",
+        "日常生成不执行全量仓库发布检查或重复安装"
+      ],
+      "acceptance": [
+        "先保留改动前基线，再在相同输入、环境与质量下比较",
+        "原始模型遥测缺失时填 unavailable，不估算或编造",
+        "12 页参考机输入 p95 <=50ms、翻页 p95 <=100ms、含防抖保存确认 p95 <=1.5s；采样量按 PLAN",
+        "缓存改变资源字节/变换/需求时失效，权限校验不能被缓存绕过",
+        "性能优化不减少事实/图片、不破坏冲突检测与恢复，不扩大未说明的丢稿窗口"
+      ],
+      "requiredEvidence": [
+        "before-after-traces",
+        "phase-and-token-telemetry",
+        "input-turn-save-samples",
+        "cache-invalidation-tests"
+      ],
+      "evidence": {
+        "report": "docs/single-file-first/evidence/s04/REPORT.md",
+        "primaryAcceptanceFile": "docs/single-file-first/evidence/s04/after.ppte.html",
+        "statusByLayer": {
+          "code": "implemented scoped optimizations; further latency work pending",
+          "automation": "69 tests passed; four added, no existing assertions weakened",
+          "realBrowser": "Chrome headless file automation observed; native and reference-device acceptance pending",
+          "human": "pending"
+        },
+        "requiredEvidence": {
+          "before-after-traces": [
+            "docs/single-file-first/evidence/s04/before.json",
+            "docs/single-file-first/evidence/s04/after-initial.json",
+            "docs/single-file-first/evidence/s04/after.json",
+            "docs/single-file-first/evidence/s04/comparison.json",
+            "docs/single-file-first/evidence/s04/resources-before.json",
+            "docs/single-file-first/evidence/s04/resources-after.json"
+          ],
+          "phase-and-token-telemetry": "docs/single-file-first/evidence/s04/phase-and-token-telemetry.json",
+          "input-turn-save-samples": [
+            "docs/single-file-first/evidence/s04/before.json",
+            "docs/single-file-first/evidence/s04/after.json"
+          ],
+          "cache-invalidation-tests": [
+            "tests/single-file-performance.test.ts",
+            "docs/single-file-first/evidence/s04/verification/test.log"
+          ]
+        },
+        "acceptanceEvidence": [
+          {
+            "criterion": "先保留改动前基线，再在相同输入、环境与质量下比较",
+            "status": "partial: engineering comparison recorded; reference hardware not frozen",
+            "paths": [
+              "docs/single-file-first/evidence/s04/comparison.json",
+              "docs/single-file-first/evidence/s04/resource-equivalence.json"
+            ]
+          },
+          {
+            "criterion": "原始模型遥测缺失时填 unavailable，不估算或编造",
+            "status": "reporting passed; actual provider telemetry unavailable",
+            "paths": [
+              "docs/single-file-first/evidence/s04/phase-and-token-telemetry.json"
+            ]
+          },
+          {
+            "criterion": "12 页参考机输入 p95 <=50ms、翻页 p95 <=100ms、含防抖保存确认 p95 <=1.5s；采样量按 PLAN",
+            "status": "failed input/turn thresholds; native save pending",
+            "paths": [
+              "docs/single-file-first/evidence/s04/before.json",
+              "docs/single-file-first/evidence/s04/after.json"
+            ]
+          },
+          {
+            "criterion": "缓存改变资源字节/变换/需求时失效，权限校验不能被缓存绕过",
+            "status": "automated pass",
+            "paths": [
+              "tests/single-file-performance.test.ts",
+              "docs/single-file-first/evidence/s04/verification/test.log"
+            ]
+          },
+          {
+            "criterion": "性能优化不减少事实/图片、不破坏冲突检测与恢复，不扩大未说明的丢稿窗口",
+            "status": "automated pass; native acceptance pending",
+            "paths": [
+              "docs/single-file-first/evidence/s04/REPORT.md",
+              "docs/single-file-first/evidence/s04/verification/test.log"
+            ]
+          }
+        ],
+        "verification": "docs/single-file-first/evidence/s04/verification/result.json",
+        "pending": [
+          "Input p95 133.5ms and turn p95 133.6ms exceed 50/100ms targets; input regressed versus measured baseline.",
+          "Reference machine not frozen; real low-performance device unavailable.",
+          "Save samples use in-memory adapter, not real native permission/disk writes.",
+          "Provider phase/token/call telemetry and nine controlled pairs unavailable.",
+          "Long/image-deck latency, first-visible and detailed blocking/phase profiling pending.",
+          "Visible-first idle thumbnails and asynchronous draft storage not implemented.",
+          "Safari, native IME, original file-picker and human review pending; F01–F05 native status not closed."
+        ]
+      }
     },
     {
-      "id": "S05", "title": "轻量审美提醒与图片理解工作流", "status": "planned", "dependsOn": ["S00"],
-      "targetAreas": ["skills/ppte/SKILL.md", "README-AGENT.md", "docs/single-file-first/evidence（新）"],
-      "addresses": ["用户反馈 2", "用户反馈 4", "R03"],
-      "deliverables": ["Skill 加入一段审美提醒和一段图片理解提醒", "实际查看上传图片，批量联系表与候选原图按需复核", "短选图说明连接页意图、图片内容与裁切策略，无强制媒体 schema"],
-      "acceptance": ["没有新增固定模板、配色/字数/版式规则或美学分数拒绝机制", "每张使用图实际视觉查看，未查看部分和不确定事实如实记录", "不机械使用全部附件，不用低清联系表裁块替代原图", "只使用当前 Agent 的视觉能力，不要求用户额外模型密钥", "文本-only 热路径没有图片分析空转或预处理依赖安装"],
-      "requiredEvidence": ["skill-diff", "mixed-image-selection-record", "human-content-and-crop-review"], "evidence": null
+      "id": "S05",
+      "title": "轻量审美提醒与图片理解工作流",
+      "status": "planned",
+      "dependsOn": [
+        "S00"
+      ],
+      "targetAreas": [
+        "skills/ppte/SKILL.md",
+        "README-AGENT.md",
+        "docs/single-file-first/evidence（新）"
+      ],
+      "addresses": [
+        "用户反馈 2",
+        "用户反馈 4",
+        "R03"
+      ],
+      "deliverables": [
+        "Skill 加入一段审美提醒和一段图片理解提醒",
+        "实际查看上传图片，批量联系表与候选原图按需复核",
+        "短选图说明连接页意图、图片内容与裁切策略，无强制媒体 schema"
+      ],
+      "acceptance": [
+        "没有新增固定模板、配色/字数/版式规则或美学分数拒绝机制",
+        "每张使用图实际视觉查看，未查看部分和不确定事实如实记录",
+        "不机械使用全部附件，不用低清联系表裁块替代原图",
+        "只使用当前 Agent 的视觉能力，不要求用户额外模型密钥",
+        "文本-only 热路径没有图片分析空转或预处理依赖安装"
+      ],
+      "requiredEvidence": [
+        "skill-diff",
+        "mixed-image-selection-record",
+        "human-content-and-crop-review"
+      ],
+      "evidence": null
     },
     {
-      "id": "S06", "title": "图片插入裁切与单文件媒体资源管理", "status": "planned", "dependsOn": ["S02", "S03", "S05"],
-      "targetAreas": ["packages/html-editor/src/commands.ts", "packages/html-editor/src/workspace.ts", "packages/html-document/src/resources.ts", "packages/html-document/src/content.ts", "packages/html-document/src/runtime.ts", "packages/html-print/src/index.ts", "packages/html-player/src/index.ts"],
-      "addresses": ["用户反馈 4", "用户反馈 3"],
-      "deliverables": ["本地图片插入/替换、完整显示/填充、焦点调整与重置", "非破坏裁切、稳定资源引用与媒体历史", "按性能证据实现重复大资源文件内去重和 blob 生命周期", "图文意义、关键文字和主体复核，视频封面/离页暂停保持"],
-      "acceptance": ["混合至少 12 张真实授权图片实际制稿；选图、主体、关键数据由人核对", "替换不同宽高比图片不误裁主体，撤销重做和保存重开保留资源与裁切", "移除原素材目录并断网后同一成品仍能显示/播放", "保存文件不含临时 blob URL，资源引用失效/缺失明确失败", "新资源表启用前验证旧 data URL 文件、重复保存体积、历史清理、打印与演讲者窗口", "CSP 只扩大必要 img/media blob 能力，不放宽作者脚本或网络", "图片压力稿报告真实文件体积、解码与内存成本，不隐藏有损降质"],
-      "requiredEvidence": ["mixed-media-fixtures-and-hashes", "crop-before-after", "offline-reopen-media", "resource-lifecycle-and-size-results"], "evidence": null
+      "id": "S06",
+      "title": "图片插入裁切与单文件媒体资源管理",
+      "status": "planned",
+      "dependsOn": [
+        "S02",
+        "S03",
+        "S05"
+      ],
+      "targetAreas": [
+        "packages/html-editor/src/commands.ts",
+        "packages/html-editor/src/workspace.ts",
+        "packages/html-document/src/resources.ts",
+        "packages/html-document/src/content.ts",
+        "packages/html-document/src/runtime.ts",
+        "packages/html-print/src/index.ts",
+        "packages/html-player/src/index.ts"
+      ],
+      "addresses": [
+        "用户反馈 4",
+        "用户反馈 3"
+      ],
+      "deliverables": [
+        "本地图片插入/替换、完整显示/填充、焦点调整与重置",
+        "非破坏裁切、稳定资源引用与媒体历史",
+        "按性能证据实现重复大资源文件内去重和 blob 生命周期",
+        "图文意义、关键文字和主体复核，视频封面/离页暂停保持"
+      ],
+      "acceptance": [
+        "混合至少 12 张真实授权图片实际制稿；选图、主体、关键数据由人核对",
+        "替换不同宽高比图片不误裁主体，撤销重做和保存重开保留资源与裁切",
+        "移除原素材目录并断网后同一成品仍能显示/播放",
+        "保存文件不含临时 blob URL，资源引用失效/缺失明确失败",
+        "新资源表启用前验证旧 data URL 文件、重复保存体积、历史清理、打印与演讲者窗口",
+        "CSP 只扩大必要 img/media blob 能力，不放宽作者脚本或网络",
+        "图片压力稿报告真实文件体积、解码与内存成本，不隐藏有损降质"
+      ],
+      "requiredEvidence": [
+        "mixed-media-fixtures-and-hashes",
+        "crop-before-after",
+        "offline-reopen-media",
+        "resource-lifecycle-and-size-results"
+      ],
+      "evidence": null
     },
     {
-      "id": "S07", "title": "直开路径整体验证与轻量分发", "status": "planned", "dependsOn": ["S02", "S03", "S04", "S06"],
-      "targetAreas": ["tests/html-document.test.ts", "tests/html-save.test.ts", "tests/html-editor.test.ts", "tests/html-player.test.ts", "tests/html-package.test.ts", "scripts/stage-package.mjs", "scripts/release-check.mjs"],
-      "addresses": ["H01", "H02", "H03", "H04", "H05", "R01", "R02", "R05", "R06"],
-      "deliverables": ["以 file:// 为主的完整旅程与实际文件/下载验证", "Chrome/Safari 能力矩阵，浏览器差异不隐藏", "npm tarball/依赖图/Skill 一致性复验，旧格式保持退休"],
-      "acceptance": ["真实 Chrome/Safari 执行阅读→编辑→保存或明确下载→关闭重开→放映→按需 PDF", "黑屏、全屏拒绝、Esc、视频点击、演讲者窗口与步骤显隐通过", "PDF 一页一幻灯片、步骤全显、无 UI、关键文字可读，图片完整", "实际原生 picker/IME/打印对话框与 headless/API 合同结果分别记录", "目标无 Node 环境下直接单文件可用，默认交付只有 .ppte.html", "轻资源完整 HTML <=1MB、runtime <=250KB gzip 延续；媒体体积单列"],
-      "requiredEvidence": ["actual-browser-journeys", "native-permission-and-ime-records", "pdf-and-media-verification", "tarball-and-no-service-checks"], "evidence": null
+      "id": "S07",
+      "title": "直开路径整体验证与轻量分发",
+      "status": "planned",
+      "dependsOn": [
+        "S02",
+        "S03",
+        "S04",
+        "S06"
+      ],
+      "targetAreas": [
+        "tests/html-document.test.ts",
+        "tests/html-save.test.ts",
+        "tests/html-editor.test.ts",
+        "tests/html-player.test.ts",
+        "tests/html-package.test.ts",
+        "scripts/stage-package.mjs",
+        "scripts/release-check.mjs"
+      ],
+      "addresses": [
+        "H01",
+        "H02",
+        "H03",
+        "H04",
+        "H05",
+        "R01",
+        "R02",
+        "R05",
+        "R06"
+      ],
+      "deliverables": [
+        "以 file:// 为主的完整旅程与实际文件/下载验证",
+        "Chrome/Safari 能力矩阵，浏览器差异不隐藏",
+        "npm tarball/依赖图/Skill 一致性复验，旧格式保持退休"
+      ],
+      "acceptance": [
+        "真实 Chrome/Safari 执行阅读→编辑→保存或明确下载→关闭重开→放映→按需 PDF",
+        "黑屏、全屏拒绝、Esc、视频点击、演讲者窗口与步骤显隐通过",
+        "PDF 一页一幻灯片、步骤全显、无 UI、关键文字可读，图片完整",
+        "实际原生 picker/IME/打印对话框与 headless/API 合同结果分别记录",
+        "目标无 Node 环境下直接单文件可用，默认交付只有 .ppte.html",
+        "轻资源完整 HTML <=1MB、runtime <=250KB gzip 延续；媒体体积单列"
+      ],
+      "requiredEvidence": [
+        "actual-browser-journeys",
+        "native-permission-and-ime-records",
+        "pdf-and-media-verification",
+        "tarball-and-no-service-checks"
+      ],
+      "evidence": null
     },
     {
-      "id": "S08", "title": "总反馈闭环与人工验收回交", "status": "planned", "dependsOn": ["S05", "S07"],
-      "targetAreas": ["docs/single-file-first/TASKS.json", "docs/single-file-first/evidence（新）", "docs/audits（新一轮报告）"],
-      "addresses": ["用户四项反馈", "F01-F05", "H00-H06", "R01-R06"],
-      "deliverables": ["每项反馈/问题对应修复提交和原始证据", "同模型三份材料各三对比较，并单列图片稿", "负责人和两名目标用户评价及真实低性能设备数据", "新版 Skill 实际生成一份 .ppte.html 供用户直接打开验收"],
-      "acceptance": ["热端到端时间中位数 <=1.25x、tokens <=1.20x 同模型直接 HTML；完整留存首稿、失败与尾部", "九对至少六对人工审美不逊于直接 HTML，事实/裁切/保存失败独立否决", "不编造人评、遥测、设备或 Safari 证明，环境受阻保持 pending", "每项区分实现完成、自动化通过、浏览器实测、人工确认，旧 done 不自动继承", "用户收到文件入口，不能用 localhost 链接替代主交付；未通过不得宣称全部完成或开始下一阶段"],
-      "requiredEvidence": ["feedback-closure-matrix", "controlled-nine-pairs", "real-user-feedback", "real-low-performance-device", "final-single-file"], "evidence": null
+      "id": "S08",
+      "title": "总反馈闭环与人工验收回交",
+      "status": "planned",
+      "dependsOn": [
+        "S05",
+        "S07"
+      ],
+      "targetAreas": [
+        "docs/single-file-first/TASKS.json",
+        "docs/single-file-first/evidence（新）",
+        "docs/audits（新一轮报告）"
+      ],
+      "addresses": [
+        "用户四项反馈",
+        "F01-F05",
+        "H00-H06",
+        "R01-R06"
+      ],
+      "deliverables": [
+        "每项反馈/问题对应修复提交和原始证据",
+        "同模型三份材料各三对比较，并单列图片稿",
+        "负责人和两名目标用户评价及真实低性能设备数据",
+        "新版 Skill 实际生成一份 .ppte.html 供用户直接打开验收"
+      ],
+      "acceptance": [
+        "热端到端时间中位数 <=1.25x、tokens <=1.20x 同模型直接 HTML；完整留存首稿、失败与尾部",
+        "九对至少六对人工审美不逊于直接 HTML，事实/裁切/保存失败独立否决",
+        "不编造人评、遥测、设备或 Safari 证明，环境受阻保持 pending",
+        "每项区分实现完成、自动化通过、浏览器实测、人工确认，旧 done 不自动继承",
+        "用户收到文件入口，不能用 localhost 链接替代主交付；未通过不得宣称全部完成或开始下一阶段"
+      ],
+      "requiredEvidence": [
+        "feedback-closure-matrix",
+        "controlled-nine-pairs",
+        "real-user-feedback",
+        "real-low-performance-device",
+        "final-single-file"
+      ],
+      "evidence": null
     }
   ]
 }

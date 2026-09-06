@@ -1,0 +1,28 @@
+{
+  "status": "passed",
+  "tests": 69,
+  "failures": 0,
+  "addedTests": 4,
+  "removedTests": 0,
+  "modifiedExistingAssertions": 0,
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "log": "typecheck.log",
+      "sha256": "0ae79858d1378de4a49bb6bdcaf88acb5b1de35ec309f992f3d1193e86a2a4a2"
+    },
+    {
+      "command": "pnpm build",
+      "exitCode": 0,
+      "log": "build.log",
+      "sha256": "981710c4773357321873464210550419258feecb6af85bb9df41b33c0f6bd351"
+    },
+    {
+      "command": "pnpm test",
+      "exitCode": 0,
+      "log": "test.log",
+      "sha256": "ebbd8783110a3bcaf6c07e7d7d71326984e676cc6b325fe101dadf796c4176a1"
+    }
+  ]
+}

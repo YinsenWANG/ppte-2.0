@@ -1,0 +1,54 @@
+{
+  "inputSha256": "c70dca183c4e27dada89891f7bd90739bc4fe58e332305a02314f78c970d5658",
+  "assetSha256": "8403ce79e864df930f1e2e391ae02aa6fcd2bf0dee823b4cb1612b1e6a65b7fe",
+  "traces": [
+    {
+      "heat": "cold-process-cache",
+      "elapsedMs": 9.325583000000002,
+      "base64Calls": 40,
+      "mediaBytes": 4560,
+      "outputSha256": "5b91f30abd7d721e566a6f180759e4cf99fcbcf39b3bd8fe4047de398bb4cbfc",
+      "metrics": "unavailable in baseline"
+    },
+    {
+      "heat": "hot",
+      "elapsedMs": 4.057249999999996,
+      "base64Calls": 40,
+      "mediaBytes": 4560,
+      "outputSha256": "5b91f30abd7d721e566a6f180759e4cf99fcbcf39b3bd8fe4047de398bb4cbfc",
+      "metrics": "unavailable in baseline"
+    },
+    {
+      "heat": "hot",
+      "elapsedMs": 3.953333999999998,
+      "base64Calls": 40,
+      "mediaBytes": 4560,
+      "outputSha256": "5b91f30abd7d721e566a6f180759e4cf99fcbcf39b3bd8fe4047de398bb4cbfc",
+      "metrics": "unavailable in baseline"
+    },
+    {
+      "heat": "hot",
+      "elapsedMs": 3.967708000000002,
+      "base64Calls": 40,
+      "mediaBytes": 4560,
+      "outputSha256": "5b91f30abd7d721e566a6f180759e4cf99fcbcf39b3bd8fe4047de398bb4cbfc",
+      "metrics": "unavailable in baseline"
+    },
+    {
+      "heat": "hot",
+      "elapsedMs": 3.9387919999999994,
+      "base64Calls": 40,
+      "mediaBytes": 4560,
+      "outputSha256": "5b91f30abd7d721e566a6f180759e4cf99fcbcf39b3bd8fe4047de398bb4cbfc",
+      "metrics": "unavailable in baseline"
+    },
+    {
+      "heat": "hot",
+      "elapsedMs": 4.311749999999996,
+      "base64Calls": 40,
+      "mediaBytes": 4560,
+      "outputSha256": "5b91f30abd7d721e566a6f180759e4cf99fcbcf39b3bd8fe4047de398bb4cbfc",
+      "metrics": "unavailable in baseline"
+    }
+  ]
+}

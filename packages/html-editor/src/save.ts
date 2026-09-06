@@ -33,6 +33,12 @@ export class SaveController {
   state: SaveState = 'unauthorized'; detail = ''; revision = 0; confirmedFileRevision: number | null = null; exportedRevision: number | null = null; draftAvailable = false; composing = false; dirty = false;
   private timer?: ReturnType<typeof setTimeout>; private running = false;
   private lastDraft?: string;
+  private draftTimer?: ReturnType<typeof setTimeout>;
+  private cached?: {revision:number; content:string};
+  private serialized() {
+    if(this.cached?.revision!==this.revision)this.cached={revision:this.revision,content:this.content()};
+    return this.cached.content;
+  }
   constructor(public adapter:Adapter|undefined, public base:Snapshot, private content:()=>string, private notify:()=>void, private storage?: Pick<Storage,'getItem'|'setItem'|'removeItem'>, public key = '') {}
   get dirtyRevision() { return this.revision; }
   get busy() { return this.running; }
@@ -40,7 +46,7 @@ export class SaveController {
   draft() {
     try {
       if (!this.storage) throw Error('草稿存储不可用');
-      const value=JSON.stringify({documentId:this.base.metadata.documentId,base:this.base.recoveryHash ?? this.base.hash,revision:this.revision,time:Date.now(),content:this.content()} satisfies Draft);
+      const value=JSON.stringify({documentId:this.base.metadata.documentId,base:this.base.recoveryHash ?? this.base.hash,revision:this.revision,time:Date.now(),content:this.serialized()} satisfies Draft);
       this.storage.setItem(this.key,value);this.lastDraft=value;this.draftAvailable=true;
     }
     catch { this.draftAvailable=false;this.detail='草稿存储不可用或配额已满；修改尚未写入文件';this.notify(); }
@@ -48,14 +54,23 @@ export class SaveController {
   recover():Draft|undefined { try { const raw=this.storage?.getItem(this.key);if(!raw)return;const d=JSON.parse(raw);if(typeof d.content!=='string'||d.documentId!==this.base.metadata.documentId)throw Error();if(d.base!==(this.base.recoveryHash ?? this.base.hash)){this.set('conflict','草稿基准已变化；可保留草稿或重新读取文件');}return d; }catch{this.set('failed','草稿不可读取');} }
   change() { this.dirty=true;this.revision++;if(this.state!=='conflict')this.set(this.adapter?'dirty':'draft');if(!this.composing)this.schedule(); }
   exported(revision:number) { this.exportedRevision=revision;this.set(this.state,'已生成更新文件；原文件未覆盖（下载是否落盘由浏览器决定）'); }
-  schedule() { clearTimeout(this.timer); this.draft(); this.timer=setTimeout(()=>void this.flush(),800); }
+  // First edit is recoverable immediately; sustained typing checkpoints at most every
+  // 200ms (plus main-thread scheduling delay). This is a disclosed crash-loss window.
+  schedule() {
+    clearTimeout(this.timer);
+    if(!this.draftTimer) {
+      if(this.lastDraft===undefined)this.draft();
+      this.draftTimer=setTimeout(()=>{this.draftTimer=undefined;if(this.dirty)this.draft();},200);
+    }
+    this.timer=setTimeout(()=>void this.flush(),800);
+  }
   composition(active:boolean) {this.composing=active;clearTimeout(this.timer);if(!active&&this.dirty)this.schedule();}
   async flush() {
     clearTimeout(this.timer);if(this.composing||this.running||!this.dirty||this.state==='conflict')return;
     if(!this.adapter){this.draft();this.set('draft',this.detail);return;}
     this.running=true;const rev=this.revision;this.set('saving');
     try {
-      const next=await this.adapter.write(this.base.hash,this.content());this.base=next;this.confirmedFileRevision=rev;
+      const next=await this.adapter.write(this.base.hash,this.serialized());this.base=next;this.confirmedFileRevision=rev;
       if(rev===this.revision){
         this.dirty=false;
         // Another window may have replaced this recovery entry while the file write
@@ -63,7 +78,7 @@ export class SaveController {
         try{if(this.lastDraft!==undefined&&this.storage?.getItem(this.key)===this.lastDraft)this.storage.removeItem(this.key);}catch{}
         this.lastDraft=undefined;this.set('saved');
       }
-      else {this.set('dirty');this.schedule();}
+      else {this.set('dirty');this.draft();this.schedule();}
     } catch(e) {this.draft();const message=String(e);this.set(message.includes('CONFLICT')?'conflict':message.includes('PERMISSION')?'unauthorized':'failed',message);}
     finally {this.running=false;}
   }

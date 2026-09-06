@@ -1,0 +1,102 @@
+{
+  "inputSha256": "c70dca183c4e27dada89891f7bd90739bc4fe58e332305a02314f78c970d5658",
+  "assetSha256": "8403ce79e864df930f1e2e391ae02aa6fcd2bf0dee823b4cb1612b1e6a65b7fe",
+  "traces": [
+    {
+      "heat": "cold-process-cache",
+      "elapsedMs": 7.240542000000001,
+      "base64Calls": 1,
+      "mediaBytes": 4560,
+      "outputSha256": "5b91f30abd7d721e566a6f180759e4cf99fcbcf39b3bd8fe4047de398bb4cbfc",
+      "metrics": {
+        "reads": 1,
+        "encodings": 1,
+        "hits": 39,
+        "misses": 1,
+        "authorizationChecks": 40,
+        "referencedBytes": 4560,
+        "cacheBytes": 356
+      }
+    },
+    {
+      "heat": "hot",
+      "elapsedMs": 2.046749999999996,
+      "base64Calls": 0,
+      "mediaBytes": 4560,
+      "outputSha256": "5b91f30abd7d721e566a6f180759e4cf99fcbcf39b3bd8fe4047de398bb4cbfc",
+      "metrics": {
+        "reads": 1,
+        "encodings": 0,
+        "hits": 40,
+        "misses": 0,
+        "authorizationChecks": 40,
+        "referencedBytes": 4560,
+        "cacheBytes": 356
+      }
+    },
+    {
+      "heat": "hot",
+      "elapsedMs": 2.0007500000000036,
+      "base64Calls": 0,
+      "mediaBytes": 4560,
+      "outputSha256": "5b91f30abd7d721e566a6f180759e4cf99fcbcf39b3bd8fe4047de398bb4cbfc",
+      "metrics": {
+        "reads": 1,
+        "encodings": 0,
+        "hits": 40,
+        "misses": 0,
+        "authorizationChecks": 40,
+        "referencedBytes": 4560,
+        "cacheBytes": 356
+      }
+    },
+    {
+      "heat": "hot",
+      "elapsedMs": 1.9048330000000036,
+      "base64Calls": 0,
+      "mediaBytes": 4560,
+      "outputSha256": "5b91f30abd7d721e566a6f180759e4cf99fcbcf39b3bd8fe4047de398bb4cbfc",
+      "metrics": {
+        "reads": 1,
+        "encodings": 0,
+        "hits": 40,
+        "misses": 0,
+        "authorizationChecks": 40,
+        "referencedBytes": 4560,
+        "cacheBytes": 356
+      }
+    },
+    {
+      "heat": "hot",
+      "elapsedMs": 1.7238340000000036,
+      "base64Calls": 0,
+      "mediaBytes": 4560,
+      "outputSha256": "5b91f30abd7d721e566a6f180759e4cf99fcbcf39b3bd8fe4047de398bb4cbfc",
+      "metrics": {
+        "reads": 1,
+        "encodings": 0,
+        "hits": 40,
+        "misses": 0,
+        "authorizationChecks": 40,
+        "referencedBytes": 4560,
+        "cacheBytes": 356
+      }
+    },
+    {
+      "heat": "hot",
+      "elapsedMs": 1.9328749999999957,
+      "base64Calls": 0,
+      "mediaBytes": 4560,
+      "outputSha256": "5b91f30abd7d721e566a6f180759e4cf99fcbcf39b3bd8fe4047de398bb4cbfc",
+      "metrics": {
+        "reads": 1,
+        "encodings": 0,
+        "hits": 40,
+        "misses": 0,
+        "authorizationChecks": 40,
+        "referencedBytes": 4560,
+        "cacheBytes": 356
+      }
+    }
+  ]
+}

@@ -1,24 +1,46 @@
 import { readFile, realpath } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { dirname, extname, isAbsolute, relative, resolve } from 'node:path';
 import { parse, serialize } from 'parse5';
 import postcss from 'postcss';
 import valueParser from 'postcss-value-parser';
 import { attr, elements, setText, textOf, dataAllowed } from './content.js';
 
-export interface ResourceOptions { root: string; base: string; assetMap?: Record<string, string>; maxBytes?: number }
+export interface ResourceOptions { root: string; base: string; assetMap?: Record<string, string>; maxBytes?: number; cacheContext?: string }
 const mime: Record<string, string> = { '.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.gif':'image/gif','.webp':'image/webp','.avif':'image/avif','.svg':'image/svg+xml','.woff':'font/woff','.woff2':'font/woff2','.ttf':'font/ttf','.otf':'font/otf','.mp4':'video/mp4','.webm':'video/webm','.mp3':'audio/mpeg','.ogg':'audio/ogg','.wav':'audio/wav' };
+// Process-local LRU: no handles, permission decisions, or visual interpretations.
+// Actual bytes are reread on each invocation; the digest, MIME, encoder version,
+// root and caller requirement/transform context form the encoding identity.
+const encoded = new Map<string, string>();
+let cacheBytes = 0;
+const CACHE_LIMIT = 8 * 1024 * 1024;
+function retain(key: string, value: string) {
+  if(value.length * 2 > CACHE_LIMIT)return;
+  while(encoded.size >= 128 || cacheBytes + value.length * 2 > CACHE_LIMIT) {
+    const oldest=encoded.keys().next().value!;
+    cacheBytes-=encoded.get(oldest)!.length * 2; encoded.delete(oldest);
+  }
+  encoded.set(key,value); cacheBytes+=value.length * 2;
+}
 /** Only explicitly local, realpath-confined assets. No fetch, shell, browser or font download. */
 export async function embedResources(input: string, options: ResourceOptions) {
   const root = await realpath(options.root);
   let mediaBytes = 0;
+  const metrics = { reads:0, encodings:0, hits:0, misses:0, authorizationChecks:0, referencedBytes:0, cacheBytes:0 };
+  const files = new Map<string, Promise<Buffer>>();
   const visited = new Set<string>();
   const read = async (url: string, base: string) => {
     const mapped = options.assetMap?.[url];
     if (!mapped && (/^[a-z][\w+.-]*:/i.test(url) || url.startsWith('//'))) throw Error('RESOURCE_AUTHORIZATION_REQUIRED');
+    metrics.authorizationChecks++;
     const path = await realpath(mapped ? resolve(root, mapped) : resolve(base, decodeURIComponent(url.split(/[?#]/)[0])));
     const rel = relative(root, path);
     if (rel === '..' || rel.startsWith('../') || isAbsolute(rel)) throw Error('RESOURCE_OUTSIDE_ROOT');
-    const bytes = await readFile(path);
+    let pending=files.get(path);
+    if(!pending) { metrics.reads++; pending=readFile(path); files.set(path,pending); }
+    const bytes = await pending;
+    // Budget remains per reference, as before; cache hits do not relax it.
+    metrics.referencedBytes += bytes.length;
     mediaBytes += bytes.length;
     if (mediaBytes > (options.maxBytes ?? 64 * 1024 * 1024)) throw Error('RESOURCE_BUDGET_EXCEEDED');
     return { path, bytes };
@@ -30,7 +52,11 @@ export async function embedResources(input: string, options: ResourceOptions) {
     const type = mime[extname(path).toLowerCase()];
     if (!type) throw Error('RESOURCE_TYPE_UNSUPPORTED');
     const fragment = url.includes('#') ? url.slice(url.indexOf('#')) : '';
-    const data = `data:${type};base64,${bytes.toString('base64')}${fragment}`;
+    const key=JSON.stringify([root,createHash('sha256').update(bytes).digest('hex'),type,'base64-v1',options.cacheContext ?? '']);
+    let payload=encoded.get(key);
+    if(payload) { metrics.hits++; encoded.delete(key); encoded.set(key,payload); }
+    else { metrics.misses++; metrics.encodings++; payload=`data:${type};base64,${bytes.toString('base64')}`; retain(key,payload); }
+    const data = payload + fragment;
     if (!dataAllowed(data)) throw Error('RESOURCE_DATA_UNSAFE');
     return data;
   };
@@ -68,6 +94,7 @@ export async function embedResources(input: string, options: ResourceOptions) {
     return tree.toString();
   };
   const document = parse(input, { scriptingEnabled: false });
+  const jobs: (() => Promise<void>)[] = [];
   for (const el of elements(document)) {
     if (el.tagName === 'link' && attr(el, 'rel')?.toLowerCase() === 'stylesheet') {
       if (attr(el, 'disabled') !== undefined) throw Error('DISABLED_STYLESHEET_UNSUPPORTED');
@@ -80,9 +107,11 @@ export async function embedResources(input: string, options: ResourceOptions) {
     } else if (el.tagName === 'style') setText(el, await css(textOf(el), options.base));
     for (const a of el.attrs) {
       if (a.name === 'style') { const result = await css(`x{${a.value}}`, options.base); a.value = result.slice(result.indexOf('{') + 1, result.lastIndexOf('}')); }
-      if (['src','poster','background'].includes(a.name) && !['script','iframe','embed','input'].includes(el.tagName)) a.value = await resource(a.value, options.base);
-      if (a.name === 'href' && ['image','use','feImage'].includes(el.tagName)) a.value = await resource(a.value, options.base);
+      if (['src','poster','background'].includes(a.name) && !['script','iframe','embed','input'].includes(el.tagName)) jobs.push(async()=>{a.value = await resource(a.value, options.base);});
+      if (a.name === 'href' && ['image','use','feImage'].includes(el.tagName)) jobs.push(async()=>{a.value = await resource(a.value, options.base);});
     }
   }
-  return { html: serialize(document), mediaBytes };
+  for(let i=0;i<jobs.length;i+=4) await Promise.all(jobs.slice(i,i+4).map(job=>job()));
+  metrics.cacheBytes=cacheBytes;
+  return { html: serialize(document), mediaBytes, metrics };
 }

@@ -1,0 +1,25 @@
+{
+  "status": "partial",
+  "results": {
+    "input": {
+      "beforeP95Ms": 103.60000014305115,
+      "afterP95Ms": 133.5,
+      "limitMs": 50,
+      "engineeringWithinLimit": false
+    },
+    "turn": {
+      "beforeP95Ms": 150.10000014305115,
+      "afterP95Ms": 133.59999990463257,
+      "limitMs": 100,
+      "engineeringWithinLimit": false
+    },
+    "save": {
+      "beforeP95Ms": 841.5999999046326,
+      "afterP95Ms": 852.8000001907349,
+      "limitMs": 1500,
+      "engineeringWithinLimit": true
+    }
+  },
+  "nativeAcceptance": "pending: frozen reference and low-performance hardware, real file permission/write journey required",
+  "modelTelemetry": "unavailable"
+}

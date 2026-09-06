@@ -1,0 +1,41 @@
+{
+  "status": "partial",
+  "before": {
+    "enhanceMs": 7.234915999999998,
+    "editableMs": 50.040250000000015,
+    "installation": "unavailable; existing installation reused",
+    "research": "unavailable",
+    "generation": "unavailable",
+    "correction": "unavailable",
+    "modelTokens": "unavailable",
+    "modelCalls": "unavailable",
+    "imagePreprocessing": "unavailable; light fixture has no media"
+  },
+  "after": {
+    "enhanceMs": 7.427333000000004,
+    "editableMs": 56.499416,
+    "installation": "unavailable; existing installation reused",
+    "research": "unavailable",
+    "generation": "unavailable",
+    "correction": "unavailable",
+    "modelTokens": "unavailable",
+    "modelCalls": "unavailable",
+    "imagePreprocessing": "unavailable; light fixture has no media"
+  },
+  "model": {
+    "tokens": "unavailable",
+    "calls": "unavailable",
+    "retries": "unavailable",
+    "ninePairs": "pending"
+  },
+  "resourceRuns": [
+    "resources-before.json",
+    "resources-after.json"
+  ],
+  "editorRuns": [
+    "before.json",
+    "after-initial.json",
+    "after.json"
+  ],
+  "scope": "observed tool/editor wall time and operation counts only; not overall generation time"
+}

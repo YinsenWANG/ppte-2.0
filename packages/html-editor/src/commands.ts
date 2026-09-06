@@ -20,10 +20,35 @@ type Entry = {
 export class Commands {
     undoStack: Entry[][] = [];
     redoStack: Entry[][] = [];
-    constructor(public doc: Document, private changed: () => void) {
+    private index = new Map<string, HTMLElement>();
+    private observer: MutationObserver;
+    constructor(public doc: Document, private changed: (ids: string[]) => void) {
+        this.indexTree(doc.documentElement);
+        this.observer = new doc.defaultView!.MutationObserver(records => this.updateIndex(records));
+        this.observer.observe(doc.documentElement, {subtree:true, childList:true, attributes:true, attributeFilter:['data-ppte-id'], attributeOldValue:true});
+    }
+    private indexTree(root: Element, remove = false) {
+        for(const n of [root, ...Array.from(root.querySelectorAll<HTMLElement>('[data-ppte-id]'))]) {
+            const id = n.getAttribute('data-ppte-id');
+            if(id && (!remove || this.index.get(id)===n)) {
+                if(remove)this.index.delete(id); else this.index.set(id,n as HTMLElement);
+            }
+        }
+    }
+    private updateIndex(records: MutationRecord[]) {
+        for(const r of records) {
+            if(r.type==='attributes') {
+                if(r.oldValue && this.index.get(r.oldValue)===r.target)this.index.delete(r.oldValue);
+                this.indexTree(r.target as Element);
+            } else {
+                r.removedNodes.forEach(n=>{if(n.nodeType===1)this.indexTree(n as Element,true);});
+                r.addedNodes.forEach(n=>{if(n.nodeType===1)this.indexTree(n as Element);});
+            }
+        }
     }
     node(id: string) {
-        const n = Array.from(this.doc.querySelectorAll<HTMLElement>('[data-ppte-id]')).find(n => n.dataset.ppteId === id);
+        this.updateIndex(this.observer.takeRecords());
+        const n = this.index.get(id);
         if (!n)
             throw Error('OBJECT_NOT_FOUND');
         return n;
@@ -39,7 +64,7 @@ export class Commands {
         if (actual.length) {
             this.undoStack.push(actual);
             this.redoStack = [];
-            this.changed();
+            this.changed(actual.map(e => e.id));
         }
     }
     transaction(ids: string[], mutate: (n: HTMLElement) => void, unlock = false) {
@@ -114,7 +139,7 @@ export class Commands {
         }
         from.pop();
         to.push(entries);
-        this.changed();
+        this.changed(entries.map(e => e.id));
     }
     style(ids: string[], property: string, value: string) {
         if (!['font-size', 'font-weight', 'font-style', 'color', 'text-align', 'background', 'width', 'height', 'left', 'top', 'transform', 'gap', 'grid-template-columns', 'object-fit', 'fill', 'order'].includes(property) || !CSS.supports(property, value) || /url\(|expression|@import/i.test(value))

@@ -286,7 +286,22 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         view.scrollTo({ top: slide.getBoundingClientRect().top + view.scrollY, left: 0 });
         positionTools();
     }
-    function thumbs() {
+    function thumbs(ids?: string[]) {
+        const slidesNow = Array.from(commands.doc.querySelectorAll<HTMLElement>('[data-ppte-slide]'));
+        const buttons = Array.from(pages.querySelectorAll<HTMLButtonElement>('button[aria-current]'));
+        if (ids && buttons.length === slidesNow.length && buttons.every((b,i)=>b.dataset.slide===slidesNow[i].dataset.ppteId)) {
+            const affected = new Set(ids.flatMap(id=>{
+                try { const n=commands.node(id); return Array.from(n.matches('[data-ppte-slide]') ? [n] : n.querySelectorAll<HTMLElement>('[data-ppte-slide]')).concat(n.closest<HTMLElement>('[data-ppte-slide]') ?? []).map(s=>s.dataset.ppteId); }
+                catch { return []; }
+            }));
+            slidesNow.forEach((slide,i)=>{
+                const b=buttons[i]; b.setAttribute('aria-current',String(i===currentSlide));
+                if(!affected.has(slide.dataset.ppteId))return;
+                b.querySelector('.preview')!.shadowRoot!.querySelector('div')!.replaceChildren(slide.cloneNode(true));
+                b.lastChild!.textContent=`${i+1} · ${slide.querySelector('h1,h2,h3')?.textContent?.slice(0,24) ?? '幻灯片'}`;
+            });
+            return;
+        }
         pages.replaceChildren();
         const slides = Array.from(commands.doc.querySelectorAll<HTMLElement>('[data-ppte-slide]'));
         slides.forEach((slide, i) => {
@@ -295,8 +310,9 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
                 scrollSlide(slide);
                 selected = [];
                 refresh();
-                thumbs();
+                thumbs([]);
             });
+            b.dataset.slide = slide.dataset.ppteId;
             b.setAttribute('aria-label', `第 ${i + 1} 页`);
             b.setAttribute('aria-current', String(i === currentSlide));
             const preview = document.createElement('span');
@@ -323,10 +339,13 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         });
     }
     function attach() {
-        commands = new Commands(frame.contentDocument!, () => {
+        commands = new Commands(frame.contentDocument!, ids => {
             change();
-            refresh();
-            thumbs();
+            // Typing keeps property controls and selection stable; structural/style
+            // commands still refresh their context synchronously.
+            if (!before) refresh();
+            else { undo.disabled = !commands.undoStack.length; redo.disabled = !commands.redoStack.length; }
+            thumbs(ids);
         });
         selected = [];
         range = null;
@@ -381,10 +400,16 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
             }
         };
         doc.addEventListener('input', (e) => {
-            if (!(e as InputEvent).isComposing)
-                record();
+            if (!(e as InputEvent).isComposing) {
+                if(before)record();
+                else { change(); thumbs([(e.target as HTMLElement).dataset.ppteId!]); }
+            }
         });
-        doc.addEventListener('compositionstart', () => composing = true);
+        doc.addEventListener('compositionstart', e => {
+            composing = true;
+            const n = (e.target as Element).closest<HTMLElement>(editable);
+            if(n && !before)before={id:n.dataset.ppteId!,html:snapshot(n)};
+        });
         doc.addEventListener('compositionend', () => { composing = false; record(); });
         doc.addEventListener('keydown', e => {
             if (e.isComposing || composing) return;

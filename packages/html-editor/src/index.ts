@@ -202,7 +202,7 @@ export function installEditor(api: API) {
         const doc = api.contentDocument!;
         if (ui?.active)
             enable();
-        doc.addEventListener('input', () => controller?.change());
+        // Commands owns input/IME history and emits one dirty revision.
         doc.addEventListener('compositionstart', () => controller?.composition(true));
         doc.addEventListener('compositionend', () => controller?.composition(false));
         doc.addEventListener('keydown', keys);
@@ -222,10 +222,13 @@ export function installEditor(api: API) {
     attach();
     window.addEventListener('beforeunload', event => {
         if (controller?.dirty) {
+            controller.draft();
             event.preventDefault();
             event.returnValue = '';
         }
     });
+    document.addEventListener('visibilitychange', () => { if(document.hidden && controller?.dirty)controller.draft(); });
+    window.addEventListener('pagehide', () => { if(controller?.dirty)controller.draft(); });
     void initialize().catch(e => {
         bar.hidden = false;
         bar.style.display = 'flex';

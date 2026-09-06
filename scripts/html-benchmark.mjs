@@ -127,3 +127,19 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
     }
   } catch (error) { console.log(JSON.stringify({ status: 'invalid', errors: [error.message] })); process.exitCode = 1; }
 }
+
+// S04 engineering samples are separate from controlled model-run acceptance.
+// In particular, a mock adapter or an unfrozen machine can never pass native S04.
+export function compareEditorSamples(before, after) {
+  if(before.sourceSha256!==after.sourceSha256 || JSON.stringify(before.environment)!==JSON.stringify(after.environment))throw Error('UNCONTROLLED_EDITOR_COMPARISON');
+  if(before.samples.pages!==12 || after.samples.pages!==12 || before.samples.text!==after.samples.text)throw Error('EDITOR_CONTENT_CHANGED');
+  const limits={input:50,turn:100,save:1500};
+  const results={};
+  for(const [kind,limit] of Object.entries(limits)) {
+    const a=before.samples[kind],b=after.samples[kind],minimum=kind==='save'?10:30;
+    if(![a,b].every(s=>Array.isArray(s)&&s.length>=minimum&&s.every(finite)))throw Error('INSUFFICIENT_EDITOR_SAMPLES');
+    const percentile=s=>[...s].sort((a,b)=>a-b)[Math.ceil(s.length*.95)-1];
+    results[kind]={beforeP95Ms:percentile(a),afterP95Ms:percentile(b),limitMs:limit,engineeringWithinLimit:percentile(b)<=limit};
+  }
+  return {status:'partial',results,nativeAcceptance:'pending: frozen reference and low-performance hardware, real file permission/write journey required',modelTelemetry:'unavailable'};
+}
