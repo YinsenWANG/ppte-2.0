@@ -1,0 +1,74 @@
+{
+  "status": "partial",
+  "implementationCommit": "7c1a6c46676566e346edc2af24974752d4288897",
+  "initialImplementationCommit": "c9e35fdd7ddb1cdafb4418e6c9ea257374cc183b",
+  "gpgSigned": true,
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "log": "typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "exitCode": 0,
+      "log": "build.log"
+    },
+    {
+      "command": "node --test dist/tests/html-player.test.js dist/tests/html-editor.test.js dist/tests/html-document.test.js",
+      "exitCode": 0,
+      "log": "focused.log"
+    },
+    {
+      "command": "pnpm test",
+      "exitCode": 0,
+      "log": "test.log",
+      "durationMs": 283214.305583
+    }
+  ],
+  "tests": {
+    "before": 434,
+    "after": 439,
+    "added": 5,
+    "removed": 0,
+    "passed": 439,
+    "failed": 0,
+    "skipped": 0,
+    "focusedPassed": 22,
+    "h04Passed": 5
+  },
+  "runtime": {
+    "node": "v22.23.2",
+    "platform": "darwin",
+    "runtimeRawBytes": 287678,
+    "runtimeGzipBytes": 83659,
+    "htmlRawBytes": 290961,
+    "htmlGzipBytes": 85167
+  },
+  "pdf": [
+    {
+      "width": 720,
+      "text": "First slide\nReveal alpha Reveal beta",
+      "height": 404.88
+    },
+    {
+      "text": "Second slide\nFinal reveal",
+      "width": 720,
+      "height": 404.88
+    }
+  ],
+  "safari": {
+    "status": "blocked",
+    "version": "Included with Safari 26.6.2 (21624.5.1.11.3)\n",
+    "response": {
+      "value": {
+        "error": "session not created",
+        "message": "Could not create a session: You must enable 'Allow remote automation' in the Developer section of Safari Settings to control Safari via WebDriver.",
+        "stacktrace": ""
+      }
+    }
+  },
+  "blackbox": "Not run: no blackbox/release scripts changed. Existing full test suite, including HTML graph and package checks, passed.",
+  "assertions": "No existing pixel, content or H03 assertions removed. H01 closed allowlist includes only the two task-authorized new modules, and new presence/retired-dependency assertions were added.",
+  "supersededRuns": "Development runs found note-attribute hiding, transient empty style attributes, and old graph whitelist/read-pixel regressions. Two pre-final full runs were stopped after further changes; neither is counted as passed."
+}

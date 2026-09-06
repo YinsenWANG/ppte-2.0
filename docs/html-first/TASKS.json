@@ -435,7 +435,7 @@
     {
       "id": "H04",
       "title": "干净放映与按需 PDF",
-      "status": "planned",
+      "status": "partial",
       "dependsOn": [
         "H01",
         "H03"
@@ -455,7 +455,78 @@
         "Esc/全屏拒绝/媒体点击/黑屏恢复/弹窗受限均可用",
         "PDF 一页一幻灯片，步骤全显，文字尽量可选，无 UI/裁切/空白多页",
         "不自动生成 PDF，不存在 PPTX/PPT/ODP/Keynote 路径"
-      ]
+      ],
+      "evidence": {
+        "authorityCommit": "bbcd46bde2c608b5a56e617f316c5dcb5534857e",
+        "implementationCommit": "7c1a6c46676566e346edc2af24974752d4288897",
+        "report": "docs/html-first/evidence/h04/IMPLEMENTATION.md",
+        "verification": "docs/html-first/evidence/h04/verification/result.json",
+        "sample": "docs/html-first/evidence/h04/example.html",
+        "acceptance": [
+          {
+            "criterion": "观众画面不含编辑控件、文本框虚线、常驻工具栏或下一页预览",
+            "status": "partial",
+            "commit": "7c1a6c46676566e346edc2af24974752d4288897",
+            "tests": [
+              "dist/tests/html-player.test.js: H04 acceptance 1/2: clean audience, idle controls, black pixels, steps, media clicks, fullscreen denial and Escape restore"
+            ],
+            "log": "docs/html-first/evidence/h04/verification/focused.log",
+            "scope": "Actual Chrome verified; Safari pending."
+          },
+          {
+            "criterion": "Esc/全屏拒绝/媒体点击/黑屏恢复/弹窗受限均可用",
+            "status": "partial",
+            "commit": "7c1a6c46676566e346edc2af24974752d4288897",
+            "tests": [
+              "dist/tests/html-player.test.js: H04 acceptance 1/2: clean audience, idle controls, black pixels, steps, media clicks, fullscreen denial and Escape restore",
+              "dist/tests/html-player.test.js: H04 acceptance 2: blocked presenter leaves audience usable; real popup has notes/next preview and shared navigation",
+              "dist/tests/html-player.test.js: H04 actual fullscreen exit, Grid slide layout, print from presentation, mount and read return"
+            ],
+            "log": "docs/html-first/evidence/h04/verification/focused.log",
+            "scope": "Actual Chrome verified; Safari pending."
+          },
+          {
+            "criterion": "PDF 一页一幻灯片，步骤全显，文字尽量可选，无 UI/裁切/空白多页",
+            "status": "partial",
+            "commit": "7c1a6c46676566e346edc2af24974752d4288897",
+            "tests": [
+              "dist/tests/html-player.test.js: H04 acceptance 3: actual browser PDF has two sized pages, selectable revealed text, no editor UI and print restores content",
+              "dist/tests/html-player.test.js: H04 actual fullscreen exit, Grid slide layout, print from presentation, mount and read return"
+            ],
+            "log": "docs/html-first/evidence/h04/verification/focused.log",
+            "scope": "Actual Chrome verified; Safari pending."
+          },
+          {
+            "criterion": "不自动生成 PDF，不存在 PPTX/PPT/ODP/Keynote 路径",
+            "status": "passed",
+            "commit": "7c1a6c46676566e346edc2af24974752d4288897",
+            "tests": [
+              "dist/tests/html-player.test.js: H04 acceptance 4: generation and reading create only HTML; new export/runtime graph excludes retired formats"
+            ],
+            "log": "docs/html-first/evidence/h04/verification/focused.log",
+            "scope": "Active HTML generation/player/print graph only; whole legacy distribution cleanup remains H05."
+          }
+        ],
+        "remaining": [
+          "Actual Safari presentation and PDF remain unverified: native Safari WebDriver rejects session creation with Allow remote automation disabled.",
+          "Native OS print dialog interaction is not automated; emitted PDF is tested through the actual Chrome print engine and macOS PDFKit.",
+          "Representative authored layouts verified; arbitrary overflowing CSS, heterogeneous author transforms and cross-platform font equality are not guaranteed.",
+          "Whole legacy repository/distribution cleanup is H05; no new retired-format path was introduced.",
+          "H00/H06 human review and controlled model/performance measurements remain open."
+        ],
+        "initialImplementationCommit": "c9e35fdd7ddb1cdafb4418e6c9ea257374cc183b",
+        "tests": {
+          "before": 434,
+          "after": 439,
+          "added": 5,
+          "removed": 0,
+          "passed": 439,
+          "failed": 0,
+          "skipped": 0,
+          "focusedPassed": 22,
+          "h04Passed": 5
+        }
+      }
     },
     {
       "id": "H05",
