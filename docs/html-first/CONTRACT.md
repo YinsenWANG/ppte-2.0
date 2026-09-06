@@ -12,7 +12,7 @@
 - 旧 PLAN §5 的 loopback 推荐策略显式退休，不能作为主入口或权限不足时的必需降级。`ppte edit` 的目标语义是打开本文件并退出；可选历史服务不得成为读者依赖。
 - 不增加 MCP stdio、第二个模型账号、Office/PPTX/PPT/ODP/Keynote、QuickJS、Electron、常驻服务或扩展要求；旧 `.ppte`、CAS、Portable profiles、Presentation IR、Recipe 仍退休。审美不增加配方、字数/卡片数或评分门禁。
 
-**实现边界：** S00 是合同冻结，不是 S01/S02 功能验收。当前 legacy `ppte edit` 仍启动 loopback，直开入口可见性与分级保存交互待修复。S01/S02/S07 负责实际文件、浏览器和权限旅程；Safari、真实选择器、人工评审、低性能设备和模型遥测均不可由本合同升级判定通过。F01–F05 仍映射到 S01/S03，保持待修复。
+**实现边界：** S00 是合同冻结，不是 S01/S02 功能验收。`ppte edit` 已改为打开文件后退出；`ppte serve` 是显式开发工具。直开入口已实现，分级保存与真实浏览器验收仍待完成。S01/S02/S07 负责实际文件、浏览器和权限旅程；Safari、真实选择器、人工评审、低性能设备和模型遥测均不可由本合同升级判定通过。F01 映射到 S01 的新证据；F02–F05 仍在 S03 待修复。
 
 机器合同在 `scripts/html-benchmark.mjs`：`CONTRACT` 为 1.1，`H00_CONTRACT` 保留 1.0。`validateContract` 默认严格验证当前版本；验证旧版必须显式指定版本。历史 `evaluate`/命令默认仍验证 H00，禁止自动重标基线；新证据须显式选择新合同并重新绑定摘要。两版均执行相同的完整测量、遥测、失败与文件校验。
 

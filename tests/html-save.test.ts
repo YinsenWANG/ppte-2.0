@@ -179,7 +179,7 @@ test('H02 acceptance 4: loopback bind, hostile Origin/Host, no token, traversal,
 test('H02 acceptance 5: real installed Chrome file URL shows limitation, keeps draft and never claims file save',async()=>{
  const f=await fixture();const browser=await chromium.launch({channel:'chrome',headless:true});try{
   const before=await readFile(f.file,'utf8');const page=await browser.newPage();await ready(page,pathToFileURL(f.file).href);
-  await page.getByText('编辑 / 保存',{exact:true}).click({force:true});await page.getByText('编辑',{exact:true}).click();
+  assert.equal(await page.getByText('编辑',{exact:true}).isVisible(),true);await page.getByText('编辑',{exact:true}).click();
   assert.match(await page.locator('[role=status]').textContent()??'',/不能自动覆盖原文件/);
   await page.frameLocator('#ppte-frame').locator('h1').fill('Draft only');await page.waitForTimeout(1000);
   assert.match(await page.locator('[role=status]').textContent()??'',/仅草稿/);assert.equal(await readFile(f.file,'utf8'),before);
@@ -208,7 +208,7 @@ test('H02 acceptance 5: Safari actual WebDriver journey or explicit blocked evid
  }finally{driver.kill();}
 });
 
-test('H02 acceptance 1/4: packaged npm install exposes ppte edit, stable restart URL and multiple file mappings',async()=>{
+test('H02 acceptance 1/4: explicit development ppte serve retains packaged npm install, stable restart URL and multiple file mappings',async()=>{
  const f=await fixture();let child:ReturnType<typeof spawn>|undefined;
  try{
   const stage=spawnSync(process.execPath,['scripts/stage-html.mjs'],{encoding:'utf8'});assert.equal(stage.status,0,stage.stderr);
@@ -221,7 +221,7 @@ test('H02 acceptance 1/4: packaged npm install exposes ppte edit, stable restart
   const install=spawnSync('npm',['install','--global','--prefix',prefix,'--ignore-scripts','--no-audit','--no-fund',tarball],{encoding:'utf8'});assert.equal(install.status,0,install.stderr);
   const bin=join(prefix,'bin','ppte');
   const launch=async(file:string)=>{
-   child=spawn(bin,['edit',file,'--no-open'],{stdio:['ignore','pipe','pipe']});
+   child=spawn(bin,['serve',file,'--no-open'],{stdio:['ignore','pipe','pipe']});
    return await new Promise<any>((yes,no)=>{let output='';child!.stdout!.on('data',b=>{output+=String(b);if(output.includes('\n')){try{yes(JSON.parse(output.trim()));}catch(e){no(e);}}});child!.once('exit',c=>no(Error(`CLI exited ${c}: ${output}`)));});
   };
   const first=await launch(f.file);assert.equal(first.ok,true);const url=new URL(first.url);const token=url.hash.slice('#token='.length);

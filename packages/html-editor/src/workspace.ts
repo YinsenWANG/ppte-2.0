@@ -50,7 +50,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     redo.title = '重做 · Cmd/Ctrl+Shift+Z';
     redo.setAttribute('aria-label', '重做');
     redo.innerHTML = '<svg viewBox="0 0 24 24"><path d="m15 5 5 5-5 5m5-5h-9a6 6 0 0 0 0 12"/></svg>';
-    const originals = Array.from(bar.querySelectorAll('button')).filter(b => !['编辑', '保存 / 授权'].includes(b.textContent ?? '') && b !== undo && b !== redo);
+    const originals = Array.from(bar.querySelectorAll('button')).filter(b => !['编辑', '保存 / 授权', '下载更新后的文件'].includes(b.textContent ?? '') && b !== undo && b !== redo);
     const more = document.createElement('details');
     more.innerHTML = '<summary>更多</summary><div></div>';
     for (const b of originals)
@@ -392,6 +392,12 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     const resize = () => {
         const top = bar.getBoundingClientRect().height + 16;
         root.style.setProperty('--top', `${top}px`);
+        if (!active) {
+            frame.style.marginLeft = '0';
+            frame.style.width = '100%';
+            frame.style.marginTop = `${top}px`;
+            frame.style.height = `calc(100% - ${top}px)`;
+        }
         if (active) {
             frame.style.marginLeft = '200px';
             frame.style.width = 'calc(100% - 448px)';
@@ -405,6 +411,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         root.removeAttribute('data-open');
         frame.style.marginLeft = '0';
         frame.style.width = '100%';
+        resize();
         refresh();
     });
     let wasActive = false;
@@ -427,7 +434,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     const printing = installPrint(frame, { suspend, resume, exitPresentation: () => player.exit() });
     button(more.lastElementChild as HTMLElement, '导出 PDF', () => printing.print());
     Object.assign(window, { PPTePlayer: player, PPTePrint: printing });
-    return { enable() {
+    return { get active() { return active; }, enable() {
             active = true;
             root.setAttribute('data-open', '');
             refresh();
@@ -437,6 +444,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
             root.removeAttribute('data-open');
             frame.style.marginLeft = '0';
             frame.style.width = '100%';
+            resize();
             refresh();
         }, refresh };
 }

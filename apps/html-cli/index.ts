@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { realpathSync } from 'node:fs';
-import { readFile, writeFile, mkdir, cp, readdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, cp, readdir, stat } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { startEditor, digest } from '../../packages/html-save/src/index.js';
@@ -10,10 +10,10 @@ import { enhanceHTML } from '../../packages/html-document/src/index.js';
 export async function runHTMLCli(args: string[]) {
   if (args.length === 0 || args[0] === '--help') return {
     ok:true, contract:'single-file-first-1.1',
-    commands:['ppte enhance input.html --out 作品.ppte.html','ppte skill-install --out DIRECTORY'],
+    commands:['ppte enhance input.html --out 作品.ppte.html','ppte edit 作品.ppte.html','ppte skill-install --out DIRECTORY'],
     entry:'Open 作品.ppte.html directly (file://). Readers require no Node or service. Existing .html remains readable.',
     save:'Original-file autosave requires actual write authorization; otherwise download a complete updated file. Draft/download is not saved to the original.',
-    migration:'S01/S02 pending: direct-open controls and save UX are not yet accepted. Legacy ppte edit FILE [--no-open] [--port=PORT] still starts loopback; its recommendation is retired. Target: open file and exit.',
+    migration:'S01/S02 acceptance partial: ppte edit opens file and exits; loopback recommendation is retired. Explicit serve is a development tool. --port is only accepted by serve.',
     pdf:'Optional browser print: More → Export PDF. Node.js is for authoring only.',
   };
   if (args[0] === 'skill-install') {
@@ -28,7 +28,21 @@ export async function runHTMLCli(args: string[]) {
     return {ok:true,path:out,hint:'Installed once; reuse for future presentations. Existing skills are never overwritten.'};
   }
   if(args[0] === 'edit') {
-    if(!args[1] || args.slice(2).some(x=>x!=='--no-open' && !/^--port=\d+$/.test(x)))throw Error('USAGE: ppte edit file.html [--no-open] [--port=PORT]');
+    if(!args[1] || args.slice(2).some(x=>x!=='--no-open'))throw Error('USAGE: ppte edit file.ppte.html [--no-open]; --port belongs to explicit serve');
+    const file=resolve(args[1]);
+    if(!/\.html$/i.test(file) || !(await stat(file)).isFile())throw Error('HTML_REQUIRED');
+    const url=pathToFileURL(file).href;
+    if(!args.includes('--no-open')) {
+      const command=process.platform==='darwin'?'open':process.platform==='win32'?'explorer':'xdg-open';
+      await new Promise<void>((done,fail)=>{
+        const child=spawn(command,[url],{stdio:'ignore',detached:true});
+        child.once('error',fail);child.once('spawn',()=>{child.unref();done();});
+      });
+    }
+    return {ok:true,url,path:file,hint:'Open this file directly. No PPTe service is running; original-file writes require browser authorization.'};
+  }
+  if(args[0] === 'serve') {
+    if(!args[1] || args.slice(2).some(x=>x!=='--no-open' && !/^--port=\d+$/.test(x)))throw Error('USAGE: ppte serve file.html [--no-open] [--port=PORT]');
     const file=resolve(args[1]);
     const portArg=args.find(x=>x.startsWith('--port='));
     const port=portArg?Number(portArg.slice(7)):20000+parseInt(digest(file).slice(0,4),16)%30000;

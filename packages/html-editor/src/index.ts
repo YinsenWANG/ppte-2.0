@@ -10,7 +10,6 @@ interface API {
 }
 export function installEditor(api: API) {
     let controller: SaveController;
-    let editing = false;
     let ui: ReturnType<typeof workspace>;
     let token = new URLSearchParams(location.hash.slice(1)).get('token');
     // Parent session storage permits reload; capabilities never enter serialized HTML or content.
@@ -29,8 +28,8 @@ export function installEditor(api: API) {
     const bar = document.createElement('nav');
     bar.id = 'ppte-save-ui';
     bar.setAttribute('data-ppte-transient', '');
-    bar.hidden = true;
-    bar.style.cssText = 'position:fixed;z-index:100;top:8px;left:8px;right:8px;padding:10px;background:#20242c;color:#fff;font:14px system-ui;border-radius:8px;display:none;gap:8px;align-items:center';
+    bar.hidden = false;
+    bar.style.cssText = 'position:fixed;z-index:100;top:8px;left:8px;right:8px;padding:10px;background:#20242c;color:#fff;font:14px system-ui;border-radius:8px;display:flex;gap:8px;align-items:center';
     const status = document.createElement('span');
     status.setAttribute('role', 'status');
     status.style.flex = '1';
@@ -49,7 +48,6 @@ export function installEditor(api: API) {
         status.textContent = names[controller.state] + (controller.detail ? '：' + controller.detail : '');
     };
     const enable = () => {
-        editing = true;
         ui?.enable();
         bar.hidden = false;
         bar.style.display = 'flex';
@@ -58,7 +56,7 @@ export function installEditor(api: API) {
     button('编辑', () => {
         enable();
         if (!controller.adapter)
-            controller.set('draft', '直开不能自动覆盖原文件。首次保存请选择原文件授权，或运行 ppte edit "作品.html"。');
+            controller.set('draft', '未授权不能自动覆盖原文件。首次保存请选择原文件授权，或下载更新后的文件。');
     });
     bar.append(status);
     const save = button('保存 / 授权', () => void (async () => {
@@ -66,7 +64,7 @@ export function installEditor(api: API) {
             if (!controller.adapter) {
                 const picker = (window as any).showOpenFilePicker;
                 if (!isSecureContext || typeof picker !== 'function') {
-                    controller.set('unauthorized', '此浏览器不能覆盖原文件。请在终端运行 ppte edit "作品.html"；此处只有草稿。');
+                    controller.set('unauthorized', '此浏览器不能覆盖原文件；请下载更新后的文件。');
                     return;
                 }
                 const [handle]: FileHandle[] = await picker({ multiple: false, types: [{ description: 'HTML', accept: { 'text/html': ['.html'] } }] });
@@ -147,29 +145,17 @@ export function installEditor(api: API) {
                 controller.set('failed', String(e));
             }
         })());
-    button('收起', () => {
-        bar.style.display = 'none';
+    button('下载更新后的文件', () => {
+        const url = URL.createObjectURL(new Blob([api.serialize()], { type: 'text/html' }));
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = (document.title.replace(/[\\/:*?"<>|]/g, '_').replace(/(?:\.ppte)?\.html$/i, '') || '作品') + '.ppte.html';
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 30000);
+        controller.set(controller.state, '已生成更新文件；原文件未覆盖（下载是否落盘由浏览器决定）');
     });
     document.body.append(bar);
-    // Reserve actual toolbar height so the first editable line remains pointer-accessible.
     const frame = document.querySelector<HTMLIFrameElement>('#ppte-frame')!;
-    new ResizeObserver(() => {
-        const inset = bar.getBoundingClientRect().height;
-        frame.style.marginTop = inset ? `${inset + 16}px` : '0';
-        frame.style.height = inset ? `calc(100% - ${inset + 16}px)` : '100%';
-    }).observe(bar);
-    const launch = document.createElement('button');
-    launch.textContent = '编辑 / 保存';
-    launch.setAttribute('data-ppte-transient', '');
-    launch.style.cssText = 'position:fixed;right:12px;bottom:12px;opacity:0';
-    launch.onfocus = () => launch.style.opacity = '1';
-    launch.onmouseenter = () => launch.style.opacity = '1';
-    launch.onmouseleave = () => launch.style.opacity = '0';
-    launch.onclick = () => {
-        bar.hidden = false;
-        bar.style.display = 'flex';
-    };
-    document.body.append(launch);
     ui = workspace(frame, bar, () => controller?.change());
     const initialize = async () => {
         let storage: Storage | undefined;
@@ -181,7 +167,7 @@ export function installEditor(api: API) {
         const adapter = token && location.hostname === '127.0.0.1' ? loopbackAdapter(token) : undefined;
         const base: Snapshot = adapter ? await adapter.load() : { content: api.content(), metadata: api.metadata, hash: crypto?.subtle ? await sha(api.content()) : api.content(), fileKey: location.href, name: document.title };
         controller = new SaveController(adapter, base, () => api.content(), render, storage, `ppte-draft:${location.origin}:${base.fileKey}`);
-        controller.set(adapter ? 'saved' : 'unauthorized', adapter ? '' : '直开未绑定原文件；编辑仅暂存草稿。使用 ppte edit "作品.html" 获得原文件自动保存。');
+        controller.set(adapter ? 'saved' : 'unauthorized', adapter ? '' : '尚未关联写入文件；可编辑、授权保存或下载更新后的文件。');
         const draft = controller.recover();
         if (draft && draft.base === base.hash) {
             await api.mount(draft.content);
@@ -197,7 +183,7 @@ export function installEditor(api: API) {
     };
     const attach = () => {
         const doc = api.contentDocument!;
-        if (editing)
+        if (ui?.active)
             enable();
         doc.addEventListener('input', () => controller?.change());
         doc.addEventListener('compositionstart', () => controller?.composition(true));
@@ -210,7 +196,7 @@ export function installEditor(api: API) {
             save.click();
         }
         if (event.key === 'Escape') {
-            bar.style.display = 'none';
+            bar.style.display = 'flex';
             ui.hide();
         }
     };
@@ -226,6 +212,6 @@ export function installEditor(api: API) {
     void initialize().catch(e => {
         bar.hidden = false;
         bar.style.display = 'flex';
-        status.textContent = '无法连接原文件；请重新运行 ppte edit 并打开新链接。' + String(e);
+        status.textContent = '保存初始化失败；内容仍可阅读。' + String(e);
     });
 }

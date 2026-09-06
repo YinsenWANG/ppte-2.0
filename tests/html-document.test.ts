@@ -40,12 +40,26 @@ test('H01 acceptance 1: native Grid/Flex/SVG/font hierarchy and nested resources
     await before.evaluate(async () => { await document.fonts.ready; await Promise.all(Array.from(document.images, i => i.decode())); });
     const after = await browser.newPage({ viewport:{width:960,height:640}, deviceScaleFactor:1 });
     const frame = await mount(after, enhanced.html);
+    await after.waitForFunction(() => !!(window as any).PPTeSave);
+    const inset = await after.locator('#ppte-save-ui').evaluate(n => n.getBoundingClientRect().height + 16);
+    await after.setViewportSize({width:960,height:640+inset});
+    await after.waitForFunction(() => document.querySelector('iframe')!.clientHeight === 640);
     assert.deepEqual(await measurements(frame), await measurements(before));
     assert.equal(await frame.evaluate(() => document.fonts.check('14px Fixture')), true);
     assert.equal(await frame.locator('.imported').evaluate(el => getComputedStyle(el).borderLeftWidth), '4px');
-    const a = await before.screenshot({ path:join(evidence,'before.png') });
-    const b = await after.screenshot({ path:join(evidence,'after.png') });
-    assert.deepEqual(b,a);
+    // Match the frame's physical screen origin too: Chromium gradient dithering depends
+    // on that origin. The baseline iframe loads the untouched author file and CSS.
+    await before.setViewportSize({width:960,height:640+inset});
+    await before.setContent(`<style>html,body{margin:0;width:100%;height:100%;background:#111}</style><nav style="position:fixed;z-index:100;top:0;left:0;right:0;height:${inset-16}px;background:white"></nav><iframe src="${pathToFileURL(join(fixture,'layout.html')).href}" style="display:block;border:0;width:960px;height:640px;margin-top:${inset}px"></iframe>`);
+    const originalFrame = before.frames().find(f => f.parentFrame())!;
+    await originalFrame.waitForLoadState();
+    await originalFrame.evaluate(async () => { await document.fonts.ready; await Promise.all(Array.from(document.images,i=>i.decode())); });
+    assert.deepEqual(await measurements(frame), await measurements(originalFrame));
+    // Isolate each canvas in an identical compositor layer (no changes inside author DOM).
+    for (const page of [before,after]) await page.locator('iframe').evaluate(n => n.style.transform = 'translateZ(0)');
+    const a = await before.locator('iframe').screenshot({ path:join(evidence,'before.png') });
+    const b = await after.locator('#ppte-frame').screenshot({ path:join(evidence,'after.png') });
+    assert.ok(b.equals(a), "Content canvas PNG bytes must match exactly");
     writeFileSync(join(evidence,'layout.json'), JSON.stringify(await measurements(frame),null,2));
     writeFileSync(join(evidence,'example.html'), enhanced.html);
   } finally { await browser.close(); }

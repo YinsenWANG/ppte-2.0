@@ -14,7 +14,7 @@ async function setup() {
  await writeFile(file,(await enhanceHTML(source.replace('<video controls', '<video muted loop src="data:video/webm;base64,'+video.toString('base64')+'" controls'),{root,base:root})).html);
  const browser=await chromium.launch({channel:'chrome',headless:true});const page=await browser.newPage({viewport:{width:1200,height:800}});
  await page.goto('file://'+file);await page.waitForFunction(()=>!!(window as any).PPTePlayer);
- await page.getByRole('button',{name:'编辑 / 保存',exact:true}).click();
+ assert.equal(await page.getByRole('button',{name:'编辑',exact:true}).isVisible(),true);
  // Explicitly inject platform failures; these are not claims of native permission interaction.
  await page.evaluate(()=>{document.documentElement.requestFullscreen=()=>Promise.reject(Error('denied'));});
  return {root,file,browser,page,async close(){await browser.close();await rm(root,{recursive:true,force:true});}};

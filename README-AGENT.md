@@ -49,11 +49,9 @@ Cancellation, conflicts and storage failures must retain edits and disclose the
 limitation. Browser storage is a convenience, not a reliable original-file copy.
 
 The loopback recommendation is retired; a service must not become the fallback
-for missing browser permissions. **S01/S02 pending:** the current legacy
-`ppte edit FILE [--no-open] [--port=PORT]` still starts loopback. Its planned
-replacement opens the file in the default browser and exits. Direct-open controls
-and capability-based save UX are not yet accepted. Do not present legacy service
-journeys as proof of this contract. Safari and native file-picker journeys remain
+for missing browser permissions. **S01/S02 acceptance partial:** `ppte edit FILE [--no-open]` opens the file and exits.
+`ppte serve FILE [--no-open] [--port=PORT]` explicitly starts the optional development service.
+Direct-open controls are implemented; capability-based save, Safari and native picker acceptance remain
 pending, as does human confirmation.
 
 ## Optional PDF

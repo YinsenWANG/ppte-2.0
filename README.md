@@ -11,10 +11,10 @@ the contract requires full editing and a complete updated-file download;
 a draft or download must never be called saved to the original file.
 The former loopback recommendation is retired, including as a required fallback.
 
-**Implementation status:** S00 freezes this contract; S01/S02 direct-open controls,
-`ppte edit` open-and-exit behavior and capability-based save UX remain pending.
-The current legacy `ppte edit` still starts a service. Do not use that path as
-single-file acceptance evidence. Safari, native picker and human acceptance are
+**Implementation status:** S00 freezes this contract; S01/S02 acceptance is partial.
+`ppte edit FILE` opens the file and exits. `ppte serve FILE` explicitly starts
+an optional development service; it is not a reader prerequisite.
+Direct-open controls are implemented; native picker, Safari and human acceptance remain
 pending; the new contract does not certify those capabilities.
 
 See [installation, workflow and recovery](README-AGENT.md), the authoritative

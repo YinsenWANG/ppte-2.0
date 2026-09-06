@@ -69,7 +69,7 @@ test('S00 active instructions and actual CLI help agree on delivery and disclose
   assert.match(help.commands[0], /--out 作品\.ppte\.html$/);
   assert.match(help.entry, /file:\/\//); assert.match(help.entry, /no Node or service/);
   assert.match(help.save, /actual write authorization/); assert.match(help.save, /Draft\/download is not saved/);
-  assert.match(help.migration, /S01\/S02 pending/); assert.match(help.migration, /still starts loopback/);
+  assert.match(help.migration, /S01\/S02 acceptance partial/); assert.match(help.migration, /ppte edit opens file and exits/);
   assert.match(help.migration, /recommendation is retired/);
   const invalid = cli('enhance'); assert.equal(invalid.status, 1);
   assert.match(JSON.parse(invalid.stdout).error, /作品\.ppte\.html/);
