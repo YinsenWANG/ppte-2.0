@@ -2936,7 +2936,7 @@
       "milestone": "M4",
       "priority": "P0",
       "title": "分阶段发布包与回滚演练收口",
-      "status": "planned",
+      "status": "partial",
       "effort": "M",
       "ownerRole": "发布 / 验收",
       "dependsOn": [
@@ -2971,7 +2971,106 @@
         "A21"
       ],
       "releaseRequired": true,
-      "evidence": []
+      "evidence": [
+        {
+          "commit": "c4b544011e3ea4fb0027ed5674612e6e6c027cea",
+          "tests": [
+            "tests/release-candidate.test.ts",
+            "tests/npm-native-skill.test.ts",
+            "tests/history-repair.test.ts"
+          ],
+          "report": "docs/evolution/quality/Q02.md",
+          "manifest": "docs/evolution/quality/release-manifest.json",
+          "verification": {
+            "status": "pass",
+            "typecheck": "pass",
+            "build": "pass",
+            "test": {
+              "before": 387,
+              "after": 392,
+              "delta": 5,
+              "passed": 392,
+              "failed": 0,
+              "skipped": 0
+            },
+            "blackbox": {
+              "start": "docs/evolution/quality/q02-blackbox-start.json",
+              "final": "docs/evolution/quality/q02-blackbox-final.json",
+              "beforeGreen": 72,
+              "beforeRed": 0,
+              "green": 72,
+              "red": 0,
+              "newRed": [],
+              "exitCode": 0
+            },
+            "buildManifest": {
+              "applicationVersion": "0.9.0-next.0",
+              "runtimeBuildId": "be2a4f326d318e1e5e9e4ee977bb45cd61a7e9ce89283e621b36fba93f526e3f"
+            },
+            "logs": {
+              "typecheck": {
+                "path": "artifacts/q02-verification/typecheck.log",
+                "sha256": "a7149824f4d2e2b22a41ec34ca6b451f7ac9e9003b5167390eead15d29870e70"
+              },
+              "build": {
+                "path": "artifacts/q02-verification/build.log",
+                "sha256": "60ca46444de45fc682ae3a482a3992ab8dd7a618503d54c03c79c3f44488bba4"
+              },
+              "test-start": {
+                "path": "artifacts/q02-verification/test-start.log",
+                "sha256": "9709d6d249be446ed619bc7d17bd4241eb48aea5d1a375224d822138bdd397c5"
+              },
+              "test-final": {
+                "path": "artifacts/q02-verification/test-final.log",
+                "sha256": "126360fc25b052003393ab1b4596688167de573e19e25248964dcb9a8c19356a"
+              },
+              "blackbox-start": {
+                "path": "artifacts/q02-verification/blackbox-start.log",
+                "sha256": "195f6c2edb9ecb1129e7146dd44d491db9fd10a2388f323d68e7172deba95503"
+              },
+              "blackbox-final": {
+                "path": "artifacts/q02-verification/blackbox-final.log",
+                "sha256": "195f6c2edb9ecb1129e7146dd44d491db9fd10a2388f323d68e7172deba95503"
+              },
+              "drill": {
+                "path": "artifacts/q02-verification/drill.log",
+                "sha256": "2ef49127bfb281c3a6d9f49b7392931334522acc16e6858f8546f017d4261782"
+              }
+            }
+          },
+          "criteria": {
+            "1": {
+              "status": "blocked",
+              "evidence": [
+                "tests/release-candidate.test.ts",
+                "tests/npm-native-skill.test.ts"
+              ],
+              "gap": "D07/P01/Q01 remain partial; real clients, physical-device performance and A21 human panel missing."
+            },
+            "2": {
+              "status": "pass",
+              "evidence": [
+                "tests/release-candidate.test.ts",
+                "tests/history-repair.test.ts"
+              ],
+              "result": "Retained originals, old/candidate tarballs and build manifests, source profile, reports and both HTML copies. Actual old reader restores legacy revision and rejects new schema without mutation."
+            },
+            "3": {
+              "status": "pass",
+              "evidence": [
+                "tests/release-candidate.test.ts"
+              ],
+              "result": "Git/npm not-run; isolated temporary local installation and synthetic versioned HTML upgrade pass. User installations and user HTML not-run."
+            }
+          },
+          "remainingRisks": [
+            "Criterion 1 remains blocked: D07/P01/Q01 are partial; actual client acceptance, real-device performance and the A21 human panel are not complete.",
+            "No Git push/tag, npm publication, persistent user runtime/Skill installation or user HTML upgrade performed.",
+            "Initial npm installation can fetch fflate; offline runtime tests block Node network APIs rather than the OS network.",
+            "Old/new candidates share application semver; package SHA-256 and runtimeBuildId identify the actual bytes. Old-runtime rollback does not downgrade new-format documents."
+          ]
+        }
+      ]
     },
     {
       "id": "X01",

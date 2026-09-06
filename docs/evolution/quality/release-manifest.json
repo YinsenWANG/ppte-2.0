@@ -66,6 +66,22 @@
     {
       "path": "docs/evolution/quality/q02-native-report.json",
       "sha256": "8c2772cfd4dc73b103beffe87555d2cc8111d96d8736749794b540b44eae56e8"
+    },
+    {
+      "path": "docs/evolution/quality/q02-verification.json",
+      "sha256": "53bc03dfc75a96657f85c3479ae6bbcc810cbb81ec4203a10f1b7e818ffa6a48"
+    },
+    {
+      "path": "docs/evolution/quality/q02-blackbox-start.json",
+      "sha256": "0abf1846a21d2bc451c4e98f30832f033ef9219e223e46fdba0baefd7eb32f88"
+    },
+    {
+      "path": "docs/evolution/quality/q02-blackbox-final.json",
+      "sha256": "0abf1846a21d2bc451c4e98f30832f033ef9219e223e46fdba0baefd7eb32f88"
+    },
+    {
+      "path": "docs/evolution/quality/q02-release-gate.json",
+      "sha256": "85037923c7e443d11f48a73377c986395210b809ce105de201fe2a65a5a4cb2e"
     }
   ],
   "automaticDowngrade": false,
@@ -114,6 +130,31 @@
     }
   },
   "verification": {
-    "status": "pending-final-suite"
+    "status": "pass",
+    "report": "docs/evolution/quality/q02-verification.json",
+    "test": {
+      "before": 387,
+      "after": 392,
+      "delta": 5,
+      "passed": 392,
+      "failed": 0,
+      "skipped": 0
+    },
+    "blackbox": {
+      "start": "docs/evolution/quality/q02-blackbox-start.json",
+      "final": "docs/evolution/quality/q02-blackbox-final.json",
+      "beforeGreen": 72,
+      "beforeRed": 0,
+      "green": 72,
+      "red": 0,
+      "newRed": [],
+      "exitCode": 0
+    }
+  },
+  "implementationCommit": "c4b544011e3ea4fb0027ed5674612e6e6c027cea",
+  "releaseCheck": {
+    "status": "blocked",
+    "exitCode": 1,
+    "report": "docs/evolution/quality/q02-release-gate.json"
   }
 }

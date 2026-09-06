@@ -1,0 +1,57 @@
+{
+  "status": "pass",
+  "typecheck": "pass",
+  "build": "pass",
+  "test": {
+    "before": 387,
+    "after": 392,
+    "delta": 5,
+    "passed": 392,
+    "failed": 0,
+    "skipped": 0
+  },
+  "blackbox": {
+    "start": "docs/evolution/quality/q02-blackbox-start.json",
+    "final": "docs/evolution/quality/q02-blackbox-final.json",
+    "beforeGreen": 72,
+    "beforeRed": 0,
+    "green": 72,
+    "red": 0,
+    "newRed": [],
+    "exitCode": 0
+  },
+  "buildManifest": {
+    "applicationVersion": "0.9.0-next.0",
+    "runtimeBuildId": "be2a4f326d318e1e5e9e4ee977bb45cd61a7e9ce89283e621b36fba93f526e3f"
+  },
+  "logs": {
+    "typecheck": {
+      "path": "artifacts/q02-verification/typecheck.log",
+      "sha256": "a7149824f4d2e2b22a41ec34ca6b451f7ac9e9003b5167390eead15d29870e70"
+    },
+    "build": {
+      "path": "artifacts/q02-verification/build.log",
+      "sha256": "60ca46444de45fc682ae3a482a3992ab8dd7a618503d54c03c79c3f44488bba4"
+    },
+    "test-start": {
+      "path": "artifacts/q02-verification/test-start.log",
+      "sha256": "9709d6d249be446ed619bc7d17bd4241eb48aea5d1a375224d822138bdd397c5"
+    },
+    "test-final": {
+      "path": "artifacts/q02-verification/test-final.log",
+      "sha256": "126360fc25b052003393ab1b4596688167de573e19e25248964dcb9a8c19356a"
+    },
+    "blackbox-start": {
+      "path": "artifacts/q02-verification/blackbox-start.log",
+      "sha256": "195f6c2edb9ecb1129e7146dd44d491db9fd10a2388f323d68e7172deba95503"
+    },
+    "blackbox-final": {
+      "path": "artifacts/q02-verification/blackbox-final.log",
+      "sha256": "195f6c2edb9ecb1129e7146dd44d491db9fd10a2388f323d68e7172deba95503"
+    },
+    "drill": {
+      "path": "artifacts/q02-verification/drill.log",
+      "sha256": "2ef49127bfb281c3a6d9f49b7392931334522acc16e6858f8546f017d4261782"
+    }
+  }
+}

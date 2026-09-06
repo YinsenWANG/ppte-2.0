@@ -1,0 +1,1381 @@
+{
+  "buildManifest": {
+    "applicationVersion": "0.9.0-next.0",
+    "runtimeBuildId": "be2a4f326d318e1e5e9e4ee977bb45cd61a7e9ce89283e621b36fba93f526e3f"
+  },
+  "environment": {
+    "node": "v22.23.2",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "mode": "milestone",
+  "selectedGroups": [
+    "core-basic",
+    "agent-scope",
+    "lock-undo",
+    "host",
+    "pages-notes-animation",
+    "compiler-quality",
+    "portable",
+    "export",
+    "recovery",
+    "review-patch",
+    "section-41",
+    "video-widget",
+    "pptx-chart",
+    "full-portable",
+    "group-rotate",
+    "legacy-import",
+    "mcp",
+    "delivery"
+  ],
+  "groups": [
+    {
+      "group": "core-basic",
+      "description": "Audit-clean reference-core paths kept as regression guards.",
+      "findings": "clean paths listed by the independent audit",
+      "green": 7,
+      "red": 0,
+      "status": "green",
+      "cases": [
+        {
+          "id": "core-basic:1",
+          "finding": "clean-path:preview-pure",
+          "title": "Preview is a pure function over a semantic snapshot.",
+          "authorization": "Human/Agent may preview a standard text-only transaction without commit authority.",
+          "expected": "preview ok; document, revision, history, redo stack, and save state remain byte-identical",
+          "status": "green",
+          "observed": {
+            "proposedRevision": "sha256-83830a511da4a2c6d31ea660363e6aeacfc598dc6f858a42a5247bd427c55394",
+            "stateUnchanged": true
+          }
+        },
+        {
+          "id": "core-basic:2",
+          "finding": "clean-path:ime-no-submit",
+          "title": "IME composition does not submit a transaction.",
+          "authorization": "While composition is active, the editor may update private local text but must not reach Session.commit.",
+          "expected": "finish() returns no transaction while composing, and local composition remains local",
+          "status": "green",
+          "observed": {
+            "composing": true,
+            "submitted": false
+          }
+        },
+        {
+          "id": "core-basic:3",
+          "finding": "clean-path:ime-one-transaction",
+          "title": "A completed IME edit becomes one semantic transaction.",
+          "authorization": "Human editor commits after compositionend; the adapter owns the transaction boundary.",
+          "expected": "exactly one text.replaceContent operation commits and one history entry is created",
+          "status": "green",
+          "observed": {
+            "operations": 1,
+            "history": 1,
+            "text": "\u7ecf\u8425\u56de\u987e\uff08\u7ec4\u5408\u8f93\u5165\uff09"
+          }
+        },
+        {
+          "id": "core-basic:4",
+          "finding": "clean-path:session-undo-redo",
+          "title": "Undo and redo are exact within one Session.",
+          "authorization": "Human edits are committed in one Session; undo/redo must traverse that Session history.",
+          "expected": "content, geometry, and metadata commits undo and redo in exact reverse/forward order",
+          "status": "green",
+          "observed": {
+            "undoRevisions": [
+              "sha256-eb51072db75403342cb0d805a955f13905b7c72e1782a30ab259e0e015576c7d",
+              "sha256-7a28d22fab9be81127d5d2e226d29128d1827cd70a9fa7bd027e60bdd01fab08",
+              "sha256-ade6aaebb54eb41a57c263627e8d4e3867333451e153de1ca6bf53735e6cfab2"
+            ],
+            "history": 3,
+            "redo": 0
+          }
+        },
+        {
+          "id": "core-basic:5",
+          "finding": "clean-path:checkpoint-atomic",
+          "title": "Checkpoint replacement is atomic and old files remain readable.",
+          "authorization": "A human save may fault before rename; readers must see either the old complete archive or the new complete archive.",
+          "expected": "fault before rename leaves the old checkpoint readable at its original revision",
+          "status": "green",
+          "observed": {
+            "atomic": true
+          }
+        },
+        {
+          "id": "core-basic:6",
+          "finding": "clean-path:special-text-roundtrip",
+          "title": "Special text round-trips byte-for-byte through the semantic file.",
+          "authorization": "Human text may contain CJK, emoji, tags, ampersands, and literal script text; file serialization must preserve it exactly.",
+          "expected": "checkpoint reopen and derived HTML preserve the exact UTF-8 text while escaping markup",
+          "status": "green",
+          "observed": {
+            "roundTrip": true
+          }
+        },
+        {
+          "id": "core-basic:7",
+          "finding": "clean-path:agent-text-scope",
+          "title": "The standard text-only Agent transaction enforces its Scope.",
+          "authorization": "Agent receives a selection Scope for the title and may replace only that title text.",
+          "expected": "commit succeeds, title changes, and body/image/shape remain unchanged",
+          "status": "green",
+          "observed": {
+            "changedElement": "bb_text_title",
+            "bodyUnchanged": true,
+            "imageUnchanged": true,
+            "surfaceUnchanged": true
+          }
+        }
+      ]
+    },
+    {
+      "group": "agent-scope",
+      "description": "Agent scope, selection regeneration, provenance, fit, asset budget, and fact safety.",
+      "findings": "7, 8, 9, 10, 12, 13, 14",
+      "green": 7,
+      "red": 0,
+      "status": "green",
+      "cases": [
+        {
+          "id": "agent-scope:1",
+          "finding": "7",
+          "title": "Generic slide.update cannot bypass a narrow Agent Scope.",
+          "authorization": "Agent is authorized for title content only; a generic slide.update attempts to mutate the body.",
+          "expected": "preview rejects the body mutation with a scope/contract error",
+          "status": "green",
+          "observed": {
+            "ok": false,
+            "issueCodes": [
+              "SLIDE_UPDATE_FIELD_NOT_ALLOWED"
+            ]
+          }
+        },
+        {
+          "id": "agent-scope:2",
+          "finding": "8",
+          "title": "Selection regeneration changes the selected semantic object.",
+          "authorization": "Agent selection contains only the title; regeneration must preserve body, image, and surface.",
+          "expected": "generated transaction targets the title and does not delete or replace non-selected elements",
+          "status": "green",
+          "observed": {
+            "ok": true,
+            "operationKinds": [
+              "element.delete",
+              "element.insert"
+            ],
+            "operationCount": 2
+          }
+        },
+        {
+          "id": "agent-scope:3",
+          "finding": "9",
+          "title": "Regeneration carries edit policy and semantic references forward.",
+          "authorization": "Agent regeneration is authorized to replace a slide but must retain title protection and body Fact/Source references.",
+          "expected": "replacement elements retain preserveOnRegenerate and semanticRefs from the source snapshot",
+          "status": "green",
+          "observed": {
+            "inserted": [
+              {
+                "id": "draft:bb_slide_main:bb_text_title",
+                "semanticKey": "title.main",
+                "hasPolicy": true,
+                "refs": null
+              },
+              {
+                "id": "draft:bb_slide_main:bb_text_body",
+                "semanticKey": "body.summary",
+                "hasPolicy": false,
+                "refs": {
+                  "factIds": [
+                    "revenue"
+                  ],
+                  "sourceIds": [
+                    "source.report"
+                  ]
+                }
+              },
+              {
+                "id": "draft:bb_slide_main:bb_image_hero",
+                "semanticKey": "image.hero",
+                "hasPolicy": false,
+                "refs": null
+              }
+            ]
+          }
+        },
+        {
+          "id": "agent-scope:4",
+          "finding": "10",
+          "title": "Regeneration consumes the caller-supplied Slide IR.",
+          "authorization": "Agent supplies an explicit Slide IR with a cautious Chinese title; the compiler must use that request.",
+          "expected": "returned draft/transaction contains the supplied IR title rather than inferred current text",
+          "status": "green",
+          "observed": {
+            "suppliedTitleUsed": true,
+            "resultOk": true
+          }
+        },
+        {
+          "id": "agent-scope:5",
+          "finding": "12",
+          "title": "Text fit is measured against the actual fixed frame.",
+          "authorization": "Agent may reduce the title font to the requested minimum, but the committed result must not retain TEXT_OVERFLOW.",
+          "expected": "fit transaction commits only when the measured result fits, with no overflow warning afterward",
+          "status": "green",
+          "observed": {
+            "remainingOverflow": 0,
+            "revision": "sha256-6995613bb4f647b64ff79e318a490fcb822bb69a8bbe9c302863623779040aa6"
+          }
+        },
+        {
+          "id": "agent-scope:6",
+          "finding": "13",
+          "title": "Image replacement consumes the declared replacement budget.",
+          "authorization": "Agent is authorized for the image but the transaction declares maxReplacedAssets=0.",
+          "expected": "preview rejects one semantic asset replacement as a mutation-budget violation",
+          "status": "green",
+          "observed": {
+            "ok": false,
+            "issueCodes": [
+              "MUTATION_BUDGET_EXCEEDED",
+              "CHANGE_INVARIANT_VIOLATION"
+            ]
+          }
+        },
+        {
+          "id": "agent-scope:7",
+          "finding": "14",
+          "title": "Fact synchronization is safe when the prior display is absent.",
+          "authorization": "Fact sync targets the body with a previous value that is not present; it must not overwrite unrelated runs.",
+          "expected": "transaction rejects or leaves the original display untouched when no safe prior-value match exists",
+          "status": "green",
+          "observed": {
+            "ok": false,
+            "before": "Revenue was 41% last year; target is 50%.",
+            "after": "Revenue was 41% last year; target is 50%."
+          }
+        }
+      ]
+    },
+    {
+      "group": "lock-undo",
+      "description": "Lock semantics and group-lock enforcement across undo.",
+      "findings": "5, 6",
+      "green": 2,
+      "red": 0,
+      "status": "green",
+      "cases": [
+        {
+          "id": "lock-undo:1",
+          "finding": "5",
+          "title": "Lock then immediate undo is legal and exact.",
+          "authorization": "Human locks a title and immediately invokes Session.undo.",
+          "expected": "lock commit and inverse undo both succeed; title returns to its unlocked state",
+          "status": "green",
+          "observed": {
+            "commit": true,
+            "undo": true,
+            "lockedAfterUndo": false
+          }
+        },
+        {
+          "id": "lock-undo:2",
+          "finding": "6",
+          "title": "A locked logical group cannot move through a member-only transaction.",
+          "authorization": "Human requests group movement while the group itself is locked; all member geometry must remain unchanged.",
+          "expected": "preview rejects group.move with a lock/edit-policy issue",
+          "status": "green",
+          "observed": {
+            "ok": false,
+            "issueCodes": [
+              "EDIT_POLICY_VIOLATION"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "group": "host",
+      "description": "Product Host controls and browser-computed DU layout.",
+      "findings": "1, 2",
+      "green": 2,
+      "red": 0,
+      "status": "green",
+      "cases": [
+        {
+          "id": "host:1",
+          "finding": "1",
+          "title": "A real Product Host exposes the first-user editing journey.",
+          "authorization": "A new user opens a local document in Chromium and must be able to select/edit text, import an image, and save.",
+          "expected": "file:// Host exposes contenteditable text, file input, and a save control",
+          "status": "green",
+          "observed": {
+            "fileUrl": true
+          }
+        },
+        {
+          "id": "host:2",
+          "finding": "2",
+          "title": "The browser computes valid slide-space layout.",
+          "authorization": "A user opens the reference preview in Chromium; rendered geometry must be visible and proportional.",
+          "expected": "slide has nonzero computed size and title has nonzero position/font size derived from DU",
+          "status": "green",
+          "observed": {
+            "computed": true
+          }
+        }
+      ]
+    },
+    {
+      "group": "pages-notes-animation",
+      "description": "Page/notes permissions and executable animation metadata.",
+      "findings": "3, 4",
+      "green": 2,
+      "red": 0,
+      "status": "green",
+      "cases": [
+        {
+          "id": "pages-notes-animation:1",
+          "finding": "3",
+          "title": "Notes updates use the notes permission.",
+          "authorization": "Human/Agent receives only notes permission and updates speaker notes without structure authority.",
+          "expected": "notes transaction commits and changes only slide.notes",
+          "status": "green",
+          "observed": {
+            "ok": true,
+            "notes": {
+              "speaker": "\u53d1\u8a00\u5907\u6ce8",
+              "handout": "\u516c\u5f00\u8bb2\u4e49"
+            }
+          }
+        },
+        {
+          "id": "pages-notes-animation:2",
+          "finding": "4",
+          "title": "Transition and element animation metadata are executable renderer inputs.",
+          "authorization": "Presenter/Portable renderer receives a fade transition and a stepped element animation.",
+          "expected": "derived HTML exposes transition and animation behavior markers, not only appearStep",
+          "status": "green",
+          "observed": {
+            "hasTransitionMarker": true,
+            "hasAnimationMarker": true,
+            "hasAppearStep": true
+          }
+        }
+      ]
+    },
+    {
+      "group": "compiler-quality",
+      "description": "Compiler output quality and measured text-fit diagnostics.",
+      "findings": "11",
+      "green": 1,
+      "red": 0,
+      "status": "green",
+      "cases": [
+        {
+          "id": "compiler-quality:1",
+          "finding": "11",
+          "title": "Compiler rejects AI input that produces key text overflow.",
+          "authorization": "AI supplies a valid Slide IR with a deliberately long primary heading; built-in quality rule max-overflow is zero.",
+          "expected": "compileSlide returns a blocking quality issue before materialization",
+          "status": "green",
+          "observed": {
+            "issueCodes": [
+              "QUALITY_OVERFLOW"
+            ],
+            "draftCount": 3
+          }
+        }
+      ]
+    },
+    {
+      "group": "portable",
+      "description": "Offline portable viewer, Quick Fix, Light Edit, and local assets.",
+      "findings": "15, 16, 17, 18, 19",
+      "green": 5,
+      "red": 0,
+      "status": "green",
+      "cases": [
+        {
+          "id": "portable:1",
+          "finding": "15",
+          "title": "A generated Portable file is an editable offline surface.",
+          "authorization": "User double-clicks a Quick Fix file through file:// and expects text editing, local image input, and save.",
+          "expected": "generated HTML contains an editing surface, file input, and save handler",
+          "status": "green",
+          "observed": {
+            "fileUrl": true
+          }
+        },
+        {
+          "id": "portable:2",
+          "finding": "16",
+          "title": "Portable Quick Fix imports a new local image asset.",
+          "authorization": "User selects a new local PNG not present in the source Document; the runtime must validate bytes and atomically add/replace the asset.",
+          "expected": "replaceImage succeeds for a new assetId and advances the semantic revision",
+          "status": "green",
+          "observed": {
+            "before": "sha256-ade6aaebb54eb41a57c263627e8d4e3867333451e153de1ca6bf53735e6cfab2",
+            "after": "sha256-35004db48f89ff7f661963744ceec9056bb557bc8693c71ef14176d0137b4920",
+            "assetId": "bb_asset_new"
+          }
+        },
+        {
+          "id": "portable:3",
+          "finding": "17",
+          "title": "Portable save preserves the document\u2019s minimum compatibility profile.",
+          "authorization": "User edits or opens a GA-B Chart document in Quick Fix and chooses Save as New Project without knowing internal profile names.",
+          "expected": "default save succeeds for a Chart document and returns a checkpoint byte stream",
+          "status": "green",
+          "observed": {
+            "ok": true,
+            "bytes": 7924
+          }
+        },
+        {
+          "id": "portable:4",
+          "finding": "18",
+          "title": "Portable unit conversion is scoped to CSS serialization.",
+          "authorization": "User opens a self-contained Portable Viewer and reads ordinary text and identifiers exactly as authored.",
+          "expected": "generated HTML has no ordinary-word corruption from DU conversion",
+          "status": "green",
+          "observed": {
+            "originalTextPresent": true,
+            "corruptedTextPresent": false
+          }
+        },
+        {
+          "id": "portable:5",
+          "finding": "19",
+          "title": "Light Edit is a superset of Quick Fix editing.",
+          "authorization": "User opens Light Edit and expects the Quick Fix text/image edits plus Light Edit geometry/chart tools.",
+          "expected": "Light Edit editText and replaceImage both commit through the portable operation boundary",
+          "status": "green",
+          "observed": {
+            "text": true,
+            "image": true
+          }
+        }
+      ]
+    },
+    {
+      "group": "export",
+      "description": "Faithful PDF, PNG, and semantic PPTX export.",
+      "findings": "20, 21, 22",
+      "green": 3,
+      "red": 0,
+      "status": "green",
+      "cases": [
+        {
+          "id": "export:1",
+          "finding": "20",
+          "title": "PDF preserves Chinese and emoji text.",
+          "authorization": "User exports the semantic Document to PDF and inspects extracted text with pdftotext.",
+          "expected": "pdftotext output contains the authored Chinese title and second paragraph without replacement question marks",
+          "status": "green",
+          "observed": {
+            "pdftotext": true
+          }
+        },
+        {
+          "id": "export:2",
+          "finding": "21",
+          "title": "PNG contains semantic text/image pixels and matches the pixel golden.",
+          "authorization": "User exports a 32\u00d718 preview and acceptance checks non-flat pixels, dark text pixels, and exact golden samples.",
+          "expected": "PNG is non-flat, contains dark text pixels, and matches blackbox-goldens.json",
+          "status": "green",
+          "observed": {
+            "stats": {
+              "uniqueColors": 44,
+              "darkPixels": 2
+            },
+            "golden": "png-content-32x18"
+          }
+        },
+        {
+          "id": "export:3",
+          "finding": "22",
+          "title": "Semantic PPTX preserves paragraphs, run formatting, and rotation.",
+          "authorization": "User exports a two-paragraph styled text box and opens it with Python python-pptx.",
+          "expected": "python-pptx observes both paragraphs, at least one styled run, and nonzero rotation",
+          "status": "green",
+          "observed": {
+            "pythonPptx": true
+          }
+        }
+      ]
+    },
+    {
+      "group": "recovery",
+      "description": "Crash recovery, checkpoint history, CAS, and runtime profile replay.",
+      "findings": "23, 24, 25",
+      "green": 4,
+      "red": 0,
+      "status": "green",
+      "cases": [
+        {
+          "id": "recovery:1",
+          "finding": "23",
+          "title": "Open automatically discovers and offers durable Journal recovery.",
+          "authorization": "A separate child process commits three text transactions, is SIGKILLed, and the user reopens the old checkpoint.",
+          "expected": "ordinary open/recover path returns the committed Journal revision instead of silently showing the old checkpoint",
+          "status": "green",
+          "observed": {
+            "recovered": true
+          }
+        },
+        {
+          "id": "recovery:2",
+          "finding": "24",
+          "title": "Checkpoint recent history restores a usable Session Undo stack.",
+          "authorization": "User saves a modified checkpoint, reopens it, and immediately presses Undo.",
+          "expected": "reopened Session has the recent transaction history and undo restores the checkpoint base",
+          "status": "green",
+          "observed": {
+            "historyRestored": true
+          }
+        },
+        {
+          "id": "recovery:3",
+          "finding": "25-CAS",
+          "title": "Journal replay resolves newly imported asset bytes by hash.",
+          "authorization": "Agent imports a new local image after the checkpoint; the durable Journal records its hash and replay has access to the bytes.",
+          "expected": "replay applies asset.upsert plus image replacement instead of reporting ASSET_MISSING",
+          "status": "green",
+          "observed": {
+            "casReplay": true
+          }
+        },
+        {
+          "id": "recovery:4",
+          "finding": "25-profile",
+          "title": "Journal replay preserves the checkpoint runtime profile.",
+          "authorization": "A GA-C Widget transaction is committed and later replayed; recovery must use GA-C operation semantics.",
+          "expected": "component.updateProps replays successfully without falling back to GA-B",
+          "status": "green",
+          "observed": {
+            "profileReplay": true
+          }
+        }
+      ]
+    },
+    {
+      "group": "review-patch",
+      "description": "Three-way review, patch integrity, literal payloads, and override debt.",
+      "findings": "26, 27, 28, 29, 30, 31",
+      "green": 12,
+      "red": 0,
+      "status": "green",
+      "cases": [
+        {
+          "id": "review-patch:1",
+          "finding": "26",
+          "title": "Delete-versus-local-edit is an explicit review conflict.",
+          "authorization": "Base has a title, local edits it, and the revised copy deletes it; review must protect the local change.",
+          "expected": "comparison returns a conflict/ambiguous unit rather than a clean deleted status",
+          "status": "green",
+          "observed": {
+            "titleStatuses": [
+              "conflict"
+            ],
+            "conflicts": 1
+          }
+        },
+        {
+          "id": "review-patch:2",
+          "finding": "27",
+          "title": "Reviewer covers persistent slide and element domains.",
+          "authorization": "Revised copy changes notes, transition, visual strategy, protected anchors, order, animation, opacity, tags, and description.",
+          "expected": "comparison emits review units for every changed persistent domain",
+          "status": "green",
+          "observed": {
+            "required": [
+              "notes",
+              "transition",
+              "visualStrategy",
+              "protectedAnchors",
+              "rootOrder",
+              "appearStep",
+              "animation",
+              "opacity",
+              "tags",
+              "description"
+            ],
+            "unitCount": 136
+          }
+        },
+        {
+          "id": "review-patch:3",
+          "finding": "27-style",
+          "title": "Reviewer produces executable operations for paragraph and box style changes.",
+          "authorization": "Revised copy changes a text element paragraph alignment; reviewer acceptance must not return a zero-operation style unit.",
+          "expected": "style unit has at least one typed operation",
+          "status": "green",
+          "observed": {
+            "styleUnits": [
+              {
+                "status": "revised-only",
+                "operations": 2
+              }
+            ]
+          }
+        },
+        {
+          "id": "review-patch:4",
+          "finding": "28-head",
+          "title": "Patch validation checks the revised head revision.",
+          "authorization": "Reviewer creates a patch and an intermediary tampers with manifest.headRevision before validation.",
+          "expected": "tampered headRevision is rejected before patch application",
+          "status": "green",
+          "observed": {
+            "ok": false,
+            "issueCodes": [
+              "PATCH_HEAD_REVISION_MISMATCH"
+            ]
+          }
+        },
+        {
+          "id": "review-patch:5",
+          "finding": "28-profile",
+          "title": "Widget patch profile follows the document capability.",
+          "authorization": "Reviewer creates a patch for a GA-C core/code Widget without an internal profile override.",
+          "expected": "patch manifest.compatibilityProfile is ppte-2.0-ga-c.1",
+          "status": "green",
+          "observed": {
+            "compatibilityProfile": "ppte-2.0-ga-c.1"
+          }
+        },
+        {
+          "id": "review-patch:6",
+          "finding": "29-literal",
+          "title": "Patch payloads allow literal script-like text as data.",
+          "authorization": "Revised title contains the literal string </script>; patch encoding must preserve it as data.",
+          "expected": "encode/decode succeeds and decoded operation text equals the literal value",
+          "status": "green",
+          "observed": {
+            "bytes": 1482,
+            "text": "Literal </script> \u4e2d\u6587 \ud83d\ude00"
+          }
+        },
+        {
+          "id": "review-patch:7",
+          "finding": "29-code",
+          "title": "Patch payloads allow the controlled Widget code field.",
+          "authorization": "Revised core/code Widget changes props.code; typed patch validation must allow the declared property.",
+          "expected": "encode/decode succeeds for a code Widget property update",
+          "status": "green",
+          "observed": {
+            "bytes": 1413,
+            "operationKinds": [
+              "component.updateProps"
+            ]
+          }
+        },
+        {
+          "id": "review-patch:8",
+          "finding": "30",
+          "title": "Override debt counts supported new local style fields.",
+          "authorization": "Key title adds a valid letterSpacing override absent from its current preset.",
+          "expected": "override report includes letterSpacing and a positive overriddenFields count",
+          "status": "green",
+          "observed": {
+            "overrideDebt": 0.05263157894736842,
+            "overriddenFields": 1,
+            "controllableFields": 19,
+            "keyElementCount": 3,
+            "entries": [
+              {
+                "slideId": "bb_slide_main",
+                "elementId": "bb_text_title",
+                "semanticKey": "title.main",
+                "fields": [
+                  "letterSpacing"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "review-patch:9",
+          "finding": "31",
+          "title": "Release evidence is independently verifiable.",
+          "authorization": "The GA-C label may not be certified by the same Contract Deck CLI/tests that implement the behavior.",
+          "expected": "legacy e2e:ga-c script no longer points directly to the Contract Deck self-check CLI",
+          "status": "green",
+          "observed": {
+            "script": "pnpm build && pnpm host:build && node scripts/blackbox-gates.mjs --milestone final"
+          }
+        },
+        {
+          "id": "review-patch:10",
+          "finding": "D07-evidence",
+          "title": "Missing authoring evidence cannot close G2.",
+          "authorization": "The authoring benchmark has no completed human panel; M3 table editing is deferred at G2.",
+          "expected": "public reviewer returns blocked with zero human passes and a deferred table script; this is a gate-contract check, not G2 acceptance",
+          "status": "green",
+          "observed": {
+            "contract": "green",
+            "authoringGate": "blocked",
+            "humanPassed": 0,
+            "deferred": [
+              "table"
+            ]
+          }
+        },
+        {
+          "id": "review-patch:11",
+          "finding": "Q01-client-evidence",
+          "title": "Unverified clients cannot close release acceptance.",
+          "authorization": "The published client matrix requires actual Safari and Office observations bound to the current artifact.",
+          "expected": "Missing client evidence blocks acceptance with zero passes; structural and browser automation gates do not imply manual acceptance",
+          "status": "green",
+          "observed": {
+            "contract": "green",
+            "clientAcceptance": "blocked",
+            "artifactIdentity": {
+              "version": 1,
+              "digest": "7609695788c99310abe3ad1e3ff32c7b715767e25aa398913891b44fff41de73",
+              "components": {
+                "document": "374f476cfcff7f031ec222654a595136ad3869c3642dff5dd4c6ae3769b50eab",
+                "runtime": "be2a4f326d318e1e5e9e4ee977bb45cd61a7e9ce89283e621b36fba93f526e3f",
+                "renderer": "ce28f28c3ab6d21b7f8e9e6bfb1ba9db5339ab5700d069b044aa9631e7f20ca4",
+                "shell": "7823957b1ba4027215452e42cd3ea391eb6c34fb4e0f58590673aaa5e9db4323",
+                "resources": "c4b32f34524046041d85d98318f6c3a205e44d3a85fe66b60ce54075effcec7e",
+                "fonts": "23ec78659eefb90379b750a82e741f31b640790035ed3eddccd27e7b79e606a1",
+                "history": "655b9cb6b1c19bece14af8c65c1584b14b64dda2fa786fe7b5c258ec7e8ea227",
+                "capabilities": "df26d09d97083e72ec5b18950c9f522dfb4bb9018ce189c349b6fb4d1514aa6c",
+                "compatibility": "1a24d2eef682c949ae70842ca2cda72862f977932cbd2d2c3e0092999351b4f1",
+                "configuration": "677dc35993bbac6373fbf0b61b2b970ce7848a3ac006746231b5cacdac727cd5"
+              }
+            },
+            "blockers": [
+              "safari:host:open:unverified",
+              "safari:host:edit:unverified",
+              "safari:host:resave:unverified",
+              "safari:host:visual:unverified",
+              "safari:host:journey:unverified",
+              "safari:file-single-html:open:unverified",
+              "safari:file-single-html:edit:unverified",
+              "safari:file-single-html:resave:unverified",
+              "safari:file-single-html:visual:unverified",
+              "safari:file-single-html:journey:unverified",
+              "safari:file-offline-directory:open:unverified",
+              "safari:file-offline-directory:edit:unverified",
+              "safari:file-offline-directory:resave:unverified",
+              "safari:file-offline-directory:visual:unverified",
+              "safari:file-offline-directory:journey:unverified",
+              "chrome:host:open:unverified",
+              "chrome:host:edit:unverified",
+              "chrome:host:resave:unverified",
+              "chrome:host:visual:unverified",
+              "chrome:host:journey:unverified",
+              "chrome:file-single-html:open:unverified",
+              "chrome:file-single-html:edit:unverified",
+              "chrome:file-single-html:resave:unverified",
+              "chrome:file-single-html:visual:unverified",
+              "chrome:file-single-html:journey:unverified",
+              "chrome:file-offline-directory:open:unverified",
+              "chrome:file-offline-directory:edit:unverified",
+              "chrome:file-offline-directory:resave:unverified",
+              "chrome:file-offline-directory:visual:unverified",
+              "chrome:file-offline-directory:journey:unverified",
+              "libreoffice:pptx-semantic:open:unverified",
+              "libreoffice:pptx-semantic:edit:unverified",
+              "libreoffice:pptx-semantic:resave:unverified",
+              "libreoffice:pptx-semantic:native-text:unverified",
+              "libreoffice:pptx-semantic:native-shape:unverified",
+              "libreoffice:pptx-semantic:native-image:unverified",
+              "libreoffice:pptx-semantic:native-chart:unverified",
+              "libreoffice:pptx-semantic:native-table:unverified",
+              "libreoffice:pptx-semantic:text-order:unverified",
+              "libreoffice:pptx-semantic:visual:unverified"
+            ]
+          }
+        },
+        {
+          "id": "review-patch:12",
+          "finding": "P01-performance-evidence",
+          "title": "Partial browser calibration cannot close A20.",
+          "authorization": "Synthetic Portable browser observations retain raw tail latency and explicitly unverified physical-device and Host coverage.",
+          "expected": "20 cold/warm and 30 separate interaction samples for 12/30/100 pages; unmeasured scope stays unverified",
+          "status": "green",
+          "observed": {
+            "contract": "green",
+            "acceptance": "unverified",
+            "measuredEntry": "full-portable file://",
+            "unverified": [
+              "12-page original Cherry material (not present in repository)",
+              "30-page 50 MiB real-resource Host corpus",
+              "Host .ppte open/save entry",
+              "Lower-performance physical device",
+              "Real Safari (Playwright WebKit is not Safari)",
+              "Physical Chinese IME and real pointer feedback",
+              "Single pointer-event input-to-paint latency",
+              "Unrelated DOM identity, text focus and playing media stability during edits",
+              "Memory peak/residual over at least 20 file/media disposal loops",
+              "OS disk-cache cold startup",
+              "Font subset missing-glyph fallback outside pinned content",
+              "Whole-product budget calibration; candidates are not release passes"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "group": "section-41",
+      "description": "\u00a741 A\u2013J scenario completion gates.",
+      "findings": "\u00a741 A\u2013J",
+      "green": 10,
+      "red": 0,
+      "status": "green",
+      "cases": [
+        {
+          "id": "section-41:1",
+          "finding": "\u00a741-A",
+          "title": "Scenario A: AI new presentation starts in a real Host.",
+          "authorization": "The existing Agent turns a source brief into Presentation IR; Host compiles that design into ten distinct editable slides retaining source facts.",
+          "expected": "Host imports genuine Agent-authored IR and renders ten distinct semantic slides retaining source facts in Chromium",
+          "status": "green",
+          "observed": {
+            "created": "1",
+            "generatedSlides": 10,
+            "agentGenerated": "true",
+            "editedText": "R7 \u771f\u4eba\u8def\u5f84\u6807\u9898",
+            "imageDragged": true,
+            "addedPage": 11,
+            "presenterSlideBeforeNavigation": 1,
+            "presenting": "true",
+            "presenterSlide": 0,
+            "savedFilename": "\u5b63\u5ea6\u7ecf\u8425\u590d\u76d8_\u793a\u4f8b_.ppte",
+            "reopenedSlides": 11,
+            "reopenedHistory": 5,
+            "undoEnabled": true,
+            "afterUndoSlides": 10,
+            "afterUndoHistory": 4
+          }
+        },
+        {
+          "id": "section-41:2",
+          "finding": "\u00a741-B",
+          "title": "Scenario B: human small edit crosses the browser transaction boundary.",
+          "authorization": "User double-clicks a text box, enters IME text, sees no intermediate commits, then saves and reopens.",
+          "expected": "Chromium exposes editable text and save/reopen controls for the file journey",
+          "status": "green",
+          "observed": {
+            "edited": "B \u573a\u666f\u8f93\u5165\u6cd5\u6807\u9898",
+            "reopenedText": "B \u573a\u666f\u8f93\u5165\u6cd5\u6807\u9898",
+            "undoEnabled": true,
+            "afterUndo": "Untitled presentation",
+            "saveName": "Untitled_presentation.ppte"
+          }
+        },
+        {
+          "id": "section-41:3",
+          "finding": "\u00a741-C",
+          "title": "Scenario C: Flat Group happy path remains exact.",
+          "authorization": "Human creates a flat group, moves and resizes it, then undoes geometry without implicit text-style changes.",
+          "expected": "create/move/resize/undo all succeed and restore exact member frames",
+          "status": "green",
+          "observed": {
+            "create": true,
+            "move": true,
+            "resize": true,
+            "exactUndo": true
+          }
+        },
+        {
+          "id": "section-41:4",
+          "finding": "\u00a741-D",
+          "title": "Scenario D: Agent local edit rejects non-target mutation.",
+          "authorization": "Agent is granted title-only scope but submits a generic operation that changes body content.",
+          "expected": "preview rejects the transaction before any non-target mutation can commit",
+          "status": "green",
+          "observed": {
+            "ok": false,
+            "issueCodes": [
+              "SLIDE_UPDATE_FIELD_NOT_ALLOWED"
+            ]
+          }
+        },
+        {
+          "id": "section-41:5",
+          "finding": "\u00a741-E",
+          "title": "Scenario E: mixed-content reflow returns a reviewable Transaction.",
+          "authorization": "Agent requests page reflow for title/body/chart/metric content and expects no object loss.",
+          "expected": "mixed-content layout returns a previewable geometry transaction",
+          "status": "green",
+          "observed": {
+            "ok": true,
+            "operationCount": 9
+          }
+        },
+        {
+          "id": "section-41:6",
+          "finding": "\u00a741-F",
+          "title": "Scenario F: visual redesign honors selection direction.",
+          "authorization": "Agent selects the title for redesign; all non-selected objects must remain unchanged.",
+          "expected": "redesign transaction only replaces the selected semantic target",
+          "status": "green",
+          "observed": {
+            "ok": true,
+            "operationCount": 2
+          }
+        },
+        {
+          "id": "section-41:7",
+          "finding": "\u00a741-G",
+          "title": "Scenario G: crash/reopen restores durable work automatically.",
+          "authorization": "A real child process is SIGKILLed after three durable commits; reopening the checkpoint must offer those commits.",
+          "expected": "reopen result revision equals the Journal tail revision",
+          "status": "green",
+          "observed": {
+            "recovered": true
+          }
+        },
+        {
+          "id": "section-41:8",
+          "finding": "\u00a741-H",
+          "title": "Scenario H: Portable Quick Fix edits and saves from file://.",
+          "authorization": "User double-clicks a generated Quick Fix file, edits text/image, then saves a new project.",
+          "expected": "file:// artifact includes the complete editing and save surface",
+          "status": "green",
+          "observed": {
+            "portableEdit": true
+          }
+        },
+        {
+          "id": "section-41:9",
+          "finding": "\u00a741-I",
+          "title": "Scenario I: revised-copy deletion is reviewable.",
+          "authorization": "Local copy edits a title while revised copy deletes it; user must receive a conflict choice.",
+          "expected": "review UI receives a nonzero conflict set",
+          "status": "green",
+          "observed": {
+            "conflicts": 1
+          }
+        },
+        {
+          "id": "section-41:10",
+          "finding": "\u00a741-J",
+          "title": "Scenario J: export is visually and semantically faithful.",
+          "authorization": "User exports the styled Unicode slide and validates PDF/PNG/PPTX content rather than just file signatures.",
+          "expected": "exported PDF text, PNG pixels, and PPTX properties all pass their independent checks",
+          "status": "green",
+          "observed": {
+            "png": {
+              "uniqueColors": 44,
+              "darkPixels": 2
+            },
+            "pdfAndPptx": "validated by the export group"
+          }
+        }
+      ]
+    },
+    {
+      "group": "video-widget",
+      "description": "GA-C Video Widget registry, poster fallback, checkpoint, Portable downgrade, and export honesty.",
+      "findings": "Video Widget",
+      "green": 3,
+      "red": 0,
+      "status": "green",
+      "cases": [
+        {
+          "id": "video-widget:1",
+          "finding": "GA-C-video-registry",
+          "title": "GA-C Video Widget is resolved through the controlled registry.",
+          "authorization": "A GA-C document contains a Video Widget with a local poster asset; the host must resolve its controlled definition and expose a poster-backed static fallback.",
+          "expected": "registry validation succeeds; rendered widget contains a video surface and a poster/fallback path",
+          "status": "green",
+          "observed": {
+            "registered": true,
+            "valid": true,
+            "exportPolicy": "static-fallback",
+            "hasVideo": true,
+            "hasPosterOrFallback": true
+          }
+        },
+        {
+          "id": "video-widget:2",
+          "finding": "GA-C-video-roundtrip",
+          "title": "Video Widget checkpoint round-trip retains the downgrade contract.",
+          "authorization": "A user saves and reopens a GA-C Video Widget project, then opens its Light Edit derivative; semantic props/fallback must survive and the derivative must report an actionable static downgrade.",
+          "expected": "checkpoint round-trip preserves Video Widget props/fallback; Light Edit reports static status, reason, recovery, and degraded=true",
+          "status": "green",
+          "observed": {
+            "roundTrip": true,
+            "portableOk": true,
+            "status": "static",
+            "reason": "Video playback is unavailable in the offline Light Edit surface; the controlled poster fallback is retained.",
+            "recovery": "Open the source document in a GA-C Host with the Video Widget registry to restore playback.",
+            "degraded": true
+          }
+        },
+        {
+          "id": "video-widget:3",
+          "finding": "GA-C-video-export",
+          "title": "PDF and PNG export a Video poster or report honest degradation.",
+          "authorization": "A user exports a GA-C Video Widget with its local poster bytes; each raster export must either contain the poster-capable path or explicitly report the degraded capability.",
+          "expected": "both PDF and PNG are non-empty and each has poster evidence or an element-scoped EXPORT_DEGRADED report",
+          "status": "green",
+          "observed": [
+            {
+              "format": "pdf",
+              "ok": false,
+              "bytes": 16024,
+              "status": "unsupported",
+              "posterPath": false,
+              "degraded": true
+            },
+            {
+              "format": "png",
+              "ok": false,
+              "bytes": 1702,
+              "status": "unsupported",
+              "posterPath": false,
+              "degraded": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "group": "pptx-chart",
+      "description": "Semantic bar/line/pie charts exported as native PPTX chart parts with capability evidence.",
+      "findings": "Native PPTX Chart",
+      "green": 2,
+      "red": 0,
+      "status": "green",
+      "cases": [
+        {
+          "id": "pptx-chart:1",
+          "finding": "native-chart-parts",
+          "title": "Semantic bar/line/pie charts become native PPTX chart parts.",
+          "authorization": "A user exports semantic Bar, Line, and Pie Chart elements; Python python-pptx must observe native chart shapes, chart parts, categories Q1/Q2, and values 42/38.",
+          "expected": "python-pptx reports at least three native chart shapes/parts and preserves the fixture categories and values",
+          "status": "green",
+          "observed": {
+            "nativeChartShapes": 3,
+            "chartTypes": [
+              "COLUMN_CLUSTERED (51)",
+              "LINE_MARKERS (65)",
+              "PIE (5)"
+            ],
+            "chartParts": [
+              "ppt/charts/chart1.xml",
+              "ppt/charts/chart2.xml",
+              "ppt/charts/chart3.xml"
+            ],
+            "categories": [
+              "Q1",
+              "Q2",
+              "Q1",
+              "Q2",
+              "Q1",
+              "Q2"
+            ],
+            "values": [
+              42,
+              38,
+              42,
+              38,
+              42,
+              38
+            ]
+          }
+        },
+        {
+          "id": "pptx-chart:2",
+          "finding": "native-chart-capability",
+          "title": "PPTX capability evidence identifies native charts.",
+          "authorization": "The semantic PPTX export advertises its Chart mapping explicitly so a consumer can distinguish a native chart from an SVG picture.",
+          "expected": "capability report includes native-chart=true for every exported semantic Chart",
+          "status": "green",
+          "observed": {
+            "native": true,
+            "chartCount": 3
+          }
+        }
+      ]
+    },
+    {
+      "group": "full-portable",
+      "description": "Full Portable file:// editor surface and save-new-project journey.",
+      "findings": "Full Portable",
+      "green": 2,
+      "red": 0,
+      "status": "green",
+      "cases": [
+        {
+          "id": "full-portable:1",
+          "finding": "full-portable-bundle",
+          "title": "full-portable packages the complete editor API.",
+          "authorization": "A user chooses profile full-portable and expects multi-selection, Move/Scale/Rotate, Crop, Chart data, undo/redo, and Save as New Project in one self-contained artifact.",
+          "expected": "bundle audit passes for full-portable and the embedded API exposes every full-editor method",
+          "status": "green",
+          "observed": {
+            "built": true,
+            "profile": "full-portable",
+            "audit": true,
+            "auditIssueCodes": [],
+            "missingMethods": []
+          }
+        },
+        {
+          "id": "full-portable:2",
+          "finding": "full-portable-file-url",
+          "title": "full-portable executes the complete file:// journey.",
+          "authorization": "A user opens a full-portable file locally, invokes its API, and saves a new project; the browser must expose the full method surface.",
+          "expected": "file:// exposes full-portable profile, all required methods, and a successful saveAsNewProject result",
+          "status": "green",
+          "observed": {
+            "profile": "full-portable",
+            "missing": [],
+            "saveOk": true,
+            "saveBytes": 7924
+          }
+        }
+      ]
+    },
+    {
+      "group": "group-rotate",
+      "description": "Explicit member transforms for Group Rotate with exact undo and Host/renderer parity.",
+      "findings": "Group Rotate",
+      "green": 1,
+      "red": 0,
+      "status": "green",
+      "cases": [
+        {
+          "id": "group-rotate:1",
+          "finding": "explicit-member-rotate",
+          "title": "Group Rotate commits explicit member transforms and exact undo.",
+          "authorization": "A human rotates a flat group containing three elements by 90 degrees; the operation must change each member frame/rotation, keep the group flat, and undo byte-exactly.",
+          "expected": "group.rotate commits; all three members receive explicit frame/rotation changes; group has no coordinate-system fields; undo restores the source snapshot",
+          "status": "green",
+          "observed": {
+            "committed": true,
+            "changedMembers": true,
+            "flatGroup": true,
+            "rendererMembers": true,
+            "hostConsistent": true,
+            "hostMembers": [
+              {
+                "id": "bb_text_title",
+                "transform": "rotate(90deg)",
+                "frame": {
+                  "left": "1070px",
+                  "top": "-360px"
+                }
+              },
+              {
+                "id": "bb_text_body",
+                "transform": "rotate(90deg)",
+                "frame": {
+                  "left": "730px",
+                  "top": "-360px"
+                }
+              },
+              {
+                "id": "bb_image_hero",
+                "transform": "rotate(90deg)",
+                "frame": {
+                  "left": "640px",
+                  "top": "600px"
+                }
+              }
+            ],
+            "exactUndo": true,
+            "operationIssues": []
+          }
+        }
+      ]
+    },
+    {
+      "group": "legacy-import",
+      "description": "Slidev/Markdown legacy migration and GA-A/GA-B/GA-C boundary coverage.",
+      "findings": "Legacy Import",
+      "green": 2,
+      "red": 0,
+      "status": "green",
+      "cases": [
+        {
+          "id": "legacy-import:1",
+          "finding": "slidev-markdown-source",
+          "title": "Slidev and Markdown files migrate into semantic documents.",
+          "authorization": "A user opens old Slidev and Markdown source files; import must parse them into semantic slides without treating raw markup as a document source.",
+          "expected": "both legacy text formats produce a non-empty semantic document with sourceFormat and migration evidence",
+          "status": "green",
+          "observed": [
+            {
+              "sourceFormat": "slidev",
+              "ok": true,
+              "slides": 1,
+              "metadataFormat": "slidev",
+              "disposition": "migrate",
+              "issueCodes": [
+                "MIGRATION_TEXT_SOURCE_PARSED",
+                "MIGRATION_DEFAULT_THEME"
+              ]
+            },
+            {
+              "sourceFormat": "markdown",
+              "ok": true,
+              "slides": 1,
+              "metadataFormat": "markdown",
+              "disposition": "migrate",
+              "issueCodes": [
+                "MIGRATION_TEXT_SOURCE_PARSED",
+                "MIGRATION_DEFAULT_THEME"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "legacy-import:2",
+          "finding": "legacy-profile-boundaries",
+          "title": "Legacy migration preserves GA-C boundaries and honest fallbacks.",
+          "authorization": "A legacy Slidev semantic snapshot contains Area/Donut charts, Poster artwork, and a Widget; GA-C retains them while GA-B downgrades unsupported content with migration issues.",
+          "expected": "GA-C retains Area/Donut, Poster artwork, and Widget static fallback; GA-B retains safe semantics, drops unsupported objects, and reports each downgrade",
+          "status": "green",
+          "observed": {
+            "gaC": {
+              "ok": true,
+              "charts": [
+                "area",
+                "donut"
+              ],
+              "poster": "poster",
+              "artwork": "image",
+              "widget": "component",
+              "staticFallback": true
+            },
+            "gaB": {
+              "ok": true,
+              "charts": [],
+              "visualStrategy": "structured",
+              "widget": false,
+              "issueCodes": [
+                "MIGRATION_UNSUPPORTED_ELEMENT",
+                "MIGRATION_UNSUPPORTED_ELEMENT",
+                "MIGRATION_UNSUPPORTED_ELEMENT",
+                "MIGRATION_UNSUPPORTED_VISUAL_STRATEGY"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "group": "mcp",
+      "description": "stdio MCP protocol, Agent tool exposure, readonly filtering, and checkpoint persistence.",
+      "findings": "Cross-agent MCP skill",
+      "green": 3,
+      "red": 0,
+      "status": "green",
+      "cases": [
+        {
+          "id": "mcp:1",
+          "finding": "stdio-smoke",
+          "title": "The published MCP smoke journey uses a real child process.",
+          "authorization": "A local GA-C example is checkpointed, opened through MCP, edited through preview\u2192commit, and reopened.",
+          "expected": "scripts/mcp-smoke.mjs exits zero and reports protocol, readonly, and persistence evidence",
+          "status": "green",
+          "observed": {
+            "smoke": "green"
+          }
+        },
+        {
+          "id": "mcp:2",
+          "finding": "tools-list",
+          "title": "MCP tools/list exposes the AgentToolServer contract with schemas.",
+          "authorization": "A client initializes a PPTe server and asks for the tool catalog.",
+          "expected": "read tools, preview, commit, and every tool inputSchema are present",
+          "status": "green",
+          "observed": {
+            "protocol": true
+          }
+        },
+        {
+          "id": "mcp:3",
+          "finding": "readonly-persistence",
+          "title": "Readonly MCP sessions hide mutations while writable sessions persist one Operation.",
+          "authorization": "A readonly client must not advertise commit/undo; a writable client previews and commits text.replaceContent, then a fresh process reads the result.",
+          "expected": "mutation filtering and same-path checkpoint persistence are both observable over stdio",
+          "status": "green",
+          "observed": {
+            "persisted": true
+          }
+        }
+      ]
+    },
+    {
+      "group": "delivery",
+      "description": "MCP-owned editable delivery, file:// save/reopen/present, preview separation, and artifact budgets.",
+      "findings": "Delivery layer P0/P1",
+      "green": 4,
+      "red": 0,
+      "status": "green",
+      "cases": [
+        {
+          "id": "delivery:1",
+          "finding": "default-mcp-delivery",
+          "title": "MCP exposes one explicit, default editable delivery contract.",
+          "authorization": "A writable MCP client asks for delivery without a profile or output path; a readonly client asks for the same tool.",
+          "expected": "writable delivery returns editable HTML first plus the same-revision .ppte source, while readonly hides and rejects the file mutation",
+          "status": "green",
+          "observed": {
+            "default": true
+          }
+        },
+        {
+          "id": "delivery:2",
+          "finding": "file-url-edit-save-reopen-present",
+          "title": "The primary editable artifact closes the receiver file:// loop.",
+          "authorization": "A receiver has only the delivered HTML: open it, edit visible text, save the primary button, reopen the downloaded sibling, and navigate presentation pages.",
+          "expected": "the saved HTML remains a full-portable editable artifact with the edited text and the next page visible after reopen",
+          "status": "green",
+          "observed": {
+            "fileUrl": true
+          }
+        },
+        {
+          "id": "delivery:3",
+          "finding": "preview-cannot-masquerade-as-delivery",
+          "title": "Read-only previews carry no delivery authority.",
+          "authorization": "A client requests render_slide and the renderer legacy wrapper; neither output may be mistaken for an editable delivery artifact.",
+          "expected": "render_slide has deliverable:false, renderer default is read-only, and neither output contains the Portable payload/positive delivery metadata",
+          "status": "green",
+          "observed": {
+            "tool": {
+              "kind": "read-only-preview-fragment",
+              "deliverable": false,
+              "hasContenteditable": false
+            },
+            "wrapper": {
+              "hasPayload": false,
+              "hasContenteditable": false,
+              "hasPositiveDelivery": false
+            },
+            "readonlyHasContenteditable": false,
+            "referenceHasHost": true
+          }
+        },
+        {
+          "id": "delivery:4",
+          "finding": "artifact-and-runtime-budget",
+          "title": "Delivery reports measured artifact and runtime budgets with explicit large-file behavior.",
+          "authorization": "A fixed-seed ten-page corpus uses ten different valid noisy PNGs; tests observe all four profiles, reject an oversized artifact/runtime, and retry only with an explicit large-file flag.",
+          "expected": "resource/raw/runtime metrics are recorded, standard full-portable fits 20 MiB, large artifacts fail without HTML, and allowLargePortable retains full profile with a warning",
+          "status": "green",
+          "observed": {
+            "budget": true
+          }
+        }
+      ]
+    }
+  ],
+  "green": 72,
+  "red": 0,
+  "ok": true
+}
