@@ -1,3 +1,5 @@
+import { planNativeTable, nativeTableXml, verifyNativeTableXml, TABLE_ADAPTER, type NativeTablePlan } from './table.js'
+export { verifyNativeTableXml } from './table.js'
 import { resolveRunFont } from '../../validation/src/index.js'
 import { canonicalRevision, sha256HexBytes } from '../../canonical-json/src/index.js'
 import { buildCapabilityReport, type CapabilityReport } from '../../capability/src/index.js'
@@ -44,7 +46,7 @@ export interface PptxInspection {
   hasSlideImages: boolean
 }
 
-export type SemanticPptxNodeKind = 'text-box' | 'picture' | 'shape' | 'chart-svg' | 'component-fallback'
+export type SemanticPptxNodeKind = 'text-box' | 'picture' | 'shape' | 'chart-svg' | 'component-fallback' | 'table'
 
 export interface SemanticPptxNode {
   id: string
@@ -77,6 +79,7 @@ export interface SemanticPptxNode {
   crop?: { x: number; y: number; width: number; height: number }
   posterAsArtwork?: boolean
   paragraphs?: SemanticPptxParagraph[]
+  table?: NativeTablePlan
   nativeChart?: boolean
   chartType?: ChartElement['chartType']
   chartData?: ChartElement['data']
@@ -226,7 +229,6 @@ export function exportSemanticPptx(document: PpteDocument, options: PptxExportOp
   const compilation = compileSemanticPptx(document, options)
   const issues = [...compilation.issues]
   collectFontIssues(document, options.fontBytes, issues)
-  addCapabilityWarnings(compilation.capabilityReport, issues)
   const media = prepareSemanticMedia(document, compilation, options, issues)
   let capabilityReport = finalizeReport(compilation.capabilityReport, issues)
   let bytes: Uint8Array = new Uint8Array()
@@ -234,12 +236,19 @@ export function exportSemanticPptx(document: PpteDocument, options: PptxExportOp
     try {
       bytes = buildSemanticPptx(document, compilation, options, capabilityReport, media)
     } catch (cause) {
+      for (const item of capabilityReport.items) { delete item.nativeTable; delete item.tableExport }
       issues.push(exportIssue('EXPORT_FAILED', cause instanceof Error ? cause.message : String(cause)))
     }
   }
-  capabilityReport = finalizeReport(compilation.capabilityReport, issues)
+  addCapabilityWarnings(capabilityReport, issues)
+  capabilityReport = finalizeReport(capabilityReport, issues)
+  if (bytes.length && options.includeCapabilityReport !== false) {
+    const archive = readStoredZip(bytes)
+    archive.set('ppt/ppte/capability-report.json', text(JSON.stringify(capabilityReport, null, 2)))
+    bytes = writeStoredZip([...archive].map(([name, data]) => ({ name, data })))
+  }
   const finalIssues = dedupe(issues)
-  const degraded = compilation.degraded || capabilityReport.degraded || finalIssues.length > 0
+  const degraded = capabilityReport.degraded || finalIssues.length > 0 || compilation.slides.some(slide => slide.posterAsArtwork || slide.nodes.some(node => node.kind === 'component-fallback' || node.fallbackLabel !== undefined))
   return { ok: bytes.length > 0 && !finalIssues.some((issue) => issue.severity === 'error') && capabilityReport.ok, format: 'pptx-semantic', bytes, slideCount: compilation.slides.length, degraded, capabilityReport, compilation: { ...compilation, capabilityReport, issues: finalIssues, ok: !finalIssues.some((issue) => issue.severity === 'error'), degraded }, issues: finalIssues }
 }
 
@@ -248,7 +257,10 @@ export const exportPptxSemantic = exportSemanticPptx
 function semanticNodes(document: PpteDocument, slideId: string, elements: Element[], issues: ValidationIssue[]): SemanticPptxNode[] {
   const nodes: SemanticPptxNode[] = []
   for (const element of elements) {
-    const node = semanticNode(document, slideId, element)
+    let node: SemanticPptxNode | undefined
+    try { node = semanticNode(document, slideId, element) } catch (cause) {
+      issues.push(exportIssue('EXPORT_MAPPING_FAILED', String(cause), slideId, element.id)); continue
+    }
     if (node) nodes.push(node)
     else issues.push(exportIssue('ELEMENT_UNSUPPORTED', `Semantic PPTX has no mapping for element ${element.id}.`, slideId, element.id))
   }
@@ -270,6 +282,10 @@ function semanticNode(document: PpteDocument, slideId: string, element: Element)
     return { id: `${slideId}:${element.id}`, sourceElementId: element.id, kind: 'shape', frame: element.frame, ...elementFields(element), shape: element.shape, fill: paintColor(fillPaint, document), fillPaint, fillOpacity: fillPaint?.kind === 'solid' || fillPaint?.kind === 'linear-gradient' ? fillPaint.opacity : undefined, stroke: strokeColor(stroke, document), strokeWidth: stroke?.width, strokeOpacity: stroke?.opacity, strokeDash: stroke?.dash, lineCap: stroke?.lineCap, lineJoin: stroke?.lineJoin }
   }
   if (element.type === 'chart') return { id: `${slideId}:${element.id}`, sourceElementId: element.id, kind: 'chart-svg', frame: element.frame, ...elementFields(element), staticSvg: renderChartSvg(element, { width: element.frame.width, height: element.frame.height, runtimeProfile: 'ga-c' }), nativeChart: ['bar', 'line', 'pie'].includes(element.chartType), chartType: element.chartType, chartData: element.data, chartEncoding: element.encoding, chartOptions: element.options }
+  if (element.type === 'component' && element.componentType === 'core/table' && element.componentVersion === '2.0.0') {
+    const table = planNativeTable(element)
+    if (table) return { id: `${slideId}:${element.id}`, sourceElementId: element.id, kind: 'table', frame: element.frame, table }
+  }
   if (element.type === 'component' && element.fallback.kind === 'asset' && element.fallback.assetId) return { id: `${slideId}:${element.id}`, sourceElementId: element.id, kind: 'picture', frame: element.frame, ...elementFields(element), assetId: element.fallback.assetId, fallbackLabel: element.fallback.label ?? `${element.componentType} static fallback` }
   if (element.type === 'component') return { id: `${slideId}:${element.id}`, sourceElementId: element.id, kind: 'component-fallback', frame: element.frame, ...elementFields(element), fallbackLabel: element.fallback.label ?? `${element.componentType} fallback` }
   return undefined
@@ -335,6 +351,26 @@ function buildSemanticPptx(document: PpteDocument, compilation: SemanticPptxComp
   }
   for (const item of [...chartParts.values()].sort((left, right) => left.filename.localeCompare(right.filename))) entries.push({ name: `ppt/charts/${item.filename}`, data: item.data })
   for (const item of [...media.values()].sort((left, right) => left.filename.localeCompare(right.filename))) entries.push({ name: `ppt/media/${item.filename}`, data: item.data })
+  const tableSources: Record<string, unknown> = {}
+  for (const [index, slide] of compilation.slides.entries()) for (const node of slide.nodes) {
+    if (node.kind !== 'table' || !node.table || !node.sourceElementId) continue
+    const element = document.slides[slide.slideId].elements[node.sourceElementId]
+    const slideXml = new TextDecoder().decode(entries.find(entry => entry.name === `ppt/slides/slide${index + 1}.xml`)!.data)
+    if (element.type !== 'component' || !verifyNativeTableXml(slideXml, element)) throw new Error(`TABLE_EXPORT_VALIDATION_FAILED: ${node.id}`)
+    tableSources[node.id] = node.table.model
+    const item = capabilityReport.items.find(item => item.id === node.id)!
+    // Keep missing facts/sources blocking even when the native structure passed.
+    if (!['missing-source', 'blocked', 'unsupported'].includes(item.status)) {
+      item.status = node.table.degradations.length ? 'layout-risk' : 'native'
+      item.reason = node.table.degradations.length ? `Native table with downgraded properties: ${node.table.degradations.join(', ')}. Target clients and font metrics remain unverified; Office may substitute fonts.` : 'Editable DrawingML table; emitted structure and content verified. Target Office clients and font metrics remain unverified; Office may substitute fonts.'
+      item.recovery = 'Validate opening, editing, re-saving and visual layout in selected Office clients under Q01.'
+    }
+    item.nativeTable = true
+    item.tableExport = { adapter: TABLE_ADAPTER, validation: 'passed', clientValidation: 'unverified', structure: 'native', content: 'native', dimensions: 'native', styles: node.table.degradations.length ? 'degraded' : 'native', degradations: node.table.degradations }
+  }
+  if (Object.keys(tableSources).length) entries.push({ name: 'ppt/ppte/table-sources.json', data: text(JSON.stringify({ sourceRevision: compilation.sourceRevision, tables: tableSources })) })
+  capabilityReport.summary = Object.fromEntries(Object.keys(capabilityReport.summary).map(status => [status, capabilityReport.items.filter(item => item.status === status).length])) as CapabilityReport['summary']
+  capabilityReport.degraded = capabilityReport.issues.length > 0 || capabilityReport.items.some(item => !['native', 'property'].includes(item.status))
   if (options.includeCapabilityReport !== false) entries.push({ name: 'ppt/ppte/capability-report.json', data: text(JSON.stringify(capabilityReport, null, 2)) })
   return writeStoredZip(entries)
 }
@@ -346,6 +382,7 @@ function semanticSlide(width: number, height: number, slide: SemanticPptxSlide, 
 }
 
 function semanticNodeXml(node: SemanticPptxNode, numericId: number, relationId: string | undefined, document: PpteDocument): string {
+  if (node.kind === 'table' && node.table) return nativeTableXml(node.table, node.sourceElementId ?? node.id, numericId, node.frame)
   const xfrm = transformXml(node)
   if (node.kind === 'picture' && relationId) return `<p:pic><p:nvPicPr><p:cNvPr id="${numericId}" name="${escapeXml(node.sourceElementId ?? node.id)}"/><p:cNvPicPr preferRelativeResize="0"/><p:nvPr/></p:nvPicPr><p:blipFill>${node.crop ? `<a:srcRect l="${Math.round(node.crop.x * 100000)}" t="${Math.round(node.crop.y * 100000)}" r="${Math.round((1 - node.crop.x - node.crop.width) * 100000)}" b="${Math.round((1 - node.crop.y - node.crop.height) * 100000)}"/>` : ''}<a:blip r:embed="${relationId}">${node.opacity === undefined ? '' : `<a:alphaModFix amt="${Math.round(clamp01(node.opacity) * 100000)}"/>`}</a:blip><a:stretch><a:fillRect/></a:stretch></p:blipFill><p:spPr>${xfrm}<a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr></p:pic>`
   if (node.kind === 'text-box') return semanticTextShape(node, numericId, xfrm, false, document)

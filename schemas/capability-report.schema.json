@@ -3,17 +3,223 @@
   "$id": "urn:ppte:schemas:2.0:capability-report",
   "title": "PPTe Capability Report",
   "type": "object",
-  "required": ["reportVersion", "target", "sourceDocumentId", "sourceRevision", "ok", "degraded", "items", "issues", "summary"],
+  "required": [
+    "reportVersion",
+    "target",
+    "sourceDocumentId",
+    "sourceRevision",
+    "ok",
+    "degraded",
+    "items",
+    "issues",
+    "summary"
+  ],
   "properties": {
-    "reportVersion": { "const": "1" },
-    "target": { "enum": ["portable-viewer", "portable-quick-fix", "portable-light-edit", "presenter", "pdf", "png", "pptx-image", "pptx-semantic"] },
-    "sourceDocumentId": { "type": "string", "minLength": 1 },
-    "sourceRevision": { "type": "string", "minLength": 1 },
-    "ok": { "type": "boolean" },
-    "degraded": { "type": "boolean" },
-    "items": { "type": "array", "items": { "type": "object", "required": ["id", "slideId", "status"], "properties": { "id": { "type": "string" }, "slideId": { "type": "string" }, "elementId": { "type": "string" }, "type": { "type": "string" }, "status": { "enum": ["native", "property", "rasterized", "static", "font-replacement", "layout-risk", "missing-source", "unsupported", "blocked"] }, "reason": { "type": "string" }, "recovery": { "type": "string" }, "sourcePath": { "type": "string" }, "nativeChart": { "type": "boolean" }, "runFonts": { "type": "array", "items": { "type": "object", "required": ["fontFamily", "fontSize"], "properties": { "fontFamily": { "type": "string" }, "fontSize": { "type": "number", "exclusiveMinimum": 0 } }, "additionalProperties": false } } }, "additionalProperties": false } },
-    "issues": { "type": "array" },
-    "summary": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0 } }
+    "reportVersion": {
+      "const": "1"
+    },
+    "target": {
+      "enum": [
+        "portable-viewer",
+        "portable-quick-fix",
+        "portable-light-edit",
+        "presenter",
+        "pdf",
+        "png",
+        "pptx-image",
+        "pptx-semantic"
+      ]
+    },
+    "sourceDocumentId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sourceRevision": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "degraded": {
+      "type": "boolean"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "slideId",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slideId": {
+            "type": "string"
+          },
+          "elementId": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "native",
+              "property",
+              "rasterized",
+              "static",
+              "font-replacement",
+              "layout-risk",
+              "missing-source",
+              "unsupported",
+              "blocked"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          },
+          "recovery": {
+            "type": "string"
+          },
+          "sourcePath": {
+            "type": "string"
+          },
+          "nativeChart": {
+            "type": "boolean"
+          },
+          "runFonts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "fontFamily",
+                "fontSize"
+              ],
+              "properties": {
+                "fontFamily": {
+                  "type": "string"
+                },
+                "fontSize": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "nativeTable": {
+            "type": "boolean"
+          },
+          "tableExport": {
+            "type": "object",
+            "required": [
+              "adapter",
+              "validation",
+              "clientValidation",
+              "structure",
+              "content",
+              "dimensions",
+              "styles",
+              "degradations"
+            ],
+            "properties": {
+              "adapter": {
+                "const": "drawingml-table-v1"
+              },
+              "validation": {
+                "const": "passed"
+              },
+              "clientValidation": {
+                "const": "unverified"
+              },
+              "structure": {
+                "const": "native"
+              },
+              "content": {
+                "const": "native"
+              },
+              "dimensions": {
+                "const": "native"
+              },
+              "styles": {
+                "enum": [
+                  "native",
+                  "degraded"
+                ]
+              },
+              "degradations": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "nativeTable": {
+                  "const": true
+                }
+              },
+              "required": [
+                "nativeTable"
+              ]
+            },
+            "then": {
+              "required": [
+                "tableExport"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "issues": {
+      "type": "array"
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "items": {
+            "contains": {
+              "properties": {
+                "nativeTable": {
+                  "const": true
+                }
+              },
+              "required": [
+                "nativeTable"
+              ]
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "target": {
+            "const": "pptx-semantic"
+          }
+        }
+      }
+    }
+  ]
 }

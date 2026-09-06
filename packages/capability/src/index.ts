@@ -19,6 +19,18 @@ export interface CapabilityItem {
   sourcePath?: string
   /** True when a semantic Chart is emitted as an editable Office chart part. */
   nativeChart?: boolean
+  /** Set only after the PPTX adapter verifies emitted table structure and content. */
+  nativeTable?: boolean
+  tableExport?: {
+    adapter: 'drawingml-table-v1'
+    validation: 'passed'
+    clientValidation: 'unverified'
+    structure: 'native'
+    content: 'native'
+    dimensions: 'native'
+    styles: 'native' | 'degraded'
+    degradations: string[]
+  }
   /** Requested run families/sizes retained by the selected target; Office still may substitute fonts. */
   runFonts?: Array<{fontFamily:string;fontSize:number}>
 }
@@ -123,6 +135,10 @@ function capabilityForElement(document: PpteDocument, slideId: string, element: 
   }
   if (element.type === 'component' && element.componentType === 'core/table' && element.componentVersion === '2.0.0' && ['portable-quick-fix','portable-light-edit'].includes(target) && status !== 'missing-source') {
     status = 'property'; reason = 'Cell values, TSV paste and basic fill style are editable; table structure requires Host.'; recovery = 'Use Host for row/column and merge edits.'
+  }
+  if (element.type === 'component' && element.componentType === 'core/table' && target === 'pptx-semantic' && status === 'static') {
+    reason = 'Native table export is unverified until an actual adapter emits and validates its DrawingML structure and content.'
+    recovery = 'Export with the native table adapter; empty and legacy tables retain their declared fallback.'
   }
   if (element.type === 'component' && status === 'static' && !reason) {
     reason = element.componentType === 'core/video'
