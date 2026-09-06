@@ -538,6 +538,8 @@ export interface Asset {
   width?: number
   height?: number
   durationMs?: number
+  posterAssetId?: AssetId
+  codec?: string
   source?: AssetSource
   license?: string
   altText?: string

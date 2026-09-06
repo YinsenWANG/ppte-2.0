@@ -1,3 +1,4 @@
+import { videoPosterId } from '../../schema/src/video.js'
 import { planNativeTable, nativeTableXml, verifyNativeTableXml, TABLE_ADAPTER, type NativeTablePlan } from './table.js'
 export { verifyNativeTableXml } from './table.js'
 import { resolveRunFont } from '../../validation/src/index.js'
@@ -149,7 +150,7 @@ export function exportImagePptx(document: PpteDocument, options: PptxExportOptio
   if (structuralIssues.length === 0) {
     for (const slideId of document.slideOrder) {
       try {
-        const html = renderSlideHtml(document, slideId, { assetSources, editable: false, includeHostControls: false })
+        const html = renderSlideHtml(document, slideId, { staticMedia: true, assetSources, editable: false, includeHostControls: false })
         const png = renderReferencePng(htmlWithCanvasSize(html, document.canvas.width, document.canvas.height, fontCss), Math.round(document.canvas.width), Math.round(document.canvas.height))
         slideSvgs.push(rasterizedSlideSvg(document.canvas.width, document.canvas.height, png))
       } catch (cause) {
@@ -286,6 +287,7 @@ function semanticNode(document: PpteDocument, slideId: string, element: Element)
     const table = planNativeTable(element)
     if (table) return { id: `${slideId}:${element.id}`, sourceElementId: element.id, kind: 'table', frame: element.frame, table }
   }
+  if (element.type === 'component' && element.componentType === 'core/video' && videoPosterId(element,document)) return { id: `${slideId}:${element.id}`, sourceElementId: element.id, kind: 'picture', frame: element.frame, ...elementFields(element), assetId: videoPosterId(element,document), fallbackLabel: 'Video poster; playback is not embedded' }
   if (element.type === 'component' && element.fallback.kind === 'asset' && element.fallback.assetId) return { id: `${slideId}:${element.id}`, sourceElementId: element.id, kind: 'picture', frame: element.frame, ...elementFields(element), assetId: element.fallback.assetId, fallbackLabel: element.fallback.label ?? `${element.componentType} static fallback` }
   if (element.type === 'component') return { id: `${slideId}:${element.id}`, sourceElementId: element.id, kind: 'component-fallback', frame: element.frame, ...elementFields(element), fallbackLabel: element.fallback.label ?? `${element.componentType} fallback` }
   return undefined
@@ -578,7 +580,7 @@ function buildPptx(document: PpteDocument, slides: string[], report: CapabilityR
 function buildAssetSources(document: PpteDocument, bytesById: Record<string, Uint8Array>, issues: ValidationIssue[]): Record<string, string> {
   const sources: Record<string, string> = {}
   const referencedAssetIds = new Set(
-    document.slideOrder.flatMap((slideId) => Object.values(document.slides[slideId]?.elements ?? {}).flatMap((element) => element.type === 'image' ? [element.assetId] : element.type === 'component' && element.fallback.kind === 'asset' && element.fallback.assetId ? [element.fallback.assetId] : [])),
+    document.slideOrder.flatMap((slideId) => Object.values(document.slides[slideId]?.elements ?? {}).flatMap((element) => element.type === 'image' ? [element.assetId] : element.type === 'component' && element.componentType === 'core/video' && videoPosterId(element,document) ? [videoPosterId(element,document)!] : element.type === 'component' && element.fallback.kind === 'asset' && element.fallback.assetId ? [element.fallback.assetId] : [])),
   )
   for (const asset of Object.values(document.assets)) {
     if (!referencedAssetIds.has(asset.id)) continue

@@ -1,0 +1,18 @@
+{
+  "budgetVersion": "f04-media-v1",
+  "standardHtmlBytes": 20971520,
+  "samples": [
+    {
+      "sourceBytes": 10485760,
+      "sha256": "d8ac291598c695ab68802c1ed215691999235f08afd2c797aa50c72ac10a3ae3",
+      "htmlBytes": 14483838,
+      "standardAccepted": true
+    },
+    {
+      "sourceBytes": 16777216,
+      "sha256": "71c10619c1c23368a137f54b93bff331ca45d3ef99d3611053fed0c3da7264e8",
+      "htmlBytes": 22872446,
+      "standardAccepted": false
+    }
+  ]
+}

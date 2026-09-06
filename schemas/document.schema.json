@@ -3467,7 +3467,7 @@
                   "additionalProperties": false
                 },
                 {
-                  "allOf": [{"if":{"properties":{"componentType":{"const":"core/table"},"componentVersion":{"enum":["2.0.0"]}}},"then":{"properties":{"props":{"$ref":"#/$defs/tableModel"}}}}],
+                  "allOf": [{"if":{"properties":{"componentType":{"const":"core/table"},"componentVersion":{"enum":["2.0.0"]}}},"then":{"properties":{"props":{"$ref":"#/$defs/tableModel"}}}}, {"if":{"properties":{"componentType":{"const":"core/video"},"componentVersion":{"const":"2.0.0"}}},"then":{"properties":{"props":{"type":"object","required":["assetId"],"additionalProperties":false,"properties":{"assetId":{"type":"string","minLength":1},"posterAssetId":{"type":"string","minLength":1},"controls":{"type":"boolean"},"muted":{"type":"boolean"}}}}}}],
                   "type": "object",
                   "required": [
                     "id",
@@ -4312,6 +4312,8 @@
             "type": "integer",
             "minimum": 1
           },
+          "posterAssetId": { "type": "string", "minLength": 1 },
+          "codec": { "type": "string" },
           "durationMs": {
             "type": "integer",
             "minimum": 0

@@ -696,3 +696,5 @@ function issue(
     ...(recovery ? { recovery } : {}),
   });
 }
+
+export { buildMediaDirectory, deliverMediaDirectory } from './media-directory.js';

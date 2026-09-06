@@ -1,3 +1,4 @@
+import { assertVideoReferences } from './video.js'
 import { assertTableComponent, assertTableModel } from './table.js'
 import type {
   ChartElement,
@@ -80,6 +81,7 @@ export function validateDocument(document: PpteDocument, options: { runtimeSubse
       validateElement(element, add, slideId, elementId, options.runtimeSubset === true, options.runtimeProfile ?? (options.runtimeSubset ? 'ga-b' : 'ga-c'))
       if (element.type === 'image' && !document.assets?.[element.assetId]) add('ASSET_MISSING', `Image references missing asset ${element.assetId}.`, { slideId, elementId })
       if (element.type === 'component' && element.fallback && element.fallback.kind === 'asset' && element.fallback.assetId && !document.assets?.[element.fallback.assetId]) add('ASSET_MISSING', `Component fallback references missing asset ${element.fallback.assetId}.`, { slideId, elementId })
+      if (element.type === 'component') { try { assertVideoReferences(element, document) } catch (cause) { add('SCHEMA_INVALID', String(cause), {slideId,elementId}) } }
       validateRefs(document, element, add, slideId)
       if (element.type === 'component' && element.componentType === 'core/table' && element.componentVersion === '2.0.0') {
         try {
@@ -132,6 +134,8 @@ export function validateDocument(document: PpteDocument, options: { runtimeSubse
     if (!Number.isInteger(asset.byteLength) || asset.byteLength < 0) add('SCHEMA_INVALID', `Asset byteLength is invalid: ${assetId}.`, { path: `/assets/${escapePointer(assetId)}/byteLength` })
     if (asset.width !== undefined && (!Number.isInteger(asset.width) || asset.width <= 0)) add('SCHEMA_INVALID', `Asset width is invalid: ${assetId}.`, { path: `/assets/${escapePointer(assetId)}/width` })
     if (asset.height !== undefined && (!Number.isInteger(asset.height) || asset.height <= 0)) add('SCHEMA_INVALID', `Asset height is invalid: ${assetId}.`, { path: `/assets/${escapePointer(assetId)}/height` })
+    if (asset.posterAssetId !== undefined && !document.assets?.[asset.posterAssetId]?.mimeType.startsWith('image/')) add('SCHEMA_INVALID', 'Video poster asset is missing.', { path: `/assets/${assetId}/posterAssetId` })
+    if (asset.codec !== undefined && typeof asset.codec !== 'string') add('SCHEMA_INVALID', 'Asset codec must be a string.')
     if (asset.durationMs !== undefined && (!Number.isInteger(asset.durationMs) || asset.durationMs < 0)) add('SCHEMA_INVALID', `Asset durationMs is invalid: ${assetId}.`, { path: `/assets/${escapePointer(assetId)}/durationMs` })
   }
   for (const [fontId, font] of Object.entries(document.fonts ?? {})) {

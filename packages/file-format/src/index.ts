@@ -173,7 +173,7 @@ export function writeCheckpoint(document: PpteDocument, target: string, options:
     if (!options.fontBytes?.[font.id]) addEntry(entries, safePackagePath(font.path ?? `fonts/${font.id}.woff2`, `fonts/${font.id}.woff2`, 'fonts/'), data)
   }
   if (!options.clean && options.redoHistory?.length) addEntry(entries, 'history/redo.json', bytes(canonicalJsonString(options.redoHistory)))
-  const files = entries.filter((entry) => entry.name !== 'mimetype').map((entry) => ({ path: entry.name, mediaType: mediaTypeFor(entry.name), byteLength: entry.data.length, sha256: sha256Binary(entry.data), required: entry.name === 'document.json' }))
+  const files = entries.filter((entry) => entry.name !== 'mimetype').map((entry) => ({ path: entry.name, mediaType: Object.values(document.assets).find(asset=>asset.mimeType.startsWith('video/') && asset.path===entry.name)?.mimeType ?? mediaTypeFor(entry.name), byteLength: entry.data.length, sha256: sha256Binary(entry.data), required: entry.name === 'document.json' }))
   const manifest: PpteManifest = {
     format: 'ppte',
     formatVersion: '2',
@@ -336,7 +336,7 @@ export function buildCheckpointBytes(document: PpteDocument, options: Checkpoint
     if (!options.fontBytes?.[font.id]) addEntry(entries, safePackagePath(font.path ?? `fonts/${font.id}.woff2`, `fonts/${font.id}.woff2`, 'fonts/'), data)
   }
   if (!options.clean && options.redoHistory?.length) addEntry(entries, 'history/redo.json', bytes(canonicalJsonString(options.redoHistory)))
-  const files = entries.filter((entry) => entry.name !== 'mimetype').map((entry) => ({ path: entry.name, mediaType: mediaTypeFor(entry.name), byteLength: entry.data.length, sha256: sha256Binary(entry.data), required: entry.name === 'document.json' }))
+  const files = entries.filter((entry) => entry.name !== 'mimetype').map((entry) => ({ path: entry.name, mediaType: Object.values(document.assets).find(asset=>asset.mimeType.startsWith('video/') && asset.path===entry.name)?.mimeType ?? mediaTypeFor(entry.name), byteLength: entry.data.length, sha256: sha256Binary(entry.data), required: entry.name === 'document.json' }))
   const manifest: PpteManifest = {
     format: 'ppte',
     formatVersion: '2',

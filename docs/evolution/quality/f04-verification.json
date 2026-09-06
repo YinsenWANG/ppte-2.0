@@ -1,0 +1,88 @@
+{
+  "task": "F04",
+  "baselineCommit": "a316b051dad3ed03cbd8f0a58fa9449b3e66590e",
+  "buildManifest": {
+    "applicationVersion": "0.9.0-next.0",
+    "runtimeBuildId": "dd1b61dc0627b1e7c527a3af67bdb404a51950b8f41cf8ac2c848be17b6c763c"
+  },
+  "verification": {
+    "typecheck": "pass",
+    "build": "pass",
+    "test": {
+      "before": 336,
+      "after": 345,
+      "delta": 9,
+      "passed": 345,
+      "failed": 0
+    },
+    "blackbox": {
+      "start": "docs/evolution/quality/f04-blackbox-start.json",
+      "final": "docs/evolution/quality/f04-blackbox-final.json",
+      "beforeGreen": 70,
+      "beforeRed": 0,
+      "green": 70,
+      "red": 0,
+      "newRed": [],
+      "exitCode": 0
+    }
+  },
+  "logs": {
+    "typecheck": {
+      "sha256": "a7149824f4d2e2b22a41ec34ca6b451f7ac9e9003b5167390eead15d29870e70",
+      "file": "/tmp/f04-typecheck-final.log"
+    },
+    "build": {
+      "sha256": "60ca46444de45fc682ae3a482a3992ab8dd7a618503d54c03c79c3f44488bba4",
+      "file": "/tmp/f04-build-final.log"
+    },
+    "test": {
+      "sha256": "af075e337b0a5ba489bedc0622c76e15dacbfbe5ad7abd85a9727535f646e7f1",
+      "file": "/tmp/f04-test-final.log"
+    }
+  },
+  "testCountNote": "Start dist run enumerated 336 tests. Its 4 identity/packaging failures overlapped a regenerated source build manifest, so it is not claimed as a pre-existing code-failure baseline. Final full suite is green.",
+  "artifacts": [
+    {
+      "path": "docs/evolution/quality/f04-media/blue-vp9.webm.png",
+      "sha256": "8710bec44164c3ab6db850de0995c57e650a55f99b85a05d4cf2d4064e059687"
+    },
+    {
+      "path": "docs/evolution/quality/f04-media/capacity.json",
+      "sha256": "6a5f54eec86c8f9a51384b7f326930a1a43fa7d544df38d2b5ea44568512c6dd"
+    },
+    {
+      "path": "docs/evolution/quality/f04-media/directory.json",
+      "sha256": "a6724ad051c5908162467abf8ddde2103721c9d4bd7e009a3223a3ea16797bfd"
+    },
+    {
+      "path": "docs/evolution/quality/f04-media/exports.json",
+      "sha256": "4ad1f81f0b0147398a641b465c3aec231c49cf3199ae0bc22c5b9d0c12ba85fe"
+    },
+    {
+      "path": "docs/evolution/quality/f04-media/host.json",
+      "sha256": "98ffbac9bd165042ab8c0688e1470abc0fe4d7ef7419d39ca6e62a0d783e72af"
+    },
+    {
+      "path": "docs/evolution/quality/f04-media/host.png",
+      "sha256": "69fb00a9b243f55e6317870700925472654085d4a2b2cc46e98a065334375480"
+    },
+    {
+      "path": "docs/evolution/quality/f04-media/playback.json",
+      "sha256": "abed3f87f2fbd43c226b81faf460c4d89ca7c50310954acedfc32f9bc325fe3d"
+    },
+    {
+      "path": "docs/evolution/quality/f04-media/red-h264.mp4.png",
+      "sha256": "d67613a726bd72e8c1d8c3bdebc883b150a767aeb6828a755b897e853d2af458"
+    },
+    {
+      "path": "docs/evolution/quality/f04-media/size-boundaries.json",
+      "sha256": "d03203bff5f1df94b4ad76f0aeb1403deff8d11eea0451b42c3abe2992a1c56e"
+    }
+  ],
+  "sourceSha256": {
+    "packages/portable-runtime/src/media-controller.ts": "1a0f65166e1d06e3b44b4b74c760033ceeaa2fc849a44edc192cb1234d11283d",
+    "packages/editor-controller/src/video-resource.ts": "70ca2e5180e51a7b9865529c314e5cf29a77b6a166e08f2f1f3c49edf78b6ee1",
+    "packages/node-runtime/src/media-directory.ts": "f8ea7177132af79c52600f8a9d839be2bd702387db776f435bf5759b673d988b",
+    "tests/media-playback-journey.test.ts": "4b0cef81b169e6be767efa300832d4e48873837793fabf28ee305cbd4aa95153"
+  }
+}

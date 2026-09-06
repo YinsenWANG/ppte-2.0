@@ -1,3 +1,4 @@
+import { videoPosterId } from '../../schema/src/video.js'
 import { deflateSync } from 'node:zlib'
 import { canonicalRevision, sha256HexBytes } from '../../canonical-json/src/index.js'
 import { buildCapabilityReport, type CapabilityReport } from '../../capability/src/index.js'
@@ -62,7 +63,7 @@ export function exportPdf(document: PpteDocument, options: PdfExportOptions = {}
   const pages = document.slideOrder.map((slideId) => {
     try {
       const slide = document.slides[slideId]
-      const slideHtml = renderSlideHtml(document, slideId, { assetSources, editable: false, includeHostControls: false })
+      const slideHtml = renderSlideHtml(document, slideId, { staticMedia: true, assetSources, editable: false, includeHostControls: false })
       const notes = options.includeNotes === true && slide?.notes
         ? `<aside data-ppte-export-notes style="position:absolute;left:0;right:0;bottom:0;box-sizing:border-box;padding:12px 20px;background:#ffffffee;color:#334155;font:14px/1.35 sans-serif;white-space:pre-wrap">${escapeHtml([slide.notes.speaker, slide.notes.handout].filter(Boolean).join(' — '))}</aside>`
         : ''
@@ -120,7 +121,7 @@ export function exportPng(document: PpteDocument, options: PngExportOptions = {}
   let bytes: Uint8Array
   let browserSucceeded = true
   try {
-    const slideHtml = renderSlideHtml(document, slideId ?? '', { assetSources, editable: false, includeHostControls: false })
+    const slideHtml = renderSlideHtml(document, slideId ?? '', { staticMedia: true, assetSources, editable: false, includeHostControls: false })
     const html = `${slideHtml}${lowResolutionTextInk(document, slide, width, height)}`
     bytes = renderReferencePng(referencePngPage(html, document.canvas.width, document.canvas.height, width, height, fontCss, options.transparent === true), width, height, { transparent: options.transparent === true })
   } catch (cause) {
@@ -151,6 +152,7 @@ function buildAssetSources(document: PpteDocument, bytesById: Record<string, Uin
   const referencedAssetIds = new Set<string>()
   for (const slideId of document.slideOrder) for (const element of Object.values(document.slides[slideId]?.elements ?? {})) {
     if (element.type === 'image') referencedAssetIds.add(element.assetId)
+    if (element.type === 'component' && element.componentType === 'core/video') { const id=videoPosterId(element,document); if(id)referencedAssetIds.add(id) }
     if (element.type === 'component' && element.fallback.kind === 'asset' && element.fallback.assetId) referencedAssetIds.add(element.fallback.assetId)
   }
   for (const assetId of referencedAssetIds) {

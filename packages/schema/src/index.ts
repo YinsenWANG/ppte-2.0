@@ -8,3 +8,5 @@ export * from './review.js'
 export * from './errors.js'
 export * from './version.js'
 export * from './table.js'
+
+export { assertVideoProps, assertVideoAsset, VIDEO_MIME_TYPES } from './video.js'

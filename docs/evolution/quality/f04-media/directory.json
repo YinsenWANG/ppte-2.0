@@ -1,0 +1,42 @@
+{
+  "path": "/var/folders/00/4ydbn_v17qs1pwsgy6lj2x700000gn/T/ppte-media-dir-0Ta3Ii/bundle/index.html",
+  "version": 1,
+  "entry": "index.html",
+  "openProtocol": "http-loopback",
+  "fileProtocol": "unsupported",
+  "packingVerification": "all CAS bytes and complete Portable audit",
+  "openingVerification": "manifest pinned by index; template and every media file SHA-256/length; reconstructed HTML SHA-256 before executing",
+  "publisherAuthentication": false,
+  "htmlSha256": "ab90f6c106f33b5f633a4aa4a90269b2de2bb598883dca44f164b0bf0cfe5111",
+  "template": {
+    "path": "template.html",
+    "sha256": "87dda4c8f9806fe6203abb5eed41e361b640de511989d3eddbd035ca0fea8bd5",
+    "byteLength": 502874
+  },
+  "resources": [
+    {
+      "path": "media/4ff6ab670a58c14270e034e2090d9a432caa263a14e0a25785386b0c12f880b5.bin",
+      "sha256": "4ff6ab670a58c14270e034e2090d9a432caa263a14e0a25785386b0c12f880b5",
+      "byteLength": 70,
+      "marker": "@ppte-media:4ff6ab670a58c14270e034e2090d9a432caa263a14e0a25785386b0c12f880b5"
+    },
+    {
+      "path": "media/82a990b53d96742dab43ce4d678a0b2c4d55010901bd6f55c30290e8ff37144a.bin",
+      "sha256": "82a990b53d96742dab43ce4d678a0b2c4d55010901bd6f55c30290e8ff37144a",
+      "byteLength": 810,
+      "marker": "@ppte-media:82a990b53d96742dab43ce4d678a0b2c4d55010901bd6f55c30290e8ff37144a"
+    }
+  ],
+  "metrics": {
+    "htmlBytes": 503898,
+    "directoryBytes": 507434
+  },
+  "browser": "151.0.7922.34",
+  "network": "external requests aborted; only loopback HTTP allowed",
+  "tamperCases": [
+    "media",
+    "template",
+    "manifest"
+  ],
+  "fileProtocolResult": "explicitly rejected"
+}

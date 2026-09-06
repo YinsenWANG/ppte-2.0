@@ -1,3 +1,4 @@
+import { videoPosterId } from '../../schema/src/video.js'
 import { effectiveRunStyle, runFontFamilyCss } from '../../validation/src/index.js'
 import { canonicalHash, canonicalJsonString } from '../../canonical-json/src/index.js'
 import { renderChartSvg } from '../../charts/src/index.js'
@@ -16,6 +17,7 @@ import type {
 } from '../../schema/src/index.js'
 
 export interface RenderOptions {
+  staticMedia?: boolean
   assetSources?: Record<string, string>
   includeDiagnostics?: boolean
   widgetRegistry?: WidgetRegistry
@@ -303,8 +305,13 @@ function renderChart(document: PpteDocument, element: Extract<Element, { type: '
 }
 
 function renderComponent(document: PpteDocument, element: Extract<Element, { type: 'component' }>, frame: string, options: RenderOptions): string {
+  if (options.staticMedia && element.componentType === 'core/video') {
+    const id=videoPosterId(element,document), asset=id?document.assets[id]:undefined
+    const content=asset?`<img src="${escapeAttr(options.assetSources?.[asset.id]??asset.path)}" alt="Video poster" style="width:100%;height:100%;object-fit:contain">`:'<span>Video — poster unavailable</span>'
+    return `<div data-ppte-element-id="${escapeAttr(element.id)}" data-ppte-video-poster style="position:absolute;${frame}overflow:hidden">${content}</div>`
+  }
   const fallbackAsset = element.fallback.kind === 'asset' && element.fallback.assetId ? document.assets[element.fallback.assetId] : undefined
-  if (fallbackAsset) {
+  if (fallbackAsset && !(element.componentType === 'core/video' && element.componentVersion === '2.0.0')) {
     const source = options.assetSources?.[fallbackAsset.id] ?? fallbackAsset.path
     return `<div data-ppte-element-id="${escapeAttr(element.id)}" data-ppte-type="component" data-ppte-component-type="${escapeAttr(element.componentType)}" data-ppte-component-version="${escapeAttr(element.componentVersion)}" data-ppte-semantic-key="${escapeAttr(element.semanticKey ?? '')}" data-ppte-widget-fallback="asset" style="position:absolute;${frame}overflow:hidden;"><img src="${escapeAttr(source)}" alt="${escapeAttr(fallbackAsset.altText ?? element.fallback.label ?? element.componentType)}" style="width:100%;height:100%;object-fit:contain;"></div>`
   }
@@ -320,7 +327,11 @@ function renderElementSvg(document: PpteDocument, element: Element, options: Ren
   else if (element.type === 'image') body = renderImageSvg(document, element, options, defs)
   else if (element.type === 'shape') body = renderShapeSvg(document, element, defs)
   else if (element.type === 'chart') body = renderChartSvgElement(document, element)
-  else if (element.fallback.kind === 'asset' && element.fallback.assetId && document.assets[element.fallback.assetId]) {
+  else if (element.componentType === 'core/video' && videoPosterId(element, document) && document.assets[videoPosterId(element, document)!]) {
+    const asset=document.assets[videoPosterId(element, document)!]
+    const source=options.assetSources?.[asset.id] ?? asset.path
+    body=`<image data-ppte-video-poster="true" x="0" y="0" width="${number(element.frame.width)}" height="${number(element.frame.height)}" href="${escapeAttr(source)}" xlink:href="${escapeAttr(source)}" preserveAspectRatio="xMidYMid meet"/>`
+  } else if (element.fallback.kind === 'asset' && element.fallback.assetId && document.assets[element.fallback.assetId]) {
     const asset = document.assets[element.fallback.assetId]
     const source = options.assetSources?.[asset.id] ?? asset.path
     body = `<image x="0" y="0" width="${number(element.frame.width)}" height="${number(element.frame.height)}" href="${escapeAttr(source)}" xlink:href="${escapeAttr(source)}" preserveAspectRatio="xMidYMid meet"/>`

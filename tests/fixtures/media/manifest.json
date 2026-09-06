@@ -1,0 +1,25 @@
+{
+  "source": "Locally generated constant color frames; no third-party footage.",
+  "license": "CC0-1.0",
+  "generator": "ffmpeg version 8.1.2 Copyright (c) 2000-2026 the FFmpeg developers",
+  "fixtures": [
+    {
+      "file": "blue-vp9.webm",
+      "sha256": "82a990b53d96742dab43ce4d678a0b2c4d55010901bd6f55c30290e8ff37144a",
+      "byteLength": 810,
+      "width": 160,
+      "height": 90,
+      "durationMs": 1000,
+      "command": "ffmpeg -f lavfi -i color=c=blue:s=160x90:r=12 -t 1 -c:v libvpx-vp9 -an blue-vp9.webm"
+    },
+    {
+      "file": "red-h264.mp4",
+      "sha256": "cc4e4dbeee14251cdf23b2299007cb69606b85bb8703cdd39a7512626c2fc2b4",
+      "byteLength": 1925,
+      "width": 160,
+      "height": 90,
+      "durationMs": 1000,
+      "command": "ffmpeg -f lavfi -i color=c=red:s=160x90:r=12 -t 1 -c:v libx264 -pix_fmt yuv420p -an red-h264.mp4"
+    }
+  ]
+}

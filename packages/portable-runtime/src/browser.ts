@@ -1,3 +1,5 @@
+import { prepareVideo, decodeBrowserVideo } from '../../editor-controller/src/video-resource.js'
+import { MediaController } from './media-controller.js'
 import { renderTableEditor, rememberTableCell } from '../../editor-dom/src/table-selection.js'
 import { planDesignEdit, planDesignTheme, recipeControls } from '../../design-compiler/src/design-edits.js'
 import { builtInRecipeSpecs } from '../../layout-recipes/src/index.js'
@@ -58,6 +60,8 @@ dom.own(mountEditorShell(root));
 const canvas = document.querySelector<HTMLElement>("[data-ppte-canvas]")!;
 const stage = document.querySelector<HTMLElement>("[data-ppte-stage]")!;
 const status = document.querySelector<HTMLElement>("[data-ppte-status]")!;
+const media = new MediaController();
+runtime.controller.own(()=>media.dispose());
 const editable = runtime.profile !== "viewer";
 const advanced =
   runtime.profile === "light-edit" || runtime.profile === "full-portable";
@@ -168,6 +172,8 @@ function show(result?: { ok: boolean; issues?: Array<{ message: string }> }) {
       const preview = canvas.querySelector<HTMLElement>(`[data-ppte-slide-id="${id}"]`)?.cloneNode(true) as HTMLElement | undefined;
       if (preview) {
         preview.removeAttribute('data-ppte-slide-id'); preview.inert = true;
+        preview.querySelectorAll('video').forEach(video=>{const poster=document.createElement('span');poster.textContent='Video';video.closest('[data-ppte-media-container]')?.replaceWith(poster);if(video.isConnected)video.replaceWith(poster)});
+
         preview.querySelectorAll('[contenteditable]').forEach(n => n.removeAttribute('contenteditable'));
         preview.querySelectorAll('[data-ppte-element-id]').forEach(n => n.removeAttribute('data-ppte-element-id'));
         preview.style.cssText = `position:absolute;left:0;top:0;display:block;transform:scale(${140/runtime.getDocument().canvas.width});transform-origin:top left;pointer-events:none`;
@@ -224,6 +230,7 @@ function show(result?: { ok: boolean; issues?: Array<{ message: string }> }) {
             .some((s) => s.elementId === n.dataset.ppteElementId),
         )),
     );
+  media.setSlide(state.slideId);
   root.dataset.ppteRevision = runtime.getRevision();
   root.dataset.ppteStep = String(state.step);
   document.documentElement.dataset.ppteRevision = runtime.getRevision();
@@ -260,7 +267,8 @@ function render() {
         `data:${doc.assets[id]?.mimeType};base64,${base64(data)}`,
       ]),
     ),
-  }), textSurface.protect);
+  }), node=>textSurface.protect(node)||media.protect(node,doc));
+  media.sync(canvas, doc, assets);
   document.getElementById("ppte-portable-fonts")?.remove();
   const fontStyle = document.createElement("style");
   fontStyle.id = "ppte-portable-fonts";
@@ -294,6 +302,7 @@ async function enterPresentation() {
   return { ok: true, issues: [] };
 }
 function leavePresentation() {
+  media.pauseAll();
   pendingPresentation = false;
   runtime.presentation.leave();
   presenting = false;
@@ -463,6 +472,21 @@ function chartDialog() {
 let imageJob:AbortController|undefined;
 dom.own(()=>imageJob?.abort());
 dom.listen(document,"keydown",event=>{if(event.key==="Escape")imageJob?.abort()});
+async function importVideo(file:Blob) {
+  if(!editable||presenting)return error('PRESENTATION_READONLY','请先退出放映再导入视频');
+  const revision=runtime.getRevision(),slideId=runtime.presenterState().slideId;
+  try {
+    const prepared=await prepareVideo(new Uint8Array(await file.arrayBuffer()),{mimeType:file.type,decode:decodeBrowserVideo});
+    if(runtime.getRevision()!==revision||presenting)return error('REVISION_CONFLICT','视频解码期间文档已变化，请重试');
+    return change(runtime.commitPreparedVideo(slideId,`video_${crypto.randomUUID()}`,prepared));
+  }catch(cause){return error('VIDEO_IMPORT_FAILED',String(cause))}
+}
+if(editable){
+ const label=document.createElement('label');label.textContent='导入视频';label.className='ppte-file-label';
+ const input=document.createElement('input');input.type='file';input.accept='video/mp4,video/webm';input.setAttribute('aria-label','导入视频');
+ input.onchange=()=>{const file=input.files?.[0];if(file)void importVideo(file).then(show);input.value=''};
+ label.append(input);root.querySelector('.ppte-toolbar')!.append(label);
+}
 async function importImage(
   target: PortableElementTarget | undefined,
   data: Blob | Uint8Array,
@@ -549,7 +573,7 @@ const elementTarget = (event: Event) =>
     : null;
 dom.listen(stage, "click", (event) => {
   const n = elementTarget(event);
-  if (presenting) return;
+  if (presenting || (event.target as HTMLElement).closest('video,audio,button,a,input,select')) return;
   if (!editable || !n) return;
   if(rememberTableCell(event.target,event.shiftKey)){select(n.dataset.ppteElementId!);return}
   if (event.shiftKey && runtime.profile === "full-portable") {
@@ -568,7 +592,7 @@ dom.listen(stage, "click", (event) => {
 });
 function cancelTransform(event?:{pointerId:number}){if(event&&drag?.pointerId!==event.pointerId)return;const gesture=drag;drag=undefined;gesture?.cancel()}
 dom.listen(stage, 'pointerdown', event=>{
-  const n=elementTarget(event);if(presenting||!advanced||!n||((event.target as HTMLElement).closest('[data-cell-id]')&&!event.ctrlKey&&!event.metaKey)||event.button!==0||(event.shiftKey&&!event.ctrlKey&&!event.metaKey)||(n.isContentEditable&&!event.ctrlKey&&!event.metaKey))return;
+  const n=elementTarget(event);if((event.target as HTMLElement).closest('video,audio,button,a,input,select')||presenting||!advanced||!n||((event.target as HTMLElement).closest('[data-cell-id]')&&!event.ctrlKey&&!event.metaKey)||event.button!==0||(event.shiftKey&&!event.ctrlKey&&!event.metaKey)||(n.isContentEditable&&!event.ctrlKey&&!event.metaKey))return;
   const id=n.dataset.ppteElementId!,state=runtime.presenterState(),doc=runtime.getDocument(),slideId=state.slideId;
   const group=!event.altKey?Object.values(doc.slides[slideId].groups??{}).find(g=>g.memberIds.includes(id)):undefined;
   if(!runtime.getSelection().some(t=>t.elementId===id))selectMany((group?.memberIds??[id]).map(elementId=>({slideId,elementId})));
@@ -653,6 +677,8 @@ const api = {
     recentTransactions: runtime.getHistory(),
     redoHistory: runtime.getRedoHistory(),
   }),
+  getMediaDiagnostics: () => media.diagnostics,
+  disposeMedia: () => media.dispose(),
   getDocument: () => runtime.getDocument(),
   getRevision: () => runtime.getRevision(),
   getHistory: () => runtime.getHistory(),
@@ -661,6 +687,7 @@ const api = {
   editText,
   replaceImage: (t: PortableElementTarget, id: string) =>
     change(runtime.replaceImage(t, id)),
+  importVideo,
   importImage,
   cropImage: (t: PortableElementTarget, c: any) =>
     change(runtime.cropImage(t, c)),

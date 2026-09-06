@@ -1,0 +1,400 @@
+{
+  "browser": "151.0.7922.34",
+  "platform": "darwin",
+  "arch": "arm64",
+  "network": "Playwright offline:true, file://",
+  "viewport": [
+    1280,
+    900
+  ],
+  "results": [
+    {
+      "name": "blue-vp9.webm",
+      "sha256": "82a990b53d96742dab43ce4d678a0b2c4d55010901bd6f55c30290e8ff37144a",
+      "htmlBytes": 503898,
+      "meta": {
+        "width": 160,
+        "height": 90,
+        "duration": 1,
+        "src": "blob:null/e88f189d-fa40-434d-aa7d-4b81e3d06004",
+        "poster": "blob:null/0dfe2dee-cbdb-4660-b8f8-ab1202b0daf6"
+      },
+      "samples": [
+        {
+          "ms": 12,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 10.100000143051147,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 13.5,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 10.200000047683716,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 16.5,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 11.100000143051147,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 14.599999904632568,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 9.799999952316284,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 14.599999904632568,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 13.900000095367432,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 13.200000047683716,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 15.699999809265137,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 10.900000095367432,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 12,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 11.5,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 15.700000047683716,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 16.200000047683716,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 11.700000047683716,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 13.400000095367432,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 15,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 14.200000047683716,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 12.600000143051147,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 11.700000047683716,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 15.299999952316284,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 13,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 15.900000095367432,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 13.5,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 12.200000047683716,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 17.09999990463257,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 13.599999904632568,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        }
+      ]
+    },
+    {
+      "name": "red-h264.mp4",
+      "sha256": "cc4e4dbeee14251cdf23b2299007cb69606b85bb8703cdd39a7512626c2fc2b4",
+      "htmlBytes": 505386,
+      "meta": {
+        "width": 160,
+        "height": 90,
+        "duration": 1,
+        "src": "blob:null/3ceecc0c-bdf4-487a-a874-e4a55ba16a5a",
+        "poster": "blob:null/d55a373d-5711-47e9-b3f0-6f2aff815896"
+      },
+      "samples": [
+        {
+          "ms": 26,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 14,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 10,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 11,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 12.100000143051147,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 7.199999809265137,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 11.299999952316284,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 5.6000001430511475,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 24,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 14,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 8.199999809265137,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 15.5,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 9.799999952316284,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 67.60000014305115,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 45.799999952316284,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 2.799999952316284,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 13.599999904632568,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 4.200000047683716,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 24.399999856948853,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 6.799999952316284,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 6.5,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 30.90000009536743,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 13.400000095367432,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 24.90000009536743,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 12.900000095367432,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 6.200000047683716,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 44.5,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 6.700000047683716,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 18.700000047683716,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        },
+        {
+          "ms": 26.299999952316284,
+          "players": 1,
+          "urls": 2,
+          "released": 0
+        }
+      ]
+    }
+  ]
+}

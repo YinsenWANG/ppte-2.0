@@ -148,6 +148,13 @@ function capabilityForElement(document: PpteDocument, slideId: string, element: 
       ? 'Open the source document in a GA-C Host with the Video Widget registry to restore playback.'
       : 'Open the source document in a Host with the Widget definition to restore interactive behavior.'
   }
+  if (element.type === 'component' && element.componentType === 'core/video' && element.componentVersion === '2.0.0') {
+    const asset = document.assets[String(element.props.assetId)]
+    const portable = ['portable-viewer','portable-quick-fix','portable-light-edit'].includes(target)
+    status = !asset ? 'missing-source' : portable ? 'native' : 'static'
+    reason = !asset ? 'Video CAS asset is missing.' : portable ? 'Manual offline Blob playback; MP4/WebM decoding depends on browser codec support, with visible playback errors.' : 'Video is static: the specified poster is exported, or a labeled placeholder when no poster is supplied. No embedded audio/video playback.'
+    recovery = portable ? 'Use a supported MP4/WebM encoding or replace the local video.' : 'Use the Portable HTML for playback; PPTX media embedding is not supported.'
+  }
   if (element.semanticRefs?.sourceIds?.some((sourceId) => !document.sources?.[sourceId])) {
     status = 'missing-source'
     reason = 'A referenced source is not present in the document.'

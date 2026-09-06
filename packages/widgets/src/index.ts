@@ -1,3 +1,4 @@
+import { assertVideoProps } from '../../schema/src/video.js'
 import { assertTableComponent, assertTableModel, tableCellDisplay, type TableModel } from '../../schema/src/table.js'
 export * from './table-model.js'
 import type { ComponentElement, JsonValue } from '../../schema/src/index.js'
@@ -54,7 +55,7 @@ let builtinRegistry: WidgetRegistry | undefined
 
 export function createBuiltinWidgetRegistry(): WidgetRegistry {
   const registry = new WidgetRegistry()
-  registry.register(tableWidgetV2()).register(tableWidget()).register(codeWidget()).register(equationWidget()).register(videoWidget())
+  registry.register(tableWidgetV2()).register(tableWidget()).register(codeWidget()).register(equationWidget()).register(videoWidget()).register(videoWidgetV2())
   return registry
 }
 
@@ -70,7 +71,7 @@ export function validateWidgetElement(element: ComponentElement, registry: Widge
 export function renderWidgetHtml(element: ComponentElement, registry: WidgetRegistry = getBuiltinWidgetRegistry()): string {
   const result = registry.validate(element)
   if (!result.ok || !result.definition) return fallbackHtml(element, result.issues[0] ?? 'Widget definition is unavailable.')
-  return `<div data-ppte-widget-type="${escapeHtml(element.componentType)}" data-ppte-widget-version="${escapeHtml(element.componentVersion)}">${result.definition.renderHtml(element.props)}</div>`
+  return `<div data-ppte-widget-type="${escapeHtml(element.componentType)}" data-ppte-widget-version="${escapeHtml(element.componentVersion)}"${element.componentType==='core/video'&&element.componentVersion==='2.0.0'?' style="height:100%"':''}>${result.definition.renderHtml(element.props)}</div>`
 }
 
 export function renderWidgetSvg(element: ComponentElement, width: number, height: number, registry: WidgetRegistry = getBuiltinWidgetRegistry()): string {
@@ -214,5 +215,14 @@ function tableWidgetV2(): WidgetDefinition {
       const draw=(text:string,x:number,y:number,w:number,h:number,color='#ffffff')=>`<rect x="${num(x)}" y="${num(y)}" width="${num(w)}" height="${num(h)}" fill="${color}" stroke="#94a3b8"/><text x="${num(x+6)}" y="${num(y+h/2)}" dominant-baseline="middle" font-size="${num(Math.max(9,Math.min(18,h*.36)))}">${escapeXml(text)}</text>`
       return (hasHeader?m.columnOrder.map((id,c)=>draw(m.columns[id].label??'',xs[c],0,xs[c+1]-xs[c],ys[1])).join(''):'')+cellLayout(m).map(x=>draw(tableCellDisplay(x.cell),xs[x.c],ys[x.r+offset],xs[x.c+x.colspan]-xs[x.c],ys[x.r+offset+x.rowspan]-ys[x.r+offset],fill(x.cell))).join('')
     },
+  }
+}
+
+function videoWidgetV2(): WidgetDefinition {
+  return {
+    componentType: 'core/video', componentVersion: '2.0.0', exportPolicy: 'static-fallback',
+    validateProps: props => { try { assertVideoProps(props); return [] } catch (cause) { return [String(cause)] } },
+    renderHtml: props => `<div data-ppte-media-container style="height:100%;display:flex;flex-direction:column"><video data-ppte-video-asset-id="${escapeHtml(String(props.assetId))}"${props.posterAssetId ? ` data-ppte-poster-asset-id="${escapeHtml(String(props.posterAssetId))}"` : ''}${props.controls===false?'':' controls'} playsinline${props.muted===true?' muted':''} preload="metadata" style="width:100%;min-height:0;flex:1;object-fit:contain"></video><button type="button" data-ppte-media-play>播放 / 暂停</button><span role="status" data-ppte-media-status></span></div>`,
+    renderSvg: videoWidget().renderSvg,
   }
 }

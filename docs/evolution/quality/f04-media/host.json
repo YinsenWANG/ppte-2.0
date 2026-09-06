@@ -1,0 +1,11 @@
+{
+  "browser": "151.0.7922.34",
+  "network": "offline:true,file://",
+  "historyDelta": 1,
+  "import": true,
+  "play": true,
+  "pause": true,
+  "exitPaused": true,
+  "checkpointCas": true,
+  "undoRedo": true
+}

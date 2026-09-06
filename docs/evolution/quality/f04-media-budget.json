@@ -1,0 +1,18 @@
+{
+  "version": "f04-media-v1",
+  "standardHtmlBytes": 20971520,
+  "importMaxBytes": 134217728,
+  "runtimeBudgetChanged": false,
+  "fixtures": "tests/fixtures/media/manifest.json",
+  "sizeSamples": {
+    "method": "Append a valid ISO BMFF free-space box to red-h264.mp4; leave encoded frames unchanged.",
+    "bytes": [
+      10485760,
+      16777216
+    ]
+  },
+  "reason": "Preserve the existing attachment contract; account for full HTML and base64 expansion. Import guard is independent of attachment acceptance.",
+  "streaming": false,
+  "fileDirectorySupported": false,
+  "singleHtmlFileSupported": true
+}

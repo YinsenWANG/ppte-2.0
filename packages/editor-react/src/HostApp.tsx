@@ -1,3 +1,5 @@
+import { MediaController } from '../../portable-runtime/src/media-controller.js'
+import { prepareVideo, decodeBrowserVideo, planVideo } from '../../editor-controller/src/video-resource.js'
 import { rememberTableCell } from '../../editor-dom/src/table-selection.js'
 import { renderRunFontControls } from '../../editor-dom/src/text-selection.js'
 import { mountEditorShell, editorShellCss } from '../../editor-dom/src/editor-shell.js'
@@ -147,7 +149,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     visit(documentNode.slides);visit(documentNode.theme)
     for (const [assetId, bytes] of Object.entries(assetBytes)) {
       const asset = documentNode.assets[assetId]
-      if (asset && referenced.has(assetId)) created[assetId] = URL.createObjectURL(new Blob([blobBytes(bytes)], { type: asset.mimeType }))
+      if (asset && !asset.mimeType.startsWith('video/') && referenced.has(assetId)) created[assetId] = URL.createObjectURL(new Blob([blobBytes(bytes)], { type: asset.mimeType }))
     }
     setAssetSources(created)
     return () => Object.values(created).forEach((source) => URL.revokeObjectURL(source))
@@ -170,6 +172,9 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     return () => observer.disconnect()
   }, [documentNode.canvas.width])
 
+  const mediaRef=useRef<{session:PpteSession|undefined;player:MediaController}>({session:sessionRef.current,player:new MediaController()})
+  useEffect(()=>()=>mediaRef.current.player.dispose(),[])
+  useEffect(()=>{if(!presenting)mediaRef.current.player.pauseAll()},[presenting])
   const renderOptions: RenderOptions = useMemo(() => ({ editable: storageReady && !presenting, assetSources }), [assetSources,storageReady,presenting])
   const slideHtml = useMemo(() => activeSlideId ? renderSlideHtml(documentNode, activeSlideId, renderOptions) : '', [activeSlideId, documentNode, renderOptions])
   textPort.current = {
@@ -189,7 +194,10 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
     })
     textSurface.current.refresh()
     const surface=root.querySelector<HTMLElement>('.ppte-rendered-slide')!
-    reconcileTextSurface(surface,slideHtml,textSurface.current.protect)
+    reconcileTextSurface(surface,slideHtml,node=>textSurface.current!.protect(node)||mediaRef.current.player.protect(node,documentNode))
+    if(mediaRef.current.session!==sessionRef.current){mediaRef.current.player.dispose();mediaRef.current={session:sessionRef.current,player:new MediaController()}}
+    mediaRef.current.player.setSlide(activeSlideId)
+    mediaRef.current.player.sync(surface,documentNode,assetBytes)
   }, [slideHtml,renderEpoch])
   useEffect(()=>()=>textSurface.current?.dispose(),[])
   // Apply transient presentation steps after semantic DOM reconciliation.
@@ -284,6 +292,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
   useEffect(()=>{cancelTransform()},[activeSlideId,documentNode])
   function cancelTransform(event?:{pointerId:number}):void {if(event&&dragRef.current?.pointerId!==event.pointerId)return;const gesture=dragRef.current;dragRef.current=undefined;gesture?.cancel();setDragFrame(undefined)}
   function onPointerDown(event: ReactPointerEvent<HTMLDivElement>): void {
+    if((event.target as HTMLElement).closest('video,audio,button,a,input,select'))return
     if (presenting || event.button!==0) return
     const target = event.target instanceof window.Element ? event.target.closest<HTMLElement>('[data-ppte-element-id]') : null
     const elementId = target?.dataset.ppteElementId
@@ -475,6 +484,18 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
 
   const imageJob = useRef<AbortController | undefined>(undefined)
   useEffect(()=>()=>imageJob.current?.abort(),[])
+  async function importVideoFile(file:File):Promise<void> {
+    const origin=sessionRef.current,slideId=activeSlideId
+    try {
+      const prepared=await prepareVideo(new Uint8Array(await file.arrayBuffer()),{mimeType:file.type,decode:decodeBrowserVideo})
+      if(!controller().flushSync().ok)return
+      if(origin!==sessionRef.current||!presentation.canMutate)throw Error('VIDEO_CANCELLED')
+      await recoveryRef.current!.resources({[prepared.asset.id]:prepared.bytes},{})
+      if(origin!==sessionRef.current||!presentation.canMutate)throw Error('VIDEO_CANCELLED')
+      const tx=planVideo(origin!.getDocument(),{revision:origin!.getRevision(),slideId,elementId:`video_${crypto.randomUUID()}`,prepared,transactionId:nextOperationId('video')})
+      if(commitTransaction(tx,'视频已导入'))setAssetBytes(current=>({...current,[prepared.asset.id]:prepared.bytes,[prepared.asset.hash]:prepared.bytes}))
+    }catch(cause){setStatus(`视频导入失败 · ${String(cause)}`)}
+  }
   async function importImageFile(file: File): Promise<void> {
     imageJob.current?.abort()
     const job = new AbortController(); imageJob.current = job
@@ -717,6 +738,7 @@ export function HostApp({ initialDocument = createEmptyDocument(), initialAssetB
       <button type="button" data-ppte-action="add-page" onClick={addPage}>复制页</button><button onClick={()=>pageAction('delete')}>删除页</button><button onClick={()=>pageAction('up')}>上移页</button><button onClick={()=>pageAction('down')}>下移页</button>
       <button type="button" data-ppte-action="undo" onClick={undo} disabled={historyDepth === 0}>Undo</button>
       <button type="button" data-ppte-action="redo" onClick={redo} disabled={redoDepth === 0}>Redo</button>
+      <label className="ppte-toolbar-label">导入视频<input aria-label="导入视频" type="file" accept="video/mp4,video/webm" onChange={event=>{const file=event.target.files?.[0];if(file)void importVideoFile(file);event.target.value=''}} /></label>
       <label className="ppte-toolbar-label">{activeElementIds.length===1&&activeSlide?.elements[activeElementIds[0]]?.type==='image'?'替换图片':'Add image'}<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" data-ppte-action="import-image" onChange={importImage} /></label>
       <button type="button" data-ppte-action="crop" onClick={cropSelected}>裁剪图片</button>
       <button type="button" data-ppte-action="save" onClick={() => void saveCopy()}>保存 PPTe 项目 (.ppte)</button>
@@ -814,5 +836,5 @@ function blobBytes(value: Uint8Array): ArrayBuffer { return value.buffer.slice(v
 function extensionForMime(mime: string): string { if (mime === 'image/jpeg') return 'jpg'; if (mime === 'image/svg+xml') return 'svg'; if (mime === 'image/webp') return 'webp'; return 'png' }
 function safeFilename(value: string): string { return value.replace(/[^\p{L}\p{N}._-]+/gu, '_').replace(/^\.+|\.+$/g, '') || 'presentation' }
 function renderThumbnailHtml(document: PpteDocument, slideId: string, assetSources: Record<string, string>): string {
-  return renderSlideHtml(document, slideId, { editable: false, assetSources }).replace(/\sdata-ppte-[a-z0-9-]+="[^"]*"/gi, '')
+  return renderSlideHtml(document, slideId, { staticMedia: true, editable: false, assetSources }).replace(/\sdata-ppte-[a-z0-9-]+="[^"]*"/gi, '')
 }

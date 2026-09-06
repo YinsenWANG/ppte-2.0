@@ -1,0 +1,180 @@
+{
+  "budgetVersion": "f04-media-v1",
+  "standardHtmlBytes": 20971520,
+  "importBytes": 134217728,
+  "fixtureSha256": "82a990b53d96742dab43ce4d678a0b2c4d55010901bd6f55c30290e8ff37144a",
+  "htmlBytes": 503898,
+  "directoryBytes": 507434,
+  "browser": "151.0.7922.34",
+  "platform": "darwin",
+  "arch": "arm64",
+  "samples": [
+    {
+      "kind": "cold-context",
+      "ms": 140.23083299999962
+    },
+    {
+      "kind": "warm-reload",
+      "ms": 89.4288749999996
+    },
+    {
+      "kind": "cold-context",
+      "ms": 150.835833000001
+    },
+    {
+      "kind": "warm-reload",
+      "ms": 82.36991699999999
+    },
+    {
+      "kind": "cold-context",
+      "ms": 129.50483299999905
+    },
+    {
+      "kind": "warm-reload",
+      "ms": 113.62645900000098
+    },
+    {
+      "kind": "cold-context",
+      "ms": 118.30283299999974
+    },
+    {
+      "kind": "warm-reload",
+      "ms": 56.19666599999982
+    },
+    {
+      "kind": "cold-context",
+      "ms": 211.8557499999988
+    },
+    {
+      "kind": "warm-reload",
+      "ms": 117.06170899999961
+    },
+    {
+      "kind": "cold-context",
+      "ms": 174.26958300000115
+    },
+    {
+      "kind": "warm-reload",
+      "ms": 85.99470900000051
+    },
+    {
+      "kind": "cold-context",
+      "ms": 178.98545899999954
+    },
+    {
+      "kind": "warm-reload",
+      "ms": 76.04491700000108
+    },
+    {
+      "kind": "cold-context",
+      "ms": 163.97829099999944
+    },
+    {
+      "kind": "warm-reload",
+      "ms": 66.62233299999934
+    },
+    {
+      "kind": "cold-context",
+      "ms": 139.5829589999994
+    },
+    {
+      "kind": "warm-reload",
+      "ms": 79.42654100000073
+    },
+    {
+      "kind": "cold-context",
+      "ms": 142.01166700000067
+    },
+    {
+      "kind": "warm-reload",
+      "ms": 53.16833299999962
+    },
+    {
+      "kind": "cold-context",
+      "ms": 328.5045829999999
+    },
+    {
+      "kind": "warm-reload",
+      "ms": 97.3796659999989
+    },
+    {
+      "kind": "cold-context",
+      "ms": 210.18391599999995
+    },
+    {
+      "kind": "warm-reload",
+      "ms": 143.20037500000035
+    },
+    {
+      "kind": "cold-context",
+      "ms": 214.6099170000016
+    },
+    {
+      "kind": "warm-reload",
+      "ms": 171.29433300000164
+    },
+    {
+      "kind": "cold-context",
+      "ms": 291.9249999999993
+    },
+    {
+      "kind": "warm-reload",
+      "ms": 191.47279200000048
+    },
+    {
+      "kind": "cold-context",
+      "ms": 250.1112499999981
+    },
+    {
+      "kind": "warm-reload",
+      "ms": 210.6981670000023
+    },
+    {
+      "kind": "cold-context",
+      "ms": 369.8944169999995
+    },
+    {
+      "kind": "warm-reload",
+      "ms": 122.52833299999838
+    },
+    {
+      "kind": "cold-context",
+      "ms": 167.51687500000116
+    },
+    {
+      "kind": "warm-reload",
+      "ms": 98.48491600000125
+    },
+    {
+      "kind": "cold-context",
+      "ms": 152.58116599999994
+    },
+    {
+      "kind": "warm-reload",
+      "ms": 84.38012499999968
+    },
+    {
+      "kind": "cold-context",
+      "ms": 146.48712499999965
+    },
+    {
+      "kind": "warm-reload",
+      "ms": 69.92691700000069
+    },
+    {
+      "kind": "cold-context",
+      "ms": 167.4930830000012
+    },
+    {
+      "kind": "warm-reload",
+      "ms": 85.1572500000002
+    }
+  ],
+  "p50": 142.01166700000067,
+  "p95": 328.5045829999999,
+  "unverified": [
+    "Safari",
+    "physical low-performance device",
+    "physical audio output"
+  ]
+}
