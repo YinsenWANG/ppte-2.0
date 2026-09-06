@@ -1,0 +1,18 @@
+✖ H02 acceptance 1/4: packaged npm install exposes ppte edit, stable restart URL and multiple file mappings (397.828416ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 566.487875
+
+✖ failing tests:
+
+test at dist/tests/html-save.test.js:362:1
+✖ H02 acceptance 1/4: packaged npm install exposes ppte edit, stable restart URL and multiple file mappings (397.828416ms)
+  TypeError: Cannot read properties of undefined (reading 'filename')
+      at TestContext.<anonymous> (file:///private/tmp/ppte5/dist/tests/html-save.test.js:370:64)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)

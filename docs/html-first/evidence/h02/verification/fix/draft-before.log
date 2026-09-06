@@ -1,0 +1,30 @@
+✖ H02 acceptance 2/3: a delayed acknowledgement never deletes another window recovery draft (1.027625ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 205.022917
+
+✖ failing tests:
+
+test at dist/tests/html-save.test.js:188:1
+✖ H02 acceptance 2/3: a delayed acknowledgement never deletes another window recovery draft (1.027625ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + null
+  - '{"documentId":"doc","base":"base","revision":1,"time":1788688297491,"content":"Window B unsaved"}'
+  
+      at TestContext.<anonymous> (file:///private/tmp/ppte5/dist/tests/html-save.test.js:203:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: '{"documentId":"doc","base":"base","revision":1,"time":1788688297491,"content":"Window B unsaved"}',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -30,10 +30,15 @@ export interface Draft { documentId:string; base:string; revision:number; time:n
 export class SaveController {
   state: SaveState = 'unauthorized'; detail = ''; revision = 0; composing = false; dirty = false;
   private timer?: ReturnType<typeof setTimeout>; private running = false;
+  private lastDraft?: string;
   constructor(public adapter:Adapter|undefined, public base:Snapshot, private content:()=>string, private notify:()=>void, private storage?: Pick<Storage,'getItem'|'setItem'|'removeItem'>, public key = '') {}
   set(state:SaveState,detail='') { this.state=state;this.detail=detail;this.notify(); }
   draft() {
-    try { if (!this.storage) throw Error('草稿存储不可用'); this.storage.setItem(this.key,JSON.stringify({documentId:this.base.metadata.documentId,base:this.base.hash,revision:this.revision,time:Date.now(),content:this.content()} satisfies Draft)); }
+    try {
+      if (!this.storage) throw Error('草稿存储不可用');
+      const value=JSON.stringify({documentId:this.base.metadata.documentId,base:this.base.hash,revision:this.revision,time:Date.now(),content:this.content()} satisfies Draft);
+      this.storage.setItem(this.key,value);this.lastDraft=value;
+    }
     catch { this.detail='草稿存储不可用或配额已满；修改尚未写入文件';this.notify(); }
   }
   recover():Draft|undefined { try { const raw=this.storage?.getItem(this.key);if(!raw)return;const d=JSON.parse(raw);if(typeof d.content!=='string'||d.documentId!==this.base.metadata.documentId)throw Error();if(d.base!==this.base.hash){this.set('conflict','草稿基准已变化；可保留草稿或重新读取文件');}return d; }catch{this.set('failed','草稿不可读取');} }
@@ -46,7 +51,13 @@ export class SaveController {
     this.running=true;const rev=this.revision;this.set('saving');
     try {
       const next=await this.adapter.write(this.base.hash,this.content());this.base=next;
-      if(rev===this.revision){this.dirty=false;try{this.storage?.removeItem(this.key);}catch{}this.set('saved');}
+      if(rev===this.revision){
+        this.dirty=false;
+        // Another window may have replaced this recovery entry while the file write
+        // was pending. Its unsaved content must survive our acknowledgement.
+        try{if(this.lastDraft!==undefined&&this.storage?.getItem(this.key)===this.lastDraft)this.storage.removeItem(this.key);}catch{}
+        this.lastDraft=undefined;this.set('saved');
+      }
       else {this.set('dirty');this.schedule();}
     } catch(e) {this.draft();const message=String(e);this.set(message.includes('CONFLICT')?'conflict':message.includes('PERMISSION')?'unauthorized':'failed',message);}
     finally {this.running=false;}

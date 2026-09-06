@@ -1,0 +1,16 @@
+TAP version 13
+# Subtest: H02 acceptance 1/4: packaged npm install exposes ppte edit, stable restart URL and multiple file mappings
+ok 1 - H02 acceptance 1/4: packaged npm install exposes ppte edit, stable restart URL and multiple file mappings
+  ---
+  duration_ms: 1670.35925
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1862.1705

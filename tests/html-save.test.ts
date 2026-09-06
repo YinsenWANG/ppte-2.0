@@ -106,7 +106,39 @@ test('H02 acceptance 3: IME does not save half composition; 800ms pause and dela
  }finally{release();await browser.close();await s.close();await f.clean();}
 });
 
+test('H02 acceptance 2/3: two real windows retain the failed draft after the other file save is acknowledged',async()=>{
+ const f=await fixture();let release:()=>void=()=>{};const gate=new Promise<void>(r=>release=r);
+ const s=await startEditor(f.file,{cacheDir:f.cacheDir,fault:p=>p==='before-replace'?gate:undefined});const browser=await chromium.launch({headless:true});
+ try{
+  const context=await browser.newContext();const a=await context.newPage(),b=await context.newPage();await ready(a,s.url);await ready(b,s.url);
+  await a.frameLocator('#ppte-frame').locator('h1').fill('Acknowledged A');await a.waitForFunction(()=>(window as any).PPTeSave.state==='saving');
+  await b.route('**/api/save',r=>r.abort());await b.frameLocator('#ppte-frame').locator('h1').fill('Recovery B');await b.waitForFunction(()=>(window as any).PPTeSave.state==='failed');
+  await b.close();release();await a.waitForFunction(()=>(window as any).PPTeSave.state==='saved');
+  assert.match(readEnhanced(await readFile(f.file,'utf8')).content,/Acknowledged A/);
+  const reopened=await context.newPage();await ready(reopened,s.url);
+  assert.equal(await reopened.evaluate(()=>(window as any).PPTeSave.state),'conflict');
+  assert.equal(await reopened.evaluate(()=>(window as any).PPTeSave.recover()?.content.includes('Recovery B')),true);
+  assert.match(await reopened.locator('[role=status]').textContent()??'',/冲突/);
+ }finally{release();await browser.close();await s.close();await f.clean();}
+});
+
 const snapshot:Snapshot={content:'old',hash:'base',fileKey:'file-a',name:'a.html',metadata:{documentId:'doc',saveRevision:0}};
+test('H02 acceptance 2/3: a delayed acknowledgement never deletes another window recovery draft',async()=>{
+ const map=new Map<string,string>();
+ const storage={getItem:(k:string)=>map.get(k)??null,setItem:(k:string,v:string)=>{map.set(k,v);},removeItem:(k:string)=>{map.delete(k);}};
+ let finish:(value:Snapshot)=>void=()=>{};
+ const a=new SaveController({load:async()=>snapshot,write:()=>new Promise(resolve=>finish=resolve)},snapshot,()=> 'Window A',()=>{},storage,'shared-file');
+ const b=new SaveController(undefined,snapshot,()=> 'Window B unsaved',()=>{},storage,'shared-file');
+ a.change();const pending=a.flush();
+ b.change();b.composition(true);
+ const retained=storage.getItem('shared-file');assert.ok(retained);
+ finish({...snapshot,content:'Window A',hash:'committed-a'});await pending;
+ assert.equal(a.state,'saved');assert.equal(storage.getItem('shared-file'),retained);
+ const reopened=new SaveController(undefined,{...snapshot,hash:'committed-a'},()=>'',()=>{},storage,'shared-file');
+ assert.equal(reopened.recover()?.content,'Window B unsaved');assert.equal(reopened.state,'conflict');
+ const owner=new SaveController({load:async()=>snapshot,write:async()=>({...snapshot,hash:'committed-owner'})},snapshot,()=> 'Owner saved',()=>{},storage,'owner-file');
+ owner.change();await owner.flush();assert.equal(owner.state,'saved');assert.equal(storage.getItem('owner-file'),null);
+});
 test('H02 acceptance 3: edits during in-flight save remain queued; draft base matching, quotas and copied identity',async()=>{
  let content='first',finish:(v:Snapshot)=>void=()=>{};const map=new Map<string,string>();const storage={getItem:(k:string)=>map.get(k)??null,setItem:(k:string,v:string)=>{map.set(k,v);},removeItem:(k:string)=>{map.delete(k);}};
  const c=new SaveController({load:async()=>snapshot,write:()=>new Promise(r=>finish=r)},snapshot,()=>content,()=>{},storage,'path-a');c.change();const pending=c.flush();content='second';c.change();finish({...snapshot,hash:'next'});await pending;assert.equal(c.state,'dirty');assert.equal(c.dirty,true);assert.equal(JSON.parse(map.get('path-a')!).base,'next');
@@ -181,7 +213,11 @@ test('H02 acceptance 1/4: packaged npm install exposes ppte edit, stable restart
  try{
   const stage=spawnSync(process.execPath,['scripts/stage-html.mjs'],{encoding:'utf8'});assert.equal(stage.status,0,stage.stderr);
   const pack=spawnSync('npm',['pack',resolve('artifacts/html-package'),'--pack-destination',f.root,'--json'],{encoding:'utf8'});assert.equal(pack.status,0,pack.stderr);
-  const tarball=join(f.root,JSON.parse(pack.stdout)[0].filename);const prefix=join(f.root,'install');
+  // npm 10/11 return an array; npm 12 keys the same receipts by package name.
+  const receipts=Object.values(JSON.parse(pack.stdout)) as {name:string;filename:string}[];
+  assert.equal(receipts.length,1,pack.stdout);const receipt=receipts[0];assert.equal(receipt.name,'ppte-html');
+  assert.match(receipt.filename,/^ppte-html-[\w.-]+\.tgz$/);
+  const tarball=join(f.root,receipt.filename);const prefix=join(f.root,'install');
   const install=spawnSync('npm',['install','--global','--prefix',prefix,'--ignore-scripts','--no-audit','--no-fund',tarball],{encoding:'utf8'});assert.equal(install.status,0,install.stderr);
   const bin=join(prefix,'bin','ppte');
   const launch=async(file:string)=>{
@@ -195,7 +231,7 @@ test('H02 acceptance 1/4: packaged npm install exposes ppte edit, stable restart
   const second=await launch(f.file);assert.equal(new URL(second.url).origin,url.origin);assert.notEqual(second.url,first.url);assert.match(await readFile(f.file,'utf8'),/Installed process saved/);
   child!.kill('SIGTERM');await new Promise(r=>child!.once('exit',r));
   const other=join(f.root,'other.html');await writeFile(other,await readFile(f.file));const third=await launch(other);assert.notEqual(new URL(third.url).origin,url.origin);
-  await writeFile(join(evidence,'npm-install.json'),JSON.stringify({status:'passed',package:JSON.parse(pack.stdout)[0],bin:'ppte',stablePort:true,rotatedSessionToken:true,originalWrite:true,multipleMapping:true},null,2));
+  await writeFile(join(evidence,'npm-install.json'),JSON.stringify({status:'passed',package:receipt,bin:'ppte',stablePort:true,rotatedSessionToken:true,originalWrite:true,multipleMapping:true},null,2));
  }finally{child?.kill('SIGTERM');await f.clean();}
 });
 
