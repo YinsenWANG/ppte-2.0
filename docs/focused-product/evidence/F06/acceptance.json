@@ -49,7 +49,8 @@
           "status": "pending",
           "reason": "尚未收到用户对目标设备操作、UI 和成稿视觉的人工验收确认。"
         }
-      }
+      },
+      "scope": "code passed 仅表示原生证据缺口与执行标准已经登记；没有声明原生旅程通过。"
     },
     {
       "id": "A3",
@@ -72,7 +73,8 @@
           "status": "pending",
           "reason": "尚未收到用户对目标设备操作、UI 和成稿视觉的人工验收确认。"
         }
-      }
+      },
+      "scope": "code/automated passed 表示缺口记录和原审查输入复现，不能据此关闭缺陷。"
     },
     {
       "id": "A4",
@@ -95,7 +97,8 @@
           "status": "pending",
           "reason": "尚未收到用户对目标设备操作、UI 和成稿视觉的人工验收确认。"
         }
-      }
+      },
+      "scope": "code/automated passed 表示冻结下载交付物及哈希被测试核验；原生使用与用户签收另计。"
     }
   ],
   "openItems": [

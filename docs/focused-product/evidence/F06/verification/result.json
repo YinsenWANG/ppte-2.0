@@ -2,7 +2,7 @@
   "task": "F06",
   "status": "verified-with-open-items",
   "releaseReady": false,
-  "time": "2026-09-07T15:28:21.325016+00:00",
+  "time": "2026-09-07T15:30:38.261526+00:00",
   "platform": {
     "system": "macOS-26.6.2-arm64-arm-64bit",
     "machine": "arm64",
@@ -10,7 +10,7 @@
     "pnpm": "11.22.0"
   },
   "baseCommit": "f567a3ded564115dad38b28ed572e2cf9f6a7c0f",
-  "implementationCommit": null,
+  "implementationCommit": "cd13f1ddc6ff4b8dd9d6316f12ca086c6fc74ab0",
   "layers": {
     "code": {
       "status": "pending",
@@ -18,7 +18,7 @@
     },
     "automated": {
       "status": "pending",
-      "reason": "Three F06 tests passed; full gates pending. PDF and native original save remain unverified."
+      "reason": "Repository gates and three F06 tests pass. Full acceptance remains pending because PDF is unimplemented and native original-file save is not evidenced."
     },
     "real-browser": {
       "status": "pending",
@@ -41,7 +41,44 @@
     ]
   },
   "gates": {
-    "status": "pending"
+    "status": "passed",
+    "commands": [
+      {
+        "command": "pnpm typecheck",
+        "status": "passed",
+        "exitCode": 0,
+        "log": "pnpm-typecheck.log",
+        "commit": "cd13f1ddc6ff4b8dd9d6316f12ca086c6fc74ab0",
+        "startedAt": "2026-09-07T15:28:36.580299+00:00",
+        "endedAt": "2026-09-07T15:28:37.777232+00:00"
+      },
+      {
+        "command": "pnpm build",
+        "status": "passed",
+        "exitCode": 0,
+        "log": "pnpm-build.log",
+        "commit": "cd13f1ddc6ff4b8dd9d6316f12ca086c6fc74ab0",
+        "startedAt": "2026-09-07T15:28:37.777591+00:00",
+        "endedAt": "2026-09-07T15:28:39.214017+00:00"
+      },
+      {
+        "command": "pnpm test",
+        "status": "passed",
+        "exitCode": 0,
+        "log": "pnpm-test.log",
+        "commit": "cd13f1ddc6ff4b8dd9d6316f12ca086c6fc74ab0",
+        "startedAt": "2026-09-07T15:28:39.214273+00:00",
+        "endedAt": "2026-09-07T15:29:56.310259+00:00"
+      }
+    ],
+    "tests": {
+      "passed": 149,
+      "failed": 0,
+      "skipped": 16,
+      "newTests": 3,
+      "newSkips": 0
+    },
+    "scope": "Repository gates pass; PDF/native/human acceptance remains incomplete."
   },
   "acceptance": "../acceptance.json",
   "nativeChecklist": "../NATIVE-VALIDATION.md",
@@ -50,7 +87,8 @@
     "protocol": "file:",
     "offline": true,
     "screenshotsInspectedByAgent": true,
-    "userApproval": false
+    "userApproval": false,
+    "browser": "152.0.7977.76"
   },
   "developmentFailures": [
     "initial-focused.log",
@@ -62,5 +100,7 @@
       "out9-F05.txt"
     ],
     "method": "local .git/info/exclude; no content deletion"
-  }
+  },
+  "testImplementationCommit": "6535b85",
+  "revalidationNote": "Gates ran unchanged code at implementationCommit; later changes are evidence metadata, documentation, TASKS status and checksums only. Frozen delivery journey remains the original recorded run; full-suite rerun artifacts are not substituted."
 }

@@ -228,7 +228,8 @@
         "automated": "pending",
         "real-browser": "pending",
         "human": "pending",
-        "reason": "F06 verification in progress; F04 PDF and F05 native/human dependency remain unfulfilled. Full acceptance is not complete."
+        "reason": "F06 verification and handoff recorded; full repository gates pass (149 passed, 0 failed, 16 existing skips), including 3 new F06 tests. Whole-task code/automated remain pending because PDF F04 is unimplemented after F04A conclusion 3. Native original-file save and human acceptance remain pending; B2 and other audit gaps are explicitly open. Headless offline download/reopen/presentation is automated evidence only.",
+        "implementationCommit": "cd13f1ddc6ff4b8dd9d6316f12ca086c6fc74ab0"
       }
     }
   ],
