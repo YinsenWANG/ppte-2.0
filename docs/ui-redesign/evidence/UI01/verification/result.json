@@ -1,0 +1,137 @@
+{
+  "task": "UI01",
+  "status": "passed-code-and-automated",
+  "commit": "5ad4f2c6e1b70ecca10e24993559b47aa2bebc58",
+  "baseCommit": "0e6b1e3",
+  "timestamp": "2026-09-07T04:45:44.695339+00:00",
+  "platform": {
+    "system": "Darwin",
+    "release": "25.6.0",
+    "machine": "arm64",
+    "node": "v22.23.2",
+    "pnpm": "11.22.0"
+  },
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/ui-redesign/evidence/UI01/verification/typecheck.log",
+      "logSha256": "0ae79858d1378de4a49bb6bdcaf88acb5b1de35ec309f992f3d1193e86a2a4a2",
+      "completedAt": "2026-09-07T04:44:21.299935+00:00",
+      "commit": "5ad4f2c6e1b70ecca10e24993559b47aa2bebc58"
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/ui-redesign/evidence/UI01/verification/build.log",
+      "logSha256": "981710c4773357321873464210550419258feecb6af85bb9df41b33c0f6bd351",
+      "completedAt": "2026-09-07T04:44:22.292926+00:00",
+      "commit": "5ad4f2c6e1b70ecca10e24993559b47aa2bebc58"
+    },
+    {
+      "command": "pnpm test",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/ui-redesign/evidence/UI01/verification/test.log",
+      "logSha256": "aecea79b26141302cc86198ad91b6ef42550e2898b5f13f36da154c4cd36a680",
+      "completedAt": "2026-09-07T04:44:44.784667+00:00",
+      "commit": "5ad4f2c6e1b70ecca10e24993559b47aa2bebc58"
+    }
+  ],
+  "tests": {
+    "framework": "node --test dist/tests/*.test.js",
+    "total": 76,
+    "passed": 76,
+    "failed": 0,
+    "skipped": 0,
+    "added": 4,
+    "removed": 0
+  },
+  "layers": {
+    "code": "passed",
+    "automated": "passed",
+    "realBrowser": {
+      "chrome": {
+        "status": "passed",
+        "version": "152.0.7977.76",
+        "headless": true,
+        "offline": true,
+        "entry": "file://",
+        "notes": "Actual installed browser; UI clicks/download/new process/fullscreen/CDP touch. Fullscreen reject/throw and delayed completion explicitly injected."
+      },
+      "safari": {
+        "status": "pending",
+        "value": null,
+        "reason": "Actual WebDriver attempt: Allow remote automation disabled; see verification/safari.json"
+      },
+      "nativeFileAuthorization": {
+        "status": "pending",
+        "value": null,
+        "reason": "UI04 scope; no native picker authorization was performed"
+      },
+      "systemIME": {
+        "status": "pending",
+        "value": null,
+        "reason": "OS IME not available to this headless journey"
+      },
+      "physicalTouch": {
+        "status": "pending",
+        "value": null,
+        "reason": "CDP touch input is not a physical touch device test"
+      }
+    },
+    "human": {
+      "status": "pending",
+      "value": null,
+      "reason": "No owner/target-user review, screen reader or native full-screen manual assessment"
+    }
+  },
+  "acceptance": [
+    {
+      "index": 1,
+      "status": "passed-code-and-automated",
+      "test": "tests/ui01-shell.test.ts — UI01 acceptance 1",
+      "capture": "docs/ui-redesign/evidence/UI01/reading.json",
+      "verdictLog": "docs/ui-redesign/evidence/UI01/verification/test.log"
+    },
+    {
+      "index": 2,
+      "status": "passed-code-and-automated",
+      "test": "tests/ui01-shell.test.ts — UI01 acceptance 2",
+      "capture": "docs/ui-redesign/evidence/UI01/context.json",
+      "verdictLog": "docs/ui-redesign/evidence/UI01/verification/test.log"
+    },
+    {
+      "index": 3,
+      "status": "passed-code-and-automated",
+      "test": "tests/ui01-shell.test.ts — UI01 acceptance 3",
+      "capture": "docs/ui-redesign/evidence/UI01/audience.json",
+      "verdictLog": "docs/ui-redesign/evidence/UI01/verification/test.log"
+    },
+    {
+      "index": 4,
+      "status": "passed-code-and-automated",
+      "test": "tests/ui01-shell.test.ts — UI01 acceptance 4",
+      "capture": "docs/ui-redesign/evidence/UI01/transitions.json",
+      "verdictLog": "docs/ui-redesign/evidence/UI01/verification/test.log"
+    }
+  ],
+  "sample": {
+    "path": "docs/ui-redesign/evidence/UI01/sample.ppte.html",
+    "sha256": "dbca2a38eaad9a438ce71da484136d61aff00ae10e419904258eeb068732ae2f",
+    "bytes": 312871,
+    "source": "Byte-identical copy of the actual download reopened and copied in acceptance 1; synthetic UI01 fixture, not UI06 final delivery"
+  },
+  "upstream": {
+    "UI04": "pending",
+    "UI07": "pending",
+    "S06": "partial unchanged",
+    "S07": "partial unchanged",
+    "S08": "partial unchanged",
+    "N01_N04": "not closed",
+    "performance": "Existing input/page-turn and real-device gaps unchanged"
+  },
+  "testAdjustments": "IMPLEMENTATION.md explains stricter no-menu assertions, contextual panel/focus contracts and preserved exact-pixel baseline; no assertion threshold weakened"
+}

@@ -1,6 +1,6 @@
 {
   "version": "ui-redesign-1.1",
-  "status": "proposed",
+  "status": "implementation-in-progress",
   "design": "DESIGN.md",
   "prototype": "UI_PROTOTYPE.html",
   "basis": [
@@ -8,12 +8,12 @@
     "b1ceb6a49ea3b9fd82963e9d2bb632e4222973be",
     "c1397304d643545206b92b795e7700c5e225300d"
   ],
-  "scope": "Design deliverable only; prototype is not production implementation. Existing audit and single-file unfinished tasks remain active.",
+  "scope": "UI01 code and automation implemented; remaining UI tasks pending. Prototype is not production implementation. Existing audit and single-file unfinished tasks remain active.",
   "tasks": [
     {
       "id": "UI01",
       "title": "三模式与布局外壳",
-      "status": "pending",
+      "status": "done",
       "dependsOn": [],
       "acceptance": [
         "默认阅读与重开默认阅读",
@@ -21,7 +21,19 @@
         "放映无菜单和鼠标召回",
         "Esc/全屏失败返回正确模式"
       ],
-      "evidence": []
+      "evidence": [
+        "docs/ui-redesign/evidence/UI01/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/UI01/verification/result.json",
+        "tests/ui01-shell.test.ts",
+        "docs/ui-redesign/evidence/UI01/sample.ppte.html"
+      ],
+      "implementationCommit": "5ad4f2c6e1b70ecca10e24993559b47aa2bebc58",
+      "statusByLayer": {
+        "code": "passed",
+        "automated": "passed: 76/76 tests; four UI01 acceptance tests",
+        "real-browser": "partial: installed Chrome headless passed; Safari/native/physical touch pending",
+        "human": "pending: no reviewer, screen reader or manual native evidence"
+      }
     },
     {
       "id": "UI02",
