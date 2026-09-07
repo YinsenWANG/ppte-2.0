@@ -59,11 +59,9 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     const undo = button(toolbar, '撤销', () => commands.history());
     undo.title = '撤销 · Cmd/Ctrl+Z';
     undo.setAttribute('aria-label', '撤销');
-    undo.innerHTML = '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 5 4 10l5 5M4 10h9a6 6 0 0 1 0 12"/></svg>';
     const redo = button(toolbar, '重做', () => commands.history(true));
     redo.title = '重做 · Cmd/Ctrl+Shift+Z';
     redo.setAttribute('aria-label', '重做');
-    redo.innerHTML = '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 5 5 5-5 5m5-5h-9a6 6 0 0 0 0 12"/></svg>';
     const insertionContext = () => ({slide:commands.doc.querySelectorAll<HTMLElement>('[data-ppte-slide]')[currentSlide].dataset.ppteId!, reference:selected.length===1?selected[0]:undefined});
     const selectInserted = (n:HTMLElement) => { selected=[n.dataset.ppteId!]; range=null; pageSettings=false; propertiesCollapsed=false; refresh(); n.scrollIntoView({block:'nearest'}); if(isTextObject(n)){n.focus(); const r=commands.doc.createRange();r.selectNodeContents(n);commands.doc.getSelection()?.removeAllRanges();commands.doc.getSelection()?.addRange(r);} };
     const imageInput=document.createElement('input'); imageInput.type='file';imageInput.accept='image/png,image/jpeg,image/webp,image/gif,image/avif';imageInput.hidden=true;imageInput.setAttribute('aria-label','选择插入图片');toolbar.append(imageInput);
@@ -724,7 +722,12 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     const zoomIn = viewButton('放大画布', () => zoom = Math.min(1.5, zoom + .1));
     const zoomReset = viewButton('重置缩放', () => zoom = 1);
     const pageCount = document.createElement('span'); controls.append(pageCount);
-    function updatePageCount() { pageCount.textContent = `${currentSlide+1} / ${commands.doc.querySelectorAll('[data-ppte-slide]').length}`; }
+    function updatePageCount() {
+        const count = commands.doc.querySelectorAll('[data-ppte-slide]').length;
+        pageCount.textContent = `${currentSlide+1} / ${count}`;
+        prev.disabled = currentSlide === 0;
+        next.disabled = currentSlide >= count - 1;
+    }
     const navigate = (delta: number) => { currentSlide=Math.max(0,Math.min(commands.doc.querySelectorAll('[data-ppte-slide]').length-1,currentSlide+delta)); selected=[]; refresh(); scrollSlide(commands.doc.querySelectorAll<HTMLElement>('[data-ppte-slide]')[currentSlide]); thumbs(); };
     const prev=viewButton('上一页', () => navigate(-1)),next=viewButton('下一页', () => navigate(1));
     const navigation=group(controls,'页面导航');navigation.append(prev,pageCount,next);controls.prepend(leftToggle,navigation);
@@ -741,6 +744,8 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         pages.hidden = collapsed;
         leftToggle.setAttribute('aria-expanded',String(!collapsed));
         leftToggle.setAttribute('aria-controls','ppte-pages');
+        railToggle.setAttribute('aria-expanded',String(!collapsed));
+        railToggle.setAttribute('aria-controls','ppte-pages');
         const drawer=innerWidth<=580 && (!panel.hidden || !collapsed);
         root.toggleAttribute('data-drawer',drawer);
         // Bottom drawers occupy their own space, so the visible page stays operable.
@@ -817,7 +822,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     // F04A must validate the route before F04 enables export. Never invoke system print.
     const pdf = button(bar, '导出为 PDF', () => {});
     pdf.disabled = true;
-    pdf.title = '导出为 PDF 尚未可用：正在验证视觉保真与可搜索文字的导出路线';
+    pdf.title = '导出为 PDF 尚未可用：现有路线未通过视觉与文字保真验证';
     pdf.setAttribute('aria-label', '导出为 PDF');
     bar.insertBefore(pdf, present);
     Object.assign(window, { PPTePlayer: player });

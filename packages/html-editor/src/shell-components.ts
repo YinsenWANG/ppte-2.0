@@ -1,5 +1,6 @@
 /** Product shell components. Every selector is scoped outside the author iframe. */
 const paths:Record<string,string>={
+ '撤销':'M7 3 2 8l5 5M2 8h8a4 4 0 0 1 0 8', '重做':'m11 3 5 5-5 5m5-5H8a4 4 0 0 0 0 8',
  '更多':'M3 9h.01M9 9h.01M15 9h.01', '帮助':'M9 16A7 7 0 1 0 9 2a7 7 0 0 0 0 14M7 6a2 2 0 0 1 4 0c0 2-2 2-2 4M9 13h.01',
  '页面导航':'M2 3h14v12H2ZM6 3v12','上一页':'m11 4-5 5 5 5','下一页':'m7 4 5 5-5 5','关闭属性':'m4 4 10 10M14 4 4 14',
  '缩小画布':'M3 9h12','放大画布':'M3 9h12M9 3v12','重置缩放':'M6 2H2v4M12 2h4v4M2 12v4h4M16 12v4h-4',
@@ -16,7 +17,8 @@ export const shellCSS=`
 body{background:#f3f4f6!important}
 #ppte-save-ui,#ppte-workspace,#ppte-edit-toolbar,#ppte-canvas-controls{font:13px/1.5 system-ui;color:#20242d;box-sizing:border-box}
 :is(#ppte-save-ui,#ppte-workspace,#ppte-edit-toolbar,#ppte-canvas-controls) button{font:inherit;color:inherit;background:#fff;border:1px solid #e7e9ee;border-radius:6px;min-height:32px;padding:4px 8px;cursor:pointer}
-:is(#ppte-save-ui,#ppte-workspace,#ppte-edit-toolbar,#ppte-canvas-controls) button:hover{background:#f0f1f5}
+:is(#ppte-save-ui,#ppte-workspace,#ppte-edit-toolbar,#ppte-canvas-controls) button:hover:not(:disabled){background:#f0f1f5}
+:is(#ppte-save-ui,#ppte-workspace,#ppte-edit-toolbar,#ppte-canvas-controls) button:disabled{color:#737a88;cursor:not-allowed;background:#f3f4f6}
 :is(#ppte-save-ui,#ppte-workspace,#ppte-edit-toolbar,#ppte-canvas-controls) :focus-visible{outline:3px solid #5261d8;outline-offset:2px}
 :is(#ppte-save-ui,#ppte-workspace,#ppte-edit-toolbar,#ppte-canvas-controls) svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle}
 :is(#ppte-save-ui,#ppte-workspace,#ppte-edit-toolbar,#ppte-canvas-controls) .icon-button{width:32px;flex:none;padding:4px}
@@ -36,6 +38,7 @@ body{background:#f3f4f6!important}
 #ppte-workspace{display:none}#ppte-workspace[data-open],#ppte-workspace[data-reading-nav]{display:block}
 #ppte-pages{position:fixed;left:0;top:var(--top);bottom:36px;width:204px;background:#fafbfc;display:flex;flex-direction:column;border-right:1px solid #e7e9ee;box-sizing:border-box}
 #ppte-page-list{flex:1;min-height:0;overflow:auto;padding:16px 12px}#ppte-page-footer{flex:none;padding:8px 12px;border-top:1px solid #e7e9ee}#ppte-page-footer button{width:100%}
+#ppte-workspace[data-reading-nav] #ppte-page-list .thumb-row{padding-right:0}
 #ppte-page-list .thumb-row{position:relative;margin-bottom:12px;padding-right:20px}#ppte-page-list button[aria-current]{display:block;width:100%;padding:4px;text-align:left;font-size:11px;overflow:hidden}
 #ppte-pages button[aria-current=true]{border:2px solid #5261d8;background:#eef0ff}
 #ppte-pages .preview{display:block;height:80px;overflow:hidden;pointer-events:none;position:relative;background:#fff}
@@ -43,6 +46,7 @@ body{background:#f3f4f6!important}
 #ppte-page-list .page-actions>div{z-index:210;background:white;border:1px solid #e7e9ee;box-shadow:0 8px 24px #20242d20;padding:8px;border-radius:12px;display:grid;gap:4px;width:140px}
 #ppte-workspace[data-reading-nav] .page-actions,#ppte-workspace[data-reading-nav] #ppte-page-footer,#ppte-workspace[data-reading-nav]>:not(#ppte-pages){display:none}
 #ppte-properties{position:fixed;right:0;top:var(--top);bottom:36px;width:264px;background:#fff;padding:0 16px;overflow:auto;box-sizing:border-box;border-left:1px solid #e7e9ee}
+#ppte-properties .panel-title{position:sticky;top:0;background:#fff;z-index:1}
 #ppte-properties h3{font-size:14px;margin:0;flex:1}#ppte-properties .panel-title{height:54px}
 #ppte-properties section{border-top:1px solid #e7e9ee;padding:16px 0;display:grid;gap:12px}
 #ppte-properties details{border-top:1px solid #e7e9ee;padding:12px 0}#ppte-properties details[open]{display:grid;gap:12px}
@@ -58,6 +62,6 @@ body{background:#f3f4f6!important}
 #ppte-canvas-controls button{border:0;min-height:30px}#ppte-canvas-controls .zoom-group{margin-left:auto}#ppte-canvas-controls summary{list-style:none;padding:4px}
 #ppte-canvas-controls .zoom-options>div{position:fixed;display:flex;padding:8px;background:white;border:1px solid #e7e9ee;border-radius:8px}#ppte-canvas-controls .zoom-options:not([open])>div{display:none}
 #ppte-canvas-controls details p{position:absolute;bottom:36px;right:8px;width:300px;padding:16px;background:white;border:1px solid #e7e9ee}
-@media(max-width:580px){#ppte-save-ui{height:100px;display:grid!important;grid-template-columns:minmax(0,1fr) auto auto auto;padding:4px 8px!important;gap:2px!important}#ppte-save-ui strong{grid-column:1/3}#ppte-save-ui[data-mode=read] .save-action,#ppte-save-ui[data-mode=read] #ppte-save-panel{display:none}
-#ppte-save-ui .modes{grid-row:2;grid-column:1}#ppte-save-panel{grid-row:1;grid-column:3/5}#ppte-save-ui [role=status]{width:120px}#ppte-save-ui .primary{grid-row:2;grid-column:3}#ppte-save-ui>button[aria-label='导出为 PDF']{grid-row:2;grid-column:4;font-size:12px;padding:4px}#ppte-save-ui strong{grid-column:1}#ppte-edit-toolbar{height:52px}#ppte-canvas-controls{height:48px;padding:0 4px;gap:0}#ppte-canvas-controls .control-row{gap:0}#ppte-canvas-controls .zoom-group{gap:0}#ppte-canvas-controls .zoom-group span{max-width:48px;line-height:1.2}#ppte-page-list .thumb-row{padding-right:44px}#ppte-page-list summary{width:44px}}
+@media(max-width:580px){#ppte-save-ui{height:100px;display:grid!important;grid-template-columns:minmax(0,1fr) auto auto;padding:4px 8px!important;gap:2px!important}#ppte-save-ui strong{grid-column:1/3}#ppte-save-ui[data-mode=read] .save-action,#ppte-save-ui[data-mode=read] #ppte-save-panel{display:none}
+#ppte-save-ui .modes{grid-row:2;grid-column:1}#ppte-save-panel{grid-row:1;grid-column:2/4}#ppte-save-ui [role=status]{width:120px}#ppte-save-ui .primary{grid-row:2;grid-column:2}#ppte-save-ui>button[aria-label='导出为 PDF']{grid-row:2;grid-column:3;padding:4px 8px}#ppte-save-ui strong{grid-column:1}#ppte-save-ui[data-mode=read] strong{grid-column:1/-1}#ppte-save-ui .save-action{grid-row:1;grid-column:2}#ppte-save-ui[data-mode=edit] #ppte-save-panel{grid-column:3}#ppte-edit-toolbar{height:52px}#ppte-canvas-controls{height:48px;padding:0 4px;gap:0}#ppte-canvas-controls .control-row{gap:0}#ppte-canvas-controls .zoom-group{gap:0}#ppte-canvas-controls .zoom-group span{max-width:48px;line-height:1.2}#ppte-page-list .thumb-row{padding-right:44px}#ppte-page-list summary{width:44px}}
 `;
