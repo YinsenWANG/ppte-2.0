@@ -13,6 +13,7 @@ interface API {
 export function installEditor(api: API) {
     let controller: SaveController;
     let boundFileName = '';
+    let associating = false;
     let ui: ReturnType<typeof workspace>;
     let token = new URLSearchParams(location.hash.slice(1)).get('token');
     // Parent session storage permits reload; capabilities never enter serialized HTML or content.
@@ -43,13 +44,16 @@ export function installEditor(api: API) {
         bar.append(b);
         return b;
     };
-    const names = { saved: '已保存到原文件', dirty: '有修改 · 尚未写入文件', saving: '保存中 · 等待文件确认', draft: '仅草稿 · 尚未写入文件', unauthorized: '无文件授权', conflict: '冲突 · 修改已保留', failed: '保存失败 · 可重试' };
+    const names = { saved: '已保存到原文件', dirty: '有修改 · 尚未写入文件', saving: '保存中 · 等待文件确认', draft: '修改尚未写入文件 · 仅草稿', unauthorized: '尚未保存 · 无文件授权', conflict: '冲突 · 修改已保留', failed: '保存失败 · 可重试' };
+    let panelInfo: HTMLElement;
+    let savePanel: HTMLDetailsElement;
     const render = () => {
         bar.toggleAttribute('data-pristine', controller.revision === 0 && !controller.dirty && ((controller.state === 'unauthorized' && controller.detail.startsWith('尚未关联写入文件')) || (controller.state === 'saved' && !controller.detail)));
-        const menu = bar.querySelector('details');
+        if(panelInfo) panelInfo.textContent = `文件：${boundFileName || controller.base.name} · ${controller.adapter?'已关联':'未关联'} · 最近成功：${controller.lastSavedAt ? new Date(controller.lastSavedAt).toLocaleTimeString() : '尚无写入记录'}`;
+        const menu = savePanel;
         if (menu && controller.state === 'conflict')
             menu.open = true;
-        status.textContent = (controller.detail.startsWith('已生成') ? controller.detail : (controller.state === 'saved' && boundFileName ? '已保存到所选文件：' + boundFileName : names[controller.state]) + (controller.detail ? '：' + controller.detail : '')) + (controller.dirty && !controller.draftAvailable ? ' · 草稿恢复不可用；请保存或下载' : '');
+        status.textContent = (controller.detail.startsWith('已发起下载') ? controller.detail : (controller.state === 'saved' && boundFileName ? '已保存到所选文件：' + boundFileName + (controller.lastSavedAt ? ' · ' + new Date(controller.lastSavedAt).toLocaleTimeString() : '') : names[controller.state]) + (controller.detail ? '：' + controller.detail : '')) + (controller.dirty && !controller.draftAvailable ? ' · 草稿恢复不可用；请保存或下载' : '');
     };
     const enable = () => {
         ui?.enable();
@@ -62,7 +66,9 @@ export function installEditor(api: API) {
 
     });
     bar.append(status);
-    const save = button('保存 / 授权', () => void (async () => {
+    const save = button('保存', () => void (async () => {
+        if(associating)return;
+        associating=true;
         try {
             if (!controller.adapter) {
                 const picker = (window as any).showOpenFilePicker;
@@ -83,20 +89,22 @@ export function installEditor(api: API) {
                 boundFileName = handle.name;
                 controller.adapter = adapter;
                 controller.base = target;
+                controller.set(controller.dirty ? 'dirty' : 'unauthorized');
             }
             await controller.adapter?.authorize?.();
+            associating=false;
             await controller.flush();
             if (controller.state === 'unauthorized') download();
-            if (!controller.dirty) controller.set('saved', '已关联所选文件：' + controller.base.name);
+            if (!controller.dirty && controller.confirmedFileRevision === null) controller.set('unauthorized', '已关联所选文件，尚无本次写入记录。');
         }
         catch (e) {
             const message = String(e);
             controller.set(message.includes('CONFLICT') ? 'conflict' : 'unauthorized', message.includes('AbortError') ? '已取消选择；修改仍保留，可重试或下载更新文件。' : message);
             if (message.includes('PERMISSION') || message.includes('NotAllowedError') || message.includes('SecurityError')) download();
-        }
+        } finally { associating=false; }
     })());
     save.title = '选择当前文件以启用自动保存；Cmd/Ctrl+S，失败后可重试';
-    button('重新读取文件', () => void (async () => {
+    const reread = button('重新读取文件', () => void (async () => {
         if (controller.busy || controller.composing) { controller.set(controller.state, '请等待保存或输入法组合完成后再重新读取。'); return; }
         if (!controller.adapter) { controller.set(controller.state, '尚未关联文件；请保存授权或下载当前修改。'); return; }
         if (controller.dirty && !confirm('当前修改保留为草稿；重新读取磁盘文件？'))
@@ -108,6 +116,7 @@ export function installEditor(api: API) {
             const latest = await controller.adapter!.load();
             if (revision !== controller.revision || controller.busy || controller.composing) { controller.set(controller.state, '读取期间有新修改；当前内容已保留，请重试。'); return; }
             controller.base = latest;
+            controller.revision++;
             controller.dirty = false;
             await api.mount(latest.content);
             controller.set('saved');
@@ -127,6 +136,7 @@ export function installEditor(api: API) {
         }
         await api.mount(d.content);
         controller.change();
+        controller.set(controller.state, '已恢复本机草稿，尚未写入文件');
     })());
     button('复制恢复草稿', () => {
         const d = controller.recover();
@@ -161,7 +171,7 @@ export function installEditor(api: API) {
     const download = (newInstance = false) => {
         if (controller.composing) { controller.set(controller.state, '请完成输入法组合后再下载；修改仍保留。'); return; }
         const revision = controller.revision;
-        const url = URL.createObjectURL(new Blob([api.encode(api.content(), newInstance ? 0 : controller.base.metadata.saveRevision + 1, newInstance ? crypto.randomUUID().replace(/-/g, '') : undefined)], { type: 'text/html' }));
+        const url = URL.createObjectURL(new Blob([api.encode(controller.snapshotContent(), newInstance ? 0 : controller.base.metadata.saveRevision + 1, newInstance ? crypto.randomUUID().replace(/-/g, '') : undefined)], { type: 'text/html' }));
         const link = document.createElement('a');
         link.href = url;
         link.download = (document.title.replace(/[\\/:*?"<>|]/g, '_').replace(/(?:\.ppte)?\.html$/i, '') || '作品') + '.ppte.html';
@@ -175,6 +185,25 @@ export function installEditor(api: API) {
     document.body.append(bar);
     const frame = document.querySelector<HTMLIFrameElement>('#ppte-frame')!;
     ui = workspace(frame, bar, () => controller?.change());
+    savePanel = document.createElement('details');
+    savePanel.id = 'ppte-save-panel';
+    savePanel.innerHTML = '<summary>保存状态</summary><div></div>';
+    const panel = savePanel.lastElementChild!;
+    panelInfo = document.createElement('p');panel.append(panelInfo,reread);
+    const autoLabel = document.createElement('label');
+    const auto = document.createElement('input');auto.type='checkbox';auto.checked=true;
+    auto.onchange=()=>controller.setAutoSave(auto.checked);
+    autoLabel.append(auto,'自动保存');panel.append(autoLabel);
+    const associate=document.createElement('button');associate.textContent='关联文件并保存';associate.onclick=()=>save.click();
+    if(isSecureContext && typeof (window as any).showOpenFilePicker==='function')panel.append(associate);
+    else { const hint=document.createElement('p');hint.textContent='此浏览器不能关联原文件；请下载更新后的文件。';panel.append(hint); }
+    const fallback=document.createElement('button');fallback.textContent='下载我的修改';fallback.onclick=()=>download();panel.append(fallback);
+    const disk=document.createElement('button');disk.textContent='查看磁盘版本';
+    disk.onclick=()=>void (async()=>{try{if(!controller.adapter)return;const latest=await controller.adapter.load();const preview=document.createElement('iframe');preview.title='磁盘版本（只读）';preview.sandbox.add('');preview.srcdoc=latest.content;preview.style.cssText='width:100%;height:240px';panel.querySelector('iframe')?.remove();panel.append(preview);}catch(e){controller.set('failed',String(e));}})();panel.append(disk);
+    status.tabIndex=0;status.setAttribute('aria-label','展开保存面板');
+    status.onclick=()=>{savePanel.open=!savePanel.open;};
+    status.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();savePanel.open=!savePanel.open;}};
+    bar.append(savePanel);
     const initialize = async () => {
         let storage: Storage | undefined;
         try {

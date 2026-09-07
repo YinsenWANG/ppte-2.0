@@ -63,7 +63,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     redo.title = '重做 · Cmd/Ctrl+Shift+Z';
     redo.setAttribute('aria-label', '重做');
     redo.innerHTML = '<svg viewBox="0 0 24 24"><path d="m15 5 5 5-5 5m5-5h-9a6 6 0 0 0 0 12"/></svg>';
-    const originals = Array.from(bar.querySelectorAll('button')).filter(b => !['编辑', '保存 / 授权', '下载更新后的文件'].includes(b.textContent ?? '') && b !== undo && b !== redo);
+    const originals = Array.from(bar.querySelectorAll('button')).filter(b => !['编辑', '保存', '下载更新后的文件'].includes(b.textContent ?? '') && b !== undo && b !== redo);
     const more = document.createElement('details');
     more.innerHTML = '<summary>更多</summary><div></div>';
     for (const b of originals)

@@ -83,7 +83,7 @@ test('H04 acceptance 3: actual browser PDF has two sized pages, selectable revea
 test('H04 acceptance 4: generation and reading create only HTML; new export/runtime graph excludes retired formats',async()=>{
  const f=await setup();try{assert.deepEqual(await readdir(f.root),['作品.html']);assert.equal(await f.page.locator('#ppte-print').count(),0);
  for(const file of ['packages/html-player/src/index.ts','packages/html-print/src/index.ts','apps/html-cli/index.ts']) assert.doesNotMatch(await readFile(file,'utf8'),/pptx|keynote|\.odp|exporter-ppt|portable|html-to-image/i);
- await f.page.locator('#ppte-save-ui summary').click();assert.equal(await f.page.getByRole('button',{name:'导出 PDF',exact:true}).count(),1);
+ await f.page.getByText('更多',{exact:true}).click();assert.equal(await f.page.getByRole('button',{name:'导出 PDF',exact:true}).count(),1);
  await f.page.evaluate(()=>{(window as any).printCalls=0;window.print=()=>{(window as any).printCalls++;window.dispatchEvent(new Event('afterprint'));};});
  await f.page.getByRole('button',{name:'导出 PDF',exact:true}).click();
  await f.page.waitForFunction(()=>(window as any).printCalls===1);
