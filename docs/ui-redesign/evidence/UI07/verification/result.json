@@ -1,0 +1,166 @@
+{
+  "task": "UI07",
+  "status": "partial",
+  "commit": "a8d9039f7e028a13dd892de84d0d5b3b3d086c35",
+  "timestamp": "2026-09-07T05:11:45.433304+00:00",
+  "platform": {
+    "system": "Darwin",
+    "release": "25.6.0",
+    "machine": "arm64",
+    "node": "v22.23.2"
+  },
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/ui-redesign/evidence/UI07/verification/typecheck.log",
+      "logSha256": "0ae79858d1378de4a49bb6bdcaf88acb5b1de35ec309f992f3d1193e86a2a4a2",
+      "commit": "a8d9039f7e028a13dd892de84d0d5b3b3d086c35",
+      "completedAt": "2026-09-07T05:11:18.905806+00:00"
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/ui-redesign/evidence/UI07/verification/build.log",
+      "logSha256": "981710c4773357321873464210550419258feecb6af85bb9df41b33c0f6bd351",
+      "commit": "a8d9039f7e028a13dd892de84d0d5b3b3d086c35",
+      "completedAt": "2026-09-07T05:11:20.071449+00:00"
+    },
+    {
+      "command": "pnpm test",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/ui-redesign/evidence/UI07/verification/test.log",
+      "logSha256": "6b34dc3c796325bfb85616792b1aa4f096fd5d81d9b66518251340c9d8509e8e",
+      "commit": "a8d9039f7e028a13dd892de84d0d5b3b3d086c35",
+      "completedAt": "2026-09-07T05:11:45.433220+00:00"
+    }
+  ],
+  "tests": {
+    "framework": "node --test dist/tests/*.test.js",
+    "total": 88,
+    "passed": 88,
+    "failed": 0,
+    "newUI07Tests": 8,
+    "existingAssertionsChanged": 0,
+    "skipped": 0
+  },
+  "acceptance": [
+    {
+      "index": 1,
+      "requirement": "命名、预览、恢复并保留恢复前内容",
+      "code": "passed",
+      "automated": "passed",
+      "evidence": [
+        "tests/ui07-versions.test.ts",
+        "docs/ui-redesign/evidence/UI07/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/UI07/journey.json",
+        "docs/ui-redesign/evidence/UI07/media-performance.json"
+      ],
+      "real-browser": "partial: Chrome headless; native and Safari pending",
+      "human": "pending",
+      "reason": "Framework assertions and recorded product journey pass; no native/human completion claim."
+    },
+    {
+      "index": 2,
+      "requirement": "历史随唯一HTML复制并在无原缓存环境恢复",
+      "code": "passed",
+      "automated": "passed",
+      "evidence": [
+        "tests/ui07-versions.test.ts",
+        "docs/ui-redesign/evidence/UI07/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/UI07/journey.json",
+        "docs/ui-redesign/evidence/UI07/media-performance.json"
+      ],
+      "real-browser": "partial: Chrome headless; native and Safari pending",
+      "human": "pending",
+      "reason": "Framework assertions and recorded product journey pass; no native/human completion claim."
+    },
+    {
+      "index": 3,
+      "requirement": "版本数量/历史容量控制，不静默删除命名版本",
+      "code": "passed",
+      "automated": "passed",
+      "evidence": [
+        "tests/ui07-versions.test.ts",
+        "docs/ui-redesign/evidence/UI07/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/UI07/journey.json",
+        "docs/ui-redesign/evidence/UI07/media-performance.json"
+      ],
+      "real-browser": "partial: Chrome headless; native and Safari pending",
+      "human": "pending",
+      "reason": "Framework assertions and recorded product journey pass; no native/human completion claim."
+    },
+    {
+      "index": 4,
+      "requirement": "资源去重、差量依赖/检查点和按需解码正确",
+      "code": "partial",
+      "automated": "partial",
+      "evidence": [
+        "tests/ui07-versions.test.ts",
+        "docs/ui-redesign/evidence/UI07/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/UI07/journey.json",
+        "docs/ui-redesign/evidence/UI07/media-performance.json"
+      ],
+      "real-browser": "partial: Chrome headless; native and Safari pending",
+      "human": "pending",
+      "reason": "Historical checkpoints and on-demand historical decoding pass; S06 current live DOM still expands data URLs. Strict shared-current-media requirement is not complete."
+    },
+    {
+      "index": 5,
+      "requirement": "历史损坏安全降级，提供不含历史的按需下载",
+      "code": "passed",
+      "automated": "passed",
+      "evidence": [
+        "tests/ui07-versions.test.ts",
+        "docs/ui-redesign/evidence/UI07/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/UI07/journey.json",
+        "docs/ui-redesign/evidence/UI07/media-performance.json"
+      ],
+      "real-browser": "partial: Chrome headless; native and Safari pending",
+      "human": "pending",
+      "reason": "Framework assertions and recorded product journey pass; no native/human completion claim."
+    },
+    {
+      "index": 6,
+      "requirement": "真实保存/预览/恢复与文件体积性能证据",
+      "code": "passed",
+      "automated": "passed",
+      "evidence": [
+        "tests/ui07-versions.test.ts",
+        "docs/ui-redesign/evidence/UI07/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/UI07/journey.json",
+        "docs/ui-redesign/evidence/UI07/media-performance.json"
+      ],
+      "real-browser": "partial: Chrome headless; native and Safari pending",
+      "human": "pending",
+      "reason": "Framework assertions and recorded product journey pass; no native/human completion claim."
+    }
+  ],
+  "real-browser": {
+    "chromeHeadless": "passed: offline actual download, copied directory, fresh process, preview, restore and no-history export",
+    "diskBridge": "passed: actual disk write/close/readback through Playwright bindings; not a native authorization test",
+    "nativePicker": null,
+    "safari": null,
+    "systemIME": null,
+    "reason": "No native authorization, Safari or system IME session recorded."
+  },
+  "human": {
+    "status": "pending",
+    "result": null,
+    "reason": "No human reviewer, independent device or screen reader session."
+  },
+  "sample": {
+    "path": "docs/ui-redesign/evidence/UI07/sample.ppte.html",
+    "bytes": 356305,
+    "sha256": "47fd8f9dc933fa563d817cd87cadfce642644ee9928426ed205668d1c1cd9c38"
+  },
+  "limitations": [
+    "A4 incomplete: current live DOM follows S06 data-URL expansion; history itself uses lazy independent checkpoints and deduplicated file resources.",
+    "S04 p95 input/page-turn budgets and controlled performance comparison are not closed. Media measurements are actual single-run samples, not equivalent p95 evidence.",
+    "Native authorization, Safari, system IME, physical device and human acceptance pending.",
+    "N01–N04 and S06–S08 outstanding acceptance remain unchanged."
+  ]
+}
