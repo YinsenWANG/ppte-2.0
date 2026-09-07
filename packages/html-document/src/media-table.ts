@@ -27,7 +27,9 @@ export function packMedia(content: string) {
     const doc = parse(content, {scriptingEnabled:false}), resources: Record<string, string> = {}, ids = new Map<string, string>();
     for (const el of elements(doc)) for (const a of el.attrs) if (['src','poster'].includes(a.name)) {
         if (a.value.startsWith(prefix) || /^(?:blob):/.test(a.value)) throw Error('MEDIA_RESOURCE_UNRESOLVED');
-        if (a.value.length < 4096 || !media.test(a.value)) continue;
+        // Even small images recur across portable checkpoints. A size cutoff
+        // duplicated their bytes in every version instead of sharing one asset.
+        if (!media.test(a.value)) continue;
         let id = ids.get(a.value);
         if (!id) { id=mediaDigest(a.value); ids.set(a.value,id); resources[id]=a.value; }
         a.value=prefix+id;

@@ -1,0 +1,253 @@
+{
+  "task": "UI03",
+  "status": "passed-code-and-automated",
+  "commit": "e340d48392ae06080f72ec51ec7ea6880aed90c9",
+  "parentCommit": "dd79fede619ceeac038fea39d8365f8d1536c7b9",
+  "baseCommit": "0e6b1e3",
+  "timestamp": "2026-09-07T05:43:27.512016+00:00",
+  "platform": {
+    "system": "Darwin",
+    "release": "25.6.0",
+    "machine": "arm64",
+    "node": "v22.23.2",
+    "pnpm": "11.22.0"
+  },
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/ui-redesign/evidence/UI03/verification/typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/ui-redesign/evidence/UI03/verification/build.log"
+    },
+    {
+      "command": "pnpm test",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/ui-redesign/evidence/UI03/verification/test.log"
+    }
+  ],
+  "tests": {
+    "total": 97,
+    "passed": 97,
+    "failed": 0,
+    "added": 5,
+    "removed": 0,
+    "existingAssertionsWeakened": 0
+  },
+  "statusByLayer": {
+    "code": "passed",
+    "automated": "passed: 97/97 tests; four UI03 acceptance tests and original audit-source composition regression",
+    "real-browser": "partial: installed Chrome headless file:// passed; Safari/native/system IME/physical touch pending",
+    "human": "pending: no screen reader, owner or target-user review evidence"
+  },
+  "acceptance": [
+    {
+      "index": 1,
+      "criterion": "添加页无控制条遮挡",
+      "status": "passed-code-and-automated",
+      "test": "tests/ui03-pages.test.ts — UI03 acceptance 1",
+      "capture": "docs/ui-redesign/evidence/UI03/rail.json",
+      "screenshot": "docs/ui-redesign/evidence/UI03/rail.png",
+      "verdictLog": "docs/ui-redesign/evidence/UI03/verification/test.log"
+    },
+    {
+      "index": 2,
+      "criterion": "响应式新页保真",
+      "status": "passed-code-and-automated",
+      "test": "tests/ui03-pages.test.ts — UI03 acceptance 2",
+      "capture": "docs/ui-redesign/evidence/UI03/responsive.json",
+      "screenshot": "docs/ui-redesign/evidence/UI03/responsive.png",
+      "verdictLog": "docs/ui-redesign/evidence/UI03/verification/test.log"
+    },
+    {
+      "index": 3,
+      "criterion": "图片不被标题挡住且可调整",
+      "status": "passed-code-and-automated",
+      "test": "tests/ui03-pages.test.ts — UI03 acceptance 3",
+      "capture": "docs/ui-redesign/evidence/UI03/image.json",
+      "screenshot": "docs/ui-redesign/evidence/UI03/image.png",
+      "verdictLog": "docs/ui-redesign/evidence/UI03/verification/test.log"
+    },
+    {
+      "index": 4,
+      "criterion": "页面排序具备键盘等效",
+      "status": "passed-code-and-automated",
+      "test": "tests/ui03-pages.test.ts — UI03 acceptance 4",
+      "capture": "docs/ui-redesign/evidence/UI03/sorting.json",
+      "screenshot": "docs/ui-redesign/evidence/UI03/sorting.png",
+      "verdictLog": "docs/ui-redesign/evidence/UI03/verification/test.log"
+    }
+  ],
+  "auditRegression": {
+    "source": "docs/audits/2026-09-07-main-61310c7/sample/source.html",
+    "test": "tests/ui03-pages.test.ts — UI03 audit N01–N03 regression",
+    "capture": "docs/ui-redesign/evidence/UI03/audit.json",
+    "scope": "Current product bundle with unchanged original authored 12-page source; no old prototype runtime."
+  },
+  "samples": [
+    {
+      "path": "docs/ui-redesign/evidence/UI03/sample.ppte.html",
+      "sha256": "16599c361484c953086695d3e021a3348085f5822306ae7ab364bf0f4ea258f3",
+      "bytes": 357992,
+      "source": "Actual product download; synthetic test fixture, fresh Chrome process offline reopen."
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI03/audit-sample.ppte.html",
+      "sha256": "ca50123173a8368bc3a86242bff051b39da689d6243f7b2f1f60a4a9e33063fe",
+      "bytes": 409710,
+      "source": "Actual product download of audit-source composition regression; screenshot crop is a deterministic insertion fixture."
+    }
+  ],
+  "pending": {
+    "Safari": {
+      "status": "pending",
+      "measurement": null,
+      "reason": "No Safari automation or manual Safari evidence collected in this round."
+    },
+    "nativePermissions": {
+      "status": "pending",
+      "measurement": null,
+      "reason": "Headless chooser file injection is not native original-file authorization evidence."
+    },
+    "systemIME": {
+      "status": "pending",
+      "measurement": null,
+      "reason": "No operating-system IME session available."
+    },
+    "screenReader": {
+      "status": "pending",
+      "measurement": null,
+      "reason": "No screen reader session or reviewer available."
+    },
+    "physicalTouch": {
+      "status": "pending",
+      "measurement": null,
+      "reason": "No physical touch device evidence."
+    },
+    "humanReview": {
+      "status": "pending",
+      "measurement": null,
+      "reason": "No owner or target-user UI/aesthetic review collected."
+    },
+    "realLowPerformanceDevice": {
+      "status": "pending",
+      "measurement": null,
+      "reason": "Development Mac is not the required low-performance device."
+    }
+  },
+  "upstream": {
+    "UI07": "partial: current-media lifecycle gap remains",
+    "UI05_UI06": "pending",
+    "S03_S06_S07_S08": "partial unchanged; supplemental references only",
+    "N01_N03": "bounded code/Chrome automated regression addressed, native/human review pending",
+    "N04": "unchanged; PDF audit gap not cancelled",
+    "performance": "S04 input/page-turn, telemetry, current media decode/memory and real-device gaps unchanged"
+  },
+  "earlierFailures": [
+    {
+      "log": "docs/ui-redesign/evidence/UI03/verification/first-test-failure.log",
+      "reason": "New test setup/measurement issues corrected; details in IMPLEMENTATION.md."
+    },
+    {
+      "log": "docs/ui-redesign/evidence/UI03/verification/initial-full-test.log",
+      "passed": 96,
+      "failed": 1,
+      "reason": "Old S04 locator included new sorting buttons; now selects thumbnails via aria-current. Seven existing assertions unchanged."
+    }
+  ],
+  "signature": {
+    "status": "verified",
+    "type": "GPG",
+    "log": "docs/ui-redesign/evidence/UI03/verification/signature.log",
+    "dco": "Signed-off-by: yinsen <cherryai001@yinsenMac-mini.local>"
+  },
+  "workspaceHygiene": "Pre-existing brief7-UI03.md retained and locally excluded; pipeline output locally excluded; no push.",
+  "artifacts": [
+    {
+      "path": "docs/ui-redesign/evidence/UI03/IMPLEMENTATION.md",
+      "sha256": "c6bb15629fd4def548e4acc1dcb77986f0b797f7e7aea67a168a509fd7611dd8"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI03/audit-sample.ppte.html",
+      "sha256": "ca50123173a8368bc3a86242bff051b39da689d6243f7b2f1f60a4a9e33063fe"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI03/audit.json",
+      "sha256": "b49aa1867ab16cd77b2b69dae869df60fee3c5d7b150d077f40dd72789f3a70e"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI03/audit.png",
+      "sha256": "6d14033c11e2b9227c0ae03ba574cc4b2dadd523182609987c39de3fa01e6e31"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI03/image.json",
+      "sha256": "7b3808a2bc623c5be56f212dfb668f1eea60d3549aa2dedb08ef9000f35653aa"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI03/image.png",
+      "sha256": "4f177950c1958138a63519b2d8d4258168f3d83cd24bf15aef49c691f04d8b9f"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI03/rail.json",
+      "sha256": "0173aab3efbdf01ef5da8d1b432aacda70b2e9b9455db8502bef878e7621ce60"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI03/rail.png",
+      "sha256": "40f9f5938c460893a5ce41f86bc7444a6ee2d3db799bab120113685a49906d57"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI03/responsive.json",
+      "sha256": "bd0a20ba5c3a33ddfeb2dda4da9e58abcaeac90cf76e41e5e3c9818a99cf3bf8"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI03/responsive.png",
+      "sha256": "5d6c7dd612c30ecf6a260de5a42bf1595ba74dd2c38e327847a3a2f7eb93ac64"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI03/sample.ppte.html",
+      "sha256": "16599c361484c953086695d3e021a3348085f5822306ae7ab364bf0f4ea258f3"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI03/sorting.json",
+      "sha256": "071c37a0e5b1d304e57750c9d7db58d8be969cd067cffae65e3c590345422146"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI03/sorting.png",
+      "sha256": "49e05a79d6744897dc4752c2e1ed0329bb9c3c3ae35203e2b2b404297abb993f"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI03/verification/build.log",
+      "sha256": "981710c4773357321873464210550419258feecb6af85bb9df41b33c0f6bd351"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI03/verification/first-test-failure.log",
+      "sha256": "42de849723bafb27933e9761f21f407e6388429a86d691343aeb92f47adc1a4e"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI03/verification/initial-full-test.log",
+      "sha256": "9bbf1b2ccfe1ee190d3a914209b6569acc5ff2e95dea186493bdaf17c9d67f1d"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI03/verification/pending.json",
+      "sha256": "1dddb3176fbe841e073db28f6070f115f76219ae572a2eee39e3911bce1f3edd"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI03/verification/signature.log",
+      "sha256": "c3097a812645f245623b26508244596ac8bb67319ca74e31b427d6d0976c9137"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI03/verification/test.log",
+      "sha256": "397d6422048e4ba438a5db0a2670254732935ac3575d068ddbc912f97032d163"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI03/verification/typecheck.log",
+      "sha256": "0ae79858d1378de4a49bb6bdcaf88acb5b1de35ec309f992f3d1193e86a2a4a2"
+    }
+  ]
+}

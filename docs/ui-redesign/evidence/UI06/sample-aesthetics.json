@@ -1,0 +1,49 @@
+{
+  "category": "sample-aesthetics",
+  "status": "pending",
+  "result": null,
+  "reason": "No blind owner/two-target-user ratings. This authored two-page functional sample and generated PNG are not nine controlled pairs or a real-image batch.",
+  "reviewers": [
+    {
+      "role": "owner",
+      "identity": null,
+      "rating": null,
+      "comments": null,
+      "reviewedAt": null
+    },
+    {
+      "role": "target-user-1",
+      "identity": null,
+      "rating": null,
+      "comments": null,
+      "reviewedAt": null
+    },
+    {
+      "role": "target-user-2",
+      "identity": null,
+      "rating": null,
+      "comments": null,
+      "reviewedAt": null
+    }
+  ],
+  "criteria": [
+    "Hierarchy and legibility",
+    "Whitespace and alignment",
+    "Consistency across slides",
+    "Image meaning and crop integrity"
+  ],
+  "vetoes": {
+    "facts": null,
+    "crop": null,
+    "save": null
+  },
+  "controlledPairs": {
+    "count": 0,
+    "result": null,
+    "reason": "Same-model paired drafts and provider telemetry unavailable; retain S08 requirement."
+  },
+  "sample": "docs/ui-redesign/evidence/delivery/把作品带走.ppte.html",
+  "source": "tests/fixtures/ui06/journey.html",
+  "authoringRecord": "Original HTML/CSS fixture for UI06, two pages; four objects inserted and adjusted through production controls. No prototype object model or external assets. Not Skill-generated controlled authoring evidence.",
+  "recordingProtocol": "Blind-review the rendered sample separately from editor chrome; retain raw ratings and independent fact/crop/save vetoes."
+}

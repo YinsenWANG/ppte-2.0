@@ -88,11 +88,11 @@ test('H02 acceptance 2/3: browser two-window conflict keeps draft; explicit rere
   assert.ok(await b.evaluate(()=>Object.values(localStorage).some((s:any)=>s.includes('Retained loser'))));
   b.on('dialog',d=>d.accept());await b.getByText('重新读取文件',{exact:true}).click();await b.waitForFunction(()=>(window as any).PPTeSave.state==='saved');assert.equal(await b.frameLocator('#ppte-frame').locator('h1').textContent(),'Winner');
   await b.route('**/api/save',r=>r.abort());await b.frameLocator('#ppte-frame').locator('h1').fill('Retry retained');await b.waitForFunction(()=>(window as any).PPTeSave.state==='failed');
-  await b.unroute('**/api/save');await b.getByText('保存 / 授权',{exact:true}).click();await b.waitForFunction(()=>(window as any).PPTeSave.state==='saved');assert.match(readEnhanced(await readFile(f.file,'utf8')).content,/Retry retained/);
+  await b.unroute('**/api/save');await b.getByText('保存',{exact:true}).click();await b.waitForFunction(()=>(window as any).PPTeSave.state==='saved');assert.match(readEnhanced(await readFile(f.file,'utf8')).content,/Retry retained/);
  }finally{await browser.close();await s.close();await f.clean();}
 });
 
-test('H02 acceptance 3: IME does not save half composition; 800ms pause and delayed acknowledgement remain dirty/saving',async()=>{
+test('H02 acceptance 3: IME does not save half composition; 1000ms pause and delayed acknowledgement remain dirty/saving',async()=>{
  const f=await fixture();let release:()=>void=()=>{};const gate=new Promise<void>(r=>release=r);
  const s=await startEditor(f.file,{cacheDir:f.cacheDir,fault:p=>p==='before-replace'?gate:undefined});const browser=await chromium.launch({headless:true});
  try{

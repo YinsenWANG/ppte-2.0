@@ -1,3 +1,5 @@
+import { readHistory, validateHistoryWire } from '../../html-document/src/history-wire.js';
+import type { HistoryWire } from '../../html-editor/src/versions.js';
 import { createHash, randomBytes } from 'node:crypto';
 import { createServer } from 'node:http';
 import { readFile, writeFile, mkdir, open, rename, unlink, readdir, stat, realpath, chmod } from 'node:fs/promises';
@@ -26,10 +28,10 @@ export async function bindFile(input: string, options: SaveOptions = {}) {
   readEnhanced(await readFile(file, 'utf8'));
   const key = digest(file), cache = join(options.cacheDir ?? dataDirectory(), key);
   await mkdir(cache, { recursive: true, mode: 0o700 });
-  const snapshot = async () => { const html = await readFile(file, 'utf8'); return { ...readEnhanced(html), hash: digest(html), fileKey: key, name: file.split('/').pop()! }; };
+  const snapshot = async () => { const html = await readFile(file, 'utf8'); return { ...readEnhanced(html), history:readHistory(html), hash: digest(html), fileKey: key, name: file.split('/').pop()! }; };
   let queue: Promise<unknown> = Promise.resolve();
   const versions = async () => { const entries=await Promise.all((await readdir(cache)).filter(n=>/^version-[a-f0-9]{64}\.html$/.test(n)).map(async n=>({n,time:(await stat(join(cache,n))).mtimeMs})));return entries.sort((a,b)=>b.time-a.time).map(v=>v.n); };
-  const save = (expected: string, content: string) => {
+  const save = (expected: string, content: string, history?:HistoryWire) => {
     const job = queue.catch(() => {}).then(async () => {
       const release = await lock(join(cache, 'write.lock'));
       const temporary = join(dirname(file), `.ppte-${key.slice(0,12)}.tmp`);
@@ -38,7 +40,7 @@ export async function bindFile(input: string, options: SaveOptions = {}) {
         const before = await readFile(file, 'utf8');
         if (digest(before) !== expected) throw Error('CONFLICT');
         const info = await stat(file); if (!(info.mode & 0o222)) throw Error('READ_ONLY');
-        const next = serializeContent(content, readEnhanced(before).metadata);
+        const next = serializeContent(content, readEnhanced(before).metadata, history ?? readHistory(before));
         if (Buffer.byteLength(next) > 16 * 1024 * 1024) throw Error('FILE_TOO_LARGE');
         // Recoverable previous bytes are committed before replacing the original.
         const version = await open(join(cache, `version-${expected}.html`), 'w', 0o600);
@@ -83,7 +85,7 @@ export async function startEditor(file: string, options: SaveOptions = {}) {
       if (req.method === 'GET' && req.url === '/') {
         const current = await binding.snapshot();
         res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Content-Security-Policy':"frame-ancestors 'none'"});
-        return res.end(envelope(current.content,current.metadata).replace("connect-src 'none'", "connect-src 'self'"));
+        return res.end(envelope(current.content,current.metadata,readHistory(await readFile(binding.file,'utf8'))).replace("connect-src 'none'", "connect-src 'self'"));
       }
       if (req.headers.authorization !== `Bearer ${token}`) return json(403,{error:'TOKEN_REQUIRED'});
       if (req.method === 'GET' && req.url === '/api/file') return json(200,await binding.snapshot());
@@ -93,8 +95,8 @@ export async function startEditor(file: string, options: SaveOptions = {}) {
       const chunks:Buffer[]=[]; let bytes = 0;
       for await (const chunk of req) { bytes += chunk.length; if (bytes > 16*1024*1024) { json(413,{error:'BODY_TOO_LARGE'});return; } chunks.push(Buffer.from(chunk)); }
       const data = JSON.parse(Buffer.concat(chunks).toString('utf8')), field = req.url === '/api/save' ? 'content' : 'version';
-      if (!data || typeof data.expected !== 'string' || !/^[a-f0-9]{64}$/.test(data.expected) || typeof data[field] !== 'string' || Object.keys(data).sort().join(',') !== [field,'expected'].sort().join(',')) return json(400,{error:'INVALID_REQUEST'});
-      return json(200,field === 'content' ? await binding.save(data.expected,data.content) : await binding.restore(data.expected,data.version));
+      if (!data || typeof data.expected !== 'string' || !/^[a-f0-9]{64}$/.test(data.expected) || typeof data[field] !== 'string' || Object.keys(data).sort().join(',') !== [field,'expected',...(data.history!==undefined&&field==='content'?['history']:[])].sort().join(',')) return json(400,{error:'INVALID_REQUEST'});
+      return json(200,field === 'content' ? await binding.save(data.expected,data.content,data.history===undefined?undefined:validateHistoryWire(data.history)) : await binding.restore(data.expected,data.version));
     } catch (e) { const error = (e as NodeJS.ErrnoException).code ?? (e as Error).message; json(error.includes('CONFLICT') ? 409 : 422,{error}); }
   });
   await new Promise<void>((done,reject) => {server.once('error',reject);server.listen(options.port ?? 0,'127.0.0.1',done);});

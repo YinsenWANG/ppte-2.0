@@ -16,6 +16,8 @@ type Entry = {
     id: string;
     before: string;
     after: string;
+    removed?: boolean;
+    relocation?: { parent: HTMLElement; from: Element | null; to: Element | null };
     insertion?: { parent: HTMLElement; previous: HTMLElement | null; node: HTMLElement };
 };
 export class Commands {
@@ -103,22 +105,45 @@ export class Commands {
         const previous = this.node(reference), parent = previous.parentElement!;
         if (!previous.hasAttribute('data-ppte-slide') || previous.tagName === 'BODY' || !parent) throw Error('PAGE_INSERT_UNSUPPORTED');
         if (parent.closest('[data-ppte-locked="true"]')) throw Error('OBJECT_PROTECTED');
-        const computed = this.doc.defaultView!.getComputedStyle(previous);
-        const n = this.doc.createElement(previous.tagName);
-        n.className = previous.className;
-        n.style.cssText = previous.style.cssText;
-        // Preserve native class/custom-property layout, but give blank content a measured canvas.
-        for (const property of ['width', 'height', 'box-sizing', 'background', 'color', 'font-family', 'container-type', 'container-name'])
-            n.style.setProperty(property, computed.getPropertyValue(property));
+        // Copy declared layout, never viewport-dependent computed pixel dimensions.
+        const n = previous.cloneNode(false) as HTMLElement;
+        n.removeAttribute('id');
+        for (const a of Array.from(n.attributes))
+            if (a.name.startsWith('data-ppte-editor-')) n.removeAttribute(a.name);
         n.dataset.ppteId = `slide-${crypto.randomUUID()}`;
         n.dataset.ppteSlide = n.dataset.ppteId;
         const title = this.doc.createElement('h1');
         title.dataset.ppteId = `text-${crypto.randomUUID()}`;
         title.textContent = '新的一页';
-        n.append(title);
+        // Keep the explicit author content-container chain on the blank page.
+        const content = previous.querySelector<HTMLElement>('[data-ppte-content]') ?? Array.from(previous.querySelectorAll<HTMLElement>('main,article,div')).find(e=>/grid|flex/.test(this.doc.defaultView!.getComputedStyle(e).display));
+        let target = n;
+        if (content) {
+            const chain: HTMLElement[] = [];
+            for (let e: HTMLElement | null = content; e && e !== previous; e = e.parentElement) chain.unshift(e);
+            for (const e of chain) {
+                const copy = e.cloneNode(false) as HTMLElement;
+                copy.removeAttribute('id');
+                copy.dataset.ppteId = `container-${crypto.randomUUID()}`;
+                for (const a of Array.from(copy.attributes)) if (a.name.startsWith('data-ppte-editor-')) copy.removeAttribute(a.name);
+                target.append(copy); target = copy;
+            }
+        }
+        target.append(title);
         previous.after(n);
         this.record([{ id: n.dataset.ppteId, before: '', after: snapshot(n), insertion: { parent, previous, node: n } }]);
         return n;
+    }
+    moveSlide(id: string, targetId: string) {
+        const n = this.node(id), target = this.node(targetId), parent = n.parentElement;
+        if (n === target) return;
+        if (!parent || n.tagName === 'BODY' || !n.hasAttribute('data-ppte-slide') || !target.hasAttribute('data-ppte-slide') || target.parentElement !== parent) throw Error('PAGE_MOVE_UNSUPPORTED');
+        if (this.protected(n) || this.protected(target) || parent.closest('[data-ppte-locked="true"]')) throw Error('OBJECT_PROTECTED');
+        const from = n.previousElementSibling;
+        const forward = !!(n.compareDocumentPosition(target) & Node.DOCUMENT_POSITION_FOLLOWING);
+        if (forward) target.after(n); else target.before(n);
+        const to = n.previousElementSibling;
+        this.record([{id, before:'before move', after:'after move', relocation:{parent,from,to}}]);
     }
     restore(n: HTMLElement, html: string) {
         const t = this.doc.createElement('template');
@@ -138,16 +163,22 @@ export class Commands {
         if (!entries)
             return;
         for (const e of entries) {
-            if (e.insertion) {
+            if (e.relocation) {
+                const {parent, from, to} = e.relocation, n = this.node(e.id), anchor = redo ? from : to;
+                if (!parent.isConnected || n.parentElement !== parent || n.previousElementSibling !== anchor || this.protected(n) || parent.closest('[data-ppte-locked="true"]') || [from,to].some(a=>a && a.parentElement!==parent)) throw Error('HISTORY_CONFLICT');
+            } else if (e.insertion) {
                 const { parent, previous, node } = e.insertion;
                 if (!parent.isConnected || previous && previous.parentElement !== parent || parent.closest('[data-ppte-locked="true"]') ||
-                    (redo ? node.isConnected : node.parentElement !== parent || this.protected(node) || snapshot(node) !== this.mediaHistory.expand(e.after)))
+                    ((redo !== !!e.removed) ? node.isConnected : node.parentElement !== parent || this.protected(node) || snapshot(node) !== this.mediaHistory.expand(e.removed ? e.before : e.after)))
                     throw Error('HISTORY_CONFLICT');
             } else if (snapshot(this.node(e.id)) !== this.mediaHistory.expand(redo ? e.before : e.after)) throw Error('HISTORY_CONFLICT');
         }
         for (const e of entries) {
-            if (e.insertion) {
-                if (redo) { if (e.insertion.previous) e.insertion.previous.after(e.insertion.node); else e.insertion.parent.prepend(e.insertion.node); }
+            if (e.relocation) {
+                const anchor = redo ? e.relocation.to : e.relocation.from, n = this.node(e.id);
+                if (anchor) anchor.after(n); else e.relocation.parent.prepend(n);
+            } else if (e.insertion) {
+                if (redo !== !!e.removed) { if (e.insertion.previous) e.insertion.previous.after(e.insertion.node); else e.insertion.parent.prepend(e.insertion.node); }
                 else e.insertion.node.remove();
             } else this.restore(this.node(e.id), this.mediaHistory.expand(redo ? e.after : e.before));
         }
@@ -156,7 +187,7 @@ export class Commands {
         this.changed(entries.map(e => e.id));
     }
     style(ids: string[], property: string, value: string) {
-        if (!['font-size', 'font-weight', 'font-style', 'color', 'text-align', 'background', 'width', 'height', 'left', 'top', 'transform', 'gap', 'grid-template-columns', 'object-fit', 'fill', 'order'].includes(property) || !CSS.supports(property, value) || /url\(|expression|@import/i.test(value))
+        if (!['font-size', 'font-weight', 'font-style', 'color', 'text-align', 'background', 'width', 'height', 'left', 'top', 'transform', 'gap', 'grid-template-columns', 'object-fit', 'fill', 'order', 'font-family', 'border-color', 'border-width', 'border-style', 'border-radius', 'align-self', 'margin'].includes(property) || !CSS.supports(property, value) || /url\(|expression|@import/i.test(value))
             throw Error('INVALID_STYLE');
         this.transaction(ids, n => {
             n.style.setProperty(property, value);
@@ -193,29 +224,52 @@ export class Commands {
         else
             throw Error('LAYOUT_UNSUPPORTED: 此对象使用普通文档流');
     }
-    table(id: string, action: 'row' | 'column' | 'delete-row' | 'delete-column') {
+    align(ids: string[], edge: 'left'|'center'|'right'|'top'|'middle'|'bottom', baseline: 'selection'|'page'|'content' = 'selection') {
+        const nodes = ids.map(id=>this.node(id));
+        if (!nodes.length || !nodes.every(n=>this.doc.defaultView!.getComputedStyle(n).position==='absolute')) throw Error('LAYOUT_UNSUPPORTED: 流式对象请使用容器内对齐');
+        if(!['selection','page','content'].includes(baseline) || !['left','center','right','top','middle','bottom'].includes(edge))throw Error('INVALID_ALIGNMENT');
+        const rects=nodes.map(n=>n.getBoundingClientRect());
+        let area={left:Math.min(...rects.map(r=>r.left)),right:Math.max(...rects.map(r=>r.right)),top:Math.min(...rects.map(r=>r.top)),bottom:Math.max(...rects.map(r=>r.bottom))};
+        if(baseline!=='selection'){
+            const parents=nodes.map(n=>baseline==='page'?n.closest('[data-ppte-slide]'):n.parentElement);
+            if(!parents[0] || !parents.every(n=>n===parents[0]))throw Error('ALIGNMENT_SCOPE: 请选择同一页面或内容区');
+            area=parents[0].getBoundingClientRect();
+        }
+        const changes=new Map(nodes.map((n,i)=>{const r=rects[i];const dx=edge==='left'?area.left-r.left:edge==='right'?area.right-r.right:edge==='center'?(area.left+area.right-r.left-r.right)/2:0;const dy=edge==='top'?area.top-r.top:edge==='bottom'?area.bottom-r.bottom:edge==='middle'?(area.top+area.bottom-r.top-r.bottom)/2:0;const transform=this.doc.defaultView!.getComputedStyle(n).transform;return [n.dataset.ppteId!,new DOMMatrix().translate(dx,dy).multiply(new DOMMatrix(transform==='none'?'':transform)).toString()];}));
+        this.transaction(ids,n=>n.style.transform=changes.get(n.dataset.ppteId!)!);
+    }
+    table(id: string, action: 'row' | 'column' | 'delete-row' | 'delete-column', cellId?: string) {
         this.transaction([id], n => {
             if (n.tagName !== 'TABLE')
                 throw Error('NOT_TABLE');
             const t = n as HTMLTableElement;
+            if (t.querySelector('[rowspan]:not([rowspan="1"]),[colspan]:not([colspan="1"])')) throw Error('TABLE_SPAN: 合并单元格请先在源文件中调整');
+            const liveCell = cellId ? this.node(cellId) as HTMLTableCellElement : undefined;
+            if (liveCell && liveCell.closest('table') !== this.node(id)) throw Error('INVALID_CELL');
+            const ri = liveCell ? (liveCell.parentElement as HTMLTableRowElement).rowIndex : t.rows.length - 1;
+            const ci = liveCell?.cellIndex ?? (t.rows[0]?.cells.length ?? 1) - 1;
             if (action === 'row') {
-                const row = t.insertRow();
-                for (let i = 0; i < (t.rows[0]?.cells.length || 2); i++)
-                    row.insertCell().textContent = '内容';
+                const row = t.insertRow(ri + 1);
+                const source = t.rows[ri];
+                for (let i = 0; i < (source?.cells.length || 2); i++) {
+                    const cell=row.insertCell();cell.textContent='内容';cell.style.cssText=source?.cells[i]?.style.cssText ?? '';
+                }
             }
             if (action === 'column')
-                for (const row of Array.from(t.rows))
-                    row.insertCell().textContent = '内容';
+                for (const row of Array.from(t.rows)) {
+                    const style=row.cells[Math.min(ci,row.cells.length-1)]?.style.cssText ?? '';
+                    const cell=row.insertCell(Math.min(ci + 1, row.cells.length));cell.textContent='内容';cell.style.cssText=style;
+                }
             if (action === 'delete-row') {
                 if (t.rows.length <= 1)
                     throw Error('LAST_ROW');
-                t.deleteRow(t.rows.length - 1);
+                t.deleteRow(ri);
             }
             if (action === 'delete-column') {
                 if (Array.from(t.rows).some(r => r.cells.length <= 1))
                     throw Error('LAST_COLUMN');
                 for (const row of Array.from(t.rows))
-                    row.deleteCell(row.cells.length - 1);
+                    row.deleteCell(Math.min(ci, row.cells.length - 1));
             }
             for (const cell of Array.from(t.querySelectorAll('td,th')))
                 if (!cell.hasAttribute('data-ppte-id'))
@@ -236,25 +290,107 @@ export class Commands {
         const src = await new Promise<string>((ok, no) => {
             const r = new FileReader(); r.onload = () => ok(String(r.result)); r.onerror = no; r.readAsDataURL(file);
         });
-        if (file.type.startsWith('image/')) { const image = new Image(); image.src = src; await image.decode(); }
+        if (file.type.startsWith('image/')) { const image = new Image(); image.src = src; try { await image.decode(); } catch { throw Error('无法读取这张图片，请重新选择 PNG、JPEG、WebP、GIF 或 AVIF；原对象已保留。'); } }
         return src;
     }
-    async insertImage(slideId: string, file: File) {
-        const parent = this.node(slideId);
-        if (!parent.hasAttribute('data-ppte-slide')) throw Error('NOT_SLIDE');
+    insertionPoint(slideId: string, referenceId?: string) {
+        const slide = this.node(slideId);
+        if (!slide.hasAttribute('data-ppte-slide')) throw Error('NOT_SLIDE');
+        const reference = referenceId ? this.node(referenceId) : undefined;
+        let parent = slide;
+        let previous: HTMLElement | null = null;
+        if (reference && reference !== slide && slide.contains(reference)) {
+            const object = reference.closest<HTMLElement>('table,svg') ?? reference;
+            parent = object.parentElement!;
+            previous = object;
+        } else {
+            const containers = Array.from(slide.querySelectorAll<HTMLElement>('[data-ppte-content],main,article,div'));
+            parent = containers.find(n => n.hasAttribute('data-ppte-content') && !n.closest('[data-ppte-locked="true"]'))
+                ?? containers.find(n => /grid|flex/.test(this.doc.defaultView!.getComputedStyle(n).display) && !n.closest('[data-ppte-locked="true"]'))
+                ?? containers.find(n => n.querySelector('p,h1,h2,h3,img,table') && !n.closest('[data-ppte-locked="true"]') && this.doc.defaultView!.getComputedStyle(n).position !== 'absolute') ?? slide;
+            previous = parent.lastElementChild as HTMLElement | null;
+        }
         if (parent.closest('[data-ppte-locked="true"]')) throw Error('OBJECT_PROTECTED');
+        return {parent, previous};
+    }
+    private appendObject(n: HTMLElement, point: {parent: HTMLElement; previous: HTMLElement | null}) {
+        const {parent, previous} = point;
+        if (!parent.isConnected || previous && previous.parentElement !== parent) throw Error('CONFLICT');
+        if (parent.closest('[data-ppte-locked="true"]')) throw Error('OBJECT_PROTECTED');
+        // Keep author containers and styles. New objects participate in native flow;
+        // their own stacking level keeps positioned author headings from hiding them.
+        if (!n.style.position) n.style.position = 'relative';
+        const levels = Array.from((parent.closest('[data-ppte-slide]') ?? parent).querySelectorAll('*')).map(e => Number(this.doc.defaultView!.getComputedStyle(e).zIndex) || 0);
+        n.style.zIndex = String(Math.max(0, ...levels) + 1);
+        n.dataset.ppteId ||= `object-${crypto.randomUUID()}`;
+        if (previous) previous.after(n); else parent.prepend(n);
+        if (n.tagName === 'IMG') {
+            // A descendant z-index cannot escape its author's stacking context.
+            // Reserve space below overlapping headings, without changing author nodes.
+            const slide = parent.closest('[data-ppte-slide]') ?? parent;
+            const r = n.getBoundingClientRect();
+            const headings = Array.from(slide.querySelectorAll('h1,h2,h3,h4,h5,h6')).map(h=>h.getBoundingClientRect());
+            const bottom = Math.max(r.top, ...headings.filter(h=>h.left<r.right && h.right>r.left && h.bottom>r.top && h.top<r.bottom).map(h=>h.bottom+16));
+            if (bottom > r.top) n.style.marginTop = `${bottom-r.top}px`;
+            const placed = n.getBoundingClientRect();
+            const overlap = headings.some(h=>h.left<placed.right && h.right>placed.left && h.bottom>placed.top && h.top<placed.bottom);
+            if (overlap || !placed.width || !placed.height) {
+                n.remove();
+                throw Error('IMAGE_PLACEMENT: 此容器无法避开标题，请选择其他内容位置后插入图片');
+            }
+        }
+        this.record([{id:n.dataset.ppteId, before:'', after:snapshot(n), insertion:{parent, previous, node:n}}]);
+        return n;
+    }
+    insertObject(slideId: string, kind: 'text' | 'rect' | 'ellipse' | 'line' | 'table', referenceId?: string, rows = 2, columns = 2) {
+        const point = this.insertionPoint(slideId, referenceId);
+        if (!['text','rect','ellipse','line','table'].includes(kind)) throw Error('INVALID_OBJECT');
+        const n = this.doc.createElement(kind === 'table' ? 'table' : 'div');
+        n.style.cssText = 'box-sizing:border-box;max-width:100%;width:280px;min-height:32px';
+        if (kind === 'text') {
+            n.dataset.ppteKind = 'text'; n.textContent = '输入文字';
+            n.style.cssText += ';font:28px system-ui;color:#20242d';
+        } else if (kind === 'table') {
+            if (![rows,columns].every(v => Number.isInteger(v) && v >= 1 && v <= 50) || rows * columns > 1000) throw Error('TABLE_SIZE: 最多 50 行/列、1000 单元格');
+            n.style.cssText += ';border-collapse:collapse;width:100%';
+            for (let r=0;r<rows;r++) {
+                const row = (n as HTMLTableElement).insertRow();
+                for(let c=0;c<columns;c++) {
+                    const cell = row.insertCell(); cell.textContent = '内容';
+                    cell.dataset.ppteId = `cell-${crypto.randomUUID()}`;
+                    cell.style.cssText = 'padding:8px;border:1px solid #737a88';
+                }
+            }
+        } else {
+            n.dataset.ppteKind = 'shape'; n.dataset.ppteShape = kind;
+            n.setAttribute('role','img'); n.setAttribute('aria-label', {rect:'矩形',ellipse:'椭圆',line:'线条'}[kind]);
+            n.style.cssText += kind === 'line' ? ';min-height:0;height:2px;border-top:2px solid #5261d8' : ';height:120px;background:#d5dfc9;border:1px solid #5261d8';
+            if (kind === 'ellipse') n.style.borderRadius = '50%';
+        }
+        return this.appendObject(n, point);
+    }
+    duplicate(id: string) {
+        const n = this.node(id);
+        if (n.hasAttribute('data-ppte-slide') || n.matches('td,th') || this.protected(n)) throw Error('OBJECT_PROTECTED_OR_UNSUPPORTED');
+        const copy = clean(n) as HTMLElement;
+        for (const e of [copy,...Array.from(copy.querySelectorAll<HTMLElement>('[data-ppte-id]'))]) e.dataset.ppteId = `object-${crypto.randomUUID()}`;
+        for (const e of [copy,...Array.from(copy.querySelectorAll('[id]'))]) e.removeAttribute('id');
+        return this.appendObject(copy,{parent:n.parentElement!,previous:n});
+    }
+    remove(id: string) {
+        const n = this.node(id), parent = n.parentElement!;
+        if (n.hasAttribute('data-ppte-slide') || n.matches('td,th') || this.protected(n)) throw Error('OBJECT_PROTECTED_OR_UNSUPPORTED');
+        const entry: Entry = {id,before:snapshot(n),after:'',removed:true,insertion:{parent,previous:n.previousElementSibling as HTMLElement | null,node:n}};
+        n.remove(); this.record([entry]);
+    }
+    async insertImage(slideId: string, file: File, referenceId?: string) {
+        const point = this.insertionPoint(slideId, referenceId);
         const src = await this.readMedia(file, true);
-        if (this.node(slideId) !== parent || !parent.isConnected) throw Error('CONFLICT');
-        if (parent.closest('[data-ppte-locked="true"]')) throw Error('OBJECT_PROTECTED');
         const image = this.doc.createElement('img');
         image.dataset.ppteId = `image-${crypto.randomUUID()}`;
         image.src = src; image.alt = '';
         image.style.cssText = 'width:320px;height:240px;max-width:100%;object-fit:contain!important;object-position:50% 50%!important';
-        // A bounded insertion does not mutate protected siblings.
-        const previous = parent.lastElementChild as HTMLElement | null;
-        parent.append(image);
-        this.record([{id:image.dataset.ppteId, before:'', after:snapshot(image), insertion:{parent, previous, node:image}}]);
-        return image;
+        return this.appendObject(image, point);
     }
     async poster(id: string, file: File) {
         const n = this.node(id);

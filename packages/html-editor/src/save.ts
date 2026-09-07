@@ -1,15 +1,16 @@
+import type { HistoryWire } from './versions.js';
 export type SaveState = 'saved' | 'dirty' | 'saving' | 'draft' | 'unauthorized' | 'conflict' | 'failed';
-export interface Snapshot { content: string; hash: string; metadata: {documentId: string; saveRevision: number}; fileKey: string; name: string; recoveryHash?: string }
+export interface Snapshot { history?:HistoryWire; content: string; hash: string; metadata: {documentId: string; saveRevision: number}; fileKey: string; name: string; recoveryHash?: string }
 export interface Adapter { authorize?():Promise<void>; load(): Promise<Snapshot>; write(expected: string, content: string): Promise<Snapshot> }
 export async function sha(text: string) { return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text))),b=>b.toString(16).padStart(2,'0')).join(''); }
 // Recovery compares canonical content and persisted revision; disk conflicts use full file bytes.
 export const recoveryFingerprint = (s: Pick<Snapshot, 'content' | 'metadata'>) => sha(JSON.stringify([s.metadata.documentId,s.metadata.saveRevision,s.content]));
-export function loopbackAdapter(token: string): Adapter {
+export function loopbackAdapter(token: string, history?:()=>HistoryWire|undefined): Adapter {
   const call = async (route: string, data?: object) => {
     const response = await fetch(route,{method:data?'POST':'GET',headers:{Authorization:`Bearer ${token}`,...(data?{'Content-Type':'application/json'}:{})},...(data?{body:JSON.stringify(data)}:{})});
     const result = await response.json(); if (!response.ok) throw Error(result.error); return result;
   };
-  return {load:()=>call('/api/file'),write:(expected,content)=>call('/api/save',{expected,content})};
+  return {load:()=>call('/api/file'),write:(expected,content)=>call('/api/save',{expected,content,...(history?{history:history()}:{} )})};
 }
 export interface FileHandle { name: string; queryPermission(o:object):Promise<string>; requestPermission(o:object):Promise<string>; getFile():Promise<{text():Promise<string>}>; createWritable():Promise<{write(s:string):Promise<void>;close():Promise<void>;abort():Promise<void>}> }
 export function fileAdapter(handle: FileHandle, decode:(s:string)=>Snapshot, encode:(content:string,revision:number)=>string): Adapter {
@@ -32,10 +33,13 @@ export interface Draft { documentId:string; base:string; revision:number; time:n
 export class SaveController {
   state: SaveState = 'unauthorized'; detail = ''; revision = 0; confirmedFileRevision: number | null = null; exportedRevision: number | null = null; draftAvailable = false; composing = false; dirty = false;
   private timer?: ReturnType<typeof setTimeout>; private running = false;
+  autoSave = true; lastSavedAt: number | null = null;
+  private deadline?: ReturnType<typeof setTimeout>;
+  private queued = false;
   private lastDraft?: string;
   private draftTimer?: ReturnType<typeof setTimeout>;
   private cached?: {revision:number; content:string};
-  private serialized() {
+  snapshotContent() {
     if(this.cached?.revision!==this.revision)this.cached={revision:this.revision,content:this.content()};
     return this.cached.content;
   }
@@ -44,16 +48,17 @@ export class SaveController {
   get busy() { return this.running; }
   set(state:SaveState,detail='') { this.state=state;this.detail=detail;this.notify(); }
   draft() {
+    if(this.composing)return;
     try {
       if (!this.storage) throw Error('草稿存储不可用');
-      const value=JSON.stringify({documentId:this.base.metadata.documentId,base:this.base.recoveryHash ?? this.base.hash,revision:this.revision,time:Date.now(),content:this.serialized()} satisfies Draft);
+      const value=JSON.stringify({documentId:this.base.metadata.documentId,base:this.base.recoveryHash ?? this.base.hash,revision:this.revision,time:Date.now(),content:this.snapshotContent()} satisfies Draft);
       this.storage.setItem(this.key,value);this.lastDraft=value;this.draftAvailable=true;
     }
     catch { this.draftAvailable=false;this.detail='草稿存储不可用或配额已满；修改尚未写入文件';this.notify(); }
   }
   recover():Draft|undefined { try { const raw=this.storage?.getItem(this.key);if(!raw)return;const d=JSON.parse(raw);if(typeof d.content!=='string'||d.documentId!==this.base.metadata.documentId)throw Error();if(d.base!==(this.base.recoveryHash ?? this.base.hash)){this.set('conflict','草稿基准已变化；可保留草稿或重新读取文件');}return d; }catch{this.set('failed','草稿不可读取');} }
-  change() { this.dirty=true;this.revision++;if(this.state!=='conflict')this.set(this.adapter?'dirty':'draft');if(!this.composing)this.schedule(); }
-  exported(revision:number) { this.exportedRevision=revision;this.set(this.state,'已生成更新文件；原文件未覆盖（下载是否落盘由浏览器决定）'); }
+  change() { this.dirty=true;this.revision++;if(!['conflict','failed','unauthorized'].includes(this.state)||this.state==='unauthorized'&&(!this.adapter||!this.detail))this.set(this.adapter?'dirty':'draft');if(!this.composing)this.schedule(); }
+  exported(revision:number) { this.exportedRevision=revision;this.set(this.state,'已发起下载，原文件未覆盖（下载是否落盘由浏览器决定）'); }
   // First edit is recoverable immediately; sustained typing checkpoints at most every
   // 200ms (plus main-thread scheduling delay). This is a disclosed crash-loss window.
   schedule() {
@@ -62,15 +67,21 @@ export class SaveController {
       if(this.lastDraft===undefined)this.draft();
       this.draftTimer=setTimeout(()=>{this.draftTimer=undefined;if(this.dirty)this.draft();},200);
     }
-    this.timer=setTimeout(()=>void this.flush(),800);
+    if(this.autoSave && !['conflict','failed','unauthorized'].includes(this.state)) {
+      this.timer=setTimeout(()=>void this.flush(false),1000);
+      this.deadline ??= setTimeout(()=>void this.flush(false),10000);
+    }
   }
-  composition(active:boolean) {this.composing=active;clearTimeout(this.timer);if(!active&&this.dirty)this.schedule();}
-  async flush() {
-    clearTimeout(this.timer);if(this.composing||this.running||!this.dirty||this.state==='conflict')return;
+  setAutoSave(active:boolean) { this.autoSave=active;clearTimeout(this.timer);clearTimeout(this.deadline);this.deadline=undefined;if(active&&this.dirty&&!this.composing)this.schedule();this.notify(); }
+  composition(active:boolean) {this.composing=active;clearTimeout(this.timer);clearTimeout(this.deadline);this.deadline=undefined;if(!active&&this.dirty)this.schedule();}
+  async flush(manual=true) {
+    clearTimeout(this.timer);clearTimeout(this.deadline);this.deadline=undefined;
+    if(this.composing||!this.dirty||this.state==='conflict')return;
+    if(this.running){this.queued ||= manual;return;}
     if(!this.adapter){this.draft();this.set('draft',this.detail);return;}
     this.running=true;const rev=this.revision;this.set('saving');
     try {
-      const next=await this.adapter.write(this.base.hash,this.serialized());this.base=next;this.confirmedFileRevision=rev;
+      const next=await this.adapter.write(this.base.hash,this.snapshotContent());this.base=next;this.confirmedFileRevision=rev;this.lastSavedAt=Date.now();
       if(rev===this.revision){
         this.dirty=false;
         // Another window may have replaced this recovery entry while the file write
@@ -80,6 +91,6 @@ export class SaveController {
       }
       else {this.set('dirty');this.draft();this.schedule();}
     } catch(e) {this.draft();const message=String(e);this.set(message.includes('CONFLICT')?'conflict':message.includes('PERMISSION')?'unauthorized':'failed',message);}
-    finally {this.running=false;}
+    finally {this.running=false;if(this.queued){this.queued=false;if(this.state==='dirty')void this.flush();}}
   }
 }

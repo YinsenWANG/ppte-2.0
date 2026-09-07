@@ -41,16 +41,17 @@ test('H01 acceptance 1: native Grid/Flex/SVG/font hierarchy and nested resources
     const after = await browser.newPage({ viewport:{width:960,height:640}, deviceScaleFactor:1 });
     const frame = await mount(after, enhanced.html);
     await after.waitForFunction(() => !!(window as any).PPTeSave);
-    const inset = await after.locator('#ppte-save-ui').evaluate(n => n.getBoundingClientRect().height + 16);
+    const top = await after.locator('#ppte-save-ui').evaluate(n => n.getBoundingClientRect().height);
+    const inset = top + await after.locator('#ppte-canvas-controls').evaluate(n => n.getBoundingClientRect().height);
     await after.setViewportSize({width:960,height:640+inset});
-    await after.waitForFunction(() => document.querySelector('iframe')!.clientHeight === 640);
+    await after.waitForFunction(() => { const frame=document.querySelector('iframe')!; return frame.clientHeight === 640 && frame.contentDocument!.querySelector('[data-ppte-slide]')!.getBoundingClientRect().width === 960; });
     assert.deepEqual(await measurements(frame), await measurements(before));
     assert.equal(await frame.evaluate(() => document.fonts.check('14px Fixture')), true);
     assert.equal(await frame.locator('.imported').evaluate(el => getComputedStyle(el).borderLeftWidth), '4px');
     // Match the frame's physical screen origin too: Chromium gradient dithering depends
     // on that origin. The baseline iframe loads the untouched author file and CSS.
     await before.setViewportSize({width:960,height:640+inset});
-    await before.setContent(`<style>html,body{margin:0;width:100%;height:100%;background:#111}</style><nav style="position:fixed;z-index:100;top:0;left:0;right:0;height:${inset-16}px;background:white"></nav><iframe src="${pathToFileURL(join(fixture,'layout.html')).href}" style="display:block;border:0;width:960px;height:640px;margin-top:${inset}px"></iframe>`);
+    await before.setContent(`<style>html,body{margin:0;width:100%;height:100%;background:#111}</style><nav style="position:fixed;z-index:100;top:0;left:0;right:0;height:${top}px;background:white"></nav><iframe src="${pathToFileURL(join(fixture,'layout.html')).href}" style="display:block;border:0;width:960px;height:640px;margin-top:${top}px"></iframe>`);
     const originalFrame = before.frames().find(f => f.parentFrame())!;
     await originalFrame.waitForLoadState();
     await originalFrame.evaluate(async () => { await document.fonts.ready; await Promise.all(Array.from(document.images,i=>i.decode())); });

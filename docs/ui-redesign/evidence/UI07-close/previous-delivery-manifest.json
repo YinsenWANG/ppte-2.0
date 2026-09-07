@@ -1,0 +1,32 @@
+{
+  "timestamp": "2026-09-07T06:01:53.264223+00:00",
+  "implementationCommit": "536674af1cbb4163434761804d487a57aae9982a",
+  "sample": {
+    "path": "docs/ui-redesign/evidence/delivery/把作品带走.ppte.html",
+    "sha256": "1c2e5df4578196e68261a7c120a02835887d43acf75b7773ef2fd054b1e6972c",
+    "bytes": 374579,
+    "source": "tests/fixtures/ui06/journey.html",
+    "generation": "Actual UI06 production browser download after restore; no post-download HTML edits",
+    "containsHistory": true,
+    "runtimeRequiresNode": false,
+    "entry": "file://",
+    "nativePermissions": "pending",
+    "humanReview": "pending"
+  },
+  "UIStatus": {
+    "UI01": "done",
+    "UI02": "done",
+    "UI03": "done",
+    "UI04": "done",
+    "UI05": "done",
+    "UI06": "partial",
+    "UI07": "partial"
+  },
+  "S06-S08": {
+    "S06": "partial",
+    "S07": "partial",
+    "S08": "partial"
+  },
+  "verification": "docs/ui-redesign/evidence/UI06/verification/result.json",
+  "note": "Delivery prepared in UI06; CLOSING must retain partial states and outstanding gates."
+}

@@ -26,8 +26,9 @@ test('S01 file URL: offline visible entry, native canvas, text/format/undo, pres
       await page.goto(pathToFileURL(path).href);
       await page.waitForFunction(()=>!!(window as any).PPTeSave);
       assert.equal(await page.locator('#ppte-save-ui strong').textContent(),'Native design · Grid / Flex / SVG');
-      for(const name of ['编辑','放映','保存 / 授权','下载更新后的文件']) assert.equal(await page.getByRole('button',{name,exact:true}).isVisible(),true);
-      assert.match(await page.getByRole('status').textContent()??'',/尚未关联写入文件/);
+      for(const name of ['编辑','放映','保存','下载更新后的文件']) assert.equal(await page.getByRole('button',{name,exact:true}).isVisible(),true);
+      assert.match(await page.locator('[role=status]').textContent()??'',/尚未关联写入文件/);
+      assert.equal(await page.locator('[role=status]').isVisible(),false);
       const frame=page.frameLocator('#ppte-frame');
       await frame.locator('img').evaluate(async n=>{await (n as HTMLImageElement).decode();});
       assert.equal(await frame.locator('.slide').evaluate(n=>getComputedStyle(n).display),'grid');
@@ -45,7 +46,7 @@ test('S01 file URL: offline visible entry, native canvas, text/format/undo, pres
       assert.equal(await page.locator('#ppte-save-ui').isVisible(),false);
       assert.equal(await page.locator('#ppte-workspace').isVisible(),false);
       await page.mouse.move(0,0);await page.waitForTimeout(2000);
-      assert.equal(await page.locator('#ppte-player-controls').evaluate(n=>getComputedStyle(n).opacity),'0');
+      assert.equal(await page.locator('#ppte-player-controls').count(),0);
       if(path===file)await page.screenshot({path:join(out,'present.png')});
       await page.keyboard.press('Escape');
       assert.equal(await page.locator('#ppte-save-ui').isVisible(),true);

@@ -70,7 +70,10 @@ test('S06 file journey: mixed ratios, insert/replace/focus/reset, guarded histor
   await page.getByLabel('替换视频封面').setInputFiles({name:'poster.webp',mimeType:fixtures[2].mime,buffer:Buffer.from(fixtures[2].src.split(',')[1],'base64')});
   await page.waitForFunction(src=>(window as any).PPTeEditor.commands.node('film').getAttribute('poster')===src,fixtures[2].src);
   await page.evaluate(()=>{const c=(window as any).PPTeEditor.commands;c.history();c.history(true);c.lock(['t0'],true);});
-  await page.getByLabel('插入本地图片').setInputFiles({name:'new.png',mimeType:'image/png',buffer:Buffer.from(fixtures[0].src.split(',')[1],'base64')});
+  await page.getByRole('button',{name:'插入',exact:true}).click();
+  const imageChooser=page.waitForEvent('filechooser');
+  await page.getByRole('menuitem',{name:'图片',exact:true}).click();
+  await (await imageChooser).setFiles({name:'new.png',mimeType:'image/png',buffer:Buffer.from(fixtures[0].src.split(',')[1],'base64')});
   await page.waitForFunction(()=>(window as any).PPTeEditor.commands.doc.querySelectorAll('img').length===13);
   const history=await page.evaluate(async()=>{
    const c=(window as any).PPTeEditor.commands, n=c.doc.querySelector('img[data-ppte-id^="image-"]'),id=n.dataset.ppteId;

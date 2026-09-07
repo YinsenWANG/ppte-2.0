@@ -1,0 +1,24 @@
+{
+  "time": "2026-09-07T05:11:40.576Z",
+  "browser": "152.0.7977.76",
+  "bridge": true,
+  "nativePermission": false,
+  "saveMs": 566.6740420000006,
+  "bytes": {
+    "resource": 555154,
+    "saved": 887691,
+    "historyOnlyMedia": 887428,
+    "public": 330039
+  },
+  "resourceCopies": 1,
+  "quotaBlockedHistoryOnly": true,
+  "currentSaveSucceeded": true,
+  "privateResourceAbsentFromPublic": true,
+  "S04": {
+    "source": "docs/single-file-first/evidence/s04/comparison.json",
+    "saveP95Ms": 852.8000001907349,
+    "saveLimitMs": 1500,
+    "comparable": false,
+    "reason": "One actual disk bridge operation on a 512×512 PNG; S04 uses another workload and p95. Not an equivalent native or controlled performance comparison."
+  }
+}

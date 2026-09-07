@@ -1,0 +1,10 @@
+{
+  "browser": "152.0.7977.76",
+  "headless": true,
+  "offline": true,
+  "entry": "file://",
+  "errors": [],
+  "network": [],
+  "timestamp": "2026-09-07T05:42:22.215Z",
+  "verdict": "Assertions in TAP are authoritative"
+}

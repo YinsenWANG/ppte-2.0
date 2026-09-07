@@ -1,0 +1,250 @@
+{
+  "task": "UI05",
+  "status": "passed-code-and-automated",
+  "commit": "6fca967b968327f5f7f730fd23bb260dd2376116",
+  "parentCommit": "8976071b7c46ca83406b69873c54893dec22cfbb",
+  "baseCommit": "0e6b1e3",
+  "timestamp": "2026-09-07T05:53:23.312305+00:00",
+  "platform": {
+    "system": "Darwin",
+    "release": "25.6.0",
+    "machine": "arm64",
+    "node": "v22.23.2",
+    "pnpm": "11.22.0"
+  },
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/ui-redesign/evidence/UI05/verification/typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/ui-redesign/evidence/UI05/verification/build.log"
+    },
+    {
+      "command": "pnpm test",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/ui-redesign/evidence/UI05/verification/test.log"
+    }
+  ],
+  "tests": {
+    "total": 101,
+    "passed": 101,
+    "failed": 0,
+    "added": 4,
+    "removed": 0,
+    "existingAssertionsWeakened": 0
+  },
+  "statusByLayer": {
+    "code": "passed",
+    "automated": "passed: 101/101 tests; four UI05 acceptance tests on dist",
+    "real-browser": "partial: installed Chrome headless offline file://; native zoom, system font, physical touch, Safari and screen reader pending",
+    "human": "pending: no owner or target-user review"
+  },
+  "acceptance": [
+    {
+      "index": 1,
+      "criterion": "1440/1024/820/390窗口",
+      "status": "passed-code-and-automated",
+      "test": "tests/ui05-accessibility.test.ts — UI05 acceptance 1",
+      "capture": "docs/ui-redesign/evidence/UI05/windows.json",
+      "verdictLog": "docs/ui-redesign/evidence/UI05/verification/test.log"
+    },
+    {
+      "index": 2,
+      "criterion": "200%缩放和触控目标",
+      "status": "passed-code-and-automated",
+      "test": "tests/ui05-accessibility.test.ts — UI05 acceptance 2",
+      "capture": "docs/ui-redesign/evidence/UI05/zoom-touch.json",
+      "verdictLog": "docs/ui-redesign/evidence/UI05/verification/test.log"
+    },
+    {
+      "index": 3,
+      "criterion": "菜单键盘与焦点恢复",
+      "status": "passed-code-and-automated",
+      "test": "tests/ui05-accessibility.test.ts — UI05 acceptance 3",
+      "capture": "docs/ui-redesign/evidence/UI05/keyboard.json",
+      "verdictLog": "docs/ui-redesign/evidence/UI05/verification/test.log"
+    },
+    {
+      "index": 4,
+      "criterion": "图标标签和重要文字对比",
+      "status": "passed-code-and-automated",
+      "test": "tests/ui05-accessibility.test.ts — UI05 acceptance 4",
+      "capture": "docs/ui-redesign/evidence/UI05/contrast.json",
+      "verdictLog": "docs/ui-redesign/evidence/UI05/verification/test.log"
+    }
+  ],
+  "pending": {
+    "native200PercentZoom": {
+      "status": "pending",
+      "measurement": null,
+      "reason": "720×450 CSS layout viewport is a 200% reflow equivalent of 1440×900, not an OS/browser zoom-menu session."
+    },
+    "systemLargeFont": {
+      "status": "pending",
+      "measurement": null,
+      "reason": "20px shell font injection is a layout stress test, not OS accessibility font settings."
+    },
+    "physicalTouch": {
+      "status": "pending",
+      "measurement": null,
+      "reason": "Coarse-pointer browser context and target geometry only; no physical touch device."
+    },
+    "screenReader": {
+      "status": "pending",
+      "measurement": null,
+      "reason": "No screen reader session or reviewer available."
+    },
+    "Safari": {
+      "status": "pending",
+      "measurement": null,
+      "reason": "No Safari automation or human Safari session collected."
+    },
+    "nativePermissions": {
+      "status": "pending",
+      "measurement": null,
+      "reason": "No original-file picker authorization session collected; existing UI04 pending unchanged."
+    },
+    "systemIME": {
+      "status": "pending",
+      "measurement": null,
+      "reason": "No operating-system IME session collected."
+    },
+    "humanReview": {
+      "status": "pending",
+      "measurement": null,
+      "reason": "No owner or target-user UI/aesthetic ratings available."
+    },
+    "realLowPerformanceDevice": {
+      "status": "pending",
+      "measurement": null,
+      "reason": "Development Mac is not a low-performance target device."
+    }
+  },
+  "sample": {
+    "path": "docs/ui-redesign/evidence/UI05/sample.ppte.html",
+    "sha256": "fef93d4604bea30e2a7d76f0d467177152b8a4b8c86500d1193ccedacfc0e230",
+    "bytes": 354022,
+    "source": "Current enhanceHTML product output exercised offline in Chrome; synthetic UI05 layout fixture, not a human-reviewed final presentation."
+  },
+  "measurements": {
+    "contrast": "docs/ui-redesign/evidence/UI05/contrast-ratios.json",
+    "touchTargets": "docs/ui-redesign/evidence/UI05/touch-targets.json",
+    "minimumTextContrast": 4.567109366198561
+  },
+  "earlierFailures": [
+    {
+      "log": "docs/ui-redesign/evidence/UI05/verification/initial-full-test.log",
+      "reason": "Two UI07 old button locators no longer match proper menuitem semantics; locator and reopen interactions updated, assertions retained."
+    },
+    {
+      "log": "docs/ui-redesign/evidence/UI05/verification/initial-targeted.log",
+      "reason": "PDF count assertion caught deferred menuitem role installation on toggle; product semantics installed eagerly and on added children."
+    }
+  ],
+  "upstream": {
+    "UI07": "partial: current-media lifecycle gap unchanged",
+    "UI06": "pending",
+    "S06_S07_S08": "partial unchanged; supplemental reference only",
+    "N01_N04_performance": "No existing audit, media, telemetry, native or human gaps cancelled."
+  },
+  "signature": {
+    "type": "GPG",
+    "status": "verified",
+    "log": "docs/ui-redesign/evidence/UI05/verification/signature.log",
+    "DCO": "Signed-off-by: yinsen <cherryai001@yinsenMac-mini.local>"
+  },
+  "workspaceHygiene": "Pre-existing brief7-UI05.md retained and locally excluded; no push.",
+  "artifacts": [
+    {
+      "path": "docs/ui-redesign/evidence/UI05/IMPLEMENTATION.md",
+      "sha256": "fee9f6d69044ebd0b15b5f1b6737ca685df1d6063525cc52100c3c1da318f4de"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI05/contrast-ratios.json",
+      "sha256": "24641a1866f73d8f309c588e3e272809042559f91c2be9e33593a925dc7f2b73"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI05/contrast.json",
+      "sha256": "156e578c5d645b52aabd1fecf1dd4c61452583f398b78e742ded1225722c9d68"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI05/editing-1024.png",
+      "sha256": "4becc44ddb66c8d118daa0d7b1cd855bfee8bbebf5acbf884e81e3e9a9ae21bc"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI05/editing-1440.png",
+      "sha256": "c8fe97c2176f50b39fecea2c9fb72f7cf67aba6377f76cbfa155a9e216c2b250"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI05/editing-390.png",
+      "sha256": "42d07117f20c6d3a1a2fb8265ba1c38363a3a746dbcb84533d2e437e94a0d594"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI05/editing-820.png",
+      "sha256": "c13a1c345f474131b5e6074ca7fe3f04c5e49a6f542e9cf4f224649ffbbb5d32"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI05/keyboard-focus.png",
+      "sha256": "40ca14b78f99cbb024a09bc938231e542b32a79b209d9f449fa0ba43123eda11"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI05/keyboard.json",
+      "sha256": "b339d3b276291dbfb3a5997297fd005b6842004ca6803aafcdd9732c61dc9b74"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI05/large-text-touch.png",
+      "sha256": "92251ed07b7ff6e8890c845277445ccec7e44699491fcaf2e104756117eb4324"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI05/sample.ppte.html",
+      "sha256": "fef93d4604bea30e2a7d76f0d467177152b8a4b8c86500d1193ccedacfc0e230"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI05/touch-targets.json",
+      "sha256": "61233529e66fa6e558b9dced0fbefb294dde329d2e2bddc8e4787da40b5db33b"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI05/verification/build.log",
+      "sha256": "981710c4773357321873464210550419258feecb6af85bb9df41b33c0f6bd351"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI05/verification/initial-full-test.log",
+      "sha256": "c2a4c4aaccd6b0543d3a00976226b87938eb8944f96a3519870fa2fae80b0d48"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI05/verification/initial-targeted.log",
+      "sha256": "403350e8d891d5a6481575658db6e45095acfa4a7fc471da233d7d1dccc2c69e"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI05/verification/pending.json",
+      "sha256": "4d70a758c819a0ea056c304aa1e60717835a68a7c2fad3b310e6d159064d2e8a"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI05/verification/signature.log",
+      "sha256": "c5509acf170cf2b1f5ce4ac13cf57bddf38e15a44e2bb79bc71b4e57fd435835"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI05/verification/test.log",
+      "sha256": "659ff5fb169c359889996899769f55cf4eec8d00d908710ebf1fc144f553b942"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI05/verification/typecheck.log",
+      "sha256": "0ae79858d1378de4a49bb6bdcaf88acb5b1de35ec309f992f3d1193e86a2a4a2"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI05/windows.json",
+      "sha256": "48d6a08dfdda3b8ec081bbf34bcd22f7359c480c3e64f16109b8cd056606f9d4"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI05/zoom-touch.json",
+      "sha256": "3d5ca29f965b60df309ef2d78894a8e4a59a778f0b3bbc35eb05afc592da3ed2"
+    }
+  ]
+}

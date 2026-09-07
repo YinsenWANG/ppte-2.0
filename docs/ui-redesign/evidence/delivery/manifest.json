@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-09-07T06:05:36.328Z",
+  "implementationCommit": "b2b3ba02e0066391877aa932d8533fde030150b0",
+  "sample": {
+    "path": "docs/ui-redesign/evidence/delivery/把作品带走.ppte.html",
+    "sha256": "1b01007e5f752822ce1b904338818b1709a7672b94f6ffa6537918609c1fc591",
+    "bytes": 368304,
+    "source": "docs/ui-redesign/evidence/UI07-close/authored.html",
+    "generation": "Built CLI enhance on authored HTML; product UI two named checkpoints, restore, actual download; final bytes unedited",
+    "containsHistory": true,
+    "runtimeRequiresNode": false,
+    "entry": "file://",
+    "nativePermissions": "pending",
+    "humanReview": "pending"
+  },
+  "UIStatus": {
+    "UI01": "done",
+    "UI02": "done",
+    "UI03": "done",
+    "UI04": "done",
+    "UI05": "done",
+    "UI06": "partial",
+    "UI07": "partial"
+  },
+  "S06-S08": {
+    "S06": "partial",
+    "S07": "partial",
+    "S08": "partial"
+  },
+  "verification": "docs/ui-redesign/evidence/UI07-close/verification/result.json",
+  "openCheck": "docs/ui-redesign/evidence/delivery/open-check.json",
+  "note": "Closing bundle complete; product acceptance remains partial. Prior UI06 delivery manifest archived under UI07-close; UI06 journey hashes identify its original artifact, not this regenerated file."
+}

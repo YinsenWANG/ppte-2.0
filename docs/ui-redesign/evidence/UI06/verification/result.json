@@ -1,0 +1,140 @@
+{
+  "task": "UI06",
+  "status": "partial",
+  "commit": "536674af1cbb4163434761804d487a57aae9982a",
+  "platform": {
+    "system": "Darwin",
+    "release": "25.6.0",
+    "machine": "arm64",
+    "node": "v22.23.2"
+  },
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/ui-redesign/evidence/UI06/verification/typecheck.log",
+      "logSha256": "0ae79858d1378de4a49bb6bdcaf88acb5b1de35ec309f992f3d1193e86a2a4a2",
+      "commit": "536674af1cbb4163434761804d487a57aae9982a",
+      "startedAt": "2026-09-07T06:00:30.548554+00:00",
+      "completedAt": "2026-09-07T06:00:31.620154+00:00"
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/ui-redesign/evidence/UI06/verification/build.log",
+      "logSha256": "981710c4773357321873464210550419258feecb6af85bb9df41b33c0f6bd351",
+      "commit": "536674af1cbb4163434761804d487a57aae9982a",
+      "startedAt": "2026-09-07T06:00:31.630301+00:00",
+      "completedAt": "2026-09-07T06:00:32.869826+00:00"
+    },
+    {
+      "command": "pnpm test",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/ui-redesign/evidence/UI06/verification/test.log",
+      "logSha256": "c0277b3c82b6cf5fca37c05f0e3817ab24cf6a097aac53e7200382b88e1f01b2",
+      "commit": "536674af1cbb4163434761804d487a57aae9982a",
+      "startedAt": "2026-09-07T06:00:32.879824+00:00",
+      "completedAt": "2026-09-07T06:01:04.211239+00:00"
+    }
+  ],
+  "timestamp": "2026-09-07T06:01:53.264223+00:00",
+  "tests": {
+    "framework": "node --test dist/tests/*.test.js",
+    "total": 104,
+    "passed": 104,
+    "failed": 0,
+    "skipped": 0,
+    "newUI06Tests": 3,
+    "existingAssertionsChanged": 0
+  },
+  "acceptance": [
+    {
+      "index": 1,
+      "requirement": "离线阅读编辑保存重开放映PDF",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "partial: installed Chrome headless; Safari/native pending",
+      "human": "pending",
+      "evidence": [
+        "tests/ui06-acceptance.test.ts",
+        "docs/ui-redesign/evidence/UI06/journey.json",
+        "docs/ui-redesign/evidence/UI06/pdf-inspection.json"
+      ],
+      "reason": "Actual offline downloads and two full browser exits; PDF API/PDFKit checked. Original-file native authorization remains pending; UI04 bridge remains separate."
+    },
+    {
+      "index": 2,
+      "requirement": "四类对象历史持久化",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "partial: installed Chrome headless; Safari/native pending",
+      "human": "pending",
+      "evidence": [
+        "tests/ui06-acceptance.test.ts",
+        "docs/ui-redesign/evidence/UI06/journey.json",
+        "docs/ui-redesign/evidence/UI06/pdf-inspection.json"
+      ],
+      "reason": "Exact full-content comparison and four-type preview assertions; two named versions plus before-restore survive portable file; small PNG stored once. UI07 A4 current-media lifecycle still incomplete."
+    },
+    {
+      "index": 3,
+      "requirement": "真实Chrome/Safari与原生权限",
+      "code": "passed",
+      "automated": "partial",
+      "real-browser": "partial: installed Chrome headless; Safari/native pending",
+      "human": "pending",
+      "evidence": [
+        "tests/ui06-acceptance.test.ts",
+        "docs/ui-redesign/evidence/UI06/journey.json",
+        "docs/ui-redesign/evidence/UI06/environment-matrix.json"
+      ],
+      "reason": "Only installed Chrome headless ran. Evidence-contract test enforces null+reason; it is not a Safari or native-permission pass."
+    },
+    {
+      "index": 4,
+      "requirement": "用户UI反馈与样稿审美分别记录",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "not-applicable: collection records",
+      "human": "pending",
+      "evidence": [
+        "tests/ui06-acceptance.test.ts",
+        "docs/ui-redesign/evidence/UI06/journey.json",
+        "docs/ui-redesign/evidence/UI06/ui-feedback.json",
+        "docs/ui-redesign/evidence/UI06/sample-aesthetics.json"
+      ],
+      "reason": "UI and aesthetic records are separate and schema-tested, with three unfilled reviewers and independent vetoes. No human rating or nine-pair completion claim."
+    }
+  ],
+  "statusByLayer": {
+    "code": "partial: journey and records complete; UI07 A4 dependency incomplete",
+    "automated": "104/104 passed; full UI06 Chrome journey and evidence contracts; native/Safari criterion not established",
+    "real-browser": "partial: installed Chrome headless file://; native picker, Safari, OS IME, native print and independent device pending",
+    "human": "pending: owner and two target-user UI and aesthetic reviews absent"
+  },
+  "sample": {
+    "path": "docs/ui-redesign/evidence/delivery/把作品带走.ppte.html",
+    "sha256": "1c2e5df4578196e68261a7c120a02835887d43acf75b7773ef2fd054b1e6972c",
+    "bytes": 374579,
+    "source": "tests/fixtures/ui06/journey.html",
+    "generation": "Actual UI06 production browser download after restore; no post-download HTML edits",
+    "containsHistory": true,
+    "runtimeRequiresNode": false,
+    "entry": "file://",
+    "nativePermissions": "pending",
+    "humanReview": "pending"
+  },
+  "limitations": [
+    "UI07 A4/S06 current live DOM media lifecycle incomplete; small-image transport fix does not close it.",
+    "Native permission/OS IME/Safari/screen reader/no-Node target require real sessions; null results in environment-matrix.json.",
+    "S04 input/page-turn budgets, real low-performance device and controlled telemetry unchanged.",
+    "S08 nine controlled pairs, actual mixed images, semantic crop and three human reviews pending; separate records do not constitute acceptance."
+  ],
+  "firstFailure": {
+    "log": "docs/ui-redesign/evidence/UI06/verification/initial-test.log",
+    "reason": "Small PNG repeated four times; transport cutoff removed, exact one-copy assertion retained."
+  }
+}

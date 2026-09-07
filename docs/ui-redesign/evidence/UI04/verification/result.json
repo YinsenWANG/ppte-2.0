@@ -1,0 +1,185 @@
+{
+  "task": "UI04",
+  "status": "passed-code-and-automated",
+  "commit": "abe467c87347cb6c8c52b0ecaff16968cba1a168",
+  "timestamp": "2026-09-07T04:52:41.197819+00:00",
+  "platform": {
+    "system": "Darwin",
+    "release": "25.6.0",
+    "machine": "arm64",
+    "node": "v22.23.2"
+  },
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/ui-redesign/evidence/UI04/verification/typecheck.log",
+      "logSha256": "0ae79858d1378de4a49bb6bdcaf88acb5b1de35ec309f992f3d1193e86a2a4a2",
+      "commit": "abe467c87347cb6c8c52b0ecaff16968cba1a168",
+      "completedAt": "2026-09-07T04:51:31.956561+00:00"
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/ui-redesign/evidence/UI04/verification/build.log",
+      "logSha256": "981710c4773357321873464210550419258feecb6af85bb9df41b33c0f6bd351",
+      "commit": "abe467c87347cb6c8c52b0ecaff16968cba1a168",
+      "completedAt": "2026-09-07T04:51:32.948518+00:00"
+    },
+    {
+      "command": "pnpm test",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/ui-redesign/evidence/UI04/verification/test.log",
+      "logSha256": "97b9c8eb6d62b77bbf31480995f53c227dde063dc82a803312fc368d1a559f02",
+      "commit": "abe467c87347cb6c8c52b0ecaff16968cba1a168",
+      "completedAt": "2026-09-07T04:51:57.704467+00:00"
+    }
+  ],
+  "tests": {
+    "framework": "node --test dist/tests/*.test.js",
+    "total": 80,
+    "passed": 80,
+    "failed": 0,
+    "newUI04Tests": 4
+  },
+  "acceptance": [
+    {
+      "index": 1,
+      "requirement": "无关联可进入编辑",
+      "code": "passed",
+      "automated": "passed",
+      "evidence": [
+        "tests/ui04-saving.test.ts",
+        "tests/single-file-save.test.ts",
+        "tests/html-save.test.ts",
+        "docs/ui-redesign/evidence/UI04/IMPLEMENTATION.md"
+      ],
+      "real-browser": "passed: Chrome headless",
+      "human": "pending"
+    },
+    {
+      "index": 2,
+      "requirement": "原生授权后实际写回",
+      "code": "passed",
+      "automated": "passed",
+      "evidence": [
+        "tests/ui04-saving.test.ts",
+        "tests/single-file-save.test.ts",
+        "tests/html-save.test.ts",
+        "docs/ui-redesign/evidence/UI04/IMPLEMENTATION.md"
+      ],
+      "real-browser": "pending",
+      "human": "pending"
+    },
+    {
+      "index": 3,
+      "requirement": "未写回文案准确",
+      "code": "passed",
+      "automated": "passed",
+      "evidence": [
+        "tests/ui04-saving.test.ts",
+        "tests/single-file-save.test.ts",
+        "tests/html-save.test.ts",
+        "docs/ui-redesign/evidence/UI04/IMPLEMENTATION.md"
+      ],
+      "real-browser": "passed: Chrome headless",
+      "human": "pending"
+    },
+    {
+      "index": 4,
+      "requirement": "失败/权限撤销/外部修改可恢复",
+      "code": "passed",
+      "automated": "passed",
+      "evidence": [
+        "tests/ui04-saving.test.ts",
+        "tests/single-file-save.test.ts",
+        "tests/html-save.test.ts",
+        "docs/ui-redesign/evidence/UI04/IMPLEMENTATION.md"
+      ],
+      "real-browser": "pending",
+      "human": "pending"
+    },
+    {
+      "index": 5,
+      "requirement": "防抖和持续输入调度，原生授权后自动写回",
+      "code": "passed",
+      "automated": "passed",
+      "evidence": [
+        "tests/ui04-saving.test.ts",
+        "tests/single-file-save.test.ts",
+        "tests/html-save.test.ts",
+        "docs/ui-redesign/evidence/UI04/IMPLEMENTATION.md"
+      ],
+      "real-browser": "pending",
+      "human": "pending"
+    },
+    {
+      "index": 6,
+      "requirement": "写入队列与修订号防止旧快照覆盖新修改",
+      "code": "passed",
+      "automated": "passed",
+      "evidence": [
+        "tests/ui04-saving.test.ts",
+        "tests/single-file-save.test.ts",
+        "tests/html-save.test.ts",
+        "docs/ui-redesign/evidence/UI04/IMPLEMENTATION.md"
+      ],
+      "real-browser": "passed: Chrome headless",
+      "human": "pending"
+    },
+    {
+      "index": 7,
+      "requirement": "同名不同文档、外部改动和权限失效正确处理",
+      "code": "passed",
+      "automated": "passed",
+      "evidence": [
+        "tests/ui04-saving.test.ts",
+        "tests/single-file-save.test.ts",
+        "tests/html-save.test.ts",
+        "docs/ui-redesign/evidence/UI04/IMPLEMENTATION.md"
+      ],
+      "real-browser": "pending",
+      "human": "pending"
+    },
+    {
+      "index": 8,
+      "requirement": "IME完整事务与新进程重开实测",
+      "code": "passed",
+      "automated": "passed",
+      "evidence": [
+        "tests/ui04-saving.test.ts",
+        "tests/single-file-save.test.ts",
+        "tests/html-save.test.ts",
+        "docs/ui-redesign/evidence/UI04/IMPLEMENTATION.md"
+      ],
+      "real-browser": "pending",
+      "human": "pending"
+    }
+  ],
+  "real-browser": {
+    "chromeHeadless": "passed: product panel, actual download and fresh-process offline reopen",
+    "nativePicker": null,
+    "systemIME": null,
+    "safari": null,
+    "reason": "No native permission dialog or system IME interaction recorded; bridge and synthetic events are automation only"
+  },
+  "human": {
+    "status": "pending",
+    "result": null,
+    "reason": "No human reviewer or screen-reader session available"
+  },
+  "sample": {
+    "path": "docs/ui-redesign/evidence/UI04/sample.ppte.html",
+    "bytes": 315132,
+    "sha256": "10bbebe9fbc313ddf5fa422e271b4e3f40f19ff2bd088b0062fe6656a73ed7b8"
+  },
+  "limitations": [
+    "Native file permission and IME acceptance remain pending at real-browser/human layers.",
+    "No OS-exclusive file lock: check/write race remains documented.",
+    "S04 performance and S06 media/N01–N04 unresolved evidence not cancelled.",
+    "UI07 portable persistent history remains a separate pending task."
+  ]
+}

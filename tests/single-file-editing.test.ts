@@ -58,11 +58,13 @@ test('S03 F02-F05 file UI: protected local insert/history, unique identity, nati
     const content=await p.evaluate(()=>(window as any).PPTeHTML.content());
     for(const [index,pattern] of [[1,/rgb\(153, 51, 68\)/],[4,/linear-gradient/],[5,/rgba\(0, 0, 0, 0\)/]] as const){
       await p.getByRole('button',{name:`第 ${index} 页`,exact:true}).click();
+      await p.getByRole('button',{name:'页面设置',exact:true}).click();
       assert.match(await p.getByLabel('背景',{exact:true}).inputValue(),pattern);
     }
     assert.equal(await p.evaluate(()=>(window as any).PPTeHTML.content()),content);
     await p.getByLabel('背景',{exact:true}).fill('#123456');await p.getByLabel('背景',{exact:true}).press('Enter');await p.getByLabel('背景',{exact:true}).press('Tab');
     await p.getByRole('button',{name:'撤销',exact:true}).click();
+    await p.getByRole('button',{name:'页面设置',exact:true}).click();
     assert.match(await p.getByLabel('背景',{exact:true}).inputValue(),/rgba\(0, 0, 0, 0\)/);
     await p.screenshot({path:join(out,'background-transparent.png')});
     // Flex sample insertion is also measured and retains cqw text.
@@ -79,6 +81,7 @@ test('S03 F02-F05 file UI: protected local insert/history, unique identity, nati
     await p.getByRole('button',{name:'编辑',exact:true}).click();
     for(let i=1;i<=6;i++){
       await p.getByRole('button',{name:`第 ${i} 页`,exact:true}).click();
+      await p.getByRole('button',{name:'页面设置',exact:true}).click();
       assert.match(await p.getByLabel('背景',{exact:true}).inputValue(),i<=3 ? /rgb\(153, 51, 68\)/ : i<=5 ? /linear-gradient/ : /rgba\(0, 0, 0, 0\)/);
       await p.getByRole('button',{name:'缩小画布',exact:true}).click();
       results.presentation.push(await visibleCurrent(p));
