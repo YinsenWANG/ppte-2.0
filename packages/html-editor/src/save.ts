@@ -1,15 +1,16 @@
+import type { HistoryWire } from './versions.js';
 export type SaveState = 'saved' | 'dirty' | 'saving' | 'draft' | 'unauthorized' | 'conflict' | 'failed';
-export interface Snapshot { content: string; hash: string; metadata: {documentId: string; saveRevision: number}; fileKey: string; name: string; recoveryHash?: string }
+export interface Snapshot { history?:HistoryWire; content: string; hash: string; metadata: {documentId: string; saveRevision: number}; fileKey: string; name: string; recoveryHash?: string }
 export interface Adapter { authorize?():Promise<void>; load(): Promise<Snapshot>; write(expected: string, content: string): Promise<Snapshot> }
 export async function sha(text: string) { return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text))),b=>b.toString(16).padStart(2,'0')).join(''); }
 // Recovery compares canonical content and persisted revision; disk conflicts use full file bytes.
 export const recoveryFingerprint = (s: Pick<Snapshot, 'content' | 'metadata'>) => sha(JSON.stringify([s.metadata.documentId,s.metadata.saveRevision,s.content]));
-export function loopbackAdapter(token: string): Adapter {
+export function loopbackAdapter(token: string, history?:()=>HistoryWire|undefined): Adapter {
   const call = async (route: string, data?: object) => {
     const response = await fetch(route,{method:data?'POST':'GET',headers:{Authorization:`Bearer ${token}`,...(data?{'Content-Type':'application/json'}:{})},...(data?{body:JSON.stringify(data)}:{})});
     const result = await response.json(); if (!response.ok) throw Error(result.error); return result;
   };
-  return {load:()=>call('/api/file'),write:(expected,content)=>call('/api/save',{expected,content})};
+  return {load:()=>call('/api/file'),write:(expected,content)=>call('/api/save',{expected,content,...(history?{history:history()}:{} )})};
 }
 export interface FileHandle { name: string; queryPermission(o:object):Promise<string>; requestPermission(o:object):Promise<string>; getFile():Promise<{text():Promise<string>}>; createWritable():Promise<{write(s:string):Promise<void>;close():Promise<void>;abort():Promise<void>}> }
 export function fileAdapter(handle: FileHandle, decode:(s:string)=>Snapshot, encode:(content:string,revision:number)=>string): Adapter {

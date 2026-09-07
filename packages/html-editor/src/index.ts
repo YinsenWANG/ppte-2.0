@@ -1,4 +1,7 @@
-import { unpackMedia } from '../../html-document/src/media-table.js';
+import { versionPanel } from './version-panel.js';
+import { Versions } from './versions.js';
+import { readHistory } from '../../html-document/src/history-wire.js';
+import { packMedia, unpackMedia } from '../../html-document/src/media-table.js';
 import { workspace } from './workspace.js';
 import { SaveController, loopbackAdapter, fileAdapter, recoveryFingerprint, type Snapshot, type FileHandle } from './save.js';
 interface API {
@@ -8,10 +11,12 @@ interface API {
     content(): string;
     normalize(s: string): string;
     mount(s: string): Promise<void>;
-    encode(s: string, revision: number, documentId?: string): string;
+    encode(s: string, revision: number, documentId?: string, withoutHistory?:boolean): string;
+    versions:Versions;
 }
 export function installEditor(api: API) {
     let controller: SaveController;
+    let openingHistory=JSON.stringify(api.versions.wire());
     let boundFileName = '';
     let associating = false;
     let ui: ReturnType<typeof workspace>;
@@ -53,7 +58,7 @@ export function installEditor(api: API) {
         const menu = savePanel;
         if (menu && controller.state === 'conflict')
             menu.open = true;
-        status.textContent = (controller.detail.startsWith('已发起下载') ? controller.detail : (controller.state === 'saved' && boundFileName ? '已保存到所选文件：' + boundFileName + (controller.lastSavedAt ? ' · ' + new Date(controller.lastSavedAt).toLocaleTimeString() : '') : names[controller.state]) + (controller.detail ? '：' + controller.detail : '')) + (controller.dirty && !controller.draftAvailable ? ' · 草稿恢复不可用；请保存或下载' : '');
+        status.textContent = (controller.detail.startsWith('已发起下载') ? controller.detail : (controller.state === 'saved' && boundFileName ? '已保存到所选文件：' + boundFileName + (controller.lastSavedAt ? ' · ' + new Date(controller.lastSavedAt).toLocaleTimeString() : '') : names[controller.state]) + (controller.detail ? '：' + controller.detail : '')) + (controller.dirty && !controller.draftAvailable ? ' · 草稿恢复不可用；请保存或下载' : '') + (api.versions.warning?' · '+api.versions.warning:'');
     };
     const enable = () => {
         ui?.enable();
@@ -81,9 +86,11 @@ export function installEditor(api: API) {
                     throw Error('PERMISSION_REVOKED');
                 const adapter = fileAdapter(handle, text => {
                     const inert = new DOMParser().parseFromString(text, 'text/html');
-                    return { content: api.normalize(unpackMedia(inert.querySelector<HTMLTemplateElement>('#ppte-content')?.content.textContent ?? '', inert.querySelector('#ppte-media') ? JSON.parse(inert.querySelector('#ppte-media')!.textContent!) : undefined)), metadata: JSON.parse(inert.querySelector('#ppte-metadata')!.textContent!), hash: '', fileKey: handle.name, name: handle.name };
-                }, api.encode);
+                    return { history:readHistory(text), content: api.normalize(unpackMedia(inert.querySelector<HTMLTemplateElement>('#ppte-content')?.content.textContent ?? '', inert.querySelector('#ppte-media') ? JSON.parse(inert.querySelector('#ppte-media')!.textContent!) : undefined)), metadata: JSON.parse(inert.querySelector('#ppte-metadata')!.textContent!), hash: '', fileKey: handle.name, name: handle.name };
+                }, (content,revision)=>{const v=api.versions.automatic(content);if(v)historyPanel.record(v.id);return api.encode(content,revision);});
                 const target = await adapter.load();
+                const targetHistory=JSON.stringify(new Versions(target.metadata.documentId,target.history,()=>packMedia(target.content).table.resources).wire());
+                if(targetHistory!==openingHistory)throw Error('CONFLICT: 所选文件的历史已变化');
                 if (target.metadata.documentId !== controller.base.metadata.documentId || target.content !== controller.base.content || target.metadata.saveRevision !== controller.base.metadata.saveRevision)
                     throw Error('CONFLICT: 所选文件不匹配打开时的内容');
                 boundFileName = handle.name;
@@ -115,6 +122,8 @@ export function installEditor(api: API) {
             const revision = controller.revision;
             const latest = await controller.adapter!.load();
             if (revision !== controller.revision || controller.busy || controller.composing) { controller.set(controller.state, '读取期间有新修改；当前内容已保留，请重试。'); return; }
+            api.versions.replace(latest.history,packMedia(latest.content).table.resources);
+            openingHistory=JSON.stringify(api.versions.wire());historyPanel.loaded();
             controller.base = latest;
             controller.revision++;
             controller.dirty = false;
@@ -144,34 +153,11 @@ export function installEditor(api: API) {
             void navigator.clipboard.writeText(api.encode(d.content, controller.base.metadata.saveRevision + 1)).catch(() => controller.set('failed', '剪贴板不可用，草稿仍保留'));
     });
     button('复制保留当前修改', () => void navigator.clipboard.writeText(api.serialize()).then(() => controller.set(controller.state, '已复制 HTML；尚未写入文件')).catch(() => controller.set(controller.state, '剪贴板不可用，修改仍在当前页面')));
-    if (token)
-        button('恢复上一版本', () => void (async () => {
-            try {
-                const headers = { Authorization: `Bearer ${token}` };
-                const versions = await (await fetch('/api/versions', { headers })).json();
-                if (!versions.length)
-                    throw Error('没有历史版本');
-                if (!confirm('将恢复上一版本；当前磁盘版本会保留在恢复记录中。'))
-                    return;
-                if (controller.dirty)
-                    controller.draft();
-                const response = await fetch('/api/restore', { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ expected: controller.base.hash, version: versions[0] }) });
-                const result = await response.json();
-                if (!response.ok)
-                    throw Error(result.error);
-                controller.base = result;
-                controller.dirty = false;
-                await api.mount(result.content);
-                controller.set('saved');
-            }
-            catch (e) {
-                controller.set('failed', String(e));
-            }
-        })());
-    const download = (newInstance = false) => {
+    const download = (newInstance = false, withoutHistory=false) => {
         if (controller.composing) { controller.set(controller.state, '请完成输入法组合后再下载；修改仍保留。'); return; }
         const revision = controller.revision;
-        const url = URL.createObjectURL(new Blob([api.encode(controller.snapshotContent(), newInstance ? 0 : controller.base.metadata.saveRevision + 1, newInstance ? crypto.randomUUID().replace(/-/g, '') : undefined)], { type: 'text/html' }));
+        if(!withoutHistory && controller.dirty){const v=api.versions.automatic(controller.snapshotContent());if(v)historyPanel.record(v.id);}
+        const url = URL.createObjectURL(new Blob([api.encode(controller.snapshotContent(), newInstance ? 0 : controller.base.metadata.saveRevision + 1, newInstance ? crypto.randomUUID().replace(/-/g, '') : undefined, withoutHistory)], { type: 'text/html' }));
         const link = document.createElement('a');
         link.href = url;
         link.download = (document.title.replace(/[\\/:*?"<>|]/g, '_').replace(/(?:\.ppte)?\.html$/i, '') || '作品') + '.ppte.html';
@@ -179,12 +165,16 @@ export function installEditor(api: API) {
         setTimeout(() => URL.revokeObjectURL(url), 30000);
         if (newInstance) controller.set(controller.state, '已生成新文件实例；当前原文件未覆盖。');
         else controller.exported(revision);
+        if(!withoutHistory)historyPanel.exported(revision);
     };
     button('下载更新后的文件', () => { try { download(); } catch (e) { controller.set('failed', String(e)); } });
+    button('版本历史',()=>historyPanel.open());
+    button('下载不含历史的文件',()=>download(false,true));
+    const historyPanel=versionPanel(api.versions,()=>controller,()=>ui.active,s=>api.mount(s),()=>download(false,true));
     button('另存为新文件', () => { try { download(true); } catch (e) { controller.set('failed', String(e)); } });
     document.body.append(bar);
     const frame = document.querySelector<HTMLIFrameElement>('#ppte-frame')!;
-    ui = workspace(frame, bar, () => controller?.change());
+    ui = workspace(frame, bar, () => {if(controller?.revision===0){const v=api.versions.automatic(controller.base.content);if(v)historyPanel.mark(v.id);}controller?.change();});
     savePanel = document.createElement('details');
     savePanel.id = 'ppte-save-panel';
     savePanel.innerHTML = '<summary>保存状态</summary><div></div>';
@@ -211,10 +201,12 @@ export function installEditor(api: API) {
         }
         catch {
         }
-        const adapter = token && location.hostname === '127.0.0.1' ? loopbackAdapter(token) : undefined;
+        const adapter = token && location.hostname === '127.0.0.1' ? loopbackAdapter(token,()=>{const v=api.versions.automatic(controller.snapshotContent());if(v)historyPanel.record(v.id);return api.versions.wire();}) : undefined;
         const base: Snapshot = adapter ? await adapter.load() : { content: api.content(), metadata: api.metadata, hash: crypto?.subtle ? await recoveryFingerprint({ content: api.content(), metadata: api.metadata }) : JSON.stringify([api.metadata.documentId, api.metadata.saveRevision, api.content()]), fileKey: location.href, name: document.title };
         controller = new SaveController(adapter, base, () => api.content(), render, storage, `ppte-draft:${location.origin}:${base.fileKey}:${base.metadata.documentId}`);
         controller.set(adapter ? 'saved' : 'unauthorized', adapter ? '' : '尚未关联写入文件；未授权不能自动覆盖原文件。可编辑、授权保存或下载更新后的文件。');
+        historyPanel.loaded();
+        try{api.versions.index;}catch{const alert=document.createElement('p');alert.setAttribute('role','alert');alert.dataset.ppteTransient='';alert.textContent=api.versions.warning;alert.style.cssText='position:fixed;bottom:40px;left:16px;z-index:120;background:white;color:#a22;padding:12px';document.body.append(alert);}
         const draft = controller.recover();
         if (draft && draft.base === (base.recoveryHash ?? base.hash)) {
             if (adapter) { await api.mount(draft.content); controller.change(); }

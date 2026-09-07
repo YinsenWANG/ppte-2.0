@@ -588,3 +588,18 @@ retained old tarball and a compatible old project copy; the new project and
 runtime remain retained. Existing HTML upgrades explicitly produce versioned
 copies and preserve the original. C06's retained candidate is used as an actual
 historical runtime fixture without claiming it was a published npm version.
+
+## 2026-09-07 — UI07 single-HTML portable checkpoints
+
+The saving-versions supplement permits deduplicated full HTML/CSS checkpoints
+before delta optimization. UI07 uses SHA-256-addressed complete content blocks,
+a lightweight schemaVersion 1 index, and inert resource templates shared with
+the current single-file media table. No checkpoint depends on another version;
+pruning cannot break a delta chain. Historical payloads are validated and expanded
+only on preview/restore, under a 32 MiB expansion limit. Default history quota is
+16 MiB of escaped HTML transport bytes excluding current required resources,
+with 20 unnamed automatic versions and a five-minute generation interval.
+Named and pre-restore versions are never evicted automatically. Unknown history
+is preserved opaquely; explicit history-free download strips historical blocks
+and historical-only resources. This does not retire S04 or S06 current-media
+lifecycle/performance gaps, native browser testing or human acceptance.
