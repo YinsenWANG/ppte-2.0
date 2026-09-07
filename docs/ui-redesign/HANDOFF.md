@@ -1,5 +1,7 @@
 # UI 设计交接
 
+> **当前执行范围已收敛（2026-09-07）：** 以 [功能收敛方案](../focused-product/PLAN.md) 和 [新任务清单](../focused-product/TASKS.json) 为准：插入只保留图片，更多改为一级导出PDF，可靠保存优先；旧四类插入和版本管理UI要求被取代，已有文件数据仍须保真。以下非冲突要求继续有效。
+
 请在最新 main 上结合本目录的 [DESIGN.md](DESIGN.md)、[TASKS.json](TASKS.json) 与 [UI_PROTOTYPE.html](UI_PROTOTYPE.html) 落地 PPTe 界面。原型为设计评审交付，尚未成为产品实现；用户若提出新反馈，先更新对应规格。
 
 承接 `c139730` 人工反馈和 `b1ceb6a` 独立验收；保留 `9856db3` / `ea260ce` 非冲突要求。最新 UI 规范优先于旧的冲突 UI 描述。N01–N04、性能/媒体与真实环境证据缺口不得取消。

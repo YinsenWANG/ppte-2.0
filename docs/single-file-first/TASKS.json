@@ -1372,5 +1372,8 @@
   "supplements": [
     "../ui-redesign/SAVING-VERSIONS.md",
     "../ui-redesign/TASKS.json"
-  ]
+  ],
+  "activeScope": "../focused-product/PLAN.md",
+  "activeTasks": "../focused-product/TASKS.json",
+  "scopeOverride": "User-directed reduction: image insertion only; direct PDF action; reliable save first. Conflicting old feature/UI requirements retired, not retroactively passed. Existing content and history preserved; see active tasks."
 }

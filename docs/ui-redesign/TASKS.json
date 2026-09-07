@@ -454,5 +454,8 @@
     "manifest": "docs/ui-redesign/evidence/delivery/r8-manifest.json",
     "verification": "docs/ui-redesign/evidence/r8-CLOSING/verification/result.json",
     "comparison": "docs/ui-redesign/evidence/r8-CLOSING/COMPARE.html"
-  }
+  },
+  "activeScope": "../focused-product/PLAN.md",
+  "activeTasks": "../focused-product/TASKS.json",
+  "scopeOverride": "User-directed reduction: image insertion only; direct PDF action; reliable save first. Conflicting old feature/UI requirements retired, not retroactively passed. Existing content and history preserved; see active tasks."
 }

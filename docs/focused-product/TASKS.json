@@ -1,0 +1,95 @@
+{
+  "version": "focused-product-1.0",
+  "status": "proposed",
+  "plan": "PLAN.md",
+  "precedence": "Latest user scope overrides conflicting earlier UI and feature breadth requirements; historical evidence is immutable.",
+  "tasks": [
+    {
+      "id": "F01",
+      "title": "移除废弃入口并收敛菜单",
+      "status": "pending",
+      "dependsOn": [],
+      "acceptance": [
+        "只保留插入图片；所有旧入口/快捷键/提示移除",
+        "更多改为一级导出为PDF",
+        "已有文稿和历史数据不被破坏"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "F02",
+      "title": "可靠保存与多行编辑",
+      "status": "pending",
+      "dependsOn": [
+        "F01"
+      ],
+      "acceptance": [
+        "取消或拒绝不自动下载",
+        "原文件手动/自动保存原生证据",
+        "队列/错误/冲突/重开正确",
+        "修复Enter后文本能力丢失"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "F03",
+      "title": "图片完整操作",
+      "status": "pending",
+      "dependsOn": [
+        "F01"
+      ],
+      "acceptance": [
+        "放置/选择/移动/裁切/替换真实UI可用",
+        "横竖透明大图与不同作者布局",
+        "撤销重做及保存重开保真"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "F04",
+      "title": "一级整稿PDF",
+      "status": "pending",
+      "dependsOn": [
+        "F01"
+      ],
+      "acceptance": [
+        "整稿页数顺序正确，所有媒体就绪",
+        "无编辑控件，文本可选",
+        "取消后原模式/内容/状态保持"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "F05",
+      "title": "整体UI细节打磨",
+      "status": "pending",
+      "dependsOn": [
+        "F02",
+        "F03",
+        "F04"
+      ],
+      "acceptance": [
+        "没有多余菜单或空位",
+        "统一控件与状态",
+        "桌面/窄屏/长稿可用",
+        "用户人工UI确认"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "F06",
+      "title": "收敛范围总验收",
+      "status": "pending",
+      "dependsOn": [
+        "F05"
+      ],
+      "acceptance": [
+        "离线直开编辑图片保存重开放映PDF",
+        "目标浏览器原生保存证据",
+        "未闭环项准确记录",
+        "回交一个HTML与实现提交/证据"
+      ],
+      "evidence": []
+    }
+  ]
+}
