@@ -45,6 +45,7 @@ export function installEditor(api: API) {
     };
     const names = { saved: '已保存到原文件', dirty: '有修改 · 尚未写入文件', saving: '保存中 · 等待文件确认', draft: '仅草稿 · 尚未写入文件', unauthorized: '无文件授权', conflict: '冲突 · 修改已保留', failed: '保存失败 · 可重试' };
     const render = () => {
+        bar.toggleAttribute('data-pristine', controller.revision === 0 && !controller.dirty && ((controller.state === 'unauthorized' && controller.detail.startsWith('尚未关联写入文件')) || (controller.state === 'saved' && !controller.detail)));
         const menu = bar.querySelector('details');
         if (menu && controller.state === 'conflict')
             menu.open = true;
@@ -58,8 +59,7 @@ export function installEditor(api: API) {
     };
     button('编辑', () => {
         enable();
-        if (!controller.adapter)
-            controller.set('draft', '未授权不能自动覆盖原文件。首次保存请选择原文件授权，或下载更新后的文件。');
+
     });
     bar.append(status);
     const save = button('保存 / 授权', () => void (async () => {
@@ -185,7 +185,7 @@ export function installEditor(api: API) {
         const adapter = token && location.hostname === '127.0.0.1' ? loopbackAdapter(token) : undefined;
         const base: Snapshot = adapter ? await adapter.load() : { content: api.content(), metadata: api.metadata, hash: crypto?.subtle ? await recoveryFingerprint({ content: api.content(), metadata: api.metadata }) : JSON.stringify([api.metadata.documentId, api.metadata.saveRevision, api.content()]), fileKey: location.href, name: document.title };
         controller = new SaveController(adapter, base, () => api.content(), render, storage, `ppte-draft:${location.origin}:${base.fileKey}:${base.metadata.documentId}`);
-        controller.set(adapter ? 'saved' : 'unauthorized', adapter ? '' : '尚未关联写入文件；可编辑、授权保存或下载更新后的文件。');
+        controller.set(adapter ? 'saved' : 'unauthorized', adapter ? '' : '尚未关联写入文件；未授权不能自动覆盖原文件。可编辑、授权保存或下载更新后的文件。');
         const draft = controller.recover();
         if (draft && draft.base === (base.recoveryHash ?? base.hash)) {
             if (adapter) { await api.mount(draft.content); controller.change(); }
