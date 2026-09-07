@@ -1,0 +1,61 @@
+{
+  "time": "2026-09-07T12:25:03.011Z",
+  "browser": "152.0.7977.76",
+  "records": {
+    "historical": {
+      "rasterHeight": 540,
+      "redPixels": 6320,
+      "rasterizer": "CGContext.drawPDFPage; RGBA8 big-endian; white background",
+      "text": "Offline updated\nComplete reveal",
+      "colorSpace": "sRGB",
+      "width": 720,
+      "height": 404.88,
+      "bluePixels": 6320,
+      "rasterWidth": 960
+    },
+    "both": {
+      "rasterHeight": 540,
+      "rasterWidth": 960,
+      "text": "",
+      "colorSpace": "sRGB",
+      "width": 720,
+      "redPixels": 6400,
+      "height": 404.88,
+      "bluePixels": 6400,
+      "rasterizer": "CGContext.drawPDFPage; RGBA8 big-endian; white background"
+    },
+    "no-red": {
+      "width": 720,
+      "text": "",
+      "rasterWidth": 960,
+      "colorSpace": "sRGB",
+      "rasterHeight": 540,
+      "redPixels": 0,
+      "bluePixels": 6400,
+      "height": 404.88,
+      "rasterizer": "CGContext.drawPDFPage; RGBA8 big-endian; white background"
+    },
+    "no-blue": {
+      "height": 404.88,
+      "redPixels": 6400,
+      "rasterHeight": 540,
+      "rasterizer": "CGContext.drawPDFPage; RGBA8 big-endian; white background",
+      "text": "",
+      "rasterWidth": 960,
+      "bluePixels": 0,
+      "colorSpace": "sRGB",
+      "width": 720
+    },
+    "no-image": {
+      "rasterizer": "CGContext.drawPDFPage; RGBA8 big-endian; white background",
+      "height": 404.88,
+      "redPixels": 0,
+      "rasterHeight": 540,
+      "text": "",
+      "rasterWidth": 960,
+      "bluePixels": 0,
+      "colorSpace": "sRGB",
+      "width": 720
+    }
+  }
+}

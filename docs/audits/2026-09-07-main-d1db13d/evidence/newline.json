@@ -1,0 +1,12 @@
+{
+  "before": {
+    "html": "<h1 data-ppte-id=\"ppte-10\" data-ppte-editor-text=\"\" contenteditable=\"true\" data-ppte-editor-focus=\"\" data-ppte-editor-selected=\"\">开源，<br data-ppte-id=\"ppte-11\" data-ppte-editor-focus=\"\">让选择更多。<div>新增一行</div></h1>",
+    "editable": "true"
+  },
+  "after": {
+    "html": "<h1 data-ppte-id=\"ppte-10\" contenteditable=\"false\" data-ppte-editor-focus=\"\" tabindex=\"0\" data-ppte-editor-selected=\"\">开源，<br data-ppte-id=\"ppte-11\" data-ppte-editor-focus=\"\">让选择更多。<div data-ppte-editor-text=\"\" contenteditable=\"true\">新增一行</div></h1>",
+    "editable": "false"
+  },
+  "fontControls": 0,
+  "panel": "内容容器\n外观\n\n此结构不支持整体文字编辑。请选择其中的独立文字；媒体、控件和布局容器不能作为一个文本框编辑。\n\n位置与布局\n对象操作\n复制对象\n删除对象\n保护\n保护对象"
+}

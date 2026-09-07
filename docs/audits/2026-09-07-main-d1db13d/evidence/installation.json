@@ -1,0 +1,8 @@
+{
+  "commit": "d1db13dd5c4ea756d58cc80c67a09d1adced606d",
+  "package": "ppte-html@1.0.0-html.0",
+  "runtime": "/Users/xinmingwong/.codex/ppte-runtimes/d1db13d/node_modules/ppte-html/ppte.js",
+  "skill": "/Users/xinmingwong/.codex/skills/ppte/SKILL.md",
+  "backup": "/Users/xinmingwong/.codex/ppte-skill-backups/before-d1db13d",
+  "method": "pinned github skill-installer to staging then backed-up update; locally packed npm candidate; initial relative package path failed and was corrected to absolute path; no product patch"
+}

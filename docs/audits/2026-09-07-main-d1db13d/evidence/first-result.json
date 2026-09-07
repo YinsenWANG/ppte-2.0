@@ -1,0 +1,93 @@
+{
+  "errors": [],
+  "network": [],
+  "pages": [
+    {
+      "text": "CHERRY STUDIO\nOPEN BY DESIGN\n\n一个桌面应用，一场共同创造\n\n开源，\n让选择更多。\n\nCherry Studio 的产品、社区与开源之路\n\n产品与社区 · 新版体验稿\n01 / 10",
+      "overflow": []
+    },
+    {
+      "text": "CHERRY STUDIO\n01 / 为什么需要这样的工具\n\n从能力丰富，到使用顺畅\n\n模型越来越多，\n工作不该越来越碎。\n01\n选择分散\n\n不同任务适合不同模型，\n切换不该打断思路。\n\n02\n上下文分散\n\n对话、材料和知识，\n需要更连贯的组织方式。\n\n03\n体验分散\n\n能力可以来自不同地方，\n日常使用应该保持清晰。\n\n问题不是缺少工具，而是如何连接它们\n02 / 10",
+      "overflow": []
+    },
+    {
+      "text": "CHERRY STUDIO\n02 / 一个共同的入口\n\n桌面工作空间\n\n把复杂留给工具，\n把选择还给人。\n\n围绕真实任务组织能力，\n让使用者保留自己的工作方式。\n\n今天，从一个问题开始\n对话\n持续思考与探索\n模型\n按任务选择合适能力\n知识\n让材料进入工作过程\n\n产品概念示意，非真实界面截图\n\n统一体验，保留选择\n03 / 10",
+      "overflow": []
+    },
+    {
+      "text": "CHERRY STUDIO\n03 / 开放带来的空间\n\n开放不是一个装饰标签\n\n可理解，可参与，\n也可以一起改变。\n看见\n理解产品\n\n通过代码、文档和讨论，\n了解工具怎样工作。\n\n表达\n提出问题\n\n把真实场景说清楚，\n让改进有具体方向。\n\n参与\n共同完善\n\n贡献不只有代码，\n也包括测试、文档与翻译。\n\n贡献方式多样，参与门槛可以更低\n04 / 10",
+      "overflow": []
+    },
+    {
+      "text": "CHERRY STUDIO\n04 / 从使用者到贡献者\n\n每一步，都可以从真实体验出发\n\n一个问题，\n也能成为一次贡献。\nSTEP 01\n使用\n\n在自己的工作中，\n发现具体需求。\n\nSTEP 02\n反馈\n\n提供场景和复现步骤，\n让问题被理解。\n\nSTEP 03\n协作\n\n讨论方案、验证修复，\n一起提高完成度。\n\nSTEP 04\n分享\n\n把经验留给后来者，\n减少重复摸索。\n\n这是参与路径建议，不是项目发布年表\n05 / 10",
+      "overflow": []
+    },
+    {
+      "text": "CHERRY STUDIO\n05 / 不同角色，同一份价值\n\n找到适合自己的参与方式\n\n开源社区，需要的不只是开发者。\n你擅长什么\t可以从这里开始\t帮助谁\n使用与观察\t提交清晰问题，验证修复效果\t使用者与维护者\n表达与整理\t完善教程、文档和翻译\t第一次接触产品的人\n设计与开发\t改进交互，提交可验证的实现\t整个产品与社区\n从一个小而完整的贡献开始\n06 / 10",
+      "overflow": []
+    },
+    {
+      "text": "CHERRY STUDIO\n06 / 质量如何积累\n\n功能之外，是日常体验\n\n真正留下用户的，\n是那些顺手的细节。\n\n功能可用，是起点。\n稳定、清晰和可控，才构成信任。\n\n01\n减少不必要的步骤\n\n让常用操作容易找到。\n\n02\n把状态解释清楚\n\n让用户知道发生了什么。\n\n03\n让反馈形成闭环\n\n实现之后，还要验证真实效果。\n\n产品观察与设计观点\n07 / 10",
+      "overflow": []
+    },
+    {
+      "text": "CHERRY STUDIO\n07 / 保持生长\n\n持续演进，比一次完成更重要\n\n把真实需求带进来，\n把复杂程度控制住。\n\n开放让更多想法进入产品，设计则帮助它们形成连贯的体验。\n\n明确方向 · 小步实现 · 真实验证 · 持续整理\n面向未来的产品建议，非项目官方路线承诺\n08 / 10",
+      "overflow": []
+    },
+    {
+      "text": "CHERRY STUDIO\n08 / 下一次贡献\n\n从你已经遇到的问题开始\n\n好的产品，\n在一起打磨中长大。\n\n提出一个清楚的问题，完善一段文档，验证一次修复。\n每一份具体的参与，都让共同使用的工具更好一点。\n\n使用　反馈　创造\nOPEN SOURCE · SHARED PROGRESS\n09 / 10",
+      "overflow": []
+    },
+    {
+      "text": "CHERRY STUDIO\n参考与说明\n\n进一步了解与参与\n\n从项目本身，继续这段开源之路。\n\nGitHub · github.com/CherryHQ/cherry-studio\n\n官方网站 · www.cherry-ai.com\n\n本稿围绕产品与社区展开叙事，不使用实时 Star、下载量或增长数字。\n参与路径、体验原则及未来方向属于作者建议，不代表项目官方路线或统计结论。\n概念界面和图形为本稿原创示意；主题材料沿用前轮已核验的项目背景。\n\n制作与实机验收 · 2026.09.07\n10 / 10",
+      "overflow": []
+    }
+  ],
+  "browser": "152.0.7977.76",
+  "fontControls": 1,
+  "geometry1024": {
+    "area": {
+      "x": 170,
+      "y": 102,
+      "width": 616,
+      "height": 822,
+      "top": 102,
+      "right": 786,
+      "bottom": 924,
+      "left": 170
+    },
+    "panel": {
+      "x": 786,
+      "y": 102,
+      "width": 238,
+      "height": 822,
+      "top": 102,
+      "right": 1024,
+      "bottom": 924,
+      "left": 786
+    }
+  },
+  "geometry390": {
+    "area": {
+      "x": 0,
+      "y": 152,
+      "width": 390,
+      "height": 334,
+      "top": 152,
+      "right": 390,
+      "bottom": 486,
+      "left": 0
+    },
+    "panel": {
+      "x": 0,
+      "y": 486,
+      "width": 390,
+      "height": 310,
+      "top": 486,
+      "right": 390,
+      "bottom": 796,
+      "left": 0
+    }
+  },
+  "failure": "locator.fill: Error: Element is not an <input>, <textarea>, <select> or [contenteditable] and does not have a role allowing [aria-readonly]\nCall log:\n\u001b[2m  - waiting for locator('#ppte-frame').contentFrame().locator('h1').first()\u001b[22m\n\u001b[2m    - locator resolved to <h1 data-ppte-id=\"ppte-10\" contenteditable=\"false\" data-ppte-editor-focus=\"\">…</h1>\u001b[22m\n\u001b[2m    - fill(\"开源，\u001b[22m\n\u001b[2m让创造发生。\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and editable\u001b[22m\n\n    at /Users/xinmingwong/.codex/.chatgpt-projects/g-p-6a9ad11768b48191abe2e30ff63650a5/ppte-audit-d1db13d/artifacts/independent-d1db/review.mjs:6:504"
+}

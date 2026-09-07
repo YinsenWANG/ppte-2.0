@@ -1,0 +1,2 @@
+$ node scripts/build-html.mjs --clean && tsc -p tsconfig.build.json
+/Users/xinmingwong/.codex/.chatgpt-projects/g-p-6a9ad11768b48191abe2e30ff63650a5/ppte-audit-d1db13d/artifacts/npm-package
