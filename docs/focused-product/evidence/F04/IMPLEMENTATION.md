@@ -26,3 +26,5 @@ All four feature acceptance items remain pending at code / automated / real-brow
 No new feature means no new mirror or placeholder tests. Existing assertions are unchanged. Repository gate results only establish regression health and correct rejection of failed routes. They do not complete F04. Logs, commands, tested commit, timestamps and platform are recorded in verification/result.json. Physical desktop operations and human PDF visual/selection/copy/search approval remain pending.
 
 The pre-existing brief9-F04.md is preserved byte-for-byte and its exact filename added only to local .git/info/exclude; it is not task evidence. No push.
+
+Final repository gates on signed commit 903dcd1: pnpm typecheck, pnpm build and pnpm test passed; 143 passed, 0 failed, 16 existing skips (159 tests). No feature acceptance status changed. This evidence-only follow-up records that run.
