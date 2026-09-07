@@ -1,0 +1,131 @@
+{
+  "task": "R1",
+  "time": "2026-09-07T08:09:09.538742+00:00",
+  "baseCommit": "f5ba1900cb1467126cc3edd911ce762413280cdb",
+  "implementationCommit": "8862954a0fed1e2f65a9d38a21b4094dcc5548a5",
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "status": "passed",
+      "log": "r1-typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "exitCode": 0,
+      "status": "passed",
+      "log": "r1-build.log"
+    },
+    {
+      "command": "pnpm test",
+      "exitCode": 0,
+      "status": "passed",
+      "log": "r1-tests.log"
+    },
+    {
+      "command": "node docs/audits/2026-09-07-ui-d96f211/probe.mjs",
+      "exitCode": 0,
+      "status": "passed",
+      "log": "r1-after-probe.log"
+    },
+    {
+      "command": "node docs/audits/2026-09-07-ui-d96f211/followup.mjs",
+      "exitCode": 0,
+      "status": "passed",
+      "log": "r1-after-followup.log"
+    }
+  ],
+  "tests": {
+    "total": 107,
+    "passed": 107,
+    "failed": 0,
+    "newR1Tests": 3,
+    "framework": "node --test dist/tests/*.test.js"
+  },
+  "probeComparison": {
+    "before": {
+      "nativeText": {
+        "contenteditable": null,
+        "tag": "DIV",
+        "text": "开源，\n让选择更多。"
+      },
+      "fontControls": 0,
+      "semanticTextControls": 1,
+      "R1": "failed"
+    },
+    "after": {
+      "nativeText": {
+        "contenteditable": "true",
+        "tag": "DIV",
+        "text": "开源，\n让选择更多。"
+      },
+      "fontControls": 1,
+      "semanticTextControls": 1,
+      "R1": "passed"
+    },
+    "rawEvidence": [
+      "before/result.json",
+      "before/followup.json",
+      "after/result.json",
+      "after/followup.json"
+    ],
+    "scope": "Probe exit zero is not whole-audit acceptance; R2-R6 remain."
+  },
+  "statusByLayer": {
+    "code": "passed",
+    "automated": "passed",
+    "real-browser": "partial: installed Chrome headless offline file:// passed; native/Safari/OS IME pending",
+    "human": "pending: no reviewer or screen-reader evidence"
+  },
+  "pending": [
+    {
+      "item": "native authorization",
+      "result": null,
+      "reason": "No real OS picker authorization/writeback evidence this round; download only"
+    },
+    {
+      "item": "Safari",
+      "result": null,
+      "reason": "No Safari execution this round"
+    },
+    {
+      "item": "OS IME / physical touch / screen reader",
+      "result": null,
+      "reason": "No system or human session available this round"
+    },
+    {
+      "item": "human review",
+      "result": null,
+      "reason": "No owner or target-user review"
+    },
+    {
+      "item": "R2-R6",
+      "result": null,
+      "reason": "Sequential later pipeline tasks"
+    },
+    {
+      "item": "performance / media A4 / PDF N04",
+      "result": null,
+      "reason": "Reserved for GAPS; passing local PDF assertion does not establish root cause"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "sample.ppte.html",
+      "sha256": "e370cd7e8f68bb83d5efb92d8c755f1c0c73407e362d9dda713db9d4be5191d5",
+      "bytes": 364189
+    },
+    {
+      "path": "edited.ppte.html",
+      "sha256": "3055a45d5d8bafee06ca4f7829d5a80e4070c558b89b5e3d6e8784a5b4ece5e7",
+      "bytes": 374673
+    }
+  ],
+  "source": {
+    "path": "docs/audits/2026-09-07-ui-d96f211/sample/source.html",
+    "sha256": "db6dd16104be24df2e93684b35e4827c3b08c0d569ab563af70bb257866882ef",
+    "modified": false
+  },
+  "sampleCommand": "node dist/apps/html-cli/index.js enhance docs/audits/2026-09-07-ui-d96f211/sample/source.html --out docs/ui-redesign/evidence/r8-R1/sample.ppte.html",
+  "workspace": "Pre-existing untracked supervisor/pipeline files preserved; tracked implementation tree clean after evidence commit; no push."
+}

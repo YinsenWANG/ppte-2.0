@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "browser": "152.0.7977.76",
+  "headless": true,
+  "offline": true,
+  "entry": "file://",
+  "actions": [
+    "click edit",
+    "click original div title",
+    "keyboard insertText",
+    "assert text and font controls"
+  ],
+  "network": [],
+  "errors": [],
+  "time": "2026-09-07T08:09:09.372Z"
+}

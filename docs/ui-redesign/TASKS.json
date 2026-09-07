@@ -59,7 +59,9 @@
         "docs/ui-redesign/evidence/UI02/sample.ppte.html",
         "docs/ui-redesign/evidence/UI07-close/HANDOFF.md",
         "docs/ui-redesign/evidence/UI07-close/acceptance.json",
-        "docs/ui-redesign/evidence/UI07-close/verification/result.json"
+        "docs/ui-redesign/evidence/UI07-close/verification/result.json",
+        "docs/ui-redesign/evidence/r8-R1/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/r8-R1/verification/result.json"
       ],
       "implementationCommit": "dbd7ed643f07de02793a406c9ad84304b7d97515",
       "statusByLayer": {
@@ -68,7 +70,14 @@
         "real-browser": "partial: installed Chrome headless file:// UI passed; Safari, native permissions, OS IME and physical touch pending",
         "human": "pending: no owner/target-user visual review or screen reader evidence"
       },
-      "closingAcceptance": "partial: code/automated task status is not four-layer product acceptance"
+      "closingAcceptance": "partial: code/automated task status is not four-layer product acceptance",
+      "regressionR1": {
+        "status": "passed: code and automated R1 only",
+        "implementationCommit": "8862954a0fed1e2f65a9d38a21b4094dcc5548a5",
+        "tests": "tests/r8-r1-text.test.ts",
+        "evidence": "docs/ui-redesign/evidence/r8-R1/verification/result.json",
+        "remaining": "R2 and R4 object/UI regressions plus existing four-layer pending remain; no full UI02 reacceptance"
+      }
     },
     {
       "id": "UI03",
