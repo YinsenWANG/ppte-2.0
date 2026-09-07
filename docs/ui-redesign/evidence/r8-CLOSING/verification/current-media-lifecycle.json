@@ -1,0 +1,19 @@
+{
+  "time": "2026-09-07T09:52:17.511Z",
+  "browser": "152.0.7977.76",
+  "offline": true,
+  "freshProcess": true,
+  "sourceImages": 12,
+  "activeImages": 1,
+  "inactiveURLs": 0,
+  "releasedNaturalWidth": 0,
+  "printImages": 13,
+  "previewRemovedOnClose": true,
+  "printRemovedOnAfterprint": true,
+  "network": [],
+  "errors": [],
+  "nativePrint": null,
+  "nativePrintReason": "window.print stub only retains prepared DOM for PDF API; no native dialog evidence",
+  "decodedMemoryBytes": null,
+  "decodedMemoryReason": "URL and naturalWidth release measured; browser GPU/decoder cache reclamation is not observable"
+}

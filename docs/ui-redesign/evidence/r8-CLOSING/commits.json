@@ -1,0 +1,92 @@
+[
+  {
+    "commit": "8862954a0fed1e2f65a9d38a21b4094dcc5548a5",
+    "title": "fix(R1): recognize safe native text objects and preserve inline editing",
+    "gpgVerified": true,
+    "signoff": "Signed-off-by: yinsen <cherryai001@yinsenMac-mini.local>"
+  },
+  {
+    "commit": "0e9d978a224c8e2a526be006d10c94cb999ebc42",
+    "title": "fix(R1): record audit comparison and offline text editing evidence",
+    "gpgVerified": true,
+    "signoff": "Signed-off-by: yinsen <cherryai001@yinsenMac-mini.local>"
+  },
+  {
+    "commit": "a142e4798f6a54b8f573b33233a116902fc47ab5",
+    "title": "fix(R2): place new objects in native layouts and enable real keyboard adjustment",
+    "gpgVerified": true,
+    "signoff": "Signed-off-by: yinsen <cherryai001@yinsenMac-mini.local>"
+  },
+  {
+    "commit": "37bb675ddb950df7429f5bf335461000d100a5f2",
+    "title": "fix(R2): record insertion audit comparison and offline object evidence",
+    "gpgVerified": true,
+    "signoff": "Signed-off-by: yinsen <cherryai001@yinsenMac-mini.local>"
+  },
+  {
+    "commit": "3a53166363a3b9092f8e004954138db186a1711f",
+    "title": "fix(R3): fit the current edit page in an isolated scrollable canvas",
+    "gpgVerified": true,
+    "signoff": "Signed-off-by: yinsen <cherryai001@yinsenMac-mini.local>"
+  },
+  {
+    "commit": "3a8314412d70f70a20bffe7ac71396a5be99a200",
+    "title": "fix(R3): record audit geometry and offline prototype comparisons",
+    "gpgVerified": true,
+    "signoff": "Signed-off-by: yinsen <cherryai001@yinsenMac-mini.local>"
+  },
+  {
+    "commit": "74ffb0fab5987815cc3b95b6bdce7311eb0a9b80",
+    "title": "fix(R4): implement prototype control hierarchy and contextual page actions",
+    "gpgVerified": true,
+    "signoff": "Signed-off-by: yinsen <cherryai001@yinsenMac-mini.local>"
+  },
+  {
+    "commit": "5be4539876a3d7e9844ef797e04442050ba70753",
+    "title": "fix(R4): record audit comparisons and offline CLI sample evidence",
+    "gpgVerified": true,
+    "signoff": "Signed-off-by: yinsen <cherryai001@yinsenMac-mini.local>"
+  },
+  {
+    "commit": "47912553bbf596acd7e6eb854e5607e7e91891e9",
+    "title": "fix(R5): reserve visible mobile canvas above bounded property drawers",
+    "gpgVerified": true,
+    "signoff": "Signed-off-by: yinsen <cherryai001@yinsenMac-mini.local>"
+  },
+  {
+    "commit": "28619997dcd2d2fd14c4a2b836d98950f5dfca71",
+    "title": "fix(R5): record mobile geometry regression and offline prototype comparisons",
+    "gpgVerified": true,
+    "signoff": "Signed-off-by: yinsen <cherryai001@yinsenMac-mini.local>"
+  },
+  {
+    "commit": "5da92d185ed694d469fad1d0b3916631c2130727",
+    "title": "fix(R6): unify version naming quota and recovery dialogs",
+    "gpgVerified": true,
+    "signoff": "Signed-off-by: yinsen <cherryai001@yinsenMac-mini.local>"
+  },
+  {
+    "commit": "00dd9d99fbc4796666632bcaf580aded2081e7e0",
+    "title": "fix(R6): record dialog audit evidence and offline prototype sample",
+    "gpgVerified": true,
+    "signoff": "Signed-off-by: yinsen <cherryai001@yinsenMac-mini.local>"
+  },
+  {
+    "commit": "86c8ce3669047e5de14575f0d515f04cc387e285",
+    "title": "fix(GAPS): defer off-page media and stabilize PDF color verification",
+    "gpgVerified": true,
+    "signoff": "Signed-off-by: yinsen <cherryai001@yinsenMac-mini.local>"
+  },
+  {
+    "commit": "ec20d5054fc11c9906590b8d334acf896849d5c7",
+    "title": "fix(GAPS): record media PDF and performance gap evidence",
+    "gpgVerified": true,
+    "signoff": "Signed-off-by: yinsen <cherryai001@yinsenMac-mini.local>"
+  },
+  {
+    "commit": "b00acc5531a7fce75b73412cf5cf5985cfecf2e2",
+    "title": "fix(GAPS): include offline CLI sample and reproducible performance fixtures",
+    "gpgVerified": true,
+    "signoff": "Signed-off-by: yinsen <cherryai001@yinsenMac-mini.local>"
+  }
+]

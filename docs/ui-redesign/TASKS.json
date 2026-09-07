@@ -1,6 +1,6 @@
 {
   "version": "ui-redesign-1.1",
-  "status": "implementation-in-progress",
+  "status": "partial",
   "design": "DESIGN.md",
   "prototype": "UI_PROTOTYPE.html",
   "basis": [
@@ -8,12 +8,12 @@
     "b1ceb6a49ea3b9fd82963e9d2bb632e4222973be",
     "c1397304d643545206b92b795e7700c5e225300d"
   ],
-  "scope": "UI01–UI05 code/automation done. GAPS closes current-page img/video/audio/source demand lifecycle and N04 automated PDF color detection. S04 headed 50/100ms passes, default headless input remains failed. UI06/UI07 remain partial across native/Safari/human layers; CLOSING pending.",
+  "scope": "R8 CLOSING bundle complete. R1–R6 and media/PDF automated scope passed; full suite 127/127. S04 default headless input still exceeds 50ms. Native/Safari/physical-device and human layers pending.",
   "tasks": [
     {
       "id": "UI01",
       "title": "三模式与布局外壳",
-      "status": "done",
+      "status": "partial",
       "dependsOn": [],
       "acceptance": [
         "默认阅读与重开默认阅读",
@@ -34,21 +34,24 @@
         "tests/r8-r3-canvas.test.ts",
         "docs/ui-redesign/evidence/r8-R4/IMPLEMENTATION.md",
         "docs/ui-redesign/evidence/r8-R4/verification/result.json",
-        "docs/ui-redesign/evidence/r8-R4/COMPARE.html"
+        "docs/ui-redesign/evidence/r8-R4/COMPARE.html",
+        "docs/ui-redesign/evidence/r8-CLOSING/HANDOFF.md",
+        "docs/ui-redesign/evidence/r8-CLOSING/verification/result.json",
+        "tests/r8-closing-delivery.test.ts"
       ],
       "implementationCommit": "5ad4f2c6e1b70ecca10e24993559b47aa2bebc58",
       "statusByLayer": {
         "code": "passed",
-        "automated": "passed: 76/76 tests; four UI01 acceptance tests",
-        "real-browser": "partial: installed Chrome headless passed; Safari/native/physical touch pending",
-        "human": "pending: no reviewer, screen reader or manual native evidence"
+        "automated": "127/127 current suite passed; see r8-CLOSING. Timing-integrity test is not S04 latency acceptance.",
+        "real-browser": "pending: native authorization, Safari, system IME and physical-device acceptance not collected; installed Chrome headless evidence is automated",
+        "human": "pending: no owner/two-target-user or assistive-technology acceptance"
       },
-      "closingAcceptance": "partial: code/automated task status is not four-layer product acceptance",
+      "closingAcceptance": "partial: current automated acceptance does not close real-browser/human layers",
       "regressionR3": {
         "status": "passed: code and automated R3 only",
         "tests": "tests/r8-r3-canvas.test.ts",
         "evidence": "docs/ui-redesign/evidence/r8-R3/verification/result.json",
-        "remaining": "R4–R6 and GAPS/four-layer pending remain; 390 inspector occlusion is R5 pending; no full product reacceptance",
+        "remaining": "Superseded by r8-CLOSING acceptance.json: R1–R6 automated passed; S04 headless input and native/Safari/human pending.",
         "implementationCommit": "3a53166363a3b9092f8e004954138db186a1711f"
       },
       "r8R4": {
@@ -56,13 +59,20 @@
         "automated": "see r8-R4 verification/result.json",
         "real-browser": "installed Chrome headless offline; not native authorization or manual review",
         "human": "pending: owner visual review absent",
-        "remaining": "R5 small-screen inspector and R6 version dialogs are subsequent tasks; existing GAPS remain"
+        "remaining": "Superseded by r8-CLOSING acceptance.json: R1–R6 automated passed; S04 headless input and native/Safari/human pending."
+      },
+      "closingR8": {
+        "bundleStatus": "complete",
+        "overallStatus": "partial",
+        "realBrowserResult": null,
+        "humanResult": null,
+        "reason": "No native/Safari/physical-device or human sessions collected."
       }
     },
     {
       "id": "UI02",
       "title": "统一插入与对象属性",
-      "status": "done",
+      "status": "partial",
       "dependsOn": [
         "UI01"
       ],
@@ -87,42 +97,52 @@
         "tests/r8-r2-insertion.test.ts",
         "docs/ui-redesign/evidence/r8-R4/IMPLEMENTATION.md",
         "docs/ui-redesign/evidence/r8-R4/verification/result.json",
-        "docs/ui-redesign/evidence/r8-R4/COMPARE.html"
+        "docs/ui-redesign/evidence/r8-R4/COMPARE.html",
+        "docs/ui-redesign/evidence/r8-CLOSING/HANDOFF.md",
+        "docs/ui-redesign/evidence/r8-CLOSING/verification/result.json",
+        "tests/r8-closing-delivery.test.ts"
       ],
       "implementationCommit": "dbd7ed643f07de02793a406c9ad84304b7d97515",
       "statusByLayer": {
         "code": "passed",
-        "automated": "passed: 92/92 tests; four UI02 acceptance tests",
-        "real-browser": "partial: installed Chrome headless file:// UI passed; Safari, native permissions, OS IME and physical touch pending",
-        "human": "pending: no owner/target-user visual review or screen reader evidence"
+        "automated": "127/127 current suite passed; see r8-CLOSING. Timing-integrity test is not S04 latency acceptance.",
+        "real-browser": "pending: native authorization, Safari, system IME and physical-device acceptance not collected; installed Chrome headless evidence is automated",
+        "human": "pending: no owner/two-target-user or assistive-technology acceptance"
       },
-      "closingAcceptance": "partial: code/automated task status is not four-layer product acceptance",
+      "closingAcceptance": "partial: current automated acceptance does not close real-browser/human layers",
       "regressionR1": {
         "status": "passed: code and automated R1 only",
         "implementationCommit": "8862954a0fed1e2f65a9d38a21b4094dcc5548a5",
         "tests": "tests/r8-r1-text.test.ts",
         "evidence": "docs/ui-redesign/evidence/r8-R1/verification/result.json",
-        "remaining": "R2 and R4 object/UI regressions plus existing four-layer pending remain; no full UI02 reacceptance"
+        "remaining": "Superseded by r8-CLOSING acceptance.json: R1–R6 automated passed; S04 headless input and native/Safari/human pending."
       },
       "regressionR2": {
         "status": "passed: code and automated R2 only",
         "implementationCommit": "a142e4798f6a54b8f573b33233a116902fc47ab5",
         "tests": "tests/r8-r2-insertion.test.ts",
         "evidence": "docs/ui-redesign/evidence/r8-R2/verification/result.json",
-        "remaining": "R3–R6, existing GAPS and four-layer pending remain; no full UI02 or product reacceptance"
+        "remaining": "Superseded by r8-CLOSING acceptance.json: R1–R6 automated passed; S04 headless input and native/Safari/human pending."
       },
       "r8R4": {
         "code": "implemented",
         "automated": "see r8-R4 verification/result.json",
         "real-browser": "installed Chrome headless offline; not native authorization or manual review",
         "human": "pending: owner visual review absent",
-        "remaining": "R5 small-screen inspector and R6 version dialogs are subsequent tasks; existing GAPS remain"
+        "remaining": "Superseded by r8-CLOSING acceptance.json: R1–R6 automated passed; S04 headless input and native/Safari/human pending."
+      },
+      "closingR8": {
+        "bundleStatus": "complete",
+        "overallStatus": "partial",
+        "realBrowserResult": null,
+        "humanResult": null,
+        "reason": "No native/Safari/physical-device or human sessions collected."
       }
     },
     {
       "id": "UI03",
       "title": "页面导航与组合缺陷",
-      "status": "done",
+      "status": "partial",
       "dependsOn": [
         "UI01"
       ],
@@ -143,28 +163,38 @@
         "docs/ui-redesign/evidence/UI07-close/verification/result.json",
         "docs/ui-redesign/evidence/r8-R4/IMPLEMENTATION.md",
         "docs/ui-redesign/evidence/r8-R4/verification/result.json",
-        "docs/ui-redesign/evidence/r8-R4/COMPARE.html"
+        "docs/ui-redesign/evidence/r8-R4/COMPARE.html",
+        "docs/ui-redesign/evidence/r8-CLOSING/HANDOFF.md",
+        "docs/ui-redesign/evidence/r8-CLOSING/verification/result.json",
+        "tests/r8-closing-delivery.test.ts"
       ],
       "implementationCommit": "e340d48392ae06080f72ec51ec7ea6880aed90c9",
       "statusByLayer": {
         "code": "passed",
-        "automated": "passed: 97/97 tests; four UI03 acceptance tests and original audit-source composition regression",
-        "real-browser": "partial: installed Chrome headless file:// passed; Safari/native/system IME/physical touch pending",
-        "human": "pending: no screen reader, owner or target-user review evidence"
+        "automated": "127/127 current suite passed; see r8-CLOSING. Timing-integrity test is not S04 latency acceptance.",
+        "real-browser": "pending: native authorization, Safari, system IME and physical-device acceptance not collected; installed Chrome headless evidence is automated",
+        "human": "pending: no owner/two-target-user or assistive-technology acceptance"
       },
-      "closingAcceptance": "partial: code/automated task status is not four-layer product acceptance",
+      "closingAcceptance": "partial: current automated acceptance does not close real-browser/human layers",
       "r8R4": {
         "code": "implemented",
         "automated": "see r8-R4 verification/result.json",
         "real-browser": "installed Chrome headless offline; not native authorization or manual review",
         "human": "pending: owner visual review absent",
-        "remaining": "R5 small-screen inspector and R6 version dialogs are subsequent tasks; existing GAPS remain"
+        "remaining": "Superseded by r8-CLOSING acceptance.json: R1–R6 automated passed; S04 headless input and native/Safari/human pending."
+      },
+      "closingR8": {
+        "bundleStatus": "complete",
+        "overallStatus": "partial",
+        "realBrowserResult": null,
+        "humanResult": null,
+        "reason": "No native/Safari/physical-device or human sessions collected."
       }
     },
     {
       "id": "UI04",
       "title": "原文件保存、自动保存与真实状态",
-      "status": "done",
+      "status": "partial",
       "dependsOn": [
         "UI01"
       ],
@@ -190,28 +220,38 @@
         "docs/ui-redesign/evidence/UI07-close/verification/result.json",
         "docs/ui-redesign/evidence/r8-R4/IMPLEMENTATION.md",
         "docs/ui-redesign/evidence/r8-R4/verification/result.json",
-        "docs/ui-redesign/evidence/r8-R4/COMPARE.html"
+        "docs/ui-redesign/evidence/r8-R4/COMPARE.html",
+        "docs/ui-redesign/evidence/r8-CLOSING/HANDOFF.md",
+        "docs/ui-redesign/evidence/r8-CLOSING/verification/result.json",
+        "tests/r8-closing-delivery.test.ts"
       ],
       "implementationCommit": "abe467c87347cb6c8c52b0ecaff16968cba1a168",
       "statusByLayer": {
         "code": "passed",
-        "automated": "passed: 80/80 tests; existing native-interface bridge and four new UI04 tests",
-        "real-browser": "partial: Chrome headless passed; native picker, system IME, Safari pending",
-        "human": "pending: no human/native reviewer evidence"
+        "automated": "127/127 current suite passed; see r8-CLOSING. Timing-integrity test is not S04 latency acceptance.",
+        "real-browser": "pending: native authorization, Safari, system IME and physical-device acceptance not collected; installed Chrome headless evidence is automated",
+        "human": "pending: no owner/two-target-user or assistive-technology acceptance"
       },
-      "closingAcceptance": "partial: code/automated task status is not four-layer product acceptance",
+      "closingAcceptance": "partial: current automated acceptance does not close real-browser/human layers",
       "r8R4": {
         "code": "implemented",
         "automated": "see r8-R4 verification/result.json",
         "real-browser": "installed Chrome headless offline; not native authorization or manual review",
         "human": "pending: owner visual review absent",
-        "remaining": "R5 small-screen inspector and R6 version dialogs are subsequent tasks; existing GAPS remain"
+        "remaining": "Superseded by r8-CLOSING acceptance.json: R1–R6 automated passed; S04 headless input and native/Safari/human pending."
+      },
+      "closingR8": {
+        "bundleStatus": "complete",
+        "overallStatus": "partial",
+        "realBrowserResult": null,
+        "humanResult": null,
+        "reason": "No native/Safari/physical-device or human sessions collected."
       }
     },
     {
       "id": "UI05",
       "title": "适配与可访问性",
-      "status": "done",
+      "status": "partial",
       "dependsOn": [
         "UI01"
       ],
@@ -236,22 +276,25 @@
         "docs/ui-redesign/evidence/r8-R4/COMPARE.html",
         "docs/ui-redesign/evidence/r8-R5/IMPLEMENTATION.md",
         "docs/ui-redesign/evidence/r8-R5/verification/result.json",
-        "tests/r8-r5-mobile.test.ts"
+        "tests/r8-r5-mobile.test.ts",
+        "docs/ui-redesign/evidence/r8-CLOSING/HANDOFF.md",
+        "docs/ui-redesign/evidence/r8-CLOSING/verification/result.json",
+        "tests/r8-closing-delivery.test.ts"
       ],
       "implementationCommit": "6fca967b968327f5f7f730fd23bb260dd2376116",
       "statusByLayer": {
         "code": "passed",
-        "automated": "passed: 101/101 tests; four UI05 acceptance tests on dist",
-        "real-browser": "partial: installed Chrome headless offline file://; native zoom, system font, physical touch, Safari and screen reader pending",
-        "human": "pending: no owner or target-user review"
+        "automated": "127/127 current suite passed; see r8-CLOSING. Timing-integrity test is not S04 latency acceptance.",
+        "real-browser": "pending: native authorization, Safari, system IME and physical-device acceptance not collected; installed Chrome headless evidence is automated",
+        "human": "pending: no owner/two-target-user or assistive-technology acceptance"
       },
-      "closingAcceptance": "partial: code/automated task status is not four-layer product acceptance",
+      "closingAcceptance": "partial: current automated acceptance does not close real-browser/human layers",
       "r8R4": {
         "code": "implemented",
         "automated": "see r8-R4 verification/result.json",
         "real-browser": "installed Chrome headless offline; not native authorization or manual review",
         "human": "pending: owner visual review absent",
-        "remaining": "R5 small-screen inspector and R6 version dialogs are subsequent tasks; existing GAPS remain"
+        "remaining": "Superseded by r8-CLOSING acceptance.json: R1–R6 automated passed; S04 headless input and native/Safari/human pending."
       },
       "r8R5": {
         "code": "implemented: bounded bottom drawers reserve current-page workspace; navigation and inspector exclusive",
@@ -259,6 +302,13 @@
         "real-browser": "installed Chrome headless file:// offline; physical device and Safari pending",
         "human": "pending: no owner or target-user review",
         "implementationCommit": "47912553bbf596acd7e6eb854e5607e7e91891e9"
+      },
+      "closingR8": {
+        "bundleStatus": "complete",
+        "overallStatus": "partial",
+        "realBrowserResult": null,
+        "humanResult": null,
+        "reason": "No native/Safari/physical-device or human sessions collected."
       }
     },
     {
@@ -294,16 +344,19 @@
         "docs/ui-redesign/evidence/UI07-close/verification/result.json",
         "docs/ui-redesign/evidence/r8-GAPS/IMPLEMENTATION.md",
         "docs/ui-redesign/evidence/r8-GAPS/verification/result.json",
-        "tests/r8-gaps.test.ts"
+        "tests/r8-gaps.test.ts",
+        "docs/ui-redesign/evidence/r8-CLOSING/HANDOFF.md",
+        "docs/ui-redesign/evidence/r8-CLOSING/verification/result.json",
+        "tests/r8-closing-delivery.test.ts"
       ],
       "implementationCommit": "536674af1cbb4163434761804d487a57aae9982a",
       "statusByLayer": {
         "code": "done: offline journey plus media dependency and deterministic PDF oracle",
-        "automated": "126/126 current full suite; GAPS A4/N04 passed in scoped automation; S04 default headless input gate still failed",
-        "real-browser": "partial: installed Chrome headless file://; native picker, Safari, OS IME, native print and independent device pending",
-        "human": "pending: owner and two target-user UI and aesthetic reviews absent"
+        "automated": "127/127 current suite passed; see r8-CLOSING. Timing-integrity test is not S04 latency acceptance.",
+        "real-browser": "pending: native authorization, Safari, system IME and physical-device acceptance not collected; installed Chrome headless evidence is automated",
+        "human": "pending: no owner/two-target-user or assistive-technology acceptance"
       },
-      "closingAcceptance": "partial: code/automated task status is not four-layer product acceptance",
+      "closingAcceptance": "partial: current automated acceptance does not close real-browser/human layers",
       "gapsR8": {
         "commit": "86c8ce3669047e5de14575f0d515f04cc387e285",
         "code": "done: current-page media demand and snapshot fidelity; fixed sRGB PDF detector",
@@ -311,7 +364,14 @@
         "real-browser": "partial: installed Chrome offline headless journeys and headed performance; native/Safari/physical device pending",
         "human": "pending: no owner, target-user or assistive-technology review",
         "evidence": "docs/ui-redesign/evidence/r8-GAPS/verification/result.json",
-        "remaining": "Native authorization, Safari, OS IME, native print, physical-device/human acceptance; S04 headless input and independent generation telemetry."
+        "remaining": "Superseded by r8-CLOSING acceptance.json: R1–R6 automated passed; S04 headless input and native/Safari/human pending."
+      },
+      "closingR8": {
+        "bundleStatus": "complete",
+        "overallStatus": "partial",
+        "realBrowserResult": null,
+        "humanResult": null,
+        "reason": "No native/Safari/physical-device or human sessions collected."
       }
     },
     {
@@ -345,22 +405,25 @@
         "tests/r8-r6-versions.test.ts",
         "docs/ui-redesign/evidence/r8-GAPS/IMPLEMENTATION.md",
         "docs/ui-redesign/evidence/r8-GAPS/verification/result.json",
-        "tests/r8-gaps.test.ts"
+        "tests/r8-gaps.test.ts",
+        "docs/ui-redesign/evidence/r8-CLOSING/HANDOFF.md",
+        "docs/ui-redesign/evidence/r8-CLOSING/verification/result.json",
+        "tests/r8-closing-delivery.test.ts"
       ],
       "implementationCommit": "a8d9039f7e028a13dd892de84d0d5b3b3d086c35",
       "statusByLayer": {
         "code": "done: portable history plus current-page media lifecycle",
-        "automated": "126/126 current full suite; GAPS A4/N04 passed in scoped automation; S04 default headless input gate still failed",
-        "real-browser": "partial: Chrome headless file journey and disk bridge passed; native/Safari/system IME pending",
-        "human": "pending: no reviewer or independent device evidence"
+        "automated": "127/127 current suite passed; see r8-CLOSING. Timing-integrity test is not S04 latency acceptance.",
+        "real-browser": "pending: native authorization, Safari, system IME and physical-device acceptance not collected; installed Chrome headless evidence is automated",
+        "human": "pending: no owner/two-target-user or assistive-technology acceptance"
       },
-      "closingAcceptance": "partial: code/automated task status is not four-layer product acceptance",
+      "closingAcceptance": "partial: current automated acceptance does not close real-browser/human layers",
       "r8R6": {
         "code": "implemented: unified naming, quota and scoped restore/delete dialogs; keyboard isolation and focus return",
         "automated": "see r8-R6 verification/result.json: real mouse/keyboard and retained UI06/UI07 data assertions",
         "real-browser": "installed Chrome headless offline file:// and fresh process reopen; native authorization, Safari and system IME pending",
         "human": "pending: no owner, screen reader or target-user review",
-        "remaining": "UI07 A4 media lifecycle and GAPS performance/PDF remain; overall UI07 stays partial",
+        "remaining": "Superseded by r8-CLOSING acceptance.json: R1–R6 automated passed; S04 headless input and native/Safari/human pending.",
         "implementationCommit": "5da92d185ed694d469fad1d0b3916631c2130727"
       },
       "gapsR8": {
@@ -370,17 +433,26 @@
         "real-browser": "partial: installed Chrome offline headless journeys and headed performance; native/Safari/physical device pending",
         "human": "pending: no owner, target-user or assistive-technology review",
         "evidence": "docs/ui-redesign/evidence/r8-GAPS/verification/result.json",
-        "remaining": "Native authorization, Safari, OS IME, native print, physical-device/human acceptance; S04 headless input and independent generation telemetry."
+        "remaining": "Superseded by r8-CLOSING acceptance.json: R1–R6 automated passed; S04 headless input and native/Safari/human pending."
+      },
+      "closingR8": {
+        "bundleStatus": "complete",
+        "overallStatus": "partial",
+        "realBrowserResult": null,
+        "humanResult": null,
+        "reason": "No native/Safari/physical-device or human sessions collected."
       }
     }
   ],
   "savingAndVersions": "SAVING-VERSIONS.md",
   "closingHandoff": {
     "status": "partial",
-    "report": "docs/ui-redesign/evidence/UI07-close/HANDOFF.md",
-    "acceptance": "docs/ui-redesign/evidence/UI07-close/acceptance.json",
-    "sample": "docs/ui-redesign/evidence/delivery/把作品带走.ppte.html",
-    "manifest": "docs/ui-redesign/evidence/delivery/manifest.json",
-    "verification": "docs/ui-redesign/evidence/UI07-close/verification/result.json"
+    "bundleStatus": "complete",
+    "report": "docs/ui-redesign/evidence/r8-CLOSING/HANDOFF.md",
+    "acceptance": "docs/ui-redesign/evidence/r8-CLOSING/acceptance.json",
+    "sample": "docs/ui-redesign/evidence/delivery/r8-same-prototype.ppte.html",
+    "manifest": "docs/ui-redesign/evidence/delivery/r8-manifest.json",
+    "verification": "docs/ui-redesign/evidence/r8-CLOSING/verification/result.json",
+    "comparison": "docs/ui-redesign/evidence/r8-CLOSING/COMPARE.html"
   }
 }

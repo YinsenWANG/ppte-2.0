@@ -1,0 +1,113 @@
+{
+  "status": "pass",
+  "time": "2026-09-07T09:52:14.256Z",
+  "browser": "152.0.7977.76",
+  "headless": true,
+  "offline": true,
+  "protocol": "file:",
+  "sample": "/private/tmp/ppte8/docs/ui-redesign/evidence/delivery/r8-same-prototype.ppte.html",
+  "sha256": "d19eebce892e7fa199a179a819e1271129bef96f78c53c7bd68022f1002e6379",
+  "bytes": 386401,
+  "sourceSha256": "db6dd16104be24df2e93684b35e4827c3b08c0d569ab563af70bb257866882ef",
+  "sameTitle": "开源，\n让选择更多。",
+  "records": [
+    {
+      "width": 1440,
+      "area": {
+        "x": 204,
+        "y": 102,
+        "width": 972,
+        "height": 822,
+        "top": 102,
+        "right": 1176,
+        "bottom": 924,
+        "left": 204
+      },
+      "panel": {
+        "x": 1176,
+        "y": 102,
+        "width": 264,
+        "height": 822,
+        "top": 102,
+        "right": 1440,
+        "bottom": 924,
+        "left": 1176
+      },
+      "page": {
+        "left": 242,
+        "right": 1138,
+        "top": 261,
+        "bottom": 765
+      },
+      "visibleSlides": 1
+    },
+    {
+      "width": 1024,
+      "area": {
+        "x": 170,
+        "y": 102,
+        "width": 616,
+        "height": 822,
+        "top": 102,
+        "right": 786,
+        "bottom": 924,
+        "left": 170
+      },
+      "panel": {
+        "x": 786,
+        "y": 102,
+        "width": 238,
+        "height": 822,
+        "top": 102,
+        "right": 1024,
+        "bottom": 924,
+        "left": 786
+      },
+      "page": {
+        "left": 196,
+        "right": 759.9999771118164,
+        "top": 354.375,
+        "bottom": 671.6249871253967
+      },
+      "visibleSlides": 1
+    },
+    {
+      "width": 390,
+      "area": {
+        "x": 0,
+        "y": 152,
+        "width": 390,
+        "height": 334,
+        "top": 152,
+        "right": 390,
+        "bottom": 486,
+        "left": 0
+      },
+      "panel": {
+        "x": 0,
+        "y": 486,
+        "width": 390,
+        "height": 310,
+        "top": 486,
+        "right": 390,
+        "bottom": 796,
+        "left": 0
+      },
+      "page": {
+        "left": 12,
+        "right": 378,
+        "top": 216.0625,
+        "bottom": 421.9375
+      },
+      "visibleSlides": 1
+    }
+  ],
+  "realMouseKeyboard": true,
+  "downloadAndFreshProcessReopen": true,
+  "namedHistoryReopened": true,
+  "errors": [],
+  "network": [],
+  "dialogs": [],
+  "nativeAuthorization": null,
+  "nativeAuthorizationReason": "Actual download tested; no native authorization session."
+}

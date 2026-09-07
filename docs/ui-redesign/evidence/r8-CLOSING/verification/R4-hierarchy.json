@@ -1,0 +1,76 @@
+{
+  "browser": "152.0.7977.76",
+  "geometry": [
+    {
+      "width": 1440,
+      "bar": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 56,
+        "top": 0,
+        "right": 1440,
+        "bottom": 56,
+        "left": 0
+      },
+      "panel": {
+        "x": 1176,
+        "y": 102,
+        "width": 264,
+        "height": 822,
+        "top": 102,
+        "right": 1440,
+        "bottom": 924,
+        "left": 1176
+      }
+    },
+    {
+      "width": 1024,
+      "bar": {
+        "x": 0,
+        "y": 0,
+        "width": 1024,
+        "height": 56,
+        "top": 0,
+        "right": 1024,
+        "bottom": 56,
+        "left": 0
+      },
+      "panel": {
+        "x": 786,
+        "y": 102,
+        "width": 238,
+        "height": 822,
+        "top": 102,
+        "right": 1024,
+        "bottom": 924,
+        "left": 786
+      }
+    },
+    {
+      "width": 390,
+      "bar": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 100,
+        "top": 0,
+        "right": 390,
+        "bottom": 100,
+        "left": 0
+      },
+      "panel": {
+        "x": 0,
+        "y": 486,
+        "width": 390,
+        "height": 310,
+        "top": 486,
+        "right": 390,
+        "bottom": 796,
+        "left": 0
+      }
+    }
+  ],
+  "errors": [],
+  "smallInspector": "R5 geometry and interaction verified by r8-r5-mobile.test.ts"
+}

@@ -1,0 +1,250 @@
+{
+  "wide": {
+    "area": {
+      "x": 204,
+      "y": 102,
+      "width": 972,
+      "height": 822,
+      "top": 102,
+      "right": 1176,
+      "bottom": 924,
+      "left": 204
+    },
+    "slides": [
+      {
+        "visible": true,
+        "native": {
+          "x": 0,
+          "y": 0,
+          "width": 960,
+          "height": 540,
+          "top": 0,
+          "right": 960,
+          "bottom": 540,
+          "left": 0
+        },
+        "screen": {
+          "x": 242,
+          "y": 261,
+          "width": 896,
+          "height": 504
+        }
+      },
+      {
+        "visible": false,
+        "native": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "screen": {
+          "x": 242,
+          "y": 261,
+          "width": 0,
+          "height": 0
+        }
+      },
+      {
+        "visible": false,
+        "native": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "screen": {
+          "x": 242,
+          "y": 261,
+          "width": 0,
+          "height": 0
+        }
+      }
+    ],
+    "scale": 0.9333333333333333,
+    "scroll": {
+      "x": 0,
+      "y": 0,
+      "width": 972,
+      "height": 822
+    },
+    "documentScroll": {
+      "x": 0,
+      "y": 0
+    }
+  },
+  "medium": {
+    "area": {
+      "x": 170,
+      "y": 102,
+      "width": 616,
+      "height": 630,
+      "top": 102,
+      "right": 786,
+      "bottom": 732,
+      "left": 170
+    },
+    "slides": [
+      {
+        "visible": true,
+        "native": {
+          "x": 0,
+          "y": 0,
+          "width": 960,
+          "height": 540,
+          "top": 0,
+          "right": 960,
+          "bottom": 540,
+          "left": 0
+        },
+        "screen": {
+          "x": 196,
+          "y": 258.375,
+          "width": 563.9999771118164,
+          "height": 317.24998712539673
+        }
+      },
+      {
+        "visible": false,
+        "native": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "screen": {
+          "x": 196,
+          "y": 258.375,
+          "width": 0,
+          "height": 0
+        }
+      },
+      {
+        "visible": false,
+        "native": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "screen": {
+          "x": 196,
+          "y": 258.375,
+          "width": 0,
+          "height": 0
+        }
+      }
+    ],
+    "scale": 0.5874999761581421,
+    "scroll": {
+      "x": 0,
+      "y": 0,
+      "width": 616,
+      "height": 630
+    },
+    "documentScroll": {
+      "x": 0,
+      "y": 0
+    }
+  },
+  "small": {
+    "area": {
+      "x": 0,
+      "y": 152,
+      "width": 390,
+      "height": 334,
+      "top": 152,
+      "right": 390,
+      "bottom": 486,
+      "left": 0
+    },
+    "slides": [
+      {
+        "visible": true,
+        "native": {
+          "x": 0,
+          "y": 0,
+          "width": 960,
+          "height": 540,
+          "top": 0,
+          "right": 960,
+          "bottom": 540,
+          "left": 0
+        },
+        "screen": {
+          "x": 12,
+          "y": 216.0625,
+          "width": 366,
+          "height": 205.875
+        }
+      },
+      {
+        "visible": false,
+        "native": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "screen": {
+          "x": 12,
+          "y": 216.0625,
+          "width": 0,
+          "height": 0
+        }
+      },
+      {
+        "visible": false,
+        "native": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "screen": {
+          "x": 12,
+          "y": 216.0625,
+          "width": 0,
+          "height": 0
+        }
+      }
+    ],
+    "scale": 0.38125,
+    "scroll": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 334
+    },
+    "documentScroll": {
+      "x": 0,
+      "y": 0
+    }
+  },
+  "smallInspector": "pending R5: overlay remains",
+  "browser": "152.0.7977.76"
+}

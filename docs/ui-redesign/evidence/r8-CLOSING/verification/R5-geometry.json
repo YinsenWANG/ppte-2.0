@@ -1,0 +1,33 @@
+{
+  "width": 390,
+  "height": 844,
+  "area": {
+    "x": 0,
+    "y": 152,
+    "width": 390,
+    "height": 334,
+    "top": 152,
+    "right": 390,
+    "bottom": 486,
+    "left": 0
+  },
+  "panel": {
+    "x": 0,
+    "y": 486,
+    "width": 390,
+    "height": 310,
+    "top": 486,
+    "right": 390,
+    "bottom": 796,
+    "left": 0
+  },
+  "page": {
+    "left": 12,
+    "top": 216.0625,
+    "right": 378,
+    "bottom": 421.9375,
+    "width": 366,
+    "height": 205.875
+  },
+  "inert": false
+}

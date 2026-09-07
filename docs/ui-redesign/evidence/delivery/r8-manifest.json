@@ -1,0 +1,12 @@
+{
+  "time": "2026-09-07T09:53:46.374091+00:00",
+  "sample": "r8-same-prototype.ppte.html",
+  "sha256": "d19eebce892e7fa199a179a819e1271129bef96f78c53c7bd68022f1002e6379",
+  "bytes": 386401,
+  "source": "docs/audits/2026-09-07-ui-d96f211/sample/source.html",
+  "sourceSha256": "db6dd16104be24df2e93684b35e4827c3b08c0d569ab563af70bb257866882ef",
+  "productionCLI": true,
+  "productCommit": "86c8ce3669047e5de14575f0d515f04cc387e285",
+  "verification": "../r8-CLOSING/verification/delivery-journey.json",
+  "note": "Single HTML requires no server or Node for opening; download copy and fresh Chrome process tested. Native permission and independent no-Node device pending."
+}

@@ -1,0 +1,611 @@
+{
+  "time": "2026-09-07T09:53:46.373727+00:00",
+  "status": "partial",
+  "items": [
+    {
+      "id": "R1",
+      "implementationCommit": "8862954a0fed1e2f65a9d38a21b4094dcc5548a5",
+      "status": "passed-code-and-automated-scope",
+      "before": "普通 div 文本无控件、不可输入；fontControls=0",
+      "after": "div contenteditable=true；fontControls=1；真实输入/样式/撤销/下载重开测试通过",
+      "tests": [
+        "tests/r8-r1-text.test.ts"
+      ],
+      "evidence": [
+        "docs/ui-redesign/evidence/r8-R1/verification/result.json"
+      ],
+      "statusByLayer": {
+        "code": "passed",
+        "automated": "passed: current full suite and real mouse/keyboard Chrome automation",
+        "real-browser": "pending: native/Safari/physical-device acceptance not collected; installed Chrome headless is automated evidence",
+        "human": "pending: no owner/target-user review"
+      },
+      "realBrowserResult": null,
+      "humanResult": null
+    },
+    {
+      "id": "R2",
+      "implementationCommit": "a142e4798f6a54b8f573b33233a116902fc47ab5",
+      "status": "passed-code-and-automated-scope",
+      "before": "插图左上遮挡标题，Alt+右键无位移",
+      "after": "overlap=false；Alt+右键 Δx=8px；文本/图片/形状/表格及流式布局测试通过",
+      "tests": [
+        "tests/r8-r2-insertion.test.ts"
+      ],
+      "evidence": [
+        "docs/ui-redesign/evidence/r8-R2/verification/result.json"
+      ],
+      "statusByLayer": {
+        "code": "passed",
+        "automated": "passed: current full suite and real mouse/keyboard Chrome automation",
+        "real-browser": "pending: native/Safari/physical-device acceptance not collected; installed Chrome headless is automated evidence",
+        "human": "pending: no owner/target-user review"
+      },
+      "realBrowserResult": null,
+      "humanResult": null
+    },
+    {
+      "id": "R3",
+      "implementationCommit": "3a53166363a3b9092f8e004954138db186a1711f",
+      "status": "passed-code-and-automated-scope",
+      "before": "全文滚动，多页同时显示且当前页超出可用宽度",
+      "after": "三尺寸仅当前页可见并完整位于工作区；响应式保真与缩放/翻页测试通过",
+      "tests": [
+        "tests/r8-r3-canvas.test.ts"
+      ],
+      "evidence": [
+        "docs/ui-redesign/evidence/r8-R3/verification/result.json"
+      ],
+      "statusByLayer": {
+        "code": "passed",
+        "automated": "passed: current full suite and real mouse/keyboard Chrome automation",
+        "real-browser": "pending: native/Safari/physical-device acceptance not collected; installed Chrome headless is automated evidence",
+        "human": "pending: no owner/target-user review"
+      },
+      "realBrowserResult": null,
+      "humanResult": null
+    },
+    {
+      "id": "R4",
+      "implementationCommit": "74ffb0fab5987815cc3b95b6bdce7311eb0a9b80",
+      "status": "passed-code-and-automated-scope",
+      "before": "控件平铺，属性行冗长，每页排序按钮常驻",
+      "after": "文档栏/工具条/属性/导航/底栏分区、紧凑样式与页面操作菜单通过；见同内容截图",
+      "tests": [
+        "tests/r8-r4-hierarchy.test.ts"
+      ],
+      "evidence": [
+        "docs/ui-redesign/evidence/r8-R4/verification/result.json"
+      ],
+      "statusByLayer": {
+        "code": "passed",
+        "automated": "passed: current full suite and real mouse/keyboard Chrome automation",
+        "real-browser": "pending: native/Safari/physical-device acceptance not collected; installed Chrome headless is automated evidence",
+        "human": "pending: no owner/target-user review"
+      },
+      "realBrowserResult": null,
+      "humanResult": null
+    },
+    {
+      "id": "R5",
+      "implementationCommit": "47912553bbf596acd7e6eb854e5607e7e91891e9",
+      "status": "passed-code-and-automated-scope",
+      "before": "390px 属性覆盖整个画布",
+      "after": "390px 限高属性区与画布无交叠；鼠标修改样式、关闭、导航互斥测试通过",
+      "tests": [
+        "tests/r8-r5-mobile.test.ts"
+      ],
+      "evidence": [
+        "docs/ui-redesign/evidence/r8-R5/verification/result.json"
+      ],
+      "statusByLayer": {
+        "code": "passed",
+        "automated": "passed: current full suite and real mouse/keyboard Chrome automation",
+        "real-browser": "pending: native/Safari/physical-device acceptance not collected; installed Chrome headless is automated evidence",
+        "human": "pending: no owner/target-user review"
+      },
+      "realBrowserResult": null,
+      "humanResult": null
+    },
+    {
+      "id": "R6",
+      "implementationCommit": "5da92d185ed694d469fad1d0b3916631c2130727",
+      "status": "passed-code-and-automated-scope",
+      "before": "命名 prompt；容量两个 prompt 加 confirm",
+      "after": "产品表单、验证/取消/焦点、容量审阅、恢复/删除范围和历史重开测试通过；无浏览器输入弹窗",
+      "tests": [
+        "tests/r8-r6-versions.test.ts"
+      ],
+      "evidence": [
+        "docs/ui-redesign/evidence/r8-R6/verification/result.json"
+      ],
+      "statusByLayer": {
+        "code": "passed",
+        "automated": "passed: current full suite and real mouse/keyboard Chrome automation",
+        "real-browser": "pending: native/Safari/physical-device acceptance not collected; installed Chrome headless is automated evidence",
+        "human": "pending: no owner/target-user review"
+      },
+      "realBrowserResult": null,
+      "humanResult": null
+    },
+    {
+      "id": "SAVING",
+      "status": "partial",
+      "automated": "Queue, debounce, revisions, failures and actual download/fresh-process tests pass; disk bridge is not native permission evidence.",
+      "tests": [
+        "tests/ui04-saving.test.ts",
+        "tests/html-save.test.ts",
+        "tests/single-file-save.test.ts"
+      ],
+      "statusByLayer": {
+        "code": "passed",
+        "automated": "passed",
+        "real-browser": "pending: native authorization/Safari/system IME not collected",
+        "human": "pending"
+      },
+      "realBrowserResult": null,
+      "humanResult": null
+    },
+    {
+      "id": "VERSIONS",
+      "status": "partial",
+      "automated": "Portable history, preview/restore, quota, corruption fallback and download/fresh-process tests pass.",
+      "tests": [
+        "tests/ui07-versions.test.ts",
+        "tests/r8-r6-versions.test.ts"
+      ],
+      "statusByLayer": {
+        "code": "passed",
+        "automated": "passed",
+        "real-browser": "pending: native authorization/Safari/system IME not collected",
+        "human": "pending"
+      },
+      "realBrowserResult": null,
+      "humanResult": null
+    },
+    {
+      "id": "UI07-A4-S06",
+      "status": "passed-automated-scope",
+      "before": "All current-document data URLs mounted eagerly; strict lifecycle remained partial. See UI07 IMPLEMENTATION.md and S08 matrix.",
+      "after": {
+        "time": "2026-09-07T09:37:59.652Z",
+        "browser": "152.0.7977.76",
+        "offline": true,
+        "freshProcess": true,
+        "sourceImages": 12,
+        "activeImages": 1,
+        "inactiveURLs": 0,
+        "releasedNaturalWidth": 0,
+        "printImages": 13,
+        "previewRemovedOnClose": true,
+        "printRemovedOnAfterprint": true,
+        "network": [],
+        "errors": [],
+        "nativePrint": null,
+        "nativePrintReason": "window.print stub only retains prepared DOM for PDF API; no native dialog evidence",
+        "decodedMemoryBytes": null,
+        "decodedMemoryReason": "URL and naturalWidth release measured; browser GPU/decoder cache reclamation is not observable"
+      },
+      "evidence": [
+        "tests/r8-gaps.test.ts",
+        "tests/single-file-media.test.ts",
+        "media-lifecycle.json",
+        "s06-journey.json",
+        "ui06-journey.json",
+        "ui07-journey.json"
+      ],
+      "limits": "Encoded media strings remain available for canonical saves; no claim that a browser has freed internal decoded caches. CSS/inline SVG stay under native browser rendering and are not rewritten into a blob/resource schema.",
+      "implementationCommit": "86c8ce3669047e5de14575f0d515f04cc387e285",
+      "gapResult": "docs/ui-redesign/evidence/r8-GAPS/verification/result.json",
+      "measurementNote": "GAPS retained measurements; current complete suite is separate evidence. Headed values are not a closing rerun."
+    },
+    {
+      "id": "N04",
+      "status": "passed-automated-scope",
+      "before": "Historical independent audit redPixels=0, bluePixels=6320; original S07 test on initial round HEAD passed (pdf-before.log), so intermittency was not hidden.",
+      "after": [
+        {
+          "redPixels": 6320,
+          "width": 720,
+          "height": 404.88,
+          "rasterWidth": 960,
+          "bluePixels": 6320,
+          "colorSpace": "sRGB",
+          "rasterizer": "CGContext.drawPDFPage; RGBA8 big-endian; white background",
+          "rasterHeight": 540,
+          "text": "Offline updated\nComplete reveal"
+        },
+        {
+          "rasterWidth": 960,
+          "redPixels": 0,
+          "rasterHeight": 540,
+          "colorSpace": "sRGB",
+          "rasterizer": "CGContext.drawPDFPage; RGBA8 big-endian; white background",
+          "width": 720,
+          "text": "Second slide\nFinal reveal",
+          "height": 404.88,
+          "bluePixels": 0
+        }
+      ],
+      "evidence": [
+        "pdf-source-diagnosis.json",
+        "pdf-legacy-diagnosis.log",
+        "pdf-controls.json",
+        "s07-journey.pdf",
+        "historical-failed.pdf"
+      ],
+      "finding": "Historical PDF stream contains DeviceRGB 1 0 0 rg / 0 0 1 rg vector paint. NSImage thumbnail + Generic RGB channel thresholds mixed a display-dependent raster with an assumed color space. Direct CGContext page rendering into explicit sRGB RGBA8 fixes that measurement boundary without changing >0.9/<0.1 or >4000 assertions. Historical bytes plus missing-red/missing-blue/missing-image controls pass. Exact past display profile remains unknown; native print acceptance remains pending.",
+      "implementationCommit": "86c8ce3669047e5de14575f0d515f04cc387e285",
+      "gapResult": "docs/ui-redesign/evidence/r8-GAPS/verification/result.json",
+      "measurementNote": "GAPS retained measurements; current complete suite is separate evidence. Headed values are not a closing rerun."
+    },
+    {
+      "id": "S04",
+      "status": "partial",
+      "beforeSyntheticP95": {
+        "input": 139.19999980926514,
+        "turn": 150.29999995231628,
+        "save": 1048.7999999523163
+      },
+      "beforeMethod": "before.json: original-style synthetic input plus idle samples; cannot be equated to a real-event before/after speedup",
+      "finalHeadless": {
+        "input": 143.90000009536743,
+        "turn": 52.299999952316284,
+        "inputHandler": 0.5,
+        "turnHandler": 11,
+        "blankIdle": 143.09999990463257,
+        "editorIdle": 143.29999995231628
+      },
+      "headlessTargets": {
+        "inputLimitMs": 50,
+        "turnLimitMs": 100,
+        "inputPassed": false,
+        "turnPassed": true
+      },
+      "finalHeaded": {
+        "input": 15.300000190734863,
+        "turn": 29.09999990463257,
+        "inputHandler": 0.3000001907348633,
+        "turnHandler": 7.299999952316284,
+        "blankIdle": 33.299999952316284,
+        "editorIdle": 33.5
+      },
+      "headedTargets": {
+        "inputLimitMs": 50,
+        "turnLimitMs": 100,
+        "inputPassed": true,
+        "turnPassed": true
+      },
+      "sources": [
+        "performance.json",
+        "headed/performance.json"
+      ],
+      "finding": "Default headless blank-page and editor idle rAF exhibit the same ~143ms delay as input; final input handler p95 is 0.5ms and turn handler 11ms. Same final build with headed Chrome and no custom launch flags meets 50/100ms. The ~133ms legacy regression is dominated by rendering/frame scheduling in this environment, not 133ms of text-command work. Exact historical compositor/power state was not recorded. No headless input success or cross-environment speedup claimed.",
+      "historicalCompositorConfiguration": null,
+      "historicalCompositorConfigurationReason": "Not recorded in S04 baseline; no reconstruction claimed",
+      "implementationCommit": "86c8ce3669047e5de14575f0d515f04cc387e285",
+      "gapResult": "docs/ui-redesign/evidence/r8-GAPS/verification/result.json",
+      "measurementNote": "GAPS retained measurements; current complete suite is separate evidence. Headed values are not a closing rerun.",
+      "closingSuiteMeasurement": {
+        "time": "2026-09-07T09:52:34.014Z",
+        "commit": "b00acc5531a7fce75b73412cf5cf5985cfecf2e2",
+        "sourceSha256": "e176fb6a3411078cdbbe431d25bec179c20293d22df5565aeb90df579e2fba5c",
+        "environment": {
+          "platform": "darwin",
+          "release": "25.6.0",
+          "cpu": "Apple M4",
+          "chrome": "152.0.7977.76",
+          "node": "v22.23.2",
+          "viewport": [
+            1440,
+            1000
+          ],
+          "headless": true,
+          "customLaunchFlags": [],
+          "referenceFrozen": false
+        },
+        "method": "Real double-click + keyboard typing and visible previous/next buttons; capture listener through next top-window rAF. Handler is capture through last bubble listener, including downstream product event handling. No internal Commands mutations.",
+        "samples": {
+          "input": [
+            56.5,
+            6.6000001430511475,
+            58,
+            66,
+            61.90000009536743,
+            56.5,
+            11.100000143051147,
+            1.8999998569488525,
+            71.20000004768372,
+            50.80000019073486,
+            59.299999952316284,
+            2.299999952316284,
+            49.5,
+            2,
+            53.799999952316284,
+            59.09999990463257,
+            1,
+            138.5,
+            0.9000000953674316,
+            121.70000004768372,
+            55.69999980926514,
+            127.40000009536743,
+            121.70000004768372,
+            4.6000001430511475,
+            118.5,
+            123.90000009536743,
+            118.60000014305115,
+            54.10000014305115,
+            118,
+            3.5
+          ],
+          "turn": [
+            119.5,
+            114.70000004768372,
+            4.300000190734863,
+            45.299999952316284,
+            121.09999990463257,
+            109,
+            36.700000047683716,
+            120.60000014305115,
+            54.799999952316284,
+            57,
+            120.5,
+            16.899999856948853,
+            55.200000047683716,
+            121.40000009536743,
+            56.799999952316284,
+            133.40000009536743,
+            19.40000009536743,
+            87.20000004768372,
+            135.10000014305115,
+            120,
+            35.09999990463257,
+            54.30000019073486,
+            3,
+            8.600000143051147,
+            123.30000019073486,
+            117.5,
+            42.5,
+            15.5,
+            8.700000047683716,
+            46.09999990463257
+          ],
+          "inputHandler": [
+            11.400000095367432,
+            0.3000001907348633,
+            0.2999999523162842,
+            0.09999990463256836,
+            0.40000009536743164,
+            0.20000004768371582,
+            0.20000004768371582,
+            0.20000004768371582,
+            0.39999985694885254,
+            0.10000014305114746,
+            0.09999990463256836,
+            0.2999999523162842,
+            0.09999990463256836,
+            0.2999999523162842,
+            0.20000004768371582,
+            0.2999999523162842,
+            0.09999990463256836,
+            0.09999990463256836,
+            0.2999999523162842,
+            0.5,
+            0.19999980926513672,
+            0.10000014305114746,
+            0.2999999523162842,
+            0.10000014305114746,
+            0.09999990463256836,
+            0.10000014305114746,
+            0.2999999523162842,
+            0.20000004768371582,
+            0.6000001430511475,
+            0.2999999523162842
+          ],
+          "turnHandler": [
+            11.5,
+            3.1000001430511475,
+            3.8000001907348633,
+            2.799999952316284,
+            2.799999952316284,
+            2.5,
+            2.5,
+            2.6000001430511475,
+            2.799999952316284,
+            3.799999952316284,
+            2.700000047683716,
+            3.5999999046325684,
+            3,
+            4.900000095367432,
+            2.799999952316284,
+            2.6000001430511475,
+            4,
+            8,
+            2.6000001430511475,
+            2.9000000953674316,
+            2.700000047683716,
+            3.200000047683716,
+            2.700000047683716,
+            4.299999952316284,
+            3.8000001907348633,
+            2.799999952316284,
+            4.599999904632568,
+            9.899999856948853,
+            7.799999952316284,
+            3.200000047683716
+          ],
+          "longTasks": [],
+          "blankIdle": [
+            0.40000009536743164,
+            74.29999995231628,
+            8.099999904632568,
+            17.5,
+            57.200000047683716,
+            60.39999985694885,
+            56.200000047683716,
+            59.90000009536743,
+            66,
+            66.39999985694885,
+            67,
+            66.29999995231628,
+            66.60000014305115,
+            67.5,
+            61,
+            28.200000047683716,
+            17.799999952316284,
+            59.700000047683716,
+            62,
+            17.399999856948853,
+            12.799999952316284,
+            48.5,
+            58.700000047683716,
+            66.5,
+            66.90000009536743,
+            57.5,
+            59.39999985694885,
+            60.5,
+            30.100000143051147,
+            62.39999985694885
+          ],
+          "editorIdle": [
+            59.299999952316284,
+            10.299999952316284,
+            39,
+            59.700000047683716,
+            56.700000047683716,
+            59.299999952316284,
+            57.39999985694885,
+            61.80000019073486,
+            38.19999980926514,
+            60.200000047683716,
+            50.200000047683716,
+            56.700000047683716,
+            58.59999990463257,
+            61.5,
+            31.40000009536743,
+            56.39999985694885,
+            69,
+            48.200000047683716,
+            67.90000009536743,
+            59.799999952316284,
+            30.09999990463257,
+            60.10000014305115,
+            61,
+            22,
+            58.200000047683716,
+            49.5,
+            58.39999985694885,
+            58.200000047683716,
+            58.799999952316284,
+            57.200000047683716
+          ],
+          "metricIdle": [
+            53.799999952316284,
+            134.10000014305115,
+            124.89999985694885,
+            49.60000014305115,
+            50,
+            54.200000047683716,
+            22.199999809265137,
+            124.40000009536743,
+            54.59999990463257,
+            6.200000047683716,
+            97.20000004768372,
+            124.59999990463257,
+            58.10000014305115,
+            134.09999990463257,
+            57.60000014305115,
+            57,
+            143,
+            58.299999952316284,
+            135.39999985694885,
+            115.90000009536743,
+            127.40000009536743,
+            41.39999985694885,
+            98,
+            116.79999995231628,
+            118.90000009536743,
+            100.90000009536743,
+            87.19999980926514,
+            49.90000009536743,
+            58,
+            134.09999990463257
+          ]
+        },
+        "p95": {
+          "input": 127.40000009536743,
+          "turn": 133.40000009536743,
+          "inputHandler": 0.6000001430511475,
+          "turnHandler": 9.899999856948853,
+          "blankIdle": 67.5,
+          "editorIdle": 67.90000009536743
+        },
+        "idleMetricsSeconds": {
+          "TaskDuration": 0.0057870000000000005,
+          "ScriptDuration": 0.000104,
+          "LayoutDuration": 0,
+          "RecalcStyleDuration": 0
+        },
+        "inputText": "第 1 页：完整保留事实xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "pages": 12,
+        "targets": {
+          "inputLimitMs": 50,
+          "turnLimitMs": 100,
+          "inputPassed": false,
+          "turnPassed": false
+        }
+      },
+      "closingSuiteNote": "Measured during full concurrent node --test suite; both latency gates fail in these observations. Not comparable to standalone headed GAPS run."
+    }
+  ],
+  "pending": [
+    {
+      "item": "S04 default headless input p95 <=50ms",
+      "status": "pending",
+      "result": null,
+      "reason": "Final installed Chrome headless input p95 is 143.9ms; blank-page rAF p95 143.1ms. Headed passes do not replace this environment or frozen reference acceptance."
+    },
+    {
+      "item": "Native file picker authorization and durable write permission",
+      "status": "pending",
+      "result": null,
+      "reason": "Headless download / disk-bridge tests are not native authorization evidence."
+    },
+    {
+      "item": "Safari, native print dialog, operating-system IME",
+      "status": "pending",
+      "result": null,
+      "reason": "No Safari, native print or operating-system IME session was collected. PDF API and synthetic composition do not substitute."
+    },
+    {
+      "item": "Physical touch, screen reader, owner and two target-user reviews",
+      "status": "pending",
+      "result": null,
+      "reason": "No physical-device, assistive-technology or human review sessions."
+    },
+    {
+      "item": "Independent low-performance/no-Node machine and same-model generation telemetry",
+      "status": "pending",
+      "result": null,
+      "reason": "This host has Node and is the development machine. Controlled model-call/token and nine-pair human aesthetic evidence is unavailable."
+    },
+    {
+      "item": "Actual browser GPU/decoder cache reclamation bytes",
+      "status": "pending",
+      "result": null,
+      "reason": "Inactive URLs and naturalWidth=0 are measured; Chrome cache/GPU residency is not observable from these page-level tests."
+    },
+    {
+      "item": "S04 closing concurrent suite input and page-turn gates",
+      "status": "pending",
+      "result": null,
+      "reason": "Latest full-suite performance observation exceeds both 50ms input and 100ms turn limits; raw observations in current-suite-performance.json, distinct from GAPS standalone measurements."
+    },
+    {
+      "item": "Real user media batches and semantic crop review; complex author CSS, 200% zoom/system fonts and assistive technology",
+      "status": "pending",
+      "result": null,
+      "reason": "No new human or independent device sessions; S08 carry-forward human/fidelity scope remains. Automated geometry and synthetic fixtures do not provide this evidence."
+    }
+  ]
+}

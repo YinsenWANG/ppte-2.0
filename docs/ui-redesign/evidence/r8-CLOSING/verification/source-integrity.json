@@ -1,0 +1,41 @@
+{
+  "base": "f5ba1900cb1467126cc3edd911ce762413280cdb",
+  "files": [
+    {
+      "file": "docs/audits/2026-09-07-ui-d96f211/REPORT.md",
+      "unchangedFromBase": true,
+      "sha256": "e33582cf847b1068cb599ae9048e2c4550bef1fe1bb40152180cf1d63f5a36a3"
+    },
+    {
+      "file": "docs/audits/2026-09-07-ui-d96f211/probe.mjs",
+      "unchangedFromBase": true,
+      "sha256": "c063b799ec206b338f702293af07cd53367d08173f2c026718501867d1e96a1c"
+    },
+    {
+      "file": "docs/audits/2026-09-07-ui-d96f211/followup.mjs",
+      "unchangedFromBase": true,
+      "sha256": "3f6e804274ccea84a8fe2a52ba1fb4dc100b75253ea12ae299dd23fc8e41211b"
+    },
+    {
+      "file": "docs/ui-redesign/DESIGN.md",
+      "unchangedFromBase": true,
+      "sha256": "4f4dfb6cfeed39f316b2f98b6b87546bbb8e6f63e0894c3824b42a27a70a4d83"
+    },
+    {
+      "file": "docs/ui-redesign/UI_PROTOTYPE.html",
+      "unchangedFromBase": true,
+      "sha256": "47c13635fd96aa8d57258ac78aa0bba97d7c1869ea01c1ab870437b1e5189c80"
+    },
+    {
+      "file": "docs/ui-redesign/SAVING-VERSIONS.md",
+      "unchangedFromBase": true,
+      "sha256": "e46e5bad2afb6375b9238aa50049621a5027deb5313ec6f1c32329822f56b0c3"
+    },
+    {
+      "file": "docs/audits/2026-09-07-ui-d96f211/sample/source.html",
+      "unchangedFromBase": true,
+      "sha256": "db6dd16104be24df2e93684b35e4827c3b08c0d569ab563af70bb257866882ef"
+    }
+  ],
+  "allThreePagesExtractedByUnmodifiedProbeMatchAuditSourceExactly": true
+}

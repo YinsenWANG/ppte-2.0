@@ -1,0 +1,108 @@
+{
+  "errors": [],
+  "nativeText": {
+    "contenteditable": null,
+    "tag": "DIV",
+    "text": "开源，\n让选择更多。"
+  },
+  "fontControls": 0,
+  "viewport": {
+    "frame": {
+      "x": 220,
+      "y": 102,
+      "width": 940,
+      "height": 790,
+      "top": 102,
+      "right": 1160,
+      "bottom": 892,
+      "left": 220
+    },
+    "slides": [
+      {
+        "x": 0,
+        "y": 0,
+        "width": 960,
+        "height": 540,
+        "top": 0,
+        "right": 960,
+        "bottom": 540,
+        "left": 0
+      },
+      {
+        "x": 0,
+        "y": 540,
+        "width": 960,
+        "height": 540,
+        "top": 540,
+        "right": 960,
+        "bottom": 1080,
+        "left": 0
+      },
+      {
+        "x": 0,
+        "y": 1080,
+        "width": 960,
+        "height": 540,
+        "top": 1080,
+        "right": 960,
+        "bottom": 1620,
+        "left": 0
+      }
+    ]
+  },
+  "imageBefore": {
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 320,
+      "height": 240,
+      "top": 0,
+      "right": 320,
+      "bottom": 240,
+      "left": 0
+    },
+    "heading": {
+      "x": 55,
+      "y": 165,
+      "width": 600,
+      "height": 183.59375,
+      "top": 165,
+      "right": 655,
+      "bottom": 348.59375,
+      "left": 55
+    },
+    "style": "width: 320px; height: 240px; max-width: 100%; object-fit: contain !important; object-position: 50% 50% !important; position: relative; z-index: 1;",
+    "overlap": true
+  },
+  "imageAfter": {
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 320,
+      "height": 240,
+      "top": 0,
+      "right": 320,
+      "bottom": 240,
+      "left": 0
+    },
+    "heading": {
+      "x": 55,
+      "y": 165,
+      "width": 600,
+      "height": 183.59375,
+      "top": 165,
+      "right": 655,
+      "bottom": 348.59375,
+      "left": 55
+    },
+    "style": "width: 320px; height: 240px; max-width: 100%; object-fit: contain !important; object-position: 50% 50% !important; position: relative; z-index: 1;",
+    "overlap": true
+  },
+  "moveFeedback": "操作未完成 · Error: LAYOUT_UNSUPPORTED: 此对象使用普通文档流",
+  "namingDialog": {
+    "type": "prompt",
+    "message": "版本名称（最多 200 字）"
+  },
+  "semanticTextControls": 1,
+  "addedCount": 13
+}
