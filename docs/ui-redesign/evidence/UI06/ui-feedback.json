@@ -1,0 +1,44 @@
+{
+  "category": "product-ui",
+  "status": "pending",
+  "result": null,
+  "reason": "No owner or target-user interaction feedback supplied for the current production sample. Automation observations are not user ratings.",
+  "reviewers": [
+    {
+      "role": "owner",
+      "identity": null,
+      "rating": null,
+      "comments": null,
+      "reviewedAt": null
+    },
+    {
+      "role": "target-user-1",
+      "identity": null,
+      "rating": null,
+      "comments": null,
+      "reviewedAt": null
+    },
+    {
+      "role": "target-user-2",
+      "identity": null,
+      "rating": null,
+      "comments": null,
+      "reviewedAt": null
+    }
+  ],
+  "criteria": [
+    "Discover reading/editing and unified insertion",
+    "Find save; distinguish download from original writeback",
+    "Preview/restore history without losing current work",
+    "Keyboard/focus and narrow viewport usability"
+  ],
+  "artifacts": [
+    "reading.png",
+    "editing.png",
+    "restore-preview.png",
+    "reopened.png",
+    "present.png"
+  ],
+  "recordingProtocol": "Record browser/device, task, expected/observed result, screenshot, severity and raw user quote separately; never infer opinions from successful clicks.",
+  "priorFeedback": "docs/single-file-first/evidence/s08/feedback-closure-matrix.md"
+}
