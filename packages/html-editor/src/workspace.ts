@@ -1,6 +1,7 @@
 import { accessibleShellCSS, disclosure } from './accessibility.js';
 import { insertMenu } from './insert-menu.js';
 import { readingView } from './reading.js';
+import { editCanvas } from './edit-canvas.js';
 import { installPlayer } from '../../html-player/src/index.js';
 import { installPrint } from '../../html-print/src/index.js';
 import { Commands, editable, isTextObject, textObject, snapshot } from './commands.js';
@@ -26,6 +27,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     document.body.append(root);
     const pages = root.querySelector<HTMLElement>('#ppte-pages')!, panel = root.querySelector<HTMLElement>('#ppte-properties')!, floating = root.querySelector<HTMLElement>('#ppte-floating')!, feedback = root.querySelector<HTMLElement>('#ppte-feedback')!;
     const reading = readingView(frame);
+    const canvas = editCanvas(frame, positionTools);
     let pageSettings = false, suspended = false;
     let active = false, selected: string[] = [], commands: Commands, range: Range | null = null, currentSlide = 0;
     const report = (e: unknown) => {
@@ -386,10 +388,8 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     }
     window.addEventListener('resize', positionTools);
     function scrollSlide(slide: HTMLElement) {
-        if (!active && !suspended) { reading.draw(currentSlide); updatePageCount(); return; }
-        const view = commands.doc.defaultView!;
-        view.scrollTo({ top: slide.getBoundingClientRect().top + view.scrollY, left: 0 });
-        positionTools();
+        if (suspended) return;
+        resize(); updatePageCount(); positionTools();
     }
     let draggedSlide: string | undefined;
     function reorderPage(id: string, target: string) {
@@ -544,10 +544,14 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
                 before = undefined;
             }
         };
+        let inputFit = 0;
         doc.addEventListener('input', (e) => {
             if (!(e as InputEvent).isComposing) {
                 if(before)record();
                 else { change(); thumbs([(e.target as HTMLElement).dataset.ppteId!]); }
+                // Flow content can change the native page height while typing.
+                cancelAnimationFrame(inputFit);
+                inputFit = requestAnimationFrame(() => { resize(); positionTools(); });
             }
         });
         doc.addEventListener('compositionstart', e => {
@@ -669,26 +673,20 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         const rail=innerWidth>=1280?204:170, prop=innerWidth>=1280?264:238;
         const left=collapsed||innerWidth<=580?0:rail, right=panel.hidden||innerWidth<=580?0:prop;
         updatePageCount();
-        frame.style.transformOrigin = 'top left';
-        frame.style.transform = active ? `scale(${zoom})` : '';
-        zoomLabel.textContent = active ? `${Math.round(zoom * 100)}%` : '适应画布';
         zoomOut.hidden = zoomIn.hidden = zoomReset.hidden = !active;
         root.style.setProperty('--top', `${top}px`);
         if (!active) {
-            frame.style.marginLeft = '0';
-            frame.style.width = '100%';
+            canvas.clear();
             frame.style.marginTop = `${top}px`;
             frame.style.marginLeft = left+'px';
             frame.style.width = `calc(100% - ${left}px)`;
             frame.style.height = `calc(100% - ${top+bottom}px)`;
             reading.draw(currentSlide);
-        }
-        if (active) {
+            zoomLabel.textContent = '适应画布';
+        } else {
             reading.clear();
-            frame.style.marginLeft = `${left+16}px`;
-            frame.style.width = `calc((100% - ${left+32+right}px) / ${zoom})`;
-            frame.style.marginTop = `${top}px`;
-            frame.style.height = `calc(100% - ${top + bottom + 32}px)`;
+            const scale = canvas.draw(currentSlide, {left,right,top,bottom},zoom);
+            zoomLabel.textContent = zoom === 1 ? '适应画布' : `${Math.round(scale*100)}%`;
         }
     };
     const shellObserver=new ResizeObserver(resize);
@@ -710,7 +708,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     let wasActive = false;
     const suspend = () => {
         insertion.close(false);
-        wasActive = active; suspended=true; reading.clear(); more.open=false; help.open=false; active = false; root.removeAttribute('data-open');
+        wasActive = active; suspended=true; reading.clear(); canvas.clear(); more.open=false; help.open=false; active = false; root.removeAttribute('data-open');
         frame.inert=false; frame.removeAttribute('aria-hidden'); bar.style.display = 'none'; frame.style.transform = ''; refresh();
     };
     const resume = () => {

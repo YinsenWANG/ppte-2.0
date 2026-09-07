@@ -43,10 +43,16 @@ test('S03 F02-F05 file UI: protected local insert/history, unique identity, nati
       await p.getByRole('button',{name:'添加页',exact:true}).click();
       results.presentation.push(await visibleCurrent(p));
     }
-    const identity=await p.evaluate(()=>{
-      const c=(window as any).PPTeEditor.commands,list=Array.from(c.doc.querySelectorAll('[data-ppte-slide]')) as HTMLElement[];
-      return list.map(n=>({id:n.dataset.ppteSlide,object:n.dataset.ppteId,width:n.getBoundingClientRect().width,height:n.getBoundingClientRect().height,display:c.doc.defaultView.getComputedStyle(n).display,titleSize:c.doc.defaultView.getComputedStyle(n.querySelector('h1')).fontSize}));
-    });
+    // A single-page editor deliberately removes inactive pages from layout.
+    // Visit each page with its real navigation control before measuring it.
+    const identity=[];
+    for(let i=0;i<5;i++){
+      await p.getByRole('button',{name:`第 ${i+1} 页`,exact:true}).click();
+      identity.push(await p.frameLocator('#ppte-frame').locator('[data-ppte-slide]').nth(i).evaluate(n=>{
+        const style=getComputedStyle(n);return {id:(n as HTMLElement).dataset.ppteSlide,object:(n as HTMLElement).dataset.ppteId,width:n.getBoundingClientRect().width,height:n.getBoundingClientRect().height,display:style.display,titleSize:getComputedStyle(n.querySelector('h1')!).fontSize};
+      }));
+    }
+    await p.getByRole('button',{name:'第 3 页',exact:true}).click();
     assert.equal(identity.length,5);assert.equal(new Set(identity.map(n=>n.id)).size,5);assert.ok(identity.every(n=>n.id));
     for(const item of identity){assert.equal(item.width,960);assert.equal(item.height,540);assert.equal(item.titleSize,'44px');}
     assert.equal(identity[1].display,'grid');assert.equal(identity[2].display,'grid');
@@ -134,7 +140,8 @@ test('S03 contextual UI: real cell mouse/keyboard range format, collapse/zoom fo
     assert.deepEqual(composition,{interim:0,final:1,text:'中文'});
     const box=p.frameLocator('#ppte-frame').locator('[data-ppte-id=box]');await box.click();
     const bounds=await p.getByRole('button',{name:'调整对象大小',exact:true}).boundingBox();assert.ok(bounds);
-    await p.mouse.move(bounds.x+12,bounds.y+12);await p.mouse.down();await p.mouse.move(bounds.x+42,bounds.y+32);await p.mouse.up();
+    const scale=await p.locator('#ppte-frame').evaluate(n=>n.getBoundingClientRect().width/n.clientWidth);
+    await p.mouse.move(bounds.x+12,bounds.y+12);await p.mouse.down();await p.mouse.move(bounds.x+12+30*scale,bounds.y+12+20*scale);await p.mouse.up();
     assert.equal(await box.evaluate(n=>(n as HTMLElement).style.width),'90px');
     await p.getByRole('button',{name:'撤销',exact:true}).click();assert.equal(await box.evaluate(n=>n.getBoundingClientRect().width),60);
     await p.screenshot({path:join(out,'shape-handles.png')});
