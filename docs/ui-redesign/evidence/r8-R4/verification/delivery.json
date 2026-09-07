@@ -1,0 +1,23 @@
+{
+  "time": "2026-09-07T08:53:53.203Z",
+  "browser": "152.0.7977.76",
+  "file": "../sample.ppte.html",
+  "sha256": "710c658c6d880e2a6e45840af78a790fd40752850898cb60b4b0c76a9297040b",
+  "bytes": 377098,
+  "offline": true,
+  "defaultRead": true,
+  "realClickEdit": true,
+  "download": true,
+  "presentEscape": true,
+  "stableBarHeight": 56,
+  "saveDetail": {
+    "text": "已发起下载，原文件未覆盖（下载是否落盘由浏览器决定）",
+    "whiteSpace": "normal",
+    "height": 40,
+    "scrollHeight": 40
+  },
+  "errors": [],
+  "network": [],
+  "nativeAuthorization": null,
+  "nativeReason": "Download path only; no successful native picker authorization"
+}

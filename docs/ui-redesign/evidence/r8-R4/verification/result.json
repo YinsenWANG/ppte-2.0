@@ -1,0 +1,214 @@
+{
+  "task": "R4",
+  "time": "2026-09-07T08:56:49.955704+00:00",
+  "baseCommit": "f5ba1900cb1467126cc3edd911ce762413280cdb",
+  "implementationCommit": "74ffb0fab5987815cc3b95b6bdce7311eb0a9b80",
+  "testedParentCommit": "3a8314412d70f70a20bffe7ac71396a5be99a200",
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "74ffb0fab5987815cc3b95b6bdce7311eb0a9b80",
+      "executionHead": "3a8314412d70f70a20bffe7ac71396a5be99a200",
+      "completedAt": "2026-09-07T08:54:25.028893+00:00",
+      "log": "typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "74ffb0fab5987815cc3b95b6bdce7311eb0a9b80",
+      "executionHead": "3a8314412d70f70a20bffe7ac71396a5be99a200",
+      "completedAt": "2026-09-07T08:54:26.222896+00:00",
+      "log": "build.log"
+    },
+    {
+      "command": "pnpm test",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "74ffb0fab5987815cc3b95b6bdce7311eb0a9b80",
+      "executionHead": "3a8314412d70f70a20bffe7ac71396a5be99a200",
+      "completedAt": "2026-09-07T08:55:20.605220+00:00",
+      "log": "test.log"
+    },
+    {
+      "command": "node docs/audits/2026-09-07-ui-d96f211/probe.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "74ffb0fab5987815cc3b95b6bdce7311eb0a9b80",
+      "executionHead": "3a8314412d70f70a20bffe7ac71396a5be99a200",
+      "completedAt": "2026-09-07T08:53:58.027805+00:00",
+      "log": "probe.log"
+    },
+    {
+      "command": "node docs/audits/2026-09-07-ui-d96f211/followup.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "74ffb0fab5987815cc3b95b6bdce7311eb0a9b80",
+      "executionHead": "3a8314412d70f70a20bffe7ac71396a5be99a200",
+      "completedAt": "2026-09-07T08:54:01.643466+00:00",
+      "log": "followup.log"
+    },
+    {
+      "command": "node dist/apps/html-cli/index.js enhance docs/audits/2026-09-07-ui-d96f211/sample/source.html --out docs/ui-redesign/evidence/r8-R4/sample.ppte.html",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "74ffb0fab5987815cc3b95b6bdce7311eb0a9b80",
+      "executionHead": "3a8314412d70f70a20bffe7ac71396a5be99a200",
+      "completedAt": "2026-09-07T08:53:51.230078+00:00",
+      "log": "cli.log"
+    }
+  ],
+  "statusByLayer": {
+    "code": "implemented",
+    "automated": "passed: 121/121 node --test on dist; R4 real mouse/keyboard regression, unchanged audit probes and offline CLI smoke",
+    "real-browser": "partial: installed Chrome 152.0.7977.76 headless, offline file://",
+    "human": "pending: no owner or target-user visual review"
+  },
+  "acceptance": [
+    {
+      "id": "document-toolbar-insert",
+      "status": "passed automated",
+      "evidence": [
+        "hierarchy.json",
+        "test.log",
+        "../product-1440.png",
+        "../audit-product-insert.png"
+      ],
+      "tests": "R4, UI01, UI02"
+    },
+    {
+      "id": "text-color-precision",
+      "status": "passed automated",
+      "evidence": [
+        "test.log",
+        "../audit-twelve-text.png",
+        "../product-1440.png"
+      ],
+      "tests": "R4, R1, H03"
+    },
+    {
+      "id": "page-actions-keyboard",
+      "status": "passed automated",
+      "evidence": [
+        "test.log"
+      ],
+      "tests": "R4 mouse menu move and Alt+ArrowUp; UI03 boundaries/drag/undo"
+    },
+    {
+      "id": "footer-icons-accessibility",
+      "status": "passed automated",
+      "evidence": [
+        "test.log",
+        "../product-1024.png"
+      ],
+      "tests": "R4, UI05"
+    },
+    {
+      "id": "stable-save-and-readable-details",
+      "status": "passed automated",
+      "evidence": [
+        "delivery.json",
+        "../save-detail.png",
+        "test.log"
+      ],
+      "tests": "R4 plus UI04 conflict path; native authorization pending"
+    },
+    {
+      "id": "approved-prototype-comparison",
+      "status": "captured; human review pending",
+      "evidence": [
+        "../COMPARE.html",
+        "hierarchy.json"
+      ]
+    }
+  ],
+  "probeComparison": {
+    "baselineMeaning": "before is actual pre-R4 run at 3a83144 (R1-R3 already fixed); historical audit baseline remains immutable",
+    "before": [
+      "before-probe.json",
+      "before-followup.json"
+    ],
+    "after": [
+      "after-probe.json",
+      "after-followup.json"
+    ],
+    "R4": {
+      "before": "fail by report criteria: flat text actions, open layout controls, raw font text field and long footer",
+      "after": "automated hierarchy passed; same-content comparison supplied; original scripts do not implement a boolean visual R4 verdict",
+      "evidence": "R4 node test measures bar/toolbar/footer and compact row geometry; compare panel texts and screenshots"
+    },
+    "retained": {
+      "nativeText": "contenteditable true, fontControls 1 in both pre/post R4",
+      "image": "no heading overlap; real Alt+ArrowRight x55→63 in both pre/post R4",
+      "presentation": "0 editable nodes and 0 visible product buttons",
+      "twelvePages": "font control 1; added count 13"
+    },
+    "remaining": {
+      "R5": "390px inspector occlusion remains pending",
+      "R6": "followup still records naming prompt; pending next task"
+    }
+  },
+  "testHistory": {
+    "final": "121/121 passed",
+    "intermittent": "Earlier full run 120/121: UI07 named version missing after copied-file reopen. Isolated UI07 rerun 8/8 and subsequent full runs 121/121. Cause not established; no assertions removed and no retry inside tests. Raw failure retained.",
+    "files": [
+      "intermediate-120-of-121.log",
+      "versions-isolated-8-of-8.log"
+    ]
+  },
+  "pending": [
+    {
+      "item": "human visual acceptance",
+      "value": null,
+      "reason": "No reviewer available; screenshots are not approval"
+    },
+    {
+      "item": "native file authorization",
+      "value": null,
+      "reason": "Headless download and existing bridge tests do not establish native picker success"
+    },
+    {
+      "item": "Safari/system IME/screen reader/physical touch",
+      "value": null,
+      "reason": "No real system/device evidence"
+    },
+    {
+      "item": "R5/R6",
+      "value": null,
+      "reason": "Ordered later pipeline tasks"
+    },
+    {
+      "item": "performance/media/PDF N04 root cause",
+      "value": null,
+      "reason": "GAPS stage retained; passing current suite does not settle prior root-cause investigation"
+    }
+  ],
+  "sample": {
+    "time": "2026-09-07T08:53:53.203Z",
+    "browser": "152.0.7977.76",
+    "file": "../sample.ppte.html",
+    "sha256": "710c658c6d880e2a6e45840af78a790fd40752850898cb60b4b0c76a9297040b",
+    "bytes": 377098,
+    "offline": true,
+    "defaultRead": true,
+    "realClickEdit": true,
+    "download": true,
+    "presentEscape": true,
+    "stableBarHeight": 56,
+    "saveDetail": {
+      "text": "已发起下载，原文件未覆盖（下载是否落盘由浏览器决定）",
+      "whiteSpace": "normal",
+      "height": 40,
+      "scrollHeight": 40
+    },
+    "errors": [],
+    "network": [],
+    "nativeAuthorization": null,
+    "nativeReason": "Download path only; no successful native picker authorization"
+  },
+  "auditFilesModified": false,
+  "push": false,
+  "workspace": "Pre-existing supervisor/brief/log files retained and locally excluded, not deleted or committed"
+}

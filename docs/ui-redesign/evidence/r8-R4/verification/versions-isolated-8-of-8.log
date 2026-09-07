@@ -1,0 +1,58 @@
+TAP version 13
+# Subtest: UI07 A1: named checkpoints deduplicate; restore is atomic and retains target, later and before-restore states
+ok 1 - UI07 A1: named checkpoints deduplicate; restore is atomic and retains target, later and before-restore states
+  ---
+  duration_ms: 5.193
+  type: 'test'
+  ...
+# Subtest: UI07 A3: 5 minute generation, count/bytes quotas, named retention and failed pre-restore preserve all history
+ok 2 - UI07 A3: 5 minute generation, count/bytes quotas, named retention and failed pre-restore preserve all history
+  ---
+  duration_ms: 7.739292
+  type: 'test'
+  ...
+# Subtest: UI07 A2/A4: portable wire, shared media across current and checkpoints, lazy decode and independent checkpoints after deletion
+ok 3 - UI07 A2/A4: portable wire, shared media across current and checkpoints, lazy decode and independent checkpoints after deletion
+  ---
+  duration_ms: 7.572334
+  type: 'test'
+  ...
+# Subtest: UI07 A5: truncation, unknown schema, missing resource, bad checkpoint, hostile HTML and expansion limits are isolated
+ok 4 - UI07 A5: truncation, unknown schema, missing resource, bad checkpoint, hostile HTML and expansion limits are isolated
+  ---
+  duration_ms: 8.135083
+  type: 'test'
+  ...
+# Subtest: UI07 A2/A5: CLI re-enhancement preserves opaque history and single-file identity
+ok 5 - UI07 A2/A5: CLI re-enhancement preserves opaque history and single-file identity
+  ---
+  duration_ms: 47.00925
+  type: 'test'
+  ...
+# Subtest: UI07 A1–A6: product controls, actual offline download, copied file in fresh process, preview/restore and media timings
+ok 6 - UI07 A1–A6: product controls, actual offline download, copied file in fresh process, preview/restore and media timings
+  ---
+  duration_ms: 5338.305125
+  type: 'test'
+  ...
+# Subtest: UI07 A3/A5/A6: real disk bridge writes media history; quota never blocks current save; no-history export removes private resources
+ok 7 - UI07 A3/A5/A6: real disk bridge writes media history; quota never blocks current save; no-history export removes private resources
+  ---
+  duration_ms: 3814.902042
+  type: 'test'
+  ...
+# Subtest: UI07 A3/A4/A5: quota measures escaped transport bytes; reference fan-out is bounded before resource expansion
+ok 8 - UI07 A3/A4/A5: quota measures escaped transport bytes; reference fan-out is bounded before resource expansion
+  ---
+  duration_ms: 20.380333
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9446.068875
