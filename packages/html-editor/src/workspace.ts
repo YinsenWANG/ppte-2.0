@@ -192,6 +192,13 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         }
         else {
             const s = section('外观');
+            if (nodes.length === 1 && nodes[0].matches('td,th')) {
+                button(s, '选择整个表格', () => {
+                    const table = nodes[0].closest('table')!;
+                    selected = [table.dataset.ppteId!]; range = null;
+                    table.setAttribute('tabindex','0'); table.focus({preventScroll:true});
+                });
+            }
             if (kind === '内容容器') {
                 const hint = document.createElement('p');
                 hint.textContent = '此结构不支持整体文字编辑。请选择其中的独立文字；媒体、控件和布局容器不能作为一个文本框编辑。';
@@ -290,7 +297,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
             const absolute = nodes.every(n => doc.defaultView!.getComputedStyle(n).position === 'absolute');
             const hint = document.createElement('p');
             hint.className = 'hint';
-            hint.textContent = absolute ? '自由定位 · 拖动对象或 Alt + 方向键移动' : '原生流式布局 · Alt + 方向键调整 Grid / Flex 顺序';
+            hint.textContent = absolute ? '自由定位 · 拖动对象或 Alt + 方向键移动' : '按内容顺序排列 · Alt + 方向键调整顺序；下方可调间距与对齐';
             layout.append(hint);
             for (const p of ['width', 'height'])
                 field(layout, p === 'width' ? '宽度' : '高度', common(p), v => commands.style(selected, p, v));
@@ -315,6 +322,12 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
                 field(layout,'顺序',common('order'),v=>commands.style(selected,'order',v));
             }
             if(!absolute)field(layout,'外边距',common('margin'),v=>commands.style(selected,'margin',v));
+            if (!absolute && nodes.length === 1 && !/grid|flex/.test(doc.defaultView!.getComputedStyle(nodes[0].parentElement!).display) && !nodes[0].matches('td,th,[data-ppte-slide]')) {
+                button(layout,'提前一个对象',()=>commands.moveFlow(selected[0],-1));
+                button(layout,'推后一个对象',()=>commands.moveFlow(selected[0],1));
+                for (const [label, alignment] of [['对象靠左','left'],['对象居中','center'],['对象靠右','right']] as const)
+                    button(layout,label,()=>commands.alignFlow(selected[0],alignment));
+            }
             if(nodes.length===1 && !nodes[0].matches('td,th,[data-ppte-slide]')){
                 const actions=section('对象操作');
                 button(actions,'复制对象',()=>selectInserted(commands.duplicate(selected[0])));
@@ -494,6 +507,9 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
             const id = n?.dataset.ppteId;
             propertiesCollapsed=false; pageSettings=false;
             selected = id ? (e.shiftKey ? [...new Set([...selected, id])] : [id]) : [];
+            // Non-text objects must own keyboard focus after a real pointer
+            // selection, including when pointerdown prevented native dragging.
+            if (n && !isTextObject(n)) { n.setAttribute('tabindex', '0'); n.focus({preventScroll:true}); }
             const selection = doc.getSelection();
             range = selection?.rangeCount && !selection.isCollapsed ? selection.getRangeAt(0).cloneRange() : null;
             const slide = n?.closest('[data-ppte-slide]');

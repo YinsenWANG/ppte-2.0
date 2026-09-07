@@ -1,6 +1,7 @@
 import { cleanContent } from '../../html-document/src/content.js';
 import { sha } from './save.js';
 import { MediaHistory } from './media-history.js';
+import { placeInserted } from './insertion-layout.js';
 // A declaration is a candidate, never permission to edit a mixed container.
 export const editable = 'h1,h2,h3,h4,h5,h6,p,li,td,th,figcaption,div,span,[data-ppte-kind="text"]';
 const inlineText = 'span,b,strong,i,em,u,s,strike,small,sub,sup,mark,abbr,cite,code,q,bdi,bdo,br,wbr';
@@ -244,8 +245,25 @@ export class Commands {
         else if (/grid|flex/.test(this.doc.defaultView!.getComputedStyle(n.parentElement!).display)) {
             this.style([id], 'order', String((Number(s.order) || 0) + Math.sign(dx || dy)));
         }
-        else
-            throw Error('LAYOUT_UNSUPPORTED: 此对象使用普通文档流');
+        else this.moveFlow(id, Math.sign(dx || dy));
+    }
+    moveFlow(id: string, direction: number) {
+        const n = this.node(id), parent = n.parentElement!;
+        if (this.protected(n) || parent.closest('[data-ppte-locked="true"]')) throw Error('OBJECT_PROTECTED');
+        const target = direction > 0 ? n.nextElementSibling : n.previousElementSibling;
+        if (!target || !direction) return;
+        const from = n.previousElementSibling;
+        if (direction > 0) target.after(n); else target.before(n);
+        const to = n.previousElementSibling;
+        this.record([{id, before:'before move', after:'after move', relocation:{parent,from,to}}]);
+    }
+    alignFlow(id: string, alignment: 'left' | 'center' | 'right') {
+        const display = this.doc.defaultView!.getComputedStyle(this.node(id)).display;
+        this.transaction([id], n => {
+            if (display.startsWith('inline')) n.style.display = 'block';
+            n.style.marginLeft = alignment === 'left' ? '0px' : 'auto';
+            n.style.marginRight = alignment === 'right' ? '0px' : 'auto';
+        });
     }
     align(ids: string[], edge: 'left'|'center'|'right'|'top'|'middle'|'bottom', baseline: 'selection'|'page'|'content' = 'selection') {
         const nodes = ids.map(id=>this.node(id));
@@ -323,7 +341,11 @@ export class Commands {
         let parent = slide;
         let previous: HTMLElement | null = null;
         if (reference && reference !== slide && slide.contains(reference)) {
-            const object = reference.closest<HTMLElement>('table,svg') ?? reference;
+            let object = reference.closest<HTMLElement>('table,svg') ?? reference;
+            // A positioned, single-media wrapper is itself the canvas object;
+            // inserting inside it would overlap its child or clip the new item.
+            while (object.parentElement && object.parentElement !== slide && object.parentElement.children.length === 1 &&
+                this.doc.defaultView!.getComputedStyle(object.parentElement).position === 'absolute') object = object.parentElement;
             parent = object.parentElement!;
             previous = object;
         } else {
@@ -340,28 +362,10 @@ export class Commands {
         const {parent, previous} = point;
         if (!parent.isConnected || previous && previous.parentElement !== parent) throw Error('CONFLICT');
         if (parent.closest('[data-ppte-locked="true"]')) throw Error('OBJECT_PROTECTED');
-        // Keep author containers and styles. New objects participate in native flow;
-        // their own stacking level keeps positioned author headings from hiding them.
-        if (!n.style.position) n.style.position = 'relative';
-        const levels = Array.from((parent.closest('[data-ppte-slide]') ?? parent).querySelectorAll('*')).map(e => Number(this.doc.defaultView!.getComputedStyle(e).zIndex) || 0);
-        n.style.zIndex = String(Math.max(0, ...levels) + 1);
         n.dataset.ppteId ||= `object-${crypto.randomUUID()}`;
         if (previous) previous.after(n); else parent.prepend(n);
-        if (n.tagName === 'IMG') {
-            // A descendant z-index cannot escape its author's stacking context.
-            // Reserve space below overlapping headings, without changing author nodes.
-            const slide = parent.closest('[data-ppte-slide]') ?? parent;
-            const r = n.getBoundingClientRect();
-            const headings = Array.from(slide.querySelectorAll('h1,h2,h3,h4,h5,h6')).map(h=>h.getBoundingClientRect());
-            const bottom = Math.max(r.top, ...headings.filter(h=>h.left<r.right && h.right>r.left && h.bottom>r.top && h.top<r.bottom).map(h=>h.bottom+16));
-            if (bottom > r.top) n.style.marginTop = `${bottom-r.top}px`;
-            const placed = n.getBoundingClientRect();
-            const overlap = headings.some(h=>h.left<placed.right && h.right>placed.left && h.bottom>placed.top && h.top<placed.bottom);
-            if (overlap || !placed.width || !placed.height) {
-                n.remove();
-                throw Error('IMAGE_PLACEMENT: 此容器无法避开标题，请选择其他内容位置后插入图片');
-            }
-        }
+        try { placeInserted(n, parent, previous, isTextObject); }
+        catch (error) { n.remove(); throw error; }
         this.record([{id:n.dataset.ppteId, before:'', after:snapshot(n), insertion:{parent, previous, node:n}}]);
         return n;
     }
