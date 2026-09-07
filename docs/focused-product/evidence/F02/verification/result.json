@@ -1,0 +1,110 @@
+{
+  "task": "F02",
+  "status": "implemented-pending-validation",
+  "implementationCommit": "272f31c41c5b00499ca4983411a8a1fce0140d91",
+  "recordedAt": "2026-09-07T14:32:51.493415+00:00",
+  "platform": {
+    "os": "macOS-26.6.2-arm64-arm-64bit",
+    "architecture": "arm64",
+    "node": "v22.23.2",
+    "pnpm": "11.22.0",
+    "chrome": "152.0.7977.76",
+    "headless": true
+  },
+  "executionNote": "Commands ran on the implementation working tree subsequently committed unchanged as implementationCommit. Evidence commit changes documentation only.",
+  "layers": {
+    "code": "passed",
+    "automated": "passed",
+    "real-browser": "pending",
+    "human": "pending"
+  },
+  "pendingReason": "No native desktop dialog control or remote target-machine receipts. Headless keyboard/download and Node-backed handle bridge are automated only; OS IME/clipboard and human approval are pending.",
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "verification/typecheck.log",
+      "implementationCommit": "272f31c41c5b00499ca4983411a8a1fce0140d91",
+      "logCreatedAt": "2026-09-07T14:29:25.537879+00:00",
+      "logLastWrittenAt": "2026-09-07T14:29:25.711684+00:00",
+      "sha256": "0ae79858d1378de4a49bb6bdcaf88acb5b1de35ec309f992f3d1193e86a2a4a2"
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "verification/build.log",
+      "implementationCommit": "272f31c41c5b00499ca4983411a8a1fce0140d91",
+      "logCreatedAt": "2026-09-07T14:29:26.717451+00:00",
+      "logLastWrittenAt": "2026-09-07T14:29:26.894002+00:00",
+      "sha256": "981710c4773357321873464210550419258feecb6af85bb9df41b33c0f6bd351"
+    },
+    {
+      "command": "pnpm test",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "verification/test.log",
+      "implementationCommit": "272f31c41c5b00499ca4983411a8a1fce0140d91",
+      "logCreatedAt": "2026-09-07T14:29:28.098591+00:00",
+      "logLastWrittenAt": "2026-09-07T14:30:26.320376+00:00",
+      "sha256": "a57d83a9f1c5c056fb800620f203f1e6b2b8fef9f79acdb27dc2eec77435d39d"
+    }
+  ],
+  "tests": {
+    "passed": 135,
+    "failed": 0,
+    "skipped": 16,
+    "newSkips": 0
+  },
+  "acceptance": [
+    {
+      "item": "取消或拒绝不自动下载",
+      "code": "passed",
+      "automated": "passed",
+      "automatedEvidence": [
+        "focused-product-f02: fault matrix",
+        "single-file-save: explicit download/reopen"
+      ],
+      "real-browser": "pending",
+      "human": "pending",
+      "reason": "See NATIVE-VALIDATION.md; native dialogs and physical/system input were not exercised."
+    },
+    {
+      "item": "原文件手动/自动保存原生证据",
+      "code": "passed",
+      "automated": "passed",
+      "automatedEvidence": [
+        "single-file-save: Node-backed file handle bridge (NOT native evidence)"
+      ],
+      "real-browser": "pending",
+      "human": "pending",
+      "reason": "See NATIVE-VALIDATION.md; native dialogs and physical/system input were not exercised."
+    },
+    {
+      "item": "队列/错误/冲突/重开正确",
+      "code": "passed",
+      "automated": "passed",
+      "automatedEvidence": [
+        "ui04-saving: debounce/queue/IME/error latch",
+        "html-save: conflicts/recovery",
+        "focused-product-f02: draft/error cache"
+      ],
+      "real-browser": "pending",
+      "human": "pending",
+      "reason": "See NATIVE-VALIDATION.md; native dialogs and physical/system input were not exercised."
+    },
+    {
+      "item": "修复Enter后文本能力丢失",
+      "code": "passed",
+      "automated": "passed",
+      "automatedEvidence": [
+        "focused-product-f02: B1 keyboard journey",
+        "r8-r1-text: author mixed-container boundaries"
+      ],
+      "real-browser": "pending",
+      "human": "pending",
+      "reason": "See NATIVE-VALIDATION.md; native dialogs and physical/system input were not exercised."
+    }
+  ]
+}

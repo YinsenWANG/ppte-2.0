@@ -1,0 +1,19 @@
+{
+  "status": "passed-automation-only",
+  "nativePicker": false,
+  "bridge": "Playwright bindings provide mocked handle methods backed by Node file I/O; no HTTP service",
+  "path": "/private/tmp/ppte8/artifacts/s02/bound.ppte.html",
+  "initial": "e7f94bbaaf5746d96fb82bec1293e27bfbf04e2db96772a8e1506269d4df7f89",
+  "firstConfirmed": "1abf28a4642859c5fa38fd4fdc91572a3577d3571035d14375c34238faa4ab56",
+  "lastConfirmed": "82e76f08052b721f3772cc4ffff6b0a7af24d0687e28fc236d10fd9d9981bb85",
+  "externalAfterConflict": "af6d8f366a9ead0d9c1e141c2897d7a4cca603086cc76fa6d33698f74cdebdbf",
+  "checks": [
+    "write/close/readback",
+    "edit during pending write",
+    "revocation/download/reauthorization",
+    "failed close/retry",
+    "external conflict stays latched",
+    "close/reopen same path",
+    "same-name same-content different-revision binding rejected"
+  ]
+}

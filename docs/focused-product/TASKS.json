@@ -34,7 +34,7 @@
     {
       "id": "F02",
       "title": "可靠保存与多行编辑",
-      "status": "pending",
+      "status": "implemented-pending-validation",
       "dependsOn": [
         "F01"
       ],
@@ -44,7 +44,25 @@
         "队列/错误/冲突/重开正确",
         "修复Enter后文本能力丢失"
       ],
-      "evidence": []
+      "evidence": [
+        "evidence/F02/IMPLEMENTATION.md",
+        "evidence/F02/verification/result.json",
+        "evidence/F02/NATIVE-VALIDATION.md",
+        "evidence/F02/Cherry-F02.ppte.html",
+        "evidence/F02/journey.json",
+        "evidence/F02/original-file-hashes.json",
+        "evidence/F02/actual-download-reopen.json",
+        "evidence/F02/screenshots/",
+        "evidence/F02/SHA256SUMS"
+      ],
+      "verification": {
+        "code": "passed",
+        "automated": "passed",
+        "real-browser": "pending",
+        "human": "pending",
+        "implementationCommit": "272f31c41c5b00499ca4983411a8a1fce0140d91",
+        "reason": "Code and automated gates passed (135 passed, 0 failed, 16 existing skips). Native original-file manual/autosave, OS IME/clipboard and human validation remain pending; mocked handles and headless downloads are not native evidence."
+      }
     },
     {
       "id": "F03",
