@@ -1,0 +1,191 @@
+{
+  "task": "UI02",
+  "status": "passed-code-and-automated",
+  "commit": "dbd7ed643f07de02793a406c9ad84304b7d97515",
+  "parentCommit": "cf497105d324b8c96fc04ab6fb6830ff2062185c",
+  "baseCommit": "0e6b1e3",
+  "timestamp": "2026-09-07T05:32:17.722198+00:00",
+  "platform": {
+    "system": "Darwin",
+    "release": "25.6.0",
+    "machine": "arm64",
+    "node": "v22.23.2",
+    "pnpm": "11.22.0"
+  },
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/ui-redesign/evidence/UI02/verification/typecheck.log",
+      "logSha256": "0ae79858d1378de4a49bb6bdcaf88acb5b1de35ec309f992f3d1193e86a2a4a2",
+      "startedAt": "2026-09-07T05:32:17.915168+00:00",
+      "completedAt": "2026-09-07T05:32:19.001990+00:00",
+      "commit": "dbd7ed643f07de02793a406c9ad84304b7d97515"
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/ui-redesign/evidence/UI02/verification/build.log",
+      "logSha256": "981710c4773357321873464210550419258feecb6af85bb9df41b33c0f6bd351",
+      "startedAt": "2026-09-07T05:32:19.002195+00:00",
+      "completedAt": "2026-09-07T05:32:20.210980+00:00",
+      "commit": "dbd7ed643f07de02793a406c9ad84304b7d97515"
+    },
+    {
+      "command": "pnpm test",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/ui-redesign/evidence/UI02/verification/test.log",
+      "logSha256": "d703f6bc9ed4b79c88d348ed2ebf31c9498d8918476deccea73d1bbf730ee867",
+      "startedAt": "2026-09-07T05:32:20.211172+00:00",
+      "completedAt": "2026-09-07T05:32:48.218989+00:00",
+      "commit": "dbd7ed643f07de02793a406c9ad84304b7d97515"
+    }
+  ],
+  "completedAt": "2026-09-07T05:32:48.219200+00:00",
+  "tests": {
+    "framework": "node --test dist/tests/*.test.js",
+    "total": 92,
+    "passed": 92,
+    "failed": 0,
+    "skipped": 0,
+    "added": 4,
+    "removed": 0,
+    "existingAssertionsWeakened": 0
+  },
+  "layers": {
+    "code": "passed",
+    "automated": "passed",
+    "real-browser": {
+      "chrome": {
+        "status": "passed",
+        "version": "152.0.7977.76",
+        "headless": true,
+        "offline": true,
+        "entry": "file://",
+        "nativeImageChooser": "Playwright filechooser event and setFiles, not native write permission evidence"
+      },
+      "safari": {
+        "status": "pending",
+        "value": null,
+        "reason": "Not executed for UI02; prior UI01 Safari WebDriver attempt recorded remote automation disabled"
+      },
+      "systemIME": {
+        "status": "pending",
+        "value": null,
+        "reason": "No OS IME interaction available in headless automation; existing synthetic composition regression passes"
+      },
+      "nativeFileAuthorization": {
+        "status": "pending",
+        "value": null,
+        "reason": "This journey downloads a file; it does not exercise an original-file write permission dialog"
+      },
+      "physicalTouch": {
+        "status": "pending",
+        "value": null,
+        "reason": "No physical touch device used"
+      }
+    },
+    "human": {
+      "status": "pending",
+      "value": null,
+      "reason": "No owner/target-user visual review or screen reader session available"
+    }
+  },
+  "acceptance": [
+    {
+      "index": 1,
+      "criterion": "四类对象可插入和调整",
+      "status": "passed-code-and-automated",
+      "test": "tests/ui02-objects.test.ts — UI02 acceptance 1",
+      "capture": "docs/ui-redesign/evidence/UI02/objects.json",
+      "verdictLog": "docs/ui-redesign/evidence/UI02/verification/test.log"
+    },
+    {
+      "index": 2,
+      "criterion": "真实作者布局不被强制绝对化",
+      "status": "passed-code-and-automated",
+      "test": "tests/ui02-objects.test.ts — UI02 acceptance 2",
+      "capture": "docs/ui-redesign/evidence/UI02/layout.json",
+      "verdictLog": "docs/ui-redesign/evidence/UI02/verification/test.log"
+    },
+    {
+      "index": 3,
+      "criterion": "保护范围和历史正确",
+      "status": "passed-code-and-automated",
+      "test": "tests/ui02-objects.test.ts — UI02 acceptance 3",
+      "capture": "docs/ui-redesign/evidence/UI02/protection.json",
+      "verdictLog": "docs/ui-redesign/evidence/UI02/verification/test.log"
+    },
+    {
+      "index": 4,
+      "criterion": "图标/控件/焦点一致",
+      "status": "passed-code-and-automated",
+      "test": "tests/ui02-objects.test.ts — UI02 acceptance 4",
+      "capture": "docs/ui-redesign/evidence/UI02/focus.json",
+      "verdictLog": "docs/ui-redesign/evidence/UI02/verification/test.log"
+    }
+  ],
+  "sample": {
+    "path": "docs/ui-redesign/evidence/UI02/sample.ppte.html",
+    "sha256": "cf8181d63f8da398cfbc67d06b7f533013e440a764b1c22758cacd57801e4156",
+    "bytes": 352696,
+    "source": "Byte-identical product download from acceptance 1, reopened in a fresh Chrome process offline. Synthetic UI02 fixture, not UI06 final delivery."
+  },
+  "upstream": {
+    "UI01": "done code/automated; native/human gaps unchanged",
+    "UI04": "done code/automated; native/human gaps unchanged",
+    "UI07": "partial: current-media lifecycle gap unchanged",
+    "UI03_UI05_UI06": "pending",
+    "S06_S07_S08": "partial unchanged",
+    "N01_N04": "not closed",
+    "performance": "Existing S04 input/page-turn, media decode memory and real-device gaps unchanged"
+  },
+  "testAdjustments": "Existing S06 image test now uses the unified Insert/Image menu and filechooser event; all existing assertions retained. New UI02 rendered-bold assertion supports existing native range spans. No force clicks. See IMPLEMENTATION.md.",
+  "earlierFailures": {
+    "log": "docs/ui-redesign/evidence/UI02/verification/initial-full-test.log",
+    "status": "failed-before-fix",
+    "testsPassed": 91,
+    "testsFailed": 1,
+    "reason": "Whole-selection node styling violated existing span contract; final implementation preserves it and full rerun passes."
+  },
+  "artifacts": [
+    {
+      "path": "docs/ui-redesign/evidence/UI02/flow.png",
+      "sha256": "93f1b06b2ada8f35d27e18b2c58cb4a2192bb7226d144dfc105359361faa78be"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI02/focus.json",
+      "sha256": "d29d21514be157e5bdc3f1378c633292e017c531d18b4111da1b09208f7b2c31"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI02/layout.json",
+      "sha256": "4d269c031b880c2cba1347a0115284ee91a2de0bb63e90abde8985411f0b904c"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI02/menu-focus.png",
+      "sha256": "404a786d077f1dab6a3c7d1633c0ab282fbd97c99156ed0dd9f3a06b55769093"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI02/objects.json",
+      "sha256": "9ea84b3fc7b0e77f3b5241e1d29eab9e1b696c626c8f4635bbf7584fc723f1fa"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI02/objects.png",
+      "sha256": "dc433109fe7b9a4a9948fac409f03a552c6512f198b7d2541a8e9eb68e52aa86"
+    },
+    {
+      "path": "docs/ui-redesign/evidence/UI02/protection.json",
+      "sha256": "8391c38a1ad2897bbc337a7f32b5bd9105d0b913e9b47e02f37cdf4d8926fd9d"
+    }
+  ],
+  "signature": {
+    "status": "verified",
+    "type": "GPG",
+    "log": "docs/ui-redesign/evidence/UI02/verification/signature.log",
+    "dco": "Signed-off-by: yinsen <cherryai001@yinsenMac-mini.local>"
+  },
+  "workspaceHygiene": "Pre-existing brief7-UI02.md and out7-UI07.txt retained in place and locally excluded with the UI02 pipeline output; no user file deleted and no push performed."
+}

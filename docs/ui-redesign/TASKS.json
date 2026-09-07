@@ -8,7 +8,7 @@
     "b1ceb6a49ea3b9fd82963e9d2bb632e4222973be",
     "c1397304d643545206b92b795e7700c5e225300d"
   ],
-  "scope": "UI01 and UI04 code/automation done; UI07 portable history implemented with A4 current-media lifecycle gap, status partial. Other UI tasks pending; native/human gaps remain.",
+  "scope": "UI01, UI02 and UI04 code/automation done; UI07 portable history implemented with A4 current-media lifecycle gap, status partial. Other UI tasks pending; native/human gaps remain.",
   "tasks": [
     {
       "id": "UI01",
@@ -38,7 +38,7 @@
     {
       "id": "UI02",
       "title": "统一插入与对象属性",
-      "status": "pending",
+      "status": "done",
       "dependsOn": [
         "UI01"
       ],
@@ -48,7 +48,19 @@
         "保护范围和历史正确",
         "图标/控件/焦点一致"
       ],
-      "evidence": []
+      "evidence": [
+        "docs/ui-redesign/evidence/UI02/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/UI02/verification/result.json",
+        "tests/ui02-objects.test.ts",
+        "docs/ui-redesign/evidence/UI02/sample.ppte.html"
+      ],
+      "implementationCommit": "dbd7ed643f07de02793a406c9ad84304b7d97515",
+      "statusByLayer": {
+        "code": "passed",
+        "automated": "passed: 92/92 tests; four UI02 acceptance tests",
+        "real-browser": "partial: installed Chrome headless file:// UI passed; Safari, native permissions, OS IME and physical touch pending",
+        "human": "pending: no owner/target-user visual review or screen reader evidence"
+      }
     },
     {
       "id": "UI03",

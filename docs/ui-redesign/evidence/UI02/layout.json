@@ -1,0 +1,10 @@
+{
+  "browser": "152.0.7977.76",
+  "headless": true,
+  "entry": "file://",
+  "offline": true,
+  "errors": [],
+  "network": [],
+  "timestamp": "2026-09-07T05:32:42.245Z",
+  "verdict": "See node --test TAP assertions; capture alone is not a pass"
+}
