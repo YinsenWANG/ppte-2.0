@@ -633,6 +633,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     const keys = (e: KeyboardEvent) => {
         if (e.isComposing || composing) return;
         const target=e.target as HTMLElement;
+        if(target.closest?.('dialog[open]'))return;
         const input=target.closest?.('input,textarea,select,[contenteditable="true"]');
         if(active&&!input&&!e.metaKey&&!e.ctrlKey&&!e.altKey&&e.key.toLowerCase()==='t'){e.preventDefault();addObject('text');return;}
         if(active&&!input&&selected.length===1&&['Delete','Backspace'].includes(e.key)){e.preventDefault();run(()=>{commands.remove(selected[0]);selected=[];range=null;});return;}

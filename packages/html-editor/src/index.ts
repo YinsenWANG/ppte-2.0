@@ -231,6 +231,7 @@ export function installEditor(api: API) {
         doc.addEventListener('keydown', keys);
     };
     const keys = (event: KeyboardEvent) => {
+        if ((event.target as Element).closest?.('dialog[open]')) return;
         if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 's') {
             event.preventDefault();
             save.click();
