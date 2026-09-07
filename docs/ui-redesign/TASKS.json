@@ -1,0 +1,106 @@
+{
+  "version": "ui-redesign-1.0",
+  "status": "proposed",
+  "design": "DESIGN.md",
+  "prototype": "UI_PROTOTYPE.html",
+  "basis": [
+    "61310c789ffe7e99311fb48b4580101803d3f40a",
+    "b1ceb6a49ea3b9fd82963e9d2bb632e4222973be",
+    "c1397304d643545206b92b795e7700c5e225300d"
+  ],
+  "scope": "Design deliverable only; prototype is not production implementation. Existing audit and single-file unfinished tasks remain active.",
+  "tasks": [
+    {
+      "id": "UI01",
+      "title": "三模式与布局外壳",
+      "status": "pending",
+      "dependsOn": [],
+      "acceptance": [
+        "默认阅读与重开默认阅读",
+        "编辑按上下文展开",
+        "放映无菜单和鼠标召回",
+        "Esc/全屏失败返回正确模式"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "UI02",
+      "title": "统一插入与对象属性",
+      "status": "pending",
+      "dependsOn": [
+        "UI01"
+      ],
+      "acceptance": [
+        "四类对象可插入和调整",
+        "真实作者布局不被强制绝对化",
+        "保护范围和历史正确",
+        "图标/控件/焦点一致"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "UI03",
+      "title": "页面导航与组合缺陷",
+      "status": "pending",
+      "dependsOn": [
+        "UI01"
+      ],
+      "acceptance": [
+        "添加页无控制条遮挡",
+        "响应式新页保真",
+        "图片不被标题挡住且可调整",
+        "页面排序具备键盘等效"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "UI04",
+      "title": "真实保存状态与下载",
+      "status": "pending",
+      "dependsOn": [
+        "UI01"
+      ],
+      "acceptance": [
+        "无关联可进入编辑",
+        "原生授权后实际写回",
+        "未写回文案准确",
+        "失败/权限撤销/外部修改可恢复"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "UI05",
+      "title": "适配与可访问性",
+      "status": "pending",
+      "dependsOn": [
+        "UI01"
+      ],
+      "acceptance": [
+        "1440/1024/820/390窗口",
+        "200%缩放和触控目标",
+        "菜单键盘与焦点恢复",
+        "图标标签和重要文字对比"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "UI06",
+      "title": "全旅程与用户验收",
+      "status": "pending",
+      "dependsOn": [
+        "UI01",
+        "UI02",
+        "UI03",
+        "UI04",
+        "UI05"
+      ],
+      "acceptance": [
+        "离线阅读编辑保存重开放映PDF",
+        "四类对象历史持久化",
+        "真实Chrome/Safari与原生权限",
+        "用户UI反馈与样稿审美分别记录"
+      ],
+      "evidence": []
+    }
+  ]
+}
