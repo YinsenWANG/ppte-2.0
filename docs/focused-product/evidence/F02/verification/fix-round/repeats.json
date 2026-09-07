@@ -1,0 +1,158 @@
+[
+  {
+    "iteration": 1,
+    "command": [
+      "node",
+      "--test",
+      "--test-name-pattern=F01 A1/A2",
+      "dist/tests/focused-product-f01.test.js"
+    ],
+    "startedAt": "2026-09-07T14:41:48.571370+00:00",
+    "finishedAt": "2026-09-07T14:41:52.508684+00:00",
+    "exitCode": 0,
+    "log": "chooser-repeat-01.log"
+  },
+  {
+    "iteration": 2,
+    "command": [
+      "node",
+      "--test",
+      "--test-name-pattern=F01 A1/A2",
+      "dist/tests/focused-product-f01.test.js"
+    ],
+    "startedAt": "2026-09-07T14:41:52.508709+00:00",
+    "finishedAt": "2026-09-07T14:41:56.442845+00:00",
+    "exitCode": 0,
+    "log": "chooser-repeat-02.log"
+  },
+  {
+    "iteration": 3,
+    "command": [
+      "node",
+      "--test",
+      "--test-name-pattern=F01 A1/A2",
+      "dist/tests/focused-product-f01.test.js"
+    ],
+    "startedAt": "2026-09-07T14:41:56.442862+00:00",
+    "finishedAt": "2026-09-07T14:42:00.192704+00:00",
+    "exitCode": 0,
+    "log": "chooser-repeat-03.log"
+  },
+  {
+    "iteration": 4,
+    "command": [
+      "node",
+      "--test",
+      "--test-name-pattern=F01 A1/A2",
+      "dist/tests/focused-product-f01.test.js"
+    ],
+    "startedAt": "2026-09-07T14:42:00.192718+00:00",
+    "finishedAt": "2026-09-07T14:42:04.226913+00:00",
+    "exitCode": 0,
+    "log": "chooser-repeat-04.log"
+  },
+  {
+    "iteration": 5,
+    "command": [
+      "node",
+      "--test",
+      "--test-name-pattern=F01 A1/A2",
+      "dist/tests/focused-product-f01.test.js"
+    ],
+    "startedAt": "2026-09-07T14:42:04.226928+00:00",
+    "finishedAt": "2026-09-07T14:42:08.197448+00:00",
+    "exitCode": 0,
+    "log": "chooser-repeat-05.log"
+  },
+  {
+    "iteration": 6,
+    "command": [
+      "node",
+      "--test",
+      "--test-name-pattern=F01 A1/A2",
+      "dist/tests/focused-product-f01.test.js"
+    ],
+    "startedAt": "2026-09-07T14:42:08.197465+00:00",
+    "finishedAt": "2026-09-07T14:42:12.043529+00:00",
+    "exitCode": 0,
+    "log": "chooser-repeat-06.log"
+  },
+  {
+    "iteration": 7,
+    "command": [
+      "node",
+      "--test",
+      "--test-name-pattern=F01 A1/A2",
+      "dist/tests/focused-product-f01.test.js"
+    ],
+    "startedAt": "2026-09-07T14:42:12.043544+00:00",
+    "finishedAt": "2026-09-07T14:42:15.360959+00:00",
+    "exitCode": 0,
+    "log": "chooser-repeat-07.log"
+  },
+  {
+    "iteration": 8,
+    "command": [
+      "node",
+      "--test",
+      "--test-name-pattern=F01 A1/A2",
+      "dist/tests/focused-product-f01.test.js"
+    ],
+    "startedAt": "2026-09-07T14:42:15.360974+00:00",
+    "finishedAt": "2026-09-07T14:42:19.424341+00:00",
+    "exitCode": 0,
+    "log": "chooser-repeat-08.log"
+  },
+  {
+    "iteration": 9,
+    "command": [
+      "node",
+      "--test",
+      "--test-name-pattern=F01 A1/A2",
+      "dist/tests/focused-product-f01.test.js"
+    ],
+    "startedAt": "2026-09-07T14:42:19.424359+00:00",
+    "finishedAt": "2026-09-07T14:42:23.391773+00:00",
+    "exitCode": 0,
+    "log": "chooser-repeat-09.log"
+  },
+  {
+    "iteration": 10,
+    "command": [
+      "node",
+      "--test",
+      "--test-name-pattern=F01 A1/A2",
+      "dist/tests/focused-product-f01.test.js"
+    ],
+    "startedAt": "2026-09-07T14:42:23.391790+00:00",
+    "finishedAt": "2026-09-07T14:42:27.623895+00:00",
+    "exitCode": 0,
+    "log": "chooser-repeat-10.log"
+  },
+  {
+    "iteration": 11,
+    "command": [
+      "node",
+      "--test",
+      "--test-name-pattern=F01 A1/A2",
+      "dist/tests/focused-product-f01.test.js"
+    ],
+    "startedAt": "2026-09-07T14:42:27.623908+00:00",
+    "finishedAt": "2026-09-07T14:42:31.512484+00:00",
+    "exitCode": 0,
+    "log": "chooser-repeat-11.log"
+  },
+  {
+    "iteration": 12,
+    "command": [
+      "node",
+      "--test",
+      "--test-name-pattern=F01 A1/A2",
+      "dist/tests/focused-product-f01.test.js"
+    ],
+    "startedAt": "2026-09-07T14:42:31.512498+00:00",
+    "finishedAt": "2026-09-07T14:42:35.581758+00:00",
+    "exitCode": 0,
+    "log": "chooser-repeat-12.log"
+  }
+]

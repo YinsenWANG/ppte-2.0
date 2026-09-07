@@ -106,5 +106,115 @@
       "human": "pending",
       "reason": "See NATIVE-VALIDATION.md; native dialogs and physical/system input were not exercised."
     }
-  ]
+  ],
+  "gateFix": {
+    "status": "passed",
+    "recordedAt": "2026-09-07T14:43:26.707297+00:00",
+    "baseCommit": "279cff3",
+    "fixCommit": "342d43927434a7c75109631b8e54b9f92e2171f7",
+    "platform": {
+      "os": "macOS-26.6.2-arm64-arm-64bit",
+      "architecture": "arm64",
+      "node": "v22.23.2",
+      "pnpm": "11.22.0",
+      "chrome": "152.0.7977.76",
+      "headless": true,
+      "playwright": "1.62.1",
+      "shell": "/bin/bash -lc"
+    },
+    "layers": {
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "pending",
+      "human": "pending"
+    },
+    "failure": "Intermittent F01 A1/A2 Enter → filechooser timeout (10000ms), 134 passed / 1 failed / 16 existing skips. Supplied pipeline tail omitted the failing test; cannot establish it was identical.",
+    "change": "Register a persistent filechooser listener before page navigation; retain all original keyboard/mouse/cancellation assertions and add exact 0/1/2 chooser counts. No runtime changes, timeout increases, retries or new skips.",
+    "reproduction": [
+      {
+        "command": "pnpm test",
+        "status": "passed",
+        "exitCode": 0,
+        "log": "verification/fix-round/before-pass.log",
+        "commit": "279cff3",
+        "logCreatedAt": "2026-09-07T14:35:13.904425+00:00",
+        "logLastWrittenAt": "2026-09-07T14:36:11.870648+00:00",
+        "sha256": "bb150f9998b4311172119186c29220a0666c79dbe4e71b62cfed733d033b54c6",
+        "timeSource": "Original command output file timestamps before evidence copy"
+      },
+      {
+        "command": "pnpm test",
+        "status": "failed",
+        "exitCode": 1,
+        "log": "verification/fix-round/before-failure.log",
+        "commit": "279cff3",
+        "logCreatedAt": "2026-09-07T14:36:27.590835+00:00",
+        "logLastWrittenAt": "2026-09-07T14:37:25.332016+00:00",
+        "sha256": "4ad82af5808689a042979b18f6d7e38ef9b4ffeb8878970d2ee30968d78327e0",
+        "timeSource": "Original command output file timestamps before evidence copy"
+      },
+      {
+        "command": "pnpm test (temporary DOM event instrumentation only)",
+        "status": "passed",
+        "exitCode": 0,
+        "log": "verification/fix-round/diagnostic-pass.log",
+        "commit": "279cff3 + diagnostic working-tree instrumentation (removed)",
+        "logCreatedAt": "2026-09-07T14:38:24.964367+00:00",
+        "logLastWrittenAt": "2026-09-07T14:39:24.151957+00:00",
+        "sha256": "e9bbd9c60311e057de7194f449b87e531714c01c30ad879fa903560d0fb8997c",
+        "timeSource": "Original command output file timestamps before evidence copy"
+      }
+    ],
+    "commands": [
+      {
+        "command": "pnpm typecheck",
+        "status": "passed",
+        "exitCode": 0,
+        "log": "verification/fix-round/typecheck.log",
+        "commit": "342d43927434a7c75109631b8e54b9f92e2171f7",
+        "logCreatedAt": "2026-09-07T14:40:26.934954+00:00",
+        "logLastWrittenAt": "2026-09-07T14:40:27.144345+00:00",
+        "sha256": "0ae79858d1378de4a49bb6bdcaf88acb5b1de35ec309f992f3d1193e86a2a4a2",
+        "timeSource": "Original command output file timestamps before evidence copy"
+      },
+      {
+        "command": "pnpm build",
+        "status": "passed",
+        "exitCode": 0,
+        "log": "verification/fix-round/build.log",
+        "commit": "342d43927434a7c75109631b8e54b9f92e2171f7",
+        "logCreatedAt": "2026-09-07T14:40:28.233139+00:00",
+        "logLastWrittenAt": "2026-09-07T14:40:28.413910+00:00",
+        "sha256": "981710c4773357321873464210550419258feecb6af85bb9df41b33c0f6bd351",
+        "timeSource": "Original command output file timestamps before evidence copy"
+      },
+      {
+        "command": "pnpm test",
+        "status": "passed",
+        "exitCode": 0,
+        "log": "verification/fix-round/test.log",
+        "commit": "342d43927434a7c75109631b8e54b9f92e2171f7",
+        "logCreatedAt": "2026-09-07T14:40:29.647637+00:00",
+        "logLastWrittenAt": "2026-09-07T14:41:28.235376+00:00",
+        "sha256": "e18e8a38d57f85b468eb97a877df4084eab134547f5d1585732c20803c5de0a6",
+        "timeSource": "Original command output file timestamps before evidence copy"
+      }
+    ],
+    "tests": {
+      "passed": 135,
+      "failed": 0,
+      "skipped": 16,
+      "newSkips": 0
+    },
+    "pendingReason": "No native desktop dialog control or remote target-machine receipts. Headless keyboard/download and Node-backed handle bridge are automated only; OS IME/clipboard and human approval are pending.",
+    "focusedRepeats": {
+      "status": "passed",
+      "runs": 12,
+      "failed": 0,
+      "commit": "342d43927434a7c75109631b8e54b9f92e2171f7",
+      "records": "verification/fix-round/repeats.json",
+      "command": "node --test --test-name-pattern=\"F01 A1/A2\" dist/tests/focused-product-f01.test.js",
+      "note": "12 fresh test processes; each must pass on its first attempt. No automatic retries within a test."
+    }
+  }
 }

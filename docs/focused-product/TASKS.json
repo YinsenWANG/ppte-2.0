@@ -53,7 +53,9 @@
         "evidence/F02/original-file-hashes.json",
         "evidence/F02/actual-download-reopen.json",
         "evidence/F02/screenshots/",
-        "evidence/F02/SHA256SUMS"
+        "evidence/F02/SHA256SUMS",
+        "evidence/F02/GATE-FIX.md",
+        "evidence/F02/verification/fix-round/"
       ],
       "verification": {
         "code": "passed",
@@ -61,7 +63,8 @@
         "real-browser": "pending",
         "human": "pending",
         "implementationCommit": "272f31c41c5b00499ca4983411a8a1fce0140d91",
-        "reason": "Code and automated gates passed (135 passed, 0 failed, 16 existing skips). Native original-file manual/autosave, OS IME/clipboard and human validation remain pending; mocked handles and headless downloads are not native evidence."
+        "reason": "Full gate revalidated after fixing intermittent F01 chooser subscription timing (135 passed, 0 failed, 16 existing skips; no weakened assertions). F02 code and automated coverage remain passed. Native original-file manual/autosave, OS IME/clipboard and human validation remain pending; mocked handles and headless downloads are not native evidence.",
+        "gateFixCommit": "342d43927434a7c75109631b8e54b9f92e2171f7"
       }
     },
     {
