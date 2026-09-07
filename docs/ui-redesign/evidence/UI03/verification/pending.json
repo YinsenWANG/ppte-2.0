@@ -1,0 +1,37 @@
+{
+  "Safari": {
+    "status": "pending",
+    "measurement": null,
+    "reason": "No Safari automation or manual Safari evidence collected in this round."
+  },
+  "nativePermissions": {
+    "status": "pending",
+    "measurement": null,
+    "reason": "Headless chooser file injection is not native original-file authorization evidence."
+  },
+  "systemIME": {
+    "status": "pending",
+    "measurement": null,
+    "reason": "No operating-system IME session available."
+  },
+  "screenReader": {
+    "status": "pending",
+    "measurement": null,
+    "reason": "No screen reader session or reviewer available."
+  },
+  "physicalTouch": {
+    "status": "pending",
+    "measurement": null,
+    "reason": "No physical touch device evidence."
+  },
+  "humanReview": {
+    "status": "pending",
+    "measurement": null,
+    "reason": "No owner or target-user UI/aesthetic review collected."
+  },
+  "realLowPerformanceDevice": {
+    "status": "pending",
+    "measurement": null,
+    "reason": "Development Mac is not the required low-performance device."
+  }
+}

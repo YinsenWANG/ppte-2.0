@@ -591,7 +591,10 @@
           "Arbitrary CSS contexts and body-as-slide insertion are not universally supported; detailed boundaries in report.",
           "S01 dependency remains partial; no closure of F01 or historical R01/R02/R05/R06 beyond documented S03 fixture evidence."
         ]
-      }
+      },
+      "supplementalEvidence": [
+        "docs/ui-redesign/evidence/UI03/verification/result.json"
+      ]
     },
     {
       "id": "S04",
@@ -1030,7 +1033,8 @@
       "supplementalEvidence": [
         "docs/ui-redesign/evidence/UI04/verification/result.json",
         "docs/ui-redesign/evidence/UI07/verification/result.json",
-        "docs/ui-redesign/evidence/UI02/verification/result.json"
+        "docs/ui-redesign/evidence/UI02/verification/result.json",
+        "docs/ui-redesign/evidence/UI03/verification/result.json"
       ]
     },
     {
@@ -1209,7 +1213,8 @@
       "supplementalEvidence": [
         "docs/ui-redesign/evidence/UI04/verification/result.json",
         "docs/ui-redesign/evidence/UI07/verification/result.json",
-        "docs/ui-redesign/evidence/UI02/verification/result.json"
+        "docs/ui-redesign/evidence/UI02/verification/result.json",
+        "docs/ui-redesign/evidence/UI03/verification/result.json"
       ]
     },
     {
@@ -1353,7 +1358,8 @@
       "supplementalEvidence": [
         "docs/ui-redesign/evidence/UI04/verification/result.json",
         "docs/ui-redesign/evidence/UI07/verification/result.json",
-        "docs/ui-redesign/evidence/UI02/verification/result.json"
+        "docs/ui-redesign/evidence/UI02/verification/result.json",
+        "docs/ui-redesign/evidence/UI03/verification/result.json"
       ]
     }
   ],
