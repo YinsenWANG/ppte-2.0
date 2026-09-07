@@ -1,0 +1,29 @@
+{
+  "time": "2026-09-07T14:17:58.045Z",
+  "records": [
+    {
+      "source": "prototype",
+      "elapsedMs": 198.52995800000008,
+      "bytes": 270251,
+      "method": "same Chrome Page.pdf candidate, named CSS pages with author dimensions, direct entire source document",
+      "priorFailure": "prototype-chromium-pdfkit-merge-failed.pdf"
+    },
+    {
+      "source": "cherry",
+      "elapsedMs": 329.92783299999996,
+      "bytes": 1033322,
+      "method": "same Chrome Page.pdf candidate, named CSS pages with author dimensions, direct entire source document",
+      "priorFailure": "cherry-chromium-pdfkit-merge-failed.pdf"
+    },
+    {
+      "source": "fixtures",
+      "elapsedMs": 111.79229100000009,
+      "bytes": 233692,
+      "method": "same Chrome Page.pdf candidate, named CSS pages with author dimensions, direct entire source document",
+      "priorFailure": "fixtures-chromium-pdfkit-merge-failed.pdf",
+      "viewportWidth": 640,
+      "note": "Narrowest fixed author viewport was tested; transformed Text spacing still differs from isolated page T ex t. Recorded as further failed qualification; no pass claim."
+    }
+  ],
+  "updatedAt": "2026-09-07T14:19:10.720Z"
+}

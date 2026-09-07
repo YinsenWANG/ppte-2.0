@@ -1,0 +1,125 @@
+{
+  "text": "CHERRY STUDIO\n03 / 社区让产品生长\n开源之路 / OPEN BY DESIGN\n03\n好的产品，\n在一起打磨中长大。\n从一个问题，到一次讨论，再到一份贡献。\n使用与发现     →     反馈与讨论     →     参与与贡献",
+  "nodes": [
+    {
+      "text": "CHERRY STUDIO",
+      "rects": [
+        {
+          "x": 58,
+          "y": 35,
+          "width": 99.375,
+          "height": 17
+        }
+      ],
+      "font": "Inter, -apple-system, \"PingFang SC\", sans-serif"
+    },
+    {
+      "text": "03 / 社区让产品生长",
+      "rects": [
+        {
+          "x": 672,
+          "y": 35,
+          "width": 112.40625,
+          "height": 17
+        }
+      ],
+      "font": "Inter, -apple-system, \"PingFang SC\", sans-serif"
+    },
+    {
+      "text": "开源之路 / OPEN BY DESIGN",
+      "rects": [
+        {
+          "x": 58,
+          "y": 490,
+          "width": 136.15625,
+          "height": 14
+        }
+      ],
+      "font": "Inter, -apple-system, \"PingFang SC\", sans-serif"
+    },
+    {
+      "text": "03",
+      "rects": [
+        {
+          "x": 861,
+          "y": 488,
+          "width": 14.40625,
+          "height": 17
+        }
+      ],
+      "font": "Inter, -apple-system, \"PingFang SC\", sans-serif"
+    },
+    {
+      "text": "好的产品，\n在一起打磨中长大。",
+      "rects": [
+        {
+          "x": 58,
+          "y": 108,
+          "width": 240,
+          "height": 67
+        },
+        {
+          "x": 298,
+          "y": 108,
+          "width": 0,
+          "height": 67
+        },
+        {
+          "x": 58,
+          "y": 172.796875,
+          "width": 432,
+          "height": 67
+        }
+      ],
+      "font": "Inter, -apple-system, \"PingFang SC\", sans-serif"
+    },
+    {
+      "text": "从一个问题，到一次讨论，再到一份贡献。",
+      "rects": [
+        {
+          "x": 60,
+          "y": 275,
+          "width": 342,
+          "height": 25
+        }
+      ],
+      "font": "Inter, -apple-system, \"PingFang SC\", sans-serif"
+    },
+    {
+      "text": "使用与发现     →     反馈与讨论     →     参与与贡献",
+      "rects": [
+        {
+          "x": 82,
+          "y": 373,
+          "width": 449.546875,
+          "height": 26
+        }
+      ],
+      "font": "Inter, -apple-system, \"PingFang SC\", sans-serif"
+    }
+  ],
+  "buttons": 0,
+  "fonts": [],
+  "missingFontCheck": true,
+  "platformFonts": [
+    {
+      "familyName": "PingFang SC",
+      "postScriptName": "PingFangSC-Regular",
+      "isCustomFont": false,
+      "glyphCount": 52
+    },
+    {
+      "familyName": "PingFang SC",
+      "postScriptName": "PingFangSC-Medium",
+      "isCustomFont": false,
+      "glyphCount": 39
+    },
+    {
+      "familyName": "PingFang SC",
+      "postScriptName": "PingFangSC-Semibold",
+      "isCustomFont": false,
+      "glyphCount": 27
+    }
+  ],
+  "missingFontNote": "FontFaceSet.check returns true for nonexistent system families; it is not evidence that F04AMissing exists. This family is deliberately absent."
+}

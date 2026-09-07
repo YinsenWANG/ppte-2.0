@@ -1,0 +1,807 @@
+{
+  "status": "pending",
+  "reason": "No human PDF-viewer drag-selection/copy/search or visual approval available in this automated run. PDFKit character bounds/extraction is automated only.",
+  "reader": "pending: human chooses supported desktop PDF viewer; PDFKit automated results do not substitute",
+  "records": [
+    {
+      "page": "prototype-01",
+      "candidate": "browser",
+      "pdf": "prototype-01/browser.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "CHERRY STUDIO",
+      "copyExpected": "prototype-01/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "prototype-01",
+      "candidate": "chromium",
+      "pdf": "prototype-01/chromium.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "CHERRY STUDIO",
+      "copyExpected": "prototype-01/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "prototype-02",
+      "candidate": "browser",
+      "pdf": "prototype-02/browser.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "CHERRY STUDIO",
+      "copyExpected": "prototype-02/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "prototype-02",
+      "candidate": "chromium",
+      "pdf": "prototype-02/chromium.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "CHERRY STUDIO",
+      "copyExpected": "prototype-02/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "prototype-03",
+      "candidate": "browser",
+      "pdf": "prototype-03/browser.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "CHERRY STUDIO",
+      "copyExpected": "prototype-03/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "prototype-03",
+      "candidate": "chromium",
+      "pdf": "prototype-03/chromium.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "CHERRY STUDIO",
+      "copyExpected": "prototype-03/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "cherry-01",
+      "candidate": "browser",
+      "pdf": "cherry-01/browser.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "CHERRY STUDIO",
+      "copyExpected": "cherry-01/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "cherry-01",
+      "candidate": "chromium",
+      "pdf": "cherry-01/chromium.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "CHERRY STUDIO",
+      "copyExpected": "cherry-01/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "cherry-02",
+      "candidate": "browser",
+      "pdf": "cherry-02/browser.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "CHERRY STUDIO",
+      "copyExpected": "cherry-02/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "cherry-02",
+      "candidate": "chromium",
+      "pdf": "cherry-02/chromium.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "CHERRY STUDIO",
+      "copyExpected": "cherry-02/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "cherry-03",
+      "candidate": "browser",
+      "pdf": "cherry-03/browser.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "CHERRY STUDIO",
+      "copyExpected": "cherry-03/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "cherry-03",
+      "candidate": "chromium",
+      "pdf": "cherry-03/chromium.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "CHERRY STUDIO",
+      "copyExpected": "cherry-03/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "cherry-04",
+      "candidate": "browser",
+      "pdf": "cherry-04/browser.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "CHERRY STUDIO",
+      "copyExpected": "cherry-04/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "cherry-04",
+      "candidate": "chromium",
+      "pdf": "cherry-04/chromium.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "CHERRY STUDIO",
+      "copyExpected": "cherry-04/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "cherry-05",
+      "candidate": "browser",
+      "pdf": "cherry-05/browser.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "CHERRY STUDIO",
+      "copyExpected": "cherry-05/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "cherry-05",
+      "candidate": "chromium",
+      "pdf": "cherry-05/chromium.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "CHERRY STUDIO",
+      "copyExpected": "cherry-05/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "cherry-06",
+      "candidate": "browser",
+      "pdf": "cherry-06/browser.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "CHERRY STUDIO",
+      "copyExpected": "cherry-06/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "cherry-06",
+      "candidate": "chromium",
+      "pdf": "cherry-06/chromium.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "CHERRY STUDIO",
+      "copyExpected": "cherry-06/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "cherry-07",
+      "candidate": "browser",
+      "pdf": "cherry-07/browser.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "CHERRY STUDIO",
+      "copyExpected": "cherry-07/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "cherry-07",
+      "candidate": "chromium",
+      "pdf": "cherry-07/chromium.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "CHERRY STUDIO",
+      "copyExpected": "cherry-07/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "cherry-08",
+      "candidate": "browser",
+      "pdf": "cherry-08/browser.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "CHERRY STUDIO",
+      "copyExpected": "cherry-08/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "cherry-08",
+      "candidate": "chromium",
+      "pdf": "cherry-08/chromium.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "CHERRY STUDIO",
+      "copyExpected": "cherry-08/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "cherry-09",
+      "candidate": "browser",
+      "pdf": "cherry-09/browser.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "CHERRY STUDIO",
+      "copyExpected": "cherry-09/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "cherry-09",
+      "candidate": "chromium",
+      "pdf": "cherry-09/chromium.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "CHERRY STUDIO",
+      "copyExpected": "cherry-09/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "cherry-10",
+      "candidate": "browser",
+      "pdf": "cherry-10/browser.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "CHERRY STUDIO",
+      "copyExpected": "cherry-10/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "cherry-10",
+      "candidate": "chromium",
+      "pdf": "cherry-10/chromium.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "CHERRY STUDIO",
+      "copyExpected": "cherry-10/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "fixtures-01",
+      "candidate": "browser",
+      "pdf": "fixtures-01/browser.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "中文多行：第一行",
+      "copyExpected": "fixtures-01/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "fixtures-01",
+      "candidate": "chromium",
+      "pdf": "fixtures-01/chromium.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "中文多行：第一行",
+      "copyExpected": "fixtures-01/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "fixtures-02",
+      "candidate": "browser",
+      "pdf": "fixtures-02/browser.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "Grid / Flex 布局与文字顺序",
+      "copyExpected": "fixtures-02/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "fixtures-02",
+      "candidate": "chromium",
+      "pdf": "fixtures-02/chromium.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "Grid / Flex 布局与文字顺序",
+      "copyExpected": "fixtures-02/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "fixtures-03",
+      "candidate": "browser",
+      "pdf": "fixtures-03/browser.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "SVG、透明图、裁切、渐变阴影",
+      "copyExpected": "fixtures-03/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "fixtures-03",
+      "candidate": "chromium",
+      "pdf": "fixtures-03/chromium.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "SVG、透明图、裁切、渐变阴影",
+      "copyExpected": "fixtures-03/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "fixtures-04",
+      "candidate": "browser",
+      "pdf": "fixtures-04/browser.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "不同页面尺寸与复杂变换",
+      "copyExpected": "fixtures-04/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "fixtures-04",
+      "candidate": "chromium",
+      "pdf": "fixtures-04/chromium.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "不同页面尺寸与复杂变换",
+      "copyExpected": "fixtures-04/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "fixtures-05",
+      "candidate": "browser",
+      "pdf": "fixtures-05/browser.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "红蓝正样本",
+      "copyExpected": "fixtures-05/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "fixtures-05",
+      "candidate": "chromium",
+      "pdf": "fixtures-05/chromium.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "红蓝正样本",
+      "copyExpected": "fixtures-05/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "fixtures-06",
+      "candidate": "browser",
+      "pdf": "fixtures-06/browser.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "缺红负样本",
+      "copyExpected": "fixtures-06/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "fixtures-06",
+      "candidate": "chromium",
+      "pdf": "fixtures-06/chromium.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "缺红负样本",
+      "copyExpected": "fixtures-06/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "fixtures-07",
+      "candidate": "browser",
+      "pdf": "fixtures-07/browser.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "缺蓝负样本",
+      "copyExpected": "fixtures-07/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    },
+    {
+      "page": "fixtures-07",
+      "candidate": "chromium",
+      "pdf": "fixtures-07/chromium.pdf",
+      "status": "pending",
+      "operator": null,
+      "time": null,
+      "searchQuery": "缺蓝负样本",
+      "copyExpected": "fixtures-07/screen-text.json",
+      "copyObserved": null,
+      "selectionScreenshot": null,
+      "selectionAlignment": null,
+      "visualApproval": null,
+      "steps": [
+        "Open PDF in desktop viewer; compare every generated page with screen.png",
+        "Search the full Chinese heading and a mixed-script phrase; record hit count",
+        "Drag-select each multiline paragraph including transformed text; copy to plain text and compare complete order/punctuation",
+        "Capture selection bounds over visible glyphs; inspect fonts and images; do not approve from keyword extraction alone"
+      ]
+    }
+  ]
+}

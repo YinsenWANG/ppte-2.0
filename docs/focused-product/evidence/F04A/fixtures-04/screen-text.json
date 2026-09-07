@@ -1,0 +1,70 @@
+{
+  "text": "不同页面尺寸与复杂变换\n\n变换后的中文 Text\n选区应贴合可见字形\n\n三维变换 3D",
+  "nodes": [
+    {
+      "text": "不同页面尺寸与复杂变换",
+      "rects": [
+        {
+          "x": 40,
+          "y": 37,
+          "width": 418,
+          "height": 55
+        }
+      ],
+      "font": "F04AEmbedded, sans-serif"
+    },
+    {
+      "text": "变换后的中文 Text",
+      "rects": [
+        {
+          "x": 120.36791229248047,
+          "y": 210.78656005859375,
+          "width": 186.83999633789062,
+          "height": 67.9056396484375
+        }
+      ],
+      "font": "F04AEmbedded, sans-serif"
+    },
+    {
+      "text": "选区应贴合可见字形",
+      "rects": [
+        {
+          "x": 131.80694580078125,
+          "y": 238.24899291992188,
+          "width": 205.498779296875,
+          "height": 71.87167358398438
+        }
+      ],
+      "font": "F04AEmbedded, sans-serif"
+    },
+    {
+      "text": "三维变换 3D",
+      "rects": [
+        {
+          "x": 125.4178466796875,
+          "y": 462.8041076660156,
+          "width": 138.61984252929688,
+          "height": 40.173065185546875
+        }
+      ],
+      "font": "F04AEmbedded, sans-serif"
+    }
+  ],
+  "buttons": 0,
+  "fonts": [
+    {
+      "family": "F04AEmbedded",
+      "status": "loaded"
+    }
+  ],
+  "missingFontCheck": true,
+  "platformFonts": [
+    {
+      "familyName": "Noto Sans SC Thin",
+      "postScriptName": "NotoSansSC-Thin_Bold",
+      "isCustomFont": true,
+      "glyphCount": 11
+    }
+  ],
+  "missingFontNote": "FontFaceSet.check returns true for nonexistent system families; it is not evidence that F04AMissing exists. This family is deliberately absent."
+}

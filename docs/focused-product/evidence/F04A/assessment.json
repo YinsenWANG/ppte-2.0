@@ -1,0 +1,168 @@
+{
+  "conclusion": 3,
+  "taskStatus": "validated-no-passing-route",
+  "hold": false,
+  "canStartF04": false,
+  "needsArchitectureDecision": false,
+  "decision": "neither-qualified",
+  "F04": "pending",
+  "F04A": "validated-no-passing-route",
+  "reason": "Browser candidate fails layout/font fidelity. Chromium is not qualified: PDFKit mixed-script/search/order failures and transform viewport discrepancy, plus human selection/visual approval pending. No architecture implementation authorized or started.",
+  "aggregates": {
+    "browser": {
+      "pages": 25,
+      "exportMs": 2340.7674560000023,
+      "maxPageExportMs": 173.54091700000004,
+      "unmergedPDFBytes": 287928,
+      "maxSampledHostChromeRSSBytes": 4395188224,
+      "note": "20 source pages; timings exclude PDFKit inspection/merge, include library/font injection for browser candidate; RSS is host-wide sampled, not isolated peak."
+    },
+    "chromium": {
+      "pages": 20,
+      "exportMs": 2857.3138719999993,
+      "maxPageExportMs": 189.36858299999994,
+      "unmergedPDFBytes": 2388849,
+      "maxSampledHostChromeRSSBytes": 4641816576,
+      "note": "20 source pages; timings exclude PDFKit inspection/merge, include library/font injection for browser candidate; RSS is host-wide sampled, not isolated peak."
+    }
+  },
+  "failures": [
+    {
+      "page": "prototype-01",
+      "candidate": "browser",
+      "reason": "Computed CSS layout not reproduced; explicit font mapping loses original family/styles; One input page becomes 2 PDF pages"
+    },
+    {
+      "page": "prototype-02",
+      "candidate": "browser",
+      "reason": "Computed CSS layout not reproduced; explicit font mapping loses original family/styles"
+    },
+    {
+      "page": "prototype-03",
+      "candidate": "browser",
+      "reason": "Computed CSS layout not reproduced; explicit font mapping loses original family/styles"
+    },
+    {
+      "page": "cherry-01",
+      "candidate": "browser",
+      "reason": "Computed CSS layout not reproduced; explicit font mapping loses original family/styles; One input page becomes 2 PDF pages"
+    },
+    {
+      "page": "cherry-02",
+      "candidate": "browser",
+      "reason": "Computed CSS layout not reproduced; explicit font mapping loses original family/styles; One input page becomes 2 PDF pages"
+    },
+    {
+      "page": "cherry-03",
+      "candidate": "browser",
+      "reason": "Computed CSS layout not reproduced; explicit font mapping loses original family/styles"
+    },
+    {
+      "page": "cherry-04",
+      "candidate": "browser",
+      "reason": "Computed CSS layout not reproduced; explicit font mapping loses original family/styles; One input page becomes 2 PDF pages"
+    },
+    {
+      "page": "cherry-05",
+      "candidate": "browser",
+      "reason": "Computed CSS layout not reproduced; explicit font mapping loses original family/styles; One input page becomes 2 PDF pages"
+    },
+    {
+      "page": "cherry-06",
+      "candidate": "browser",
+      "reason": "Computed CSS layout not reproduced; explicit font mapping loses original family/styles"
+    },
+    {
+      "page": "cherry-07",
+      "candidate": "browser",
+      "reason": "Computed CSS layout not reproduced; explicit font mapping loses original family/styles"
+    },
+    {
+      "page": "cherry-08",
+      "candidate": "browser",
+      "reason": "Computed CSS layout not reproduced; explicit font mapping loses original family/styles"
+    },
+    {
+      "page": "cherry-09",
+      "candidate": "browser",
+      "reason": "Computed CSS layout not reproduced; explicit font mapping loses original family/styles"
+    },
+    {
+      "page": "cherry-10",
+      "candidate": "browser",
+      "reason": "Computed CSS layout not reproduced; explicit font mapping loses original family/styles"
+    },
+    {
+      "page": "cherry-10",
+      "candidate": "chromium",
+      "reason": "PDFKit extraction/search order failure",
+      "text": [
+        "参与路径、体验原则及未来方向属于作者建议，不代表项目官方路线或统计结论。"
+      ]
+    },
+    {
+      "page": "fixtures-01",
+      "candidate": "browser",
+      "reason": "Computed CSS layout not reproduced; explicit font mapping loses original family/styles"
+    },
+    {
+      "page": "fixtures-01",
+      "candidate": "chromium",
+      "reason": "PDFKit extraction/search order failure",
+      "text": [
+        "第二行 English 2026"
+      ]
+    },
+    {
+      "page": "fixtures-02",
+      "candidate": "browser",
+      "reason": "Computed CSS layout not reproduced; explicit font mapping loses original family/styles"
+    },
+    {
+      "page": "fixtures-03",
+      "candidate": "browser",
+      "reason": "Computed CSS layout not reproduced; explicit font mapping loses original family/styles"
+    },
+    {
+      "page": "fixtures-04",
+      "candidate": "browser",
+      "reason": "Computed CSS layout not reproduced; explicit font mapping loses original family/styles"
+    },
+    {
+      "page": "fixtures-04",
+      "candidate": "chromium",
+      "reason": "Complex transform raster changes at outer viewport 1440 and visual viewport scale 1.5; text unchanged. Difference classification pending."
+    },
+    {
+      "page": "fixtures-05",
+      "candidate": "browser",
+      "reason": "Computed CSS layout not reproduced; explicit font mapping loses original family/styles"
+    },
+    {
+      "page": "fixtures-06",
+      "candidate": "browser",
+      "reason": "Computed CSS layout not reproduced; explicit font mapping loses original family/styles"
+    },
+    {
+      "page": "fixtures-07",
+      "candidate": "browser",
+      "reason": "Computed CSS layout not reproduced; explicit font mapping loses original family/styles"
+    },
+    {
+      "page": "fixtures-04-whole",
+      "candidate": "chromium",
+      "reason": "Direct whole-document PDF extraction has Text where the isolated-page reference has T ex t. Strict text equality fails; no further route tuning in this bounded trial."
+    }
+  ],
+  "human": {
+    "status": "pending",
+    "reason": "No human PDF-viewer drag-selection/copy/search or visual approval available in this automated run. PDFKit character bounds/extraction is automated only."
+  },
+  "realBrowser": {
+    "status": "pending",
+    "reason": "Installed Chrome executed headless via file:// offline. No physical desktop interaction; no Safari/Firefox claim."
+  },
+  "extraProductRemovals": [],
+  "architectureChanged": false,
+  "productDependenciesAdded": 0
+}

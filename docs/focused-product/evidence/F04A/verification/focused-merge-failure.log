@@ -1,0 +1,156 @@
+TAP version 13
+# Subtest: F04A acceptance 1–3: replay real PDFs, full text, fonts, colors and frozen input integrity
+    # Subtest: PDFKit reopens and re-extracts every candidate page; negative controls really discriminate
+    not ok 1 - PDFKit reopens and re-extracts every candidate page; negative controls really discriminate
+      ---
+      duration_ms: 14894.61025
+      type: 'test'
+      location: '/private/tmp/ppte8/dist/tests/f04a-pdf-route.test.js:38:13'
+      failureType: 'testCodeFailure'
+      error: |-
+        merged deliverable preserves every page and mixed size
+        + actual - expected
+        
+          [
+            [
+        +     '',
+        -     'CHERRY STUDIO 01 / 一切从选择开始\n' +
+        -       '工具属于每一个使用它的人\n' +
+        -       '开源，\n' +
+        -       '让选择更多。\n' +
+        -       'Cherry Studio 的产品、社区与共同创造\n' +
+        -       '开源之路 / OPEN BY DESIGN 01',
+              720,
+              404.88
+            ],
+            [
+        +     '',
+        -     'CHERRY STUDIO 02 / 一个共同的方向\n' +
+        -       '把复杂留给工具，\n' +
+        -       '把选择还给人。\n' +
+        -       '一个入口，连接不同模型、工作方式与创造者。\n' +
+        -       '01 自由选择\n' +
+        -       '让工具适应你的工作方式\n' +
+        -       '02 开放连接\n' +
+        -       '让想法与能力顺畅相遇\n' +
+        -       '03 共同创造\n' +
+        -       '让每一次贡献\n' +
+        -       '推\n' +
+        -       '动下一步\n' +
+        -       '开源之路 / OPEN BY DESIGN 02',
+              720,
+              404.88
+            ],
+            [
+        +     '',
+        -     'CHERRY STUDIO 03 / 社区让产品生长\n' +
+        -       '好\n' +
+        -       '的产品，\n' +
+        -       '在一起打磨中长大。\n' +
+        -       '从一个问题，到一次讨论，再到一份贡献。\n' +
+        -       '使用与发现 → 反馈与讨论 → 参与与贡献\n' +
+        -       '开源之路 / OPEN BY DESIGN 03',
+              720,
+              404.88
+            ]
+          ]
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected:
+        0:
+          0: |-
+            CHERRY STUDIO 01 / 一切从选择开始
+            工具属于每一个使用它的人
+            开源，
+            让选择更多。
+            Cherry Studio 的产品、社区与共同创造
+            开源之路 / OPEN BY DESIGN 01
+          1: 720
+          2: 404.88
+        1:
+          0: |-
+            CHERRY STUDIO 02 / 一个共同的方向
+            把复杂留给工具，
+            把选择还给人。
+            一个入口，连接不同模型、工作方式与创造者。
+            01 自由选择
+            让工具适应你的工作方式
+            02 开放连接
+            让想法与能力顺畅相遇
+            03 共同创造
+            让每一次贡献
+            推
+            动下一步
+            开源之路 / OPEN BY DESIGN 02
+          1: 720
+          2: 404.88
+        2:
+          0: |-
+            CHERRY STUDIO 03 / 社区让产品生长
+            好
+            的产品，
+            在一起打磨中长大。
+            从一个问题，到一次讨论，再到一份贡献。
+            使用与发现 → 反馈与讨论 → 参与与贡献
+            开源之路 / OPEN BY DESIGN 03
+          1: 720
+          2: 404.88
+      actual:
+        0:
+          0: ''
+          1: 720
+          2: 404.88
+        1:
+          0: ''
+          1: 720
+          2: 404.88
+        2:
+          0: ''
+          1: 720
+          2: 404.88
+      operator: 'deepStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/f04a-pdf-route.test.js:77:24)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/f04a-pdf-route.test.js:38:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    1..1
+not ok 1 - F04A acceptance 1–3: replay real PDFs, full text, fonts, colors and frozen input integrity
+  ---
+  duration_ms: 14906.252667
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/f04a-pdf-route.test.js:14:1'
+  failureType: 'subtestsFailed'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: F04A acceptance 3: installed Chrome really exports frozen file:// fixture offline; not a product PDF action
+ok 2 - F04A acceptance 3: installed Chrome really exports frozen file:// fixture offline; not a product PDF action
+  ---
+  duration_ms: 583.187792
+  type: 'test'
+  ...
+# Subtest: F04A acceptance 2: every human selection and physical-browser requirement remains explicitly pending
+ok 3 - F04A acceptance 2: every human selection and physical-browser requirement remains explicitly pending
+  ---
+  duration_ms: 4.035792
+  type: 'test'
+  ...
+# Subtest: F04A acceptance 4: only external qualification requires HOLD; neither qualified cannot enable F04
+ok 4 - F04A acceptance 4: only external qualification requires HOLD; neither qualified cannot enable F04
+  ---
+  duration_ms: 1.081292
+  type: 'test'
+  ...
+1..4
+# tests 5
+# suites 0
+# pass 3
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 15669.774041

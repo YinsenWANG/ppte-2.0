@@ -1,0 +1,18 @@
+[
+  {
+    "path": "inputs/prototype.html",
+    "sha256": "a898a0086cd6d304769bbc47d2166aa0b8b8a1d394c095b047a445360e5fc5aa"
+  },
+  {
+    "path": "inputs/cherry.html",
+    "sha256": "ee75cf0ee3533c20017daf211226ee5b4b335279fab8c96cd62093826c027d5a"
+  },
+  {
+    "path": "inputs/fixtures.html",
+    "sha256": "3e3d389d53097199e8378a3ee95e0da3cf5015c8824c4583a01f0198aced5902"
+  },
+  {
+    "path": "inputs/embedded.ttf",
+    "sha256": "799895152295bff0b1aa0276d1774372ae22aa785f777987933019812e3461a6"
+  }
+]

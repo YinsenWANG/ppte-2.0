@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "html-to-pdfmake": "2.5.32",
+    "pdfmake": "0.2.20"
+  }
+}

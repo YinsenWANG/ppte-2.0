@@ -1,0 +1,461 @@
+[
+  {
+    "bluePixels": 0,
+    "characters": [
+      {
+        "boundsPDFBottomLeft": [
+          1.595,
+          564.359,
+          28.0575,
+          23.95399999999995
+        ],
+        "index": 0,
+        "text": "不"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          29.6525,
+          564.243,
+          27.811,
+          24.562999999999988
+        ],
+        "index": 1,
+        "text": "同"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          57.463499999999996,
+          564.214,
+          29.464000000000002,
+          24.418000000000006
+        ],
+        "index": 2,
+        "text": "页"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          86.92750000000001,
+          564.301,
+          28.7825,
+          23.95399999999995
+        ],
+        "index": 3,
+        "text": "面"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          115.71000000000001,
+          564.243,
+          29.362500000000004,
+          24.360000000000014
+        ],
+        "index": 4,
+        "text": "尺"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          145.0725,
+          564.301,
+          29.04349999999998,
+          26.158000000000015
+        ],
+        "index": 5,
+        "text": "寸"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          174.11599999999999,
+          564.62,
+          27.579000000000008,
+          25.027000000000044
+        ],
+        "index": 6,
+        "text": "与"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          201.695,
+          564.301,
+          30.40650000000001,
+          26.158000000000015
+        ],
+        "index": 7,
+        "text": "复"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          232.1015,
+          564.417,
+          29.072500000000005,
+          26.04200000000003
+        ],
+        "index": 8,
+        "text": "杂"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          261.174,
+          564.243,
+          28.75350000000003,
+          26.389999999999986
+        ],
+        "index": 9,
+        "text": "变"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          289.9275,
+          564.243,
+          27.70950000000002,
+          26.36099999999999
+        ],
+        "index": 10,
+        "text": "换"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          1.17,
+          512.8140000000001,
+          16.785,
+          16.379999999999995
+        ],
+        "index": 11,
+        "text": "换"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          17.955,
+          512.8140000000001,
+          18.018,
+          16.361999999999966
+        ],
+        "index": 12,
+        "text": "变"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          35.973,
+          512.832,
+          18.396,
+          16.002000000000066
+        ],
+        "index": 13,
+        "text": "换"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          54.369,
+          513.264,
+          17.793,
+          15.966000000000008
+        ],
+        "index": 14,
+        "text": "后"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          72.162,
+          512.904,
+          17.270999999999994,
+          16.182000000000016
+        ],
+        "index": 15,
+        "text": "的"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          89.433,
+          512.922,
+          18.161999999999992,
+          16.200000000000045
+        ],
+        "index": 16,
+        "text": "中"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          107.595,
+          514.128,
+          4.959000000000003,
+          0
+        ],
+        "index": 17,
+        "text": "文"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          112.554,
+          514.128,
+          9.378000000000007,
+          13.067999999999984
+        ],
+        "index": 18,
+        "text": " "
+      },
+      {
+        "boundsPDFBottomLeft": [
+          121.93200000000002,
+          513.894,
+          8.433,
+          9.954000000000065
+        ],
+        "index": 19,
+        "text": "T"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          130.365,
+          514.128,
+          8.018999999999991,
+          9.48599999999999
+        ],
+        "index": 20,
+        "text": "e"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          138.38400000000001,
+          513.894,
+          5.454000000000022,
+          12.492000000000075
+        ],
+        "index": 21,
+        "text": "x"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          1.044,
+          486.98400000000004,
+          17.604,
+          15.98399999999998
+        ],
+        "index": 22,
+        "text": "t"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          18.648,
+          487.362,
+          17.271,
+          14.490000000000009
+        ],
+        "index": 23,
+        "text": "t"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          35.919,
+          486.696,
+          18.036,
+          16.379999999999995
+        ],
+        "index": 24,
+        "text": "选"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          53.955,
+          486.786,
+          18.054000000000006,
+          16.200000000000045
+        ],
+        "index": 25,
+        "text": "区"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          72.009,
+          486.84000000000003,
+          18.18,
+          16.182000000000016
+        ],
+        "index": 26,
+        "text": "应"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          90.189,
+          486.84000000000003,
+          17.811000000000007,
+          14.831999999999994
+        ],
+        "index": 27,
+        "text": "贴"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          108,
+          486.822,
+          18.044999999999995,
+          15.012
+        ],
+        "index": 28,
+        "text": "合"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          126.045,
+          486.80400000000003,
+          17.703000000000003,
+          16.325999999999965
+        ],
+        "index": 29,
+        "text": "可"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          143.748,
+          486.732,
+          17.567999999999998,
+          15.947999999999979
+        ],
+        "index": 30,
+        "text": "见"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          1.2240000000000002,
+          452.27,
+          16.668,
+          12.906000000000006
+        ],
+        "index": 31,
+        "text": "字"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          17.892,
+          450.74,
+          18.207000000000004,
+          16.091999999999985
+        ],
+        "index": 32,
+        "text": "形"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          36.099000000000004,
+          450.686,
+          17.855999999999995,
+          16.379999999999995
+        ],
+        "index": 33,
+        "text": "形"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          53.955,
+          450.686,
+          17.622,
+          16.362000000000023
+        ],
+        "index": 34,
+        "text": "三"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          71.577,
+          452,
+          4.977000000000004,
+          0
+        ],
+        "index": 35,
+        "text": "维"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          76.554,
+          451.766,
+          9.26100000000001,
+          13.139999999999986
+        ],
+        "index": 36,
+        "text": "变"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          85.81500000000001,
+          452,
+          10.304999999999993,
+          13.067999999999984
+        ],
+        "index": 37,
+        "text": "换"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "index": 38,
+        "text": " "
+      },
+      {
+        "boundsPDFBottomLeft": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "index": 39,
+        "text": "3"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "index": 40,
+        "text": "D"
+      }
+    ],
+    "fonts": [
+      {
+        "baseFont": "BZZZZZ+NotoSansSC-Thin",
+        "descendant": {
+          "baseFont": "BZZZZZ+NotoSansSC-Thin",
+          "embeddedStreams": [
+            "FontFile2"
+          ],
+          "subtype": "CIDFontType2",
+          "toUnicodePresent": false,
+          "type3CharProcsPresent": false
+        },
+        "embeddedStreams": [],
+        "resource": "F1",
+        "subtype": "Type0",
+        "toUnicodePresent": true,
+        "type3CharProcsPresent": false
+      }
+    ],
+    "heightPt": 600,
+    "page": 1,
+    "rasterHeight": 800,
+    "rasterWidth": 640,
+    "redPixels": 0,
+    "screenDifference": {
+      "automaticPassThreshold": null,
+      "fractionPixelsDeltaAbove32": 0.288951171875,
+      "meanAbsoluteChannelDifference": 25.011835286458332
+    },
+    "search": {
+      "English 2026": [],
+      "Grid": [],
+      "SVG 文字": [],
+      "三维变换": [
+        {
+          "bounds": "{{0, 446.81599999999997}, {72, 26.064000000000021}}",
+          "text": "三维变换"
+        }
+      ],
+      "甲乙丙丁": [],
+      "统计结论": []
+    },
+    "text": "不同页面尺寸与复杂变换\n变换后的中文 Text\n选区应贴合可见字形\n三维变换 3D",
+    "widthPt": 480
+  }
+]

@@ -1,0 +1,18 @@
+{
+  "browser": {
+    "pages": 25,
+    "exportMs": 2340.7674560000023,
+    "maxPageExportMs": 173.54091700000004,
+    "unmergedPDFBytes": 287928,
+    "maxSampledHostChromeRSSBytes": 4395188224,
+    "note": "20 source pages; timings exclude PDFKit inspection/merge, include library/font injection for browser candidate; RSS is host-wide sampled, not isolated peak."
+  },
+  "chromium": {
+    "pages": 20,
+    "exportMs": 2857.3138719999993,
+    "maxPageExportMs": 189.36858299999994,
+    "unmergedPDFBytes": 2388849,
+    "maxSampledHostChromeRSSBytes": 4641816576,
+    "note": "20 source pages; timings exclude PDFKit inspection/merge, include library/font injection for browser candidate; RSS is host-wide sampled, not isolated peak."
+  }
+}

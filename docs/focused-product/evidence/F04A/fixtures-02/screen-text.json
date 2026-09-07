@@ -1,0 +1,130 @@
+{
+  "text": "Grid / Flex 布局与文字顺序\n\n左列第一段\n左列第二行\n\n一 Alpha\n二 Beta\n\n右列第三段\n右列第四行\n\n表格甲\t表格乙",
+  "nodes": [
+    {
+      "text": "Grid / Flex 布局与文字顺序",
+      "rects": [
+        {
+          "x": 40,
+          "y": 37,
+          "width": 463.3125,
+          "height": 55
+        }
+      ],
+      "font": "F04AEmbedded, sans-serif"
+    },
+    {
+      "text": "左列第一段",
+      "rects": [
+        {
+          "x": 40,
+          "y": 137.390625,
+          "width": 120,
+          "height": 35
+        }
+      ],
+      "font": "F04AEmbedded, sans-serif"
+    },
+    {
+      "text": "左列第二行",
+      "rects": [
+        {
+          "x": 40,
+          "y": 173.390625,
+          "width": 120,
+          "height": 35
+        }
+      ],
+      "font": "F04AEmbedded, sans-serif"
+    },
+    {
+      "text": "一 Alpha",
+      "rects": [
+        {
+          "x": 60,
+          "y": 253.390625,
+          "width": 93.75,
+          "height": 35
+        }
+      ],
+      "font": "F04AEmbedded, sans-serif"
+    },
+    {
+      "text": "二 Beta",
+      "rects": [
+        {
+          "x": 507.984375,
+          "y": 253.390625,
+          "width": 80.015625,
+          "height": 35
+        }
+      ],
+      "font": "F04AEmbedded, sans-serif"
+    },
+    {
+      "text": "右列第三段",
+      "rects": [
+        {
+          "x": 636,
+          "y": 137.390625,
+          "width": 120,
+          "height": 35
+        }
+      ],
+      "font": "F04AEmbedded, sans-serif"
+    },
+    {
+      "text": "右列第四行",
+      "rects": [
+        {
+          "x": 636,
+          "y": 173.390625,
+          "width": 120,
+          "height": 35
+        }
+      ],
+      "font": "F04AEmbedded, sans-serif"
+    },
+    {
+      "text": "表格甲",
+      "rects": [
+        {
+          "x": 43,
+          "y": 341.390625,
+          "width": 72,
+          "height": 35
+        }
+      ],
+      "font": "F04AEmbedded, sans-serif"
+    },
+    {
+      "text": "表格乙",
+      "rects": [
+        {
+          "x": 119,
+          "y": 341.390625,
+          "width": 72,
+          "height": 35
+        }
+      ],
+      "font": "F04AEmbedded, sans-serif"
+    }
+  ],
+  "buttons": 0,
+  "fonts": [
+    {
+      "family": "F04AEmbedded",
+      "status": "loaded"
+    }
+  ],
+  "missingFontCheck": true,
+  "platformFonts": [
+    {
+      "familyName": "Noto Sans SC Thin",
+      "postScriptName": "NotoSansSC-Thin_Bold",
+      "isCustomFont": true,
+      "glyphCount": 19
+    }
+  ],
+  "missingFontNote": "FontFaceSet.check returns true for nonexistent system families; it is not evidence that F04AMissing exists. This family is deliberately absent."
+}

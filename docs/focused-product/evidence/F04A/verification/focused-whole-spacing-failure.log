@@ -1,0 +1,192 @@
+TAP version 13
+# Subtest: F04A acceptance 1–3: replay real PDFs, full text, fonts, colors and frozen input integrity
+    # Subtest: PDFKit reopens and re-extracts every candidate page; negative controls really discriminate
+    not ok 1 - PDFKit reopens and re-extracts every candidate page; negative controls really discriminate
+      ---
+      duration_ms: 17462.554667
+      type: 'test'
+      location: '/private/tmp/ppte8/dist/tests/f04a-pdf-route.test.js:38:13'
+      failureType: 'testCodeFailure'
+      error: |-
+        merged deliverable preserves every page and mixed size
+        + actual - expected
+        ... Skipped lines
+        
+          [
+            [
+              '中文多行：第一行\n' +
+                '第二行 En\n' +
+                'lish 2026\n' +
+        ...
+            [
+        +     '三维变换 3D\n不同页面尺寸与复杂变换\n变换后的中文 Text\n选区应贴合可见字形',
+        -     '三维变换 3D\n不同页面尺寸与复杂变换\n变换后的中文 T ex t\n选区应贴合可见字形',
+              480,
+              600
+            ],
+            [
+              '红蓝正样本\n两种颜色都必须保留。',
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected:
+        0:
+          0: |-
+            中文多行：第一行
+            第二行 En
+            lish 2026
+            g
+            嵌入字体，复制顺序：甲乙丙丁。
+            Mixed 中文 punctuation，标点 & 123。
+            缺
+            失字体 F04AMissing：不得静默替换。
+          1: 720
+          2: 404.88
+        1:
+          0: |-
+            Grid / Flex 布局与文字顺序
+            左列第一段
+            左列第二行
+            右列第三段
+            右列第四行
+            一 Alpha 二 Beta
+            表格甲 表格乙
+          1: 720
+          2: 404.88
+        2:
+          0: |-
+            SVG、透明图、裁
+            切、渐变阴影
+            透明区域应与白底混合，右侧保留蓝色。
+            SVG 文字
+          1: 720
+          2: 404.88
+        3:
+          0: |-
+            三维变换 3D
+            不同页面尺寸与复杂变换
+            变换后的中文 T ex t
+            选区应贴合可见字形
+          1: 480
+          2: 600
+        4:
+          0: |-
+            红蓝正样本
+            两种颜色都必须保留。
+          1: 720
+          2: 404.88
+        5:
+          0: |-
+            缺红负样本
+            此页故意没有红色。
+          1: 720
+          2: 404.88
+        6:
+          0: |-
+            缺蓝负样本
+            此页故意没有蓝色。
+          1: 720
+          2: 404.88
+      actual:
+        0:
+          0: |-
+            中文多行：第一行
+            第二行 En
+            lish 2026
+            g
+            嵌入字体，复制顺序：甲乙丙丁。
+            Mixed 中文 punctuation，标点 & 123。
+            缺
+            失字体 F04AMissing：不得静默替换。
+          1: 720
+          2: 404.88
+        1:
+          0: |-
+            Grid / Flex 布局与文字顺序
+            左列第一段
+            左列第二行
+            右列第三段
+            右列第四行
+            一 Alpha 二 Beta
+            表格甲 表格乙
+          1: 720
+          2: 404.88
+        2:
+          0: |-
+            SVG、透明图、裁
+            切、渐变阴影
+            透明区域应与白底混合，右侧保留蓝色。
+            SVG 文字
+          1: 720
+          2: 404.88
+        3:
+          0: |-
+            三维变换 3D
+            不同页面尺寸与复杂变换
+            变换后的中文 Text
+            选区应贴合可见字形
+          1: 480
+          2: 600
+        4:
+          0: |-
+            红蓝正样本
+            两种颜色都必须保留。
+          1: 720
+          2: 404.88
+        5:
+          0: |-
+            缺红负样本
+            此页故意没有红色。
+          1: 720
+          2: 404.88
+        6:
+          0: |-
+            缺蓝负样本
+            此页故意没有蓝色。
+          1: 720
+          2: 404.88
+      operator: 'deepStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/f04a-pdf-route.test.js:77:24)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/f04a-pdf-route.test.js:38:5)
+        async Test.run (node:internal/test_runner/test:1054:7)
+        async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+      ...
+    1..1
+not ok 1 - F04A acceptance 1–3: replay real PDFs, full text, fonts, colors and frozen input integrity
+  ---
+  duration_ms: 17474.567333
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/f04a-pdf-route.test.js:14:1'
+  failureType: 'subtestsFailed'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: F04A acceptance 3: installed Chrome really exports frozen file:// fixture offline; not a product PDF action
+ok 2 - F04A acceptance 3: installed Chrome really exports frozen file:// fixture offline; not a product PDF action
+  ---
+  duration_ms: 449.648375
+  type: 'test'
+  ...
+# Subtest: F04A acceptance 2: every human selection and physical-browser requirement remains explicitly pending
+ok 3 - F04A acceptance 2: every human selection and physical-browser requirement remains explicitly pending
+  ---
+  duration_ms: 3.697291
+  type: 'test'
+  ...
+# Subtest: F04A acceptance 4: only external qualification requires HOLD; neither qualified cannot enable F04
+ok 4 - F04A acceptance 4: only external qualification requires HOLD; neither qualified cannot enable F04
+  ---
+  duration_ms: 0.891833
+  type: 'test'
+  ...
+1..4
+# tests 5
+# suites 0
+# pass 3
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 18101.649083

@@ -1,0 +1,106 @@
+{
+  "text": "CHERRY STUDIO\nOPEN BY DESIGN\n\n一个桌面应用，一场共同创造\n\n开源，\n让选择更多。\n\nCherry Studio 的产品、社区与开源之路\n\n产品与社区 · 新版体验稿\n01 / 10",
+  "nodes": [
+    {
+      "text": "CHERRY STUDIO",
+      "rects": [
+        {
+          "x": 72,
+          "y": 44,
+          "width": 118.578125,
+          "height": 15
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "OPEN BY DESIGN",
+      "rects": [
+        {
+          "x": 1008.59375,
+          "y": 44,
+          "width": 119.40625,
+          "height": 15
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "一个桌面应用，一场共同创造",
+      "rects": [
+        {
+          "x": 72,
+          "y": 163.390625,
+          "width": 208,
+          "height": 17
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "开源，",
+      "rects": [
+        {
+          "x": 72,
+          "y": 202.390625,
+          "width": 249,
+          "height": 101
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "让选择更多。",
+      "rects": [
+        {
+          "x": 72,
+          "y": 298.703125,
+          "width": 498,
+          "height": 101
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "Cherry Studio 的产品、社区与开源之路",
+      "rects": [
+        {
+          "x": 72,
+          "y": 432.015625,
+          "width": 362.109375,
+          "height": 24
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "产品与社区 · 新版体验稿",
+      "rects": [
+        {
+          "x": 72,
+          "y": 635,
+          "width": 121.953125,
+          "height": 12
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "01 / 10",
+      "rects": [
+        {
+          "x": 1089.625,
+          "y": 634,
+          "width": 38.375,
+          "height": 12
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    }
+  ],
+  "buttons": 0,
+  "fonts": [],
+  "missingFontCheck": true,
+  "platformFonts": [],
+  "missingFontNote": "FontFaceSet.check returns true for nonexistent system families; it is not evidence that F04AMissing exists. This family is deliberately absent."
+}

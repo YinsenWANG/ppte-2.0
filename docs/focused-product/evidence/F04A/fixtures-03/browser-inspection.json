@@ -1,0 +1,461 @@
+[
+  {
+    "bluePixels": 0,
+    "characters": [
+      {
+        "boundsPDFBottomLeft": [
+          1.537,
+          370.983,
+          14.384,
+          21.807999999999993
+        ],
+        "index": 0,
+        "text": "S"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          15.921,
+          371.36,
+          16.660500000000006,
+          21.053999999999974
+        ],
+        "index": 1,
+        "text": "V"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          32.581500000000005,
+          370.983,
+          17.965500000000006,
+          21.807999999999993
+        ],
+        "index": 2,
+        "text": "G"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          50.54700000000001,
+          370.113,
+          20.21299999999999,
+          7.221000000000004
+        ],
+        "index": 3,
+        "text": "、"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          70.76,
+          369.62,
+          38.772999999999996,
+          25.230000000000018
+        ],
+        "index": 4,
+        "text": "透"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          109.533,
+          369.156,
+          28.40549999999999,
+          24.968999999999994
+        ],
+        "index": 5,
+        "text": "明"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          137.93849999999998,
+          369.33000000000004,
+          28.376500000000007,
+          24.678999999999974
+        ],
+        "index": 6,
+        "text": "图"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          166.315,
+          370.113,
+          20.444999999999993,
+          7.221000000000004
+        ],
+        "index": 7,
+        "text": "、"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          186.76,
+          369.38800000000003,
+          37.8305,
+          26.07099999999997
+        ],
+        "index": 8,
+        "text": "裁"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          224.5905,
+          369.504,
+          29.087000000000003,
+          24.824000000000012
+        ],
+        "index": 9,
+        "text": "切"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          253.6775,
+          370.113,
+          19.937499999999986,
+          7.221000000000004
+        ],
+        "index": 10,
+        "text": "、"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          273.615,
+          369.301,
+          38.35249999999999,
+          26.071000000000026
+        ],
+        "index": 11,
+        "text": "渐"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          311.96750000000003,
+          369.243,
+          29.420499999999976,
+          26.390000000000043
+        ],
+        "index": 12,
+        "text": "变"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          341.38800000000003,
+          369.243,
+          27.94149999999999,
+          24.99799999999999
+        ],
+        "index": 13,
+        "text": "阴"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          369.3295,
+          369.446,
+          28.202499999999986,
+          25.346000000000004
+        ],
+        "index": 14,
+        "text": "影"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          12.954,
+          269.774,
+          8.928,
+          13.536000000000001
+        ],
+        "index": 15,
+        "text": "影"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          21.882,
+          270.008,
+          10.341000000000001,
+          13.067999999999984
+        ],
+        "index": 16,
+        "text": "S"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          32.223,
+          269.774,
+          10.575,
+          13.536000000000001
+        ],
+        "index": 17,
+        "text": "V"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          42.798,
+          270.008,
+          5.525999999999996,
+          0
+        ],
+        "index": 18,
+        "text": "G"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          48.324,
+          268.80199999999996,
+          17.424,
+          16.19999999999999
+        ],
+        "index": 19,
+        "text": " "
+      },
+      {
+        "boundsPDFBottomLeft": [
+          65.74799999999999,
+          268.748,
+          16.326,
+          16.325999999999965
+        ],
+        "index": 20,
+        "text": "文"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          1.044,
+          82.048,
+          17.424,
+          15.659999999999997
+        ],
+        "index": 21,
+        "text": "字"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          18.468,
+          81.76,
+          17.775,
+          15.49799999999999
+        ],
+        "index": 22,
+        "text": "字"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          36.242999999999995,
+          82.426,
+          17.676000000000005,
+          14.489999999999995
+        ],
+        "index": 23,
+        "text": "透"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          53.919,
+          81.886,
+          17.955000000000005,
+          16.182000000000002
+        ],
+        "index": 24,
+        "text": "明"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          71.874,
+          81.76,
+          18.251999999999995,
+          16.379999999999995
+        ],
+        "index": 25,
+        "text": "区"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          90.126,
+          82.048,
+          18.171,
+          15.533999999999992
+        ],
+        "index": 26,
+        "text": "域"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          108.297,
+          81.85,
+          16.605000000000004,
+          16.290000000000006
+        ],
+        "index": 27,
+        "text": "应"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          124.902,
+          81.76,
+          19.061999999999998,
+          16.307999999999993
+        ],
+        "index": 28,
+        "text": "与"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          143.964,
+          81.796,
+          18.063000000000002,
+          16.055999999999997
+        ],
+        "index": 29,
+        "text": "白"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          162.027,
+          81.904,
+          18.56700000000002,
+          16.182000000000002
+        ],
+        "index": 30,
+        "text": "底"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          180.594,
+          81.76,
+          11.196000000000012,
+          5.471999999999994
+        ],
+        "index": 31,
+        "text": "混"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          191.79000000000002,
+          81.832,
+          23.921999999999983,
+          16.254000000000005
+        ],
+        "index": 32,
+        "text": "合"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          215.71200000000002,
+          81.904,
+          17.738999999999976,
+          16.146
+        ],
+        "index": 33,
+        "text": "，"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          233.451,
+          81.85,
+          19.107000000000014,
+          16.164
+        ],
+        "index": 34,
+        "text": "右"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          252.558,
+          81.868,
+          17.01899999999999,
+          16.074000000000012
+        ],
+        "index": 35,
+        "text": "侧"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          269.577,
+          82.426,
+          18.44999999999999,
+          15.641999999999996
+        ],
+        "index": 36,
+        "text": "保"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          288.027,
+          82.12,
+          18.045000000000016,
+          15.929999999999993
+        ],
+        "index": 37,
+        "text": "留"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          306.072,
+          82.3,
+          6.0120000000000005,
+          5.14800000000001
+        ],
+        "index": 38,
+        "text": "蓝"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "index": 39,
+        "text": "色"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "index": 40,
+        "text": "。"
+      }
+    ],
+    "fonts": [
+      {
+        "baseFont": "BZZZZZ+NotoSansSC-Thin",
+        "descendant": {
+          "baseFont": "BZZZZZ+NotoSansSC-Thin",
+          "embeddedStreams": [
+            "FontFile2"
+          ],
+          "subtype": "CIDFontType2",
+          "toUnicodePresent": false,
+          "type3CharProcsPresent": false
+        },
+        "embeddedStreams": [],
+        "resource": "F1",
+        "subtype": "Type0",
+        "toUnicodePresent": true,
+        "type3CharProcsPresent": false
+      }
+    ],
+    "heightPt": 405,
+    "page": 1,
+    "rasterHeight": 540,
+    "rasterWidth": 960,
+    "redPixels": 13304,
+    "screenDifference": {
+      "automaticPassThreshold": null,
+      "fractionPixelsDeltaAbove32": 0.31428047839506174,
+      "meanAbsoluteChannelDifference": 45.35235468106996
+    },
+    "search": {
+      "English 2026": [],
+      "Grid": [],
+      "SVG 文字": [
+        {
+          "bounds": "{{12, 264.82399999999996}, {71.478000000000009, 26.064000000000021}}",
+          "text": "SVG 文字"
+        }
+      ],
+      "三维变换": [],
+      "甲乙丙丁": [],
+      "统计结论": []
+    },
+    "text": "SVG、透明图、裁切、渐变阴影\nSVG 文字\n透明区域应与白底混合，右侧保留蓝色。",
+    "widthPt": 720
+  }
+]

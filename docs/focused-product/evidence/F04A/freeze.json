@@ -1,0 +1,34 @@
+{
+  "frozenAt": "2026-09-07T14:05:50.162Z",
+  "baselineCommit": "fc0abb2329de326e4e86ef3660cab102fb9d36cb",
+  "sources": [
+    {
+      "path": "docs/ui-redesign/UI_PROTOTYPE.html",
+      "sha256": "47c13635fd96aa8d57258ac78aa0bba97d7c1869ea01c1ab870437b1e5189c80"
+    },
+    {
+      "path": "docs/audits/2026-09-07-main-d1db13d/sample/source.html",
+      "sha256": "ee75cf0ee3533c20017daf211226ee5b4b335279fab8c96cd62093826c027d5a"
+    }
+  ],
+  "environment": {
+    "platform": "darwin",
+    "release": "25.6.0",
+    "arch": "arm64",
+    "node": "v22.23.2",
+    "browser": "152.0.7977.76",
+    "headless": true,
+    "offline": true,
+    "viewport": {
+      "width": 1440,
+      "height": 960
+    },
+    "deviceScaleFactor": 1
+  },
+  "font": {
+    "upstream": "https://github.com/google/fonts/tree/main/ofl/notosanssc",
+    "sourceSHA256": "a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da",
+    "license": "OFL-1.1",
+    "note": "Locally cached original Noto Sans SC; subset for fixtures and explicit candidate font substitution only. Original prototype/Cherry fonts preserved in reference/Chromium."
+  }
+}

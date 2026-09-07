@@ -1,0 +1,100 @@
+{
+  "text": "中文多行：第一行\n第二行 English 2026\n\n嵌入字体，复制顺序：甲乙丙丁。\nMixed 中文 punctuation，标点 & 123。\n\n缺失字体 F04AMissing：不得静默替换。",
+  "nodes": [
+    {
+      "text": "中文多行：第一行",
+      "rects": [
+        {
+          "x": 40,
+          "y": 37,
+          "width": 304,
+          "height": 55
+        }
+      ],
+      "font": "F04AEmbedded, sans-serif"
+    },
+    {
+      "text": "第二行 English 2026",
+      "rects": [
+        {
+          "x": 40,
+          "y": 86.390625,
+          "width": 357.9375,
+          "height": 55
+        }
+      ],
+      "font": "F04AEmbedded, sans-serif"
+    },
+    {
+      "text": "嵌入字体，复制顺序：甲乙丙丁。",
+      "rects": [
+        {
+          "x": 40,
+          "y": 162.78125,
+          "width": 360,
+          "height": 35
+        }
+      ],
+      "font": "F04AEmbedded, sans-serif"
+    },
+    {
+      "text": "Mixed 中文 punctuation，标点 & 123。",
+      "rects": [
+        {
+          "x": 40,
+          "y": 198.78125,
+          "width": 424.96875,
+          "height": 35
+        }
+      ],
+      "font": "F04AEmbedded, sans-serif"
+    },
+    {
+      "text": "缺失字体 F04AMissing：不得静默替换。",
+      "rects": [
+        {
+          "x": 40,
+          "y": 262.78125,
+          "width": 426.046875,
+          "height": 28
+        }
+      ],
+      "font": "F04AMissing, serif"
+    }
+  ],
+  "buttons": 0,
+  "fonts": [
+    {
+      "family": "F04AEmbedded",
+      "status": "loaded"
+    }
+  ],
+  "missingFontCheck": true,
+  "platformFonts": [
+    {
+      "familyName": "Noto Sans SC Thin",
+      "postScriptName": "NotoSansSC-Thin_Bold",
+      "isCustomFont": true,
+      "glyphCount": 24
+    },
+    {
+      "familyName": "Noto Sans SC Thin",
+      "postScriptName": "NotoSansSC-Thin_Regular",
+      "isCustomFont": true,
+      "glyphCount": 45
+    },
+    {
+      "familyName": "PingFang SC",
+      "postScriptName": "PingFangSC-Regular",
+      "isCustomFont": false,
+      "glyphCount": 12
+    },
+    {
+      "familyName": "Times",
+      "postScriptName": "Times-Roman",
+      "isCustomFont": false,
+      "glyphCount": 12
+    }
+  ],
+  "missingFontNote": "FontFaceSet.check returns true for nonexistent system families; it is not evidence that F04AMissing exists. This family is deliberately absent."
+}

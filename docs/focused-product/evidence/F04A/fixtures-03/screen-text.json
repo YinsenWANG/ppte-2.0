@@ -1,0 +1,64 @@
+{
+  "text": "SVG、透明图、裁切、渐变阴影\nSVG 文字\n\n透明区域应与白底混合，右侧保留蓝色。",
+  "nodes": [
+    {
+      "text": "SVG、透明图、裁切、渐变阴影",
+      "rects": [
+        {
+          "x": 40,
+          "y": 37,
+          "width": 529.8125,
+          "height": 55
+        }
+      ],
+      "font": "F04AEmbedded, sans-serif"
+    },
+    {
+      "text": "SVG 文字",
+      "rects": [
+        {
+          "x": 648,
+          "y": 167.390625,
+          "width": 73.265625,
+          "height": 26
+        }
+      ],
+      "font": "F04AEmbedded, sans-serif"
+    },
+    {
+      "text": "透明区域应与白底混合，右侧保留蓝色。",
+      "rects": [
+        {
+          "x": 40,
+          "y": 414.390625,
+          "width": 432,
+          "height": 35
+        }
+      ],
+      "font": "F04AEmbedded, sans-serif"
+    }
+  ],
+  "buttons": 0,
+  "fonts": [
+    {
+      "family": "F04AEmbedded",
+      "status": "loaded"
+    }
+  ],
+  "missingFontCheck": true,
+  "platformFonts": [
+    {
+      "familyName": "Noto Sans SC Thin",
+      "postScriptName": "NotoSansSC-Thin_Bold",
+      "isCustomFont": true,
+      "glyphCount": 15
+    },
+    {
+      "familyName": "Noto Sans SC Thin",
+      "postScriptName": "NotoSansSC-Thin_Regular",
+      "isCustomFont": true,
+      "glyphCount": 18
+    }
+  ],
+  "missingFontNote": "FontFaceSet.check returns true for nonexistent system families; it is not evidence that F04AMissing exists. This family is deliberately absent."
+}

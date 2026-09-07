@@ -1,0 +1,154 @@
+{
+  "text": "CHERRY STUDIO\n08 / 下一次贡献\n\n从你已经遇到的问题开始\n\n好的产品，\n在一起打磨中长大。\n\n提出一个清楚的问题，完善一段文档，验证一次修复。\n每一份具体的参与，都让共同使用的工具更好一点。\n\n使用　反馈　创造\nOPEN SOURCE · SHARED PROGRESS\n09 / 10",
+  "nodes": [
+    {
+      "text": "CHERRY STUDIO",
+      "rects": [
+        {
+          "x": 72,
+          "y": 45,
+          "width": 118.578125,
+          "height": 15
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "08 / 下一次贡献",
+      "rects": [
+        {
+          "x": 1028.359375,
+          "y": 45,
+          "width": 99.640625,
+          "height": 15
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "从你已经遇到的问题开始",
+      "rects": [
+        {
+          "x": 72,
+          "y": 145,
+          "width": 176,
+          "height": 17
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "好的产品，",
+      "rects": [
+        {
+          "x": 72,
+          "y": 187,
+          "width": 311.5,
+          "height": 76
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "在一起打磨中长大。",
+      "rects": [
+        {
+          "x": 72,
+          "y": 263.796875,
+          "width": 560.703125,
+          "height": 76
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "提出一个清楚的问题，完善一段文档，验证一次修复。",
+      "rects": [
+        {
+          "x": 72,
+          "y": 376.59375,
+          "width": 504,
+          "height": 24
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "每一份具体的参与，都让共同使用的工具更好一点。",
+      "rects": [
+        {
+          "x": 72,
+          "y": 410.1875,
+          "width": 483,
+          "height": 24
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "使用",
+      "rects": [
+        {
+          "x": 89,
+          "y": 487.78125,
+          "width": 26,
+          "height": 16
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "反馈",
+      "rects": [
+        {
+          "x": 165,
+          "y": 487.78125,
+          "width": 26,
+          "height": 16
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "创造",
+      "rects": [
+        {
+          "x": 241,
+          "y": 487.78125,
+          "width": 26,
+          "height": 16
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "OPEN SOURCE · SHARED PROGRESS",
+      "rects": [
+        {
+          "x": 72,
+          "y": 636,
+          "width": 208.765625,
+          "height": 12
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "09 / 10",
+      "rects": [
+        {
+          "x": 1087.890625,
+          "y": 636,
+          "width": 40.109375,
+          "height": 12
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    }
+  ],
+  "buttons": 0,
+  "fonts": [],
+  "missingFontCheck": true,
+  "platformFonts": [],
+  "missingFontNote": "FontFaceSet.check returns true for nonexistent system families; it is not evidence that F04AMissing exists. This family is deliberately absent."
+}

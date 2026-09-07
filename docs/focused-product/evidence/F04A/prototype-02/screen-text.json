@@ -1,0 +1,185 @@
+{
+  "text": "CHERRY STUDIO\n02 / 一个共同的方向\n开源之路 / OPEN BY DESIGN\n02\n把复杂留给工具，\n把选择还给人。\n一个入口，连接不同模型、工作方式与创造者。\n01  自由选择\n让工具适应你的工作方式\n02  开放连接\n让想法与能力顺畅相遇\n03  共同创造\n让每一次贡献推动下一步",
+  "nodes": [
+    {
+      "text": "CHERRY STUDIO",
+      "rects": [
+        {
+          "x": 58,
+          "y": 35,
+          "width": 99.375,
+          "height": 17
+        }
+      ],
+      "font": "Inter, -apple-system, \"PingFang SC\", sans-serif"
+    },
+    {
+      "text": "02 / 一个共同的方向",
+      "rects": [
+        {
+          "x": 672,
+          "y": 35,
+          "width": 112.40625,
+          "height": 17
+        }
+      ],
+      "font": "Inter, -apple-system, \"PingFang SC\", sans-serif"
+    },
+    {
+      "text": "开源之路 / OPEN BY DESIGN",
+      "rects": [
+        {
+          "x": 58,
+          "y": 490,
+          "width": 136.15625,
+          "height": 14
+        }
+      ],
+      "font": "Inter, -apple-system, \"PingFang SC\", sans-serif"
+    },
+    {
+      "text": "02",
+      "rects": [
+        {
+          "x": 861,
+          "y": 488,
+          "width": 14.40625,
+          "height": 17
+        }
+      ],
+      "font": "Inter, -apple-system, \"PingFang SC\", sans-serif"
+    },
+    {
+      "text": "把复杂留给工具，\n把选择还给人。",
+      "rects": [
+        {
+          "x": 58,
+          "y": 100,
+          "width": 368,
+          "height": 65
+        },
+        {
+          "x": 426,
+          "y": 100,
+          "width": 0,
+          "height": 65
+        },
+        {
+          "x": 58,
+          "y": 162.09375,
+          "width": 322,
+          "height": 65
+        }
+      ],
+      "font": "Inter, -apple-system, \"PingFang SC\", sans-serif"
+    },
+    {
+      "text": "一个入口，连接不同模型、工作方式与创造者。",
+      "rects": [
+        {
+          "x": 60,
+          "y": 246,
+          "width": 378,
+          "height": 25
+        }
+      ],
+      "font": "Inter, -apple-system, \"PingFang SC\", sans-serif"
+    },
+    {
+      "text": "01  自由选择",
+      "rects": [
+        {
+          "x": 78,
+          "y": 339,
+          "width": 113.53125,
+          "height": 28
+        }
+      ],
+      "font": "Inter, -apple-system, \"PingFang SC\", sans-serif"
+    },
+    {
+      "text": "让工具适应你的工作方式",
+      "rects": [
+        {
+          "x": 78,
+          "y": 377,
+          "width": 143,
+          "height": 18
+        }
+      ],
+      "font": "Inter, -apple-system, \"PingFang SC\", sans-serif"
+    },
+    {
+      "text": "02  开放连接",
+      "rects": [
+        {
+          "x": 358,
+          "y": 339,
+          "width": 117.328125,
+          "height": 28
+        }
+      ],
+      "font": "Inter, -apple-system, \"PingFang SC\", sans-serif"
+    },
+    {
+      "text": "让想法与能力顺畅相遇",
+      "rects": [
+        {
+          "x": 358,
+          "y": 377,
+          "width": 130,
+          "height": 18
+        }
+      ],
+      "font": "Inter, -apple-system, \"PingFang SC\", sans-serif"
+    },
+    {
+      "text": "03  共同创造",
+      "rects": [
+        {
+          "x": 638,
+          "y": 339,
+          "width": 117.328125,
+          "height": 28
+        }
+      ],
+      "font": "Inter, -apple-system, \"PingFang SC\", sans-serif"
+    },
+    {
+      "text": "让每一次贡献推动下一步",
+      "rects": [
+        {
+          "x": 638,
+          "y": 377,
+          "width": 143,
+          "height": 18
+        }
+      ],
+      "font": "Inter, -apple-system, \"PingFang SC\", sans-serif"
+    }
+  ],
+  "buttons": 0,
+  "fonts": [],
+  "missingFontCheck": true,
+  "platformFonts": [
+    {
+      "familyName": "PingFang SC",
+      "postScriptName": "PingFangSC-Regular",
+      "isCustomFont": false,
+      "glyphCount": 86
+    },
+    {
+      "familyName": "PingFang SC",
+      "postScriptName": "PingFangSC-Medium",
+      "isCustomFont": false,
+      "glyphCount": 2
+    },
+    {
+      "familyName": "PingFang SC",
+      "postScriptName": "PingFangSC-Semibold",
+      "isCustomFont": false,
+      "glyphCount": 52
+    }
+  ],
+  "missingFontNote": "FontFaceSet.check returns true for nonexistent system families; it is not evidence that F04AMissing exists. This family is deliberately absent."
+}

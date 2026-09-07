@@ -1,0 +1,13 @@
+{
+  "task": "F04A",
+  "status": "pending-full-verification",
+  "commit": null,
+  "verification": {
+    "code": "passed",
+    "automated": "pending",
+    "real-browser": "pending",
+    "human": "pending"
+  },
+  "reason": "Focused tests passed 5/5; complete repository gates will be run against the signed implementation commit. Neither PDF route is qualified.",
+  "commands": []
+}

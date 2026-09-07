@@ -1,0 +1,226 @@
+{
+  "text": "CHERRY STUDIO\n05 / 不同角色，同一份价值\n\n找到适合自己的参与方式\n\n开源社区，需要的不只是开发者。\n你擅长什么\t可以从这里开始\t帮助谁\n使用与观察\t提交清晰问题，验证修复效果\t使用者与维护者\n表达与整理\t完善教程、文档和翻译\t第一次接触产品的人\n设计与开发\t改进交互，提交可验证的实现\t整个产品与社区\n从一个小而完整的贡献开始\n06 / 10",
+  "nodes": [
+    {
+      "text": "CHERRY STUDIO",
+      "rects": [
+        {
+          "x": 72,
+          "y": 45,
+          "width": 118.578125,
+          "height": 15
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "05 / 不同角色，同一份价值",
+      "rects": [
+        {
+          "x": 961.609375,
+          "y": 45,
+          "width": 166.390625,
+          "height": 15
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "找到适合自己的参与方式",
+      "rects": [
+        {
+          "x": 72,
+          "y": 115,
+          "width": 176,
+          "height": 17
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "开源社区，需要的不只是开发者。",
+      "rects": [
+        {
+          "x": 72,
+          "y": 157,
+          "width": 784.515625,
+          "height": 63
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "你擅长什么",
+      "rects": [
+        {
+          "x": 90,
+          "y": 278.796875,
+          "width": 65,
+          "height": 16
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "可以从这里开始",
+      "rects": [
+        {
+          "x": 375.109375,
+          "y": 278.796875,
+          "width": 91,
+          "height": 16
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "帮助谁",
+      "rects": [
+        {
+          "x": 819.84375,
+          "y": 278.796875,
+          "width": 39,
+          "height": 16
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "使用与观察",
+      "rects": [
+        {
+          "x": 90,
+          "y": 337.796875,
+          "width": 90,
+          "height": 21
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "提交清晰问题，验证修复效果",
+      "rects": [
+        {
+          "x": 375.109375,
+          "y": 337.796875,
+          "width": 234,
+          "height": 21
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "使用者与维护者",
+      "rects": [
+        {
+          "x": 819.84375,
+          "y": 337.796875,
+          "width": 126,
+          "height": 21
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "表达与整理",
+      "rects": [
+        {
+          "x": 90,
+          "y": 409.796875,
+          "width": 90,
+          "height": 21
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "完善教程、文档和翻译",
+      "rects": [
+        {
+          "x": 375.109375,
+          "y": 409.796875,
+          "width": 180,
+          "height": 21
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "第一次接触产品的人",
+      "rects": [
+        {
+          "x": 819.84375,
+          "y": 409.796875,
+          "width": 162,
+          "height": 21
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "设计与开发",
+      "rects": [
+        {
+          "x": 90,
+          "y": 481.796875,
+          "width": 90,
+          "height": 21
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "改进交互，提交可验证的实现",
+      "rects": [
+        {
+          "x": 375.109375,
+          "y": 481.796875,
+          "width": 234,
+          "height": 21
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "整个产品与社区",
+      "rects": [
+        {
+          "x": 819.84375,
+          "y": 481.796875,
+          "width": 126,
+          "height": 21
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "从一个小而完整的贡献开始",
+      "rects": [
+        {
+          "x": 72,
+          "y": 635,
+          "width": 132,
+          "height": 12
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "06 / 10",
+      "rects": [
+        {
+          "x": 1087.890625,
+          "y": 634,
+          "width": 40.109375,
+          "height": 12
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    }
+  ],
+  "buttons": 0,
+  "fonts": [],
+  "missingFontCheck": true,
+  "platformFonts": [],
+  "missingFontNote": "FontFaceSet.check returns true for nonexistent system families; it is not evidence that F04AMissing exists. This family is deliberately absent."
+}

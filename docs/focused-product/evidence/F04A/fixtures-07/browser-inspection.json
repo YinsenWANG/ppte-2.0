@@ -1,0 +1,196 @@
+[
+  {
+    "bluePixels": 0,
+    "characters": [
+      {
+        "boundsPDFBottomLeft": [
+          1.131,
+          369.35900000000004,
+          27.985,
+          26.15799999999996
+        ],
+        "index": 0,
+        "text": "缺"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          29.116,
+          370.22900000000004,
+          29.261,
+          25.200999999999965
+        ],
+        "index": 1,
+        "text": "蓝"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          58.376999999999995,
+          369.35900000000004,
+          27.752999999999997,
+          26.041999999999973
+        ],
+        "index": 2,
+        "text": "负"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          86.13,
+          369.33000000000004,
+          29.638000000000005,
+          26.128999999999962
+        ],
+        "index": 3,
+        "text": "样"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          115.768,
+          369.33000000000004,
+          28.01400000000001,
+          26.07099999999997
+        ],
+        "index": 4,
+        "text": "本"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          0.99,
+          318.246,
+          17.208000000000002,
+          15.822000000000003
+        ],
+        "index": 5,
+        "text": "本"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          18.198,
+          317.796,
+          17.631,
+          15.156000000000006
+        ],
+        "index": 6,
+        "text": "此"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          35.829,
+          317.81399999999996,
+          18.458999999999996,
+          16.272000000000048
+        ],
+        "index": 7,
+        "text": "页"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          54.288,
+          317.99399999999997,
+          17.487000000000002,
+          16.182000000000016
+        ],
+        "index": 8,
+        "text": "故"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          71.775,
+          317.81399999999996,
+          18.296999999999997,
+          16.02000000000004
+        ],
+        "index": 9,
+        "text": "意"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          90.072,
+          317.868,
+          17.766,
+          16.19999999999999
+        ],
+        "index": 10,
+        "text": "没"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          107.83800000000001,
+          318.426,
+          18.188999999999993,
+          15.641999999999996
+        ],
+        "index": 11,
+        "text": "有"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          126.027,
+          318.12,
+          18.045,
+          15.930000000000007
+        ],
+        "index": 12,
+        "text": "蓝"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          144.072,
+          318.3,
+          6.0120000000000005,
+          5.147999999999968
+        ],
+        "index": 13,
+        "text": "色"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "index": 14,
+        "text": "。"
+      }
+    ],
+    "fonts": [
+      {
+        "baseFont": "BZZZZZ+NotoSansSC-Thin",
+        "descendant": {
+          "baseFont": "BZZZZZ+NotoSansSC-Thin",
+          "embeddedStreams": [
+            "FontFile2"
+          ],
+          "subtype": "CIDFontType2",
+          "toUnicodePresent": false,
+          "type3CharProcsPresent": false
+        },
+        "embeddedStreams": [],
+        "resource": "F1",
+        "subtype": "Type0",
+        "toUnicodePresent": true,
+        "type3CharProcsPresent": false
+      }
+    ],
+    "heightPt": 405,
+    "page": 1,
+    "rasterHeight": 540,
+    "rasterWidth": 960,
+    "redPixels": 0,
+    "screenDifference": {
+      "automaticPassThreshold": null,
+      "fractionPixelsDeltaAbove32": 0.2690798611111111,
+      "meanAbsoluteChannelDifference": 16.02725372942387
+    },
+    "search": {
+      "English 2026": [],
+      "Grid": [],
+      "SVG 文字": [],
+      "三维变换": [],
+      "甲乙丙丁": [],
+      "统计结论": []
+    },
+    "text": "缺蓝负样本\n此页故意没有蓝色。",
+    "widthPt": 720
+  }
+]

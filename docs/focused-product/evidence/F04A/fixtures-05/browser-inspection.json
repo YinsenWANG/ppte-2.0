@@ -1,0 +1,206 @@
+[
+  {
+    "bluePixels": 0,
+    "characters": [
+      {
+        "boundsPDFBottomLeft": [
+          1.421,
+          371.36,
+          27.608,
+          23.954000000000008
+        ],
+        "index": 0,
+        "text": "红"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          29.029,
+          370.22900000000004,
+          29.116,
+          25.200999999999965
+        ],
+        "index": 1,
+        "text": "蓝"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          58.144999999999996,
+          370.809,
+          28.593999999999998,
+          22.27199999999999
+        ],
+        "index": 2,
+        "text": "正"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          86.739,
+          369.33000000000004,
+          29.028999999999996,
+          26.128999999999962
+        ],
+        "index": 3,
+        "text": "样"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          115.768,
+          369.33000000000004,
+          28.014000000000003,
+          26.07099999999997
+        ],
+        "index": 4,
+        "text": "本"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          1.134,
+          317.84999999999997,
+          16.551000000000002,
+          14.886000000000024
+        ],
+        "index": 5,
+        "text": "本"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          17.685000000000002,
+          317.868,
+          18.044999999999998,
+          16.182000000000016
+        ],
+        "index": 6,
+        "text": "两"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          35.730000000000004,
+          317.832,
+          18.278999999999996,
+          16.25400000000002
+        ],
+        "index": 7,
+        "text": "种"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          54.009,
+          318.12,
+          17.874,
+          15.930000000000007
+        ],
+        "index": 8,
+        "text": "颜"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          71.88300000000001,
+          317.84999999999997,
+          18.035999999999994,
+          16.074000000000012
+        ],
+        "index": 9,
+        "text": "色"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          89.919,
+          317.95799999999997,
+          18.234,
+          16.00200000000001
+        ],
+        "index": 10,
+        "text": "都"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          108.15299999999999,
+          317.868,
+          17.649,
+          15.839999999999975
+        ],
+        "index": 11,
+        "text": "必"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          125.80199999999999,
+          317.84999999999997,
+          18.756000000000007,
+          16.164000000000044
+        ],
+        "index": 12,
+        "text": "须"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          144.558,
+          317.868,
+          17.037000000000006,
+          16.074000000000012
+        ],
+        "index": 13,
+        "text": "保"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          161.59499999999997,
+          318.3,
+          6.4890000000000185,
+          5.147999999999968
+        ],
+        "index": 14,
+        "text": "留"
+      },
+      {
+        "boundsPDFBottomLeft": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "index": 15,
+        "text": "。"
+      }
+    ],
+    "fonts": [
+      {
+        "baseFont": "BZZZZZ+NotoSansSC-Thin",
+        "descendant": {
+          "baseFont": "BZZZZZ+NotoSansSC-Thin",
+          "embeddedStreams": [
+            "FontFile2"
+          ],
+          "subtype": "CIDFontType2",
+          "toUnicodePresent": false,
+          "type3CharProcsPresent": false
+        },
+        "embeddedStreams": [],
+        "resource": "F1",
+        "subtype": "Type0",
+        "toUnicodePresent": true,
+        "type3CharProcsPresent": false
+      }
+    ],
+    "heightPt": 405,
+    "page": 1,
+    "rasterHeight": 540,
+    "rasterWidth": 960,
+    "redPixels": 0,
+    "screenDifference": {
+      "automaticPassThreshold": null,
+      "fractionPixelsDeltaAbove32": 0.26949845679012346,
+      "meanAbsoluteChannelDifference": 18.7998353909465
+    },
+    "search": {
+      "English 2026": [],
+      "Grid": [],
+      "SVG 文字": [],
+      "三维变换": [],
+      "甲乙丙丁": [],
+      "统计结论": []
+    },
+    "text": "红蓝正样本\n两种颜色都必须保留。",
+    "widthPt": 720
+  }
+]

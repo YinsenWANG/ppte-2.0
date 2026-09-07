@@ -1,0 +1,5 @@
+中文多行：第一行
+第二行 English 2026
+嵌入字体，复制顺序：甲乙丙丁。
+Mixed 中文 punctuation，标点 & 123。
+缺失字体 F04AMissing：不得静默替换。

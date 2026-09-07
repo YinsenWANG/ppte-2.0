@@ -1,0 +1,142 @@
+{
+  "text": "CHERRY STUDIO\n参考与说明\n\n进一步了解与参与\n\n从项目本身，继续这段开源之路。\n\nGitHub · github.com/CherryHQ/cherry-studio\n\n官方网站 · www.cherry-ai.com\n\n本稿围绕产品与社区展开叙事，不使用实时 Star、下载量或增长数字。\n参与路径、体验原则及未来方向属于作者建议，不代表项目官方路线或统计结论。\n概念界面和图形为本稿原创示意；主题材料沿用前轮已核验的项目背景。\n\n制作与实机验收 · 2026.09.07\n10 / 10",
+  "nodes": [
+    {
+      "text": "CHERRY STUDIO",
+      "rects": [
+        {
+          "x": 72,
+          "y": 45,
+          "width": 118.578125,
+          "height": 15
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "参考与说明",
+      "rects": [
+        {
+          "x": 1061,
+          "y": 45,
+          "width": 67,
+          "height": 15
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "进一步了解与参与",
+      "rects": [
+        {
+          "x": 72,
+          "y": 115,
+          "width": 128,
+          "height": 17
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "从项目本身，继续这段开源之路。",
+      "rects": [
+        {
+          "x": 72,
+          "y": 157,
+          "width": 784.515625,
+          "height": 63
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "GitHub · github.com/CherryHQ/cherry-studio",
+      "rects": [
+        {
+          "x": 72,
+          "y": 276.796875,
+          "width": 325.234375,
+          "height": 18
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "官方网站 · www.cherry-ai.com",
+      "rects": [
+        {
+          "x": 72,
+          "y": 310.390625,
+          "width": 217.5,
+          "height": 18
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "本稿围绕产品与社区展开叙事，不使用实时 Star、下载量或增长数字。",
+      "rects": [
+        {
+          "x": 72,
+          "y": 377.984375,
+          "width": 467.046875,
+          "height": 18
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "参与路径、体验原则及未来方向属于作者建议，不代表项目官方路线或统计结论。",
+      "rects": [
+        {
+          "x": 72,
+          "y": 403.484375,
+          "width": 540,
+          "height": 18
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "概念界面和图形为本稿原创示意；主题材料沿用前轮已核验的项目背景。",
+      "rects": [
+        {
+          "x": 72,
+          "y": 428.984375,
+          "width": 480,
+          "height": 18
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "制作与实机验收 · 2026.09.07",
+      "rects": [
+        {
+          "x": 72,
+          "y": 635,
+          "width": 153.75,
+          "height": 12
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "10 / 10",
+      "rects": [
+        {
+          "x": 1089.625,
+          "y": 634,
+          "width": 38.375,
+          "height": 12
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    }
+  ],
+  "buttons": 0,
+  "fonts": [],
+  "missingFontCheck": true,
+  "platformFonts": [],
+  "missingFontNote": "FontFaceSet.check returns true for nonexistent system families; it is not evidence that F04AMissing exists. This family is deliberately absent."
+}

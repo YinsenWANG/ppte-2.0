@@ -63,7 +63,7 @@
     {
       "id": "F04A",
       "title": "验证无系统打印且视觉与文字均保真的PDF路线",
-      "status": "pending",
+      "status": "validated-no-passing-route",
       "dependsOn": [],
       "acceptance": [
         "最多两个候选，对照同稿PDF与逐页屏幕效果",
@@ -71,7 +71,26 @@
         "记录依赖、file协议能力、耗时内存体积与失败夹具",
         "仅外部工具通过时交回架构取舍，不默认增服务或降级图片PDF"
       ],
-      "evidence": []
+      "evidence": [
+        "evidence/F04A/IMPLEMENTATION.md",
+        "evidence/F04A/verification/result.json",
+        "evidence/F04A/COMPARE.html",
+        "evidence/F04A/assessment.json",
+        "evidence/F04A/probe.json",
+        "evidence/F04A/freeze.json",
+        "evidence/F04A/input-hashes.json",
+        "evidence/F04A/manual-selection.json",
+        "evidence/F04A/inputs/",
+        "evidence/F04A/cherry-browser.pdf",
+        "evidence/F04A/cherry-chromium.pdf"
+      ],
+      "verification": {
+        "code": "passed",
+        "automated": "pending",
+        "real-browser": "pending",
+        "human": "pending",
+        "reason": "Bounded two-candidate validation executed on 20 frozen content pages; conclusion ③ neither qualified. Browser candidate fails layout/font fidelity; Chromium PDFKit search/order failures and transform viewport discrepancy retained. F04 remains pending. Headless file:// is automated evidence only; physical desktop selection/copy and human visual approval unavailable. Repository checks in progress."
+      }
     },
     {
       "id": "F04",

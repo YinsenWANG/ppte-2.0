@@ -1,0 +1,118 @@
+{
+  "text": "CHERRY STUDIO\n07 / 保持生长\n\n持续演进，比一次完成更重要\n\n把真实需求带进来，\n把复杂程度控制住。\n\n开放让更多想法进入产品，设计则帮助它们形成连贯的体验。\n\n明确方向 · 小步实现 · 真实验证 · 持续整理\n面向未来的产品建议，非项目官方路线承诺\n08 / 10",
+  "nodes": [
+    {
+      "text": "CHERRY STUDIO",
+      "rects": [
+        {
+          "x": 72,
+          "y": 45,
+          "width": 118.578125,
+          "height": 15
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "07 / 保持生长",
+      "rects": [
+        {
+          "x": 1042.828125,
+          "y": 45,
+          "width": 85.171875,
+          "height": 15
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "持续演进，比一次完成更重要",
+      "rects": [
+        {
+          "x": 72,
+          "y": 145,
+          "width": 208,
+          "height": 17
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "把真实需求带进来，",
+      "rects": [
+        {
+          "x": 72,
+          "y": 187,
+          "width": 560.703125,
+          "height": 76
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "把复杂程度控制住。",
+      "rects": [
+        {
+          "x": 72,
+          "y": 263.796875,
+          "width": 560.703125,
+          "height": 76
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "开放让更多想法进入产品，设计则帮助它们形成连贯的体验。",
+      "rects": [
+        {
+          "x": 72,
+          "y": 376.59375,
+          "width": 567,
+          "height": 24
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "明确方向 · 小步实现 · 真实验证 · 持续整理",
+      "rects": [
+        {
+          "x": 103,
+          "y": 456.1875,
+          "width": 364.1875,
+          "height": 23
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "面向未来的产品建议，非项目官方路线承诺",
+      "rects": [
+        {
+          "x": 72,
+          "y": 635,
+          "width": 209,
+          "height": 12
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "08 / 10",
+      "rects": [
+        {
+          "x": 1087.875,
+          "y": 634,
+          "width": 40.125,
+          "height": 12
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    }
+  ],
+  "buttons": 0,
+  "fonts": [],
+  "missingFontCheck": true,
+  "platformFonts": [],
+  "missingFontNote": "FontFaceSet.check returns true for nonexistent system families; it is not evidence that F04AMissing exists. This family is deliberately absent."
+}

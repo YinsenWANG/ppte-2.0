@@ -1,0 +1,125 @@
+{
+  "text": "CHERRY STUDIO\n01 / 一切从选择开始\n开源之路 / OPEN BY DESIGN\n01\n工具属于每一个使用它的人\n开源，\n让选择更多。\nCherry Studio 的产品、社区与共同创造",
+  "nodes": [
+    {
+      "text": "CHERRY STUDIO",
+      "rects": [
+        {
+          "x": 58,
+          "y": 35,
+          "width": 99.375,
+          "height": 17
+        }
+      ],
+      "font": "Inter, -apple-system, \"PingFang SC\", sans-serif"
+    },
+    {
+      "text": "01 / 一切从选择开始",
+      "rects": [
+        {
+          "x": 672,
+          "y": 35,
+          "width": 110.015625,
+          "height": 17
+        }
+      ],
+      "font": "Inter, -apple-system, \"PingFang SC\", sans-serif"
+    },
+    {
+      "text": "开源之路 / OPEN BY DESIGN",
+      "rects": [
+        {
+          "x": 58,
+          "y": 490,
+          "width": 136.15625,
+          "height": 14
+        }
+      ],
+      "font": "Inter, -apple-system, \"PingFang SC\", sans-serif"
+    },
+    {
+      "text": "01",
+      "rects": [
+        {
+          "x": 861,
+          "y": 488,
+          "width": 12.109375,
+          "height": 17
+        }
+      ],
+      "font": "Inter, -apple-system, \"PingFang SC\", sans-serif"
+    },
+    {
+      "text": "工具属于每一个使用它的人",
+      "rects": [
+        {
+          "x": 58,
+          "y": 119,
+          "width": 192,
+          "height": 22
+        }
+      ],
+      "font": "Inter, -apple-system, \"PingFang SC\", sans-serif"
+    },
+    {
+      "text": "开源，\n让选择更多。",
+      "rects": [
+        {
+          "x": 55,
+          "y": 163,
+          "width": 204,
+          "height": 95
+        },
+        {
+          "x": 259,
+          "y": 163,
+          "width": 0,
+          "height": 95
+        },
+        {
+          "x": 55,
+          "y": 254.796875,
+          "width": 408,
+          "height": 95
+        }
+      ],
+      "font": "Inter, -apple-system, \"PingFang SC\", sans-serif"
+    },
+    {
+      "text": "Cherry Studio 的产品、社区与共同创造",
+      "rects": [
+        {
+          "x": 60,
+          "y": 351,
+          "width": 318.71875,
+          "height": 25
+        }
+      ],
+      "font": "Inter, -apple-system, \"PingFang SC\", sans-serif"
+    }
+  ],
+  "buttons": 0,
+  "fonts": [],
+  "missingFontCheck": true,
+  "platformFonts": [
+    {
+      "familyName": "PingFang SC",
+      "postScriptName": "PingFangSC-Regular",
+      "isCustomFont": false,
+      "glyphCount": 70
+    },
+    {
+      "familyName": "PingFang SC",
+      "postScriptName": "PingFangSC-Medium",
+      "isCustomFont": false,
+      "glyphCount": 2
+    },
+    {
+      "familyName": "PingFang SC",
+      "postScriptName": "PingFangSC-Semibold",
+      "isCustomFont": false,
+      "glyphCount": 22
+    }
+  ],
+  "missingFontNote": "FontFaceSet.check returns true for nonexistent system families; it is not evidence that F04AMissing exists. This family is deliberately absent."
+}

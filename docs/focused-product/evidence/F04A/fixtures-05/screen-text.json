@@ -1,0 +1,52 @@
+{
+  "text": "红蓝正样本\n\n两种颜色都必须保留。",
+  "nodes": [
+    {
+      "text": "红蓝正样本",
+      "rects": [
+        {
+          "x": 40,
+          "y": 37,
+          "width": 190,
+          "height": 55
+        }
+      ],
+      "font": "F04AEmbedded, sans-serif"
+    },
+    {
+      "text": "两种颜色都必须保留。",
+      "rects": [
+        {
+          "x": 40,
+          "y": 277.390625,
+          "width": 240,
+          "height": 35
+        }
+      ],
+      "font": "F04AEmbedded, sans-serif"
+    }
+  ],
+  "buttons": 0,
+  "fonts": [
+    {
+      "family": "F04AEmbedded",
+      "status": "loaded"
+    }
+  ],
+  "missingFontCheck": true,
+  "platformFonts": [
+    {
+      "familyName": "Noto Sans SC Thin",
+      "postScriptName": "NotoSansSC-Thin_Bold",
+      "isCustomFont": true,
+      "glyphCount": 5
+    },
+    {
+      "familyName": "Noto Sans SC Thin",
+      "postScriptName": "NotoSansSC-Thin_Regular",
+      "isCustomFont": true,
+      "glyphCount": 10
+    }
+  ],
+  "missingFontNote": "FontFaceSet.check returns true for nonexistent system families; it is not evidence that F04AMissing exists. This family is deliberately absent."
+}

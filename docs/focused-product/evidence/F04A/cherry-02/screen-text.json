@@ -1,0 +1,238 @@
+{
+  "text": "CHERRY STUDIO\n01 / 为什么需要这样的工具\n\n从能力丰富，到使用顺畅\n\n模型越来越多，\n工作不该越来越碎。\n01\n选择分散\n\n不同任务适合不同模型，\n切换不该打断思路。\n\n02\n上下文分散\n\n对话、材料和知识，\n需要更连贯的组织方式。\n\n03\n体验分散\n\n能力可以来自不同地方，\n日常使用应该保持清晰。\n\n问题不是缺少工具，而是如何连接它们\n02 / 10",
+  "nodes": [
+    {
+      "text": "CHERRY STUDIO",
+      "rects": [
+        {
+          "x": 72,
+          "y": 45,
+          "width": 118.578125,
+          "height": 15
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "01 / 为什么需要这样的工具",
+      "rects": [
+        {
+          "x": 963.46875,
+          "y": 45,
+          "width": 164.53125,
+          "height": 15
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "从能力丰富，到使用顺畅",
+      "rects": [
+        {
+          "x": 72,
+          "y": 115,
+          "width": 176,
+          "height": 17
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "模型越来越多，",
+      "rects": [
+        {
+          "x": 72,
+          "y": 157,
+          "width": 366.109375,
+          "height": 63
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "工作不该越来越碎。",
+      "rects": [
+        {
+          "x": 72,
+          "y": 221.796875,
+          "width": 470.703125,
+          "height": 63
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "01",
+      "rects": [
+        {
+          "x": 72,
+          "y": 368.59375,
+          "width": 14.078125,
+          "height": 16
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "选择分散",
+      "rects": [
+        {
+          "x": 72,
+          "y": 416.59375,
+          "width": 104,
+          "height": 30
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "不同任务适合不同模型，",
+      "rects": [
+        {
+          "x": 72,
+          "y": 469.6875,
+          "width": 187,
+          "height": 20
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "切换不该打断思路。",
+      "rects": [
+        {
+          "x": 72,
+          "y": 498.578125,
+          "width": 153,
+          "height": 20
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "02",
+      "rects": [
+        {
+          "x": 434,
+          "y": 368.59375,
+          "width": 15.890625,
+          "height": 16
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "上下文分散",
+      "rects": [
+        {
+          "x": 434,
+          "y": 416.59375,
+          "width": 130,
+          "height": 30
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "对话、材料和知识，",
+      "rects": [
+        {
+          "x": 434,
+          "y": 469.6875,
+          "width": 153,
+          "height": 20
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "需要更连贯的组织方式。",
+      "rects": [
+        {
+          "x": 434,
+          "y": 498.578125,
+          "width": 187,
+          "height": 20
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "03",
+      "rects": [
+        {
+          "x": 796,
+          "y": 368.59375,
+          "width": 16.1875,
+          "height": 16
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "体验分散",
+      "rects": [
+        {
+          "x": 796,
+          "y": 416.59375,
+          "width": 104,
+          "height": 30
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "能力可以来自不同地方，",
+      "rects": [
+        {
+          "x": 796,
+          "y": 469.6875,
+          "width": 187,
+          "height": 20
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "日常使用应该保持清晰。",
+      "rects": [
+        {
+          "x": 796,
+          "y": 498.578125,
+          "width": 187,
+          "height": 20
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "问题不是缺少工具，而是如何连接它们",
+      "rects": [
+        {
+          "x": 72,
+          "y": 635,
+          "width": 187,
+          "height": 12
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "02 / 10",
+      "rects": [
+        {
+          "x": 1088.234375,
+          "y": 634,
+          "width": 39.765625,
+          "height": 12
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    }
+  ],
+  "buttons": 0,
+  "fonts": [],
+  "missingFontCheck": true,
+  "platformFonts": [],
+  "missingFontNote": "FontFaceSet.check returns true for nonexistent system families; it is not evidence that F04AMissing exists. This family is deliberately absent."
+}

@@ -1,0 +1,286 @@
+{
+  "text": "CHERRY STUDIO\n04 / 从使用者到贡献者\n\n每一步，都可以从真实体验出发\n\n一个问题，\n也能成为一次贡献。\nSTEP 01\n使用\n\n在自己的工作中，\n发现具体需求。\n\nSTEP 02\n反馈\n\n提供场景和复现步骤，\n让问题被理解。\n\nSTEP 03\n协作\n\n讨论方案、验证修复，\n一起提高完成度。\n\nSTEP 04\n分享\n\n把经验留给后来者，\n减少重复摸索。\n\n这是参与路径建议，不是项目发布年表\n05 / 10",
+  "nodes": [
+    {
+      "text": "CHERRY STUDIO",
+      "rects": [
+        {
+          "x": 72,
+          "y": 45,
+          "width": 118.578125,
+          "height": 15
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "04 / 从使用者到贡献者",
+      "rects": [
+        {
+          "x": 988.109375,
+          "y": 45,
+          "width": 139.890625,
+          "height": 15
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "每一步，都可以从真实体验出发",
+      "rects": [
+        {
+          "x": 72,
+          "y": 115,
+          "width": 224,
+          "height": 17
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "一个问题，",
+      "rects": [
+        {
+          "x": 72,
+          "y": 157,
+          "width": 261.5,
+          "height": 63
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "也能成为一次贡献。",
+      "rects": [
+        {
+          "x": 72,
+          "y": 221.796875,
+          "width": 470.703125,
+          "height": 63
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "STEP 01",
+      "rects": [
+        {
+          "x": 72,
+          "y": 387.59375,
+          "width": 46.53125,
+          "height": 15
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "使用",
+      "rects": [
+        {
+          "x": 72,
+          "y": 421.59375,
+          "width": 52,
+          "height": 30
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "在自己的工作中，",
+      "rects": [
+        {
+          "x": 72,
+          "y": 471.6875,
+          "width": 128,
+          "height": 18
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "发现具体需求。",
+      "rects": [
+        {
+          "x": 72,
+          "y": 498.875,
+          "width": 112,
+          "height": 18
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "STEP 02",
+      "rects": [
+        {
+          "x": 336,
+          "y": 387.59375,
+          "width": 48.203125,
+          "height": 15
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "反馈",
+      "rects": [
+        {
+          "x": 336,
+          "y": 421.59375,
+          "width": 52,
+          "height": 30
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "提供场景和复现步骤，",
+      "rects": [
+        {
+          "x": 336,
+          "y": 471.6875,
+          "width": 160,
+          "height": 18
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "让问题被理解。",
+      "rects": [
+        {
+          "x": 336,
+          "y": 498.875,
+          "width": 112,
+          "height": 18
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "STEP 03",
+      "rects": [
+        {
+          "x": 600,
+          "y": 387.59375,
+          "width": 48.484375,
+          "height": 15
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "协作",
+      "rects": [
+        {
+          "x": 600,
+          "y": 421.59375,
+          "width": 52,
+          "height": 30
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "讨论方案、验证修复，",
+      "rects": [
+        {
+          "x": 600,
+          "y": 471.6875,
+          "width": 160,
+          "height": 18
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "一起提高完成度。",
+      "rects": [
+        {
+          "x": 600,
+          "y": 498.875,
+          "width": 128,
+          "height": 18
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "STEP 04",
+      "rects": [
+        {
+          "x": 864,
+          "y": 387.59375,
+          "width": 48.6875,
+          "height": 15
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "分享",
+      "rects": [
+        {
+          "x": 864,
+          "y": 421.59375,
+          "width": 52,
+          "height": 30
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "把经验留给后来者，",
+      "rects": [
+        {
+          "x": 864,
+          "y": 471.6875,
+          "width": 144,
+          "height": 18
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "减少重复摸索。",
+      "rects": [
+        {
+          "x": 864,
+          "y": 498.875,
+          "width": 112,
+          "height": 18
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "这是参与路径建议，不是项目发布年表",
+      "rects": [
+        {
+          "x": 72,
+          "y": 635,
+          "width": 187,
+          "height": 12
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    {
+      "text": "05 / 10",
+      "rects": [
+        {
+          "x": 1088.078125,
+          "y": 634,
+          "width": 39.921875,
+          "height": 12
+        }
+      ],
+      "font": "-apple-system, \"system-ui\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    }
+  ],
+  "buttons": 0,
+  "fonts": [],
+  "missingFontCheck": true,
+  "platformFonts": [],
+  "missingFontNote": "FontFaceSet.check returns true for nonexistent system families; it is not evidence that F04AMissing exists. This family is deliberately absent."
+}

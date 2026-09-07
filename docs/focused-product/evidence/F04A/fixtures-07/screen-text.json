@@ -1,0 +1,52 @@
+{
+  "text": "缺蓝负样本\n\n此页故意没有蓝色。",
+  "nodes": [
+    {
+      "text": "缺蓝负样本",
+      "rects": [
+        {
+          "x": 40,
+          "y": 37,
+          "width": 190,
+          "height": 55
+        }
+      ],
+      "font": "F04AEmbedded, sans-serif"
+    },
+    {
+      "text": "此页故意没有蓝色。",
+      "rects": [
+        {
+          "x": 40,
+          "y": 277.390625,
+          "width": 216,
+          "height": 35
+        }
+      ],
+      "font": "F04AEmbedded, sans-serif"
+    }
+  ],
+  "buttons": 0,
+  "fonts": [
+    {
+      "family": "F04AEmbedded",
+      "status": "loaded"
+    }
+  ],
+  "missingFontCheck": true,
+  "platformFonts": [
+    {
+      "familyName": "Noto Sans SC Thin",
+      "postScriptName": "NotoSansSC-Thin_Bold",
+      "isCustomFont": true,
+      "glyphCount": 5
+    },
+    {
+      "familyName": "Noto Sans SC Thin",
+      "postScriptName": "NotoSansSC-Thin_Regular",
+      "isCustomFont": true,
+      "glyphCount": 9
+    }
+  ],
+  "missingFontNote": "FontFaceSet.check returns true for nonexistent system families; it is not evidence that F04AMissing exists. This family is deliberately absent."
+}
