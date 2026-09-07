@@ -8,7 +8,7 @@
     "b1ceb6a49ea3b9fd82963e9d2bb632e4222973be",
     "c1397304d643545206b92b795e7700c5e225300d"
   ],
-  "scope": "UI01 code and automation implemented; remaining UI tasks pending. Prototype is not production implementation. Existing audit and single-file unfinished tasks remain active.",
+  "scope": "UI01 and UI04 code and automation implemented; other UI tasks pending. Native and human acceptance gaps remain explicitly pending; prototype is not product evidence.",
   "tasks": [
     {
       "id": "UI01",
@@ -68,7 +68,7 @@
     {
       "id": "UI04",
       "title": "原文件保存、自动保存与真实状态",
-      "status": "pending",
+      "status": "done",
       "dependsOn": [
         "UI01"
       ],
@@ -82,7 +82,21 @@
         "同名不同文档、外部改动和权限失效正确处理",
         "IME完整事务与新进程重开实测"
       ],
-      "evidence": []
+      "evidence": [
+        "docs/ui-redesign/evidence/UI04/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/UI04/verification/result.json",
+        "tests/ui04-saving.test.ts",
+        "docs/ui-redesign/evidence/UI04/journey.json",
+        "docs/ui-redesign/evidence/UI04/file-interface-bridge.json",
+        "docs/ui-redesign/evidence/UI04/sample.ppte.html"
+      ],
+      "implementationCommit": "abe467c87347cb6c8c52b0ecaff16968cba1a168",
+      "statusByLayer": {
+        "code": "passed",
+        "automated": "passed: 80/80 tests; existing native-interface bridge and four new UI04 tests",
+        "real-browser": "partial: Chrome headless passed; native picker, system IME, Safari pending",
+        "human": "pending: no human/native reviewer evidence"
+      }
     },
     {
       "id": "UI05",

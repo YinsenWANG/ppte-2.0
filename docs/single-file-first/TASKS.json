@@ -396,7 +396,10 @@
           "Browser digest check and write are not atomic CAS against arbitrary external processes.",
           "F01 remains S01 partial; F02–F05 remain assigned to S03. R05/R06 native validation gaps are not closed."
         ]
-      }
+      },
+      "supplementalEvidence": [
+        "docs/ui-redesign/evidence/UI04/verification/result.json"
+      ]
     },
     {
       "id": "S03",
@@ -1022,7 +1025,10 @@
           "History limits cover step count and interned media string estimate, not total DOM/decoder memory; latest large transaction retained.",
           "S02/S03/S05 remain partial. F01–F05 existing regressions pass in full suite but historical/native/human pending conditions are not closed."
         ]
-      }
+      },
+      "supplementalEvidence": [
+        "docs/ui-redesign/evidence/UI04/verification/result.json"
+      ]
     },
     {
       "id": "S07",
@@ -1196,7 +1202,10 @@
           "S02/S03/S04/S06 partial acceptance remains; automated release gate is not final user acceptance",
           "PDF pixel and text evidence is a synthetic two-slide fixture; real-photo semantics pending"
         ]
-      }
+      },
+      "supplementalEvidence": [
+        "docs/ui-redesign/evidence/UI04/verification/result.json"
+      ]
     },
     {
       "id": "S08",
@@ -1335,7 +1344,10 @@
           "standaloneAcceptanceProbesAdded": 1
         },
         "implementationCommit": "bfe142cde4ed91546279d5751c9aa540778e1c5c"
-      }
+      },
+      "supplementalEvidence": [
+        "docs/ui-redesign/evidence/UI04/verification/result.json"
+      ]
     }
   ],
   "supplements": [
