@@ -1,0 +1,32 @@
+{
+  "errors": [],
+  "network": [],
+  "browser": "152.0.7977.76",
+  "read": "Cherry Studio · 开源之路\n阅读\n编辑\n保存\n放映\n更多\n1 / 3\n适应画布",
+  "textPanel": "文字\n外观\n字体\n作者字体 · Inter\n系统无衬线\n衬线\n等宽\n字号\n文字颜色\n#24493C\n位置与布局\n对象操作\n复制对象\n删除对象\n保护\n保护对象",
+  "menu": [
+    "",
+    "",
+    "",
+    "",
+    "文本框\n形状\n图片\n表格"
+  ],
+  "insert": {
+    "html": "<div data-ppte-kind=\"text\" style=\"box-sizing: border-box; max-width: 100%; width: 280px; min-height: 32px; font: 28px system-ui; color: rgb(32, 36, 45); position: absolute; margin: 0px; transform: none; inset: 484px auto auto 516px;\" data-ppte-id=\"object-10f3f01b-4ae0-43d7-8746-7893c66e0b22\" data-ppte-editor-text=\"\" contenteditable=\"true\" data-ppte-editor-focus=\"\" data-ppte-editor-selected=\"\">输入文字</div>",
+    "rect": {
+      "x": 516,
+      "y": 484,
+      "width": 280,
+      "height": 40,
+      "top": 484,
+      "right": 796,
+      "bottom": 524,
+      "left": 516
+    }
+  },
+  "present": {
+    "editable": 0,
+    "visibleButtons": []
+  },
+  "save": "Cherry Studio · 开源之路\n阅读\n编辑\n保存\n放映\n更多\n尚未保存 · 无文件授权：已取消选择；修改仍保留，可重试或下载更新文件。\n1 · 幻灯片\n2 · 幻灯片\n3 · 幻灯片\n添加页\n插入\n页面设置\n1 / 3\n适应画布"
+}

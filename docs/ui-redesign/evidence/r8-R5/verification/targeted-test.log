@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: R5: mobile inspector reserves visible current page, closes by mouse/Escape, navigation is exclusive, primary controls remain reachable
+ok 1 - R5: mobile inspector reserves visible current page, closes by mouse/Escape, navigation is exclusive, primary controls remain reachable
+  ---
+  duration_ms: 5280.223333
+  type: 'test'
+  ...
+# Subtest: UI05 acceptance 1: 1440/1024/820/390 reading/editing, mutually exclusive drawers and reachable primary controls
+ok 2 - UI05 acceptance 1: 1440/1024/820/390 reading/editing, mutually exclusive drawers and reachable primary controls
+  ---
+  duration_ms: 5546.254667
+  type: 'test'
+  ...
+# Subtest: UI05 acceptance 2: 200% equivalent layout viewport, large font, coarse 44px targets and table grid
+ok 3 - UI05 acceptance 2: 200% equivalent layout viewport, large font, coarse 44px targets and table grid
+  ---
+  duration_ms: 2181.437208
+  type: 'test'
+  ...
+# Subtest: UI05 acceptance 3: menu arrows/Home/End/Enter/Escape/Tab, focus restoration, edge placement and disclosure semantics
+ok 4 - UI05 acceptance 3: menu arrows/Home/End/Enter/Escape/Tab, focus restoration, edge placement and disclosure semantics
+  ---
+  duration_ms: 1800.965458
+  type: 'test'
+  ...
+# Subtest: UI05 acceptance 4: icon names/tooltips, visible focus, modes and measured important text contrast
+ok 5 - UI05 acceptance 4: icon names/tooltips, visible focus, modes and measured important text contrast
+  ---
+  duration_ms: 814.567292
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 10556.969875

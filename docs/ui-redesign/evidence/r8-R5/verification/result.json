@@ -1,0 +1,134 @@
+{
+  "task": "R5",
+  "time": "2026-09-07T09:04:38.876168+00:00",
+  "baseCommit": "f5ba1900cb1467126cc3edd911ce762413280cdb",
+  "implementationCommit": "47912553bbf596acd7e6eb854e5607e7e91891e9",
+  "testedParentCommit": "5be4539",
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "47912553bbf596acd7e6eb854e5607e7e91891e9",
+      "executionNote": "verified working-tree content now in implementation commit; final test only strengthens exact font delta; probe used identical product code",
+      "completedAt": "2026-09-07T09:03:04.768505+00:00",
+      "log": "typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "47912553bbf596acd7e6eb854e5607e7e91891e9",
+      "executionNote": "verified working-tree content now in implementation commit; final test only strengthens exact font delta; probe used identical product code",
+      "completedAt": "2026-09-07T09:03:05.948163+00:00",
+      "log": "build.log"
+    },
+    {
+      "command": "pnpm test",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "47912553bbf596acd7e6eb854e5607e7e91891e9",
+      "executionNote": "verified working-tree content now in implementation commit; final test only strengthens exact font delta; probe used identical product code",
+      "completedAt": "2026-09-07T09:04:00.520428+00:00",
+      "log": "test.log"
+    },
+    {
+      "command": "node docs/audits/2026-09-07-ui-d96f211/probe.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "47912553bbf596acd7e6eb854e5607e7e91891e9",
+      "executionNote": "verified working-tree content now in implementation commit; final test only strengthens exact font delta; probe used identical product code",
+      "completedAt": "2026-09-07T09:01:11.428201+00:00",
+      "log": "probe.log"
+    },
+    {
+      "command": "node docs/audits/2026-09-07-ui-d96f211/followup.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "47912553bbf596acd7e6eb854e5607e7e91891e9",
+      "executionNote": "verified working-tree content now in implementation commit; final test only strengthens exact font delta; probe used identical product code",
+      "completedAt": "2026-09-07T09:01:16.182746+00:00",
+      "log": "followup.log"
+    },
+    {
+      "command": "node docs/ui-redesign/evidence/r8-R5/compare.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "47912553bbf596acd7e6eb854e5607e7e91891e9",
+      "executionNote": "verified working-tree content now in implementation commit; final test only strengthens exact font delta; probe used identical product code",
+      "completedAt": "2026-09-07T09:02:15.992738+00:00",
+      "log": "comparison.json"
+    }
+  ],
+  "tests": {
+    "total": 122,
+    "passed": 122,
+    "failed": 0
+  },
+  "probeComparison": {
+    "before": "probe-before.json",
+    "after": "probe-after.json",
+    "exitBefore": 0,
+    "exitAfter": 0,
+    "note": "Original probe has no R5 geometry assertion; compare screenshots and new test."
+  },
+  "followupComparison": {
+    "before": "followup-before.json",
+    "after": "followup-after.json",
+    "exitBefore": 0,
+    "exitAfter": 0,
+    "R6": "prompt remains; pending subsequent task"
+  },
+  "R5": {
+    "before": "fail: full overlap, 644px inspector, inert frame",
+    "after": "pass: 310px inspector, independent 334px work area, visible page 366 x 205.875",
+    "beforeGeometry": "geometry-before.json",
+    "afterGeometry": "geometry-after.json",
+    "regression": "baseline-test.log fails; final node --test passes"
+  },
+  "statusByLayer": {
+    "code": "implemented",
+    "automated": "passed",
+    "real-browser": "Chrome 152.0.7977.76 headless offline file:// passed; physical device/Safari pending",
+    "human": "pending: no independent human review"
+  },
+  "pending": [
+    {
+      "item": "native authorization",
+      "result": null,
+      "reason": "No OS picker grant/writeback performed"
+    },
+    {
+      "item": "Safari",
+      "result": null,
+      "reason": "No Safari test performed"
+    },
+    {
+      "item": "system IME",
+      "result": null,
+      "reason": "No OS input method journey"
+    },
+    {
+      "item": "screen reader and physical touch",
+      "result": null,
+      "reason": "No assistive technology or physical device journey"
+    },
+    {
+      "item": "human visual review",
+      "result": null,
+      "reason": "No owner/target-user review"
+    },
+    {
+      "item": "R6 and GAPS",
+      "result": null,
+      "reason": "Separate pipeline tasks; no closure claimed"
+    }
+  ],
+  "sample": {
+    "path": "sample.ppte.html",
+    "command": "node dist/apps/html-cli/index.js enhance docs/audits/2026-09-07-ui-d96f211/sample/source.html --out docs/ui-redesign/evidence/r8-R5/sample.ppte.html",
+    "sha256": "27a155940b541438d87803239200d267b5813096c71c18c219ab1d05ed672cd5",
+    "offlineVerification": "comparison.json"
+  },
+  "inputFilesPreserved": "/tmp/ppte8-pipeline-inputs-R5/"
+}

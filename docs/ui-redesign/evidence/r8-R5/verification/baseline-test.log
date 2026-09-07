@@ -1,0 +1,28 @@
+TAP version 13
+# Subtest: R5: mobile inspector reserves visible current page, closes by mouse/Escape, navigation is exclusive, primary controls remain reachable
+not ok 1 - R5: mobile inspector reserves visible current page, closes by mouse/Escape, navigation is exclusive, primary controls remain reachable
+  ---
+  duration_ms: 1371.804791
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/r8-r5-mobile.test.js:17:1'
+  failureType: 'testCodeFailure'
+  error: '{"width":390,"height":844,"area":{"x":0,"y":152,"width":390,"height":644,"top":152,"right":390,"bottom":796,"left":0},"panel":{"x":0,"y":152,"width":390,"height":644,"top":152,"right":390,"bottom":796,"left":0},"page":{"left":12,"top":371.0625,"right":378,"bottom":576.9375,"width":366,"height":205.875},"inert":true}'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/r8-r5-mobile.test.js:40:20)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1560.717667
