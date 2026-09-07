@@ -68,12 +68,31 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     const selectInserted = (n:HTMLElement) => { selected=[n.dataset.ppteId!]; range=null; pageSettings=false; propertiesCollapsed=false; refresh(); n.scrollIntoView({block:'nearest'}); if(isTextObject(n)){n.focus(); const r=commands.doc.createRange();r.selectNodeContents(n);commands.doc.getSelection()?.removeAllRanges();commands.doc.getSelection()?.addRange(r);} };
     const imageInput=document.createElement('input'); imageInput.type='file';imageInput.accept='image/png,image/jpeg,image/webp,image/gif,image/avif';imageInput.hidden=true;imageInput.setAttribute('aria-label','选择插入图片');toolbar.append(imageInput);
     let imagePoint:ReturnType<typeof insertionContext>|undefined;
-    imageInput.onchange=()=>{const file=imageInput.files?.[0],point=imagePoint;imageInput.value='';if(file&&point)run(async()=>selectInserted(await commands.insertImage(point.slide,file,point.reference)));};
-    button(toolbar, '插入图片', () => {
-        if (!active || composing) return;
+    let imageJob: {controller: AbortController; slide: number} | undefined;
+    const imageProgress = document.createElement('span'); imageProgress.hidden = true;
+    imageProgress.setAttribute('aria-live', 'polite'); imageProgress.textContent = '正在读取图片…'; toolbar.append(imageProgress);
+    const cancelImage = button(toolbar, '取消读取图片', () => imageJob?.controller.abort()); cancelImage.hidden = true;
+    const imageAction = (action: (signal: AbortSignal) => Promise<void>) => {
+        if (!active) return;
+        if (imageJob) { feedback.textContent = '正在读取图片，请先完成或取消。'; return; }
+        const job = {controller:new AbortController(), slide:currentSlide}; imageJob = job;
+        imageProgress.hidden = cancelImage.hidden = false; insertImageButton.disabled = true;
+        run(async () => {
+            try { await action(job.controller.signal); }
+            catch (e) { if (!job.controller.signal.aborted) throw e; }
+            finally { imageJob = undefined; imageProgress.hidden = cancelImage.hidden = true; insertImageButton.disabled = false; }
+        });
+    };
+    imageInput.onchange = () => {
+        const file = imageInput.files?.[0], point = imagePoint; imageInput.value = '';
+        if (file && point) imageAction(async signal => selectInserted(await commands.insertImage(point.slide, file, point.reference, signal)));
+    };
+    const insertImageButton = button(toolbar, '插入图片', () => {
+        if (!active || composing || imageJob) return;
         imagePoint = insertionContext();
         imageInput.click();
     });
+    toolbar.append(imageProgress, cancelImage);
     const title = document.createElement('strong');
     title.textContent = document.title;
     bar.prepend(title);
@@ -129,6 +148,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     };
     let composing = false;
     function refresh() {
+        if (imageJob && (!active || currentSlide !== imageJob.slide)) imageJob.controller.abort();
         if (!commands)
             return;
         const doc = commands.doc;
@@ -246,10 +266,15 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
                 const input = field(s, '替换本地资源', '', () => {
                 });
                 input.type = 'file';
-                input.accept = 'image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm';
+                input.accept = nodes[0].tagName === 'IMG' ? imageInput.accept : 'video/mp4,video/webm';
                 input.onchange = () => {
-                    if (input.files?.[0])
-                        run(() => { input.blur(); return commands.media(selected[0], input.files![0]); });
+                    const file = input.files?.[0], id = selected[0];
+                    input.value = '';
+                    if (file) {
+                        input.blur();
+                        if (nodes[0].tagName === 'IMG') imageAction(signal => commands.media(id, file, signal));
+                        else run(() => commands.media(id, file));
+                    }
                 };
                 if (nodes[0].tagName === 'VIDEO') {
                     const poster = field(s, '替换视频封面', '', () => {});
@@ -364,6 +389,8 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
             n.style.height = `${Math.max(8, start.height + (e.clientY - start.y) / start.scale)}px`;
         }));
     };
+    handle.onpointercancel = () => { sizing = undefined; };
+    handle.onlostpointercapture = () => { sizing = undefined; };
     handle.onkeydown = e => {
         if (!e.key.startsWith('Arrow')) return;
         e.preventDefault();
@@ -650,6 +677,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
                 drag = { id: n.dataset.ppteId!, x: e.clientX, y: e.clientY };
             }
         });
+        doc.addEventListener('pointercancel', () => { drag = undefined; });
         doc.addEventListener('pointerup', e => {
             if (drag) {
                 const d = drag;

@@ -327,14 +327,35 @@ export class Commands {
             n.style.setProperty('object-position', `${x}% ${y}%`, 'important');
         });
     }
-    private async readMedia(file: File, imageOnly = false) {
-        if (!/^(image\/(png|jpeg|webp|gif|avif)|video\/(mp4|webm))$/.test(file.type) || !file.size || imageOnly && !file.type.startsWith('image/')) throw Error('UNSUPPORTED_MEDIA');
+    private async readMedia(file: File, imageOnly = false, signal?: AbortSignal) {
+        signal?.throwIfAborted();
+        if (!/^(image\/(png|jpeg|webp|gif|avif)|video\/(mp4|webm))$/.test(file.type) || !file.size || imageOnly && !file.type.startsWith('image/')) throw Error('UNSUPPORTED_MEDIA: 请选择 PNG、JPEG、WebP、GIF 或 AVIF 图片（视频仅支持 MP4、WebM）；原稿未改变');
         if (file.size > 16 * 1024 * 1024) throw Error('MEDIA_LIMIT: 单个资源最多 16 MiB；原始像素不会自动压缩');
         const src = await new Promise<string>((ok, no) => {
-            const r = new FileReader(); r.onload = () => ok(String(r.result)); r.onerror = no; r.readAsDataURL(file);
+            const r = new FileReader(), abort = () => r.abort();
+            const release = () => signal?.removeEventListener('abort', abort);
+            r.onload = () => { release(); ok(String(r.result)); };
+            r.onerror = () => { release(); no(Error('图片文件读取失败，请重新选择；原稿未改变')); };
+            r.onabort = () => { release(); no(new DOMException('已取消读取图片', 'AbortError')); };
+            signal?.addEventListener('abort', abort, {once:true}); r.readAsDataURL(file);
         });
-        if (file.type.startsWith('image/')) { const image = new Image(); image.src = src; try { await image.decode(); } catch { throw Error('无法读取这张图片，请重新选择 PNG、JPEG、WebP、GIF 或 AVIF；原对象已保留。'); } }
-        return src;
+        signal?.throwIfAborted();
+        let width = 0, height = 0;
+        if (file.type.startsWith('image/')) {
+            const image = new this.doc.defaultView!.Image(); image.src = src;
+            try {
+                await new Promise<void>((ok, no) => {
+                    const abort = () => no(signal?.reason);
+                    signal?.addEventListener('abort', abort, {once:true});
+                    image.decode().then(ok, no).finally(() => signal?.removeEventListener('abort', abort));
+                });
+                width = image.naturalWidth; height = image.naturalHeight;
+            }
+            catch { signal?.throwIfAborted(); throw Error('无法读取这张图片，请重新选择 PNG、JPEG、WebP、GIF 或 AVIF；原对象已保留。'); }
+            finally { image.removeAttribute('src'); }
+        }
+        signal?.throwIfAborted();
+        return {src, width, height};
     }
     insertionPoint(slideId: string, referenceId?: string) {
         const slide = this.node(slideId);
@@ -412,30 +433,35 @@ export class Commands {
         const entry: Entry = {id,before:snapshot(n),after:'',removed:true,insertion:{parent,previous:n.previousElementSibling as HTMLElement | null,node:n}};
         n.remove(); this.record([entry]);
     }
-    async insertImage(slideId: string, file: File, referenceId?: string) {
+    async insertImage(slideId: string, file: File, referenceId?: string, signal?: AbortSignal) {
         const point = this.insertionPoint(slideId, referenceId);
-        const src = await this.readMedia(file, true);
+        const {src, width, height} = await this.readMedia(file, true, signal);
+        signal?.throwIfAborted();
         const image = this.doc.createElement('img');
         image.dataset.ppteId = `image-${crypto.randomUUID()}`;
         image.src = src; image.alt = '';
-        image.style.cssText = 'width:320px;height:240px;max-width:100%;object-fit:contain!important;object-position:50% 50%!important';
+        // Fit the decoded aspect ratio; give tiny icons a selectable minimum. Placement
+        // can shrink this box further, but never re-encodes the original pixels.
+        const scale = Math.min(Math.max(1, 32 / Math.min(width, height)), 320 / width, 240 / height);
+        image.style.cssText = `width:${width * scale}px;height:${height * scale}px;max-width:100%;object-fit:contain!important;object-position:50% 50%!important`;
         return this.appendObject(image, point);
     }
     async poster(id: string, file: File) {
         const n = this.node(id);
         if (n.tagName !== 'VIDEO') throw Error('NOT_VIDEO');
         if (this.protected(n)) throw Error('OBJECT_PROTECTED');
-        const original = snapshot(n), src = await this.readMedia(file, true);
+        const original = snapshot(n), {src} = await this.readMedia(file, true);
         if (snapshot(this.node(id)) !== original) throw Error('CONFLICT');
         this.transaction([id], n => n.setAttribute('poster', src));
     }
-    async media(id: string, file: File) {
+    async media(id: string, file: File, signal?: AbortSignal) {
         const n = this.node(id);
         if (!['IMG', 'VIDEO'].includes(n.tagName)) throw Error('NOT_MEDIA');
-        if (n.tagName === 'IMG' && !file.type.startsWith('image/') || n.tagName === 'VIDEO' && !file.type.startsWith('video/')) throw Error('MEDIA_KIND_MISMATCH');
+        if (n.tagName === 'IMG' && !file.type.startsWith('image/') || n.tagName === 'VIDEO' && !file.type.startsWith('video/')) throw Error('MEDIA_KIND_MISMATCH: 图片只能替换为图片，视频只能替换为视频；原对象已保留');
         if (this.protected(n)) throw Error('OBJECT_PROTECTED');
         const original = snapshot(n);
-        const src = await this.readMedia(file);
+        const {src} = await this.readMedia(file, false, signal);
+        signal?.throwIfAborted();
         if (snapshot(this.node(id)) !== original)
             throw Error('CONFLICT');
         this.transaction([id], n => {
