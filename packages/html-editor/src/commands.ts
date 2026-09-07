@@ -1,3 +1,4 @@
+import { materializeMedia } from './media-demand.js';
 import { cleanContent } from '../../html-document/src/content.js';
 import { sha } from './save.js';
 import { MediaHistory } from './media-history.js';
@@ -27,6 +28,7 @@ export function textObject(target: Element | null): HTMLElement | null {
 }
 const clean = (e: Element) => {
     const c = e.cloneNode(true) as Element;
+    materializeMedia(c);
     c.querySelectorAll('[data-ppte-transient]').forEach(n => n.remove());
     for (const n of [c, ...Array.from(c.querySelectorAll('*'))])
         for (const a of Array.from(n.attributes))

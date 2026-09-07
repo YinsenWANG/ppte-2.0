@@ -1,12 +1,14 @@
+import { materializeMedia } from '../../html-editor/src/media-demand.js';
 /** Browser-native vector/text printing. Built only for an explicit print action. */
 export function installPrint(frame: HTMLIFrameElement, hooks: { suspend(): void; resume(): void; exitPresentation(): void }) {
+    let suspended = false;
     let host: HTMLElement | undefined, style: HTMLStyleElement | undefined;
-    function restore() { if (!host) return; host?.remove();style?.remove();host=undefined;style=undefined;hooks.resume(); }
+    function restore() { if (!host && !suspended) return; host?.remove();style?.remove();host=undefined;style=undefined;suspended=false;hooks.resume(); }
     function prepare() {
         if (host) return;
-        hooks.exitPresentation();
-        hooks.suspend();
+        if (!suspended) { hooks.exitPresentation(); hooks.suspend(); suspended = true; }
         const doc=frame.contentDocument!;
+        materializeMedia(doc);
         const slides=Array.from(doc.querySelectorAll<HTMLElement>('[data-ppte-slide]'));
         const sizes=slides.map(n=>{const r=n.getBoundingClientRect();return {width:Math.max(1,r.width),height:Math.max(1,r.height),display:doc.defaultView!.getComputedStyle(n).display};});
         const size=sizes[0]; if(!size)throw Error('NO_SLIDES');
@@ -18,6 +20,7 @@ export function installPrint(frame: HTMLIFrameElement, hooks: { suspend(): void;
             const page=document.createElement('div');page.style.cssText=`width:${size.width}px;height:${size.height}px;position:relative;overflow:hidden;break-inside:avoid;break-after:${i===slides.length-1?'auto':'page'};`;
             const shadow=page.attachShadow({mode:'open'});
             const clone=doc.documentElement.cloneNode(true) as HTMLElement;
+            materializeMedia(clone);
             clone.querySelectorAll('[data-ppte-transient],meta[http-equiv]').forEach(n=>n.remove());
             clone.querySelectorAll('[contenteditable],[data-ppte-editor-selected],[tabindex]').forEach(n=>{n.removeAttribute('contenteditable');n.removeAttribute('data-ppte-editor-selected');n.removeAttribute('tabindex');});
             clone.querySelectorAll('[data-ppte-slide]').forEach((n,j)=>{if(i!==j)n.remove();});
@@ -30,5 +33,10 @@ export function installPrint(frame: HTMLIFrameElement, hooks: { suspend(): void;
     }
     window.addEventListener('beforeprint',prepare);
     window.addEventListener('afterprint',restore);
-    return { prepare, restore, async print() { prepare();try {await document.fonts.ready;await Promise.all(Array.from(host!.children).flatMap(n=>Array.from(n.shadowRoot!.querySelectorAll('img'))).filter(n=>n.hasAttribute('src')).map(n=>n.decode().catch(()=>{throw Error('PRINT_MEDIA_DECODE_FAILED');})));window.print();} catch(e) {restore();throw e;} } };
+    return { prepare, restore, async print() { try {
+        // User-requested whole-deck print is an explicit all-page demand.
+        if (!suspended) { hooks.exitPresentation(); hooks.suspend(); suspended = true; }
+        materializeMedia(frame.contentDocument!);
+        await Promise.all(Array.from(frame.contentDocument!.querySelectorAll('img[src]')).map(n=>(n as HTMLImageElement).decode()));
+        prepare();await document.fonts.ready;await Promise.all(Array.from(host!.children).flatMap(n=>Array.from(n.shadowRoot!.querySelectorAll('img'))).filter(n=>n.hasAttribute('src')).map(n=>n.decode().catch(()=>{throw Error('PRINT_MEDIA_DECODE_FAILED');})));window.print();} catch(e) {restore();throw e;} } };
 }

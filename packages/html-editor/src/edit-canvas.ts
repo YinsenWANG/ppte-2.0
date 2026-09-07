@@ -1,3 +1,4 @@
+import { demandSlide } from './media-demand.js';
 /** Single-page editor viewport. Author coordinates stay unscaled inside the frame;
  * only its outer display is scaled, so editing/layout commands retain CSS pixels.
  * The document viewport follows the window, not zoom or inspector visibility.
@@ -46,6 +47,7 @@ export function editCanvas(frame: HTMLIFrameElement, moved: () => void) {
         // Always measure the native page afresh, with no prior view stylesheet.
         // Neither zoom nor a panel toggle changes author media-query breakpoints.
         frame.style.cssText = `position:fixed;margin:0;border:0;width:${innerWidth}px;height:${innerHeight}px;transform-origin:top left`;
+        demandSlide(doc, index);
         const slide = doc.querySelectorAll<HTMLElement>('[data-ppte-slide]')[index];
         if (!slide) { clear(); return 1; }
         const rect = slide.getBoundingClientRect(), computed = view.getComputedStyle(slide);

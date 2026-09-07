@@ -114,9 +114,18 @@ export function cleanContent(input: string, addIds = true, depth = 0) {
   }
   return { html: serialize(document), issues, pages: elements(document).filter(e => attr(e, 'data-ppte-slide') !== undefined).length };
 }
-export function frameContent(html: string) {
+export function frameContent(html: string, deferOffPageMedia = false) {
   // Structural insertion: a quoted > in author attributes cannot precede/break the policy.
   const document = parse(html, { scriptingEnabled: false });
+  if (deferOffPageMedia) {
+    const all = elements(document), first = all.find(e => attr(e, 'data-ppte-slide') !== undefined);
+    for (const el of all) if (['img','video','audio','source'].includes(el.tagName)) {
+      let parent: Node | null = el;
+      while (parent && parent !== first && !('tagName' in parent && attr(parent, 'data-ppte-slide') !== undefined)) parent = 'parentNode' in parent ? parent.parentNode : null;
+      if (!parent || parent === first) continue;
+      for (const a of el.attrs) if (['src','poster'].includes(a.name)) a.name = 'data-ppte-editor-media-' + a.name;
+    }
+  }
   const head = elements(document).find(e => e.tagName === 'head')!;
   const policy = elements(parse(`<meta http-equiv="Content-Security-Policy" content="${CONTENT_CSP}">`)).find(e => e.tagName === 'meta')!;
   policy.parentNode = head; head.childNodes.unshift(policy);

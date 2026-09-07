@@ -1,3 +1,4 @@
+import { demandSlide } from './media-demand.js';
 /** A transient view over the author's DOM, never a second slide/content model. */
 export function readingView(frame: HTMLIFrameElement) {
     let css: HTMLStyleElement | undefined;
@@ -5,6 +6,7 @@ export function readingView(frame: HTMLIFrameElement) {
     function draw(index: number) {
         clear();
         const doc = frame.contentDocument!;
+        demandSlide(doc, index);
         const slides = Array.from(doc.querySelectorAll<HTMLElement>('[data-ppte-slide]'));
         const slide = slides[index];
         if (!slide) return;

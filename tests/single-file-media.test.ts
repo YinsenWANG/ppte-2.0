@@ -48,7 +48,13 @@ test('S06 file journey: mixed ratios, insert/replace/focus/reset, guarded histor
   await rm(inputs,{recursive:true});await context.setOffline(true);
   const network:string[]=[];page.on('request',r=>{if(/^https?:/.test(r.url()))network.push(r.url());});
   await page.goto(pathToFileURL(file).href);await page.waitForFunction(()=>!!(window as any).PPTeEditor);
-  assert.equal(await page.frameLocator('#ppte-frame').locator('img').evaluateAll(async ns=>{await Promise.all(ns.map(n=>(n as HTMLImageElement).decode()));return ns.length;}),12);
+  let pageDecoded = 0;
+  for (let slide = 0; slide < 2; slide++) {
+   if (slide) await page.getByRole('button',{name:'下一页',exact:true}).click();
+   pageDecoded += await page.frameLocator('#ppte-frame').locator('[data-ppte-slide]').nth(slide).locator('img').evaluateAll(async ns=>{await Promise.all(ns.map(n=>(n as HTMLImageElement).decode()));return ns.length;});
+  }
+  assert.equal(pageDecoded,12);
+  await page.getByRole('button',{name:'上一页',exact:true}).click();
   await page.getByRole('button',{name:'编辑',exact:true}).click();
   await page.evaluate(()=>{const e=(window as any).PPTeEditor;e.select(['i0']);e.commands.crop(['i0'],'cover',100,0);});
   await page.screenshot({path:join(evidence,'crop-before.png')});
@@ -93,7 +99,13 @@ test('S06 file journey: mixed ratios, insert/replace/focus/reset, guarded histor
   const serialized=await readFile(downloaded,'utf8');assert.doesNotMatch(readEnhanced(serialized).content,/blob:|ppte-history/);
   await writeFile(join(evidence,'review.ppte.html'),serialized);
   const reopening=join(root,'reopened.ppte.html');await writeFile(reopening,serialized);await page.close();const reopened=await context.newPage();await reopened.goto(pathToFileURL(reopening).href);await reopened.waitForFunction(()=>!!(window as any).PPTeEditor);
-  assert.equal(await reopened.frameLocator('#ppte-frame').locator('img').evaluateAll(async ns=>{await Promise.all(ns.map(n=>(n as HTMLImageElement).decode()));return ns.length;}),13);
+  let reopenedDecoded = 0;
+  for (let slide = 0; slide < 2; slide++) {
+   if (slide) await reopened.getByRole('button',{name:'下一页',exact:true}).click();
+   reopenedDecoded += await reopened.frameLocator('#ppte-frame').locator('[data-ppte-slide]').nth(slide).locator('img').evaluateAll(async ns=>{await Promise.all(ns.map(n=>(n as HTMLImageElement).decode()));return ns.length;});
+  }
+  assert.equal(reopenedDecoded,13);
+  await reopened.getByRole('button',{name:'上一页',exact:true}).click();
   assert.equal(await reopened.frameLocator('#ppte-frame').locator('[data-ppte-id=i0]').evaluate(n=>(n as HTMLElement).style.objectFit),'contain');
   assert.equal(await reopened.frameLocator('#ppte-frame').locator('video').getAttribute('poster'),fixtures[2].src);
   const repeat=await reopened.evaluate(()=>(window as any).PPTeHTML.serialize());assert.equal(Buffer.byteLength(repeat),Buffer.byteLength(serialized));

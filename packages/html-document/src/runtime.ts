@@ -1,3 +1,4 @@
+import { materializeMedia } from '../../html-editor/src/media-demand.js';
 import { Versions, type HistoryWire } from '../../html-editor/src/versions.js';
 import { cleanContent, frameContent } from './content.js';
 import { packMedia, unpackMedia } from './media-table.js';
@@ -16,7 +17,7 @@ const readParts=(key:string)=>Object.fromEntries(Array.from(document.querySelect
 const historyWire:HistoryWire|undefined=historyElement?{index:historyElement.textContent??'',blocks:readParts('data-ppte-version-block'),resources:readParts('data-ppte-version-resource')}:undefined;
 const originalMedia=mediaElement?JSON.parse(mediaElement.textContent!).resources:{};
 const versions=new Versions(metadata.documentId,historyWire,()=>originalMedia);
-frame.srcdoc = frameContent(initial.html);
+frame.srcdoc = frameContent(initial.html, true);
 frame.addEventListener('load', () => {
   const doc = frame.contentDocument!;
   doc.addEventListener('click', event => {
@@ -27,6 +28,7 @@ frame.addEventListener('load', () => {
 function content() {
   if (!frame.contentDocument?.documentElement || frame.contentDocument.URL === 'about:blank') throw Error('CONTENT_NOT_READY');
   const clone = frame.contentDocument.documentElement.cloneNode(true) as HTMLElement;
+  materializeMedia(clone);
   clone.querySelector('meta[http-equiv="Content-Security-Policy"]')?.remove();
   const result = cleanContent('<!doctype html>' + clone.outerHTML);
   if(result.issues.length) throw Error('UNSAFE_CONTENT: '+JSON.stringify(result.issues));
@@ -56,7 +58,7 @@ const api = {
   get metadata() { return structuredClone(metadata); },
   content, encode, versions,
   normalize(value: string) { const result=cleanContent('<!doctype html>'+value.replace(/^<!doctype[^>]*>/i,''));if(result.issues.length)throw Error('UNSAFE_CONTENT');return result.html; },
-  mount(value: string) { const cleaned=cleanContent(value);if(cleaned.issues.length)throw Error('UNSAFE_CONTENT');return new Promise<void>(done=>{frame.addEventListener('load',()=>done(),{once:true});frame.srcdoc=frameContent(cleaned.html);}); },
+  mount(value: string) { const cleaned=cleanContent(value);if(cleaned.issues.length)throw Error('UNSAFE_CONTENT');return new Promise<void>(done=>{frame.addEventListener('load',()=>done(),{once:true});frame.srcdoc=frameContent(cleaned.html, true);}); },
   serialize() { return encode(content(),metadata.saveRevision+1); }
 };
 frame.addEventListener('load',()=>installEditor(api),{once:true});

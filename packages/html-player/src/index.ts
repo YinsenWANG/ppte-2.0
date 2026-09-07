@@ -1,3 +1,4 @@
+import { demandSlide, materializeMedia } from '../../html-editor/src/media-demand.js';
 import { cleanContent, frameContent } from '../../html-document/src/content.js';
 
 /** Ephemeral presentation state. No content attributes or inline layout are changed. */
@@ -34,7 +35,14 @@ body:has(#ppte-player:not([hidden]))>[data-ppte-transient]:not(#ppte-player){dis
     function pause() { frame.contentDocument?.querySelectorAll('video,audio').forEach(n => (n as HTMLMediaElement).pause()); }
     function draw() {
         if (!running || !css) return;
-        const list = slides(), n = list[index], size = sizes[index];
+        demandSlide(frame.contentDocument!, index);
+        const list = slides(), n = list[index];
+        if (!n) return;
+        // Intrinsic media may only become known on this visit. Measure without
+        // the transient presentation geometry, then fit the current page again.
+        css.textContent = '';
+        const rect = n.getBoundingClientRect(), computed = frame.contentWindow!.getComputedStyle(n);
+        const size = sizes[index] = {width:Math.max(1,rect.width),height:Math.max(1,rect.height),display:computed.display,background:computed.backgroundColor==='rgba(0, 0, 0, 0)'?frame.contentWindow!.getComputedStyle(frame.contentDocument!.body).backgroundColor:computed.backgroundColor};
         if (!n || !size) return;
         const scale = Math.min(frame.clientWidth / size.width, frame.clientHeight / size.height);
         const selector = `[data-ppte-id="${CSS.escape(n.dataset.ppteId!)}"]`;
@@ -84,6 +92,7 @@ body:has(#ppte-player:not([hidden]))>[data-ppte-transient]:not(#ppte-player){dis
         d.querySelector('#notes')!.textContent = slides()[index].getAttribute('data-ppte-notes') ?? slides()[index].querySelector('[data-ppte-notes]')?.textContent ?? '无备注';
         // Rebuild only the private preview, with content scripts still forbidden.
         const clone = frame.contentDocument!.documentElement.cloneNode(true) as HTMLElement;
+        materializeMedia(clone);
         clone.querySelectorAll('[data-ppte-transient],meta[http-equiv]').forEach(n => n.remove());
         const list = Array.from(clone.querySelectorAll('[data-ppte-slide]'));
         list.forEach((n,i) => { if (i !== Math.min(index+1,list.length-1)) n.remove(); });
@@ -108,6 +117,7 @@ body:has(#ppte-player:not([hidden]))>[data-ppte-transient]:not(#ppte-player){dis
     }
     shell.querySelector('#ppte-black')!.addEventListener('click',()=>blackout(false));
     function attach() {
+        frame.contentDocument!.addEventListener('load',e=>{if ((e.target as Element).tagName === 'IMG') draw();},true);
         frame.contentDocument!.addEventListener('keydown',keys,true);
         frame.contentDocument!.addEventListener('pointermove',wake);
         let touch: { x: number; y: number } | undefined;

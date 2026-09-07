@@ -1,3 +1,4 @@
+import { deferMedia, materializeMedia } from './media-demand.js';
 import { shellCSS, icon, iconButton, group, selectField } from './shell-components.js';
 import { accessibleShellCSS, disclosure } from './accessibility.js';
 import { insertMenu } from './insert-menu.js';
@@ -407,6 +408,29 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         pages.querySelector<HTMLButtonElement>(`button[data-slide="${CSS.escape(id)}"]`)?.focus();
         feedback.textContent = `页面已移至第 ${currentSlide + 1} 页`;
     }
+    const visiblePreviews = new WeakSet<Element>();
+    const mediaObserver = new IntersectionObserver(entries => {
+        for (const entry of entries) {
+            const preview = entry.target.querySelector('.preview')?.shadowRoot?.querySelector('div');
+            if (!preview) continue;
+            if (entry.isIntersecting) { visiblePreviews.add(entry.target); materializeMedia(preview); }
+            else { visiblePreviews.delete(entry.target); deferMedia(preview); }
+        }
+    });
+    function previewClone(slide: HTMLElement, visible = false) {
+        const clone = slide.cloneNode(true) as HTMLElement;
+        // A thumbnail needs the poster, never an independent playing decoder.
+        clone.querySelectorAll('video,audio').forEach(media => {
+            const image = document.createElement('img');
+            const poster = media.getAttribute('poster') ?? media.getAttribute('data-ppte-editor-media-poster');
+            if (poster) image.setAttribute('data-ppte-editor-media-src', poster);
+            image.setAttribute('style', media.getAttribute('style') ?? '');
+            for (const attr of ['width','height']) if (media.hasAttribute(attr)) image.setAttribute(attr,media.getAttribute(attr)!);
+            image.alt = ''; media.replaceWith(image);
+        });
+        if (visible) materializeMedia(clone); else deferMedia(clone);
+        return clone;
+    }
     function thumbs(ids?: string[]) {
         const slidesNow = Array.from(commands.doc.querySelectorAll<HTMLElement>('[data-ppte-slide]'));
         const buttons = Array.from(pages.querySelectorAll<HTMLButtonElement>('button[aria-current]'));
@@ -418,12 +442,13 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
             slidesNow.forEach((slide,i)=>{
                 const b=buttons[i]; b.setAttribute('aria-current',String(i===currentSlide));
                 if(!affected.has(slide.dataset.ppteId))return;
-                b.querySelector('.preview')!.shadowRoot!.querySelector('div')!.replaceChildren(slide.cloneNode(true));
+                b.querySelector('.preview')!.shadowRoot!.querySelector('div')!.replaceChildren(previewClone(slide, visiblePreviews.has(b)));
                 b.lastChild!.textContent=`${i+1} · ${slide.querySelector('h1,h2,h3')?.textContent?.slice(0,24) ?? '幻灯片'}`;
             });
             return;
         }
         const scrollTop = pages.querySelector('#ppte-page-list')?.scrollTop ?? 0;
+        mediaObserver.disconnect();
         pages.replaceChildren();
         const list = document.createElement('div'); list.id = 'ppte-page-list';
         const footer = document.createElement('div'); footer.id = 'ppte-page-footer';
@@ -460,9 +485,10 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
             for (const s of Array.from(commands.doc.querySelectorAll('style:not([data-ppte-transient])')))
                 shadow.append(s.cloneNode(true));
             scaled.inert = true;
-            scaled.append(slide.cloneNode(true));
+            scaled.append(previewClone(slide));
             shadow.append(scaled);
             b.prepend(preview);
+            mediaObserver.observe(b);
             const menu=document.createElement('details');menu.className='page-actions';menu.innerHTML=`<summary aria-label="第 ${i+1} 页操作" title="第 ${i+1} 页操作">${icon('更多')}</summary><div></div>`;row.append(menu);
             const actions=menu.lastElementChild as HTMLElement;
             for (const [label, delta] of [['上移',-1],['下移',1]] as const) {
@@ -500,6 +526,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         selected = [];
         range = null;
         const doc = commands.doc;
+        doc.addEventListener('load', e => { if (!suspended && (e.target as Element).tagName === 'IMG') resize(); }, true);
         doc.defaultView?.addEventListener('scroll', positionTools);
         const css = doc.createElement('style');
         css.dataset.ppteTransient = '';
