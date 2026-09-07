@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: F03 failures/cancel: cancelled chooser, invalid bytes/type/oversize preserve original and undo stack; same replacement can be retried
+ok 1 - F03 failures/cancel: cancelled chooser, invalid bytes/type/oversize preserve original and undo stack; same replacement can be retried
+  ---
+  duration_ms: 2641.389875
+  type: 'test'
+  ...
+# Subtest: F03 bounded async image import: progress, cancel and leaving edit discard delayed decode without dirty/history changes
+ok 2 - F03 bounded async image import: progress, cancel and leaving edit discard delayed decode without dirty/history changes
+  ---
+  duration_ms: 6338.706291
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9269.891208

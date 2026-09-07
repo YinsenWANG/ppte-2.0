@@ -1,0 +1,8 @@
+{
+  "injection": "2s delayed native image.decode",
+  "cancelButton": true,
+  "leaveEdit": true,
+  "replacementCancel": true,
+  "noMutation": true,
+  "notNativeChooserEvidence": true
+}

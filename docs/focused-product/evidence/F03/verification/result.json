@@ -1,0 +1,123 @@
+{
+  "task": "F03",
+  "status": "implemented-pending-validation",
+  "implementationCommit": "63a5565c85ac76aceb614e889e80458a0a6d5991",
+  "recordedAt": "2026-09-07T15:02:22.067671+00:00",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "browser": "152.0.7977.76",
+  "browserMode": "installed Chrome headless; Playwright; file://; offline:true; viewport 1440x1000",
+  "node": "v22.23.2",
+  "pnpm": "11.22.0",
+  "testedSourceSHA256": {
+    "packages/html-editor/src/commands.ts": "733104e63feb3a523fe1c3fd12481d0706a7fca762d860072ec70181aac2ae7a",
+    "packages/html-editor/src/workspace.ts": "975d7dead8f8a572c6b9f0aa6130d173ce7732e14a9d83f1b3a68c9151fed036",
+    "tests/focused-product-f03.test.ts": "d0413b8330ede99e17594ce87cafceb15131c85f2bf26eec8352fce34a81e615"
+  },
+  "sourceBinding": "Gates ran immediately before the implementation commit; the exact tested source files above were committed unchanged. Documentation/evidence added in a subsequent F03 commit.",
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "start": "2026-09-07T14:59:24.027300+00:00",
+      "end": "2026-09-07T14:59:25.221808+00:00",
+      "log": "typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "exitCode": 0,
+      "start": "2026-09-07T14:59:25.232053+00:00",
+      "end": "2026-09-07T14:59:26.653323+00:00",
+      "log": "build.log"
+    },
+    {
+      "command": "pnpm test",
+      "status": "passed",
+      "exitCode": 0,
+      "start": "2026-09-07T14:59:26.653576+00:00",
+      "end": "2026-09-07T15:00:39.554288+00:00",
+      "log": "test.log"
+    }
+  ],
+  "tests": {
+    "framework": "node --test dist/tests/*.test.js",
+    "passed": 143,
+    "failed": 0,
+    "existingSkipped": 16,
+    "newF03Tests": 8,
+    "newSkipped": 0
+  },
+  "layers": {
+    "code": "passed",
+    "automated": "passed",
+    "real-browser": "pending",
+    "human": "pending"
+  },
+  "acceptance": [
+    {
+      "acceptance": "放置/选择/移动/裁切/替换真实UI可用",
+      "tests": [
+        "F03 four layout UI journeys",
+        "F03 actual prototype/Cherry consecutive insertion and pointer resizing",
+        "F03 errors and delayed decode cancellation",
+        "R2 no-space insertion rollback"
+      ],
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "pending: only Chrome headless automation is available; no physical desktop, native OS chooser, target-device receipt or native original-file authorization/writeback evidence.",
+      "human": "pending: user has not reviewed image subjects/crops, visual fidelity or UI usability; deterministic PNG fixtures are not user-photo/semantic acceptance."
+    },
+    {
+      "acceptance": "横竖透明大图与不同作者布局",
+      "tests": [
+        "F03 each layout x landscape 1200x600, portrait 600x1200, RGBA 3200x2400",
+        "F03 two actual author drafts: complete original DOM/CSS equality after removing only inserted nodes",
+        "S06 mixed PNG/JPEG/WebP and demand/lifecycle regressions"
+      ],
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "pending: only Chrome headless automation is available; no physical desktop, native OS chooser, target-device receipt or native original-file authorization/writeback evidence.",
+      "human": "pending: user has not reviewed image subjects/crops, visual fidelity or UI usability; deterministic PNG fixtures are not user-photo/semantic acceptance."
+    },
+    {
+      "acceptance": "撤销重做及保存重开保真",
+      "tests": [
+        "F03 transactional move/order/crop/reset/replace undo and redo",
+        "F03 actual download, complete first-browser shutdown, new offline Chrome process, src/style/alt equality and continued editing",
+        "F03 duplicate original encoded once in downloaded file"
+      ],
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "pending: only Chrome headless automation is available; no physical desktop, native OS chooser, target-device receipt or native original-file authorization/writeback evidence.",
+      "human": "pending: user has not reviewed image subjects/crops, visual fidelity or UI usability; deterministic PNG fixtures are not user-photo/semantic acceptance."
+    }
+  ],
+  "firstGate": {
+    "result": "failed",
+    "passed": 131,
+    "failed": 12,
+    "skipped": 15,
+    "logs": "first-gate/",
+    "resolution": "FIXES.md",
+    "retained": true
+  },
+  "dependenciesAdded": [],
+  "extraProductCapabilitiesRemoved": [],
+  "limits": [
+    "Synthetic PNG engineering fixtures, not user photo selection or human aesthetics.",
+    "Native original-file manual/autosave validation remains pending under F02.",
+    "AVIF chooser is aligned; native format/device matrix remains pending.",
+    "Bounded author layouts only; no universal CSS layout editor claim.",
+    "No GPU decoded-memory release-byte claim.",
+    "F04A/F04 and B2 link issue not resolved by F03."
+  ],
+  "agentScreenshotInspection": {
+    "paths": [
+      "screenshots/cherry-images.png",
+      "screenshots/absolute-transparent-large.png"
+    ],
+    "humanApproval": false
+  },
+  "localOrchestration": "Pre-existing brief9-F03.md retained unchanged; locally excluded with out9-F03.txt following prior pipeline convention, not part of product evidence."
+}

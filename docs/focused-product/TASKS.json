@@ -70,7 +70,7 @@
     {
       "id": "F03",
       "title": "图片完整操作",
-      "status": "pending",
+      "status": "implemented-pending-validation",
       "dependsOn": [
         "F01"
       ],
@@ -79,7 +79,25 @@
         "横竖透明大图与不同作者布局",
         "撤销重做及保存重开保真"
       ],
-      "evidence": []
+      "evidence": [
+        "evidence/F03/IMPLEMENTATION.md",
+        "evidence/F03/verification/result.json",
+        "evidence/F03/verification/FIXES.md",
+        "evidence/F03/NATIVE-VALIDATION.md",
+        "evidence/F03/Cherry-F03.ppte.html",
+        "evidence/F03/journeys/",
+        "evidence/F03/screenshots/",
+        "evidence/F03/samples/",
+        "evidence/F03/SHA256SUMS"
+      ],
+      "verification": {
+        "code": "passed",
+        "automated": "passed",
+        "real-browser": "pending",
+        "human": "pending",
+        "implementationCommit": "63a5565c85ac76aceb614e889e80458a0a6d5991",
+        "reason": "F03 8 new tests and complete repository gates pass (143 passed, 0 failed, 16 existing skips). Real mouse/keyboard driven Chrome headless file:// journeys include four layouts, landscape/portrait/transparent large images, cancellation, replacement/crop, undo/redo, actual download and new-process reopen. Native picker/original-file save and physical-device/user visual validation remain pending; first failed gate and fixes retained."
+      }
     },
     {
       "id": "F04A",

@@ -1,0 +1,8 @@
+{
+  "cancel": "chooser empty files (automation, not native OS Cancel)",
+  "invalidDecode": true,
+  "invalidType": true,
+  "over16MiB": true,
+  "unchanged": true,
+  "noUndoPollution": true
+}
