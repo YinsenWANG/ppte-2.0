@@ -1,0 +1,28 @@
+✖ S07 continuous file journey: offline download, browser shutdown, fresh reopen, presentation and optional PDF (2908.932583ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3124.1585
+
+✖ failing tests:
+
+test at dist/tests/single-file-journey.test.js:12:1
+✖ S07 continuous file journey: offline download, browser shutdown, fresh reopen, presentation and optional PDF (2908.932583ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(pdfPages[0].redPixels > 4000)
+  
+      at TestContext.<anonymous> (file:///Users/xinmingwong/.codex/.chatgpt-projects/g-p-6a9ad11768b48191abe2e30ff63650a5/ppte-audit-61310c7/dist/tests/single-file-journey.test.js:93:16)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

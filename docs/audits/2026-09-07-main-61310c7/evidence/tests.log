@@ -1,0 +1,99 @@
+✔ H01 acceptance 1: native Grid/Flex/SVG/font hierarchy and nested resources retain computed layout and exact pixels (2804.301459ms)
+✔ H01 acceptance 1: deterministic IDs reserve author identities, repair duplicates and preserve nested template escaping (163.668792ms)
+✔ H01 acceptance 2: 100 actual browser serialize/write/close/reopen cycles retain one payload and no editing residue (21578.017625ms)
+✔ H01 acceptance 2: sanitizer reports executable content; runtime sandbox/CSP block independent script/event/network/navigation attempts (339.668292ms)
+✔ H01 acceptance 2: safe serialization fails closed for executable CSS, SVG data, remote resource and malformed metadata (15.76275ms)
+✔ H01 acceptance 3: offline CLI with no PATH/keys/browser writes exactly one HTML and <=1KB summary (208.103542ms)
+✔ H01 acceptance 3: rejection creates no output; local resource root, symlinks, missing resources and import cycles fail explicitly (65.560708ms)
+✔ H01 acceptance 4: actual bundled CLI/runtime import graphs exclude old representations; all three H00 drafts enhance directly (92.856542ms)
+✔ H01 acceptance 1/3: embedded SVG references preserve fragment identity and diagnostics obey byte limits (17.656333ms)
+✔ H03 acceptance 2/3: viewport changes retain focused format control, selection and original DOM without edits (6070.46725ms)
+✔ H03 acceptance 1: real object selection, empty/multiple/mixed contextual shell and screenshots (3166.851166ms)
+✔ H03 acceptance 2: computed normal text contrast >=4.5, visible keyboard focus and keyboard object/format path (2187.977959ms)
+✔ H03 acceptance 3: local text/range history preserves sibling identity, native Grid/Flex strategies and protected Agent hash (3568.426ms)
+✔ H03 acceptance 4: original-file reopen retains text, range style, layout, media, table/background/lock; errors retain work (4421.473417ms)
+✔ H03 native typing history, atomic multi-edit failure, table cell and page insertion history (1308.333292ms)
+✔ H03 original-file persisted range formatting and keyboard/pointer layout; clean preview returns to edit (1968.907166ms)
+✔ H03 guarded SVG replacement, protected native input, composition events coalesce and hash race rejects (748.019625ms)
+✔ H00 acceptance 1: frozen positive HTML contract excludes retired formats and IR pipeline (6.621666ms)
+✔ H00 acceptance 2: real fixed materials, all nine pairs and cold/hot missing data stay pending (84.323ms)
+✔ H00 acceptance 2: missing timings/tokens, changed model/materials, omitted runs and fake success fail (13.986708ms)
+✔ H00 acceptance 2: observed failures are retained, never repaired away or silently excluded (10.059833ms)
+✔ H00 acceptance 2: artifact bytes must exist inside evidence root including symlink resolution (50.869791ms)
+✔ H00 acceptance 2: capture records actual subprocess time/bytes/failure and refuses overwrite (72.930958ms)
+✔ H00 retained exploratory HTML has twelve pages, no runtime/network and real data table; not timing evidence (1.239917ms)
+✔ H00 dependency inventory preserves evidence of live retired dependencies without declaring retirement (0.862625ms)
+✔ H05 acceptance 1: static CLI/runtime graph and actual installed npm tarball contain only HTML dependencies (3.455708ms)
+✔ H05 acceptance 2: offline installed CLI generates HTML with network and external processes forbidden (970.142542ms)
+✔ H05 acceptance 3: candidate runtime <=250 KB gzip and three twelve-page light HTMLs <=1 MB measured (752.827709ms)
+✔ H05 acceptance 4: isolated install, reusable skill and overwrite refusal preserve existing user files (2405.508334ms)
+✔ H05 acceptance 2: packaged HTML prints through separately available Chrome PDF toolchain (2061.258709ms)
+✔ H05 retirement: all historical test files remain byte-identical to the pre-H05 manifest (39.320625ms)
+✔ H04 acceptance 1/2: clean audience, idle controls, black pixels, steps, media clicks, fullscreen denial and Escape restore (9443.720541ms)
+✔ H04 acceptance 2: blocked presenter leaves audience usable; real popup has notes/next preview and shared navigation (2700.304167ms)
+✔ H04 acceptance 3: actual browser PDF has two sized pages, selectable revealed text, no editor UI and print restores content (4512.868167ms)
+✔ H04 acceptance 4: generation and reading create only HTML; new export/runtime graph excludes retired formats (1578.888042ms)
+✔ H04 actual fullscreen exit, Grid slide layout, print from presentation, mount and read return (1919.497667ms)
+✔ H02 acceptance 1: original path autosave, close/reopen and service restart preserve text with no download (8391.719791ms)
+✔ H02 acceptance 2: OS read-only, ENOSPC fault, interrupted replace retain original and recoverable version (347.399875ms)
+✔ H02 acceptance 2: two services/windows serialize one winner and detect external Agent edits at replace (213.417458ms)
+✔ H02 acceptance 2: kill process before rename, restart recovers stale lock and preserves original (475.297125ms)
+✔ H02 acceptance 2/3: browser two-window conflict keeps draft; explicit reread and retry after network failure (3836.25675ms)
+✔ H02 acceptance 3: IME does not save half composition; 800ms pause and delayed acknowledgement remain dirty/saving (3117.723291ms)
+✔ H02 acceptance 2/3: two real windows retain the failed draft after the other file save is acknowledged (2586.721125ms)
+✔ H02 acceptance 2/3: a delayed acknowledgement never deletes another window recovery draft (1.141292ms)
+✔ H02 acceptance 3: edits during in-flight save remain queued; draft base matching, quotas and copied identity (0.885459ms)
+✔ H02 acceptance 2/3: File System Access permission revoked, conflict, failed close and confirmation (API contract test) (8.282666ms)
+✔ H02 acceptance 4: loopback bind, hostile Origin/Host, no token, traversal, arbitrary fields and unsafe content rejected (122.05425ms)
+✔ H02 acceptance 5: real installed Chrome file URL shows limitation, keeps draft and never claims file save (2317.765666ms)
+✔ H02 acceptance 5: Safari actual WebDriver journey or explicit blocked evidence (not simulated Safari) (30333.475833ms)
+✔ H02 acceptance 1/4: explicit development ppte serve retains packaged npm install, stable restart URL and multiple file mappings (2007.676167ms)
+✔ H02 acceptance 2: history bounded by count and rejected restoration paths never write (457.474041ms)
+✔ H02 acceptance 2: actual bounded full disk returns ENOSPC without replacing original (macOS HFS+) (1388.411333ms)
+✔ H02 acceptance 2/3: failed-save draft survives page close, restores on matching file base and flushes to original (2367.831959ms)
+✔ S00 frozen current contract rejects weakened requirements and cross-version relabelling (2.811125ms)
+✔ S00 version changes cannot promote the historical baseline or bypass missing telemetry (46.286208ms)
+✔ S00 active instructions and actual CLI help agree on delivery and disclose migration (187.407291ms)
+✔ S00 no new runtime or dependency requirement and historical bytes stay unchanged (83.906792ms)
+✔ S00 real enhancement supports both extensions and refuses to rewrite existing user files (259.142583ms)
+✔ S03 F02-F05 file UI: protected local insert/history, unique identity, native context, background, download/reopen and PDF (11426.314375ms)
+✔ S03 contextual UI: real cell mouse/keyboard range format, collapse/zoom focus, handles and composition refresh (6120.443875ms)
+✔ S01 file URL: offline visible entry, native canvas, text/format/undo, present/Esc, copied file and complete download (12104.728542ms)
+✔ S01 CLI edit exits with file URL, rejects service flags and leaves original bytes unchanged (864.379375ms)
+✖ S07 continuous file journey: offline download, browser shutdown, fresh reopen, presentation and optional PDF (15353.052333ms)
+✔ S06 table: SHA-256 vectors, legacy identity, dedup, stable references, missing/corrupt resources, no CSP expansion (177.03825ms)
+✔ S06 file journey: mixed ratios, insert/replace/focus/reset, guarded history, download/reopen, print and speaker (10434.847375ms)
+✔ S04 evidence refuses changed environment, content, undersampling and nonfinite timings (1.642542ms)
+✔ S04 cache: bytes, MIME, requirement/transform context, root authorization and budget cannot be stale (209.550458ms)
+✔ S04 draft: bounded checkpoints, revision reuse, latest recovery and permission checks on each flush (269.808792ms)
+✔ S04 file browser: one input revision, local thumbnail, stable tools and synchronous index invalidation (3332.0605ms)
+✔ S02 file entry: no API and denied permission actually download, reopen content/style/lock/media offline (5939.175625ms)
+✔ S02 conflict remains latched through input; exported and confirmed revisions are independent (0.745375ms)
+✔ S02 file handle contract bridge: real file bytes, permission lifecycle, autosave, conflicts and delayed receipts (6285.851833ms)
+ℹ tests 72
+ℹ suites 0
+ℹ pass 71
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 59628.881708
+
+✖ failing tests:
+
+test at dist/tests/single-file-journey.test.js:12:1
+✖ S07 continuous file journey: offline download, browser shutdown, fresh reopen, presentation and optional PDF (15353.052333ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(pdfPages[0].redPixels > 4000)
+  
+      at TestContext.<anonymous> (file:///Users/xinmingwong/.codex/.chatgpt-projects/g-p-6a9ad11768b48191abe2e30ff63650a5/ppte-audit-61310c7/dist/tests/single-file-journey.test.js:93:16)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

@@ -1,0 +1,17 @@
+{
+  "sRGBRedPixels" : 0,
+  "sampleRaw" : [
+    0.91764705882352937,
+    0.20000000000000001,
+    0.13725490196078433
+  ],
+  "sampleSRGB" : [
+    0.94379335641860962,
+    0.29306778311729431,
+    0.17751452326774597
+  ],
+  "rawBluePixels" : 6320,
+  "sRGBBluePixels" : 0,
+  "space" : "Generic RGB",
+  "rawRedPixels" : 0
+}

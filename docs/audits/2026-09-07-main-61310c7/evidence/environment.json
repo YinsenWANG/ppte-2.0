@@ -1,0 +1,18 @@
+{
+  "date": "2026-09-07T03:37:24.181Z",
+  "code": "61310c789ffe7e99311fb48b4580101803d3f40a",
+  "plan": "9856db3cef4da0d6ea6aca5a46b7039a166b995c",
+  "node": "v26.5.0",
+  "platform": "darwin",
+  "arch": "arm64",
+  "os": "macOS 27.0",
+  "chrome": "152.0.7977.76",
+  "runtime": "ppte-html@1.0.0-html.0",
+  "installedRuntime": "/Users/xinmingwong/.codex/ppte-runtimes/61310c7/node_modules/ppte-html/ppte.js",
+  "sampleSHA256": "4046d7a4b3b11e27d529848a2f6627c530a6a9228a1f2c837df958dd9a3af2d2",
+  "packageSHA256": "c0fa4959612ce0a65a2f4f03c22b497ab0425dcc2e21c8ec29e85d515997eac0",
+  "sampleBytes": 336706,
+  "authoring": "new visual edition derived from prior verified 12-page source; not a controlled generation benchmark",
+  "correctionRounds": 0,
+  "productCodeChanged": false
+}

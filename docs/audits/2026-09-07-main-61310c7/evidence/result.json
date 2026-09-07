@@ -1,0 +1,113 @@
+{
+  "requests": [],
+  "errors": [],
+  "pages": [
+    {
+      "page": 1,
+      "pixelIdentical": true
+    },
+    {
+      "page": 2,
+      "pixelIdentical": true
+    },
+    {
+      "page": 3,
+      "pixelIdentical": true
+    },
+    {
+      "page": 4,
+      "pixelIdentical": true
+    },
+    {
+      "page": 5,
+      "pixelIdentical": true
+    },
+    {
+      "page": 6,
+      "pixelIdentical": true
+    },
+    {
+      "page": 7,
+      "pixelIdentical": true
+    },
+    {
+      "page": 8,
+      "pixelIdentical": true
+    },
+    {
+      "page": 9,
+      "pixelIdentical": true
+    },
+    {
+      "page": 10,
+      "pixelIdentical": true
+    },
+    {
+      "page": 11,
+      "pixelIdentical": true
+    },
+    {
+      "page": 12,
+      "pixelIdentical": true
+    }
+  ],
+  "browser": "152.0.7977.76",
+  "entry": {
+    "edit": true,
+    "present": true
+  },
+  "overflow": [],
+  "download": {
+    "failure": null,
+    "status": "已生成更新文件；原文件未覆盖（下载是否落盘由浏览器决定）",
+    "originalUnchanged": true,
+    "freshProcessReopen": true
+  },
+  "background": "rgb(36, 69, 62)",
+  "presentation": {
+    "editable": 0,
+    "visiblePages": 1
+  },
+  "addMouseBlocked": "TimeoutError: locator.click: Timeout 1500ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: '添加页', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\">添加页</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <button type=\"button\">折叠缩略图</button> from <div id=\"ppte-canvas-controls\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <button type=\"button\">折叠缩略图</button> from <div id=\"ppte-canvas-controls\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    3 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <button type=\"button\">折叠缩略图</button> from <div id=\"ppte-canvas-controls\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n",
+  "addUsedKeyboardWorkaround": true,
+  "addProtected": {
+    "pages": 13,
+    "feedback": ""
+  },
+  "newPagesVisible": [
+    "slide-10fa1d2d-ff87-4592-bbda-7c7ca26cc064"
+  ],
+  "newPageResponsive": [
+    {
+      "id": "ppte-5",
+      "width": 1440,
+      "height": 810
+    },
+    {
+      "id": "slide-53fc2418-f4e9-4d48-97dd-64a8f8ca1044",
+      "width": 992,
+      "height": 558
+    },
+    {
+      "id": "slide-10fa1d2d-ff87-4592-bbda-7c7ca26cc064",
+      "width": 992,
+      "height": 558
+    },
+    {
+      "id": "ppte-24",
+      "width": 1440,
+      "height": 810
+    }
+  ],
+  "insertImage": {
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 320,
+      "height": 240
+    },
+    "hitTag": "H1",
+    "hitIsImage": false,
+    "style": "width: 320px; height: 240px; max-width: 100%; object-fit: contain !important; object-position: 50% 50% !important;"
+  }
+}

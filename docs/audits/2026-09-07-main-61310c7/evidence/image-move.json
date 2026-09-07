@@ -1,0 +1,8 @@
+{
+  "selected": [
+    "image-578e89b6-85e6-40e3-845c-366723710417"
+  ],
+  "feedback": "",
+  "imageStyle": "width: 320px; height: 240px; max-width: 100%; object-fit: contain !important; object-position: 50% 50% !important;",
+  "commandProbe": "Error: LAYOUT_UNSUPPORTED: 此对象使用普通文档流"
+}
