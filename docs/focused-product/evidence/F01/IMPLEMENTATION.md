@@ -9,6 +9,8 @@ F01 实现范围：只插入图片、一级 PDF 入口、已有作者内容及�
 
 ## 验收与证据
 
+最终复验基于签名实现提交 `2853126d842c585bc2edffb9eef8fe6368a3636b`，`pnpm typecheck && pnpm build && pnpm test` 全通过：142 项测试记录中 **126 passed / 0 failed / 16 明确退休 skipped**，其中 7 项 F01 新测试均通过且无跳过。完成时间 `2026-09-07T14:01:12.774Z`；环境 darwin / arm64，Chrome 152.0.7977.76，headless / offline file://。TASKS 的 F01 标为 `implemented`，原生实机与人工层仍 pending。
+
 `verification/run.mjs` 顺序执行 `pnpm typecheck`、`pnpm build`、`pnpm test`；结果、日志、实际测试代码提交、时间、平台及逐 acceptance 四层状态见 `verification/result.json`。复验：`node docs/focused-product/evidence/F01/verification/run.mjs`。
 
 `tests/focused-product-f01.test.ts` 的七项测试覆盖直接图片选择、空选择无副作用、撤销重做、外层及 iframe 中的废弃按键无效果、无旧入口、新 PDF 边界、四类历史文件编辑下载后关闭整个浏览器并新进程重开、模拟文件适配器的真实磁盘写入，以及原审查 Cherry 十页稿升级与三尺寸截图。图片选择由 Playwright 捕获 filechooser/setFiles，**不称为原生系统选择器人工验证**。适配器测试明确使用 mock 权限/句柄，不冒充真人授权写回。

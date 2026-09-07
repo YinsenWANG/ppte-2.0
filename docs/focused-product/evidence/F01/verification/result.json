@@ -1,0 +1,166 @@
+{
+  "task": "F01",
+  "status": "passed",
+  "commit": "2853126d842c585bc2edffb9eef8fe6368a3636b",
+  "tree": "ac876b8f778e00e47dd12400b4dcf25d02bd1ccc",
+  "branch": "feat/focused-product-v9",
+  "startedAt": "2026-09-07T14:00:18.580Z",
+  "platform": {
+    "os": "darwin",
+    "release": "25.6.0",
+    "arch": "arm64",
+    "node": "v22.23.2",
+    "pnpm": "11.22.0"
+  },
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "startedAt": "2026-09-07T14:00:18.763Z",
+      "finishedAt": "2026-09-07T14:00:19.961Z",
+      "durationMs": 1197,
+      "log": "typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "startedAt": "2026-09-07T14:00:19.961Z",
+      "finishedAt": "2026-09-07T14:00:21.316Z",
+      "durationMs": 1355,
+      "log": "build.log"
+    },
+    {
+      "command": "pnpm test",
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "startedAt": "2026-09-07T14:00:21.316Z",
+      "finishedAt": "2026-09-07T14:01:12.774Z",
+      "durationMs": 51458,
+      "log": "test.log"
+    }
+  ],
+  "finishedAt": "2026-09-07T14:01:12.774Z",
+  "tests": {
+    "tests": 142,
+    "pass": 126,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 16,
+    "todo": 0
+  },
+  "skipPolicy": "Explicit scope retirements, not passes; see ../TEST-MIGRATION.json. New F01 tests have no skips.",
+  "browser": {
+    "time": "2026-09-07T14:00:28.218Z",
+    "browser": "152.0.7977.76",
+    "platform": "darwin",
+    "headless": true,
+    "offline": true,
+    "nativePicker": false,
+    "chooser": "Playwright filechooser capture/setFiles",
+    "screenshots": [
+      1440,
+      1024,
+      390
+    ],
+    "human": "pending: user has not reviewed UI"
+  },
+  "layers": {
+    "code": {
+      "status": "passed",
+      "commit": "2853126d842c585bc2edffb9eef8fe6368a3636b"
+    },
+    "automated": {
+      "status": "passed",
+      "scope": "node --test on dist, real headless Chrome offline interactions, actual downloads/new browser processes; simulated file adapter"
+    },
+    "real-browser": {
+      "status": "pending",
+      "reason": "Automated Chrome uses headless file:// and Playwright filechooser capture. Native desktop picker, physical keyboard/touch and other supported browsers were not manually exercised. Mocked file-handle methods backed by real disk I/O are only an adapter regression."
+    },
+    "human": {
+      "status": "pending",
+      "reason": "User has not confirmed the focused UI or document aesthetics; screenshots are review material only."
+    }
+  },
+  "acceptance": [
+    {
+      "item": "只保留插入图片；所有旧入口/快捷键/提示移除",
+      "tests": [
+        "F01 A1/A2 direct chooser, empty chooser, image undo/redo, removed T in outer and content frame",
+        "F01 audited Cherry upgrade",
+        "H01 runtime graph excludes retired menu and version panel"
+      ],
+      "code": {
+        "status": "passed",
+        "commit": "2853126d842c585bc2edffb9eef8fe6368a3636b"
+      },
+      "automated": {
+        "status": "passed",
+        "scope": "node --test on dist, real headless Chrome offline interactions, actual downloads/new browser processes; simulated file adapter"
+      },
+      "real-browser": {
+        "status": "pending",
+        "reason": "Automated Chrome uses headless file:// and Playwright filechooser capture. Native desktop picker, physical keyboard/touch and other supported browsers were not manually exercised. Mocked file-handle methods backed by real disk I/O are only an adapter regression."
+      },
+      "human": {
+        "status": "pending",
+        "reason": "User has not confirmed the focused UI or document aesthetics; screenshots are review material only."
+      }
+    },
+    {
+      "item": "更多改为一级导出为PDF",
+      "tests": [
+        "F01 A1/A2 top-level button in read/edit at 1440/1024/390; disabled with truthful reason; no PPTePrint/beforeprint route",
+        "H04 runtime/action boundary"
+      ],
+      "limitation": "F01 delivers the entry only. F04A/F04 remain pending: PDF is disabled, not implemented and not replaced by system print or raster PDF.",
+      "code": {
+        "status": "passed",
+        "commit": "2853126d842c585bc2edffb9eef8fe6368a3636b"
+      },
+      "automated": {
+        "status": "passed",
+        "scope": "node --test on dist, real headless Chrome offline interactions, actual downloads/new browser processes; simulated file adapter"
+      },
+      "real-browser": {
+        "status": "pending",
+        "reason": "Automated Chrome uses headless file:// and Playwright filechooser capture. Native desktop picker, physical keyboard/touch and other supported browsers were not manually exercised. Mocked file-handle methods backed by real disk I/O are only an adapter regression."
+      },
+      "human": {
+        "status": "pending",
+        "reason": "User has not confirmed the focused UI or document aesthetics; screenshots are review material only."
+      }
+    },
+    {
+      "item": "已有文稿和历史数据不被破坏",
+      "tests": [
+        "F01 no-history/valid/broken/unknown history edit/download/full-process reopen",
+        "F01 mocked native adapter real disk manual/auto writes preserve history",
+        "F01 audited Cherry ten-page content and navigation",
+        "UI07 retained history model/wire/CLI safety regressions"
+      ],
+      "limitation": "Native authorization/writeback is pending F02. Cherry mode changes compare full DOM with inline CSS declaration whitespace canonicalized; initial upgrade content is byte-equal.",
+      "code": {
+        "status": "passed",
+        "commit": "2853126d842c585bc2edffb9eef8fe6368a3636b"
+      },
+      "automated": {
+        "status": "passed",
+        "scope": "node --test on dist, real headless Chrome offline interactions, actual downloads/new browser processes; simulated file adapter"
+      },
+      "real-browser": {
+        "status": "pending",
+        "reason": "Automated Chrome uses headless file:// and Playwright filechooser capture. Native desktop picker, physical keyboard/touch and other supported browsers were not manually exercised. Mocked file-handle methods backed by real disk I/O are only an adapter regression."
+      },
+      "human": {
+        "status": "pending",
+        "reason": "User has not confirmed the focused UI or document aesthetics; screenshots are review material only."
+      }
+    }
+  ]
+}

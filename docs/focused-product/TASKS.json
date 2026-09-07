@@ -7,14 +7,29 @@
     {
       "id": "F01",
       "title": "移除废弃入口并收敛菜单",
-      "status": "pending",
+      "status": "implemented",
       "dependsOn": [],
       "acceptance": [
         "只保留插入图片；所有旧入口/快捷键/提示移除",
         "更多改为一级导出为PDF",
         "已有文稿和历史数据不被破坏"
       ],
-      "evidence": []
+      "evidence": [
+        "evidence/F01/IMPLEMENTATION.md",
+        "evidence/F01/verification/result.json",
+        "evidence/F01/TEST-MIGRATION.json",
+        "evidence/F01/Cherry-F01.ppte.html",
+        "evidence/F01/screenshots/",
+        "evidence/F01/SHA256SUMS"
+      ],
+      "verification": {
+        "code": "passed",
+        "automated": "passed",
+        "real-browser": "pending",
+        "human": "pending",
+        "implementationCommit": "2853126d842c585bc2edffb9eef8fe6368a3636b",
+        "reason": "Implemented and all repository gates pass. Chrome headless file:// interaction/download/fresh-process evidence is automated only; native picker/physical desktop operations and user UI confirmation are pending. PDF entry is disabled pending F04A/F04; no PDF implementation claim."
+      }
     },
     {
       "id": "F02",
