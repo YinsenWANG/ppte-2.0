@@ -1,0 +1,394 @@
+{
+  "task": "R3",
+  "time": "2026-09-07T08:39:27.609967+00:00",
+  "baseCommit": "f5ba1900cb1467126cc3edd911ce762413280cdb",
+  "testedParentCommit": "37bb675ddb950df7429f5bf335461000d100a5f2",
+  "implementationCommit": "3a53166363a3b9092f8e004954138db186a1711f",
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "3a53166363a3b9092f8e004954138db186a1711f",
+      "executionHead": "37bb675ddb950df7429f5bf335461000d100a5f2",
+      "completedAt": "2026-09-07T08:35:37.097540+00:00",
+      "log": "typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "3a53166363a3b9092f8e004954138db186a1711f",
+      "executionHead": "37bb675ddb950df7429f5bf335461000d100a5f2",
+      "completedAt": "2026-09-07T08:35:38.213352+00:00",
+      "log": "build.log"
+    },
+    {
+      "command": "pnpm test",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "3a53166363a3b9092f8e004954138db186a1711f",
+      "executionHead": "37bb675ddb950df7429f5bf335461000d100a5f2",
+      "completedAt": "2026-09-07T08:36:31.201952+00:00",
+      "log": "test.log"
+    },
+    {
+      "command": "node docs/audits/2026-09-07-ui-d96f211/probe.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "3a53166363a3b9092f8e004954138db186a1711f",
+      "executionHead": "3a53166363a3b9092f8e004954138db186a1711f",
+      "completedAt": "2026-09-07T08:37:48.784682+00:00",
+      "log": "probe.log"
+    },
+    {
+      "command": "node docs/audits/2026-09-07-ui-d96f211/followup.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "3a53166363a3b9092f8e004954138db186a1711f",
+      "executionHead": "3a53166363a3b9092f8e004954138db186a1711f",
+      "completedAt": "2026-09-07T08:37:52.288678+00:00",
+      "log": "followup.log"
+    },
+    {
+      "command": "node dist/apps/html-cli/index.js enhance docs/audits/2026-09-07-ui-d96f211/sample/source.html --out docs/ui-redesign/evidence/r8-R3/sample.ppte.html",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "3a53166363a3b9092f8e004954138db186a1711f",
+      "executionHead": "3a53166363a3b9092f8e004954138db186a1711f",
+      "completedAt": "2026-09-07T08:37:45.522927+00:00",
+      "log": "enhance.log"
+    },
+    {
+      "command": "node docs/ui-redesign/evidence/r8-R3/compare.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "3a53166363a3b9092f8e004954138db186a1711f",
+      "executionHead": "3a53166363a3b9092f8e004954138db186a1711f",
+      "completedAt": "2026-09-07T08:37:45.525447+00:00",
+      "log": "compare.log"
+    }
+  ],
+  "testProvenance": "Final typecheck/build/test ran on the exact source/test working tree subsequently committed as implementationCommit; audit reruns and CLI sample verification ran after that commit. No runtime/source edits between these phases.",
+  "tests": {
+    "total": 120,
+    "passed": 120,
+    "failed": 0,
+    "newR3Tests": 4,
+    "framework": "node --test dist/tests/*.test.js",
+    "intermediateTargeted": {
+      "total": 15,
+      "passed": 15,
+      "log": "targeted-test.log",
+      "commit": null,
+      "reason": "Intermediate working tree before final input-fit scheduling and paper shadow; final full test includes those changes."
+    },
+    "initialFailures": [
+      {
+        "log": "initial-targeted.log",
+        "reason": "Responsive test dblclick without prior selection moved under the newly opened inspector. Test now explicitly selects then double-clicks as the existing R1 user path, and also asserts text before saving."
+      },
+      {
+        "log": "initial-full-test.log",
+        "reason": "Inactive page geometry/Grid tests assumed continuous layout; resize mouse delta assumed 100%. Tests retain original assertions but measure after real navigation and scale the gesture. Help disclosure default paragraph margin caused viewport overflow; product positioning fixed."
+      }
+    ]
+  },
+  "probeComparison": {
+    "before": {
+      "executionHead": "37bb675ddb950df7429f5bf335461000d100a5f2",
+      "probeExitCode": 0,
+      "followupExitCode": 0,
+      "R3": "failed",
+      "viewport": {
+        "frame": {
+          "x": 220,
+          "y": 102,
+          "width": 940,
+          "height": 790,
+          "top": 102,
+          "right": 1160,
+          "bottom": 892,
+          "left": 220
+        },
+        "slides": [
+          {
+            "x": 0,
+            "y": 0,
+            "width": 960,
+            "height": 540,
+            "top": 0,
+            "right": 960,
+            "bottom": 540,
+            "left": 0
+          },
+          {
+            "x": 0,
+            "y": 540,
+            "width": 960,
+            "height": 540,
+            "top": 540,
+            "right": 960,
+            "bottom": 1080,
+            "left": 0
+          },
+          {
+            "x": 0,
+            "y": 1080,
+            "width": 960,
+            "height": 540,
+            "top": 1080,
+            "right": 960,
+            "bottom": 1620,
+            "left": 0
+          }
+        ]
+      },
+      "reason": "960px author page in 940px frame, page 2 starts at y540 inside first viewport; full deck scroll."
+    },
+    "after": {
+      "executionHead": "3a53166363a3b9092f8e004954138db186a1711f",
+      "probeExitCode": 0,
+      "followupExitCode": 0,
+      "R3": "passed: current page only, fit and padding assertions",
+      "rawViewport": {
+        "frame": {
+          "x": 242,
+          "y": 261,
+          "width": 1344,
+          "height": 896,
+          "top": 261,
+          "right": 1586,
+          "bottom": 1157,
+          "left": 242
+        },
+        "slides": [
+          {
+            "x": 0,
+            "y": 0,
+            "width": 960,
+            "height": 540,
+            "top": 0,
+            "right": 960,
+            "bottom": 540,
+            "left": 0
+          },
+          {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          },
+          {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        ]
+      },
+      "screenGeometry": [
+        {
+          "width": 1440,
+          "height": 960,
+          "geometry": {
+            "area": {
+              "x": 204,
+              "y": 102,
+              "width": 972,
+              "height": 822,
+              "top": 102,
+              "right": 1176,
+              "bottom": 924,
+              "left": 204
+            },
+            "scale": 0.9333333333333333,
+            "slides": [
+              {
+                "visible": true,
+                "x": 242,
+                "y": 261,
+                "width": 896,
+                "height": 504
+              },
+              {
+                "visible": false,
+                "x": 242,
+                "y": 261,
+                "width": 0,
+                "height": 0
+              },
+              {
+                "visible": false,
+                "x": 242,
+                "y": 261,
+                "width": 0,
+                "height": 0
+              }
+            ]
+          }
+        },
+        {
+          "width": 1024,
+          "height": 768,
+          "geometry": {
+            "area": {
+              "x": 170,
+              "y": 102,
+              "width": 616,
+              "height": 630,
+              "top": 102,
+              "right": 786,
+              "bottom": 732,
+              "left": 170
+            },
+            "scale": 0.5874999761581421,
+            "slides": [
+              {
+                "visible": true,
+                "x": 196,
+                "y": 258.375,
+                "width": 563.9999771118164,
+                "height": 317.24998712539673
+              },
+              {
+                "visible": false,
+                "x": 196,
+                "y": 258.375,
+                "width": 0,
+                "height": 0
+              },
+              {
+                "visible": false,
+                "x": 196,
+                "y": 258.375,
+                "width": 0,
+                "height": 0
+              }
+            ]
+          }
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "geometry": {
+            "area": {
+              "x": 0,
+              "y": 192,
+              "width": 390,
+              "height": 551,
+              "top": 192,
+              "right": 390,
+              "bottom": 743,
+              "left": 0
+            },
+            "scale": 0.38125,
+            "slides": [
+              {
+                "visible": true,
+                "x": 12,
+                "y": 364.5625,
+                "width": 366,
+                "height": 205.875
+              },
+              {
+                "visible": false,
+                "x": 12,
+                "y": 364.5625,
+                "width": 0,
+                "height": 0
+              },
+              {
+                "visible": false,
+                "x": 12,
+                "y": 364.5625,
+                "width": 0,
+                "height": 0
+              }
+            ]
+          }
+        }
+      ],
+      "note": "followup getBoundingClientRect inside iframe is in author pixels. The frame is scaled and clipped to current page/work area. CLI geometry records apply the actual outer scale and measure work area."
+    },
+    "retainedR1R2": {
+      "fontControls": 1,
+      "imageOverlap": false,
+      "keyboardDeltaX": 8,
+      "moveFeedback": "",
+      "addedCount": 13
+    },
+    "remainingObserved": {
+      "R6": {
+        "type": "prompt",
+        "message": "版本名称（最多 200 字）"
+      },
+      "R5": "390 inspector still covers canvas; paired screenshot explicitly pending"
+    },
+    "scope": "Original probes are unmodified travel/data capture scripts. Zero exit is not whole-audit acceptance. Only R3 inferred from raw data + assertive dist tests."
+  },
+  "statusByLayer": {
+    "code": "passed: R3",
+    "automated": "passed: 120/120",
+    "real-browser": "partial: installed Chrome headless offline file:// passed; no native authorization/Safari/system input session",
+    "human": "pending: no owner/target-user/screen-reader review"
+  },
+  "pending": [
+    {
+      "item": "native authorization",
+      "result": null,
+      "reason": "No real OS file-picker writeback authorization session; actual browser download does not establish native writeback."
+    },
+    {
+      "item": "Safari",
+      "result": null,
+      "reason": "No Safari session available in this round."
+    },
+    {
+      "item": "OS IME / physical touch / screen reader",
+      "result": null,
+      "reason": "No system or human session; synthetic tests cannot substitute."
+    },
+    {
+      "item": "human visual review",
+      "result": null,
+      "reason": "No owner or target-user review."
+    },
+    {
+      "item": "R4–R6 / final CLOSING",
+      "result": null,
+      "reason": "Sequential later tasks. R3 comparisons do not approve toolbar hierarchy or small-screen inspector."
+    },
+    {
+      "item": "PDF N04 / S04 performance / UI07 A4 media",
+      "result": null,
+      "reason": "Reserved GAPS investigations; passing existing tests does not establish root cause or close thresholds/lifecycle."
+    }
+  ],
+  "source": {
+    "path": "docs/audits/2026-09-07-ui-d96f211/sample/source.html",
+    "sha256": "db6dd16104be24df2e93684b35e4827c3b08c0d569ab563af70bb257866882ef",
+    "modified": false
+  },
+  "artifacts": [
+    {
+      "path": "responsive-saved.ppte.html",
+      "sha256": "3d96661706e1518f80eca1ae7aeafd6c659d5cc12ce30b1f1607dbd504fdaa8a",
+      "bytes": 364817
+    },
+    {
+      "path": "sample.ppte.html",
+      "sha256": "f77b3a15ffb97c2e194eaefe349c8a2e07554de0dcc708622d5014285511777d",
+      "bytes": 371518
+    }
+  ],
+  "workspace": "No push. Tracked task work clean after signed evidence commit; pre-existing untracked supervisor/pipeline files preserved."
+}

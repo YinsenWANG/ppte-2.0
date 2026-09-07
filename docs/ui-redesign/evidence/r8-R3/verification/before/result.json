@@ -1,0 +1,29 @@
+{
+  "errors": [],
+  "network": [],
+  "browser": "152.0.7977.76",
+  "read": "Cherry Studio · 开源之路\n阅读\n编辑\n保存\n下载更新后的文件\n更多\n放映\n保存状态\n1 / 3\n展开缩略图\n适应画布\n上一页\n下一页\n快捷键与帮助",
+  "textPanel": "关闭属性\n文字\n外观\n字体\n字号\n文字颜色\n字号 −\n字号 ＋\n粗体\n斜体\n左对齐\n居中\n右对齐\n位置与布局\n\n自由定位 · 拖动对象或 Alt + 方向键移动\n\n宽度\n高度\n旋转\n对齐基准\n当前选择范围\n当前页面\n父内容区\n向左对齐水平居中向右对齐顶部对齐垂直居中底部对齐\n对象操作\n复制对象\n删除对象\n保护\n保护对象",
+  "menu": [
+    "",
+    "文本框\n形状\n图片\n表格"
+  ],
+  "insert": {
+    "html": "<div data-ppte-kind=\"text\" style=\"box-sizing: border-box; max-width: 100%; width: 280px; min-height: 32px; font: 28px system-ui; color: rgb(32, 36, 45); position: absolute; margin: 0px; transform: none; inset: 484px auto auto 516px;\" data-ppte-id=\"object-51be8398-4e24-4957-ae5b-2de60eca597d\" data-ppte-editor-text=\"\" contenteditable=\"true\" data-ppte-editor-focus=\"\" data-ppte-editor-selected=\"\">输入文字</div>",
+    "rect": {
+      "x": 516,
+      "y": 484,
+      "width": 280,
+      "height": 40,
+      "top": 484,
+      "right": 796,
+      "bottom": 524,
+      "left": 516
+    }
+  },
+  "present": {
+    "editable": 0,
+    "visibleButtons": []
+  },
+  "save": "Cherry Studio · 开源之路\n阅读\n编辑\n修改尚未写入文件 · 仅草稿：已取消选择；修改仍保留，可重试或下载更新文件。\n保存\n下载更新后的文件\n更多\n放映\n保存状态\n1 · 幻灯片\n上移\n下移\n2 · 幻灯片\n上移\n下移\n3 · 幻灯片\n上移\n下移\n添加页\n插入\n页面设置\n1 / 3\n折叠缩略图\n缩小画布\n100%\n放大画布\n重置缩放\n上一页\n下一页\n快捷键与帮助"
+}

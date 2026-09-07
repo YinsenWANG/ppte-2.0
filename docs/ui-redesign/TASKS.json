@@ -45,7 +45,8 @@
         "status": "passed: code and automated R3 only",
         "tests": "tests/r8-r3-canvas.test.ts",
         "evidence": "docs/ui-redesign/evidence/r8-R3/verification/result.json",
-        "remaining": "R4–R6 and GAPS/four-layer pending remain; 390 inspector occlusion is R5 pending; no full product reacceptance"
+        "remaining": "R4–R6 and GAPS/four-layer pending remain; 390 inspector occlusion is R5 pending; no full product reacceptance",
+        "implementationCommit": "3a53166363a3b9092f8e004954138db186a1711f"
       }
     },
     {
