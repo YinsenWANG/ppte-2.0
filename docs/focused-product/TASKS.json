@@ -152,7 +152,19 @@
         "直接导出一个PDF，进度取消重试且原稿状态不变",
         "真实声明支持路径验证，外部工具证据不能冒充单HTML内能力"
       ],
-      "evidence": []
+      "evidence": [
+        "evidence/F04/IMPLEMENTATION.md",
+        "evidence/F04/verification/result.json",
+        "evidence/F04A/assessment.json",
+        "evidence/F04A/COMPARE.html"
+      ],
+      "verification": {
+        "code": "pending",
+        "automated": "pending",
+        "real-browser": "pending",
+        "human": "pending",
+        "reason": "F04A conclusion 3: neither route qualified; canStartF04=false. The bounded protocol prohibits F04 implementation. No architecture change or further candidate validation authorized."
+      }
     },
     {
       "id": "F05",

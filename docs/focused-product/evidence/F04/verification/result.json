@@ -1,0 +1,111 @@
+{
+  "task": "F04",
+  "status": "pending",
+  "reason": "F04A conclusion 3: neither route qualified; canStartF04=false. The bounded protocol prohibits F04 implementation. No architecture change or further candidate validation authorized.",
+  "verification": {
+    "code": "pending",
+    "automated": "pending",
+    "real-browser": "pending",
+    "human": "pending",
+    "reason": "F04A conclusion 3: neither route qualified; canStartF04=false. The bounded protocol prohibits F04 implementation. No architecture change or further candidate validation authorized."
+  },
+  "acceptance": [
+    {
+      "id": "A1",
+      "acceptance": "不依赖系统打印，路线通过后实现，必要架构变更经用户确认",
+      "verification": {
+        "code": {
+          "status": "pending",
+          "reason": "F04A conclusion 3: neither route qualified; canStartF04=false. The bounded protocol prohibits F04 implementation. No architecture change or further candidate validation authorized."
+        },
+        "automated": {
+          "status": "pending",
+          "reason": "F04A conclusion 3: neither route qualified; canStartF04=false. The bounded protocol prohibits F04 implementation. No architecture change or further candidate validation authorized."
+        },
+        "real-browser": {
+          "status": "pending",
+          "reason": "No qualified product exporter is available; physical desktop export and human PDF visual/selection/copy/search acceptance were not performed."
+        },
+        "human": {
+          "status": "pending",
+          "reason": "No qualified product exporter is available; physical desktop export and human PDF visual/selection/copy/search acceptance were not performed."
+        }
+      },
+      "existingGuardrailTests": "tests/f04a-pdf-route.test.ts: acceptance 4 checks all three route decisions and rejects starting F04.",
+      "guardrailIsFeatureAcceptance": false
+    },
+    {
+      "id": "A2",
+      "acceptance": "整稿视觉保真且文字可选择搜索复制，无控件或缺页",
+      "verification": {
+        "code": {
+          "status": "pending",
+          "reason": "Browser pagination/font/layout failures and Chromium search/order/transform failures remain. No qualified product PDF."
+        },
+        "automated": {
+          "status": "pending",
+          "reason": "Browser pagination/font/layout failures and Chromium search/order/transform failures remain. No qualified product PDF."
+        },
+        "real-browser": {
+          "status": "pending",
+          "reason": "No qualified product exporter is available; physical desktop export and human PDF visual/selection/copy/search acceptance were not performed."
+        },
+        "human": {
+          "status": "pending",
+          "reason": "No qualified product exporter is available; physical desktop export and human PDF visual/selection/copy/search acceptance were not performed."
+        }
+      },
+      "existingGuardrailTests": "tests/f04a-pdf-route.test.ts: acceptance 1-3 reopens actual PDFs and retains strict failure assertions.",
+      "guardrailIsFeatureAcceptance": false
+    },
+    {
+      "id": "A3",
+      "acceptance": "直接导出一个PDF，进度取消重试且原稿状态不变",
+      "verification": {
+        "code": {
+          "status": "pending",
+          "reason": "Export transaction, single-PDF download, progress, cancellation, cleanup and retry are not implemented; a disabled entry is not acceptance."
+        },
+        "automated": {
+          "status": "pending",
+          "reason": "Export transaction, single-PDF download, progress, cancellation, cleanup and retry are not implemented; a disabled entry is not acceptance."
+        },
+        "real-browser": {
+          "status": "pending",
+          "reason": "No qualified product exporter is available; physical desktop export and human PDF visual/selection/copy/search acceptance were not performed."
+        },
+        "human": {
+          "status": "pending",
+          "reason": "No qualified product exporter is available; physical desktop export and human PDF visual/selection/copy/search acceptance were not performed."
+        }
+      },
+      "existingGuardrailTests": "tests/focused-product-f01.test.ts: A1/A2 exercises the disabled entry in read/edit and verifies no printing.",
+      "guardrailIsFeatureAcceptance": false
+    },
+    {
+      "id": "A4",
+      "acceptance": "真实声明支持路径验证，外部工具证据不能冒充单HTML内能力",
+      "verification": {
+        "code": {
+          "status": "pending",
+          "reason": "No qualified offline single-HTML PDF path. External Chromium uses the browser print pipeline and does not prove in-page capability."
+        },
+        "automated": {
+          "status": "pending",
+          "reason": "No qualified offline single-HTML PDF path. External Chromium uses the browser print pipeline and does not prove in-page capability."
+        },
+        "real-browser": {
+          "status": "pending",
+          "reason": "No qualified product exporter is available; physical desktop export and human PDF visual/selection/copy/search acceptance were not performed."
+        },
+        "human": {
+          "status": "pending",
+          "reason": "No qualified product exporter is available; physical desktop export and human PDF visual/selection/copy/search acceptance were not performed."
+        }
+      },
+      "existingGuardrailTests": "tests/f04a-pdf-route.test.ts: acceptance 2/3 preserves manual pending records and distinguishes external file:// comparison.",
+      "guardrailIsFeatureAcceptance": false
+    }
+  ],
+  "commands": []
+}
