@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: F06 A1/A4: same offline Cherry draft edits text and image, downloads once, reopens in fresh process and presents all pages; PDF stays unqualified
+not ok 1 - F06 A1/A4: same offline Cherry draft edits text and image, downloads once, reopens in fresh process and presents all pages; PDF stays unqualified
+  ---
+  duration_ms: 3849.176291
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/focused-product-f06.test.js:14:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + '开源，<br data-ppte-id="ppte-11" data-ppte-editor-focus="">让选择更多。<br data-ppte-id="ppte-245" data-ppte-editor-focus="">离线验收'
+    - '开源，<br data-ppte-id="ppte-11" data-ppte-editor-focus="">让选择更多。<br>离线验收'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: '开源，<br data-ppte-id="ppte-11" data-ppte-editor-focus="">让选择更多。<br>离线验收'
+  actual: '开源，<br data-ppte-id="ppte-11" data-ppte-editor-focus="">让选择更多。<br data-ppte-id="ppte-245" data-ppte-editor-focus="">离线验收'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/focused-product-f06.test.js:100:16)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: F06 A2/A3: native acceptance and audit gaps cannot be closed by automated evidence
+ok 2 - F06 A2/A3: native acceptance and audit gaps cannot be closed by automated evidence
+  ---
+  duration_ms: 5.958167
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 1
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4045.156083

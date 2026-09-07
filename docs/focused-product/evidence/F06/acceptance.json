@@ -1,0 +1,192 @@
+{
+  "status": "verified-with-open-items",
+  "releaseReady": false,
+  "acceptance": [
+    {
+      "id": "A1",
+      "title": "离线直开编辑图片保存重开放映PDF",
+      "tests": [
+        "tests/focused-product-f06.test.ts"
+      ],
+      "layers": {
+        "code": {
+          "status": "pending",
+          "reason": "F04A 结论③，两条路线均未通过；完整旅程的 PDF 能力未实现。"
+        },
+        "automated": {
+          "status": "pending",
+          "reason": "HTML 旅程由真实自动化测试覆盖；PDF 仅验证入口诚实禁用，不构成完整旅程通过。"
+        },
+        "real-browser": {
+          "status": "pending",
+          "reason": "当前仅有 Chrome headless 自动化通道；未提供原生桌面选择器操作工具或远程目标机回执。下载与模拟句柄不构成原文件保存证据。"
+        },
+        "human": {
+          "status": "pending",
+          "reason": "尚未收到用户对目标设备操作、UI 和成稿视觉的人工验收确认。"
+        }
+      }
+    },
+    {
+      "id": "A2",
+      "title": "目标浏览器原生保存证据",
+      "tests": [
+        "tests/focused-product-f06.test.ts"
+      ],
+      "layers": {
+        "code": {
+          "status": "passed"
+        },
+        "automated": {
+          "status": "pending",
+          "reason": "当前仅有 Chrome headless 自动化通道；未提供原生桌面选择器操作工具或远程目标机回执。下载与模拟句柄不构成原文件保存证据。"
+        },
+        "real-browser": {
+          "status": "pending",
+          "reason": "当前仅有 Chrome headless 自动化通道；未提供原生桌面选择器操作工具或远程目标机回执。下载与模拟句柄不构成原文件保存证据。"
+        },
+        "human": {
+          "status": "pending",
+          "reason": "尚未收到用户对目标设备操作、UI 和成稿视觉的人工验收确认。"
+        }
+      }
+    },
+    {
+      "id": "A3",
+      "title": "未闭环项准确记录",
+      "tests": [
+        "tests/focused-product-f06.test.ts"
+      ],
+      "layers": {
+        "code": {
+          "status": "passed"
+        },
+        "automated": {
+          "status": "passed"
+        },
+        "real-browser": {
+          "status": "pending",
+          "reason": "当前仅有 Chrome headless 自动化通道；未提供原生桌面选择器操作工具或远程目标机回执。下载与模拟句柄不构成原文件保存证据。"
+        },
+        "human": {
+          "status": "pending",
+          "reason": "尚未收到用户对目标设备操作、UI 和成稿视觉的人工验收确认。"
+        }
+      }
+    },
+    {
+      "id": "A4",
+      "title": "回交一个HTML与实现提交/证据",
+      "tests": [
+        "tests/focused-product-f06.test.ts"
+      ],
+      "layers": {
+        "code": {
+          "status": "passed"
+        },
+        "automated": {
+          "status": "passed"
+        },
+        "real-browser": {
+          "status": "pending",
+          "reason": "当前仅有 Chrome headless 自动化通道；未提供原生桌面选择器操作工具或远程目标机回执。下载与模拟句柄不构成原文件保存证据。"
+        },
+        "human": {
+          "status": "pending",
+          "reason": "尚未收到用户对目标设备操作、UI 和成稿视觉的人工验收确认。"
+        }
+      }
+    }
+  ],
+  "openItems": [
+    {
+      "id": "PDF",
+      "status": "open",
+      "reason": "F04A 结论③，浏览器字体/布局失败，Chromium 文字顺序/搜索与变换一致性失败。受控 Chromium 仍使用浏览器打印管线；F04 未实现，不再换第三个库。",
+      "evidence": [
+        "evidence/F04A/assessment.json",
+        "evidence/F04A/COMPARE.html",
+        "evidence/F04/IMPLEMENTATION.md"
+      ]
+    },
+    {
+      "id": "B1",
+      "status": "open",
+      "reason": "多行编辑代码及自动化已修复，F06 再验 Enter、失焦重选、样式与重开；系统 IME 与原生剪贴板仍待验。",
+      "evidence": [
+        "evidence/F02/IMPLEMENTATION.md",
+        "evidence/F02/NATIVE-VALIDATION.md"
+      ]
+    },
+    {
+      "id": "B2",
+      "status": "open",
+      "reason": "普通 HTTPS 引用链接仍产生 CONTENT_URL_REMOVED；原始 source-with-links.html 由 F06 测试重新复现。未关闭；最终 Cherry 使用审查既存 source.html，未在 F06 删链接绕过。",
+      "evidence": [
+        "../audits/2026-09-07-main-d1db13d/REPORT.md",
+        "../audits/2026-09-07-main-d1db13d/sample/source-with-links.html"
+      ]
+    },
+    {
+      "id": "NATIVE-SAVE",
+      "status": "open",
+      "reason": "当前仅有 Chrome headless 自动化通道；未提供原生桌面选择器操作工具或远程目标机回执。下载与模拟句柄不构成原文件保存证据。",
+      "evidence": [
+        "evidence/F02/NATIVE-VALIDATION.md"
+      ]
+    },
+    {
+      "id": "PERFORMANCE",
+      "status": "open",
+      "reason": "既有自动化指标只代表当前环境；低性能参考机未冻结，不能证明目标机输入/翻页预算。",
+      "evidence": [
+        "../audits/2026-09-07-main-d1db13d/REPORT.md"
+      ]
+    },
+    {
+      "id": "MEDIA",
+      "status": "open",
+      "reason": "按需挂载、离页 URL 释放已有测试；GPU/解码缓存实际释放字节不可观测，未实现完整 blob 共享架构。",
+      "evidence": [
+        "../audits/2026-09-07-main-d1db13d/evidence/media-lifecycle.json",
+        "evidence/F03/IMPLEMENTATION.md"
+      ]
+    },
+    {
+      "id": "HUMAN-UI",
+      "status": "open",
+      "reason": "尚未收到用户对目标设备操作、UI 和成稿视觉的人工验收确认。",
+      "evidence": [
+        "evidence/F05/HUMAN-VALIDATION.md",
+        "evidence/F05/COMPARE.html"
+      ]
+    },
+    {
+      "id": "GENERATION",
+      "status": "open",
+      "reason": "九对同模型生成/token 遥测、真实用户图片语义及裁切主体和成稿美学仍无输入与人工证据。",
+      "evidence": [
+        "../audits/2026-09-07-main-d1db13d/REPORT.md"
+      ]
+    },
+    {
+      "id": "COMPATIBILITY",
+      "status": "open",
+      "reason": "Safari/其他声明支持浏览器、真实触控、系统 200% 缩放、大字体及屏幕阅读器未完成目标设备验收。",
+      "evidence": [
+        "evidence/F05/HUMAN-VALIDATION.md",
+        "evidence/F03/NATIVE-VALIDATION.md"
+      ]
+    },
+    {
+      "id": "RECOVERY",
+      "status": "open",
+      "reason": "草稿已按修订缓存，仍为同步 localStorage；大型图片稿长期输入/存储容量与跨 file:// 隔离在目标浏览器待验，200ms 窗口还受主线程调度影响。",
+      "evidence": [
+        "evidence/F02/IMPLEMENTATION.md"
+      ]
+    }
+  ],
+  "additionalCapabilityRemovals": [],
+  "sourcePolicy": "原审查记录不改写。F01 的用户已确认入口移除沿用；F06 无额外产品能力删除。F05 页面管理已有自动化证据，未扩大布局编辑器。"
+}

@@ -1,0 +1,66 @@
+{
+  "task": "F06",
+  "status": "verified-with-open-items",
+  "releaseReady": false,
+  "time": "2026-09-07T15:28:21.325016+00:00",
+  "platform": {
+    "system": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "node": "v22.23.2",
+    "pnpm": "11.22.0"
+  },
+  "baseCommit": "f567a3ded564115dad38b28ed572e2cf9f6a7c0f",
+  "implementationCommit": null,
+  "layers": {
+    "code": {
+      "status": "pending",
+      "reason": "PDF F04 is not implemented; F06 adds acceptance tests and evidence only."
+    },
+    "automated": {
+      "status": "pending",
+      "reason": "Three F06 tests passed; full gates pending. PDF and native original save remain unverified."
+    },
+    "real-browser": {
+      "status": "pending",
+      "reason": "No physical desktop/native picker tool or target-device receipt; headless evidence is automated only."
+    },
+    "human": {
+      "status": "pending",
+      "reason": "User has not approved UI, artwork, OS IME/clipboard or native save journey."
+    }
+  },
+  "focused": {
+    "command": "pnpm build && node --test dist/tests/focused-product-f06.test.js",
+    "status": "passed",
+    "exitCode": 0,
+    "passed": 3,
+    "failed": 0,
+    "logs": [
+      "delivery-build.log",
+      "delivery-focused.log"
+    ]
+  },
+  "gates": {
+    "status": "pending"
+  },
+  "acceptance": "../acceptance.json",
+  "nativeChecklist": "../NATIVE-VALIDATION.md",
+  "evidenceCapture": {
+    "headless": true,
+    "protocol": "file:",
+    "offline": true,
+    "screenshotsInspectedByAgent": true,
+    "userApproval": false
+  },
+  "developmentFailures": [
+    "initial-focused.log",
+    "second-focused.log"
+  ],
+  "localPipelineFiles": {
+    "preserved": [
+      "brief9-F06.md",
+      "out9-F05.txt"
+    ],
+    "method": "local .git/info/exclude; no content deletion"
+  }
+}

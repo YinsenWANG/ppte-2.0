@@ -1,0 +1,32 @@
+{
+  "time": "2026-09-07T15:27:28.488Z",
+  "browser": "152.0.7977.76",
+  "headless": true,
+  "offline": true,
+  "protocol": "file:",
+  "inputSHA256": "f2669de57b944d41c6714180fb8f4823abb169efded7d7f8be4ae72cc6e8f4cb",
+  "deliverySHA256": "e0a8621d9f83516ce31b21cae1077a0c08d8683b7d762b92ede73c23325fe81c",
+  "deliveryBytes": 398849,
+  "textEnter": true,
+  "imageCropUndoRedo": true,
+  "downloadCount": 1,
+  "freshProcess": true,
+  "pagesPresented": [
+    "ppte-3",
+    "ppte-23",
+    "ppte-50",
+    "ppte-81",
+    "ppte-108",
+    "ppte-140",
+    "ppte-169",
+    "ppte-199",
+    "ppte-212",
+    "ppte-229"
+  ],
+  "network": [],
+  "errors": [],
+  "nativePicker": false,
+  "nativeOriginalSave": false,
+  "pdf": "pending: F04A conclusion 3, disabled product entry",
+  "human": "pending"
+}

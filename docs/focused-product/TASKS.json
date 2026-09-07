@@ -203,7 +203,7 @@
     {
       "id": "F06",
       "title": "收敛范围总验收",
-      "status": "pending",
+      "status": "verified-with-open-items",
       "dependsOn": [
         "F05"
       ],
@@ -213,7 +213,23 @@
         "未闭环项准确记录",
         "回交一个HTML与实现提交/证据"
       ],
-      "evidence": []
+      "evidence": [
+        "evidence/F06/IMPLEMENTATION.md",
+        "evidence/F06/verification/result.json",
+        "evidence/F06/acceptance.json",
+        "evidence/F06/NATIVE-VALIDATION.md",
+        "evidence/F06/Cherry-F06.ppte.html",
+        "evidence/F06/journey.json",
+        "evidence/F06/screenshots/",
+        "evidence/F06/SHA256SUMS"
+      ],
+      "verification": {
+        "code": "pending",
+        "automated": "pending",
+        "real-browser": "pending",
+        "human": "pending",
+        "reason": "F06 verification in progress; F04 PDF and F05 native/human dependency remain unfulfilled. Full acceptance is not complete."
+      }
     }
   ],
   "supplement": "PDF-AND-CORE-REVIEW.md"
