@@ -1,0 +1,9 @@
+已提交 `b4e5c1b`：`docs(UI07-close): handoff bundle`，GPG 签名与 DCO signoff 已验证，未 push，工作树干净。
+
+- [交付报告：提交清单、逐项四层状态、操作证据](/tmp/ppte7/docs/ui-redesign/evidence/UI07-close/HANDOFF.md)
+- [离线样稿：把作品带走.ppte.html](/tmp/ppte7/docs/ui-redesign/evidence/delivery/把作品带走.ppte.html)
+- [SHA-256](/tmp/ppte7/docs/ui-redesign/evidence/delivery/SHA256SUMS)
+
+typecheck、build、104/104 测试通过。样稿经构建后 CLI 生成及产品操作下载，Chrome 新进程 `file://` 离线验证通过，网络请求和脚本错误均为 0。
+
+整体仍为 **partial**：UI07/S06 当前媒体按需解码未完成；性能门槛未关闭；原生授权、Safari、系统 IME、辅助技术、独立设备及真人评审缺少证据，继续保留 pending。
