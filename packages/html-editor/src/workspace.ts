@@ -1,3 +1,4 @@
+import { accessibleShellCSS, disclosure } from './accessibility.js';
 import { insertMenu } from './insert-menu.js';
 import { readingView } from './reading.js';
 import { installPlayer } from '../../html-player/src/index.js';
@@ -16,6 +17,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
 #ppte-canvas-controls{box-sizing:border-box;left:0;bottom:0;width:100%;height:36px;padding:0 16px;border-radius:0;border-top:1px solid #e7e9ee;font:12px system-ui;z-index:90}#ppte-canvas-controls button{border:0;background:white;color:#20242d;padding:4px 8px}#ppte-canvas-controls details{margin-left:auto}#ppte-canvas-controls details p{position:absolute;bottom:36px;right:8px;width:300px;padding:16px;background:white;border:1px solid #e7e9ee}
 #ppte-save-ui[data-pristine] [role=status]{display:none}#ppte-save-ui [role=status]{max-width:36vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#ppte-save-ui .modes{display:flex;gap:2px;border:1px solid #e7e9ee;border-radius:8px;padding:2px}
 `;
+    style.textContent += accessibleShellCSS;
     document.head.append(style);
     const root = document.createElement('div');
     root.id = 'ppte-workspace';
@@ -81,7 +83,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     more.innerHTML = '<summary>更多</summary><div></div>';
     for (const b of originals)
         more.lastElementChild!.append(b);
-    bar.append(more);
+    bar.append(more); disclosure(more, true);
     const title = document.createElement('strong');
     title.textContent = document.title;
     bar.prepend(title);
@@ -154,7 +156,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         panel.hidden = !active || propertiesCollapsed || (!selected.length && !pageSettings);
         resize();
         panel.replaceChildren();
-        button(panel, '关闭属性', () => { propertiesCollapsed = true; refresh(); });
+        button(panel, '关闭属性', () => { propertiesCollapsed = true; refresh(); settings.focus(); });
         floating.replaceChildren();
         if (commands.historyTrimmed) { const note = document.createElement('p'); note.textContent = '较早撤销记录已清理（最多 100 步 / 64 MiB 媒体字符串）；当前文件内容保留。'; panel.append(note); }
 
@@ -603,8 +605,8 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         const b = document.createElement('button'); b.textContent = label; b.type = 'button';
         b.onmousedown = e => e.preventDefault(); b.onclick = () => { action(); resize(); positionTools(); }; controls.append(b); return b;
     };
-    const leftToggle = viewButton('展开缩略图', () => { collapsed = !collapsed; pages.hidden = collapsed; leftToggle.textContent = collapsed ? '展开缩略图' : '折叠缩略图'; });
-    button(toolbar, '页面设置', () => { selected=[]; pageSettings=true; propertiesCollapsed=false; refresh(); });
+    const leftToggle = viewButton('展开缩略图', () => { collapsed = !collapsed; if(!collapsed && innerWidth<=820){propertiesCollapsed=true;panel.hidden=true;} pages.hidden = collapsed; leftToggle.textContent = collapsed ? '展开缩略图' : '折叠缩略图'; });
+    const settings = button(toolbar, '页面设置', () => { selected=[]; pageSettings=true; propertiesCollapsed=false; refresh(); });
     const zoomOut = viewButton('缩小画布', () => zoom = Math.max(.25, zoom - .1));
     const zoomLabel = document.createElement('span'); controls.append(zoomLabel);
     const zoomIn = viewButton('放大画布', () => zoom = Math.min(1.5, zoom + .1));
@@ -613,16 +615,30 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     function updatePageCount() { pageCount.textContent = `${currentSlide+1} / ${commands.doc.querySelectorAll('[data-ppte-slide]').length}`; }
     const navigate = (delta: number) => { currentSlide=Math.max(0,Math.min(commands.doc.querySelectorAll('[data-ppte-slide]').length-1,currentSlide+delta)); selected=[]; refresh(); scrollSlide(commands.doc.querySelectorAll<HTMLElement>('[data-ppte-slide]')[currentSlide]); thumbs(); };
     viewButton('上一页', () => navigate(-1)); viewButton('下一页', () => navigate(1));
-    const help = document.createElement('details'); help.innerHTML='<summary>快捷键与帮助</summary><p>放映：← / →、PageUp / PageDown、空格翻页；B 黑屏；Esc 返回。横向滑动翻页。</p>'; controls.append(help);
+    const help = document.createElement('details'); help.innerHTML='<summary>快捷键与帮助</summary><p>放映：← / →、PageUp / PageDown、空格翻页；B 黑屏；Esc 返回。横向滑动翻页。</p>'; controls.append(help); disclosure(help);
+    panel.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();propertiesCollapsed=true;refresh();settings.focus();}});
     const resize = () => {
         if (suspended) return;
         toolbar.hidden = !active;
         bar.dataset.mode = active ? 'edit' : 'read';
         for (const b of Array.from(bar.querySelectorAll('button'))) if (b.textContent === '阅读' || b.textContent === '编辑') b.setAttribute('aria-pressed', String((b.textContent === '编辑') === active));
+        if(active && !panel.hidden && innerWidth<=820) collapsed=true;
         pages.hidden = collapsed;
+        leftToggle.setAttribute('aria-expanded',String(!collapsed));
+        leftToggle.setAttribute('aria-controls','ppte-pages');
+        const drawer=innerWidth<=580 && (!panel.hidden || !collapsed);
+        root.toggleAttribute('data-drawer',drawer);
+        frame.inert=drawer;
+        frame.setAttribute('aria-hidden',String(drawer));
         leftToggle.textContent = collapsed ? '展开缩略图' : '折叠缩略图';
         root.toggleAttribute('data-reading-nav', !active && !collapsed);
-        const top = 56 + (active ? 46 : 0);
+        const barHeight=bar.getBoundingClientRect().height;
+        toolbar.style.top=barHeight+'px';
+        const top=barHeight+(active?toolbar.getBoundingClientRect().height:0);
+        const bottom=controls.getBoundingClientRect().height;
+        pages.style.bottom=panel.style.bottom=bottom+'px';
+        const rail=innerWidth>=1280?204:170, prop=innerWidth>=1280?264:238;
+        const left=collapsed||innerWidth<=580?0:rail, right=panel.hidden||innerWidth<=580?0:prop;
         updatePageCount();
         frame.style.transformOrigin = 'top left';
         frame.style.transform = active ? `scale(${zoom})` : '';
@@ -633,20 +649,21 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
             frame.style.marginLeft = '0';
             frame.style.width = '100%';
             frame.style.marginTop = `${top}px`;
-            frame.style.marginLeft = collapsed ? '0' : '204px';
-            frame.style.width = collapsed ? '100%' : 'calc(100% - 204px)';
-            frame.style.height = `calc(100% - ${top+36}px)`;
+            frame.style.marginLeft = left+'px';
+            frame.style.width = `calc(100% - ${left}px)`;
+            frame.style.height = `calc(100% - ${top+bottom}px)`;
             reading.draw(currentSlide);
         }
         if (active) {
             reading.clear();
-            frame.style.marginLeft = collapsed ? '16px' : '220px';
-            frame.style.width = `calc((100% - ${(collapsed ? 32 : 236) + (panel.hidden ? 0 : 264)}px) / ${zoom})`;
+            frame.style.marginLeft = `${left+16}px`;
+            frame.style.width = `calc((100% - ${left+32+right}px) / ${zoom})`;
             frame.style.marginTop = `${top}px`;
-            frame.style.height = `calc(100% - ${top + 96}px)`;
+            frame.style.height = `calc(100% - ${top + bottom + 32}px)`;
         }
     };
-    new ResizeObserver(resize).observe(bar);
+    const shellObserver=new ResizeObserver(resize);
+    for(const n of [bar,toolbar,controls])shellObserver.observe(n);
     window.addEventListener('resize', resize);
     button(bar, '阅读', () => {
         if (composing) return;
@@ -665,7 +682,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     const suspend = () => {
         insertion.close(false);
         wasActive = active; suspended=true; reading.clear(); more.open=false; help.open=false; active = false; root.removeAttribute('data-open');
-        bar.style.display = 'none'; frame.style.transform = ''; refresh();
+        frame.inert=false; frame.removeAttribute('aria-hidden'); bar.style.display = 'none'; frame.style.transform = ''; refresh();
     };
     const resume = () => {
         suspended=false; active = wasActive; bar.style.display = 'flex'; root.toggleAttribute('data-open', active);
@@ -685,7 +702,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     Object.assign(window, { PPTePlayer: player, PPTePrint: printing });
     return { get active() { return active; }, enable() {
             if (composing) return;
-            reading.clear(); active = true; collapsed=false;
+            reading.clear(); active = true; collapsed=innerWidth<=580;
             root.setAttribute('data-open', '');
             refresh();
             resize();

@@ -1,3 +1,4 @@
+import { disclosure } from './accessibility.js';
 import { versionPanel } from './version-panel.js';
 import { Versions } from './versions.js';
 import { readHistory } from '../../html-document/src/history-wire.js';
@@ -193,7 +194,7 @@ export function installEditor(api: API) {
     status.tabIndex=0;status.setAttribute('aria-label','展开保存面板');
     status.onclick=()=>{savePanel.open=!savePanel.open;};
     status.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();savePanel.open=!savePanel.open;}};
-    bar.append(savePanel);
+    bar.append(savePanel); disclosure(savePanel);
     const initialize = async () => {
         let storage: Storage | undefined;
         try {
