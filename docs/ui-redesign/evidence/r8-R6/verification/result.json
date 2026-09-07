@@ -1,0 +1,183 @@
+{
+  "task": "R6",
+  "time": "2026-09-07T09:16:44.233352+00:00",
+  "baseCommit": "f5ba1900cb1467126cc3edd911ce762413280cdb",
+  "testedParentCommit": "28619997dcd2d2fd14c4a2b836d98950f5dfca71",
+  "implementationCommit": "5da92d185ed694d469fad1d0b3916631c2130727",
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "5da92d185ed694d469fad1d0b3916631c2130727",
+      "completedAt": "2026-09-07T09:13:55.293924+00:00",
+      "log": "typecheck.log",
+      "executionNote": "Executed on working-tree product/test content committed as implementationCommit; later changes are evidence/docs only."
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "5da92d185ed694d469fad1d0b3916631c2130727",
+      "completedAt": "2026-09-07T09:13:56.477223+00:00",
+      "log": "build.log",
+      "executionNote": "Executed on working-tree product/test content committed as implementationCommit; later changes are evidence/docs only."
+    },
+    {
+      "command": "pnpm test",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "5da92d185ed694d469fad1d0b3916631c2130727",
+      "completedAt": "2026-09-07T09:14:52.737604+00:00",
+      "log": "test.log",
+      "executionNote": "Executed on working-tree product/test content committed as implementationCommit; later changes are evidence/docs only."
+    },
+    {
+      "command": "node docs/audits/2026-09-07-ui-d96f211/probe.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "5da92d185ed694d469fad1d0b3916631c2130727",
+      "completedAt": "2026-09-07T09:15:27.894728+00:00",
+      "log": "probe.log",
+      "executionNote": "Executed on working-tree product/test content committed as implementationCommit; later changes are evidence/docs only."
+    },
+    {
+      "command": "node docs/audits/2026-09-07-ui-d96f211/followup.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "5da92d185ed694d469fad1d0b3916631c2130727",
+      "completedAt": "2026-09-07T09:15:31.627966+00:00",
+      "log": "followup.log",
+      "executionNote": "Executed on working-tree product/test content committed as implementationCommit; later changes are evidence/docs only."
+    },
+    {
+      "command": "node docs/ui-redesign/evidence/r8-R6/followup-product-form.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "5da92d185ed694d469fad1d0b3916631c2130727",
+      "completedAt": "2026-09-07T09:15:35.425343+00:00",
+      "log": "followup-product-form.log",
+      "executionNote": "Executed on working-tree product/test content committed as implementationCommit; later changes are evidence/docs only."
+    },
+    {
+      "command": "node dist/apps/html-cli/index.js enhance docs/audits/2026-09-07-ui-d96f211/sample/source.html --out docs/ui-redesign/evidence/r8-R6/sample.ppte.html",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "5da92d185ed694d469fad1d0b3916631c2130727",
+      "completedAt": "2026-09-07T09:15:04.750739+00:00",
+      "log": "cli.log",
+      "executionNote": "Executed on working-tree product/test content committed as implementationCommit; later changes are evidence/docs only."
+    },
+    {
+      "command": "node docs/ui-redesign/evidence/r8-R6/compare.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "5da92d185ed694d469fad1d0b3916631c2130727",
+      "completedAt": "2026-09-07T09:15:35.430546+00:00",
+      "log": "compare.log",
+      "executionNote": "Executed on working-tree product/test content committed as implementationCommit; later changes are evidence/docs only."
+    }
+  ],
+  "tests": {
+    "passed": 123,
+    "failed": 0,
+    "firstRun": {
+      "passed": 112,
+      "failed": 11,
+      "log": "test-first-run.log",
+      "resolution": "Avoid duplicate global role=status while keeping polite live pending text; wait for asynchronous restore dialog completion before existing data assertions. All original assertions retained."
+    }
+  },
+  "statusByLayer": {
+    "code": "passed",
+    "automated": "passed: R6 mouse/keyboard on dist and UI06/UI07 retained data regressions, 123/123 total",
+    "real-browser": "partial: installed Chrome 152.0.7977.76 headless offline file://; native authorization/Safari/OS IME pending",
+    "human": "pending: no reviewer or screen-reader session"
+  },
+  "probeComparison": {
+    "before": {
+      "commit": "28619997dcd2d2fd14c4a2b836d98950f5dfca71",
+      "probe": "before-probe.json",
+      "followup": "before-followup.json",
+      "R6": "fail: actual browser prompt",
+      "namingDialog": {
+        "type": "prompt",
+        "message": "版本名称（最多 200 字）"
+      }
+    },
+    "after": {
+      "commit": "5da92d185ed694d469fad1d0b3916631c2130727",
+      "probe": "after-probe.json",
+      "followup": "after-followup.json",
+      "nativePrompt": false,
+      "rawNamingCompletion": null,
+      "rawNamingCompletionReason": "Unmodified historical followup only answers native prompts, so it opens but does not complete the new product form. Exit 0 is not a naming acceptance pass.",
+      "sameJourneyProductForm": "after-followup-product-form.json",
+      "R6": "pass: visible product field receives identical independent audit name; zero native dialogs; list has name and pending-file-save state"
+    },
+    "originalScriptsAndReport": "unchanged; no assertions removed; original R1–R5 observations retained"
+  },
+  "acceptanceEvidence": {
+    "nameValidationCancelFocus": "journey.json; tests/r8-r6-versions.test.ts; history-named.png",
+    "singleReviewableQuotaPanel": "capacity-1440.png, capacity-1024.png, capacity-390.png; numeric and atomic quota rejection tested",
+    "scopedRestoreAndDelete": "restore-confirmation.png; cancellation has identical state; before-restore checkpoint retained; deletion preserves other content/history",
+    "persistentDataCorrectness": "journey.json, ui06-journey.json, ui07-journey.json; fresh browser process and actual downloads",
+    "prototypeComparison": "../COMPARE.html; comparison.json; product/prototype 1440/1024/390"
+  },
+  "sample": {
+    "path": "docs/ui-redesign/evidence/r8-R6/sample.ppte.html",
+    "sha256": "80f90ef845a5e79328bea9114b3a94a60e253202f90f0914e1192f4b0819424f",
+    "bytes": 383673,
+    "source": "docs/audits/2026-09-07-ui-d96f211/sample/source.html",
+    "sourceSha256": "db6dd16104be24df2e93684b35e4827c3b08c0d569ab563af70bb257866882ef",
+    "productionCLI": true,
+    "offlineFileOpen": "passed in compare.mjs (read → edit → actual title selection); R6 full edit/history journey uses same unmodified source and production runtime"
+  },
+  "pending": [
+    {
+      "item": "Native file authorization and persistent write permission",
+      "status": "pending",
+      "result": null,
+      "reason": "Headless download and existing disk bridge are not native picker authorization evidence."
+    },
+    {
+      "item": "Safari",
+      "status": "pending",
+      "result": null,
+      "reason": "No Safari session or device evidence collected."
+    },
+    {
+      "item": "System IME",
+      "status": "pending",
+      "result": null,
+      "reason": "Synthetic composition coverage does not establish OS input-method behavior."
+    },
+    {
+      "item": "Physical touch / screen reader / user visual review",
+      "status": "pending",
+      "result": null,
+      "reason": "No physical-device, screen-reader or human reviewer session."
+    },
+    {
+      "item": "S04 p95 50/100ms",
+      "status": "pending",
+      "result": null,
+      "reason": "Dedicated controlled performance closure belongs to subsequent GAPS round."
+    },
+    {
+      "item": "UI07 A4 media lifecycle",
+      "status": "pending",
+      "result": null,
+      "reason": "R6 changes UI only; strict current-DOM demand decode remains a GAPS item."
+    },
+    {
+      "item": "PDF N04 color root cause / native print",
+      "status": "pending",
+      "result": null,
+      "reason": "Full regression passes on this run, including PDF; no new controlled color root-cause or native print investigation in R6."
+    }
+  ],
+  "scope": "R6 only; GAPS/CLOSING not claimed complete.",
+  "signing": "GPG + Signed-off-by (DCO); git verify-commit passed; no push",
+  "localInputs": "Pre-existing untracked brief8-R6.md and out8-R5.txt are untouched; exact names added to local .git/info/exclude so pipeline metadata does not dirty the delivery tree."
+}

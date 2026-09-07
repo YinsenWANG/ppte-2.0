@@ -327,7 +327,10 @@
         "docs/ui-redesign/evidence/UI07/sample.ppte.html",
         "docs/ui-redesign/evidence/UI07-close/HANDOFF.md",
         "docs/ui-redesign/evidence/UI07-close/acceptance.json",
-        "docs/ui-redesign/evidence/UI07-close/verification/result.json"
+        "docs/ui-redesign/evidence/UI07-close/verification/result.json",
+        "docs/ui-redesign/evidence/r8-R6/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/r8-R6/verification/result.json",
+        "tests/r8-r6-versions.test.ts"
       ],
       "implementationCommit": "a8d9039f7e028a13dd892de84d0d5b3b3d086c35",
       "statusByLayer": {
@@ -336,7 +339,15 @@
         "real-browser": "partial: Chrome headless file journey and disk bridge passed; native/Safari/system IME pending",
         "human": "pending: no reviewer or independent device evidence"
       },
-      "closingAcceptance": "partial: code/automated task status is not four-layer product acceptance"
+      "closingAcceptance": "partial: code/automated task status is not four-layer product acceptance",
+      "r8R6": {
+        "code": "implemented: unified naming, quota and scoped restore/delete dialogs; keyboard isolation and focus return",
+        "automated": "see r8-R6 verification/result.json: real mouse/keyboard and retained UI06/UI07 data assertions",
+        "real-browser": "installed Chrome headless offline file:// and fresh process reopen; native authorization, Safari and system IME pending",
+        "human": "pending: no owner, screen reader or target-user review",
+        "remaining": "UI07 A4 media lifecycle and GAPS performance/PDF remain; overall UI07 stays partial",
+        "implementationCommit": "5da92d185ed694d469fad1d0b3916631c2130727"
+      }
     }
   ],
   "savingAndVersions": "SAVING-VERSIONS.md",

@@ -1,0 +1,104 @@
+{
+  "errors": [],
+  "nativeText": {
+    "contenteditable": "true",
+    "tag": "DIV",
+    "text": "开源，\n让选择更多。"
+  },
+  "fontControls": 1,
+  "viewport": {
+    "frame": {
+      "x": 242,
+      "y": 261,
+      "width": 1344,
+      "height": 896,
+      "top": 261,
+      "right": 1586,
+      "bottom": 1157,
+      "left": 242
+    },
+    "slides": [
+      {
+        "x": 0,
+        "y": 0,
+        "width": 960,
+        "height": 540,
+        "top": 0,
+        "right": 960,
+        "bottom": 540,
+        "left": 0
+      },
+      {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "left": 0
+      },
+      {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "left": 0
+      }
+    ]
+  },
+  "imageBefore": {
+    "rect": {
+      "x": 55,
+      "y": 384.296875,
+      "width": 96,
+      "height": 72,
+      "top": 384.296875,
+      "right": 151,
+      "bottom": 456.296875,
+      "left": 55
+    },
+    "heading": {
+      "x": 55,
+      "y": 165,
+      "width": 600,
+      "height": 183.59375,
+      "top": 165,
+      "right": 655,
+      "bottom": 348.59375,
+      "left": 55
+    },
+    "style": "width: 96px; height: 72px; max-width: 100%; object-fit: contain !important; object-position: 50% 50% !important; position: absolute; margin: 0px; transform: none; inset: 384.297px auto auto 55px;",
+    "overlap": false
+  },
+  "imageAfter": {
+    "rect": {
+      "x": 63,
+      "y": 384.296875,
+      "width": 96,
+      "height": 72,
+      "top": 384.296875,
+      "right": 159,
+      "bottom": 456.296875,
+      "left": 63
+    },
+    "heading": {
+      "x": 55,
+      "y": 165,
+      "width": 600,
+      "height": 183.59375,
+      "top": 165,
+      "right": 655,
+      "bottom": 348.59375,
+      "left": 55
+    },
+    "style": "width: 96px; height: 72px; max-width: 100%; object-fit: contain !important; object-position: 50% 50% !important; position: absolute; margin: 0px; transform: translate(8px, 0px); inset: 384.297px auto auto 55px;",
+    "overlap": false
+  },
+  "moveFeedback": "",
+  "semanticTextControls": 1,
+  "addedCount": 13
+}

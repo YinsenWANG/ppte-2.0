@@ -1,0 +1,12 @@
+{
+  "status": "pass",
+  "browser": "152.0.7977.76",
+  "offline": true,
+  "nativeDialogs": [],
+  "errors": [],
+  "network": [],
+  "source": "docs/audits/2026-09-07-ui-d96f211/sample/source.html",
+  "freshBrowserProcess": true,
+  "nativeAuthorization": null,
+  "nativeAuthorizationReason": "No native picker exercised; actual download and file reopen only"
+}
