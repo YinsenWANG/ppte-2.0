@@ -33,7 +33,7 @@ async function insert(p: Page, kind: Kind, succeeds = true) {
   if (kind !== 'text') await p.getByRole('menuitem',{name:kind==='table'?'2 行 2 列':'矩形',exact:true}).click();
  }
 }
-async function property(p: Page, label: string, value: string) {await p.getByLabel(label,{exact:true}).fill(value);await p.getByLabel(label,{exact:true}).press('Tab');}
+async function property(p:Page,label:string,value:string){const input=p.getByLabel(label,{exact:true});if(!await input.isVisible())await p.locator('#ppte-properties summary').filter({hasText:'位置与布局'}).click();if(await input.evaluate(n=>n.tagName)==='SELECT')await input.selectOption(value);else{await input.fill(value);await input.press('Tab');}}
 async function clickObject(p: Page, object: ReturnType<ReturnType<typeof frame>['locator']>, kind: Kind) {
  await object.click();
  if (kind === 'table') await p.getByRole('button',{name:'选择整个表格',exact:true}).click();

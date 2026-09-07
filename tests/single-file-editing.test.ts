@@ -62,16 +62,16 @@ test('S03 F02-F05 file UI: protected local insert/history, unique identity, nati
     assert.equal(await p.evaluate(()=>{const c=(window as any).PPTeEditor.commands,b=(window as any).protectedBaseline;return c.node('title')===b.node&&c.node('title').outerHTML===b.html;}),true);
     // Viewing backgrounds is read-only, including changing page and undoing a real background edit.
     const content=await p.evaluate(()=>(window as any).PPTeHTML.content());
-    for(const [index,pattern] of [[1,/rgb\(153, 51, 68\)/],[4,/linear-gradient/],[5,/rgba\(0, 0, 0, 0\)/]] as const){
+    for(const [index,pattern] of [[1,/#993344/],[4,/linear-gradient/],[5,/透明/]] as const){
       await p.getByRole('button',{name:`第 ${index} 页`,exact:true}).click();
       await p.getByRole('button',{name:'页面设置',exact:true}).click();
-      assert.match(await p.getByLabel('背景',{exact:true}).inputValue(),pattern);
+      assert.match((await p.getByLabel('背景',{exact:true}).inputValue())+(await p.locator('.color-field span').allTextContents()).join(''),pattern);
     }
     assert.equal(await p.evaluate(()=>(window as any).PPTeHTML.content()),content);
     await p.getByLabel('背景',{exact:true}).fill('#123456');await p.getByLabel('背景',{exact:true}).press('Enter');await p.getByLabel('背景',{exact:true}).press('Tab');
     await p.getByRole('button',{name:'撤销',exact:true}).click();
     await p.getByRole('button',{name:'页面设置',exact:true}).click();
-    assert.match(await p.getByLabel('背景',{exact:true}).inputValue(),/rgba\(0, 0, 0, 0\)/);
+    assert.match((await p.getByLabel('背景',{exact:true}).inputValue())+(await p.locator('.color-field span').allTextContents()).join(''),/透明/);
     await p.screenshot({path:join(out,'background-transparent.png')});
     // Flex sample insertion is also measured and retains cqw text.
     await p.getByRole('button',{name:'第 4 页',exact:true}).click();await p.getByRole('button',{name:'添加页',exact:true}).click();
@@ -88,7 +88,7 @@ test('S03 F02-F05 file UI: protected local insert/history, unique identity, nati
     for(let i=1;i<=6;i++){
       await p.getByRole('button',{name:`第 ${i} 页`,exact:true}).click();
       await p.getByRole('button',{name:'页面设置',exact:true}).click();
-      assert.match(await p.getByLabel('背景',{exact:true}).inputValue(),i<=3 ? /rgb\(153, 51, 68\)/ : i<=5 ? /linear-gradient/ : /rgba\(0, 0, 0, 0\)/);
+      assert.match((await p.getByLabel('背景',{exact:true}).inputValue())+(await p.locator('.color-field span').allTextContents()).join(''),i<=3 ? /#993344/ : i<=5 ? /linear-gradient/ : /透明/);
       await p.getByRole('button',{name:'缩小画布',exact:true}).click();
       results.presentation.push(await visibleCurrent(p));
       await p.getByRole('button',{name:'重置缩放',exact:true}).click();

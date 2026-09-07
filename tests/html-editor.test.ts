@@ -78,11 +78,11 @@ test('H03 acceptance 1: real object selection, empty/multiple/mixed contextual s
         await frame.locator('[data-ppte-id=a]').click();
         await frame.locator('[data-ppte-id=b]').click({ modifiers: ['Shift'] });
         assert.equal(await page.locator('#ppte-properties h3').textContent(), '多选');
-        assert.equal(await page.getByLabel('文字颜色', { exact: true }).inputValue(), '混合');
+        assert.equal(await page.locator('.color-field span').textContent(), '混合');
         await page.getByRole('button', { name: '粗体', exact: true }).click();
         assert.deepEqual(await page.evaluate(() => ['a', 'b'].map(id => (window as any).PPTeEditor.commands.node(id).style.fontWeight)), ['700', '700']);
         await page.screenshot({ path: join(evidence, 'mixed.png') });
-        assert.equal(await page.locator('#ppte-properties select,#ppte-properties fieldset').count(), 0);
+        assert.deepEqual(await page.getByLabel('字体',{exact:true}).locator('option').allTextContents(), ['系统无衬线','衬线','等宽']);
         assert.equal(await page.getByRole('button', { name: '第 2 页', exact: true }).count(), 1);
     }
     finally {
@@ -124,7 +124,7 @@ test('H03 acceptance 2: computed normal text contrast >=4.5, visible keyboard fo
         const focused = await page.evaluate(() => {
             const e = document.activeElement!;
             const s = getComputedStyle(e);
-            return { label: e.textContent, outline: s.outlineWidth, style: s.outlineStyle };
+            return { label: e.getAttribute('aria-label')??e.textContent, outline: s.outlineWidth, style: s.outlineStyle };
         });
         assert.equal(focused.label, '斜体');
         assert.equal(focused.outline, '3px');

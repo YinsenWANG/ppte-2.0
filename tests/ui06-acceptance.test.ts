@@ -14,7 +14,7 @@ const out=resolve('artifacts/ui06'), evidence=resolve('docs/ui-redesign/evidence
 const sha=(b:Buffer|string)=>createHash('sha256').update(b).digest('hex');
 const frame=(p:Page)=>p.frameLocator('#ppte-frame');
 async function insert(p:Page,name:string,child?:string){await p.getByRole('button',{name:'插入',exact:true}).click();await p.getByRole('menuitem',{name,exact:true}).click();if(child)await p.getByRole('menuitem',{name:child,exact:true}).click();}
-async function property(p:Page,name:string,value:string){await p.getByLabel(name,{exact:true}).fill(value);await p.getByLabel(name,{exact:true}).press('Tab');}
+async function property(p:Page,label:string,value:string){const input=p.getByLabel(label,{exact:true});if(!await input.isVisible())await p.locator('#ppte-properties summary').filter({hasText:'位置与布局'}).click();await input.fill(value);await input.press('Tab');}
 async function history(p:Page){await p.getByText('更多',{exact:true}).click();await p.getByRole('menuitem',{name:'版本历史',exact:true}).click();}
 async function checkpoint(p:Page,name:string){await history(p);p.once('dialog',d=>d.accept(name));await p.getByRole('button',{name:'保存命名版本',exact:true}).click();await p.locator('#ppte-versions section').filter({hasText:name}).waitFor();await p.getByRole('button',{name:'关闭版本历史',exact:true}).click();}
 async function download(p:Page,path:string){const event=p.waitForEvent('download');await p.getByRole('button',{name:'下载更新后的文件',exact:true}).click();const d=await event;assert.match(d.suggestedFilename(),/\.ppte\.html$/);await d.saveAs(path);assert.equal(await d.failure(),null);assert.match(await p.getByRole('status').innerText(),/原文件未覆盖/);assert.equal(await p.evaluate(()=>(window as any).PPTeSave.dirty),true);}

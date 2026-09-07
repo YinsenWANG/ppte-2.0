@@ -52,14 +52,15 @@ export function installEditor(api: API) {
     };
     const names = { saved: '已保存到原文件', dirty: '有修改 · 尚未写入文件', saving: '保存中 · 等待文件确认', draft: '修改尚未写入文件 · 仅草稿', unauthorized: '尚未保存 · 无文件授权', conflict: '冲突 · 修改已保留', failed: '保存失败 · 可重试' };
     let panelInfo: HTMLElement;
+    let saveDetail: HTMLElement;
     let savePanel: HTMLDetailsElement;
     const render = () => {
         bar.toggleAttribute('data-pristine', controller.revision === 0 && !controller.dirty && ((controller.state === 'unauthorized' && controller.detail.startsWith('尚未关联写入文件')) || (controller.state === 'saved' && !controller.detail)));
         if(panelInfo) panelInfo.textContent = `文件：${boundFileName || controller.base.name} · ${controller.adapter?'已关联':'未关联'} · 最近成功：${controller.lastSavedAt ? new Date(controller.lastSavedAt).toLocaleTimeString() : '尚无写入记录'}`;
-        const menu = savePanel;
-        if (menu && controller.state === 'conflict')
-            menu.open = true;
         status.textContent = (controller.detail.startsWith('已发起下载') ? controller.detail : (controller.state === 'saved' && boundFileName ? '已保存到所选文件：' + boundFileName + (controller.lastSavedAt ? ' · ' + new Date(controller.lastSavedAt).toLocaleTimeString() : '') : names[controller.state]) + (controller.detail ? '：' + controller.detail : '')) + (controller.dirty && !controller.draftAvailable ? ' · 草稿恢复不可用；请保存或下载' : '') + (api.versions.warning?' · '+api.versions.warning:'');
+        if(saveDetail)saveDetail.textContent=status.textContent;
+        status.title=status.textContent??'';
+        if(savePanel && ['failed','conflict'].includes(controller.state))savePanel.open=true;
     };
     const enable = () => {
         ui?.enable();
@@ -191,9 +192,8 @@ export function installEditor(api: API) {
     const fallback=document.createElement('button');fallback.textContent='下载我的修改';fallback.onclick=()=>download();panel.append(fallback);
     const disk=document.createElement('button');disk.textContent='查看磁盘版本';
     disk.onclick=()=>void (async()=>{try{if(!controller.adapter)return;const latest=await controller.adapter.load();const preview=document.createElement('iframe');preview.title='磁盘版本（只读）';preview.sandbox.add('');preview.srcdoc=latest.content;preview.style.cssText='width:100%;height:240px';panel.querySelector('iframe')?.remove();panel.append(preview);}catch(e){controller.set('failed',String(e));}})();panel.append(disk);
-    status.tabIndex=0;status.setAttribute('aria-label','展开保存面板');
-    status.onclick=()=>{savePanel.open=!savePanel.open;};
-    status.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();savePanel.open=!savePanel.open;}};
+    const summary=savePanel.querySelector('summary')!;summary.textContent='';summary.setAttribute('aria-label','保存状态');summary.append(status);
+    saveDetail=document.createElement('p');saveDetail.className='save-detail';panel.prepend(saveDetail);
     bar.append(savePanel); disclosure(savePanel);
     const initialize = async () => {
         let storage: Storage | undefined;

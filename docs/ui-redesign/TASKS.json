@@ -31,7 +31,10 @@
         "docs/ui-redesign/evidence/UI07-close/verification/result.json",
         "docs/ui-redesign/evidence/r8-R3/IMPLEMENTATION.md",
         "docs/ui-redesign/evidence/r8-R3/verification/result.json",
-        "tests/r8-r3-canvas.test.ts"
+        "tests/r8-r3-canvas.test.ts",
+        "docs/ui-redesign/evidence/r8-R4/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/r8-R4/verification/result.json",
+        "docs/ui-redesign/evidence/r8-R4/COMPARE.html"
       ],
       "implementationCommit": "5ad4f2c6e1b70ecca10e24993559b47aa2bebc58",
       "statusByLayer": {
@@ -47,6 +50,13 @@
         "evidence": "docs/ui-redesign/evidence/r8-R3/verification/result.json",
         "remaining": "R4–R6 and GAPS/four-layer pending remain; 390 inspector occlusion is R5 pending; no full product reacceptance",
         "implementationCommit": "3a53166363a3b9092f8e004954138db186a1711f"
+      },
+      "r8R4": {
+        "code": "implemented",
+        "automated": "see r8-R4 verification/result.json",
+        "real-browser": "installed Chrome headless offline; not native authorization or manual review",
+        "human": "pending: owner visual review absent",
+        "remaining": "R5 small-screen inspector and R6 version dialogs are subsequent tasks; existing GAPS remain"
       }
     },
     {
@@ -74,7 +84,10 @@
         "docs/ui-redesign/evidence/r8-R1/verification/result.json",
         "docs/ui-redesign/evidence/r8-R2/IMPLEMENTATION.md",
         "docs/ui-redesign/evidence/r8-R2/verification/result.json",
-        "tests/r8-r2-insertion.test.ts"
+        "tests/r8-r2-insertion.test.ts",
+        "docs/ui-redesign/evidence/r8-R4/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/r8-R4/verification/result.json",
+        "docs/ui-redesign/evidence/r8-R4/COMPARE.html"
       ],
       "implementationCommit": "dbd7ed643f07de02793a406c9ad84304b7d97515",
       "statusByLayer": {
@@ -97,6 +110,13 @@
         "tests": "tests/r8-r2-insertion.test.ts",
         "evidence": "docs/ui-redesign/evidence/r8-R2/verification/result.json",
         "remaining": "R3–R6, existing GAPS and four-layer pending remain; no full UI02 or product reacceptance"
+      },
+      "r8R4": {
+        "code": "implemented",
+        "automated": "see r8-R4 verification/result.json",
+        "real-browser": "installed Chrome headless offline; not native authorization or manual review",
+        "human": "pending: owner visual review absent",
+        "remaining": "R5 small-screen inspector and R6 version dialogs are subsequent tasks; existing GAPS remain"
       }
     },
     {
@@ -120,7 +140,10 @@
         "docs/ui-redesign/evidence/UI03/audit.png",
         "docs/ui-redesign/evidence/UI07-close/HANDOFF.md",
         "docs/ui-redesign/evidence/UI07-close/acceptance.json",
-        "docs/ui-redesign/evidence/UI07-close/verification/result.json"
+        "docs/ui-redesign/evidence/UI07-close/verification/result.json",
+        "docs/ui-redesign/evidence/r8-R4/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/r8-R4/verification/result.json",
+        "docs/ui-redesign/evidence/r8-R4/COMPARE.html"
       ],
       "implementationCommit": "e340d48392ae06080f72ec51ec7ea6880aed90c9",
       "statusByLayer": {
@@ -129,7 +152,14 @@
         "real-browser": "partial: installed Chrome headless file:// passed; Safari/native/system IME/physical touch pending",
         "human": "pending: no screen reader, owner or target-user review evidence"
       },
-      "closingAcceptance": "partial: code/automated task status is not four-layer product acceptance"
+      "closingAcceptance": "partial: code/automated task status is not four-layer product acceptance",
+      "r8R4": {
+        "code": "implemented",
+        "automated": "see r8-R4 verification/result.json",
+        "real-browser": "installed Chrome headless offline; not native authorization or manual review",
+        "human": "pending: owner visual review absent",
+        "remaining": "R5 small-screen inspector and R6 version dialogs are subsequent tasks; existing GAPS remain"
+      }
     },
     {
       "id": "UI04",
@@ -157,7 +187,10 @@
         "docs/ui-redesign/evidence/UI04/sample.ppte.html",
         "docs/ui-redesign/evidence/UI07-close/HANDOFF.md",
         "docs/ui-redesign/evidence/UI07-close/acceptance.json",
-        "docs/ui-redesign/evidence/UI07-close/verification/result.json"
+        "docs/ui-redesign/evidence/UI07-close/verification/result.json",
+        "docs/ui-redesign/evidence/r8-R4/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/r8-R4/verification/result.json",
+        "docs/ui-redesign/evidence/r8-R4/COMPARE.html"
       ],
       "implementationCommit": "abe467c87347cb6c8c52b0ecaff16968cba1a168",
       "statusByLayer": {
@@ -166,7 +199,14 @@
         "real-browser": "partial: Chrome headless passed; native picker, system IME, Safari pending",
         "human": "pending: no human/native reviewer evidence"
       },
-      "closingAcceptance": "partial: code/automated task status is not four-layer product acceptance"
+      "closingAcceptance": "partial: code/automated task status is not four-layer product acceptance",
+      "r8R4": {
+        "code": "implemented",
+        "automated": "see r8-R4 verification/result.json",
+        "real-browser": "installed Chrome headless offline; not native authorization or manual review",
+        "human": "pending: owner visual review absent",
+        "remaining": "R5 small-screen inspector and R6 version dialogs are subsequent tasks; existing GAPS remain"
+      }
     },
     {
       "id": "UI05",
@@ -190,7 +230,10 @@
         "docs/ui-redesign/evidence/UI05/sample.ppte.html",
         "docs/ui-redesign/evidence/UI07-close/HANDOFF.md",
         "docs/ui-redesign/evidence/UI07-close/acceptance.json",
-        "docs/ui-redesign/evidence/UI07-close/verification/result.json"
+        "docs/ui-redesign/evidence/UI07-close/verification/result.json",
+        "docs/ui-redesign/evidence/r8-R4/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/r8-R4/verification/result.json",
+        "docs/ui-redesign/evidence/r8-R4/COMPARE.html"
       ],
       "implementationCommit": "6fca967b968327f5f7f730fd23bb260dd2376116",
       "statusByLayer": {
@@ -199,7 +242,14 @@
         "real-browser": "partial: installed Chrome headless offline file://; native zoom, system font, physical touch, Safari and screen reader pending",
         "human": "pending: no owner or target-user review"
       },
-      "closingAcceptance": "partial: code/automated task status is not four-layer product acceptance"
+      "closingAcceptance": "partial: code/automated task status is not four-layer product acceptance",
+      "r8R4": {
+        "code": "implemented",
+        "automated": "see r8-R4 verification/result.json",
+        "real-browser": "installed Chrome headless offline; not native authorization or manual review",
+        "human": "pending: owner visual review absent",
+        "remaining": "R5 small-screen inspector and R6 version dialogs are subsequent tasks; existing GAPS remain"
+      }
     },
     {
       "id": "UI06",

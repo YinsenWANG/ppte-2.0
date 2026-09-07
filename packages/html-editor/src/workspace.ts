@@ -1,3 +1,4 @@
+import { shellCSS, icon, iconButton, group, selectField } from './shell-components.js';
 import { accessibleShellCSS, disclosure } from './accessibility.js';
 import { insertMenu } from './insert-menu.js';
 import { readingView } from './reading.js';
@@ -8,17 +9,7 @@ import { Commands, editable, isTextObject, textObject, snapshot } from './comman
 export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: () => void) {
     const style = document.createElement('style');
     style.dataset.ppteTransient = '';
-    style.textContent = `
- body{background:#f3f4f6!important}html:has(#ppte-workspace[data-open]){background:#f4f5f7!important}#ppte-save-ui,#ppte-workspace{font:14px/1.5 system-ui;color:#20252c}#ppte-save-ui{background:#fff!important;color:#20252c!important;inset:0 0 auto!important;padding:12px 20px!important;border-radius:0!important;border-bottom:1px solid #dce1e8;min-height:48px;flex-wrap:wrap}#ppte-save-ui button,#ppte-workspace button{font:inherit;color:#20252c;background:#f2f4f8;border:1px solid #dce1e8;border-radius:8px;min-height:36px;padding:6px 12px;cursor:pointer}#ppte-save-ui button:hover,#ppte-workspace button:hover{background:#e4eaf5}#ppte-save-ui :focus-visible,#ppte-workspace :focus-visible{outline:3px solid #335cff;outline-offset:3px}#ppte-save-ui svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8}#ppte-save-ui details{position:relative}#ppte-save-ui details>div{position:absolute;right:0;top:36px;width:256px;background:#fff;box-shadow:0 8px 32px #20252c30;padding:16px;display:grid;gap:8px}#ppte-workspace{display:none}#ppte-workspace[data-open]{display:block}#ppte-pages{position:fixed;left:0;top:var(--top);bottom:0;width:184px;background:#fafbfc;overflow:auto;padding:16px;box-sizing:border-box}#ppte-pages button[aria-current=true]{border-color:#335cff;box-shadow:0 0 0 2px #335cff20}#ppte-pages button{display:block;width:100%;margin-bottom:16px;overflow:hidden;text-align:left}#ppte-pages .preview{display:block;height:80px;overflow:hidden;pointer-events:none;position:relative;background:#fff}#ppte-pages .preview>div{transform:scale(.12);transform-origin:top left;width:1080px;height:640px}#ppte-properties{position:fixed;right:0;top:var(--top);bottom:0;width:232px;background:#fff;padding:20px;overflow:auto;box-sizing:border-box;border-left:1px solid #dce1e8}#ppte-properties h3{font-size:14px;margin:0 0 16px}#ppte-properties section,#ppte-properties details{border-top:1px solid #dce1e8;padding:16px 0;display:grid;gap:8px}#ppte-workspace label{display:grid;gap:6px;color:#46515e}#ppte-workspace input,#ppte-workspace select{font:inherit;border:1px solid #ccd3de;border-radius:8px;padding:8px;color:#20252c;background:#f6f7f9;width:100%;box-sizing:border-box}#ppte-floating{position:fixed;z-index:101;bottom:24px;left:calc(50% - 24px);transform:translateX(-50%);display:flex;gap:8px;padding:8px;border:1px solid #dce1e8;border-radius:12px;background:#fff;box-shadow:0 8px 24px #20252c20;max-width:calc(100vw - 450px);flex-wrap:wrap}#ppte-floating:empty{display:none}#ppte-feedback{position:fixed;bottom:88px;left:208px;max-width:calc(100% - 464px);background:#fff;color:#20252c;border-radius:8px;padding:8px}#ppte-feedback:empty{display:none}#ppte-workspace button[aria-pressed=true]{background:#e4eafe;border-color:#335cff}#ppte-save-ui summary{cursor:pointer;border-radius:8px;padding:8px}#ppte-workspace .hint{color:#46515e;font-size:12px}`;
-    style.textContent += '#ppte-pages[hidden],#ppte-properties[hidden]{display:none}#ppte-canvas-controls{position:fixed;bottom:8px;left:16px;display:flex;align-items:center;gap:8px;background:white;padding:8px;border-radius:12px}';
-    style.textContent += `
-#ppte-save-ui{box-sizing:border-box;height:56px;min-height:56px;padding:0 20px!important;flex-wrap:nowrap;font-size:13px;gap:8px}#ppte-save-ui strong{margin-right:auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}#ppte-save-ui button{min-height:32px;background:white;border:0}#ppte-save-ui button[aria-pressed=true]{background:#eef0ff;color:#5261d8}
-#ppte-edit-toolbar{position:fixed;top:56px;left:0;right:0;height:46px;box-sizing:border-box;background:white;border-bottom:1px solid #e7e9ee;display:flex;align-items:center;gap:8px;padding:0 16px;font:13px system-ui;color:#20242d;z-index:90}#ppte-edit-toolbar[hidden]{display:none}#ppte-edit-toolbar button{height:32px;border:0;border-radius:6px;background:#f0f1f5;padding:6px 12px;color:inherit}#ppte-edit-toolbar svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.65}
-#ppte-pages{width:204px;bottom:36px;display:flex;flex-direction:column;overflow:hidden;padding:0}#ppte-page-list{flex:1;min-height:0;overflow:auto;padding:16px}#ppte-page-footer{flex:none;padding:8px 16px;border-top:1px solid #e7e9ee}#ppte-pages #ppte-page-footer button{margin:0}#ppte-page-list .page-actions{display:flex;gap:4px;margin-bottom:16px}#ppte-page-list .page-actions button{margin:0;padding:4px;font-size:12px}#ppte-workspace[data-reading-nav] .page-actions,#ppte-workspace[data-reading-nav] #ppte-page-footer{display:none}#ppte-properties{width:264px;bottom:36px}#ppte-workspace[data-reading-nav]{display:block}#ppte-workspace[data-reading-nav]>:not(#ppte-pages){display:none}#ppte-workspace[data-reading-nav] #ppte-pages>button:not([aria-current]){display:none}
-#ppte-canvas-controls{box-sizing:border-box;left:0;bottom:0;width:100%;height:36px;padding:0 16px;border-radius:0;border-top:1px solid #e7e9ee;font:12px system-ui;z-index:90}#ppte-canvas-controls button{border:0;background:white;color:#20242d;padding:4px 8px}#ppte-canvas-controls details{margin-left:auto}#ppte-canvas-controls details p{position:absolute;bottom:36px;right:8px;width:300px;padding:16px;background:white;border:1px solid #e7e9ee}
-#ppte-save-ui[data-pristine] [role=status]{display:none}#ppte-save-ui [role=status]{max-width:36vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#ppte-save-ui .modes{display:flex;gap:2px;border:1px solid #e7e9ee;border-radius:8px;padding:2px}
-`;
-    style.textContent += accessibleShellCSS;
+    style.textContent = shellCSS + accessibleShellCSS;
     document.head.append(style);
     const root = document.createElement('div');
     root.id = 'ppte-workspace';
@@ -58,6 +49,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     const button = (container: HTMLElement, label: string, fn: () => unknown) => {
         const b = document.createElement('button');
         b.textContent = label; b.title = label;
+        iconButton(b, label);
         b.type = 'button';
         b.onmousedown = e => { if (container === floating) e.preventDefault(); };
         b.onclick = () => run(fn);
@@ -89,11 +81,13 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     const title = document.createElement('strong');
     title.textContent = document.title;
     bar.prepend(title);
+    let layoutExpanded=false;
     const section = (label: string) => {
         const s = document.createElement(label === '位置与布局' ? 'details' : 'section');
-        if(s.tagName==='DETAILS')s.setAttribute('open','');
+
         const h = document.createElement(label === '位置与布局' ? 'summary' : 'strong');
         h.textContent = label;
+        if(s instanceof HTMLDetailsElement){s.open=layoutExpanded;h.addEventListener('click',()=>{layoutExpanded=!s.open;});}
         s.append(h);
         panel.append(s);
         return s;
@@ -102,11 +96,20 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         const l = document.createElement('label');
         l.textContent = label;
         const input = document.createElement('input');
-        input.value = value;
+        input.value = value.replace(/(-?\d+\.\d{2,})(px|%)/g, (_, n, unit) => String(Math.round(Number(n)*10)/10)+unit);
+        input.setAttribute('aria-label',label);
         input.placeholder = value === '混合' ? '混合' : '';
-        input.onchange = () => run(() => action(input.value));
+        input.onchange = () => { input.blur(); run(() => action(input.value)); };
         l.append(input);
         container.append(l);
+        return input;
+    };
+    const colorField = (container:HTMLElement,label:string,value:string,action:(v:string)=>unknown) => {
+        const row=group(container,label+'选择'); row.classList.add('color-field');
+        const input=field(row,label,'',action); input.type='color';
+        const ctx=document.createElement('canvas').getContext('2d')!; ctx.fillStyle=value;
+        const color=String(ctx.fillStyle); input.value=/^#[0-9a-f]{6}$/i.test(color)?color:'#000000';
+        const note=document.createElement('span');note.textContent=value==='混合'?'混合':value==='rgba(0, 0, 0, 0)'?'透明':input.value.toUpperCase();row.append(note);
         return input;
     };
     const selectedNodes = () => selected.map(id => commands.node(id));
@@ -166,7 +169,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         panel.hidden = !active || propertiesCollapsed || (!selected.length && !pageSettings);
         resize();
         panel.replaceChildren();
-        button(panel, '关闭属性', () => { propertiesCollapsed = true; refresh(); settings.focus(); });
+        const closeProperty = button(panel, '关闭属性', () => { propertiesCollapsed = true; refresh(); settings.focus(); });
         floating.replaceChildren();
         if (commands.historyTrimmed) { const note = document.createElement('p'); note.textContent = '较早撤销记录已清理（最多 100 步 / 64 MiB 媒体字符串）；当前文件内容保留。'; panel.append(note); }
 
@@ -174,7 +177,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         const kind = nodes.length > 1 ? '多选' : !nodes.length ? '空选区' : nodes[0].matches('img,video') ? '图片 / 视频' : nodes[0].matches('svg,[data-ppte-kind="shape"]') ? '形状' : nodes[0].matches('table,td,th') ? '表格' : isTextObject(nodes[0]) ? '文字' : '内容容器';
         const heading = document.createElement('h3');
         heading.textContent = kind;
-        panel.append(heading);
+        const panelTitle = group(panel, '属性标题'); panelTitle.classList.add('panel-title'); panelTitle.append(heading,closeProperty);
         const slides = Array.from(doc.querySelectorAll<HTMLElement>('[data-ppte-slide]'));
         const slide = slides[currentSlide] ?? slides[0];
         if (!nodes.length) {
@@ -186,7 +189,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
             if (slide) {
                 const computed = doc.defaultView!.getComputedStyle(slide);
                 const value = computed.backgroundImage !== 'none' ? computed.background : computed.backgroundColor;
-                field(s, '背景', value, v => commands.style([slide.dataset.ppteId!], 'background', v));
+                (computed.backgroundImage !== 'none' ? field : colorField)(s, '背景', value, v => commands.style([slide.dataset.ppteId!], 'background', v));
                 const state = document.createElement('p'); state.className = 'hint';
                 state.textContent = computed.backgroundImage !== 'none' ? '复杂背景 · 保留渐变或图像' : computed.backgroundColor === 'rgba(0, 0, 0, 0)' ? '透明 · 显示下层背景' : '纯色背景';
                 s.append(state);
@@ -213,9 +216,10 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
                 return new Set(values).size === 1 ? values[0] : '混合';
             };
             if (nodes.every(n => isTextObject(n))) {
-                field(s, '字体', common('font-family'), v => format('font-family', v));
-                field(s, '字号', common('font-size'), v => format('font-size', v));
-                field(s, '文字颜色', common('color'), v => format('color', v));
+                selectField(s,'字体',common('font-family'),[['system-ui','系统无衬线'],['serif','衬线'],['monospace','等宽']],v=>run(()=>format('font-family',v)));
+                const sizeRow=group(s,'字号与强调');
+                field(sizeRow, '字号', common('font-size'), v => format('font-size', /^\d+(\.\d+)?$/.test(v) ? v+'px' : v));
+                colorField(s, '文字颜色', common('color'), v => format('color', v));
                 const palette = document.createElement('div');
                 palette.style.cssText = 'display:flex;gap:8px';
                 s.append(palette);
@@ -224,22 +228,23 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
                     swatch.setAttribute('aria-label', label); swatch.title=label;
                     swatch.style.cssText = `background:${color};width:28px;min-height:28px;border-radius:50%;padding:0`;
                 }
-                button(s, '字号 −', () => {
+                button(sizeRow, '字号 −', () => {
                     const value = parseFloat(common('font-size'));
                     if (!Number.isFinite(value))
                         throw Error('MIXED_SIZE: 请先指定字号');
                     format('font-size', `${Math.max(8, value - 2)}px`);
                 });
-                button(s, '字号 ＋', () => {
+                button(sizeRow, '字号 ＋', () => {
                     const value = parseFloat(common('font-size'));
                     if (!Number.isFinite(value))
                         throw Error('MIXED_SIZE: 请先指定字号');
                     format('font-size', `${value + 2}px`);
                 });
-                button(s, '粗体', () => format('font-weight', common('font-weight') === '700' ? '400' : '700')).setAttribute('aria-pressed',common('font-weight')==='混合'?'mixed':String(Number(common('font-weight'))>=600));
-                button(s, '斜体', () => format('font-style', common('font-style') === 'italic' ? 'normal' : 'italic'));
+                button(sizeRow, '粗体', () => format('font-weight', common('font-weight') === '700' ? '400' : '700')).setAttribute('aria-pressed',common('font-weight')==='混合'?'mixed':String(Number(common('font-weight'))>=600));
+                button(sizeRow, '斜体', () => format('font-style', common('font-style') === 'italic' ? 'normal' : 'italic')).setAttribute('aria-pressed',String(common('font-style')==='italic'));
+                const alignRow=group(s,'文字对齐');
                 for (const [label, value] of [['左对齐', 'left'], ['居中', 'center'], ['右对齐', 'right']])
-                    button(s, label, () => format('text-align', value));
+                    button(alignRow, label, () => format('text-align', value)).setAttribute('aria-pressed',String(common('text-align')===value));
             }
             if (kind === '图片 / 视频') {
                 const input = field(s, '替换本地资源', '', () => {
@@ -268,9 +273,9 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
 
             }
             if (kind === '形状') {
-                if (nodes.every(n=>n.dataset.ppteShape !== 'line')) field(s, '填充', common(nodes[0].dataset.ppteKind==='shape'?'background-color':'fill'), v => commands.style(selected, 'fill', v));
+                if (nodes.every(n=>n.dataset.ppteShape !== 'line')) colorField(s, '填充', common(nodes[0].dataset.ppteKind==='shape'?'background-color':'fill'), v => commands.style(selected, 'fill', v));
                 if(nodes.every(n=>n.dataset.ppteKind==='shape')) {
-                    field(s,'边框颜色',common('border-top-color'),v=>commands.style(selected,'border-color',v));
+                    colorField(s,'边框颜色',common('border-top-color'),v=>commands.style(selected,'border-color',v));
                     field(s,'边框宽度',common('border-top-width'),v=>commands.style(selected,'border-width',v));
                     if(nodes.every(n=>n.dataset.ppteShape!=='line'))field(s,'圆角',common('border-radius'),v=>commands.style(selected,'border-radius',v));
                 }
@@ -289,8 +294,8 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
                 const cell = nodes[0].matches('td,th') ? nodes[0] as HTMLTableCellElement : undefined;
                 const scope=document.createElement('p');scope.className='hint';scope.textContent=cell?`当前单元格 · 第 ${(cell.parentElement as HTMLTableRowElement).rowIndex+1} 行 / 第 ${cell.cellIndex+1} 列`:'选择单元格以操作对应行或列';s.append(scope);
                 if(cell){
-                    field(s,'单元格填充',common('background-color'),v=>commands.style(selected,'background',v));
-                    field(s,'单元格边框',common('border-color'),v=>commands.style(selected,'border-color',v));
+                    colorField(s,'单元格填充',common('background-color'),v=>commands.style(selected,'background',v));
+                    colorField(s,'单元格边框',common('border-color'),v=>commands.style(selected,'border-color',v));
                     for (const [label, value] of [['添加行', 'row'], ['添加列', 'column'], ['删除当前行', 'delete-row'], ['删除当前列', 'delete-column']] as const)
                         button(s, label, () => { const table=cell.closest('table')!;commands.table(table.dataset.ppteId!,value,cell.dataset.ppteId);try { commands.node(cell.dataset.ppteId!); } catch { selected=[table.dataset.ppteId!]; range=null; } });
                 }
@@ -301,8 +306,9 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
             hint.className = 'hint';
             hint.textContent = absolute ? '自由定位 · 拖动对象或 Alt + 方向键移动' : '按内容顺序排列 · Alt + 方向键调整顺序；下方可调间距与对齐';
             layout.append(hint);
+            const dimensions=group(layout,'尺寸');
             for (const p of ['width', 'height'])
-                field(layout, p === 'width' ? '宽度' : '高度', common(p), v => commands.style(selected, p, v));
+                field(dimensions, p === 'width' ? '宽度' : '高度', common(p), v => commands.style(selected, p, v));
             if (absolute)
                 field(layout, '旋转', '0', v => {
                     if (!Number.isFinite(Number(v)))
@@ -312,15 +318,16 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
             if(absolute){
                 const label=document.createElement('label');label.textContent='对齐基准';const baseline=document.createElement('select');baseline.setAttribute('aria-label','对齐基准');
                 for(const [value,title] of [['selection','当前选择范围'],['page','当前页面'],['content','父内容区']]){const o=document.createElement('option');o.value=value;o.textContent=title;baseline.append(o);}label.append(baseline);layout.append(label);
-                for(const [title,edge] of [['向左对齐','left'],['水平居中','center'],['向右对齐','right'],['顶部对齐','top'],['垂直居中','middle'],['底部对齐','bottom']] as const)button(layout,title,()=>commands.align(selected,edge,baseline.value as 'selection'|'page'|'content'));
+                const alignment=group(layout,'对象对齐');
+                for(const [title,edge] of [['向左对齐','left'],['水平居中','center'],['向右对齐','right'],['顶部对齐','top'],['垂直居中','middle'],['底部对齐','bottom']] as const)button(alignment,title,()=>commands.align(selected,edge,baseline.value as 'selection'|'page'|'content'));
             }
             if (nodes.length === 1 && /grid|flex/.test(doc.defaultView!.getComputedStyle(nodes[0]).display)) {
                 field(layout, '间距', common('gap'), v => commands.style(selected, 'gap', v));
                 if (doc.defaultView!.getComputedStyle(nodes[0]).display.includes('grid'))
-                    field(layout, '网格列', common('grid-template-columns'), v => commands.style(selected, 'grid-template-columns', v));
+                    field(layout, '高级：列宽规则', common('grid-template-columns'), v => commands.style(selected, 'grid-template-columns', v));
             }
             if(nodes.every(n=>/grid|flex/.test(doc.defaultView!.getComputedStyle(n.parentElement!).display))){
-                field(layout,'容器内对齐',common('align-self'),v=>commands.style(selected,'align-self',v));
+                selectField(layout,'容器内对齐',common('align-self'),[['auto','跟随容器'],['start','起点'],['center','居中'],['end','末端'],['stretch','拉伸']],v=>run(()=>commands.style(selected,'align-self',v)));
                 field(layout,'顺序',common('order'),v=>commands.style(selected,'order',v));
             }
             if(!absolute)field(layout,'外边距',common('margin'),v=>commands.style(selected,'margin',v));
@@ -331,7 +338,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
                     button(layout,label,()=>commands.alignFlow(selected[0],alignment));
             }
             if(nodes.length===1 && !nodes[0].matches('td,th,[data-ppte-slide]')){
-                const actions=section('对象操作');
+                const actions=group(section('对象操作'),'复制与删除');
                 button(actions,'复制对象',()=>selectInserted(commands.duplicate(selected[0])));
                 button(actions,'删除对象',()=>{commands.remove(selected[0]);selected=[];range=null;});
             }
@@ -423,7 +430,8 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         pages.append(list, footer);
         const slides = Array.from(commands.doc.querySelectorAll<HTMLElement>('[data-ppte-slide]'));
         slides.forEach((slide, i) => {
-            const b = button(list, `${i + 1} · ${slide.querySelector('h1,h2,h3')?.textContent?.slice(0, 24) ?? '幻灯片'}`, () => {
+            const row=document.createElement('div');row.className='thumb-row';list.append(row);
+            const b = button(row, `${i + 1} · ${slide.querySelector('h1,h2,h3')?.textContent?.slice(0, 24) ?? '幻灯片'}`, () => {
                 currentSlide = i;
                 scrollSlide(slide);
                 selected = [];
@@ -455,12 +463,14 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
             scaled.append(slide.cloneNode(true));
             shadow.append(scaled);
             b.prepend(preview);
-            const actions = document.createElement('div'); actions.className = 'page-actions'; list.append(actions);
+            const menu=document.createElement('details');menu.className='page-actions';menu.innerHTML=`<summary aria-label="第 ${i+1} 页操作" title="第 ${i+1} 页操作">${icon('更多')}</summary><div></div>`;row.append(menu);
+            const actions=menu.lastElementChild as HTMLElement;
             for (const [label, delta] of [['上移',-1],['下移',1]] as const) {
                 const target = slides[i+delta];
                 const move = button(actions,label,()=>reorderPage(slide.dataset.ppteId!,target.dataset.ppteId!));
                 move.setAttribute('aria-label',`第 ${i+1} 页${label}`); move.disabled = !target;
             }
+            disclosure(menu,true);
         });
         list.scrollTop = scrollTop;
         button(footer, '添加页', () => {
@@ -635,20 +645,24 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     let collapsed = true, propertiesCollapsed = false, zoom = 1;
     const controls = document.createElement('div'); controls.id = 'ppte-canvas-controls'; controls.dataset.ppteTransient=''; document.body.append(controls);
     const viewButton = (label: string, action: () => void) => {
-        const b = document.createElement('button'); b.textContent = label; b.type = 'button';
+        const b = document.createElement('button'); b.textContent = label; b.type = 'button'; iconButton(b,label);
         b.onmousedown = e => e.preventDefault(); b.onclick = () => { action(); resize(); positionTools(); }; controls.append(b); return b;
     };
-    const leftToggle = viewButton('展开缩略图', () => { collapsed = !collapsed; if(!collapsed && innerWidth<=820){propertiesCollapsed=true;panel.hidden=true;} pages.hidden = collapsed; leftToggle.textContent = collapsed ? '展开缩略图' : '折叠缩略图'; });
+    const leftToggle = viewButton('展开缩略图', () => { collapsed = !collapsed; if(!collapsed && innerWidth<=820){propertiesCollapsed=true;panel.hidden=true;} pages.hidden = collapsed; iconButton(leftToggle,collapsed ? '展开缩略图' : '折叠缩略图'); });
     const settings = button(toolbar, '页面设置', () => { selected=[]; pageSettings=true; propertiesCollapsed=false; refresh(); });
+    settings.style.marginLeft='auto';
+    const railToggle=button(toolbar,'页面导航',()=>leftToggle.click());toolbar.prepend(railToggle);
     const zoomOut = viewButton('缩小画布', () => zoom = Math.max(.25, zoom - .1));
     const zoomLabel = document.createElement('span'); controls.append(zoomLabel);
     const zoomIn = viewButton('放大画布', () => zoom = Math.min(1.5, zoom + .1));
     const zoomReset = viewButton('重置缩放', () => zoom = 1);
-    const pageCount = document.createElement('span'); controls.prepend(pageCount);
+    const pageCount = document.createElement('span'); controls.append(pageCount);
     function updatePageCount() { pageCount.textContent = `${currentSlide+1} / ${commands.doc.querySelectorAll('[data-ppte-slide]').length}`; }
     const navigate = (delta: number) => { currentSlide=Math.max(0,Math.min(commands.doc.querySelectorAll('[data-ppte-slide]').length-1,currentSlide+delta)); selected=[]; refresh(); scrollSlide(commands.doc.querySelectorAll<HTMLElement>('[data-ppte-slide]')[currentSlide]); thumbs(); };
-    viewButton('上一页', () => navigate(-1)); viewButton('下一页', () => navigate(1));
-    const help = document.createElement('details'); help.innerHTML='<summary>快捷键与帮助</summary><p>放映：← / →、PageUp / PageDown、空格翻页；B 黑屏；Esc 返回。横向滑动翻页。</p>'; controls.append(help); disclosure(help);
+    const prev=viewButton('上一页', () => navigate(-1)),next=viewButton('下一页', () => navigate(1));
+    const navigation=group(controls,'页面导航');navigation.append(prev,pageCount,next);controls.prepend(leftToggle,navigation);
+    const zoomGroup=group(controls,'画布缩放');zoomGroup.classList.add('zoom-group');zoomGroup.append(zoomOut,zoomLabel,zoomIn,zoomReset);
+    const help = document.createElement('details'); help.innerHTML=`<summary aria-label="快捷键与帮助" title="快捷键与帮助">${icon('帮助')}</summary><p>放映：← / →、PageUp / PageDown、空格翻页；B 黑屏；Esc 返回。横向滑动翻页。</p>`; controls.append(help); disclosure(help);
     panel.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();propertiesCollapsed=true;refresh();settings.focus();}});
     const resize = () => {
         if (suspended) return;
@@ -663,7 +677,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         root.toggleAttribute('data-drawer',drawer);
         frame.inert=drawer;
         frame.setAttribute('aria-hidden',String(drawer));
-        leftToggle.textContent = collapsed ? '展开缩略图' : '折叠缩略图';
+        iconButton(leftToggle,collapsed ? '展开缩略图' : '折叠缩略图');
         root.toggleAttribute('data-reading-nav', !active && !collapsed);
         const barHeight=bar.getBoundingClientRect().height;
         toolbar.style.top=barHeight+'px';
@@ -720,7 +734,8 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     };
     // Attach to the current document after editor initialization below.
     let player: ReturnType<typeof installPlayer>;
-    button(bar, '放映', () => { if (!composing) player.start(); });
+    const present=button(bar, '放映', () => { if (!composing) player.start(); });present.classList.add('primary');bar.insertBefore(present,more);
+    for(const b of Array.from(bar.children))if(b instanceof HTMLButtonElement && b.textContent==='下载更新后的文件')iconButton(b,'下载更新后的文件');
     frame.addEventListener('load', attach);
     attach();
     player = installPlayer(frame, { suspend, resume, current: () => currentSlide, moved: i => currentSlide = i });
