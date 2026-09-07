@@ -8,7 +8,7 @@
     "b1ceb6a49ea3b9fd82963e9d2bb632e4222973be",
     "c1397304d643545206b92b795e7700c5e225300d"
   ],
-  "scope": "UI01, UI02, UI03 and UI04 code/automation done; UI07 portable history implemented with A4 current-media lifecycle gap, status partial. UI05/UI06 pending; native/human gaps remain.",
+  "scope": "UI01–UI05 code/automation done. UI07 partial: current-media lifecycle A4 remains. UI06 partial: offline four-object portable-history/PDF journey passed; native/Safari/human and UI07 dependency gaps remain.",
   "tasks": [
     {
       "id": "UI01",
@@ -155,7 +155,7 @@
     {
       "id": "UI06",
       "title": "全旅程与用户验收",
-      "status": "pending",
+      "status": "partial",
       "dependsOn": [
         "UI01",
         "UI02",
@@ -170,7 +170,24 @@
         "真实Chrome/Safari与原生权限",
         "用户UI反馈与样稿审美分别记录"
       ],
-      "evidence": []
+      "evidence": [
+        "docs/ui-redesign/evidence/UI06/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/UI06/verification/result.json",
+        "tests/ui06-acceptance.test.ts",
+        "docs/ui-redesign/evidence/UI06/journey.json",
+        "docs/ui-redesign/evidence/UI06/environment-matrix.json",
+        "docs/ui-redesign/evidence/UI06/ui-feedback.json",
+        "docs/ui-redesign/evidence/UI06/sample-aesthetics.json",
+        "docs/ui-redesign/evidence/UI06/carry-forward.md",
+        "docs/ui-redesign/evidence/delivery/把作品带走.ppte.html"
+      ],
+      "implementationCommit": "536674af1cbb4163434761804d487a57aae9982a",
+      "statusByLayer": {
+        "code": "partial: journey and records complete; UI07 A4 dependency incomplete",
+        "automated": "104/104 passed; full UI06 Chrome journey and evidence contracts; native/Safari criterion not established",
+        "real-browser": "partial: installed Chrome headless file://; native picker, Safari, OS IME, native print and independent device pending",
+        "human": "pending: owner and two target-user UI and aesthetic reviews absent"
+      }
     },
     {
       "id": "UI07",

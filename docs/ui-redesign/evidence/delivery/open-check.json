@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-09-07T06:02:28.161Z",
+  "command": "node --input-type=module (Playwright installed Chrome offline delivery-path read/history preview check)",
+  "status": "passed",
+  "browser": "152.0.7977.76",
+  "headless": true,
+  "file": "docs/ui-redesign/evidence/delivery/把作品带走.ppte.html",
+  "sha256": "1c2e5df4578196e68261a7c120a02835887d43acf75b7773ef2fd054b1e6972c",
+  "network": [],
+  "errors": []
+}
