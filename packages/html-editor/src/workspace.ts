@@ -3,7 +3,7 @@ import { insertMenu } from './insert-menu.js';
 import { readingView } from './reading.js';
 import { installPlayer } from '../../html-player/src/index.js';
 import { installPrint } from '../../html-print/src/index.js';
-import { Commands, editable, snapshot } from './commands.js';
+import { Commands, editable, isTextObject, textObject, snapshot } from './commands.js';
 export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: () => void) {
     const style = document.createElement('style');
     style.dataset.ppteTransient = '';
@@ -72,7 +72,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     redo.setAttribute('aria-label', '重做');
     redo.innerHTML = '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 5 5 5-5 5m5-5h-9a6 6 0 0 0 0 12"/></svg>';
     const insertionContext = () => ({slide:commands.doc.querySelectorAll<HTMLElement>('[data-ppte-slide]')[currentSlide].dataset.ppteId!, reference:selected.length===1?selected[0]:undefined});
-    const selectInserted = (n:HTMLElement) => { selected=[n.dataset.ppteId!]; range=null; pageSettings=false; propertiesCollapsed=false; refresh(); n.scrollIntoView({block:'nearest'}); if(n.matches(editable)){n.focus(); const r=commands.doc.createRange();r.selectNodeContents(n);commands.doc.getSelection()?.removeAllRanges();commands.doc.getSelection()?.addRange(r);} };
+    const selectInserted = (n:HTMLElement) => { selected=[n.dataset.ppteId!]; range=null; pageSettings=false; propertiesCollapsed=false; refresh(); n.scrollIntoView({block:'nearest'}); if(isTextObject(n)){n.focus(); const r=commands.doc.createRange();r.selectNodeContents(n);commands.doc.getSelection()?.removeAllRanges();commands.doc.getSelection()?.addRange(r);} };
     const imageInput=document.createElement('input'); imageInput.type='file';imageInput.accept='image/png,image/jpeg,image/webp,image/gif,image/avif';imageInput.hidden=true;imageInput.setAttribute('aria-label','选择插入图片');toolbar.append(imageInput);
     let imagePoint:ReturnType<typeof insertionContext>|undefined;
     imageInput.onchange=()=>{const file=imageInput.files?.[0],point=imagePoint;imageInput.value='';if(file&&point)run(async()=>selectInserted(await commands.insertImage(point.slide,file,point.reference)));};
@@ -133,7 +133,15 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         const doc = commands.doc;
         currentSlide = Math.max(0, Math.min(currentSlide, doc.querySelectorAll('[data-ppte-slide]').length - 1));
         doc.querySelectorAll('[data-ppte-editor-selected]').forEach(n => n.removeAttribute('data-ppte-editor-selected'));
-        doc.querySelectorAll<HTMLElement>(editable).forEach(n => n.contentEditable = String(active && !n.closest('[data-ppte-locked="true"]')));
+        doc.querySelectorAll<HTMLElement>(editable).forEach(n => {
+            const text = isTextObject(n);
+            if (text) n.setAttribute('data-ppte-editor-text', '');
+            else n.removeAttribute('data-ppte-editor-text');
+            n.contentEditable = String(active && text && textObject(n) === n && !commands.protected(n));
+            // Descendant inline runs inherit the editing host rather than becoming
+            // nested editing islands (or contenteditable=false barriers).
+            if (text && textObject(n) !== n) n.removeAttribute('contenteditable');
+        });
         doc.querySelectorAll<HTMLElement>('[data-ppte-id]').forEach(n => {
             if (active)
                 n.setAttribute('data-ppte-editor-focus', '');
@@ -161,7 +169,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         if (commands.historyTrimmed) { const note = document.createElement('p'); note.textContent = '较早撤销记录已清理（最多 100 步 / 64 MiB 媒体字符串）；当前文件内容保留。'; panel.append(note); }
 
         const nodes = selectedNodes();
-        const kind = nodes.length > 1 ? '多选' : !nodes.length ? '空选区' : nodes[0].matches('img,video') ? '图片 / 视频' : nodes[0].matches('svg,[data-ppte-kind="shape"]') ? '形状' : nodes[0].matches('table,td,th') ? '表格' : '文字';
+        const kind = nodes.length > 1 ? '多选' : !nodes.length ? '空选区' : nodes[0].matches('img,video') ? '图片 / 视频' : nodes[0].matches('svg,[data-ppte-kind="shape"]') ? '形状' : nodes[0].matches('table,td,th') ? '表格' : isTextObject(nodes[0]) ? '文字' : '内容容器';
         const heading = document.createElement('h3');
         heading.textContent = kind;
         panel.append(heading);
@@ -184,13 +192,18 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         }
         else {
             const s = section('外观');
+            if (kind === '内容容器') {
+                const hint = document.createElement('p');
+                hint.textContent = '此结构不支持整体文字编辑。请选择其中的独立文字；媒体、控件和布局容器不能作为一个文本框编辑。';
+                s.append(hint);
+            }
             const common = (p: string) => {
                 const textRange=range && !range.collapsed && nodes.length===1 && nodes[0].contains(range.commonAncestorContainer) && ['font-family','font-size','font-weight','font-style','color'].includes(p);
                 const target=textRange ? (range!.commonAncestorContainer.nodeType===1 ? range!.commonAncestorContainer as Element : range!.commonAncestorContainer.parentElement!) : null;
                 const values = (target?[target]:nodes).map(n => doc.defaultView!.getComputedStyle(n).getPropertyValue(p));
                 return new Set(values).size === 1 ? values[0] : '混合';
             };
-            if (nodes.every(n => n.matches(editable))) {
+            if (nodes.every(n => isTextObject(n))) {
                 field(s, '字体', common('font-family'), v => format('font-family', v));
                 field(s, '字号', common('font-size'), v => format('font-size', v));
                 field(s, '文字颜色', common('color'), v => format('color', v));
@@ -348,7 +361,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         let n: HTMLElement; try { n = commands.node(selected[0]); } catch { return; }
         const r = n.getBoundingClientRect(), f = frame.getBoundingClientRect();
         const scale = f.width / frame.clientWidth;
-        handle.hidden = !active || selected.length !== 1 || commands.protected(n) || n.matches(editable);
+        handle.hidden = !active || selected.length !== 1 || commands.protected(n) || isTextObject(n);
         handle.style.left = `${f.left + r.right * scale - 12}px`;
         handle.style.top = `${f.top + r.bottom * scale - 12}px`;
         floating.style.bottom = 'auto'; floating.style.transform = 'none';
@@ -471,7 +484,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         doc.head.append(css);
         const selectTarget = (target: EventTarget | null) => {
             const e = target as Element;
-            return e.closest?.('td,th') ?? e.closest?.('svg,img,video,table') ?? e.closest?.('[data-ppte-id]');
+            return e.closest?.('td,th') ?? e.closest?.('svg,img,video,table') ?? textObject(e) ?? e.closest?.('[data-ppte-id]');
         };
         doc.addEventListener('pointerdown',()=>insertion.close(false));
         doc.addEventListener('click', e => {
@@ -497,7 +510,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
             html: string;
         } | undefined;
         doc.addEventListener('beforeinput', e => {
-            const n = (e.target as Element).closest<HTMLElement>(editable);
+            const n = textObject(e.target as Element);
             if (!n)
                 return;
             if (commands.protected(n)) {
@@ -523,7 +536,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         });
         doc.addEventListener('compositionstart', e => {
             composing = true;
-            const n = (e.target as Element).closest<HTMLElement>(editable);
+            const n = textObject(e.target as Element);
             if(n && !before)before={id:n.dataset.ppteId!,html:snapshot(n)};
         });
         doc.addEventListener('compositionend', () => { composing = false; record(); });
@@ -532,7 +545,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
             if (!active)
                 return;
             if (e.key === 'Tab' && !e.ctrlKey && !e.metaKey) {
-                const objects = Array.from(doc.querySelectorAll<HTMLElement>('[data-ppte-id]')).filter(n => n.getBoundingClientRect().width > 0 && (!n.closest('svg') || n.matches('svg')));
+                const objects = Array.from(doc.querySelectorAll<HTMLElement>('[data-ppte-id]')).filter(n => n.getBoundingClientRect().width > 0 && (!textObject(n) || textObject(n) === n) && (!n.closest('svg') || n.matches('svg')));
                 if (objects.length) {
                     e.preventDefault();
                     const i = objects.findIndex(n => n.dataset.ppteId === selected[0]);
@@ -563,7 +576,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
             if (!active)
                 return;
             const n = selectTarget(e.target) as HTMLElement | null;
-            if (n && !n.matches(editable) && doc.defaultView!.getComputedStyle(n).position === 'absolute') {
+            if (n && !isTextObject(n) && doc.defaultView!.getComputedStyle(n).position === 'absolute') {
                 e.preventDefault();
                 drag = { id: n.dataset.ppteId!, x: e.clientX, y: e.clientY };
             }

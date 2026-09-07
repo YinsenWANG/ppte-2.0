@@ -1,7 +1,29 @@
 import { cleanContent } from '../../html-document/src/content.js';
 import { sha } from './save.js';
 import { MediaHistory } from './media-history.js';
-export const editable = 'h1,h2,h3,h4,h5,h6,p,li,td,th,figcaption,[data-ppte-kind="text"]';
+// A declaration is a candidate, never permission to edit a mixed container.
+export const editable = 'h1,h2,h3,h4,h5,h6,p,li,td,th,figcaption,div,span,[data-ppte-kind="text"]';
+const inlineText = 'span,b,strong,i,em,u,s,strike,small,sub,sup,mark,abbr,cite,code,q,bdi,bdo,br,wbr';
+export function isTextObject(n: Element): boolean {
+    if (n.namespaceURI !== 'http://www.w3.org/1999/xhtml' || !n.matches(editable) ||
+        n.matches('[data-ppte-slide],[data-ppte-content],[data-ppte-kind="shape"],[role="img"]')) return false;
+    // Inline formatting is preserved; media, controls, links and block children
+    // are separate objects. Empty semantic/declared text remains editable.
+    if (!n.textContent?.trim() && !n.matches('h1,h2,h3,h4,h5,h6,p,li,td,th,figcaption,[data-ppte-kind="text"]') && !n.hasAttribute('data-ppte-editor-text')) return false;
+    return Array.from(n.querySelectorAll('*')).every(child => {
+        if (!child.matches(inlineText) || child.matches('[data-ppte-locked="true"],[data-ppte-kind],[role="img"]')) return false;
+        const style = child.isConnected ? child.ownerDocument.defaultView?.getComputedStyle(child) : (child as HTMLElement).style;
+        return !style || !/absolute|fixed/.test(style.position) && !/block|flex|grid|table/.test(style.display);
+    });
+}
+export function textObject(target: Element | null): HTMLElement | null {
+    let result: HTMLElement | null = null;
+    for (let n = target; n && !n.hasAttribute('data-ppte-slide'); n = n.parentElement) {
+        if (isTextObject(n)) result = n as HTMLElement;
+        else if (result) break;
+    }
+    return result;
+}
 const clean = (e: Element) => {
     const c = e.cloneNode(true) as Element;
     c.querySelectorAll('[data-ppte-transient]').forEach(n => n.remove());
@@ -204,8 +226,9 @@ export class Commands {
         });
     }
     text(id: string, value: string) {
+        if (!isTextObject(this.node(id))) throw Error('NOT_TEXT');
         this.transaction([id], n => {
-            if (!n.matches(editable))
+            if (!isTextObject(n))
                 throw Error('NOT_TEXT');
             n.textContent = value;
         });
@@ -448,9 +471,10 @@ export class Commands {
         const original = snapshot(this.node(id));
         if (await sha(original) !== expected || snapshot(this.node(id)) !== original)
             throw Error('CONFLICT');
+        if (patch.text !== undefined && !isTextObject(this.node(id))) throw Error('NOT_TEXT');
         this.transaction([id], n => {
             if (patch.text !== undefined) {
-                if (!n.matches(editable))
+                if (!isTextObject(n))
                     throw Error('NOT_TEXT');
                 n.textContent = patch.text;
             }
