@@ -41,6 +41,6 @@ test('R4 hierarchy: actual text controls, stable status, contextual page orderin
  const fresh=await b.newContext({offline:true});const q=await fresh.newPage();await q.goto(pathToFileURL(saved).href);await q.waitForFunction(()=>!!(window as any).PPTeEditor);assert.equal(await q.frameLocator('#ppte-frame').locator('[data-id=title1]').evaluate(n=>getComputedStyle(n).color),'rgb(83, 99, 72)');await fresh.close();
  await p.goto(pathToFileURL(resolve('docs/ui-redesign/UI_PROTOTYPE.html')).href);await p.getByRole('button',{name:'编辑',exact:true}).click();await p.locator('#slide [data-id=title1]').click();
  for(const width of [1440,1024,390]){await resizeViewport(p,{width,height:width===390?844:960});await p.screenshot({path:join(out,`prototype-${width}.png`)});}
- await writeFile(join(out,'hierarchy.json'),JSON.stringify({browser:b.version(),geometry,errors,smallInspector:'R5 pending: full workspace overlay remains'},null,2));assert.deepEqual(errors,[]);
+ await writeFile(join(out,'hierarchy.json'),JSON.stringify({browser:b.version(),geometry,errors,smallInspector:'R5 geometry and interaction verified by r8-r5-mobile.test.ts'},null,2));assert.deepEqual(errors,[]);
  }finally{await b.close();}
 });

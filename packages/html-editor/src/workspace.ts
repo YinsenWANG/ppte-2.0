@@ -662,6 +662,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     const prev=viewButton('上一页', () => navigate(-1)),next=viewButton('下一页', () => navigate(1));
     const navigation=group(controls,'页面导航');navigation.append(prev,pageCount,next);controls.prepend(leftToggle,navigation);
     const zoomGroup=group(controls,'画布缩放');zoomGroup.classList.add('zoom-group');zoomGroup.append(zoomOut,zoomLabel,zoomIn,zoomReset);
+    const zoomOptions=document.createElement('details'); zoomOptions.className='zoom-options'; zoomOptions.innerHTML='<summary aria-label="画布缩放选项" title="画布缩放选项">缩放</summary><div></div>'; controls.append(zoomOptions); disclosure(zoomOptions);
     const help = document.createElement('details'); help.innerHTML=`<summary aria-label="快捷键与帮助" title="快捷键与帮助">${icon('帮助')}</summary><p>放映：← / →、PageUp / PageDown、空格翻页；B 黑屏；Esc 返回。横向滑动翻页。</p>`; controls.append(help); disclosure(help);
     panel.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();propertiesCollapsed=true;refresh();settings.focus();}});
     const resize = () => {
@@ -675,15 +676,23 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         leftToggle.setAttribute('aria-controls','ppte-pages');
         const drawer=innerWidth<=580 && (!panel.hidden || !collapsed);
         root.toggleAttribute('data-drawer',drawer);
-        frame.inert=drawer;
-        frame.setAttribute('aria-hidden',String(drawer));
+        // Bottom drawers occupy their own space, so the visible page stays operable.
+        frame.inert=false;
+        frame.removeAttribute('aria-hidden');
         iconButton(leftToggle,collapsed ? '展开缩略图' : '折叠缩略图');
         root.toggleAttribute('data-reading-nav', !active && !collapsed);
         const barHeight=bar.getBoundingClientRect().height;
         toolbar.style.top=barHeight+'px';
         const top=barHeight+(active?toolbar.getBoundingClientRect().height:0);
-        const bottom=controls.getBoundingClientRect().height;
-        pages.style.bottom=panel.style.bottom=bottom+'px';
+        const compact=innerWidth<=580;
+        zoomOptions.hidden=!compact || !active;
+        const zoomParent=compact?zoomOptions.lastElementChild!:zoomGroup;
+        for(const b of [zoomOut,zoomIn,zoomReset])if(b.parentElement!==zoomParent)zoomParent.append(b);
+        const footerHeight=controls.getBoundingClientRect().height;
+        const drawerHeight=drawer?Math.min(310,Math.max(0,(innerHeight-top-footerHeight)*.5)):0;
+        root.style.setProperty('--drawer-height',drawerHeight+'px');
+        const bottom=footerHeight+drawerHeight;
+        pages.style.bottom=panel.style.bottom=footerHeight+'px';
         const rail=innerWidth>=1280?204:170, prop=innerWidth>=1280?264:238;
         const left=collapsed||innerWidth<=580?0:rail, right=panel.hidden||innerWidth<=580?0:prop;
         updatePageCount();

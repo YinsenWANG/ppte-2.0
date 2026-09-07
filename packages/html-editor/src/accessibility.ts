@@ -10,7 +10,7 @@ export const accessibleShellCSS = `
 #ppte-versions{box-sizing:border-box}#ppte-versions button{font:inherit;color:#20242d;background:#f0f1f5;border:1px solid #737a88;border-radius:6px}
 @media(min-width:821px) and (max-width:1279px){#ppte-pages{width:170px}#ppte-properties{width:238px}}
 @media(max-width:820px){#ppte-pages{width:170px}#ppte-properties{width:238px}}
-@media(max-width:580px){#ppte-save-ui{padding:4px 8px!important;gap:4px}#ppte-edit-toolbar{padding:4px 8px;gap:4px}#ppte-properties,#ppte-pages{width:100%;border:1px solid #737a88}#ppte-floating{display:none}#ppte-workspace[data-drawer] > button{display:none}}
+@media(max-width:580px){#ppte-save-ui{padding:4px 8px!important;gap:4px}#ppte-edit-toolbar{padding:4px 8px;gap:4px}#ppte-properties,#ppte-pages{width:100%;top:auto;height:var(--drawer-height);border:1px solid #e7e9ee;border-radius:12px 12px 0 0}#ppte-properties .panel-title{position:sticky;top:0;background:white;z-index:1}#ppte-floating{display:none}}
 @media(pointer:coarse),(max-width:580px){
 #ppte-save-ui button,#ppte-save-ui summary,#ppte-edit-toolbar button,#ppte-workspace button,#ppte-canvas-controls button,#ppte-canvas-controls summary,#ppte-insert-menu button,#ppte-insert-menu .grid button,#ppte-versions button{min-width:44px!important;min-height:44px!important;height:auto;box-sizing:border-box}
 #ppte-properties input,#ppte-properties select,#ppte-properties summary,#ppte-insert-menu input{min-height:44px}
