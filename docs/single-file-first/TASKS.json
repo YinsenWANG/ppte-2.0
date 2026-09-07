@@ -1337,5 +1337,9 @@
         "implementationCommit": "bfe142cde4ed91546279d5751c9aa540778e1c5c"
       }
     }
+  ],
+  "supplements": [
+    "../ui-redesign/SAVING-VERSIONS.md",
+    "../ui-redesign/TASKS.json"
   ]
 }
