@@ -52,7 +52,7 @@ test('S04 file browser: one input revision, local thumbnail, stable tools and sy
   await page.frameLocator('#ppte-frame').locator('[data-ppte-id=t]').click();
   const result=await page.evaluate(()=>{
    const c=(window as any).PPTeEditor.commands,s=(window as any).PPTeSave;
-   const buttons=Array.from(document.querySelectorAll('#ppte-pages button'));
+   const buttons=Array.from(document.querySelectorAll('#ppte-pages button[aria-current]'));
    const other=buttons[1].querySelector('.preview')!.shadowRoot!.querySelector('div')!.firstChild;
    const tool=document.querySelector('#ppte-properties input'),rev=s.revision,n=c.node('t');
    n.dispatchEvent(new InputEvent('beforeinput',{bubbles:true,data:'X'}));n.textContent+='X';n.dispatchEvent(new InputEvent('input',{bubbles:true,data:'X'}));

@@ -12,7 +12,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     style.textContent += `
 #ppte-save-ui{box-sizing:border-box;height:56px;min-height:56px;padding:0 20px!important;flex-wrap:nowrap;font-size:13px;gap:8px}#ppte-save-ui strong{margin-right:auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}#ppte-save-ui button{min-height:32px;background:white;border:0}#ppte-save-ui button[aria-pressed=true]{background:#eef0ff;color:#5261d8}
 #ppte-edit-toolbar{position:fixed;top:56px;left:0;right:0;height:46px;box-sizing:border-box;background:white;border-bottom:1px solid #e7e9ee;display:flex;align-items:center;gap:8px;padding:0 16px;font:13px system-ui;color:#20242d;z-index:90}#ppte-edit-toolbar[hidden]{display:none}#ppte-edit-toolbar button{height:32px;border:0;border-radius:6px;background:#f0f1f5;padding:6px 12px;color:inherit}#ppte-edit-toolbar svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.65}
-#ppte-pages{width:204px;bottom:36px}#ppte-properties{width:264px;bottom:36px}#ppte-workspace[data-reading-nav]{display:block}#ppte-workspace[data-reading-nav]>:not(#ppte-pages){display:none}#ppte-workspace[data-reading-nav] #ppte-pages>button:not([aria-current]){display:none}
+#ppte-pages{width:204px;bottom:36px;display:flex;flex-direction:column;overflow:hidden;padding:0}#ppte-page-list{flex:1;min-height:0;overflow:auto;padding:16px}#ppte-page-footer{flex:none;padding:8px 16px;border-top:1px solid #e7e9ee}#ppte-pages #ppte-page-footer button{margin:0}#ppte-page-list .page-actions{display:flex;gap:4px;margin-bottom:16px}#ppte-page-list .page-actions button{margin:0;padding:4px;font-size:12px}#ppte-workspace[data-reading-nav] .page-actions,#ppte-workspace[data-reading-nav] #ppte-page-footer{display:none}#ppte-properties{width:264px;bottom:36px}#ppte-workspace[data-reading-nav]{display:block}#ppte-workspace[data-reading-nav]>:not(#ppte-pages){display:none}#ppte-workspace[data-reading-nav] #ppte-pages>button:not([aria-current]){display:none}
 #ppte-canvas-controls{box-sizing:border-box;left:0;bottom:0;width:100%;height:36px;padding:0 16px;border-radius:0;border-top:1px solid #e7e9ee;font:12px system-ui;z-index:90}#ppte-canvas-controls button{border:0;background:white;color:#20242d;padding:4px 8px}#ppte-canvas-controls details{margin-left:auto}#ppte-canvas-controls details p{position:absolute;bottom:36px;right:8px;width:300px;padding:16px;background:white;border:1px solid #e7e9ee}
 #ppte-save-ui[data-pristine] [role=status]{display:none}#ppte-save-ui [role=status]{max-width:36vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#ppte-save-ui .modes{display:flex;gap:2px;border:1px solid #e7e9ee;border-radius:8px;padding:2px}
 `;
@@ -363,6 +363,15 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         view.scrollTo({ top: slide.getBoundingClientRect().top + view.scrollY, left: 0 });
         positionTools();
     }
+    let draggedSlide: string | undefined;
+    function reorderPage(id: string, target: string) {
+        if (!active || composing) return;
+        commands.moveSlide(id, target);
+        currentSlide = Array.from(commands.doc.querySelectorAll('[data-ppte-slide]')).indexOf(commands.node(id));
+        selected = []; refresh(); thumbs(); scrollSlide(commands.node(id));
+        pages.querySelector<HTMLButtonElement>(`button[data-slide="${CSS.escape(id)}"]`)?.focus();
+        feedback.textContent = `页面已移至第 ${currentSlide + 1} 页`;
+    }
     function thumbs(ids?: string[]) {
         const slidesNow = Array.from(commands.doc.querySelectorAll<HTMLElement>('[data-ppte-slide]'));
         const buttons = Array.from(pages.querySelectorAll<HTMLButtonElement>('button[aria-current]'));
@@ -379,10 +388,14 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
             });
             return;
         }
+        const scrollTop = pages.querySelector('#ppte-page-list')?.scrollTop ?? 0;
         pages.replaceChildren();
+        const list = document.createElement('div'); list.id = 'ppte-page-list';
+        const footer = document.createElement('div'); footer.id = 'ppte-page-footer';
+        pages.append(list, footer);
         const slides = Array.from(commands.doc.querySelectorAll<HTMLElement>('[data-ppte-slide]'));
         slides.forEach((slide, i) => {
-            const b = button(pages, `${i + 1} · ${slide.querySelector('h1,h2,h3')?.textContent?.slice(0, 24) ?? '幻灯片'}`, () => {
+            const b = button(list, `${i + 1} · ${slide.querySelector('h1,h2,h3')?.textContent?.slice(0, 24) ?? '幻灯片'}`, () => {
                 currentSlide = i;
                 scrollSlide(slide);
                 selected = [];
@@ -390,6 +403,17 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
                 thumbs([]);
             });
             b.dataset.slide = slide.dataset.ppteId;
+            b.draggable = active;
+            b.ondragstart = e => { if (!active || composing) { e.preventDefault(); return; } draggedSlide = slide.dataset.ppteId; e.dataTransfer?.setData('text/plain', draggedSlide!); };
+            b.ondragover = e => { if (active && draggedSlide) e.preventDefault(); };
+            b.ondrop = e => { e.preventDefault(); const id = draggedSlide; draggedSlide = undefined; if (id) run(()=>reorderPage(id,slide.dataset.ppteId!)); };
+            b.ondragend = () => { draggedSlide = undefined; };
+            b.onkeydown = e => {
+                if (!active || !e.altKey || !['ArrowUp','ArrowDown'].includes(e.key)) return;
+                e.preventDefault();
+                const target = slides[i + (e.key === 'ArrowUp' ? -1 : 1)];
+                if (target) run(()=>reorderPage(slide.dataset.ppteId!,target.dataset.ppteId!));
+            };
             b.setAttribute('aria-label', `第 ${i + 1} 页`);
             b.setAttribute('aria-current', String(i === currentSlide));
             const preview = document.createElement('span');
@@ -403,8 +427,16 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
             scaled.append(slide.cloneNode(true));
             shadow.append(scaled);
             b.prepend(preview);
+            const actions = document.createElement('div'); actions.className = 'page-actions'; list.append(actions);
+            for (const [label, delta] of [['上移',-1],['下移',1]] as const) {
+                const target = slides[i+delta];
+                const move = button(actions,label,()=>reorderPage(slide.dataset.ppteId!,target.dataset.ppteId!));
+                move.setAttribute('aria-label',`第 ${i+1} 页${label}`); move.disabled = !target;
+            }
         });
-        button(pages, '添加页', () => {
+        list.scrollTop = scrollTop;
+        button(footer, '添加页', () => {
+            if (!active || composing) return;
             const slide = slides[currentSlide];
             if (!slide)
                 throw Error('NO_SLIDE');
@@ -418,6 +450,9 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     function attach() {
         commands = new Commands(frame.contentDocument!, ids => {
             change();
+            const currentId = pages.querySelector<HTMLButtonElement>('button[aria-current="true"]')?.dataset.slide;
+            const currentIndex = Array.from(commands.doc.querySelectorAll<HTMLElement>('[data-ppte-slide]')).findIndex(n=>n.dataset.ppteId===currentId);
+            if (currentIndex >= 0) currentSlide = currentIndex;
             // Typing keeps property controls and selection stable; structural/style
             // commands still refresh their context synchronously.
             if (!before) refresh();

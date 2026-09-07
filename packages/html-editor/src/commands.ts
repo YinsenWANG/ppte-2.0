@@ -17,6 +17,7 @@ type Entry = {
     before: string;
     after: string;
     removed?: boolean;
+    relocation?: { parent: HTMLElement; from: Element | null; to: Element | null };
     insertion?: { parent: HTMLElement; previous: HTMLElement | null; node: HTMLElement };
 };
 export class Commands {
@@ -104,22 +105,45 @@ export class Commands {
         const previous = this.node(reference), parent = previous.parentElement!;
         if (!previous.hasAttribute('data-ppte-slide') || previous.tagName === 'BODY' || !parent) throw Error('PAGE_INSERT_UNSUPPORTED');
         if (parent.closest('[data-ppte-locked="true"]')) throw Error('OBJECT_PROTECTED');
-        const computed = this.doc.defaultView!.getComputedStyle(previous);
-        const n = this.doc.createElement(previous.tagName);
-        n.className = previous.className;
-        n.style.cssText = previous.style.cssText;
-        // Preserve native class/custom-property layout, but give blank content a measured canvas.
-        for (const property of ['width', 'height', 'box-sizing', 'background', 'color', 'font-family', 'container-type', 'container-name'])
-            n.style.setProperty(property, computed.getPropertyValue(property));
+        // Copy declared layout, never viewport-dependent computed pixel dimensions.
+        const n = previous.cloneNode(false) as HTMLElement;
+        n.removeAttribute('id');
+        for (const a of Array.from(n.attributes))
+            if (a.name.startsWith('data-ppte-editor-')) n.removeAttribute(a.name);
         n.dataset.ppteId = `slide-${crypto.randomUUID()}`;
         n.dataset.ppteSlide = n.dataset.ppteId;
         const title = this.doc.createElement('h1');
         title.dataset.ppteId = `text-${crypto.randomUUID()}`;
         title.textContent = '新的一页';
-        n.append(title);
+        // Keep the explicit author content-container chain on the blank page.
+        const content = previous.querySelector<HTMLElement>('[data-ppte-content]') ?? Array.from(previous.querySelectorAll<HTMLElement>('main,article,div')).find(e=>/grid|flex/.test(this.doc.defaultView!.getComputedStyle(e).display));
+        let target = n;
+        if (content) {
+            const chain: HTMLElement[] = [];
+            for (let e: HTMLElement | null = content; e && e !== previous; e = e.parentElement) chain.unshift(e);
+            for (const e of chain) {
+                const copy = e.cloneNode(false) as HTMLElement;
+                copy.removeAttribute('id');
+                copy.dataset.ppteId = `container-${crypto.randomUUID()}`;
+                for (const a of Array.from(copy.attributes)) if (a.name.startsWith('data-ppte-editor-')) copy.removeAttribute(a.name);
+                target.append(copy); target = copy;
+            }
+        }
+        target.append(title);
         previous.after(n);
         this.record([{ id: n.dataset.ppteId, before: '', after: snapshot(n), insertion: { parent, previous, node: n } }]);
         return n;
+    }
+    moveSlide(id: string, targetId: string) {
+        const n = this.node(id), target = this.node(targetId), parent = n.parentElement;
+        if (n === target) return;
+        if (!parent || n.tagName === 'BODY' || !n.hasAttribute('data-ppte-slide') || !target.hasAttribute('data-ppte-slide') || target.parentElement !== parent) throw Error('PAGE_MOVE_UNSUPPORTED');
+        if (this.protected(n) || this.protected(target) || parent.closest('[data-ppte-locked="true"]')) throw Error('OBJECT_PROTECTED');
+        const from = n.previousElementSibling;
+        const forward = !!(n.compareDocumentPosition(target) & Node.DOCUMENT_POSITION_FOLLOWING);
+        if (forward) target.after(n); else target.before(n);
+        const to = n.previousElementSibling;
+        this.record([{id, before:'before move', after:'after move', relocation:{parent,from,to}}]);
     }
     restore(n: HTMLElement, html: string) {
         const t = this.doc.createElement('template');
@@ -139,7 +163,10 @@ export class Commands {
         if (!entries)
             return;
         for (const e of entries) {
-            if (e.insertion) {
+            if (e.relocation) {
+                const {parent, from, to} = e.relocation, n = this.node(e.id), anchor = redo ? from : to;
+                if (!parent.isConnected || n.parentElement !== parent || n.previousElementSibling !== anchor || this.protected(n) || parent.closest('[data-ppte-locked="true"]') || [from,to].some(a=>a && a.parentElement!==parent)) throw Error('HISTORY_CONFLICT');
+            } else if (e.insertion) {
                 const { parent, previous, node } = e.insertion;
                 if (!parent.isConnected || previous && previous.parentElement !== parent || parent.closest('[data-ppte-locked="true"]') ||
                     ((redo !== !!e.removed) ? node.isConnected : node.parentElement !== parent || this.protected(node) || snapshot(node) !== this.mediaHistory.expand(e.removed ? e.before : e.after)))
@@ -147,7 +174,10 @@ export class Commands {
             } else if (snapshot(this.node(e.id)) !== this.mediaHistory.expand(redo ? e.before : e.after)) throw Error('HISTORY_CONFLICT');
         }
         for (const e of entries) {
-            if (e.insertion) {
+            if (e.relocation) {
+                const anchor = redo ? e.relocation.to : e.relocation.from, n = this.node(e.id);
+                if (anchor) anchor.after(n); else e.relocation.parent.prepend(n);
+            } else if (e.insertion) {
                 if (redo !== !!e.removed) { if (e.insertion.previous) e.insertion.previous.after(e.insertion.node); else e.insertion.parent.prepend(e.insertion.node); }
                 else e.insertion.node.remove();
             } else this.restore(this.node(e.id), this.mediaHistory.expand(redo ? e.after : e.before));
@@ -294,6 +324,21 @@ export class Commands {
         n.style.zIndex = String(Math.max(0, ...levels) + 1);
         n.dataset.ppteId ||= `object-${crypto.randomUUID()}`;
         if (previous) previous.after(n); else parent.prepend(n);
+        if (n.tagName === 'IMG') {
+            // A descendant z-index cannot escape its author's stacking context.
+            // Reserve space below overlapping headings, without changing author nodes.
+            const slide = parent.closest('[data-ppte-slide]') ?? parent;
+            const r = n.getBoundingClientRect();
+            const headings = Array.from(slide.querySelectorAll('h1,h2,h3,h4,h5,h6')).map(h=>h.getBoundingClientRect());
+            const bottom = Math.max(r.top, ...headings.filter(h=>h.left<r.right && h.right>r.left && h.bottom>r.top && h.top<r.bottom).map(h=>h.bottom+16));
+            if (bottom > r.top) n.style.marginTop = `${bottom-r.top}px`;
+            const placed = n.getBoundingClientRect();
+            const overlap = headings.some(h=>h.left<placed.right && h.right>placed.left && h.bottom>placed.top && h.top<placed.bottom);
+            if (overlap || !placed.width || !placed.height) {
+                n.remove();
+                throw Error('IMAGE_PLACEMENT: 此容器无法避开标题，请选择其他内容位置后插入图片');
+            }
+        }
         this.record([{id:n.dataset.ppteId, before:'', after:snapshot(n), insertion:{parent, previous, node:n}}]);
         return n;
     }
