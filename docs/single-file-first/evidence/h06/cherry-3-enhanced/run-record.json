@@ -2,9 +2,9 @@
   "id": "cherry:3:enhanced",
   "status": "failure",
   "heat": "hot",
-  "rebuiltAt": "2026-09-07T05:11:47.905Z",
+  "rebuiltAt": "2026-09-07T05:14:07.462Z",
   "rebuildReason": "runner crashed writing record (Buffer bug); model call itself completed",
-  "commit": "61310c789ffe7e99311fb48b4580101803d3f40a",
+  "commit": "f1ea1b7fbe736d7c199737cabc3263e1243e06f2",
   "model": {
     "model": "gpt-6-astra",
     "reasoning": "medium",
@@ -13,7 +13,7 @@
   },
   "environment": {
     "device": "yinsenMac-mini M4",
-    "node": "v24.19.0",
+    "node": "v22.23.2",
     "timing": "provider session span (session_meta -> last event)",
     "caveat": "shared background load with pipeline v7 after 12:32; ratios are the verdict metric"
   },
@@ -45,7 +45,7 @@
     "sha256": "8c4d3a585c9aaff72ef57232f8cd9b3e8dc3b9328b98056a1e5ba04ab2a300bb"
   },
   "bytes": 15720,
-  "gzipBytes": 6125,
+  "gzipBytes": 6292,
   "mediaBytes": 0,
   "failures": [
     "final identical to draft: CLI NOT executed"

@@ -2,9 +2,9 @@
   "id": "product:3:direct",
   "status": "success",
   "heat": "hot",
-  "rebuiltAt": "2026-09-07T05:11:48.028Z",
+  "rebuiltAt": "2026-09-07T05:14:07.568Z",
   "rebuildReason": "runner crashed writing record (Buffer bug); model call itself completed",
-  "commit": "61310c789ffe7e99311fb48b4580101803d3f40a",
+  "commit": "f1ea1b7fbe736d7c199737cabc3263e1243e06f2",
   "model": {
     "model": "gpt-6-astra",
     "reasoning": "medium",
@@ -13,7 +13,7 @@
   },
   "environment": {
     "device": "yinsenMac-mini M4",
-    "node": "v24.19.0",
+    "node": "v22.23.2",
     "timing": "provider session span (session_meta -> last event)",
     "caveat": "shared background load with pipeline v7 after 12:32; ratios are the verdict metric"
   },
@@ -45,7 +45,7 @@
     "sha256": "dc97b3358b0f82744a535853bdfb915aad2bb3386c922f15c2905913b23e4cc0"
   },
   "bytes": 34447,
-  "gzipBytes": 11955,
+  "gzipBytes": 12274,
   "mediaBytes": 0,
   "failures": []
 }

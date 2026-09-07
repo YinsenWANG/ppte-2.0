@@ -2,9 +2,9 @@
   "id": "data:2:enhanced",
   "status": "failure",
   "heat": "hot",
-  "rebuiltAt": "2026-09-07T05:11:47.950Z",
+  "rebuiltAt": "2026-09-07T05:14:07.502Z",
   "rebuildReason": "runner crashed writing record (Buffer bug); model call itself completed",
-  "commit": "61310c789ffe7e99311fb48b4580101803d3f40a",
+  "commit": "f1ea1b7fbe736d7c199737cabc3263e1243e06f2",
   "model": {
     "model": "gpt-6-astra",
     "reasoning": "medium",
@@ -13,7 +13,7 @@
   },
   "environment": {
     "device": "yinsenMac-mini M4",
-    "node": "v24.19.0",
+    "node": "v22.23.2",
     "timing": "provider session span (session_meta -> last event)",
     "caveat": "shared background load with pipeline v7 after 12:32; ratios are the verdict metric"
   },
@@ -45,9 +45,9 @@
     "sha256": "f14992b75a61a23a1ffc884fc1d71a50fcc74d076b2c05da41707f91b3ae818d"
   },
   "bytes": 25664,
-  "gzipBytes": 6831,
+  "gzipBytes": 6976,
   "mediaBytes": 0,
   "failures": [
-    "no enhancement markers"
+    "final is not real enhance output (container signature absent)"
   ]
 }

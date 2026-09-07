@@ -1,47 +1,37 @@
 {
- "protocol": "docs/single-file-first/evidence/s08/collection-protocol.md (machine layer)",
- "rebuiltMethod": "runner crashed before record-write (Buffer bug, fixed); model calls completed; wall=reprovider session span; all raw artifacts+telemetry retained",
+ "protocol": "docs/single-file-first/evidence/s08/collection-protocol.md (machine layer only)",
+ "rebuiltMethod": "runner crashed before record-write (Buffer bug fixed in-script); model calls completed; wall = provider session span; raw artifacts + telemetry retained verbatim",
  "direct": {
   "success": "9/9",
-  "wall_s_median": 267,
+  "wall_s_median": 267.061,
   "tokens_median": 35124
  },
  "enhanced": {
-  "success": "0/9",
-  "wall_s_median_all_attempts": 516,
-  "tokens_median_all_attempts": 215875
+  "success": "1/9",
+  "wall_s_median_all_attempts": 515.871,
+  "tokens_median_all_attempts": 215875,
+  "true_success_path": "/tmp/ppte6/docs/single-file-first/evidence/h06/product-2-enhanced (passed through enhance container pipeline, sha recorded)"
  },
- "ratios_vs_thresholds": {
-  "wall_median_ratio_all_attempts": 1.93,
-  "tokens_median_ratio_all_attempts": 6.15,
+ "ratios": {
+  "wall_ratio_all_attempts": 1.93,
+  "token_ratio_all_attempts": 6.15,
   "thresholds": {
-   "wall": 1.25,
-   "tokens": 1.2
+   "wall_max": 1.25,
+   "token_max": 1.2
   },
-  "speed_verdict": "FAIL (~1.9x)",
-  "tokens_verdict": "FAIL (~6.3x)"
+  "verdict_machine": "speed FAIL (1.93x), tokens FAIL (6.15x)"
  },
- "enhanced_failure_attribution": {
-  "draft_eq_final_no_enhance": [
-   "cherry:1",
-   "cherry:3",
-   "product:3"
-  ],
-  "final_not_enhance_output": [
-   "cherry:2",
-   "data:1",
-   "data:2",
-   "data:3",
-   "product:1"
-  ],
-  "single_true_success": [
-   "product:2"
-  ],
-  "root_cause_sample": "enhance rejected decks containing external URLs (CONTENT_URL_REMOVED, ok:false); skill does not warn about rejection upfront, so agents worked around the CLI instead of delivering through it"
+ "enhanced_failure_taxonomy": {
+  "agents_bypassed_cli": "8/9: final.html is NOT real enhance output — 3 draft==final copies, 5 model self-assembled structures",
+  "observed_cause": "enhance rejects decks containing external URLs (CONTENT_URL_REMOVED => ok:false, exit 1); the shipped skill warns only indirectly (prefer SVG/system fonts) and doesn't state rejection semantics upfront; agents hit failure and silently continued without the CLI instead of repairing sources",
+  "product_change_candidates": [
+   "skill: explicit rejection contract + repair instructions so agents re-author local resources instead of bypassing",
+   "enhance: distinguish hard-reject vs remove-and-warn for link-only violations",
+   "decision: whether pure external-URL decks must be supported at all"
+  ]
  },
  "caveats": [
-  "shared background load with pipeline v7 after 12:32 (both arms equally affected; ratio metric)",
-  "enhanced tokens include in-session tool loops (read skill, retry) — real end-to-end cost per protocol definition"
- ],
- "next": "speed/token machine verdict FAIL as-is; aesthetic nine-pair blind review still requires humans; product fix candidate: skill must state rejection rules + enhance should report actionable error text"
+  "pipeline v7 shared load after 12:32 — both arms equally affected, ratio metric unaffected",
+  "token ratios include in-session tool loops = true end-to-end cost per protocol"
+ ]
 }

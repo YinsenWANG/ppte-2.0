@@ -46,7 +46,7 @@ for (const dir of readdirSync(ROOT).sort()) {
   if (mode === 'enhanced') {
     if (!existsSync(d + '/draft.html')) failures.push('no draft.html => enhance chain unproven');
     else if (draft && sha(d + '/draft.html') === sha(draft)) failures.push('final identical to draft: CLI NOT executed');
-    else if (!/data-ppte-doc|data-ppte-runtime|save-status/.test(html)) failures.push('no enhancement markers');
+    else if (!(/id="ppte-content"/.test(html) && /id="ppte-frame"/.test(html) && /id="ppte-metadata"/.test(html))) failures.push('final is not real enhance output (container signature absent)');
   }
   if (!tokens) failures.push('no token telemetry');
   const rec = {
