@@ -1,3 +1,4 @@
+import { downloadUpdated } from './helpers/focused-product.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
@@ -18,7 +19,7 @@ async function setup(name:string, source:string){
  return {p,browser,async close(){await browser.close();assert.deepEqual(errors,[]);assert.deepEqual(network,[]);}};
 }
 async function property(p:Page,label:string,value:string){await p.getByLabel(label,{exact:true}).fill(value);await p.getByLabel(label,{exact:true}).press('Tab');}
-async function download(p:Page,name:string){const event=p.waitForEvent('download');await p.getByRole('button',{name:'下载更新后的文件',exact:true}).click();const file=join(out,name+'.ppte.html');await(await event).saveAs(file);return file;}
+async function download(p:Page,name:string){const event=p.waitForEvent('download');await downloadUpdated(p);const file=join(out,name+'.ppte.html');await(await event).saveAs(file);return file;}
 test('R1 audit native div: actual click, keyboard input, styles, undo/redo and offline download/new-process reopen',async()=>{
  const source=await readFile('docs/audits/2026-09-07-ui-d96f211/sample/source.html','utf8');
  const f=await setup('audit-source',source),p=f.p;

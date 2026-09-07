@@ -64,7 +64,7 @@ test('H04 acceptance 2: blocked presenter leaves audience usable; real popup has
  await popup.screenshot({path:join(evidence,'presenter.png')});await popup.close();await p.keyboard.press('Escape');assert.equal(await p.locator('#ppte-save-ui').isVisible(),true);
  }finally{await f.close();}
 });
-test('H04 acceptance 3: actual browser PDF has two sized pages, selectable revealed text, no editor UI and print restores content',async()=>{
+test('H04 acceptance 3: actual browser PDF has two sized pages, selectable revealed text, no editor UI and print restores content', {skip:'F01 scope retirement: docs/focused-product/evidence/F01/TEST-MIGRATION.json; not a pass'}, async()=>{
  const f=await setup();try{const p=f.page;await p.evaluate(()=>{(window as any).before=(window as any).PPTeHTML.content();(window as any).PPTePrint.prepare();});
  await p.emulateMedia({media:'print'});
  assert.equal(await p.locator('#ppte-save-ui').isVisible(),false);assert.equal(await p.locator('#ppte-print>div').count(),2);
@@ -80,18 +80,23 @@ test('H04 acceptance 3: actual browser PDF has two sized pages, selectable revea
  await writeFile(join(evidence,'example.html'),await readFile(f.file));
  }finally{await f.close();}
 });
-test('H04 acceptance 4: generation and reading create only HTML; new export/runtime graph excludes retired formats',async()=>{
+test('H04 acceptance 4: generation and reading create only HTML; new export/runtime graph excludes retired formats',async t=>{
  const f=await setup();try{assert.deepEqual(await readdir(f.root),['作品.html']);assert.equal(await f.page.locator('#ppte-print').count(),0);
  for(const file of ['packages/html-player/src/index.ts','packages/html-print/src/index.ts','apps/html-cli/index.ts']) assert.doesNotMatch(await readFile(file,'utf8'),/pptx|keynote|\.odp|exporter-ppt|portable|html-to-image/i);
+ await t.test('Retired product system-print action', {skip:'F01 forbids system-print export; assertions preserved'},async()=>{
  await f.page.getByText('更多',{exact:true}).click();assert.equal(await f.page.getByRole('menuitem',{name:'导出 PDF',exact:true}).count(),1);
  await f.page.evaluate(()=>{(window as any).printCalls=0;window.print=()=>{(window as any).printCalls++;window.dispatchEvent(new Event('afterprint'));};});
  await f.page.getByRole('menuitem',{name:'导出 PDF',exact:true}).click();
  await f.page.waitForFunction(()=>(window as any).printCalls===1);
+ });
+ assert.equal(await f.page.getByRole('button',{name:'导出为 PDF',exact:true}).count(),1);
+ assert.equal(await f.page.getByRole('button',{name:'导出为 PDF',exact:true}).isDisabled(),true);
+ assert.equal(await f.page.evaluate(()=>typeof (window as any).PPTePrint),'undefined');
  assert.equal(await f.page.locator('#ppte-print').count(),0);assert.deepEqual(await readdir(f.root),['作品.html']);
  }finally{await f.close();}
 });
 
-test('H04 actual fullscreen exit, Grid slide layout, print from presentation, mount and read return',async()=>{
+test('H04 actual fullscreen exit, Grid slide layout, print from presentation, mount and read return',async t=>{
  const f=await setup();try{const p=f.page;
  await p.evaluate(async()=>{const api=(window as any).PPTeHTML;await api.mount(api.content().replace('section{','section{display:grid;grid-template-columns:1fr 1fr;'));});
  await p.evaluate(()=>{delete (document.documentElement as any).requestFullscreen;});
@@ -101,9 +106,12 @@ test('H04 actual fullscreen exit, Grid slide layout, print from presentation, mo
  await p.evaluate(()=>document.exitFullscreen());await p.waitForFunction(()=>!(window as any).PPTePlayer.running);
  assert.equal(await p.locator('#ppte-workspace').isVisible(),false);
  await p.getByRole('button',{name:'放映',exact:true}).click();
+ await t.test('Retired system-print product path — F04A/F04 pending', {skip:'F01: user forbids system printing; original assertions preserved'}, async()=>{
  await p.evaluate(()=>(window as any).PPTePrint.prepare());
  assert.equal(await p.evaluate(()=>(window as any).PPTePlayer.running),false);
  await p.evaluate(()=>(window as any).PPTePrint.restore());
  assert.equal(await p.locator('#ppte-save-ui').isVisible(),true);assert.equal(await p.locator('#ppte-workspace').isVisible(),false);
+ });
+
  }finally{await f.close();}
 });

@@ -1,3 +1,4 @@
+import { downloadUpdated } from './helpers/focused-product.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdir, writeFile, readFile } from 'node:fs/promises';
@@ -26,7 +27,7 @@ async function visibleCurrent(p: Page) {
   await p.keyboard.press('Escape');
   return state;
 }
-test('S03 F02-F05 file UI: protected local insert/history, unique identity, native context, background, download/reopen and PDF',async()=>{
+test('S03 F02-F05 file UI: protected local insert/history, unique identity, native context, background, download/reopen and PDF',async t=>{
   await mkdir(out,{recursive:true});
   const file=join(out,'作品.ppte.html');await writeFile(file,(await enhanceHTML(source,{root:out,base:out})).html);
   const browser=await chromium.launch({channel:'chrome',headless:true});
@@ -78,7 +79,7 @@ test('S03 F02-F05 file UI: protected local insert/history, unique identity, nati
     assert.equal(await p.frameLocator('#ppte-frame').locator('[data-ppte-slide]').nth(4).evaluate(n=>getComputedStyle(n).display),'flex');
     await p.frameLocator('#ppte-frame').locator('[data-ppte-slide]').nth(4).locator('h1').fill('Added Flex');
     results.presentation.push(await visibleCurrent(p));
-    const downloadEvent=p.waitForEvent('download');await p.getByRole('button',{name:'下载更新后的文件',exact:true}).click();
+    const downloadEvent=p.waitForEvent('download');await downloadUpdated(p);
     const saved=join(out,'验收入口.ppte.html');await (await downloadEvent).saveAs(saved);
     assert.doesNotMatch(readEnhanced(await readFile(saved,'utf8')).content,/ppte-editor-|contenteditable/);
     results.presentation.push(await visibleCurrent(p));
@@ -95,6 +96,7 @@ test('S03 F02-F05 file UI: protected local insert/history, unique identity, nati
     }
     assert.deepEqual(await p.evaluate(()=>Array.from((window as any).PPTeEditor.commands.doc.querySelectorAll('[data-ppte-slide]')).map((n:any)=>n.dataset.ppteSlide)),[...identity.slice(0,4).map(n=>n.id),await p.frameLocator('#ppte-frame').locator('[data-ppte-slide]').nth(4).getAttribute('data-ppte-slide'),identity[4].id]);
     assert.equal(await p.frameLocator('#ppte-frame').locator('[data-ppte-slide]').nth(4).locator('h1').textContent(),'Added Flex');
+    await t.test('Retired system-print product path', {skip:'F01 PDF remains pending F04A/F04'},async()=>{
     await p.evaluate(()=>(window as any).PPTePrint.prepare());await p.emulateMedia({media:'print'});
     assert.equal(await p.locator('#ppte-print>div').count(),6);
     results.pdf=await p.locator('#ppte-print>div').evaluateAll(nodes=>nodes.map(n=>({width:n.getBoundingClientRect().width,height:n.getBoundingClientRect().height,text:n.shadowRoot!.querySelector('html')!.textContent?.includes('Added Flex')})));
@@ -108,6 +110,7 @@ test('S03 F02-F05 file UI: protected local insert/history, unique identity, nati
     for(const page of results.pdfParsed){assert.ok(Math.abs(page.width-720)<1);assert.ok(Math.abs(page.height-405)<1);assert.doesNotMatch(page.text,/编辑|保存|撤销/);}
 
     await p.emulateMedia({media:'screen'});await p.evaluate(()=>(window as any).PPTePrint.restore());
+    });
     results.identity=identity;assert.deepEqual(results.network,[]);
     await writeFile(join(out,'regressions.json'),JSON.stringify(results,null,2));
   }finally{await browser.close();}

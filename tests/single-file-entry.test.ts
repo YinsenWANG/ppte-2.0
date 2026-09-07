@@ -1,3 +1,4 @@
+import { downloadUpdated } from './helpers/focused-product.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdirSync, readFileSync, writeFileSync, copyFileSync } from 'node:fs';
@@ -26,7 +27,9 @@ test('S01 file URL: offline visible entry, native canvas, text/format/undo, pres
       await page.goto(pathToFileURL(path).href);
       await page.waitForFunction(()=>!!(window as any).PPTeSave);
       assert.equal(await page.locator('#ppte-save-ui strong').textContent(),'Native design · Grid / Flex / SVG');
-      for(const name of ['编辑','放映','保存','下载更新后的文件']) assert.equal(await page.getByRole('button',{name,exact:true}).isVisible(),true);
+      for(const name of ['编辑','放映','导出为 PDF']) assert.equal(await page.getByRole('button',{name,exact:true}).isVisible(),true);
+      assert.equal(await page.getByRole('button',{name:'保存',exact:true}).isVisible(),false);
+      assert.equal(await page.getByRole('button',{name:'下载更新后的文件',exact:true}).isVisible(),false);
       assert.match(await page.locator('[role=status]').textContent()??'',/尚未关联写入文件/);
       assert.equal(await page.locator('[role=status]').isVisible(),false);
       const frame=page.frameLocator('#ppte-frame');
@@ -56,7 +59,7 @@ test('S01 file URL: offline visible entry, native canvas, text/format/undo, pres
       assert.equal(await heading.getAttribute('contenteditable'),'false');
       assert.equal(await page.getByRole('button',{name:'编辑',exact:true}).isVisible(),true);
       const downloadEvent=page.waitForEvent('download');
-      await page.getByRole('button',{name:'下载更新后的文件',exact:true}).click();
+      await downloadUpdated(page);
       const download=await downloadEvent;assert.match(download.suggestedFilename(),/\.ppte\.html$/);
       await download.saveAs(join(out,'download.ppte.html'));
       assert.match(await page.getByRole('status').textContent()??'',/原文件未覆盖/);

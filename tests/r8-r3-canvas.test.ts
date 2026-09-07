@@ -1,3 +1,5 @@
+import { seedLegacyObject } from './helpers/focused-product.js';
+import { downloadUpdated } from './helpers/focused-product.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdir,readFile,writeFile} from 'node:fs/promises';
@@ -52,7 +54,7 @@ test('R3 manual zoom scrolls only the current work area, reset fits; real drag/r
  const s=before.slides[0].screen;await p.mouse.move(Math.max(before.area.x+30,s.x+30),before.area.y+100);await p.mouse.wheel(200,120);await p.waitForFunction(()=>document.querySelector('#ppte-edit-canvas')!.scrollLeft>0);
  const after=await geometry(p);assert.ok(after.scroll.x>0);assert.deepEqual(after.slides.map(n=>n.visible),[true,false,false]);assert.deepEqual(after.documentScroll,{x:0,y:0});
  await p.getByRole('button',{name:'重置缩放',exact:true}).click();await fitted(p,0);
- await p.getByRole('button',{name:'插入',exact:true}).click();await p.getByRole('menuitem',{name:'形状',exact:true}).click();await p.getByRole('menuitem',{name:'矩形',exact:true}).click();
+ await seedLegacyObject(p,'rect'); // F01: seed existing shape; drag/resize remain real UI checks.
  const obj=frame(p).locator('[data-ppte-kind=shape]');await obj.click();const old=await obj.evaluate(n=>n.getBoundingClientRect().toJSON()),scale=(await geometry(p)).scale;
  const b=(await obj.boundingBox())!;await p.mouse.move(b.x+b.width/2,b.y+b.height/2);await p.mouse.down();await p.mouse.move(b.x+b.width/2+16*scale,b.y+b.height/2);await p.mouse.up();
  assert.ok(Math.abs(await obj.evaluate(n=>n.getBoundingClientRect().x)-old.x-16)<1);
@@ -74,7 +76,7 @@ test('R3 responsive author CSS reflows on window resize; transient fits do not c
  const small=await measure();assert.equal(small.width,630);assert.equal(small.font,'18px');assert.equal(small.columns.split(' ').length,1);
  assert.equal(await p.evaluate(()=>(window as any).PPTeHTML.content()),original);
  await frame(p).locator('#title').click();await frame(p).locator('#title').dblclick();await p.keyboard.press('ControlOrMeta+a');await p.keyboard.insertText('Saved responsive edit');assert.equal(await frame(p).locator('#title').textContent(),'Saved responsive edit');await p.getByRole('button',{name:'阅读',exact:true}).click();
- const event=p.waitForEvent('download');await p.getByRole('button',{name:'下载更新后的文件',exact:true}).click();const saved=join(out,'responsive-saved.ppte.html');await(await event).saveAs(saved);
+ const event=p.waitForEvent('download');await downloadUpdated(p);const saved=join(out,'responsive-saved.ppte.html');await(await event).saveAs(saved);
  const content=readEnhanced(await readFile(saved,'utf8')).content;assert.doesNotMatch(content,/data-ppte-transient|position:fixed!important|contenteditable/);assert.match(content,/90vw/);
  const fresh=await chromium.launch({channel:'chrome',headless:true});try{const q=await fresh.newPage({offline:true,viewport:{width:1440,height:960}});await q.goto(pathToFileURL(saved).href);await q.waitForFunction(()=>!!(window as any).PPTeEditor);assert.equal(await frame(q).locator('#title').textContent(),'Saved responsive edit');await q.getByRole('button',{name:'编辑',exact:true}).click();await fitted(q,0);assert.equal(await frame(q).locator('.slide').first().evaluate(n=>n.getBoundingClientRect().width),1296);}finally{await fresh.close();}
  }finally{await f.close();}

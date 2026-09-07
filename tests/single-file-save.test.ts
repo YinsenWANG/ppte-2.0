@@ -11,7 +11,7 @@ const out=resolve('artifacts/s02');
 const hash=(s:string)=>createHash('sha256').update(s).digest('hex');
 async function ready(page:Page,file:string){await page.goto(pathToFileURL(file).href);await page.waitForFunction(()=>!!(window as any).PPTeSave);}
 
-test('S02 file entry: no API and denied permission actually download, reopen content/style/lock/media offline',async()=>{
+test('S02 file entry: no API and denied permission actually download, reopen content/style/lock/media offline',async t=>{
  await mkdir(out,{recursive:true});
  const media='data:image/svg+xml;base64,'+Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="40" height="20"><rect width="40" height="20" fill="red"/></svg>').toString('base64');
  const file=join(out,'download-source.ppte.html');
@@ -45,8 +45,10 @@ test('S02 file entry: no API and denied permission actually download, reopen con
   await page.evaluate(()=>(window as any).PPTeSave.draft());await page.close();const again=await context.newPage();await ready(again,file);
   assert.equal(await again.frameLocator('#ppte-frame').locator('h1').innerText(),'Original');assert.match(await again.locator('[role=status]').innerText(),/发现匹配草稿/);
   const copy=join(out,'copy.ppte.html');await copyFile(file,copy);const copied=await context.newPage();await ready(copied,copy);assert.equal(await copied.evaluate(()=>(window as any).PPTeSave.recover()),undefined);
+  await t.test('Retired new-file-instance menu', {skip:'F01 confirmed removal; identity compatibility covered by focused-product-f01'},async()=>{
   const dl=copied.waitForEvent('download');await copied.getByText('更多',{exact:true}).click();await copied.getByText('另存为新文件',{exact:true}).click();await (await dl).saveAs(join(out,'new-instance.ppte.html'));
   assert.notEqual(readEnhanced(await readFile(join(out,'new-instance.ppte.html'),'utf8')).metadata.documentId,readEnhanced(before).metadata.documentId);
+  });
   await copied.getByText('编辑',{exact:true}).click();
   await copied.evaluate(()=>{Storage.prototype.setItem=()=>{throw new DOMException('quota','QuotaExceededError');};(window as any).showOpenFilePicker=undefined;});
   await copied.frameLocator('#ppte-frame').locator('h1').fill('Storage unavailable');
@@ -55,7 +57,7 @@ test('S02 file entry: no API and denied permission actually download, reopen con
   const noStorage=copied.waitForEvent('download');await copied.frameLocator('#ppte-frame').locator('h1').press('Control+s');await (await noStorage).saveAs(join(out,'no-storage.ppte.html'));
   assert.match(readEnhanced(await readFile(join(out,'no-storage.ppte.html'),'utf8')).content,/Storage unavailable/);
   assert.equal(await readFile(file,'utf8'),before);assert.deepEqual(requests,[]);
-  await writeFile(join(out,'actual-download-reopen.json'),JSON.stringify({status:'passed',browser:browser.version(),headless:true,capabilities,modes:['no-api','denied'],checks:['actual download.saveAs and file reopen','text/style/lock/media/editor','cancel retains edits','explicit draft recovery','copy isolation','new instance identity','no HTTP requests'],originalBefore:hash(before),originalAfter:hash(await readFile(file,'utf8'))},null,2));
+  await writeFile(join(out,'actual-download-reopen.json'),JSON.stringify({status:'passed',browser:browser.version(),headless:true,capabilities,modes:['no-api','denied'],checks:['actual download.saveAs and file reopen','text/style/lock/media/editor','cancel retains edits','explicit draft recovery','copy isolation','new instance identity UI retired by F01','no HTTP requests'],originalBefore:hash(before),originalAfter:hash(await readFile(file,'utf8'))},null,2));
  }finally{await browser.close();}
 });
 
@@ -91,6 +93,7 @@ test('S02 file handle contract bridge: real file bytes, permission lifecycle, au
   const winner=await readFile(file,'utf8');const external=winner.replace(/Quota retry/g,'External winner');await writeFile(file,external);await title.fill('Conflict retained');await page.waitForFunction(()=>(window as any).PPTeSave.state==='conflict');await title.fill('Conflict still retained');await title.press('Control+s');assert.equal(await readFile(file,'utf8'),external);
   await page.close();const reopened=await context.newPage();await ready(reopened,file);assert.equal(await reopened.frameLocator('#ppte-frame').locator('h1').innerText(),'External winner');
   await reopened.evaluate(()=>{const w=window as any;const picker=w.showOpenFilePicker;w.showOpenFilePicker=async()=>{const [handle]=await picker();const get=handle.getFile;handle.getFile=async()=>({text:async()=>(await (await get()).text()).replace(/"saveRevision":(\d+)/,(_:string,n:string)=>'"saveRevision":'+(Number(n)+1))});return [handle];};});
+  await reopened.getByText('编辑',{exact:true}).click();
   await reopened.getByText('保存',{exact:true}).click();await reopened.waitForFunction(()=>(window as any).PPTeSave.detail.includes('所选文件不匹配'));
   assert.equal(await readFile(file,'utf8'),external);
   await writeFile(join(out,'original-file-hashes.json'),JSON.stringify({status:'passed-automation-only',nativePicker:false,bridge:'Playwright bindings provide mocked handle methods backed by Node file I/O; no HTTP service',path:file,initial:hash(initial),firstConfirmed:hash(first),lastConfirmed:hash(winner),externalAfterConflict:hash(await readFile(file,'utf8')),checks:['write/close/readback','edit during pending write','revocation/download/reauthorization','failed close/retry','external conflict stays latched','close/reopen same path','same-name same-content different-revision binding rejected']},null,2));

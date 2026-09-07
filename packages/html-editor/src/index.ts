@@ -1,5 +1,4 @@
 import { disclosure } from './accessibility.js';
-import { versionPanel } from './version-panel.js';
 import { Versions } from './versions.js';
 import { readHistory } from '../../html-document/src/history-wire.js';
 import { packMedia, unpackMedia } from '../../html-document/src/media-table.js';
@@ -89,7 +88,7 @@ export function installEditor(api: API) {
                 const adapter = fileAdapter(handle, text => {
                     const inert = new DOMParser().parseFromString(text, 'text/html');
                     return { history:readHistory(text), content: api.normalize(unpackMedia(inert.querySelector<HTMLTemplateElement>('#ppte-content')?.content.textContent ?? '', inert.querySelector('#ppte-media') ? JSON.parse(inert.querySelector('#ppte-media')!.textContent!) : undefined)), metadata: JSON.parse(inert.querySelector('#ppte-metadata')!.textContent!), hash: '', fileKey: handle.name, name: handle.name };
-                }, (content,revision)=>{const v=api.versions.automatic(content);if(v)historyPanel.record(v.id);return api.encode(content,revision);});
+                }, (content,revision)=>api.encode(content,revision));
                 const target = await adapter.load();
                 const targetHistory=JSON.stringify(new Versions(target.metadata.documentId,target.history,()=>packMedia(target.content).table.resources).wire());
                 if(targetHistory!==openingHistory)throw Error('CONFLICT: 所选文件的历史已变化');
@@ -112,6 +111,7 @@ export function installEditor(api: API) {
             if (message.includes('PERMISSION') || message.includes('NotAllowedError') || message.includes('SecurityError')) download();
         } finally { associating=false; }
     })());
+    save.classList.add('save-action');
     save.title = '选择当前文件以启用自动保存；Cmd/Ctrl+S，失败后可重试';
     const reread = button('重新读取文件', () => void (async () => {
         if (controller.busy || controller.composing) { controller.set(controller.state, '请等待保存或输入法组合完成后再重新读取。'); return; }
@@ -125,7 +125,7 @@ export function installEditor(api: API) {
             const latest = await controller.adapter!.load();
             if (revision !== controller.revision || controller.busy || controller.composing) { controller.set(controller.state, '读取期间有新修改；当前内容已保留，请重试。'); return; }
             api.versions.replace(latest.history,packMedia(latest.content).table.resources);
-            openingHistory=JSON.stringify(api.versions.wire());historyPanel.loaded();
+            openingHistory=JSON.stringify(api.versions.wire());
             controller.base = latest;
             controller.revision++;
             controller.dirty = false;
@@ -136,7 +136,7 @@ export function installEditor(api: API) {
             controller.set('failed', String(e));
         }
     })());
-    button('恢复草稿', () => void (async () => {
+    const recover = button('恢复草稿', () => void (async () => {
         if (controller.busy || controller.composing) { controller.set(controller.state, '请等待保存或输入法组合完成后再恢复草稿。'); return; }
         const d = controller.recover();
         if (!d)
@@ -149,39 +149,32 @@ export function installEditor(api: API) {
         controller.change();
         controller.set(controller.state, '已恢复本机草稿，尚未写入文件');
     })());
-    button('复制恢复草稿', () => {
+    const copyDraft = button('复制恢复草稿', () => {
         const d = controller.recover();
         if (d)
             void navigator.clipboard.writeText(api.encode(d.content, controller.base.metadata.saveRevision + 1)).catch(() => controller.set('failed', '剪贴板不可用，草稿仍保留'));
     });
-    button('复制保留当前修改', () => void navigator.clipboard.writeText(api.serialize()).then(() => controller.set(controller.state, '已复制 HTML；尚未写入文件')).catch(() => controller.set(controller.state, '剪贴板不可用，修改仍在当前页面')));
-    const download = (newInstance = false, withoutHistory=false) => {
+    const copyCurrent = button('复制保留当前修改', () => void navigator.clipboard.writeText(api.serialize()).then(() => controller.set(controller.state, '已复制 HTML；尚未写入文件')).catch(() => controller.set(controller.state, '剪贴板不可用，修改仍在当前页面')));
+    const download = () => {
         if (controller.composing) { controller.set(controller.state, '请完成输入法组合后再下载；修改仍保留。'); return; }
         const revision = controller.revision;
-        if(!withoutHistory && controller.dirty){const v=api.versions.automatic(controller.snapshotContent());if(v)historyPanel.record(v.id);}
-        const url = URL.createObjectURL(new Blob([api.encode(controller.snapshotContent(), newInstance ? 0 : controller.base.metadata.saveRevision + 1, newInstance ? crypto.randomUUID().replace(/-/g, '') : undefined, withoutHistory)], { type: 'text/html' }));
+        const url = URL.createObjectURL(new Blob([api.encode(controller.snapshotContent(), controller.base.metadata.saveRevision + 1)], { type: 'text/html' }));
         const link = document.createElement('a');
         link.href = url;
         link.download = (document.title.replace(/[\\/:*?"<>|]/g, '_').replace(/(?:\.ppte)?\.html$/i, '') || '作品') + '.ppte.html';
         link.click();
         setTimeout(() => URL.revokeObjectURL(url), 30000);
-        if (newInstance) controller.set(controller.state, '已生成新文件实例；当前原文件未覆盖。');
-        else controller.exported(revision);
-        if(!withoutHistory)historyPanel.exported(revision);
+        controller.exported(revision);
     };
-    button('下载更新后的文件', () => { try { download(); } catch (e) { controller.set('failed', String(e)); } });
-    button('版本历史',()=>historyPanel.open());
-    button('下载不含历史的文件',()=>download(false,true));
-    const historyPanel=versionPanel(api.versions,()=>controller,()=>ui.active,s=>api.mount(s),()=>download(false,true));
-    button('另存为新文件', () => { try { download(true); } catch (e) { controller.set('failed', String(e)); } });
+    const downloadButton = button('下载更新后的文件', () => { try { download(); } catch (e) { controller.set('failed', String(e)); } });
     document.body.append(bar);
     const frame = document.querySelector<HTMLIFrameElement>('#ppte-frame')!;
-    ui = workspace(frame, bar, () => {if(controller?.revision===0){const v=api.versions.automatic(controller.base.content);if(v)historyPanel.mark(v.id);}controller?.change();});
+    ui = workspace(frame, bar, () => controller?.change());
     savePanel = document.createElement('details');
     savePanel.id = 'ppte-save-panel';
     savePanel.innerHTML = '<summary>保存状态</summary><div></div>';
     const panel = savePanel.lastElementChild!;
-    panelInfo = document.createElement('p');panel.append(panelInfo,reread);
+    panelInfo = document.createElement('p');panel.append(panelInfo,reread,recover,copyDraft,copyCurrent,downloadButton);
     const autoLabel = document.createElement('label');
     const auto = document.createElement('input');auto.type='checkbox';auto.checked=true;
     auto.onchange=()=>controller.setAutoSave(auto.checked);
@@ -189,7 +182,6 @@ export function installEditor(api: API) {
     const associate=document.createElement('button');associate.textContent='关联文件并保存';associate.onclick=()=>save.click();
     if(isSecureContext && typeof (window as any).showOpenFilePicker==='function')panel.append(associate);
     else { const hint=document.createElement('p');hint.textContent='此浏览器不能关联原文件；请下载更新后的文件。';panel.append(hint); }
-    const fallback=document.createElement('button');fallback.textContent='下载我的修改';fallback.onclick=()=>download();panel.append(fallback);
     const disk=document.createElement('button');disk.textContent='查看磁盘版本';
     disk.onclick=()=>void (async()=>{try{if(!controller.adapter)return;const latest=await controller.adapter.load();const preview=document.createElement('iframe');preview.title='磁盘版本（只读）';preview.sandbox.add('');preview.srcdoc=latest.content;preview.style.cssText='width:100%;height:240px';panel.querySelector('iframe')?.remove();panel.append(preview);}catch(e){controller.set('failed',String(e));}})();panel.append(disk);
     const summary=savePanel.querySelector('summary')!;summary.textContent='';summary.setAttribute('aria-label','保存状态');summary.append(status);
@@ -202,16 +194,15 @@ export function installEditor(api: API) {
         }
         catch {
         }
-        const adapter = token && location.hostname === '127.0.0.1' ? loopbackAdapter(token,()=>{const v=api.versions.automatic(controller.snapshotContent());if(v)historyPanel.record(v.id);return api.versions.wire();}) : undefined;
+        const adapter = token && location.hostname === '127.0.0.1' ? loopbackAdapter(token,()=>api.versions.wire()) : undefined;
         const base: Snapshot = adapter ? await adapter.load() : { content: api.content(), metadata: api.metadata, hash: crypto?.subtle ? await recoveryFingerprint({ content: api.content(), metadata: api.metadata }) : JSON.stringify([api.metadata.documentId, api.metadata.saveRevision, api.content()]), fileKey: location.href, name: document.title };
         controller = new SaveController(adapter, base, () => api.content(), render, storage, `ppte-draft:${location.origin}:${base.fileKey}:${base.metadata.documentId}`);
         controller.set(adapter ? 'saved' : 'unauthorized', adapter ? '' : '尚未关联写入文件；未授权不能自动覆盖原文件。可编辑、授权保存或下载更新后的文件。');
-        historyPanel.loaded();
-        try{api.versions.index;}catch{const alert=document.createElement('p');alert.setAttribute('role','alert');alert.dataset.ppteTransient='';alert.textContent=api.versions.warning;alert.style.cssText='position:fixed;bottom:40px;left:16px;z-index:120;background:white;color:#a22;padding:12px';document.body.append(alert);}
+        try{if(api.versions.wire())void api.versions.index;}catch{const alert=document.createElement('p');alert.setAttribute('role','alert');alert.dataset.ppteTransient='';alert.textContent=api.versions.warning;alert.style.cssText='position:fixed;bottom:40px;left:16px;z-index:120;background:white;color:#a22;padding:12px';document.body.append(alert);}
         const draft = controller.recover();
         if (draft && draft.base === (base.recoveryHash ?? base.hash)) {
             if (adapter) { await api.mount(draft.content); controller.change(); }
-            else controller.set('unauthorized', '发现匹配草稿；请在更多菜单中选择恢复草稿。尚未写入文件。');
+            else controller.set('unauthorized', '发现匹配草稿；请进入编辑，在保存状态中选择恢复草稿。尚未写入文件。');
         }
         if (adapter) {
             if (!draft && api.content() !== base.content)

@@ -1,3 +1,4 @@
+import { downloadUpdated } from './helpers/focused-product.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Versions } from '../packages/html-editor/src/versions.js';
@@ -58,7 +59,7 @@ test('UI07 A2/A5: CLI re-enhancement preserves opaque history and single-file id
  const second=await enhanceHTML(withHistory,{root,base:root});assert.equal(second.metadata.documentId,first.metadata.documentId);assert.match(new Versions(first.metadata.documentId,readHistory(second.html)).preview(h.index.versions[0].id),/old/);
 });
 
-test('UI07 A1–A6: product controls, actual offline download, copied file in fresh process, preview/restore and media timings',async()=>{
+test('UI07 A1–A6: product controls, actual offline download, copied file in fresh process, preview/restore and media timings', {skip:'F01 scope retirement: docs/focused-product/evidence/F01/TEST-MIGRATION.json; not a pass'}, async()=>{
  const out=resolve('artifacts/ui07');await mkdir(join(out,'copied'),{recursive:true});let browser=await chromium.launch({channel:'chrome',headless:true});
  const timings:Record<string,number>={};const start=()=>performance.now();let t=0;
  try{
@@ -76,7 +77,7 @@ test('UI07 A1–A6: product controls, actual offline download, copied file in fr
   t=start();await page.getByRole('button',{name:'保存命名版本',exact:true}).click();await page.getByLabel('版本名称',{exact:true}).fill('可回到这里');await page.getByRole('button',{name:'保存名称',exact:true}).click();await page.locator('#ppte-versions section').filter({hasText:'可回到这里'}).waitFor();timings.createVersionMs=start()-t;
   await page.getByRole('button',{name:'关闭版本历史',exact:true}).click();await page.frameLocator('#ppte-frame').locator('h1').fill('第二稿 · 未保存');
   await page.getByText('更多',{exact:true}).click();await page.getByRole('menuitem',{name:'版本历史',exact:true}).click();await page.getByRole('button',{name:'保存命名版本',exact:true}).click();await page.getByLabel('版本名称',{exact:true}).fill('第二稿');await page.getByRole('button',{name:'保存名称',exact:true}).click();await page.getByRole('button',{name:'关闭版本历史',exact:true}).click();
-  t=start();const download=page.waitForEvent('download');await page.getByRole('button',{name:'下载更新后的文件',exact:true}).click();const saved=join(out,'saved.ppte.html');await(await download).saveAs(saved);timings.downloadMs=start()-t;
+  t=start();const download=page.waitForEvent('download');await downloadUpdated(page);const saved=join(out,'saved.ppte.html');await(await download).saveAs(saved);timings.downloadMs=start()-t;
   const savedText=await readFile(saved,'utf8');assert.equal(savedText.split(image).length-1,1);assert.match(await page.getByRole('status').innerText(),/原文件未覆盖/);
   await browser.close();await copyFile(saved,join(out,'copied','portable.ppte.html'));
   browser=await chromium.launch({channel:'chrome',headless:true});page=await browser.newPage({offline:true,acceptDownloads:true,viewport:{width:1440,height:1000}});
@@ -90,7 +91,7 @@ test('UI07 A1–A6: product controls, actual offline download, copied file in fr
   await page.locator('#ppte-versions section').filter({hasText:'恢复前'}).getByRole('button',{name:'预览',exact:true}).click();assert.equal(await page.frameLocator('iframe[title="版本预览（只读）"]').locator('h1').innerText(),'恢复前的临时内容');
   assert.equal(await page.evaluate(()=>(window as any).PPTeSave.dirty),true);await page.screenshot({path:join(out,'history-restored.png')});
   const stripped=page.waitForEvent('download');await page.locator('#ppte-versions').getByRole('button',{name:'下载不含历史的文件',exact:true}).click();const clean=join(out,'no-history.ppte.html');await(await stripped).saveAs(clean);const cleanText=await readFile(clean,'utf8');assert.equal(readHistory(cleanText),undefined);assert.doesNotMatch(readEnhanced(cleanText).content,/恢复前的临时内容|第二稿/);
-  await page.getByRole('button',{name:'关闭版本历史',exact:true}).click();const redownload=page.waitForEvent('download');await page.getByRole('button',{name:'下载更新后的文件',exact:true}).click();const final=join(out,'sample.ppte.html');await(await redownload).saveAs(final);
+  await page.getByRole('button',{name:'关闭版本历史',exact:true}).click();const redownload=page.waitForEvent('download');await downloadUpdated(page);const final=join(out,'sample.ppte.html');await(await redownload).saveAs(final);
   const finalText=await readFile(final,'utf8');const wire=readHistory(finalText)!;const media=packMedia(readEnhanced(finalText).content).table.resources;const reopened=new Versions(readEnhanced(finalText).metadata.documentId,wire,()=>media);assert.ok(reopened.index.versions.some(v=>v.kind==='before-restore'));assert.equal(finalText.split(image).length-1,1);
   // Truncated index cannot prevent current reading; opaque bytes survive normal export.
   const broken=finalText.replace(/(<script id="ppte-history-index"[^>]*>)[\s\S]*?(<\/script>)/,'$1{$2');const badFile=join(out,'broken.ppte.html');await writeFile(badFile,broken);const bad=await browser.newPage({offline:true});await bad.goto(pathToFileURL(badFile).href);await bad.waitForFunction(()=>!!(window as any).PPTeSave);assert.equal(await bad.frameLocator('#ppte-frame').locator('h1').innerText(),'第一稿');assert.match(await bad.getByRole('alert').innerText(),/原始历史保留/);assert.equal(readHistory(await bad.evaluate(()=>(window as any).PPTeHTML.serialize()))!.index,'{');
@@ -99,7 +100,7 @@ test('UI07 A1–A6: product controls, actual offline download, copied file in fr
  }finally{await browser.close();}
 });
 
-test('UI07 A3/A5/A6: real disk bridge writes media history; quota never blocks current save; no-history export removes private resources',async()=>{
+test('UI07 A3/A5/A6: real disk bridge writes media history; quota never blocks current save; no-history export removes private resources', {skip:'F01 scope retirement: docs/focused-product/evidence/F01/TEST-MIGRATION.json; not a pass'}, async()=>{
  const out=resolve('artifacts/ui07');await mkdir(out,{recursive:true});const browser=await chromium.launch({channel:'chrome',headless:true});
  try{
   const page=await browser.newPage({offline:true,acceptDownloads:true});const image=await page.evaluate(()=>{const c=document.createElement('canvas');c.width=512;c.height=512;const x=c.getContext('2d')!,d=x.createImageData(512,512);let seed=42;for(let i=0;i<d.data.length;i+=4){seed=(Math.imul(seed,1664525)+1013904223)>>>0;d.data[i]=seed>>>24;d.data[i+1]=seed>>>16;d.data[i+2]=seed>>>8;d.data[i+3]=255;}x.putImageData(d,0,0);return c.toDataURL();});

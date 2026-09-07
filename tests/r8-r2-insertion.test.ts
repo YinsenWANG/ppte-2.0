@@ -1,3 +1,5 @@
+import { seedLegacyObject } from './helpers/focused-product.js';
+import { downloadUpdated } from './helpers/focused-product.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
@@ -23,14 +25,14 @@ async function setup(name: string, source: string) {
 }
 async function insert(p: Page, kind: Kind, succeeds = true) {
  const png = kind === 'image' ? await readFile('docs/audits/2026-09-07-ui-d96f211/evidence/product-read.png') : null;
- await p.getByRole('button',{name:'插入',exact:true}).click();
  if (kind === 'image') {
-  const chooser = p.waitForEvent('filechooser'); await p.getByRole('menuitem',{name:'图片',exact:true}).click();
+  const chooser = p.waitForEvent('filechooser'); await p.getByRole('button',{name:'插入图片',exact:true}).click();
   await (await chooser).setFiles({name:'local.png',mimeType:'image/png',buffer:png!});
   if (succeeds) await frame(p).locator('img[data-ppte-editor-selected]').waitFor();
  } else {
-  await p.getByRole('menuitem',{name:{text:'文本框',shape:'形状',table:'表格'}[kind],exact:true}).click();
-  if (kind !== 'text') await p.getByRole('menuitem',{name:kind==='table'?'2 行 2 列':'矩形',exact:true}).click();
+  // F01 migration: non-image objects are command fixtures, never product insertion evidence.
+  await seedLegacyObject(p,kind==='text'?'text':kind==='shape'?'rect':'table',2,2);
+
  }
 }
 async function property(p:Page,label:string,value:string){const input=p.getByLabel(label,{exact:true});if(!await input.isVisible())await p.locator('#ppte-properties summary').filter({hasText:'位置与布局'}).click();if(await input.evaluate(n=>n.tagName)==='SELECT')await input.selectOption(value);else{await input.fill(value);await input.press('Tab');}}
@@ -45,7 +47,7 @@ async function geometry(p: Page) {return selected(p).evaluate(n => {
  return {rect:r.toJSON(),inside:r.left>=slide.left&&r.top>=slide.top&&r.right<=slide.right&&r.bottom<=slide.bottom,
  overlaps:text.filter(e=>{const b=e.getBoundingClientRect();return r.left<b.right&&r.right>b.left&&r.top<b.bottom&&r.bottom>b.top;}).map(e=>e.getAttribute('data-id'))};
  });}
-for (const kind of kinds) test(`R2 audit ${kind}: mouse insertion/selection, actual Alt+Right, resize, undo/redo and offline download/new-process reopen`, async () => {
+for (const kind of kinds) test(`R2 audit ${kind}: image UI or explicit legacy command fixture, mouse selection, actual Alt+Right, resize, undo/redo and offline download/new-process reopen`, async () => {
  const f=await setup('audit-'+kind,await readFile('docs/audits/2026-09-07-ui-d96f211/sample/source.html','utf8')),p=f.p;
  try {
   const author=await authors(p);
@@ -63,13 +65,13 @@ for (const kind of kinds) test(`R2 audit ${kind}: mouse insertion/selection, act
   await p.getByRole('button',{name:'撤销',exact:true}).click(); assert.equal((await geometry(p)).rect.x,before.rect.x);
   await p.getByRole('button',{name:'重做',exact:true}).click(); assert.equal((await geometry(p)).rect.x,moved.rect.x);
   await property(p,'宽度',`${before.rect.width-8}px`);assert.equal((await geometry(p)).rect.width,before.rect.width-8);
-  if(kind==='text'){await object.dblclick();await p.keyboard.press('ControlOrMeta+a');await p.keyboard.insertText('R2 可调整文字');await p.getByRole('button',{name:'插入',exact:true}).click();await p.keyboard.press('Escape');}
+  if(kind==='text'){await object.dblclick();await p.keyboard.press('ControlOrMeta+a');await p.keyboard.insertText('R2 可调整文字');await p.getByRole('button',{name:'页面设置',exact:true}).click();}
   if(kind==='table'){await object.locator('td').first().click();await p.keyboard.press('ControlOrMeta+a');await p.keyboard.insertText('R2 单元格');}
   // No author layout or text mutation is allowed as an insertion side effect.
   const cleanAuthors=await frame(p).locator('[data-id]').evaluateAll(ns=>ns.map(n=>{const c=n.cloneNode(true) as Element;for(const e of [c,...Array.from(c.querySelectorAll('*'))])for(const a of Array.from(e.attributes))if(a.name==='contenteditable'||a.name==='tabindex'||a.name.startsWith('data-ppte-editor-'))e.removeAttribute(a.name);return c.outerHTML;}));
   assert.deepEqual(cleanAuthors,author);
   await p.screenshot({path:join(out,kind+'.png'),caret:'initial'});
-  const event=p.waitForEvent('download');await p.getByRole('button',{name:'下载更新后的文件',exact:true}).click();const saved=join(out,kind+'-saved.ppte.html');await(await event).saveAs(saved);
+  const event=p.waitForEvent('download');await downloadUpdated(p);const saved=join(out,kind+'-saved.ppte.html');await(await event).saveAs(saved);
   const content=readEnhanced(await readFile(saved,'utf8')).content;assert.doesNotMatch(content,/contenteditable|data-ppte-editor-/);
   const style=await object.getAttribute('style'),text=await object.textContent(),src=await object.getAttribute('src');
   const fresh=await chromium.launch({channel:'chrome',headless:true});try{
@@ -81,7 +83,7 @@ for (const kind of kinds) test(`R2 audit ${kind}: mouse insertion/selection, act
  }finally{await f.close();}
 });
 const flowSource=(display:string)=>`<style>body{margin:0}section{padding:40px;min-height:700px}.content{display:${display};${display==='flex'?'flex-direction:column;':display==='grid'?'grid-template-columns:1fr;':''}gap:16px;width:700px}p{margin:12px 0}</style><section data-ppte-slide><div class="content"><p id="first">First author paragraph</p><p id="last">Last author paragraph</p></div></section>`;
-for(const display of ['block','flex','grid']) test(`R2 ${display}: all four types use real order, spacing/alignment and retain native layout after download`,async()=>{
+for(const display of ['block','flex','grid']) test(`R2 ${display}: image UI and legacy command fixtures use real order, spacing/alignment and retain native layout after download`,async()=>{
  const f=await setup(display,flowSource(display)),p=f.p;try{
   for(const kind of kinds){
    await frame(p).locator('#first').click();await insert(p,kind);const obj=selected(p);await obj.waitFor();const id=await obj.getAttribute('data-ppte-id');assert.ok(id);assert.notEqual(await obj.evaluate(n=>getComputedStyle(n).position),'absolute');assert.equal(await obj.evaluate(n=>n.parentElement!.className),'content');
@@ -90,17 +92,17 @@ for(const display of ['block','flex','grid']) test(`R2 ${display}: all four type
    if(display==='block'){assert.equal(await obj.evaluate(n=>n.previousElementSibling?.id),'last');await p.getByRole('button',{name:'撤销',exact:true}).click();assert.equal(await obj.evaluate(n=>n.previousElementSibling?.id),'first');await p.getByRole('button',{name:'重做',exact:true}).click();await property(p,'宽度','280px');await p.getByRole('button',{name:'对象居中',exact:true}).click();assert.ok(await obj.evaluate(n=>n.getBoundingClientRect().left>n.parentElement!.getBoundingClientRect().left));}
    else {await property(p,'容器内对齐','center');assert.equal(await obj.evaluate(n=>getComputedStyle(n).alignSelf),'center');}
    await property(p,'外边距','16px');assert.equal(await obj.evaluate(n=>getComputedStyle(n).marginTop),'16px');
-   const event=p.waitForEvent('download');await p.getByRole('button',{name:'下载更新后的文件',exact:true}).click();const saved=join(out,`${display}-${kind}-saved.ppte.html`);await(await event).saveAs(saved);const style=await obj.getAttribute('style');
+   const event=p.waitForEvent('download');await downloadUpdated(p);const saved=join(out,`${display}-${kind}-saved.ppte.html`);await(await event).saveAs(saved);const style=await obj.getAttribute('style');
    await p.goto(pathToFileURL(saved).href);await p.waitForFunction(()=>!!(window as any).PPTeEditor);await p.getByRole('button',{name:'编辑',exact:true}).click();const reopened=frame(p).locator(`[data-ppte-id="${id}"]`);assert.equal(await reopened.getAttribute('style'),style);assert.equal(await reopened.evaluate(n=>getComputedStyle(n.parentElement!).display),display);await clickObject(p,reopened,kind);await p.getByRole('button',{name:'删除对象',exact:true}).click();
   }
  }finally{await f.close();}
 });
-test('R2 no available space: each menu insertion rolls back DOM and undo history with an accurate visible error',async()=>{
+test('R2 no available space: image UI / legacy command fixture insertion rolls back DOM and undo history with an accurate visible error',async()=>{
  const source='<style>body{margin:0}section{position:relative;width:480px;height:360px;overflow:hidden}#full{position:absolute;inset:0;background:white;font:30px system-ui}</style><section data-ppte-slide><div id="full">All this text area is occupied</div></section>';
  const f=await setup('no-space',source),p=f.p;try{
   await frame(p).locator('#full').click();
   const before=await frame(p).locator('[data-ppte-slide]').innerHTML();
-  for(const kind of kinds){await insert(p,kind,false);await p.locator('#ppte-feedback').filter({hasText:'插入已撤销'}).waitFor();assert.match(await p.locator('#ppte-feedback').innerText(),/没有足够空白/);assert.equal(await frame(p).locator('[data-ppte-slide]').innerHTML(),before);assert.equal(await p.getByRole('button',{name:'撤销',exact:true}).isDisabled(),true);}
+  for(const kind of kinds){if(kind==='image'){await insert(p,kind,false);await p.locator('#ppte-feedback').filter({hasText:'插入已撤销'}).waitFor();assert.match(await p.locator('#ppte-feedback').innerText(),/没有足够空白/);}else{await assert.rejects(insert(p,kind,false),/没有足够空白/);}assert.equal(await frame(p).locator('[data-ppte-slide]').innerHTML(),before);assert.equal(await p.getByRole('button',{name:'撤销',exact:true}).isDisabled(),true);}
  }finally{await f.close();}
 });
 test('R2 native media wrapper and mixed text: insert beside the canvas object, and protect non-heading direct text',async()=>{

@@ -1,3 +1,4 @@
+import { downloadUpdated } from './helpers/focused-product.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
@@ -37,7 +38,7 @@ test('CLOSING: delivered CLI file supports offline editing, history, download an
  await resizeViewport(p,{width:1440,height:960});
  const title=p.frameLocator('#ppte-frame').locator('[data-id=title1]');await title.dblclick();await title.fill('离线回交验证');await p.getByRole('button',{name:'页面设置',exact:true}).click();
  await p.getByText('更多',{exact:true}).click();await p.getByRole('menuitem',{name:'版本历史',exact:true}).click();await p.getByRole('button',{name:'保存命名版本',exact:true}).click();await p.getByLabel('版本名称',{exact:true}).fill('回交离线版本');await p.getByLabel('版本名称',{exact:true}).press('Enter');await p.locator('#ppte-version-form').waitFor({state:'detached'});assert.match(await p.locator('#ppte-versions').innerText(),/回交离线版本/);await p.getByRole('button',{name:'关闭版本历史',exact:true}).click();
- const download=p.waitForEvent('download');await p.getByRole('button',{name:'下载更新后的文件',exact:true}).click();const saved=out+'/downloaded.ppte.html';await(await download).saveAs(saved);
+ const download=p.waitForEvent('download');await downloadUpdated(p);const saved=out+'/downloaded.ppte.html';await(await download).saveAs(saved);
  await b.close();b=await chromium.launch({channel:'chrome',headless:true});p=await b.newPage({offline:true,viewport:{width:1440,height:960}});observe(p);await p.goto(pathToFileURL(saved).href);assert.equal(await p.frameLocator('#ppte-frame').locator('[data-id=title1]').innerText(),'离线回交验证');assert.equal(await p.getByRole('button',{name:'插入',exact:true}).isVisible(),false);
  await p.getByText('更多',{exact:true}).click();await p.getByRole('menuitem',{name:'版本历史',exact:true}).click();assert.match(await p.locator('#ppte-versions').innerText(),/回交离线版本/);await p.getByRole('button',{name:'关闭版本历史',exact:true}).click();
  await p.getByRole('button',{name:'放映',exact:true}).click();assert.equal(await p.locator('button:visible').count(),0);await p.keyboard.press('ArrowRight');await p.keyboard.press('Escape');assert.equal(await p.getByRole('button',{name:'编辑',exact:true}).isVisible(),true);

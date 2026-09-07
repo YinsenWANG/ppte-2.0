@@ -1,0 +1,137 @@
+{
+  "retired": [
+    {
+      "file": "tests/ui02-objects.test.ts",
+      "title": "UI02 acceptance 4: one labeled SVG menu, keyboard navigation/escape/outside close and focus-safe properties",
+      "reason": "Superseded insertion/history menus or system-print product contract; original assertions retained. F01 replacements: tests/focused-product-f01.test.ts; PDF remains pending F04A/F04."
+    },
+    {
+      "file": "tests/ui05-accessibility.test.ts",
+      "title": "UI05 acceptance 3: menu arrows/Home/End/Enter/Escape/Tab, focus restoration, edge placement and disclosure semantics",
+      "reason": "Superseded insertion/history menus or system-print product contract; original assertions retained. F01 replacements: tests/focused-product-f01.test.ts; PDF remains pending F04A/F04."
+    },
+    {
+      "file": "tests/ui06-acceptance.test.ts",
+      "title": "UI06 A1/A2: product offline four-object history → download → full shutdown → copy → preview/restore → download → fresh read/show/PDF",
+      "reason": "Superseded insertion/history menus or system-print product contract; original assertions retained. F01 replacements: tests/focused-product-f01.test.ts; PDF remains pending F04A/F04."
+    },
+    {
+      "file": "tests/ui07-versions.test.ts",
+      "title": "UI07 A1–A6: product controls, actual offline download, copied file in fresh process, preview/restore and media timings",
+      "reason": "Superseded insertion/history menus or system-print product contract; original assertions retained. F01 replacements: tests/focused-product-f01.test.ts; PDF remains pending F04A/F04."
+    },
+    {
+      "file": "tests/ui07-versions.test.ts",
+      "title": "UI07 A3/A5/A6: real disk bridge writes media history; quota never blocks current save; no-history export removes private resources",
+      "reason": "Superseded insertion/history menus or system-print product contract; original assertions retained. F01 replacements: tests/focused-product-f01.test.ts; PDF remains pending F04A/F04."
+    },
+    {
+      "file": "tests/r8-r6-versions.test.ts",
+      "title": "R6: audit source mouse/keyboard naming, validation, cancellation, scoped confirmations, quota review, offline history round trip",
+      "reason": "Superseded insertion/history menus or system-print product contract; original assertions retained. F01 replacements: tests/focused-product-f01.test.ts; PDF remains pending F04A/F04."
+    },
+    {
+      "file": "tests/html-player.test.ts",
+      "title": "H04 acceptance 3: actual browser PDF has two sized pages, selectable revealed text, no editor UI and print restores content",
+      "reason": "Superseded insertion/history menus or system-print product contract; original assertions retained. F01 replacements: tests/focused-product-f01.test.ts; PDF remains pending F04A/F04."
+    },
+    {
+      "file": "tests/html-package.test.ts",
+      "title": "H05 acceptance 2: packaged HTML prints through separately available Chrome PDF toolchain",
+      "reason": "Superseded insertion/history menus or system-print product contract; original assertions retained. F01 replacements: tests/focused-product-f01.test.ts; PDF remains pending F04A/F04."
+    }
+  ],
+  "policy": "Bodies and assertions retained; skips are scope retirements, never passing evidence. Non-conflicting tests migrate selectors or use explicitly labeled command fixtures.",
+  "retiredSubtests": [
+    {
+      "file": "tests/single-file-journey.test.ts",
+      "title": "Retired system-print product path — F04A/F04 pending",
+      "reason": "F01: user forbids system printing; original assertions preserved"
+    },
+    {
+      "file": "tests/single-file-save.test.ts",
+      "title": "Retired new-file-instance menu",
+      "reason": "F01 confirmed removal; identity compatibility covered by focused-product-f01"
+    },
+    {
+      "file": "tests/single-file-editing.test.ts",
+      "title": "Retired system-print product path",
+      "reason": "F01 PDF remains pending F04A/F04"
+    },
+    {
+      "file": "tests/html-player.test.ts",
+      "title": "Retired product system-print action",
+      "reason": "F01 forbids system-print export; assertions preserved"
+    },
+    {
+      "file": "tests/html-player.test.ts",
+      "title": "Retired system-print product path — F04A/F04 pending",
+      "reason": "F01: user forbids system printing; original assertions preserved"
+    },
+    {
+      "file": "tests/single-file-media.test.ts",
+      "title": "Retired system-print product path — F04A/F04 pending",
+      "reason": "F01: user forbids system printing; original assertions preserved"
+    },
+    {
+      "file": "tests/r8-gaps.test.ts",
+      "title": "Retired history preview UI",
+      "reason": "F01 confirmed history UI removal"
+    },
+    {
+      "file": "tests/r8-gaps.test.ts",
+      "title": "Retired system-print action",
+      "reason": "F01 PDF pending F04A/F04"
+    }
+  ],
+  "activeMigrations": [
+    {
+      "files": [
+        "tests/helpers/focused-product.ts",
+        "tests/r8-r2-insertion.test.ts",
+        "tests/ui02-objects.test.ts",
+        "tests/r8-r3-canvas.test.ts"
+      ],
+      "change": "Removed non-image insertion controls are replaced by explicit Commands fixture setup. Current properties, real selection, geometry, movement, undo/redo, protection, author layouts and actual download/reopen assertions remain active. Fixture construction is NOT proof of a supported insertion UI. No-space non-image cases assert the actual Commands rejection; no synthetic error UI."
+    },
+    {
+      "files": [
+        "tests/helpers/focused-product.ts"
+      ],
+      "change": "Download selectors now use real edit/save-status/explicit download clicks; no forced clicks or internal serialization substitute."
+    },
+    {
+      "files": [
+        "tests/ui03-pages.test.ts",
+        "tests/single-file-media.test.ts",
+        "tests/r8-r2-insertion.test.ts",
+        "tests/ui02-objects.test.ts"
+      ],
+      "change": "Image chooser uses direct 插入图片 button; decode, crop, history and round-trip assertions remain active."
+    },
+    {
+      "files": [
+        "tests/ui05-accessibility.test.ts"
+      ],
+      "change": "Responsive, coarse target 44px and text contrast >=4.5 checks now measure direct image toolbar and its keyboard focus. Only obsolete menu traversal composite is retired; F01 tests add direct keyboard chooser, retired-key absence and safe save disclosure traversal."
+    },
+    {
+      "files": [
+        "tests/html-document.test.ts",
+        "tests/html-player.test.ts"
+      ],
+      "change": "Runtime inclusion contract intentionally changes from html-print present to absent; requires editor/player and rejects insert-menu/version-panel. PDF button must be top-level and disabled pending F04A/F04."
+    },
+    {
+      "files": [
+        "tests/r8-gaps.test.ts",
+        "tests/single-file-media.test.ts",
+        "tests/single-file-editing.test.ts",
+        "tests/single-file-journey.test.ts",
+        "tests/single-file-save.test.ts"
+      ],
+      "change": "Surviving media/navigation/edit/save/reopen/permission/conflict assertions continue outside narrowly retired history-menu/new-instance/print subtests. Unrun PDF/preview fields are null or identified as retired."
+    }
+  ],
+  "replacement": "tests/focused-product-f01.test.ts: seven active tests for F01 acceptance; history unit/CLI compatibility tests and unchanged PDF color positive/negative controls remain active."
+}

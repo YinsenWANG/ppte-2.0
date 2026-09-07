@@ -75,7 +75,7 @@ test('H05 acceptance 4: isolated install, reusable skill and overwrite refusal p
  assert.deepEqual(readdirSync(user).sort(),Object.keys(originals).sort());assert.deepEqual(readFileSync(join(skill,'SKILL.md')),skillBytes);
  writeFileSync(join(evidence,'recovery.json'),JSON.stringify({isolatedReinstall:true,legacyAndCurrentBytesUnchanged:true,skillReused:true,overwriteRefused:true},null,2));
 });
-test('H05 acceptance 2: packaged HTML prints through separately available Chrome PDF toolchain',async()=>{
+test('H05 acceptance 2: packaged HTML prints through separately available Chrome PDF toolchain', {skip:'F01 scope retirement: docs/focused-product/evidence/F01/TEST-MIGRATION.json; not a pass'}, async()=>{
  const out=join(root,'print.html');const draft=join(root,'print-draft.html');writeFileSync(draft,'<style>body{margin:0}section{width:960px;height:540px}</style><section data-ppte-slide><h1>Packaged PDF</h1></section>');run(process.execPath,[bin,'enhance',draft,'--out',out]);
  const browser=await chromium.launch({channel:'chrome',headless:true});try{
   const page=await browser.newPage();await page.goto('file://'+out);await page.waitForFunction(()=>!!(window as any).PPTePlayer);

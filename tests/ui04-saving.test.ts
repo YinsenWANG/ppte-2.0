@@ -38,9 +38,9 @@ test('UI04 A1/A3/A7/A8: product save panel, wrong same-name document refusal, co
  await page.evaluate(html=>{(window as any).showOpenFilePicker=async()=>[{name:'same.ppte.html',requestPermission:async()=> 'granted',getFile:async()=>({text:async()=>html.replace(/"documentId":"[^"]+"/,'"documentId":"different"')}),createWritable:()=>{throw Error('MUST_NOT_WRITE');}}];},html);
  await page.getByRole('button',{name:'保存',exact:true}).click();await page.waitForFunction(()=>(window as any).PPTeSave.state==='conflict');assert.equal(await readFile(file,'utf8'),html);
  await title.evaluate(e=>{e.dispatchEvent(new CompositionEvent('compositionstart',{bubbles:true}));e.textContent='中';e.dispatchEvent(new InputEvent('input',{bubbles:true,isComposing:true}));});
- await page.getByRole('button',{name:'下载我的修改',exact:true}).click();assert.match(await page.getByRole('status').innerText(),/完成输入法/);
+ await page.getByRole('button',{name:'下载更新后的文件',exact:true}).click();assert.match(await page.getByRole('status').innerText(),/完成输入法/);
  await title.evaluate(e=>{e.textContent='中文完整事务';e.dispatchEvent(new CompositionEvent('compositionend',{bubbles:true}));});
- const downloading=page.waitForEvent('download');await page.getByRole('button',{name:'下载我的修改',exact:true}).click();const dest=join(out,'complete.ppte.html');await (await downloading).saveAs(dest);
+ const downloading=page.waitForEvent('download');await page.getByRole('button',{name:'下载更新后的文件',exact:true}).click();const dest=join(out,'complete.ppte.html');await (await downloading).saveAs(dest);
  assert.match(readEnhanced(await readFile(dest,'utf8')).content,/中文完整事务/);assert.match(await page.getByRole('status').innerText(),/原文件未覆盖/);await page.screenshot({path:join(out,'save-panel.png')});
  await browser.close();browser=await chromium.launch({channel:'chrome',headless:true});page=await browser.newPage({offline:true});await page.goto(pathToFileURL(dest).href);await page.waitForFunction(()=>!!(window as any).PPTeSave);
  assert.equal(await page.frameLocator('#ppte-frame').locator('h1').innerText(),'中文完整事务');assert.equal(await page.locator('#ppte-edit-toolbar').isVisible(),false);assert.equal(await page.evaluate(()=>!!(window as any).PPTeSave.adapter),false);

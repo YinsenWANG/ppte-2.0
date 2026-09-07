@@ -1,3 +1,4 @@
+import { downloadUpdated } from './helpers/focused-product.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdir,readFile,writeFile} from 'node:fs/promises';
@@ -37,7 +38,7 @@ test('R4 hierarchy: actual text controls, stable status, contextual page orderin
  await p.goto(pathToFileURL(file).href);await p.waitForFunction(()=>!!(window as any).PPTeEditor);await p.getByRole('button',{name:'编辑',exact:true}).click();await title.click();
  const geometry=[];
  for(const width of [1440,1024,390]){await resizeViewport(p,{width,height:width===390?844:960});await p.screenshot({path:join(out,`product-${width}.png`)});geometry.push(await p.evaluate(()=>({width:innerWidth,bar:document.querySelector('#ppte-save-ui')!.getBoundingClientRect().toJSON(),panel:document.querySelector('#ppte-properties')!.getBoundingClientRect().toJSON()})));}
- await resizeViewport(p,{width:1440,height:960});await p.getByRole('button',{name:'叶绿色',exact:true}).click();const download=p.waitForEvent('download');await p.getByRole('button',{name:'下载更新后的文件',exact:true}).click();const saved=join(out,'saved.ppte.html');await(await download).saveAs(saved);assert.match(readEnhanced(await readFile(saved,'utf8')).content,/rgb\(83, 99, 72\)/);
+ await resizeViewport(p,{width:1440,height:960});await p.getByRole('button',{name:'叶绿色',exact:true}).click();const download=p.waitForEvent('download');await downloadUpdated(p);const saved=join(out,'saved.ppte.html');await(await download).saveAs(saved);assert.match(readEnhanced(await readFile(saved,'utf8')).content,/rgb\(83, 99, 72\)/);
  const fresh=await b.newContext({offline:true});const q=await fresh.newPage();await q.goto(pathToFileURL(saved).href);await q.waitForFunction(()=>!!(window as any).PPTeEditor);assert.equal(await q.frameLocator('#ppte-frame').locator('[data-id=title1]').evaluate(n=>getComputedStyle(n).color),'rgb(83, 99, 72)');await fresh.close();
  await p.goto(pathToFileURL(resolve('docs/ui-redesign/UI_PROTOTYPE.html')).href);await p.getByRole('button',{name:'编辑',exact:true}).click();await p.locator('#slide [data-id=title1]').click();
  for(const width of [1440,1024,390]){await resizeViewport(p,{width,height:width===390?844:960});await p.screenshot({path:join(out,`prototype-${width}.png`)});}

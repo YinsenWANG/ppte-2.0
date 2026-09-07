@@ -35,7 +35,7 @@ export class Versions {
         this.blocks={...this.original.blocks};this.resources={...this.original.resources};
       }
       return structuredClone(this.state!);
-    }catch(e){this.warning=String(e)+'；原始历史保留。可下载不含历史的文件。';throw e;}
+    }catch(e){this.warning=String(e)+'；原始历史保留，当前内容仍可保存。';throw e;}
   }
   private checkLimits(count:number,size:number){if(!Number.isInteger(count)||count<0||count>200||!Number.isSafeInteger(size)||size<1024||size>hardLimit)throw Error('容量须为 1 KiB–128 MiB，自动版本数须为 0–200');}
   private packed(html:string){if(this.cache?.html!==html)this.cache={html,packed:packMedia(safe(html))};return this.cache.packed;}

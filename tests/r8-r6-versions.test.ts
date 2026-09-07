@@ -17,7 +17,7 @@ async function focused(n:Locator){assert.equal(await n.evaluate(e=>e===e.ownerDo
 async function manage(row:Locator){if(!await row.locator('details').evaluate(n=>(n as HTMLDetailsElement).open))await row.getByText('管理版本',{exact:true}).click();}
 async function name(p:Page,value:string){await click(p,'保存命名版本');await p.getByLabel('版本名称',{exact:true}).fill(value);await click(p,'保存名称');await closed(p);}
 
-test('R6: audit source mouse/keyboard naming, validation, cancellation, scoped confirmations, quota review, offline history round trip',async()=>{
+test('R6: audit source mouse/keyboard naming, validation, cancellation, scoped confirmations, quota review, offline history round trip', {skip:'F01 scope retirement: docs/focused-product/evidence/F01/TEST-MIGRATION.json; not a pass'}, async()=>{
  await mkdir(out,{recursive:true});const source=await readFile('docs/audits/2026-09-07-ui-d96f211/sample/source.html','utf8');const file=join(out,'sample.ppte.html');await writeFile(file,(await enhanceHTML(source,{root:out,base:out})).html);
  let b=await chromium.launch({channel:'chrome',headless:true});const nativeDialogs:string[]=[],errors:string[]=[],network:string[]=[];
  try{

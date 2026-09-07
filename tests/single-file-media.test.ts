@@ -1,3 +1,4 @@
+import { downloadUpdated } from './helpers/focused-product.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
@@ -29,7 +30,7 @@ test('S06 table: SHA-256 vectors, legacy identity, dedup, stable references, mis
  assert.equal(readEnhanced(envelope(content,{...metadata,mediaTable:undefined})).content,content);
 });
 
-test('S06 file journey: mixed ratios, insert/replace/focus/reset, guarded history, download/reopen, print and speaker',async()=>{
+test('S06 file journey: mixed ratios, insert/replace/focus/reset, guarded history, download/reopen, print and speaker',async t=>{
  await mkdir(evidence,{recursive:true});
  const root=await mkdtemp(join(tmpdir(),'s06-media-'));const browser=await chromium.launch({channel:'chrome',headless:true});
  try {
@@ -76,9 +77,9 @@ test('S06 file journey: mixed ratios, insert/replace/focus/reset, guarded histor
   await page.getByLabel('替换视频封面').setInputFiles({name:'poster.webp',mimeType:fixtures[2].mime,buffer:Buffer.from(fixtures[2].src.split(',')[1],'base64')});
   await page.waitForFunction(src=>(window as any).PPTeEditor.commands.node('film').getAttribute('poster')===src,fixtures[2].src);
   await page.evaluate(()=>{const c=(window as any).PPTeEditor.commands;c.history();c.history(true);c.lock(['t0'],true);});
-  await page.getByRole('button',{name:'插入',exact:true}).click();
+
   const imageChooser=page.waitForEvent('filechooser');
-  await page.getByRole('menuitem',{name:'图片',exact:true}).click();
+  await page.getByRole('button',{name:'插入图片',exact:true}).click();
   await (await imageChooser).setFiles({name:'new.png',mimeType:'image/png',buffer:Buffer.from(fixtures[0].src.split(',')[1],'base64')});
   await page.waitForFunction(()=>(window as any).PPTeEditor.commands.doc.querySelectorAll('img').length===13);
   const history=await page.evaluate(async()=>{
@@ -94,7 +95,7 @@ test('S06 file journey: mixed ratios, insert/replace/focus/reset, guarded histor
    c.crop(['i0'],'contain');
    return {id,undo,redo,invalid,broken,atomic,count,trimmed,stats};
   });assert.ok(history.undo&&history.redo&&history.invalid&&history.broken&&history.atomic&&history.trimmed);assert.equal(history.count,100);
-  const downloadEvent=page.waitForEvent('download'); await page.getByRole('button',{name:'下载更新后的文件',exact:true}).click();
+  const downloadEvent=page.waitForEvent('download'); await downloadUpdated(page);
   const download=await downloadEvent; const downloaded=join(root,'download.ppte.html'); await download.saveAs(downloaded);
   const serialized=await readFile(downloaded,'utf8');assert.doesNotMatch(readEnhanced(serialized).content,/blob:|ppte-history/);
   await writeFile(join(evidence,'review.ppte.html'),serialized);
@@ -109,8 +110,11 @@ test('S06 file journey: mixed ratios, insert/replace/focus/reset, guarded histor
   assert.equal(await reopened.frameLocator('#ppte-frame').locator('[data-ppte-id=i0]').evaluate(n=>(n as HTMLElement).style.objectFit),'contain');
   assert.equal(await reopened.frameLocator('#ppte-frame').locator('video').getAttribute('poster'),fixtures[2].src);
   const repeat=await reopened.evaluate(()=>(window as any).PPTeHTML.serialize());assert.equal(Buffer.byteLength(repeat),Buffer.byteLength(serialized));
+ await t.test('Retired system-print product path — F04A/F04 pending', {skip:'F01: user forbids system printing; original assertions preserved'}, async()=>{
   const print=await reopened.evaluate(async()=>{const e=(window as any).PPTeEditor;(window as any).PPTePrint.prepare();const imgs=Array.from(document.querySelectorAll('#ppte-print>div')).flatMap(n=>Array.from(n.shadowRoot!.querySelectorAll('img')));await Promise.all(imgs.map(n=>n.decode()));return imgs.length;});assert.equal(print,14);
   await reopened.pdf({path:join(evidence,'media.pdf'),preferCSSPageSize:true});await reopened.evaluate(()=>(window as any).PPTePrint.restore());
+
+ });
   await reopened.getByRole('button',{name:'放映',exact:true}).click();
   const popupPromise=context.waitForEvent('page');await reopened.evaluate(()=>(window as any).PPTePlayer.presenter());const popup=await popupPromise;
   await popup.waitForFunction(()=>!!document.querySelector('iframe')?.contentDocument?.querySelector('img'));
@@ -121,6 +125,6 @@ test('S06 file journey: mixed ratios, insert/replace/focus/reset, guarded histor
   const cleared=await reopened.evaluate(()=>{const c=(window as any).PPTeEditor.commands;c.crop(['i0'],'cover');c.clearHistory();return c.mediaHistory.stats;});assert.equal(cleared.resources,0);
   assert.deepEqual(network,[]);
   const corrupt=join(root,'corrupt.ppte.html');await writeFile(corrupt,serialized.replace(/ppte-resource:[a-f0-9]{64}/,'ppte-resource:missing'));const failed=await context.newPage();await failed.goto(pathToFileURL(corrupt).href);await failed.getByRole('alert').waitFor();assert.match(await failed.getByRole('alert').textContent() ?? '',/MEDIA_RESOURCE_MISSING/);
-  await writeFile(join(evidence,'journey.json'),JSON.stringify({fixtureKind:'12 synthetic raster fixtures, not real photo or human acceptance',browser:browser.version(),offline:true,sourceDirectoryRemoved:true,decoded:13,printImages:print,speakerImages:6,video:{sha256:createHash('sha256').update(video).digest('hex'),offlinePlay:true,leaveSlidePaused:true},corruptFile:'visible MEDIA_RESOURCE_MISSING alert',history,repeatFileBytes:Buffer.byteLength(repeat),network,fixtures:fixtures.map((f,i)=>({index:i,width:f.width,height:f.height,mime:f.mime,bytes:Buffer.from(f.src.split(',')[1],'base64').length,sha256:createHash('sha256').update(Buffer.from(f.src.split(',')[1],'base64')).digest('hex')}))},null,2));
+  await writeFile(join(evidence,'journey.json'),JSON.stringify({fixtureKind:'12 synthetic raster fixtures, not real photo or human acceptance',browser:browser.version(),offline:true,sourceDirectoryRemoved:true,decoded:13,printImages:null,PDF:"pending F04A/F04; old print subtest retired",speakerImages:6,video:{sha256:createHash('sha256').update(video).digest('hex'),offlinePlay:true,leaveSlidePaused:true},corruptFile:'visible MEDIA_RESOURCE_MISSING alert',history,repeatFileBytes:Buffer.byteLength(repeat),network,fixtures:fixtures.map((f,i)=>({index:i,width:f.width,height:f.height,mime:f.mime,bytes:Buffer.from(f.src.split(',')[1],'base64').length,sha256:createHash('sha256').update(Buffer.from(f.src.split(',')[1],'base64')).digest('hex')}))},null,2));
  }finally{await browser.close();await rm(root,{recursive:true,force:true});}
 });

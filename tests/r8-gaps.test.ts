@@ -1,3 +1,4 @@
+import { downloadUpdated } from './helpers/focused-product.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
@@ -26,7 +27,7 @@ test('GAPS N04: fixed sRGB rasterization preserves original >4000 gates and reje
  }finally{await browser.close();}
 });
 
-test('GAPS A4: real navigation, image edit undo, versions, download/reopen, presentation and PDF demand/release',async()=>{
+test('GAPS A4: real navigation, image edit undo, versions, download/reopen, presentation and PDF demand/release', async t=>{
  await mkdir(out,{recursive:true});let browser=await chromium.launch({channel:'chrome',headless:true});
  const network:string[]=[],errors:string[]=[];
  let original:string,downloaded=join(out,'media-downloaded.ppte.html');
@@ -55,11 +56,13 @@ test('GAPS A4: real navigation, image edit undo, versions, download/reopen, pres
   assert.equal(await frame.getByAltText('Image 2',{exact:true}).evaluate(n=>(n as HTMLElement).style.objectFit),'cover');
   await page.getByRole('button',{name:'撤销',exact:true}).click();assert.equal(await frame.getByAltText('Image 2',{exact:true}).evaluate(n=>(n as HTMLElement).style.objectFit),'');
   await page.getByRole('button',{name:'重做',exact:true}).click();
+  await t.test('Retired history preview UI', {skip:'F01 confirmed history UI removal'},async()=>{
   await page.getByText('更多',{exact:true}).click();await page.getByRole('menuitem',{name:'版本历史',exact:true}).click();
   await page.getByRole('button',{name:'保存命名版本',exact:true}).click();await page.getByLabel('版本名称',{exact:true}).fill('Media checkpoint');await page.getByRole('button',{name:'保存名称',exact:true}).click();
   await page.locator('#ppte-versions section').filter({hasText:'Media checkpoint'}).getByRole('button',{name:'预览',exact:true}).click();await page.getByTitle('版本预览（只读）').waitFor();
   await page.getByRole('button',{name:'关闭版本历史',exact:true}).click();await page.getByTitle('版本预览（只读）').waitFor({state:'detached'});assert.equal(await page.getByTitle('版本预览（只读）').count(),0);
-  const event=page.waitForEvent('download');await page.getByRole('button',{name:'下载更新后的文件',exact:true}).click();await(await event).saveAs(downloaded);
+  });
+  const event=page.waitForEvent('download');await downloadUpdated(page);await(await event).saveAs(downloaded);
   const wire=readEnhanced(await readFile(downloaded,'utf8'));assert.equal((wire.content.match(/<img /g)||[]).length,12);assert.doesNotMatch(wire.content,/data-ppte-editor-media-/);assert.equal((wire.content.match(/src="data:image/g)||[]).length,12);
  }finally{await browser.close();}
  browser=await chromium.launch({channel:'chrome',headless:true});
@@ -70,14 +73,16 @@ test('GAPS A4: real navigation, image edit undo, versions, download/reopen, pres
   await f.locator('video').evaluate(n=>(n as HTMLVideoElement).play());
   await p.keyboard.press('ArrowRight');assert.equal(await f.locator('video').evaluate(n=>(n as HTMLVideoElement).paused),true);assert.equal(await f.locator('video source').getAttribute('src'),null);
   await f.getByAltText('Image 2',{exact:true}).evaluate(n=>(n as HTMLImageElement).decode());assert.equal(await f.locator('img[src]').count(),1);
-  await p.keyboard.press('Escape');await p.getByText('更多',{exact:true}).click();
+  await p.keyboard.press('Escape');await t.test('Retired system-print action', {skip:'F01 PDF pending F04A/F04'},async()=>{
+await p.getByText('更多',{exact:true}).click();
   // Native print dialog is out of scope: keep prepared DOM for PDF API inspection.
   await p.evaluate(()=>{window.print=()=>{};});await p.getByRole('menuitem',{name:'导出 PDF',exact:true}).click();
   await p.waitForFunction(()=>Array.from(document.querySelectorAll('#ppte-print>div')).every(n=>Array.from(n.shadowRoot!.querySelectorAll('img[src]')).every(i=>(i as HTMLImageElement).complete)));
   assert.equal(await p.locator('#ppte-print img[src]').count(),13);await p.pdf({path:join(out,'media.pdf'),preferCSSPageSize:true,printBackground:true});
   await p.evaluate(()=>window.dispatchEvent(new Event('afterprint')));assert.equal(await p.locator('#ppte-print').count(),0);assert.equal(await f.locator('img[src]').count(),1);
+  });
   assert.deepEqual(network,[]);assert.deepEqual(errors,[]);
-  await writeFile(join(out,'media-lifecycle.json'),JSON.stringify({time:new Date().toISOString(),browser:browser.version(),offline:true,freshProcess:true,sourceImages:12,activeImages:1,inactiveURLs:0,releasedNaturalWidth:0,printImages:13,previewRemovedOnClose:true,printRemovedOnAfterprint:true,network,errors,nativePrint:null,nativePrintReason:'window.print stub only retains prepared DOM for PDF API; no native dialog evidence',decodedMemoryBytes:null,decodedMemoryReason:'URL and naturalWidth release measured; browser GPU/decoder cache reclamation is not observable'},null,2));
+  await writeFile(join(out,'media-lifecycle.json'),JSON.stringify({time:new Date().toISOString(),browser:browser.version(),offline:true,freshProcess:true,sourceImages:12,activeImages:1,inactiveURLs:0,releasedNaturalWidth:0,printImages:null,previewRemovedOnClose:null,printRemovedOnAfterprint:null,network,errors,nativePrint:null,nativePrintReason:'F01: obsolete history preview and system-print subtests retired; PDF pending F04A/F04',decodedMemoryBytes:null,decodedMemoryReason:'URL and naturalWidth release measured; browser GPU/decoder cache reclamation is not observable'},null,2));
  }finally{await browser.close();}
 });
 

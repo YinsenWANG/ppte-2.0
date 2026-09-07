@@ -1,11 +1,9 @@
 import { deferMedia, materializeMedia } from './media-demand.js';
 import { shellCSS, icon, iconButton, group, selectField } from './shell-components.js';
 import { accessibleShellCSS, disclosure } from './accessibility.js';
-import { insertMenu } from './insert-menu.js';
 import { readingView } from './reading.js';
 import { editCanvas } from './edit-canvas.js';
 import { installPlayer } from '../../html-player/src/index.js';
-import { installPrint } from '../../html-print/src/index.js';
 import { Commands, editable, isTextObject, textObject, snapshot } from './commands.js';
 export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: () => void) {
     const style = document.createElement('style');
@@ -71,14 +69,11 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     const imageInput=document.createElement('input'); imageInput.type='file';imageInput.accept='image/png,image/jpeg,image/webp,image/gif,image/avif';imageInput.hidden=true;imageInput.setAttribute('aria-label','选择插入图片');toolbar.append(imageInput);
     let imagePoint:ReturnType<typeof insertionContext>|undefined;
     imageInput.onchange=()=>{const file=imageInput.files?.[0],point=imagePoint;imageInput.value='';if(file&&point)run(async()=>selectInserted(await commands.insertImage(point.slide,file,point.reference)));};
-    const addObject=(kind:'text'|'rect'|'ellipse'|'line'|'table',rows?:number,cols?:number)=>run(()=>{if(!active||composing)return;const point=insertionContext();selectInserted(commands.insertObject(point.slide,kind,point.reference,rows,cols));});
-    const insertion=insertMenu(toolbar,addObject,()=>{imagePoint=insertionContext();imageInput.click();});
-    const originals = Array.from(bar.querySelectorAll('button')).filter(b => !['编辑', '保存', '下载更新后的文件'].includes(b.textContent ?? '') && b !== undo && b !== redo);
-    const more = document.createElement('details');
-    more.innerHTML = '<summary>更多</summary><div></div>';
-    for (const b of originals)
-        more.lastElementChild!.append(b);
-    bar.append(more); disclosure(more, true);
+    button(toolbar, '插入图片', () => {
+        if (!active || composing) return;
+        imagePoint = insertionContext();
+        imageInput.click();
+    });
     const title = document.createElement('strong');
     title.textContent = document.title;
     bar.prepend(title);
@@ -536,7 +531,6 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
             const e = target as Element;
             return e.closest?.('td,th') ?? e.closest?.('svg,img,video,table') ?? textObject(e) ?? e.closest?.('[data-ppte-id]');
         };
-        doc.addEventListener('pointerdown',()=>insertion.close(false));
         doc.addEventListener('click', e => {
             if (!active)
                 return;
@@ -662,7 +656,6 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         const target=e.target as HTMLElement;
         if(target.closest?.('dialog[open]'))return;
         const input=target.closest?.('input,textarea,select,[contenteditable="true"]');
-        if(active&&!input&&!e.metaKey&&!e.ctrlKey&&!e.altKey&&e.key.toLowerCase()==='t'){e.preventDefault();addObject('text');return;}
         if(active&&!input&&selected.length===1&&['Delete','Backspace'].includes(e.key)){e.preventDefault();run(()=>{commands.remove(selected[0]);selected=[];range=null;});return;}
         if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') {
             e.preventDefault();
@@ -745,7 +738,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     window.addEventListener('resize', resize);
     button(bar, '阅读', () => {
         if (composing) return;
-        insertion.close(false); active = false; collapsed=true; reading.clear();
+        active = false; collapsed=true; reading.clear();
         root.removeAttribute('data-open');
         frame.style.marginLeft = '0';
         frame.style.width = '100%';
@@ -758,8 +751,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     bar.insertBefore(modes,bar.querySelector('[role=status]'));
     let wasActive = false;
     const suspend = () => {
-        insertion.close(false);
-        wasActive = active; suspended=true; reading.clear(); canvas.clear(); more.open=false; help.open=false; active = false; root.removeAttribute('data-open');
+        wasActive = active; suspended=true; reading.clear(); canvas.clear(); help.open=false; active = false; root.removeAttribute('data-open');
         frame.inert=false; frame.removeAttribute('aria-hidden'); bar.style.display = 'none'; frame.style.transform = ''; refresh();
     };
     const resume = () => {
@@ -771,14 +763,18 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     };
     // Attach to the current document after editor initialization below.
     let player: ReturnType<typeof installPlayer>;
-    const present=button(bar, '放映', () => { if (!composing) player.start(); });present.classList.add('primary');bar.insertBefore(present,more);
+    const present=button(bar, '放映', () => { if (!composing) player.start(); });present.classList.add('primary');
     for(const b of Array.from(bar.children))if(b instanceof HTMLButtonElement && b.textContent==='下载更新后的文件')iconButton(b,'下载更新后的文件');
     frame.addEventListener('load', attach);
     attach();
     player = installPlayer(frame, { suspend, resume, current: () => currentSlide, moved: i => currentSlide = i });
-    const printing = installPrint(frame, { suspend, resume, exitPresentation: () => player.exit() });
-    button(more.lastElementChild as HTMLElement, '导出 PDF', () => printing.print());
-    Object.assign(window, { PPTePlayer: player, PPTePrint: printing });
+    // F04A must validate the route before F04 enables export. Never invoke system print.
+    const pdf = button(bar, '导出为 PDF', () => {});
+    pdf.disabled = true;
+    pdf.title = '导出为 PDF 尚未可用：正在验证视觉保真与可搜索文字的导出路线';
+    pdf.setAttribute('aria-label', '导出为 PDF');
+    bar.insertBefore(pdf, present);
+    Object.assign(window, { PPTePlayer: player });
     return { get active() { return active; }, enable() {
             if (composing) return;
             reading.clear(); active = true; collapsed=innerWidth<=580;
@@ -789,7 +785,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
             if (slide) scrollSlide(slide);
         }, hide() {
             if (composing) return;
-            insertion.close(false); active = false; collapsed=true;
+            active = false; collapsed=true;
             root.removeAttribute('data-open');
             frame.style.marginLeft = '0';
             frame.style.width = '100%';

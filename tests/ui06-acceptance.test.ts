@@ -1,3 +1,4 @@
+import { downloadUpdated } from './helpers/focused-product.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdir, readFile, writeFile, copyFile, readdir } from 'node:fs/promises';
@@ -17,9 +18,9 @@ async function insert(p:Page,name:string,child?:string){await p.getByRole('butto
 async function property(p:Page,label:string,value:string){const input=p.getByLabel(label,{exact:true});if(!await input.isVisible())await p.locator('#ppte-properties summary').filter({hasText:'位置与布局'}).click();await input.fill(value);await input.press('Tab');}
 async function history(p:Page){await p.getByText('更多',{exact:true}).click();await p.getByRole('menuitem',{name:'版本历史',exact:true}).click();}
 async function checkpoint(p:Page,name:string){await history(p);await p.getByRole('button',{name:'保存命名版本',exact:true}).click();await p.getByLabel('版本名称',{exact:true}).fill(name);await p.getByRole('button',{name:'保存名称',exact:true}).click();await p.locator('#ppte-versions section').filter({hasText:name}).waitFor();await p.getByRole('button',{name:'关闭版本历史',exact:true}).click();}
-async function download(p:Page,path:string){const event=p.waitForEvent('download');await p.getByRole('button',{name:'下载更新后的文件',exact:true}).click();const d=await event;assert.match(d.suggestedFilename(),/\.ppte\.html$/);await d.saveAs(path);assert.equal(await d.failure(),null);assert.match(await p.getByRole('status').innerText(),/原文件未覆盖/);assert.equal(await p.evaluate(()=>(window as any).PPTeSave.dirty),true);}
+async function download(p:Page,path:string){const event=p.waitForEvent('download');await downloadUpdated(p);const d=await event;assert.match(d.suggestedFilename(),/\.ppte\.html$/);await d.saveAs(path);assert.equal(await d.failure(),null);assert.match(await p.getByRole('status').innerText(),/原文件未覆盖/);assert.equal(await p.evaluate(()=>(window as any).PPTeSave.dirty),true);}
 
-test('UI06 A1/A2: product offline four-object history → download → full shutdown → copy → preview/restore → download → fresh read/show/PDF',async()=>{
+test('UI06 A1/A2: product offline four-object history → download → full shutdown → copy → preview/restore → download → fresh read/show/PDF', {skip:'F01 scope retirement: docs/focused-product/evidence/F01/TEST-MIGRATION.json; not a pass'}, async()=>{
  await mkdir(join(out,'portable'),{recursive:true});
  const source=await readFile('tests/fixtures/ui06/journey.html','utf8');
  const original=join(out,'original.ppte.html');await writeFile(original,(await enhanceHTML(source,{root:out,base:out,mediaTable:true})).html);
@@ -32,7 +33,7 @@ test('UI06 A1/A2: product offline four-object history → download → full shut
   await insert(p,'形状','矩形');await property(p,'填充','#6f8c69');await property(p,'宽度','180px');await property(p,'高度','72px');await property(p,'圆角','12px');
   // Deterministic encoded PNG: two colored halves make non-destructive crop/recovery observable.
   const png=await p.evaluate(()=>{const c=document.createElement('canvas');c.width=240;c.height=120;const x=c.getContext('2d')!;x.fillStyle='#426d58';x.fillRect(0,0,120,120);x.fillStyle='#dfbc75';x.fillRect(120,0,120,120);return c.toDataURL();});
-  await p.getByRole('button',{name:'插入',exact:true}).click();const chooser=p.waitForEvent('filechooser');await p.getByRole('menuitem',{name:'图片',exact:true}).click();await(await chooser).setFiles({name:'two-tones.png',mimeType:'image/png',buffer:Buffer.from(png.split(',')[1],'base64')});await frame(p).locator('img').waitFor();await property(p,'宽度','240px');await property(p,'高度','120px');await p.getByRole('button',{name:'填充裁切',exact:true}).click();await property(p,'水平焦点（0–100%）','25');
+  const chooser=p.waitForEvent('filechooser');await p.getByRole('button',{name:'插入图片',exact:true}).click();await(await chooser).setFiles({name:'two-tones.png',mimeType:'image/png',buffer:Buffer.from(png.split(',')[1],'base64')});await frame(p).locator('img').waitFor();await property(p,'宽度','240px');await property(p,'高度','120px');await p.getByRole('button',{name:'填充裁切',exact:true}).click();await property(p,'水平焦点（0–100%）','25');
   await insert(p,'表格','2 行 2 列');await frame(p).locator('td').first().click();await frame(p).locator('td').first().fill('初稿');await property(p,'单元格填充','#e2e9df');
   const t=performance.now();await checkpoint(p,'四类对象 · 第一稿');timings.checkpointMs=performance.now()-t;
   const first=await p.evaluate(()=>(window as any).PPTeHTML.content());

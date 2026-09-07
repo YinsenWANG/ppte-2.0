@@ -1,3 +1,4 @@
+import { downloadUpdated } from './helpers/focused-product.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdir, readFile, writeFile, readdir } from 'node:fs/promises';
@@ -10,7 +11,7 @@ import { enhanceHTML } from '../packages/html-document/src/index.js';
 
 const out=resolve('artifacts/s07');
 const sha=(bytes:Buffer|string)=>createHash('sha256').update(bytes).digest('hex');
-test('S07 continuous file journey: offline download, browser shutdown, fresh reopen, presentation and optional PDF',async()=>{
+test('S07 continuous file journey: offline download, browser shutdown, fresh reopen, presentation and optional PDF',async t=>{
  await mkdir(out,{recursive:true});
  const delivery=join(out,'delivery');await mkdir(delivery,{recursive:true});
  const media='data:image/svg+xml;base64,'+Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="160" height="80"><rect width="160" height="80" fill="#ff0000"/><rect x="80" width="80" height="80" fill="#0000ff"/></svg>').toString('base64');
@@ -31,7 +32,7 @@ test('S07 continuous file journey: offline download, browser shutdown, fresh reo
   assert.equal(await p.getByRole('button',{name:'编辑',exact:true}).isVisible(),true);
   await p.getByRole('button',{name:'编辑',exact:true}).click();
   await p.frameLocator('#ppte-frame').locator('h1').first().fill('Offline updated');
-  const event=p.waitForEvent('download');await p.getByRole('button',{name:'下载更新后的文件',exact:true}).click();
+  const event=p.waitForEvent('download');await downloadUpdated(p);
   const d=await event;assert.match(d.suggestedFilename(),/\.ppte\.html$/);await d.saveAs(downloaded);assert.equal(await d.failure(),null);
   assert.match(await p.getByRole('status').innerText(),/原文件未覆盖/);
   assert.equal(await readFile(original,'utf8'),result.html);
@@ -51,6 +52,7 @@ test('S07 continuous file journey: offline download, browser shutdown, fresh reo
   await p.keyboard.press('ArrowRight');assert.equal(await p.frameLocator('#ppte-frame').locator('[data-ppte-step]').first().isVisible(),true);
   await p.keyboard.press('Escape');assert.equal(await p.locator('#ppte-save-ui').isVisible(),true);
   assert.equal(await p.locator('#ppte-print').count(),0);
+ await t.test('Retired system-print product path — F04A/F04 pending', {skip:'F01: user forbids system printing; original assertions preserved'}, async()=>{
   await p.evaluate(()=>(window as any).PPTePrint.prepare());await p.emulateMedia({media:'print'});
   assert.equal(await p.locator('#ppte-print>div').count(),2);
   for(const n of await p.locator('#ppte-print [data-ppte-step]').all())assert.equal(await n.isVisible(),true);
@@ -69,7 +71,9 @@ test('S07 continuous file journey: offline download, browser shutdown, fresh reo
   await p.screenshot({path:join(out,'print.png'),fullPage:true});
   await p.emulateMedia({media:'screen'});await p.evaluate(()=>(window as any).PPTePrint.restore());
   assert.equal(await p.locator('#ppte-save-ui').isVisible(),true);
+
+ });
   assert.deepEqual(requests.filter(u=>/^(https?|wss?):/.test(u)),[]);assert.deepEqual(errors,[]);
-  await writeFile(join(out,'journey.json'),JSON.stringify({status:'passed-automation',browser:version,headless:true,capabilities,offline:true,freshBrowserReopen:true,pickerMocked:false,savePath:'explicit download; Playwright saveAs captures actual browser download',originalHash:sha(result.html),originalAfterHash:sha(await readFile(original)),downloadHash:sha(await readFile(downloaded)),printImageEdgePixels:pixels,requests,errors,noNodeMachine:'pending: development host has Node installed',nativePicker:'pending: not exercised',nativeIME:'pending: no operating-system IME input',nativePrintDialog:'pending: PDF API only',human:'pending'},null,2));
+  await writeFile(join(out,'journey.json'),JSON.stringify({status:'passed-automation',browser:version,headless:true,capabilities,offline:true,freshBrowserReopen:true,pickerMocked:false,savePath:'explicit download; Playwright saveAs captures actual browser download',originalHash:sha(result.html),originalAfterHash:sha(await readFile(original)),downloadHash:sha(await readFile(downloaded)),printImageEdgePixels:null,PDF:"pending F04A/F04; old print subtest retired",requests,errors,noNodeMachine:'pending: development host has Node installed',nativePicker:'pending: not exercised',nativeIME:'pending: no operating-system IME input',nativePrintDialog:'pending: PDF API only',human:'pending'},null,2));
  }finally{await browser.close();}
 });

@@ -1,3 +1,4 @@
+import { downloadUpdated } from './helpers/focused-product.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdir, writeFile, readFile } from 'node:fs/promises';
@@ -32,7 +33,7 @@ test('UI01 acceptance 1: offline initial, copied and downloaded files reopen in 
  assert.equal(await p.frameLocator('#ppte-frame').locator('section').first().isVisible(),false);
  await p.getByRole('button',{name:'编辑',exact:true}).click();
  await p.frameLocator('#ppte-frame').locator('[data-ppte-id=t2]').fill('已编辑第二张');
- const download=p.waitForEvent('download');await p.getByRole('button',{name:'下载更新后的文件',exact:true}).click();
+ const download=p.waitForEvent('download');await downloadUpdated(p);
  const saved=join(out,'reopened.ppte.html');await (await download).saveAs(saved);
  const copy=join(out,'copied.ppte.html');await writeFile(copy,await readFile(saved));
  // A separate browser process and storage context, not reload or the original cache.

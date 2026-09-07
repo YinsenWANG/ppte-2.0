@@ -189,10 +189,12 @@ test('H01 acceptance 4: actual bundled CLI/runtime import graphs exclude old rep
   assert.ok(!inputs.some(p => /playwright|puppeteer|apps\/mcp/.test(p)));
   const runtime=await build({entryPoints:['packages/html-document/src/runtime.ts'],bundle:true,platform:'browser',write:false,metafile:true});
   assert.deepEqual(Object.keys(runtime.metafile!.inputs).filter(p => /packages\//.test(p) && !/^packages\/(html-document|html-editor|html-player|html-print)\//.test(p)),[]);
-  // H04 explicitly adds these two modules to the HTML contract. Keep the closed
-  // allowlist above and additionally require both modules and reject retired/runtime tool chains.
+  // F01 retains editor/player and excludes the obsolete print implementation.
+  // Keep the closed allowlist and reject retired formats/runtime tool chains.
   const runtimeInputs = Object.keys(runtime.metafile!.inputs);
-  for (const name of ['html-player', 'html-print']) assert.ok(runtimeInputs.includes(`packages/${name}/src/index.ts`));
+  for (const name of ['html-player', 'html-editor']) assert.ok(runtimeInputs.includes(`packages/${name}/src/index.ts`));
+  assert.ok(!runtimeInputs.includes('packages/html-print/src/index.ts'), 'F01: system printing must not ship in the product runtime');
+  for(const name of ['insert-menu','version-panel'])assert.ok(!runtimeInputs.includes(`packages/html-editor/src/${name}.ts`), 'F01: retired UI excluded from runtime');
   for (const path of [...inputs, ...runtimeInputs]) assert.doesNotMatch(path, /packages\/(core|portable-runtime|exporter-pptx|file-format|layout-recipes|design-compiler)\/|playwright|puppeteer|apps\/mcp/);
   const records=[];
   for (const name of ['cherry','product','data']) {
