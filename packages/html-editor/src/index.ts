@@ -73,13 +73,15 @@ export function installEditor(api: API) {
     });
     bar.append(status);
     const save = button('保存', () => void (async () => {
-        if(associating)return;
+        if(associating || !controller)return;
+        if(controller.composing){controller.set(controller.state, '请完成输入法组合后再保存；修改仍保留。');return;}
         associating=true;
         try {
             if (!controller.adapter) {
                 const picker = (window as any).showOpenFilePicker;
                 if (!isSecureContext || typeof picker !== 'function') {
-                    download();
+                    controller.set('unauthorized', '此浏览器无法直接写回原文件；请明确选择“下载更新后的文件”。');
+                    savePanel.open=true;
                     return;
                 }
                 const [handle]: FileHandle[] = await picker({ multiple: false, types: [{ description: 'HTML', accept: { 'text/html': ['.html'] } }] });
@@ -102,13 +104,13 @@ export function installEditor(api: API) {
             await controller.adapter?.authorize?.();
             associating=false;
             await controller.flush();
-            if (controller.state === 'unauthorized') download();
             if (!controller.dirty && controller.confirmedFileRevision === null) controller.set('unauthorized', '已关联所选文件，尚无本次写入记录。');
         }
         catch (e) {
             const message = String(e);
-            controller.set(message.includes('CONFLICT') ? 'conflict' : 'unauthorized', message.includes('AbortError') ? '已取消选择；修改仍保留，可重试或下载更新文件。' : message);
-            if (message.includes('PERMISSION') || message.includes('NotAllowedError') || message.includes('SecurityError')) download();
+            const denied = /PERMISSION|NotAllowedError|SecurityError/.test(message);
+            controller.set(message.includes('CONFLICT') ? 'conflict' : denied || message.includes('AbortError') ? 'unauthorized' : 'failed', message.includes('AbortError') ? '已取消选择；修改仍保留，可重试或下载更新文件。' : denied ? '未获得文件写入授权；修改仍保留，请重试授权或选择下载。' : '文件选择或读取失败；修改仍保留：' + message);
+            savePanel.open=true;
         } finally { associating=false; }
     })());
     save.classList.add('save-action');

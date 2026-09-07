@@ -15,7 +15,7 @@ export function loopbackAdapter(token: string, history?:()=>HistoryWire|undefine
 export interface FileHandle { name: string; queryPermission(o:object):Promise<string>; requestPermission(o:object):Promise<string>; getFile():Promise<{text():Promise<string>}>; createWritable():Promise<{write(s:string):Promise<void>;close():Promise<void>;abort():Promise<void>}> }
 export function fileAdapter(handle: FileHandle, decode:(s:string)=>Snapshot, encode:(content:string,revision:number)=>string): Adapter {
   const load = async () => { const text = await (await handle.getFile()).text(); const decoded=decode(text); return {...decoded,hash:await sha(text),recoveryHash:await recoveryFingerprint(decoded),fileKey:handle.name,name:handle.name}; };
-  return {load,async authorize(){if(await handle.requestPermission({mode:'readwrite'})!=='granted')throw Error('PERMISSION_REVOKED');}, async write(expected,content) {
+  return {load,async authorize(){if(await handle.queryPermission({mode:'readwrite'})!=='granted' && await handle.requestPermission({mode:'readwrite'})!=='granted')throw Error('PERMISSION_REVOKED');}, async write(expected,content) {
     const perform = async () => {
       if (await handle.queryPermission({mode:'readwrite'}) !== 'granted') throw Error('PERMISSION_REVOKED');
       const before = await load(); if (before.hash !== expected) throw Error('CONFLICT');
@@ -37,6 +37,9 @@ export class SaveController {
   private deadline?: ReturnType<typeof setTimeout>;
   private queued = false;
   private lastDraft?: string;
+  private draftRevision = -1;
+  private draftBase = '';
+  draftError = '';
   private draftTimer?: ReturnType<typeof setTimeout>;
   private cached?: {revision:number; content:string};
   snapshotContent() {
@@ -51,13 +54,15 @@ export class SaveController {
     if(this.composing)return;
     try {
       if (!this.storage) throw Error('草稿存储不可用');
+      const base=this.base.recoveryHash ?? this.base.hash;
+      if(this.draftAvailable && this.draftRevision===this.revision && this.draftBase===base)return;
       const value=JSON.stringify({documentId:this.base.metadata.documentId,base:this.base.recoveryHash ?? this.base.hash,revision:this.revision,time:Date.now(),content:this.snapshotContent()} satisfies Draft);
-      this.storage.setItem(this.key,value);this.lastDraft=value;this.draftAvailable=true;
+      this.storage.setItem(this.key,value);this.lastDraft=value;this.draftAvailable=true;this.draftRevision=this.revision;this.draftBase=base;this.draftError='';
     }
-    catch { this.draftAvailable=false;this.detail='草稿存储不可用或配额已满；修改尚未写入文件';this.notify(); }
+    catch { this.draftAvailable=false;this.draftError='草稿存储不可用或配额已满；文件保存仍可重试';if(!this.detail)this.detail=this.draftError;this.notify(); }
   }
   recover():Draft|undefined { try { const raw=this.storage?.getItem(this.key);if(!raw)return;const d=JSON.parse(raw);if(typeof d.content!=='string'||d.documentId!==this.base.metadata.documentId)throw Error();if(d.base!==(this.base.recoveryHash ?? this.base.hash)){this.set('conflict','草稿基准已变化；可保留草稿或重新读取文件');}return d; }catch{this.set('failed','草稿不可读取');} }
-  change() { this.dirty=true;this.revision++;if(!['conflict','failed','unauthorized'].includes(this.state)||this.state==='unauthorized'&&(!this.adapter||!this.detail))this.set(this.adapter?'dirty':'draft');if(!this.composing)this.schedule(); }
+  change() { this.dirty=true;this.revision++;if(!['conflict','failed','unauthorized'].includes(this.state)||this.state==='unauthorized'&&(!this.detail||this.detail.startsWith('尚未关联写入文件')))this.set(this.running?'saving':this.adapter?'dirty':'draft');if(!this.composing)this.schedule(); }
   exported(revision:number) { this.exportedRevision=revision;this.set(this.state,'已发起下载，原文件未覆盖（下载是否落盘由浏览器决定）'); }
   // First edit is recoverable immediately; sustained typing checkpoints at most every
   // 200ms (plus main-thread scheduling delay). This is a disclosed crash-loss window.
@@ -76,7 +81,7 @@ export class SaveController {
   composition(active:boolean) {this.composing=active;clearTimeout(this.timer);clearTimeout(this.deadline);this.deadline=undefined;if(!active&&this.dirty)this.schedule();}
   async flush(manual=true) {
     clearTimeout(this.timer);clearTimeout(this.deadline);this.deadline=undefined;
-    if(this.composing||!this.dirty||this.state==='conflict')return;
+    if(this.composing||!this.dirty||this.state==='conflict'||!manual&&['failed','unauthorized'].includes(this.state))return;
     if(this.running){this.queued ||= manual;return;}
     if(!this.adapter){this.draft();this.set('draft',this.detail);return;}
     this.running=true;const rev=this.revision;this.set('saving');
@@ -90,7 +95,7 @@ export class SaveController {
         this.lastDraft=undefined;this.set('saved');
       }
       else {this.set('dirty');this.draft();this.schedule();}
-    } catch(e) {this.draft();const message=String(e);this.set(message.includes('CONFLICT')?'conflict':message.includes('PERMISSION')?'unauthorized':'failed',message);}
+    } catch(e) {this.draft();const message=String(e);this.set(message.includes('CONFLICT')?'conflict':/PERMISSION|NotAllowedError|SecurityError/.test(message)?'unauthorized':'failed',message);}
     finally {this.running=false;if(this.queued){this.queued=false;if(this.state==='dirty')void this.flush();}}
   }
 }

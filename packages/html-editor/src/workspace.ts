@@ -567,6 +567,24 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
             }
             if (!before)
                 before = { id: n.dataset.ppteId!, html: snapshot(n) };
+            // Keep one text host: browser paragraph insertion otherwise creates
+            // block children that are correctly rejected as author containers.
+            if (e.inputType === 'insertParagraph' && !e.isComposing) {
+                e.preventDefault();
+                doc.execCommand('insertLineBreak');
+            }
+        });
+        doc.addEventListener('paste', e => {
+            const n = textObject(e.target as Element);
+            if (!active || !n || commands.protected(n) || !e.clipboardData) return;
+            e.preventDefault();
+            if (!before) before = {id:n.dataset.ppteId!, html:snapshot(n)};
+            // Insert clipboard text as inline line breaks; never import layout,
+            // scripts or nested editing hosts from another application.
+            const text = e.clipboardData.getData('text/plain').replace(/\r\n?/g, '\n');
+            const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+            if (escaped) doc.execCommand('insertHTML', false, escaped);
+            record();
         });
         const record = () => {
             if (before) {

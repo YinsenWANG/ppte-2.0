@@ -19,7 +19,7 @@ test('UI04 A5: 1s debounce, 10s sustained input, default autosave and manual ove
 test('UI04 A6: one writer, stale acknowledgement stays dirty and manual queued revision runs with auto off',async t=>{
  t.mock.timers.enable({apis:['setTimeout']});let value='r1',release!:()=>void;const writes:string[]=[];let active=0,max=0;
  const c=new SaveController({load:async()=>base,write:async(_,content)=>{max=Math.max(max,++active);writes.push(content);if(writes.length===1)await new Promise<void>(r=>release=r);active--;return {...base,content};}},base,()=>value,()=>{});
- c.setAutoSave(false);c.change();const first=c.flush();value='r2';c.change();await c.flush();assert.equal(writes.length,1);release();await first;await settle();assert.equal(max,1);assert.deepEqual(writes,['r1','r2']);assert.equal(c.confirmedFileRevision,2);assert.equal(c.dirty,false);
+ c.setAutoSave(false);c.change();const first=c.flush();value='r2';c.change();assert.equal(c.state,'saving');await c.flush();assert.equal(writes.length,1);release();await first;await settle();assert.equal(max,1);assert.deepEqual(writes,['r1','r2']);assert.equal(c.confirmedFileRevision,2);assert.equal(c.dirty,false);
 });
 test('UI04 A4/A7/A8: errors latch; composition never serializes partial drafts or writes; retry retains baseline',async t=>{
  t.mock.timers.enable({apis:['setTimeout']});let value='complete',failure='PERMISSION_REVOKED',writes=0;const drafts:string[]=[];

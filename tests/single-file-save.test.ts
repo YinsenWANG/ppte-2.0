@@ -1,3 +1,4 @@
+import { downloadUpdated } from './helpers/focused-product.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdir, readFile, writeFile, copyFile } from 'node:fs/promises';
@@ -11,7 +12,7 @@ const out=resolve('artifacts/s02');
 const hash=(s:string)=>createHash('sha256').update(s).digest('hex');
 async function ready(page:Page,file:string){await page.goto(pathToFileURL(file).href);await page.waitForFunction(()=>!!(window as any).PPTeSave);}
 
-test('S02 file entry: no API and denied permission actually download, reopen content/style/lock/media offline',async t=>{
+test('S02 file entry: no API and denied permission require explicit download, reopen content/style/lock/media offline',async t=>{
  await mkdir(out,{recursive:true});
  const media='data:image/svg+xml;base64,'+Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="40" height="20"><rect width="40" height="20" fill="red"/></svg>').toString('base64');
  const file=join(out,'download-source.ppte.html');
@@ -24,7 +25,10 @@ test('S02 file entry: no API and denied permission actually download, reopen con
   for(const mode of ['no-api','denied']){
    await page.evaluate(mode=>{(window as any).showOpenFilePicker=mode==='no-api'?undefined:async()=>[{requestPermission:async()=> 'denied'}];},mode);
    await page.getByText('编辑',{exact:true}).click();await page.frameLocator('#ppte-frame').locator('h1').fill(`Updated ${mode}`);
-   const event=page.waitForEvent('download');await page.frameLocator('#ppte-frame').locator('h1').press('Control+s');const download=await event;
+   const unexpected:string[]=[];const track=(d:any)=>unexpected.push(d.suggestedFilename());page.on('download',track);
+   await page.frameLocator('#ppte-frame').locator('h1').press('Control+s');
+   await page.waitForFunction(()=>(window as any).PPTeSave.state==='unauthorized');await page.waitForTimeout(1100);assert.deepEqual(unexpected,[]);page.off('download',track);
+   const event=page.waitForEvent('download');await downloadUpdated(page);const download=await event;
    const dest=join(out,`${mode}.ppte.html`);await download.saveAs(dest);
    const state=await page.evaluate(()=>{const c=(window as any).PPTeSave;return {state:c.state,dirty:c.dirty,confirmed:c.confirmedFileRevision,exported:c.exportedRevision,revision:c.revision};});
    assert.notEqual(state.state,'saved');assert.equal(state.dirty,true);assert.equal(state.confirmed,null);assert.equal(state.exported,state.revision);
@@ -54,7 +58,7 @@ test('S02 file entry: no API and denied permission actually download, reopen con
   await copied.frameLocator('#ppte-frame').locator('h1').fill('Storage unavailable');
   assert.equal(await copied.evaluate(()=>(window as any).PPTeSave.draftAvailable),false);
   assert.match(await copied.locator('[role=status]').innerText(),/草稿恢复不可用/);
-  const noStorage=copied.waitForEvent('download');await copied.frameLocator('#ppte-frame').locator('h1').press('Control+s');await (await noStorage).saveAs(join(out,'no-storage.ppte.html'));
+  const noStorage=copied.waitForEvent('download');await copied.frameLocator('#ppte-frame').locator('h1').press('Control+s');await downloadUpdated(copied);await (await noStorage).saveAs(join(out,'no-storage.ppte.html'));
   assert.match(readEnhanced(await readFile(join(out,'no-storage.ppte.html'),'utf8')).content,/Storage unavailable/);
   assert.equal(await readFile(file,'utf8'),before);assert.deepEqual(requests,[]);
   await writeFile(join(out,'actual-download-reopen.json'),JSON.stringify({status:'passed',browser:browser.version(),headless:true,capabilities,modes:['no-api','denied'],checks:['actual download.saveAs and file reopen','text/style/lock/media/editor','cancel retains edits','explicit draft recovery','copy isolation','new instance identity UI retired by F01','no HTTP requests'],originalBefore:hash(before),originalAfter:hash(await readFile(file,'utf8'))},null,2));
@@ -87,7 +91,7 @@ test('S02 file handle contract bridge: real file bytes, permission lifecycle, au
   delay=true;await title.fill('In flight');await page.waitForFunction(()=>(window as any).PPTeSave.state==='saving');await title.fill('Latest input');delay=false;release();
   await page.waitForFunction(()=>{const c=(window as any).PPTeSave;return c.state==='saved'&&c.confirmedFileRevision===c.revision;});assert.match(readEnhanced(await readFile(file,'utf8')).content,/Latest input/);
   permission='denied';await title.fill('Permission retained');await page.waitForFunction(()=>(window as any).PPTeSave.state==='unauthorized');assert.equal(await title.innerText(),'Permission retained');
-  const downloadEvent=page.waitForEvent('download');await title.press('Control+s');await (await downloadEvent).saveAs(join(out,'revoked.ppte.html'));
+  await title.press('Control+s');await page.waitForFunction(()=>(window as any).PPTeSave.detail.includes('未获得'));const downloadEvent=page.waitForEvent('download');await downloadUpdated(page);await (await downloadEvent).saveAs(join(out,'revoked.ppte.html'));
   permission='granted';await title.press('Control+s');await page.waitForFunction(()=>(window as any).PPTeSave.state==='saved');assert.match(readEnhanced(await readFile(file,'utf8')).content,/Permission retained/);
   fail=true;await title.fill('Quota retry');await page.waitForFunction(()=>(window as any).PPTeSave.state==='failed');assert.match(readEnhanced(await readFile(file,'utf8')).content,/Permission retained/);fail=false;await title.press('Control+s');await page.waitForFunction(()=>(window as any).PPTeSave.state==='saved');
   const winner=await readFile(file,'utf8');const external=winner.replace(/Quota retry/g,'External winner');await writeFile(file,external);await title.fill('Conflict retained');await page.waitForFunction(()=>(window as any).PPTeSave.state==='conflict');await title.fill('Conflict still retained');await title.press('Control+s');assert.equal(await readFile(file,'utf8'),external);
