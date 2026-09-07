@@ -1,0 +1,96 @@
+TAP version 13
+# 2026-09-07T09:34:55.272Z pw:api => browserType.launch started
+# 2026-09-07T09:34:55.432Z pw:api <= browserType.launch succeeded
+# 2026-09-07T09:34:55.433Z pw:api => browser.newPage started
+# 2026-09-07T09:34:55.572Z pw:api <= browser.newPage succeeded
+# 2026-09-07T09:34:55.573Z pw:api => page.goto started
+# 2026-09-07T09:34:55.573Z pw:api navigating to "file:///var/folders/00/4ydbn_v17qs1pwsgy6lj2x700000gn/T/h04-gSCZaO/%E4%BD%9C%E5%93%81.html", waiting until "load"
+# 2026-09-07T09:34:55.586Z pw:api   "commit" event fired
+# 2026-09-07T09:34:55.587Z pw:api   navigated to "file:///var/folders/00/4ydbn_v17qs1pwsgy6lj2x700000gn/T/h04-gSCZaO/%E4%BD%9C%E5%93%81.html"
+# 2026-09-07T09:34:55.592Z pw:api   navigated to "about:blank"
+# 2026-09-07T09:34:55.608Z pw:api   "domcontentloaded" event fired
+# 2026-09-07T09:34:55.610Z pw:api   navigated to "about:srcdoc"
+# 2026-09-07T09:34:55.639Z pw:api   "load" event fired
+# 2026-09-07T09:34:55.640Z pw:api <= page.goto succeeded
+# 2026-09-07T09:34:55.641Z pw:api => page.waitForFunction started
+# 2026-09-07T09:34:55.651Z pw:api <= page.waitForFunction succeeded
+# 2026-09-07T09:34:55.652Z pw:api => locator.isVisible started
+# 2026-09-07T09:34:55.653Z pw:api   checking visibility of getByRole('button', { name: '编辑', exact: true })
+# 2026-09-07T09:34:55.664Z pw:api <= locator.isVisible succeeded
+# 2026-09-07T09:34:55.665Z pw:api => page.evaluate started
+# 2026-09-07T09:34:55.665Z pw:api <= page.evaluate succeeded
+# 2026-09-07T09:34:55.666Z pw:api => locator.click started
+# 2026-09-07T09:34:55.666Z pw:api waiting for getByRole('button', { name: '编辑', exact: true })
+# 2026-09-07T09:34:55.668Z pw:api   locator resolved to <button aria-pressed="false">编辑</button>
+# 2026-09-07T09:34:55.669Z pw:api attempting click action
+# 2026-09-07T09:34:55.669Z pw:api   waiting for element to be visible, enabled and stable
+# 2026-09-07T09:34:55.792Z pw:api   element is visible, enabled and stable
+# 2026-09-07T09:34:55.792Z pw:api   scrolling into view if needed
+# 2026-09-07T09:34:55.793Z pw:api   done scrolling
+# 2026-09-07T09:34:55.796Z pw:api   performing click action
+# 2026-09-07T09:34:55.801Z pw:api   click action done
+# 2026-09-07T09:34:55.801Z pw:api   waiting for scheduled navigations to finish
+# 2026-09-07T09:34:55.802Z pw:api   navigations have finished
+# 2026-09-07T09:34:55.802Z pw:api <= locator.click succeeded
+# 2026-09-07T09:34:55.802Z pw:api => page.evaluate started
+# 2026-09-07T09:34:55.808Z pw:api <= page.evaluate succeeded
+# 2026-09-07T09:34:55.808Z pw:api => locator.click started
+# 2026-09-07T09:34:55.808Z pw:api waiting for getByRole('button', { name: '放映', exact: true })
+# 2026-09-07T09:34:55.810Z pw:api   locator resolved to <button title="放映" type="button" class="primary">放映</button>
+# 2026-09-07T09:34:55.810Z pw:api attempting click action
+# 2026-09-07T09:34:55.811Z pw:api   waiting for element to be visible, enabled and stable
+# 2026-09-07T09:34:55.924Z pw:api   element is visible, enabled and stable
+# 2026-09-07T09:34:55.924Z pw:api   scrolling into view if needed
+# 2026-09-07T09:34:55.924Z pw:api   done scrolling
+# 2026-09-07T09:34:55.926Z pw:api   performing click action
+# 2026-09-07T09:34:55.931Z pw:api   click action done
+# 2026-09-07T09:34:55.931Z pw:api   waiting for scheduled navigations to finish
+# 2026-09-07T09:34:55.932Z pw:api   navigations have finished
+# 2026-09-07T09:34:55.932Z pw:api <= locator.click succeeded
+# 2026-09-07T09:34:55.932Z pw:api => locator.isVisible started
+# 2026-09-07T09:34:55.933Z pw:api   checking visibility of locator('\#ppte-save-ui')
+# 2026-09-07T09:34:55.935Z pw:api <= locator.isVisible succeeded
+# 2026-09-07T09:34:55.935Z pw:api => locator.isVisible started
+# 2026-09-07T09:34:55.935Z pw:api   checking visibility of locator('\#ppte-workspace')
+# 2026-09-07T09:34:55.936Z pw:api <= locator.isVisible succeeded
+# 2026-09-07T09:34:55.936Z pw:api => locator.isVisible started
+# 2026-09-07T09:34:55.936Z pw:api   checking visibility of locator('\#ppte-frame').contentFrame().locator('[data-ppte-slide=two]')
+# 2026-09-07T09:34:55.945Z pw:api <= locator.isVisible succeeded
+# 2026-09-07T09:34:55.945Z pw:api => locator.isVisible started
+# 2026-09-07T09:34:55.945Z pw:api   checking visibility of locator('\#ppte-frame').contentFrame().locator('[data-ppte-step]').first()
+# 2026-09-07T09:34:55.947Z pw:api <= locator.isVisible succeeded
+# 2026-09-07T09:34:55.947Z pw:api => locator.evaluate started
+# 2026-09-07T09:34:55.947Z pw:api waiting for locator('\#ppte-frame').contentFrame().locator('h1').first()
+# 2026-09-07T09:34:55.949Z pw:api   locator resolved to visible <h1 data-ppte-id="title" contenteditable="false" data-ppte-editor-text="">First slide</h1>
+# 2026-09-07T09:34:55.956Z pw:api <= locator.evaluate succeeded
+# 2026-09-07T09:34:55.957Z pw:api => locator.count started
+# 2026-09-07T09:34:55.957Z pw:api <= locator.count succeeded
+# 2026-09-07T09:34:55.957Z pw:api => mouse.move started
+# 2026-09-07T09:34:56.031Z pw:api <= mouse.move succeeded
+# 2026-09-07T09:34:56.031Z pw:api => page.waitForTimeout started
+# 2026-09-07T09:34:56.112Z pw:api   "networkidle" event fired
+# 2026-09-07T09:34:58.033Z pw:api <= page.waitForTimeout succeeded
+# 2026-09-07T09:34:58.033Z pw:api => locator.count started
+# 2026-09-07T09:35:10.358Z pw:api <= locator.count succeeded
+# 2026-09-07T09:35:10.358Z pw:api => keyboard.press started
+# 2026-09-07T09:35:10.359Z pw:api <= keyboard.press succeeded
+# 2026-09-07T09:35:10.360Z pw:api => page.evaluate started
+# Subtest: dist/tests/html-player.test.js
+not ok 1 - dist/tests/html-player.test.js
+  ---
+  duration_ms: 20002.161292
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/html-player.test.js:1:1'
+  failureType: 'testTimeoutFailure'
+  error: 'test timed out after 20000ms'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 0
+# cancelled 1
+# skipped 0
+# todo 0
+# duration_ms 20005.826417

@@ -1,0 +1,74 @@
+TAP version 13
+# Subtest: dist/tests/html-player.test.js
+not ok 1 - dist/tests/html-player.test.js
+  ---
+  duration_ms: 25003.264333
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/html-player.test.js:1:1'
+  failureType: 'testTimeoutFailure'
+  error: 'test timed out after 25000ms'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: S06 table: SHA-256 vectors, legacy identity, dedup, stable references, missing/corrupt resources, no CSP expansion
+ok 2 - S06 table: SHA-256 vectors, legacy identity, dedup, stable references, missing/corrupt resources, no CSP expansion
+  ---
+  duration_ms: 56.921209
+  type: 'test'
+  ...
+# Subtest: dist/tests/single-file-media.test.js
+not ok 2 - dist/tests/single-file-media.test.js
+  ---
+  duration_ms: 25002.236792
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/single-file-media.test.js:1:1'
+  failureType: 'testTimeoutFailure'
+  error: 'test timed out after 25000ms'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: UI01 acceptance 1: offline initial, copied and downloaded files reopen in reading in a fresh process
+ok 4 - UI01 acceptance 1: offline initial, copied and downloaded files reopen in reading in a fresh process
+  ---
+  duration_ms: 2260.681333
+  type: 'test'
+  ...
+# Subtest: UI01 acceptance 2: editor expands context on real selection, closes properties, keeps author DOM and input through mode switches
+ok 5 - UI01 acceptance 2: editor expands context on real selection, closes properties, keeps author DOM and input through mode switches
+  ---
+  duration_ms: 1740.831083
+  type: 'test'
+  ...
+# Subtest: dist/tests/ui01-shell.test.js
+not ok 3 - dist/tests/ui01-shell.test.js
+  ---
+  duration_ms: 25002.418708
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/ui01-shell.test.js:1:1'
+  failureType: 'testTimeoutFailure'
+  error: 'test timed out after 25000ms'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: UI02 acceptance 1: four object types adjust through UI and survive actual download / fresh process
+ok 7 - UI02 acceptance 1: four object types adjust through UI and survive actual download / fresh process
+  ---
+  duration_ms: 8347.593792
+  type: 'test'
+  ...
+# Subtest: dist/tests/ui02-objects.test.js
+not ok 4 - dist/tests/ui02-objects.test.js
+  ---
+  duration_ms: 25003.265083
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/ui02-objects.test.js:1:1'
+  failureType: 'testTimeoutFailure'
+  error: 'test timed out after 25000ms'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 4
+# fail 0
+# cancelled 4
+# skipped 0
+# todo 0
+# duration_ms 25010.861334

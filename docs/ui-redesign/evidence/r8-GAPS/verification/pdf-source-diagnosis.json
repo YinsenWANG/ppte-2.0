@@ -1,0 +1,25 @@
+{
+  "time": "2026-09-07T09:40:29.472274+00:00",
+  "historicalPDFSha256": "811002cd2897884e9ce813a3d8d41b3f66afe366277eaa042423fcc7c4f2f92f",
+  "originalAudit": {
+    "sRGBRedPixels": 0,
+    "sampleRaw": [
+      0.9176470588235294,
+      0.2,
+      0.13725490196078433
+    ],
+    "sampleSRGB": [
+      0.9437933564186096,
+      0.2930677831172943,
+      0.17751452326774597
+    ],
+    "rawBluePixels": 6320,
+    "sRGBBluePixels": 0,
+    "space": "Generic RGB",
+    "rawRedPixels": 0
+  },
+  "contentStreamsContainingDeviceRGBRedAndBlue": [
+    ".23999999 0 0 -.23999999 0 404.88 cm\nq\n3.125 0 0 3.125 0 0 cm\n1 1 1 RG 1 1 1 rg\n/G3 gs\n0 0 960 540 re\nf\nQ\nq\n0 0 3000 1687.5 re\nW* n\nq\n3.125 0 0 3.125 0 0 cm\n1 1 1 RG 1 1 1 rg\n/G3 gs\n0 0 960 540 re\nf\nQ\nQ\nq\n0 0 3000 1687.5 re\nW* n\nq\n3.125 0 0 3.125 0 0 cm\n1 1 1 RG 1 1 1 rg\n/G3 gs\n0 0 960 540 re\nf\n.0667 .1333 .2 RG .0667 .1333 .2 rg\nBT\n/F4 48 Tf\n1 0 0 -1 40 116 Tm\n<003200490049004F004C0051004800030058005300470044005700480047> Tj\nET\nBT\n/F5 24 Tf\n1 0 0 -1 40 181 Tm\n<0026005200500053004F004800570048000300550048005900480044004F> Tj\nET\nQ\nQ\nq\n125 659.375 500 250 re\nW* n\nq\n3.125 0 0 3.125 125 659.375 cm\n1 0 0 RG 1 0 0 rg\n/G3 gs\n0 0 160 80 re\nf\n0 0 1 RG 0 0 1 rg\n80 0 80 80 re\nf\nQ\nQ\n"
+  ],
+  "conclusion": "Historical PDF contains vector red/blue paint operators (DeviceRGB rg 1 0 0 and 0 0 1). Old Generic RGB thumbnail pixels are not a fixed sRGB oracle. Rendering the page directly into explicit sRGB RGBA8 passes unchanged >4000 gates and negative controls. Exact historical display/profile configuration was not recorded and cannot be reconstructed."
+}

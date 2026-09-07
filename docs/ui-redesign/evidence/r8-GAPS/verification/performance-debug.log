@@ -1,0 +1,16 @@
+{
+  active: 'IFRAME',
+  inner: '<section data-ppte-slide="s0" data-ppte-id="s0" data-ppte-editor-focus="" tabindex="0" data-ppte-editor-selected=""><h1 data-ppte-id="t0" data-ppte-editor-text="" contenteditable="true" data-ppte-editor-focus="">第 1 页：完整保留事实</h1><p data-ppte-id="ppte-2" data-ppte-editor-text="" contenteditable="true" data-ppte-editor-focus="">固定轻资源样本，输入、翻页与保存均保留全部十二页。</p></section>'
+}
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+page.waitForFunction: Timeout 10000ms exceeded.
+    at measureGapsPerformance (/private/tmp/ppte8/scripts/r8-gaps-performance.mjs:31:66)
+    at async file:///private/tmp/ppte8/scripts/r8-gaps-performance.mjs:42:85 {
+  log: [],
+  name: 'TimeoutError'
+}
+
+Node.js v22.23.2

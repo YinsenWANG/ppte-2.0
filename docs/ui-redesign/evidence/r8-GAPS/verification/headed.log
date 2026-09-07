@@ -1,0 +1,8 @@
+{
+  input: 16.100000143051147,
+  turn: 16.200000047683716,
+  inputHandler: 0.3000001907348633,
+  turnHandler: 2.700000047683716,
+  blankIdle: 33.5,
+  editorIdle: 18.5
+}

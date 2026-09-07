@@ -1,0 +1,28 @@
+TAP version 13
+# Subtest: H01 acceptance 1: native Grid/Flex/SVG/font hierarchy and nested resources retain computed layout and exact pixels
+not ok 1 - H01 acceptance 1: native Grid/Flex/SVG/font hierarchy and nested resources retain computed layout and exact pixels
+  ---
+  duration_ms: 1044.759834
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/html-document.test.js:35:1'
+  failureType: 'testCodeFailure'
+  error: 'Content canvas PNG bytes must match exactly'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/html-document.test.js:66:16)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1354.951792

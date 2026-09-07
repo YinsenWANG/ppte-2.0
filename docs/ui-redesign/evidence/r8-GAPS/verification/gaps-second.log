@@ -1,0 +1,33 @@
+TAP version 13
+# Subtest: GAPS N04: fixed sRGB rasterization preserves original >4000 gates and rejects missing red, blue, and image
+ok 1 - GAPS N04: fixed sRGB rasterization preserves original >4000 gates and rejects missing red, blue, and image
+  ---
+  duration_ms: 2062.204375
+  type: 'test'
+  ...
+# Subtest: GAPS A4: real navigation, image edit undo, versions, download/reopen, presentation and PDF demand/release
+not ok 2 - GAPS A4: real navigation, image edit undo, versions, download/reopen, presentation and PDF demand/release
+  ---
+  duration_ms: 31030.916625
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/r8-gaps.test.js:40:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    locator.click: Timeout 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: '填充裁切', exact: true })[22m
+    
+  code: 'ERR_TEST_FAILURE'
+  name: 'TimeoutError'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/ppte8/dist/tests/r8-gaps.test.js:73:71)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 1
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 33665.349459

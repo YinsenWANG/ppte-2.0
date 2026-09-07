@@ -8,7 +8,7 @@
     "b1ceb6a49ea3b9fd82963e9d2bb632e4222973be",
     "c1397304d643545206b92b795e7700c5e225300d"
   ],
-  "scope": "UI01–UI05 code/automation done. UI07 partial: current-media lifecycle A4 remains. UI06 partial: offline four-object portable-history/PDF journey passed; native/Safari/human and UI07 dependency gaps remain.",
+  "scope": "UI01–UI05 code/automation done. GAPS closes current-page img/video/audio/source demand lifecycle and N04 automated PDF color detection. S04 headed 50/100ms passes, default headless input remains failed. UI06/UI07 remain partial across native/Safari/human layers; CLOSING pending.",
   "tasks": [
     {
       "id": "UI01",
@@ -291,16 +291,28 @@
         "docs/ui-redesign/evidence/delivery/把作品带走.ppte.html",
         "docs/ui-redesign/evidence/UI07-close/HANDOFF.md",
         "docs/ui-redesign/evidence/UI07-close/acceptance.json",
-        "docs/ui-redesign/evidence/UI07-close/verification/result.json"
+        "docs/ui-redesign/evidence/UI07-close/verification/result.json",
+        "docs/ui-redesign/evidence/r8-GAPS/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/r8-GAPS/verification/result.json",
+        "tests/r8-gaps.test.ts"
       ],
       "implementationCommit": "536674af1cbb4163434761804d487a57aae9982a",
       "statusByLayer": {
-        "code": "partial: journey and records complete; UI07 A4 dependency incomplete",
-        "automated": "104/104 passed; full UI06 Chrome journey and evidence contracts; native/Safari criterion not established",
+        "code": "done: offline journey plus media dependency and deterministic PDF oracle",
+        "automated": "126/126 current full suite; GAPS A4/N04 passed in scoped automation; S04 default headless input gate still failed",
         "real-browser": "partial: installed Chrome headless file://; native picker, Safari, OS IME, native print and independent device pending",
         "human": "pending: owner and two target-user UI and aesthetic reviews absent"
       },
-      "closingAcceptance": "partial: code/automated task status is not four-layer product acceptance"
+      "closingAcceptance": "partial: code/automated task status is not four-layer product acceptance",
+      "gapsR8": {
+        "commit": "86c8ce3669047e5de14575f0d515f04cc387e285",
+        "code": "done: current-page media demand and snapshot fidelity; fixed sRGB PDF detector",
+        "automated": "126/126 passed; S04 headless input latency gate remains failed",
+        "real-browser": "partial: installed Chrome offline headless journeys and headed performance; native/Safari/physical device pending",
+        "human": "pending: no owner, target-user or assistive-technology review",
+        "evidence": "docs/ui-redesign/evidence/r8-GAPS/verification/result.json",
+        "remaining": "Native authorization, Safari, OS IME, native print, physical-device/human acceptance; S04 headless input and independent generation telemetry."
+      }
     },
     {
       "id": "UI07",
@@ -330,12 +342,15 @@
         "docs/ui-redesign/evidence/UI07-close/verification/result.json",
         "docs/ui-redesign/evidence/r8-R6/IMPLEMENTATION.md",
         "docs/ui-redesign/evidence/r8-R6/verification/result.json",
-        "tests/r8-r6-versions.test.ts"
+        "tests/r8-r6-versions.test.ts",
+        "docs/ui-redesign/evidence/r8-GAPS/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/r8-GAPS/verification/result.json",
+        "tests/r8-gaps.test.ts"
       ],
       "implementationCommit": "a8d9039f7e028a13dd892de84d0d5b3b3d086c35",
       "statusByLayer": {
-        "code": "partial: portable history implemented; A4 current-media lifecycle requirement remains",
-        "automated": "88/88 tests passed; eight UI07 tests; A4 strict current-DOM criterion remains partial",
+        "code": "done: portable history plus current-page media lifecycle",
+        "automated": "126/126 current full suite; GAPS A4/N04 passed in scoped automation; S04 default headless input gate still failed",
         "real-browser": "partial: Chrome headless file journey and disk bridge passed; native/Safari/system IME pending",
         "human": "pending: no reviewer or independent device evidence"
       },
@@ -347,6 +362,15 @@
         "human": "pending: no owner, screen reader or target-user review",
         "remaining": "UI07 A4 media lifecycle and GAPS performance/PDF remain; overall UI07 stays partial",
         "implementationCommit": "5da92d185ed694d469fad1d0b3916631c2130727"
+      },
+      "gapsR8": {
+        "commit": "86c8ce3669047e5de14575f0d515f04cc387e285",
+        "code": "done: current-page media demand and snapshot fidelity; fixed sRGB PDF detector",
+        "automated": "126/126 passed; S04 headless input latency gate remains failed",
+        "real-browser": "partial: installed Chrome offline headless journeys and headed performance; native/Safari/physical device pending",
+        "human": "pending: no owner, target-user or assistive-technology review",
+        "evidence": "docs/ui-redesign/evidence/r8-GAPS/verification/result.json",
+        "remaining": "Native authorization, Safari, OS IME, native print, physical-device/human acceptance; S04 headless input and independent generation telemetry."
       }
     }
   ],

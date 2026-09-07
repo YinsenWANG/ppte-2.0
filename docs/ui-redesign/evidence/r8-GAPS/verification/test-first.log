@@ -1,0 +1,202 @@
+$ pnpm build && node --test dist/tests/*.test.js
+$ node scripts/build-html.mjs --clean && tsc -p tsconfig.build.json
+TAP version 13
+# Subtest: H01 acceptance 1: native Grid/Flex/SVG/font hierarchy and nested resources retain computed layout and exact pixels
+not ok 1 - H01 acceptance 1: native Grid/Flex/SVG/font hierarchy and nested resources retain computed layout and exact pixels
+  ---
+  duration_ms: 1919.280791
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/html-document.test.js:35:1'
+  failureType: 'testCodeFailure'
+  error: 'Content canvas PNG bytes must match exactly'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/html-document.test.js:66:16)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: H01 acceptance 1: deterministic IDs reserve author identities, repair duplicates and preserve nested template escaping
+ok 2 - H01 acceptance 1: deterministic IDs reserve author identities, repair duplicates and preserve nested template escaping
+  ---
+  duration_ms: 96.650625
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 2: 100 actual browser serialize/write/close/reopen cycles retain one payload and no editing residue
+ok 3 - H01 acceptance 2: 100 actual browser serialize/write/close/reopen cycles retain one payload and no editing residue
+  ---
+  duration_ms: 27181.73
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 2: sanitizer reports executable content; runtime sandbox/CSP block independent script/event/network/navigation attempts
+ok 4 - H01 acceptance 2: sanitizer reports executable content; runtime sandbox/CSP block independent script/event/network/navigation attempts
+  ---
+  duration_ms: 682.458292
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 2: safe serialization fails closed for executable CSS, SVG data, remote resource and malformed metadata
+ok 5 - H01 acceptance 2: safe serialization fails closed for executable CSS, SVG data, remote resource and malformed metadata
+  ---
+  duration_ms: 36.355584
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 3: offline CLI with no PATH/keys/browser writes exactly one HTML and <=1KB summary
+ok 6 - H01 acceptance 3: offline CLI with no PATH/keys/browser writes exactly one HTML and <=1KB summary
+  ---
+  duration_ms: 335.469792
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 3: rejection creates no output; local resource root, symlinks, missing resources and import cycles fail explicitly
+ok 7 - H01 acceptance 3: rejection creates no output; local resource root, symlinks, missing resources and import cycles fail explicitly
+  ---
+  duration_ms: 117.741708
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 4: actual bundled CLI/runtime import graphs exclude old representations; all three H00 drafts enhance directly
+ok 8 - H01 acceptance 4: actual bundled CLI/runtime import graphs exclude old representations; all three H00 drafts enhance directly
+  ---
+  duration_ms: 132.029792
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 1/3: embedded SVG references preserve fragment identity and diagnostics obey byte limits
+ok 9 - H01 acceptance 1/3: embedded SVG references preserve fragment identity and diagnostics obey byte limits
+  ---
+  duration_ms: 76.597666
+  type: 'test'
+  ...
+# Subtest: H03 acceptance 2/3: viewport changes retain focused format control, selection and original DOM without edits
+ok 10 - H03 acceptance 2/3: viewport changes retain focused format control, selection and original DOM without edits
+  ---
+  duration_ms: 3092.230875
+  type: 'test'
+  ...
+# Subtest: H03 acceptance 1: real object selection, empty/multiple/mixed contextual shell and screenshots
+ok 11 - H03 acceptance 1: real object selection, empty/multiple/mixed contextual shell and screenshots
+  ---
+  duration_ms: 5822.221166
+  type: 'test'
+  ...
+# Subtest: H03 acceptance 2: computed normal text contrast >=4.5, visible keyboard focus and keyboard object/format path
+ok 12 - H03 acceptance 2: computed normal text contrast >=4.5, visible keyboard focus and keyboard object/format path
+  ---
+  duration_ms: 2330.2475
+  type: 'test'
+  ...
+# Subtest: H03 acceptance 3: local text/range history preserves sibling identity, native Grid/Flex strategies and protected Agent hash
+ok 13 - H03 acceptance 3: local text/range history preserves sibling identity, native Grid/Flex strategies and protected Agent hash
+  ---
+  duration_ms: 2716.783834
+  type: 'test'
+  ...
+# Subtest: H03 acceptance 4: original-file reopen retains text, range style, layout, media, table/background/lock; errors retain work
+ok 14 - H03 acceptance 4: original-file reopen retains text, range style, layout, media, table/background/lock; errors retain work
+  ---
+  duration_ms: 6337.366916
+  type: 'test'
+  ...
+# Subtest: H03 native typing history, atomic multi-edit failure, table cell and page insertion history
+ok 15 - H03 native typing history, atomic multi-edit failure, table cell and page insertion history
+  ---
+  duration_ms: 1580.272667
+  type: 'test'
+  ...
+# Subtest: H03 original-file persisted range formatting and keyboard/pointer layout; clean preview returns to edit
+ok 16 - H03 original-file persisted range formatting and keyboard/pointer layout; clean preview returns to edit
+  ---
+  duration_ms: 4998.725583
+  type: 'test'
+  ...
+# Subtest: H03 guarded SVG replacement, protected native input, composition events coalesce and hash race rejects
+ok 17 - H03 guarded SVG replacement, protected native input, composition events coalesce and hash race rejects
+  ---
+  duration_ms: 1348.765959
+  type: 'test'
+  ...
+# Subtest: H00 acceptance 1: frozen positive HTML contract excludes retired formats and IR pipeline
+ok 18 - H00 acceptance 1: frozen positive HTML contract excludes retired formats and IR pipeline
+  ---
+  duration_ms: 2.5575
+  type: 'test'
+  ...
+# Subtest: H00 acceptance 2: real fixed materials, all nine pairs and cold/hot missing data stay pending
+ok 19 - H00 acceptance 2: real fixed materials, all nine pairs and cold/hot missing data stay pending
+  ---
+  duration_ms: 88.62025
+  type: 'test'
+  ...
+# Subtest: H00 acceptance 2: missing timings/tokens, changed model/materials, omitted runs and fake success fail
+ok 20 - H00 acceptance 2: missing timings/tokens, changed model/materials, omitted runs and fake success fail
+  ---
+  duration_ms: 31.551625
+  type: 'test'
+  ...
+# Subtest: H00 acceptance 2: observed failures are retained, never repaired away or silently excluded
+ok 21 - H00 acceptance 2: observed failures are retained, never repaired away or silently excluded
+  ---
+  duration_ms: 12.308458
+  type: 'test'
+  ...
+# Subtest: H00 acceptance 2: artifact bytes must exist inside evidence root including symlink resolution
+ok 22 - H00 acceptance 2: artifact bytes must exist inside evidence root including symlink resolution
+  ---
+  duration_ms: 37.897375
+  type: 'test'
+  ...
+# Subtest: H00 acceptance 2: capture records actual subprocess time/bytes/failure and refuses overwrite
+ok 23 - H00 acceptance 2: capture records actual subprocess time/bytes/failure and refuses overwrite
+  ---
+  duration_ms: 61.273667
+  type: 'test'
+  ...
+# Subtest: H00 retained exploratory HTML has twelve pages, no runtime/network and real data table; not timing evidence
+ok 24 - H00 retained exploratory HTML has twelve pages, no runtime/network and real data table; not timing evidence
+  ---
+  duration_ms: 0.811708
+  type: 'test'
+  ...
+# Subtest: H00 dependency inventory preserves evidence of live retired dependencies without declaring retirement
+ok 25 - H00 dependency inventory preserves evidence of live retired dependencies without declaring retirement
+  ---
+  duration_ms: 1.286959
+  type: 'test'
+  ...
+# Subtest: H05 acceptance 1: static CLI/runtime graph and actual installed npm tarball contain only HTML dependencies
+ok 26 - H05 acceptance 1: static CLI/runtime graph and actual installed npm tarball contain only HTML dependencies
+  ---
+  duration_ms: 2.215625
+  type: 'test'
+  ...
+# Subtest: H05 acceptance 2: offline installed CLI generates HTML with network and external processes forbidden
+ok 27 - H05 acceptance 2: offline installed CLI generates HTML with network and external processes forbidden
+  ---
+  duration_ms: 165.54825
+  type: 'test'
+  ...
+# Subtest: H05 acceptance 3: candidate runtime <=250 KB gzip and three twelve-page light HTMLs <=1 MB measured
+ok 28 - H05 acceptance 3: candidate runtime <=250 KB gzip and three twelve-page light HTMLs <=1 MB measured
+  ---
+  duration_ms: 427.13
+  type: 'test'
+  ...
+# Subtest: H05 acceptance 4: isolated install, reusable skill and overwrite refusal preserve existing user files
+ok 29 - H05 acceptance 4: isolated install, reusable skill and overwrite refusal preserve existing user files
+  ---
+  duration_ms: 1228.08675
+  type: 'test'
+  ...
+# Subtest: H05 acceptance 2: packaged HTML prints through separately available Chrome PDF toolchain
+ok 30 - H05 acceptance 2: packaged HTML prints through separately available Chrome PDF toolchain
+  ---
+  duration_ms: 2573.02425
+  type: 'test'
+  ...
+# Subtest: H05 retirement: all historical test files remain byte-identical to the pre-H05 manifest
+ok 31 - H05 retirement: all historical test files remain byte-identical to the pre-H05 manifest
+  ---
+  duration_ms: 12.810333
+  type: 'test'
+  ...
+[ELIFECYCLE] Test failed. See above for more details.

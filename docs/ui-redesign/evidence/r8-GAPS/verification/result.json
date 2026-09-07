@@ -1,0 +1,325 @@
+{
+  "task": "GAPS",
+  "time": "2026-09-07T09:43:55.459608+00:00",
+  "baseCommit": "f5ba1900cb1467126cc3edd911ce762413280cdb",
+  "parentCommit": "00dd9d9",
+  "implementationCommit": "86c8ce3669047e5de14575f0d515f04cc387e285",
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "86c8ce3669047e5de14575f0d515f04cc387e285",
+      "completedAt": "2026-09-07T09:37:44.099115+00:00",
+      "log": "typecheck.log",
+      "note": "Typecheck/build/test ran on the exact product/test working tree subsequently committed as implementationCommit; all later changes are evidence/docs. Performance command completion is not a passing latency gate."
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "86c8ce3669047e5de14575f0d515f04cc387e285",
+      "completedAt": "2026-09-07T09:37:45.353161+00:00",
+      "log": "build.log",
+      "note": "Typecheck/build/test ran on the exact product/test working tree subsequently committed as implementationCommit; all later changes are evidence/docs. Performance command completion is not a passing latency gate."
+    },
+    {
+      "command": "pnpm test",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "86c8ce3669047e5de14575f0d515f04cc387e285",
+      "completedAt": "2026-09-07T09:38:34.872956+00:00",
+      "log": "test.log",
+      "note": "Typecheck/build/test ran on the exact product/test working tree subsequently committed as implementationCommit; all later changes are evidence/docs. Performance command completion is not a passing latency gate."
+    },
+    {
+      "command": "node docs/audits/2026-09-07-ui-d96f211/probe.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "86c8ce3669047e5de14575f0d515f04cc387e285",
+      "completedAt": "2026-09-07T09:39:25.812227+00:00",
+      "log": "probe.log",
+      "note": "Typecheck/build/test ran on the exact product/test working tree subsequently committed as implementationCommit; all later changes are evidence/docs. Performance command completion is not a passing latency gate."
+    },
+    {
+      "command": "node docs/audits/2026-09-07-ui-d96f211/followup.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "86c8ce3669047e5de14575f0d515f04cc387e285",
+      "completedAt": "2026-09-07T09:39:29.534764+00:00",
+      "log": "followup.log",
+      "note": "Typecheck/build/test ran on the exact product/test working tree subsequently committed as implementationCommit; all later changes are evidence/docs. Performance command completion is not a passing latency gate."
+    },
+    {
+      "command": "node scripts/r8-gaps-performance.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "86c8ce3669047e5de14575f0d515f04cc387e285",
+      "completedAt": "2026-09-07T09:40:41.845598+00:00",
+      "log": "performance-final.log",
+      "note": "Typecheck/build/test ran on the exact product/test working tree subsequently committed as implementationCommit; all later changes are evidence/docs. Performance command completion is not a passing latency gate."
+    },
+    {
+      "command": "node --input-type=module (measureGapsPerformance with headless=false; see scripts/r8-gaps-performance.mjs)",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "86c8ce3669047e5de14575f0d515f04cc387e285",
+      "completedAt": "2026-09-07T09:40:46.346139+00:00",
+      "log": "headed-final.log",
+      "note": "Typecheck/build/test ran on the exact product/test working tree subsequently committed as implementationCommit; all later changes are evidence/docs. Performance command completion is not a passing latency gate."
+    },
+    {
+      "command": "swift scripts/r8-gaps-pdf-diagnosis.swift docs/audits/2026-09-07-main-61310c7/evidence/initial-s07.pdf artifacts/s07/journey.pdf",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "86c8ce3669047e5de14575f0d515f04cc387e285",
+      "completedAt": "2026-09-07T09:39:24.504339+00:00",
+      "log": "pdf-legacy-diagnosis.log",
+      "note": "Typecheck/build/test ran on the exact product/test working tree subsequently committed as implementationCommit; all later changes are evidence/docs. Performance command completion is not a passing latency gate."
+    },
+    {
+      "command": "node dist/apps/html-cli/index.js enhance docs/audits/2026-09-07-ui-d96f211/sample/source.html --out docs/ui-redesign/evidence/r8-GAPS/sample.ppte.html",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "86c8ce3669047e5de14575f0d515f04cc387e285",
+      "completedAt": "2026-09-07T09:40:29.534741+00:00",
+      "log": "cli.log",
+      "note": "Typecheck/build/test ran on the exact product/test working tree subsequently committed as implementationCommit; all later changes are evidence/docs. Performance command completion is not a passing latency gate."
+    },
+    {
+      "command": "node docs/ui-redesign/evidence/r8-GAPS/verification/offline-sample.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "86c8ce3669047e5de14575f0d515f04cc387e285",
+      "completedAt": "2026-09-07T09:41:28.529066+00:00",
+      "log": "sample.log",
+      "note": "Typecheck/build/test ran on the exact product/test working tree subsequently committed as implementationCommit; all later changes are evidence/docs. Performance command completion is not a passing latency gate."
+    },
+    {
+      "command": "git verify-commit 86c8ce3669047e5de14575f0d515f04cc387e285",
+      "status": "passed",
+      "exitCode": 0,
+      "commit": "86c8ce3669047e5de14575f0d515f04cc387e285",
+      "completedAt": "2026-09-07T09:39:24.522429+00:00",
+      "log": "signature.log",
+      "note": "Typecheck/build/test ran on the exact product/test working tree subsequently committed as implementationCommit; all later changes are evidence/docs. Performance command completion is not a passing latency gate."
+    }
+  ],
+  "tests": {
+    "passed": 126,
+    "failed": 0,
+    "log": "test.log",
+    "integrity": "Existing PDF redPixels>4000 and bluePixels>4000, canonical-content and exact-pixel assertions retained. S06 still decodes all 12/13 images, now via real owning-page navigation. New tests run with node --test on dist. Performance measurement-integrity success is not a timing pass.",
+    "intermediateFailures": [
+      {
+        "log": "test-first.log",
+        "status": "interrupted",
+        "reason": "Media-size load handler also received stylesheet load events, causing repeated fitting and long-running journeys. H01 differed by 1 channel level on 35,130 pixels. Fixed by responding only to IMG load; exact PNG equality then passed."
+      },
+      {
+        "log": "test-second.log",
+        "passed": 124,
+        "failed": 2,
+        "reason": "Restoring deferred src/poster moved attributes, causing H04/UI06 canonical-content inequality. Renaming now preserves attribute order; no assertions changed."
+      }
+    ],
+    "targetedLogs": "pdf-before.log, gaps-*.log, media-initial.log, load-fix.log preserve intermediate investigations; only test.log is final full-suite acceptance"
+  },
+  "statusByLayer": {
+    "code": "passed: demand/release for img/video/audio/source, snapshot fidelity and explicit sRGB PDF oracle implemented; performance investigation completed with remaining gate reported",
+    "automated": "126/126 passed; A4 and N04 closed in automated scope; default headless S04 input gate remains failed",
+    "real-browser": "partial: installed Chrome 152.0.7977.76 headless file:// offline and headed performance measurements; native/Safari/physical device pending",
+    "human": "pending: no human review or screen reader session"
+  },
+  "items": {
+    "S04": {
+      "status": "partial",
+      "beforeSyntheticP95": {
+        "input": 139.19999980926514,
+        "turn": 150.29999995231628,
+        "save": 1048.7999999523163
+      },
+      "beforeMethod": "before.json: original-style synthetic input plus idle samples; cannot be equated to a real-event before/after speedup",
+      "finalHeadless": {
+        "input": 143.90000009536743,
+        "turn": 52.299999952316284,
+        "inputHandler": 0.5,
+        "turnHandler": 11,
+        "blankIdle": 143.09999990463257,
+        "editorIdle": 143.29999995231628
+      },
+      "headlessTargets": {
+        "inputLimitMs": 50,
+        "turnLimitMs": 100,
+        "inputPassed": false,
+        "turnPassed": true
+      },
+      "finalHeaded": {
+        "input": 15.300000190734863,
+        "turn": 29.09999990463257,
+        "inputHandler": 0.3000001907348633,
+        "turnHandler": 7.299999952316284,
+        "blankIdle": 33.299999952316284,
+        "editorIdle": 33.5
+      },
+      "headedTargets": {
+        "inputLimitMs": 50,
+        "turnLimitMs": 100,
+        "inputPassed": true,
+        "turnPassed": true
+      },
+      "sources": [
+        "performance.json",
+        "headed/performance.json"
+      ],
+      "finding": "Default headless blank-page and editor idle rAF exhibit the same ~143ms delay as input; final input handler p95 is 0.5ms and turn handler 11ms. Same final build with headed Chrome and no custom launch flags meets 50/100ms. The ~133ms legacy regression is dominated by rendering/frame scheduling in this environment, not 133ms of text-command work. Exact historical compositor/power state was not recorded. No headless input success or cross-environment speedup claimed.",
+      "historicalCompositorConfiguration": null,
+      "historicalCompositorConfigurationReason": "Not recorded in S04 baseline; no reconstruction claimed"
+    },
+    "UI07-A4-S06": {
+      "status": "passed-automated-scope",
+      "before": "All current-document data URLs mounted eagerly; strict lifecycle remained partial. See UI07 IMPLEMENTATION.md and S08 matrix.",
+      "after": {
+        "time": "2026-09-07T09:37:59.652Z",
+        "browser": "152.0.7977.76",
+        "offline": true,
+        "freshProcess": true,
+        "sourceImages": 12,
+        "activeImages": 1,
+        "inactiveURLs": 0,
+        "releasedNaturalWidth": 0,
+        "printImages": 13,
+        "previewRemovedOnClose": true,
+        "printRemovedOnAfterprint": true,
+        "network": [],
+        "errors": [],
+        "nativePrint": null,
+        "nativePrintReason": "window.print stub only retains prepared DOM for PDF API; no native dialog evidence",
+        "decodedMemoryBytes": null,
+        "decodedMemoryReason": "URL and naturalWidth release measured; browser GPU/decoder cache reclamation is not observable"
+      },
+      "evidence": [
+        "tests/r8-gaps.test.ts",
+        "tests/single-file-media.test.ts",
+        "media-lifecycle.json",
+        "s06-journey.json",
+        "ui06-journey.json",
+        "ui07-journey.json"
+      ],
+      "limits": "Encoded media strings remain available for canonical saves; no claim that a browser has freed internal decoded caches. CSS/inline SVG stay under native browser rendering and are not rewritten into a blob/resource schema."
+    },
+    "N04": {
+      "status": "passed-automated-scope",
+      "before": "Historical independent audit redPixels=0, bluePixels=6320; original S07 test on initial round HEAD passed (pdf-before.log), so intermittency was not hidden.",
+      "after": [
+        {
+          "redPixels": 6320,
+          "width": 720,
+          "height": 404.88,
+          "rasterWidth": 960,
+          "bluePixels": 6320,
+          "colorSpace": "sRGB",
+          "rasterizer": "CGContext.drawPDFPage; RGBA8 big-endian; white background",
+          "rasterHeight": 540,
+          "text": "Offline updated\nComplete reveal"
+        },
+        {
+          "rasterWidth": 960,
+          "redPixels": 0,
+          "rasterHeight": 540,
+          "colorSpace": "sRGB",
+          "rasterizer": "CGContext.drawPDFPage; RGBA8 big-endian; white background",
+          "width": 720,
+          "text": "Second slide\nFinal reveal",
+          "height": 404.88,
+          "bluePixels": 0
+        }
+      ],
+      "evidence": [
+        "pdf-source-diagnosis.json",
+        "pdf-legacy-diagnosis.log",
+        "pdf-controls.json",
+        "s07-journey.pdf",
+        "historical-failed.pdf"
+      ],
+      "finding": "Historical PDF stream contains DeviceRGB 1 0 0 rg / 0 0 1 rg vector paint. NSImage thumbnail + Generic RGB channel thresholds mixed a display-dependent raster with an assumed color space. Direct CGContext page rendering into explicit sRGB RGBA8 fixes that measurement boundary without changing >0.9/<0.1 or >4000 assertions. Historical bytes plus missing-red/missing-blue/missing-image controls pass. Exact past display profile remains unknown; native print acceptance remains pending."
+    }
+  },
+  "probeComparison": {
+    "before": {
+      "sourceCommit": "00dd9d9",
+      "source": "R6 archived after-probe/after-followup copied as before-*.json"
+    },
+    "after": {
+      "sourceCommit": "86c8ce3669047e5de14575f0d515f04cc387e285",
+      "probe": "after-probe.json",
+      "followup": "after-followup.json",
+      "nativeTextEditable": "true",
+      "fontControls": 1,
+      "imageOverlapBeforeMove": false,
+      "moveDeltaX": 8,
+      "twelvePageAddCount": 13,
+      "errors": []
+    },
+    "note": "Original historical scripts unchanged. R6 raw followup opens the product naming form but only answers old browser prompts, so its exit 0 is not naming completion. Full unchanged R6 data/UI tests pass in test.log; raw probe contains no GAPS latency/color assertions."
+  },
+  "sample": {
+    "time": "2026-09-07T09:41:29.506Z",
+    "file": "/private/tmp/ppte8/docs/ui-redesign/evidence/r8-GAPS/sample.ppte.html",
+    "sha256": "d19eebce892e7fa199a179a819e1271129bef96f78c53c7bd68022f1002e6379",
+    "bytes": 386401,
+    "protocol": "file:",
+    "offline": true,
+    "browser": "152.0.7977.76",
+    "realMouseTitleSelection": true,
+    "fontControls": 1,
+    "presentationAndReturn": true,
+    "network": [],
+    "errors": [],
+    "path": "docs/ui-redesign/evidence/r8-GAPS/sample.ppte.html",
+    "productionCLI": true,
+    "source": "docs/audits/2026-09-07-ui-d96f211/sample/source.html",
+    "sourceSha256": "db6dd16104be24df2e93684b35e4827c3b08c0d569ab563af70bb257866882ef"
+  },
+  "pending": [
+    {
+      "item": "S04 default headless input p95 <=50ms",
+      "status": "pending",
+      "result": null,
+      "reason": "Final installed Chrome headless input p95 is 143.9ms; blank-page rAF p95 143.1ms. Headed passes do not replace this environment or frozen reference acceptance."
+    },
+    {
+      "item": "Native file picker authorization and durable write permission",
+      "status": "pending",
+      "result": null,
+      "reason": "Headless download / disk-bridge tests are not native authorization evidence."
+    },
+    {
+      "item": "Safari, native print dialog, operating-system IME",
+      "status": "pending",
+      "result": null,
+      "reason": "No Safari, native print or operating-system IME session was collected. PDF API and synthetic composition do not substitute."
+    },
+    {
+      "item": "Physical touch, screen reader, owner and two target-user reviews",
+      "status": "pending",
+      "result": null,
+      "reason": "No physical-device, assistive-technology or human review sessions."
+    },
+    {
+      "item": "Independent low-performance/no-Node machine and same-model generation telemetry",
+      "status": "pending",
+      "result": null,
+      "reason": "This host has Node and is the development machine. Controlled model-call/token and nine-pair human aesthetic evidence is unavailable."
+    },
+    {
+      "item": "Actual browser GPU/decoder cache reclamation bytes",
+      "status": "pending",
+      "result": null,
+      "reason": "Inactive URLs and naturalWidth=0 are measured; Chrome cache/GPU residency is not observable from these page-level tests."
+    }
+  ],
+  "scope": "GAPS round only. Overall four-layer acceptance remains partial; CLOSING is separate. Historical audit REPORT/probes/prototype are unchanged.",
+  "signing": "GPG and Signed-off-by (DCO), signature.log; no push",
+  "localInputs": "Pre-existing brief8-GAPS.md and out8-R6.txt left untouched; exact names locally excluded from git status. Temporary baseline checkout removed; baseline setup failed at pnpm workspace validation and supplies no comparison claim."
+}

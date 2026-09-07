@@ -1,0 +1,43 @@
+{
+  "status": "passed-automation",
+  "browser": "152.0.7977.76",
+  "headless": true,
+  "capabilities": {
+    "protocol": "file:",
+    "secure": true,
+    "openPicker": "function",
+    "savePicker": "function",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/152.0.0.0 Safari/537.36"
+  },
+  "offline": true,
+  "freshBrowserReopen": true,
+  "pickerMocked": false,
+  "savePath": "explicit download; Playwright saveAs captures actual browser download",
+  "originalHash": "a067fe73d3294bd9af098aa099e8d5094a63427b398163ba6cd2657a61c1aaec",
+  "originalAfterHash": "a067fe73d3294bd9af098aa099e8d5094a63427b398163ba6cd2657a61c1aaec",
+  "downloadHash": "90ab1631e57dd2d828dd0fe7f3f4994fcf07fb9be0ec04c5919bf891ee888f46",
+  "printImageEdgePixels": [
+    [
+      255,
+      0,
+      0,
+      255
+    ],
+    [
+      0,
+      0,
+      255,
+      255
+    ]
+  ],
+  "requests": [
+    "file:///private/tmp/ppte8/artifacts/s07/delivery/%E4%BD%9C%E5%93%81.ppte.html",
+    "file:///private/tmp/ppte8/artifacts/s07/updated.ppte.html"
+  ],
+  "errors": [],
+  "noNodeMachine": "pending: development host has Node installed",
+  "nativePicker": "pending: not exercised",
+  "nativeIME": "pending: no operating-system IME input",
+  "nativePrintDialog": "pending: PDF API only",
+  "human": "pending"
+}

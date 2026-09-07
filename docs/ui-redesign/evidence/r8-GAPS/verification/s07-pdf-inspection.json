@@ -1,0 +1,24 @@
+[
+  {
+    "redPixels": 6320,
+    "width": 720,
+    "height": 404.88,
+    "rasterWidth": 960,
+    "bluePixels": 6320,
+    "colorSpace": "sRGB",
+    "rasterizer": "CGContext.drawPDFPage; RGBA8 big-endian; white background",
+    "rasterHeight": 540,
+    "text": "Offline updated\nComplete reveal"
+  },
+  {
+    "rasterWidth": 960,
+    "redPixels": 0,
+    "rasterHeight": 540,
+    "colorSpace": "sRGB",
+    "rasterizer": "CGContext.drawPDFPage; RGBA8 big-endian; white background",
+    "width": 720,
+    "text": "Second slide\nFinal reveal",
+    "height": 404.88,
+    "bluePixels": 0
+  }
+]

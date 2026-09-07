@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "time": "2026-09-07T09:38:25.855Z",
+  "browser": "152.0.7977.76",
+  "offline": true,
+  "freshBrowserProcess": true,
+  "copiedDirectory": true,
+  "cacheEntriesOnReopen": 0,
+  "nativePicker": null,
+  "nativePickerReason": "Actual download is tested; native authorization unavailable",
+  "timings": {
+    "firstOpenMs": 89.46154200000001,
+    "createVersionMs": 219.529542,
+    "downloadMs": 148.19525000000021,
+    "freshOpenMs": 109.50679199999968,
+    "previewMs": 94.26195800000005,
+    "restoreMs": 486.75304099999994
+  },
+  "bytes": {
+    "initial": 394567,
+    "saved": 398787,
+    "restored": 400195,
+    "withoutHistory": 394591,
+    "image": 15130,
+    "video": 810
+  },
+  "historyVersions": 4,
+  "network": [],
+  "fixture": "Canvas raster gradient plus checked-in playable WebM; not a real-user photo set",
+  "baseline": "S04 development measurements remain separate, no end-to-end or device claim"
+}

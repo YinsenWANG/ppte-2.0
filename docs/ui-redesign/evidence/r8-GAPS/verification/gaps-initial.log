@@ -1,0 +1,37 @@
+TAP version 13
+# Subtest: GAPS N04: fixed sRGB rasterization preserves original >4000 gates and rejects missing red, blue, and image
+ok 1 - GAPS N04: fixed sRGB rasterization preserves original >4000 gates and rejects missing red, blue, and image
+  ---
+  duration_ms: 2172.033958
+  type: 'test'
+  ...
+# Subtest: GAPS A4: real navigation, image edit undo, versions, download/reopen, presentation and PDF demand/release
+not ok 2 - GAPS A4: real navigation, image edit undo, versions, download/reopen, presentation and PDF demand/release
+  ---
+  duration_ms: 590.637083
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/r8-gaps.test.js:40:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    locator.evaluate: Error: strict mode violation: getByAltText('Image 1') resolved to 4 elements:
+        1) <img alt="Image 1" data-ppte-id="ppte-4" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAQAElEQVR4AezYV5IbSRIE0La9/51nqckWAEqkDH9rM0N2oyoz/AU+3PZ//729/edfBr4DvgO+A74DvgNZ34H/vfkfAQIECBAgECbw9qYAxK1cYAIECBAgoAD4DhAgQIAAgTiB74H9PwDfFfxLgAABAgTCBBSAsIWLS4AAAQLpAj/zKwA/HfyXAAECBAhECSgAUesWlgABAgTSBX7nVwB+S/iTAAECBAgECSgAQcsWlQABAgTSBf7mVwD+WvgbAQIECBCIEVAAYlYtKAECBAikC/ybXwH4V8PfCRAgQIBAiIACELJoMQkQIEAgXeB9fgXgvYefCBAgQIBAhIACELFmIQkQIEAgXeBjfgXgo4ifCRAgQIBAgIACELBkEQkQIEAgXeB…/> aka getByRole('img', { name: 'Image' })
+        2) <img alt="Image 10" data-ppte-id="ppte-32" data-ppte-editor-media-src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAQAElEQVR4AezYV5IbSRIE0La9/51nqckWAEqkDH9rM0N2oyoz/AU+3PZ//729/edfBr4DvgO+A74DvgNZ34H/vfkfAQIECBAgECbw9qYAxK1cYAIECBAgoAD4DhAgQIAAgTiB74H9PwDfFfxLgAABAgTCBBSAsIWLS4AAAQLpAj/zKwA/HfyXAAECBAhECSgAUesWlgABAgTSBX7nVwB+S/iTAAECBAgECSgAQcsWlQABAgTSBf7mVwD+WvgbAQIECBCIEVAAYlYtKAECBAikC/ybXwH4V8PfCRAgQIBAiIACELJoMQkQIEAgXeB9fgXgvYefCBAgQIBAhIACELFmIQkQIEAgXeBjfgXgo4ifCR…/> aka getByAltText('Image 10')
+        3) <img alt="Image 11" data-ppte-id="ppte-35" data-ppte-editor-media-src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAQAElEQVR4AezYV5IbSRIE0La9/51nqckWAEqkDH9rM0N2oyoz/AU+3PZ//729/edfBr4DvgO+A74DvgNZ34H/vfkfAQIECBAgECbw9qYAxK1cYAIECBAgoAD4DhAgQIAAgTiB74H9PwDfFfxLgAABAgTCBBSAsIWLS4AAAQLpAj/zKwA/HfyXAAECBAhECSgAUesWlgABAgTSBX7nVwB+S/iTAAECBAgECSgAQcsWlQABAgTSBf7mVwD+WvgbAQIECBCIEVAAYlYtKAECBAikC/ybXwH4V8PfCRAgQIBAiIACELJoMQkQIEAgXeB9fgXgvYefCBAgQIBAhIACELFmIQkQIEAgXeBjfgXgo4ifCR…/> aka getByAltText('Image 11')
+        4) <img alt="Image 12" data-ppte-id="ppte-38" data-ppte-editor-media-src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAQAElEQVR4AezYV5IbSRIE0La9/51nqckWAEqkDH9rM0N2oyoz/AU+3PZ//729/edfBr4DvgO+A74DvgNZ34H/vfkfAQIECBAgECbw9qYAxK1cYAIECBAgoAD4DhAgQIAAgTiB74H9PwDfFfxLgAABAgTCBBSAsIWLS4AAAQLpAj/zKwA/HfyXAAECBAhECSgAUesWlgABAgTSBX7nVwB+S/iTAAECBAgECSgAQcsWlQABAgTSBf7mVwD+WvgbAQIECBCIEVAAYlYtKAECBAikC/ybXwH4V8PfCRAgQIBAiIACELJoMQkQIEAgXeB9fgXgvYefCBAgQIBAhIACELFmIQkQIEAgXeBjfgXgo4ifCR…/> aka getByAltText('Image 12')
+    
+    Call log:
+    [2m  - waiting for locator('#ppte-frame').contentFrame().getByAltText('Image 1')[22m
+    
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/ppte8/dist/tests/r8-gaps.test.js:62:45)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 1
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2962.059458

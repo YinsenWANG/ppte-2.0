@@ -1,0 +1,54 @@
+{
+  "status": "passed",
+  "timestamp": "2026-09-07T09:38:27.792Z",
+  "browser": "152.0.7977.76",
+  "headless": true,
+  "sessions": [
+    {
+      "protocol": "file:",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/152.0.0.0 Safari/537.36",
+      "openPicker": "function",
+      "secure": true,
+      "cacheEntries": 0
+    },
+    {
+      "protocol": "file:",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/152.0.0.0 Safari/537.36",
+      "openPicker": "function",
+      "secure": true,
+      "cacheEntries": 0
+    },
+    {
+      "protocol": "file:",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/152.0.0.0 Safari/537.36",
+      "openPicker": "function",
+      "secure": true,
+      "cacheEntries": 0
+    }
+  ],
+  "wholeBrowserShutdowns": 2,
+  "offline": true,
+  "network": [],
+  "errors": [],
+  "timings": {
+    "open1Ms": 86.55774999999994,
+    "checkpointMs": 597.8112079999996,
+    "downloadMs": 153.0102910000005,
+    "open2Ms": 159.23141699999996,
+    "previewMs": 178.5472920000002,
+    "restoreMs": 468.52795799999967,
+    "open3Ms": 89.31795800000145
+  },
+  "savePath": "actual browser download; no native permission or disk-write bridge",
+  "originalHash": "618de0b9d1afca709a70aaa724ad6b60547bd85c1614e66b94313c1d6578547e",
+  "originalAfterHash": "618de0b9d1afca709a70aaa724ad6b60547bd85c1614e66b94313c1d6578547e",
+  "sample": {
+    "sha256": "78eaff2dec7fe4754dcf7f6e301201bf81e7c9849cb9ff6dee4c5a447de646ce",
+    "bytes": 398327
+  },
+  "historyVersions": 4,
+  "resourceCopies": 1,
+  "source": "tests/fixtures/ui06/journey.html",
+  "image": "Generated two-tone PNG; not real-user media or aesthetic evidence",
+  "pdf": "Chromium PDF API + independent PDFKit; native dialog pending"
+}
