@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cherry Studio · 开源贡献者指南</title>
+<style>
+:root{--bg:#101313;--panel:#1a2020;--line:#34403b;--ink:#f3f4ed;--muted:#a9b6ae;--green:#c3ef97;--cherry:#ff7b88;--paper:#edf0e5}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-snap-type:y proximity}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}
+a{color:inherit;text-decoration:none;border-bottom:1px solid currentColor}
+a:hover{color:var(--cherry)}
+button{font:inherit}
+.slide{position:relative;min-height:100svh;padding:54px 6vw 62px;display:flex;flex-direction:column;justify-content:center;gap:26px;overflow:hidden;scroll-snap-align:start;border-bottom:1px solid var(--line)}
+.top,.foot{display:flex;justify-content:space-between;align-items:center;gap:20px;font-size:11px;letter-spacing:2px}
+.top{position:absolute;top:25px;left:6vw;right:6vw;color:var(--muted)}
+.foot{position:absolute;bottom:22px;left:6vw;right:6vw;color:var(--muted);letter-spacing:1px}
+.kicker{font-size:13px;letter-spacing:3px;color:var(--green);font-weight:700}
+h1,h2,h3,p{margin:0}
+h1{font-size:clamp(50px,6.5vw,96px);line-height:1.08;letter-spacing:-3px;font-weight:800}
+h2{font-size:clamp(32px,4vw,58px);line-height:1.18;letter-spacing:-1.5px}
+h3{font-size:22px;line-height:1.4}
+p,li{font-size:18px;line-height:1.7}
+.lead{font-size:22px;line-height:1.65;max-width:900px;color:var(--muted)}
+.muted{color:var(--muted)}
+.small{font-size:14px;line-height:1.65}
+.grid{display:grid;gap:18px}
+.two{grid-template-columns:1fr 1fr}
+.three{grid-template-columns:repeat(3,1fr)}
+.four{grid-template-columns:repeat(4,1fr)}
+.card{padding:26px;background:var(--panel);border:1px solid var(--line);border-radius:4px}
+.card h3{margin-bottom:12px}
+.card p+p{margin-top:10px}
+.tag{display:inline-block;border:1px solid var(--line);padding:6px 11px;font-size:12px;letter-spacing:1px;margin:0 7px 7px 0}
+.pill{display:inline-block;background:var(--green);color:var(--bg);padding:6px 12px;font-size:12px;font-weight:700;letter-spacing:1px}
+.pink{color:var(--cherry)}
+.green{color:var(--green)}
+.big{font-size:clamp(48px,5vw,74px);line-height:1.1;font-weight:800;letter-spacing:-2px}
+.rule{padding-top:18px;border-top:1px solid var(--line)}
+.note{padding:14px 18px;border-left:3px solid var(--cherry);background:#ff7b880b;color:var(--muted);font-size:14px;line-height:1.7}
+.cover-grid{display:grid;grid-template-columns:1.4fr 1fr;align-items:center;gap:40px}
+.cherry-art{width:100%;max-height:380px}
+.light{background:var(--paper);color:#19251e;--panel:#e3e8d9;--line:#bfccba;--muted:#54654f;--green:#395d29;--cherry:#b13d50}
+.light .pill{color:#fff}
+.list{list-style:none;padding:0;margin:0}
+.list li{padding:10px 0;border-bottom:1px solid var(--line)}
+.list li:last-child{border:0}
+.num{font-size:13px;color:var(--green);letter-spacing:1px;display:block;margin-bottom:22px}
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--line)}
+.step{padding:28px 24px;border-right:1px solid var(--line)}
+.step:last-child{border-right:0}
+.step .big{color:var(--green);font-size:48px;margin-bottom:22px}
+.step h3{font-size:20px;margin-bottom:12px}
+.step p{font-size:16px;color:var(--muted)}
+.linkrow{display:flex;flex-wrap:wrap;gap:14px 28px;font-size:15px;line-height:1.7}
+.split{display:grid;grid-template-columns:.8fr 1.6fr;gap:40px;align-items:center}
+.stacked{display:flex;flex-direction:column;gap:18px}
+table{width:100%;border-collapse:collapse;font-size:17px;line-height:1.55}
+th,td{text-align:left;padding:17px 22px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:13px;letter-spacing:1px;color:var(--muted)}
+th:first-child,td:first-child{width:20%}
+td:nth-child(2){width:35%}
+td:nth-child(3){background:#c3ef9708}
+.nav{position:fixed;right:18px;bottom:14px;display:flex;gap:5px;align-items:center;z-index:10;padding:5px;background:#101313df;border:1px solid #34403b;border-radius:6px;color:#f3f4ed}
+.nav button{border:0;background:transparent;color:inherit;cursor:pointer;padding:7px 10px;font-size:16px}
+.nav span{font-size:11px;min-width:44px;text-align:center}
+@media(min-width:1500px){.slide{padding-left:max(6vw,calc((100vw - 1350px)/2));padding-right:max(6vw,calc((100vw - 1350px)/2))}}
+@media(max-width:850px){
+.slide{padding:80px 7vw;min-height:100svh;gap:24px}
+.two,.three,.four,.cover-grid,.split{grid-template-columns:1fr}
+.flow{grid-template-columns:1fr 1fr}
+.step:nth-child(2){border-right:0}.step:nth-child(-n+2){border-bottom:1px solid var(--line)}
+.cherry-art{max-height:220px}
+h1{letter-spacing:-2px}.lead{font-size:19px}
+.top,.foot{left:7vw;right:7vw;font-size:9px;letter-spacing:.5px}
+.card{padding:22px}table{font-size:13px}th,td{padding:12px 9px}
+.nav{right:8px;bottom:5px}.foot{bottom:45px}
+}
+@media print{
+@page{size:320mm 180mm;margin:0}
+html{scroll-snap-type:none}
+body{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+.slide{width:320mm;height:180mm;min-height:0;padding:17mm 19mm 18mm;gap:7mm;break-after:page;break-inside:avoid}
+.slide:last-of-type{break-after:auto}
+h1{font-size:66px}h2{font-size:42px}h3{font-size:20px}p,li{font-size:16px}.lead{font-size:20px}
+.card{padding:20px}.big{font-size:58px}.top{top:7mm}.foot{bottom:6mm}
+.nav{display:none}a{text-decoration:none}
+}
+</style>
+</head>
+<body>
+
+<section class="slide" data-ppte-slide>
+<div class="top"><span>CHERRY STUDIO / CONTRIBUTOR GUIDE</span><span>固定 README · 中文演示稿</span></div>
+<div class="cover-grid">
+<div class="stacked">
+<div class="kicker">开源贡献者指南</div>
+<h1>让多模型协作<br>从桌面开始。</h1>
+<p class="lead">认识 Cherry Studio 的产品与生态，<br>找到你的第一个贡献入口。</p>
+<div><span class="tag">Windows</span><span class="tag">Mac</span><span class="tag">Linux</span></div>
+</div>
+<svg class="cherry-art" viewBox="0 0 420 420" role="img" aria-label="以樱桃和连接线构成的抽象协作图形">
+<circle cx="210" cy="210" r="180" fill="none" stroke="#34403b"/>
+<circle cx="210" cy="210" r="133" fill="none" stroke="#34403b" stroke-dasharray="4 10"/>
+<path d="M131 275C131 162 223 192 238 82M288 279C288 169 250 143 238 82" fill="none" stroke="#c3ef97" stroke-width="10" stroke-linecap="round"/>
+<path d="M238 82C283 51 322 77 333 101C292 121 259 117 238 82" fill="#c3ef97"/>
+<circle cx="130" cy="283" r="67" fill="#ff7b88"/>
+<circle cx="288" cy="291" r="67" fill="#e55e71"/>
+<path d="M90 267Q95 247 113 243M248 275Q253 255 271 251" fill="none" stroke="#ffbec5" stroke-width="8" stroke-linecap="round"/>
+<circle cx="45" cy="180" r="7" fill="#c3ef97"/><circle cx="360" cy="162" r="7" fill="#c3ef97"/>
+</svg>
+</div>
+<div class="rule linkrow"><span>产品能力</span><span>开放生态</span><span>贡献路径</span><span>开发者共创</span><span>版本边界</span></div>
+<div class="foot"><span>内容依据：用户提供的固定 README；不代表实时项目状态</span><span>01 / 12</span></div>
+</section>
+
+<section class="slide" data-ppte-slide>
+<div class="top"><span>01 / PRODUCT</span><span>产品定位</span></div>
+<div class="kicker">一个桌面客户端，多种模型来源</div>
+<h2>把云端、Web 与本地模型<br>放进同一个工作入口。</h2>
+<p class="lead">Cherry Studio 支持多个 LLM 提供商，并提供 Windows、Mac、Linux 桌面版本。</p>
+<div class="grid three">
+<article class="card"><span class="num">CLOUD / 云端服务</span><h3>连接主流 LLM</h3><p>OpenAI<br>Gemini<br>Anthropic 等</p></article>
+<article class="card"><span class="num">WEB / AI Web 服务集成</span><h3>延伸服务选择</h3><p>Claude<br>Perplexity<br>Poe 等</p></article>
+<article class="card"><span class="num">LOCAL / 本地模型</span><h3>接入本地运行环境</h3><p>Ollama<br>LM Studio</p></article>
+</div>
+<p class="small muted">README 列出的产品体验：开箱即用，无需环境配置；支持浅色／深色主题与透明窗口。</p>
+<div class="foot"><span>来源：产品简介 · Key Features</span><span>02 / 12</span></div>
+</section>
+
+<section class="slide" data-ppte-slide>
+<div class="top"><span>02 / EXPERIENCE</span><span>README 已列出的产品能力</span></div>
+<h2>从对话到资料处理，<br>再到日常工具。</h2>
+<div class="grid three">
+<article class="card">
+<div class="big green">300+</div>
+<h3 style="margin-top:16px">预配置 AI 助手</h3>
+<p class="muted">创建自定义助手<br>多模型同时对话</p>
+</article>
+<article class="card">
+<span class="num">DOCUMENTS & DATA</span><h3>处理多种资料</h3>
+<p class="muted">文本、图片、Office、PDF 等<br>WebDAV 文件管理与备份<br>Mermaid 图表、代码高亮</p>
+</article>
+<article class="card">
+<span class="num">TOOLS & WORKFLOW</span><h3>组织与连接工作</h3>
+<p class="muted">全局搜索、话题管理、AI 翻译<br>拖拽排序、小程序支持<br>MCP 服务器</p>
+</article>
+</div>
+<div class="rule"><p>完整 Markdown 渲染与便捷内容分享，让内容从阅读、组织走向交流。</p></div>
+<div class="foot"><span>来源：Key Features；300+ 为固定 README 中的数量</span><span>03 / 12</span></div>
+</section>
+
+<section class="slide light" data-ppte-slide>
+<div class="top"><span>03 / ECOSYSTEM</span><span>主题与相关项目</span></div>
+<div class="kicker">生态不止于核心代码</div>
+<h2>从界面表达，到周边工具。</h2>
+<div class="grid two">
+<article class="card">
+<h3>主题生态 · 欢迎提交更多主题 PR</h3>
+<ul class="list">
+<li><a href="https://cherrycss.com">Theme Gallery / 主题画廊</a></li>
+<li><a href="https://github.com/hakadao/CherryStudio-Aero">Aero Theme</a> · <a href="https://github.com/rainoffallingstar/CherryStudio-PaperMaterial">PaperMaterial</a></li>
+<li><a href="https://github.com/bjl101501/CherryStudio-Claudestyle-dynamic">Claude dynamic-style</a></li>
+<li><a href="https://github.com/BoningtonChen/CherryStudio_themes">Maple Neon Theme</a></li>
+</ul>
+</article>
+<article class="card">
+<h3>README 列出的相关项目</h3>
+<ul class="list">
+<li><a href="https://github.com/QuantumNous/new-api">new-api</a><span class="small muted"> · LLM 网关与 AI 资产管理</span></li>
+<li><a href="https://github.com/songquanpeng/one-api">one-api</a><span class="small muted"> · LLM API 管理与分发</span></li>
+<li><a href="https://poe.com/">Poe</a><span class="small muted"> · 多种 AI 的访问入口</span></li>
+<li><a href="https://github.com/iorate/ublacklist">ublacklist</a><span class="small muted"> · 屏蔽 Google 搜索中的指定站点</span></li>
+</ul>
+</article>
+</div>
+<p class="small muted">“相关项目”是 README 的推荐列表，不等同于 Cherry Studio 内置能力或官方合作关系。</p>
+<div class="foot"><span>来源：Theme · Related Projects</span><span>04 / 12</span></div>
+</section>
+
+<section class="slide" data-ppte-slide>
+<div class="top"><span>04 / ROADMAP</span><span>设计目标 · 非已上线清单</span></div>
+<div><span class="pill">全部为设计目标 / 规划中</span></div>
+<h2>下一步的方向，<br>也是参与讨论的起点。</h2>
+<div class="grid two">
+<article class="card"><h3>核心功能 <span class="small green">/ 设计目标</span></h3><p class="muted">智能划词助手 · Deep Research<br>文档预处理 · MCP Marketplace</p></article>
+<article class="card"><h3>知识管理 <span class="small green">/ 设计目标</span></h3><p class="muted">笔记与收藏 · 动态画布<br>OCR · TTS 语音合成</p></article>
+<article class="card"><h3>平台支持 <span class="small green">/ 设计目标</span></h3><p class="muted">HarmonyOS 电脑版 · Android / iOS 第一阶段<br>多窗口 · 窗口置顶 · Intel AI PC（Core Ultra）</p></article>
+<article class="card"><h3>高级功能 <span class="small green">/ 设计目标</span></h3><p class="muted">插件系统 · ASR 自动语音识别<br>助手与话题交互重构</p></article>
+</div>
+<div class="linkrow"><a href="https://github.com/orgs/CherryHQ/projects/7">项目看板：跟踪进展 ↗</a><a href="https://github.com/CherryHQ/cherry-studio/discussions">GitHub Discussions：提出想法 ↗</a></div>
+<div class="foot"><span>来源：Roadmap；固定材料未提供这些功能的发布日期</span><span>05 / 12</span></div>
+</section>
+
+<section class="slide" data-ppte-slide>
+<div class="top"><span>05 / CONTRIBUTING</span><span>七类贡献方式</span></div>
+<div class="kicker">找到适合你的入口</div>
+<h2>贡献可以从代码开始，<br>也可以从一次解释开始。</h2>
+<div class="grid three">
+<article class="card"><span class="num">BUILD</span><h3>开发与修复</h3><p class="muted">① 贡献代码：开发新功能或优化现有代码。<br>② 修复 Bug：提交发现的问题修复。</p></article>
+<article class="card"><span class="num">SHAPE</span><h3>维护与设计</h3><p class="muted">③ 维护 Issues：协助管理问题。<br>④ 产品设计：参与设计讨论。</p></article>
+<article class="card"><span class="num">CONNECT</span><h3>文档与社区</h3><p class="muted">⑤ 编写文档：完善手册与指南。<br>⑥ 社区参与：讨论并帮助用户。<br>⑦ 推广使用：让更多人了解项目。</p></article>
+</div>
+<p class="rule lead">选择一个你理解的问题，把改进的内容和理由讲清楚。</p>
+<div class="foot"><span>来源：Contributing；末句为参与建议</span><span>06 / 12</span></div>
+</section>
+
+<section class="slide light" data-ppte-slide>
+<div class="top"><span>06 / FIRST PULL REQUEST</span><span>从入口到提交</span></div>
+<div class="kicker">你的第一个 PR</div>
+<h2>先理解贡献约定，再提交改变。</h2>
+<p class="lead">探索仓库，选择一个 <strong>good first issue</strong>，或提出自己的改进建议。</p>
+<div class="flow">
+<article class="step"><div class="big">01</div><h3>Fork 与克隆</h3><p>Fork 仓库，并克隆到本地。</p></article>
+<article class="step"><div class="big">02</div><h3>创建分支</h3><p>为你的修改建立分支。</p></article>
+<article class="step"><div class="big">03</div><h3>提交更改</h3><p>Commit 并推送你的修改。</p></article>
+<article class="step"><div class="big">04</div><h3>发起 Pull Request</h3><p>描述修改内容，以及做出修改的原因。</p></article>
+</div>
+<div class="linkrow">
+<a href="https://github.com/CherryHQ/cherry-studio/blob/main/docs/contrib/development.md">Development ↗</a>
+<a href="https://github.com/CherryHQ/cherry-studio/blob/main/docs/contrib/branching-strategy.md">分支策略 ↗</a>
+<a href="https://github.com/CherryHQ/cherry-studio/blob/main/CONTRIBUTING.md">贡献指南 ↗</a>
+</div>
+<p class="small muted">以上文档路径来自 README；本演示稿不补充材料未提供的构建命令或审核规则。</p>
+<div class="foot"><span>来源：Contributing · Getting Started · How to Get Started?</span><span>07 / 12</span></div>
+</section>
+
+<section class="slide" data-ppte-slide>
+<div class="top"><span>07 / CO-CREATION</span><span>开发者共创计划</span></div>
+<h2>让持续贡献，获得持续支持。</h2>
+<div class="split">
+<div class="stacked">
+<div class="big green">&gt; 30</div>
+<h3>有意义的 commits</h3>
+<p class="muted">在任一统计周期内，对 Cherry Studio 的任一 GitHub 开源项目贡献超过 30 个有意义的 commits，即符合 README 所述奖励资格。</p>
+<p class="small pink">门槛为“超过 30”，不是“达到 30”；统计对象为 commits，并非 PR 数量。</p>
+</div>
+<div class="stacked">
+<article class="card"><h3>Cursor 订阅支持 <span class="green">US$70</span></h3><p class="muted">提供 70 美元额度或订阅费用报销。</p></article>
+<article class="card"><h3>DeepSeek 与 Qwen</h3><p class="muted">README 所述权益：无限量模型 API 调用。</p></article>
+<article class="card"><h3>不定期前沿技术福利</h3><p class="muted">包括 Claude、Gemini、OpenAI 等模型的 API 访问机会。</p></article>
+</div>
+</div>
+<div class="note">README 所述首期统计周期为 2025 年第三季度（7—9 月），奖励安排在 10 月 1 日发放。此处复述原文计划，不表示奖励已发放，也未核验当前执行情况。</div>
+<div class="foot"><span>来源：Developer Co-creation Program · Contributor Rewards Program</span><span>08 / 12</span></div>
+</section>
+
+<section class="slide" data-ppte-slide>
+<div class="top"><span>08 / COMMUNITY</span><span>把反馈接回项目</span></div>
+<div class="kicker">共同建设的日常入口</div>
+<h2>报告问题、讨论方向、帮助彼此。</h2>
+<div class="grid three">
+<article class="card"><span class="num">FEEDBACK</span><h3>问题与想法</h3><p><a href="https://github.com/CherryHQ/cherry-studio/issues">GitHub Issues ↗</a></p><p><a href="https://github.com/CherryHQ/cherry-studio/discussions">GitHub Discussions ↗</a></p><p class="small muted">提交反馈，参与设计与路线图讨论。</p></article>
+<article class="card"><span class="num">CONVERSATION</span><h3>加入社区交流</h3><p><a href="https://t.me/CherryStudioAI">Telegram ↗</a> · <a href="https://discord.gg/wez8HtpxqQ">Discord ↗</a></p><p><a href="https://qm.qq.com/q/lo0D4qVZKi">QQ 群：575014769 ↗</a></p><p class="small muted">参与讨论，并帮助其他用户。</p></article>
+<article class="card"><span class="num">SUPPORT</span><h3>支持项目发展</h3><p><a href="https://github.com/CherryHQ/cherry-studio">给仓库一个 Star ↗</a></p><p><a href="https://github.com/CherryHQ/cherry-studio/blob/main/docs/sponsor.md">Sponsor / 赞助 ↗</a></p><p class="small muted">通过使用、分享与赞助支持开发。</p></article>
+</div>
+<div class="rule"><p class="muted">共创计划的未来方向：随项目成长持续调整支持资源，并以更开放的姿态回馈开源社区。<span class="green">这是未来计划，不是新增权益承诺。</span></p></div>
+<div class="foot"><span>来源：社区链接 · Contributing · Growing Together & Future Plans</span><span>09 / 12</span></div>
+</section>
+
+<section class="slide" data-ppte-slide>
+<div class="top"><span>09 / ENTERPRISE</span><span>企业版定位</span></div>
+<div class="kicker">从个人桌面使用，延伸到组织管理</div>
+<h2>企业版：可私有部署的<br>AI 生产力与管理平台。</h2>
+<p class="lead">基于社区版，集中管理团队的 AI 资源、知识与数据。</p>
+<div class="grid three">
+<article class="card"><span class="num">RESOURCES</span><h3>统一模型管理</h3><p class="muted">集中接入云端 LLM 与本地私有模型，员工无需逐一配置。</p></article>
+<article class="card"><span class="num">KNOWLEDGE</span><h3>企业级知识库</h3><p class="muted">构建、管理并共享团队知识库，支持基于统一信息与 AI 交互。</p></article>
+<article class="card"><span class="num">GOVERNANCE</span><h3>细粒度权限</h3><p class="muted">通过统一后台管理员工账号，以及模型、知识库与功能的角色权限。</p></article>
+</div>
+<div class="grid two">
+<div class="rule"><h3>完整后端私有部署</h3><p class="muted">部署在本地服务器或私有云，让组织掌控数据。</p></div>
+<div class="rule"><h3>后端服务与数据保障</h3><p class="muted">提供 API 服务，以及企业级数据备份与恢复机制。</p></div>
+</div>
+<div class="foot"><span>来源：Enterprise Edition · Core Advantages；为 README 的产品描述</span><span>10 / 12</span></div>
+</section>
+
+<section class="slide light" data-ppte-slide>
+<div class="top"><span>10 / EDITION BOUNDARIES</span><span>社区版与企业版边界</span></div>
+<h2>开源许可与企业服务，分别看清。</h2>
+<table aria-label="社区版与企业版比较">
+<thead><tr><th>维度</th><th>社区版</th><th>企业版</th></tr></thead>
+<tbody>
+<tr><td>开源范围</td><td>开源</td><td>部分向客户开放</td></tr>
+<tr><td>许可／费用</td><td>AGPL-3.0</td><td>买断／订阅费用</td></tr>
+<tr><td>管理后台</td><td>README 对比表标为“—”</td><td>模型接入、员工管理、共享知识库、<br>访问控制、数据备份</td></tr>
+<tr><td>专属服务器部署</td><td>README 对比表标为“—”</td><td>专用私有部署</td></tr>
+</tbody>
+</table>
+<div class="grid two">
+<article class="rule"><h3>社区版可以用于商业用途</h3><p class="muted">前提是完整遵守 AGPL-3.0 的条款与条件。开源不等于免除许可义务。</p></article>
+<article class="rule"><h3>需要豁免 AGPL-3.0 要求</h3><p class="muted">README 指引联系 <a href="mailto:bd@cherry-ai.com">bd@cherry-ai.com</a>，咨询商业许可。</p></article>
+</div>
+<p class="small muted">许可内容仅转述固定 README。企业版购买模式与商业许可豁免并列说明，材料未将二者明确等同。</p>
+<div class="foot"><span>来源：Version Comparison · License</span><span>11 / 12</span></div>
+</section>
+
+<section class="slide" data-ppte-slide>
+<div class="top"><span>11 / START HERE</span><span>行动入口</span></div>
+<div class="kicker">LET’S BUILD TOGETHER</div>
+<h1>从一个问题，<br>开始你的贡献。</h1>
+<p class="lead">选择一个入口：理解产品、提出改进，或提交第一个 Pull Request。</p>
+<div class="grid three">
+<article class="card"><span class="num">01 / 了解</span><h3>体验与阅读</h3><div class="stacked small"><a href="https://github.com/CherryHQ/cherry-studio/releases">下载 Releases ↗</a><a href="https://cherry-ai.com">官方网站 ↗</a><a href="https://docs.cherry-ai.com/docs/en-us">产品文档 ↗</a></div></article>
+<article class="card"><span class="num">02 / 参与</span><h3>走进开源仓库</h3><div class="stacked small"><a href="https://github.com/CherryHQ/cherry-studio">CherryHQ / cherry-studio ↗</a><a href="https://github.com/CherryHQ/cherry-studio/issues">浏览 Issues · 寻找 good first issue ↗</a><a href="https://github.com/CherryHQ/cherry-studio/discussions">讨论你的改进建议 ↗</a></div></article>
+<article class="card"><span class="num">03 / 企业需求</span><h3>了解团队方案</h3><div class="stacked small"><a href="https://enterprise.cherry-ai.com">企业版在线演示 ↗</a><a href="mailto:bd@cherry-ai.com">商务咨询：bd@cherry-ai.com ↗</a><span class="muted">咨询详情、报价或预约演示。</span></div></article>
+</div>
+<div class="foot"><span>仅依据固定 README 制作 · 路线图均为设计目标 · 未引入动态增长数据</span><span>12 / 12</span></div>
+</section>
+
+<nav class="nav" aria-label="演示稿导航">
+<button type="button" id="prev" aria-label="上一页">←</button>
+<span id="counter" aria-live="polite">01 / 12</span>
+<button type="button" id="next" aria-label="下一页">→</button>
+</nav>
+<script>
+(function(){
+const slides=Array.from(document.querySelectorAll(".slide"));
+const counter=document.getElementById("counter");
+let current=0;
+function go(index){current=Math.max(0,Math.min(slides.length-1,index));slides[current].scrollIntoView({behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"instant":"smooth",block:"start"});update()}
+function update(){counter.textContent=String(current+1).padStart(2,"0")+" / 12"}
+document.getElementById("prev").addEventListener("click",()=>go(current-1));
+document.getElementById("next").addEventListener("click",()=>go(current+1));
+document.addEventListener("keydown",function(e){
+if(e.target.closest("a,button,input,textarea,select"))return;
+if(["ArrowRight","PageDown"," "].includes(e.key)){e.preventDefault();go(current+1)}
+if(["ArrowLeft","PageUp"].includes(e.key)){e.preventDefault();go(current-1)}
+if(e.key==="Home"){e.preventDefault();go(0)}
+if(e.key==="End"){e.preventDefault();go(slides.length-1)}
+});
+let ticking=false;
+window.addEventListener("scroll",function(){if(ticking)return;ticking=true;requestAnimationFrame(function(){let best=Infinity;slides.forEach(function(s,i){const distance=Math.abs(s.getBoundingClientRect().top);if(distance<best){best=distance;current=i}});update();ticking=false})},{passive:true});
+})();
+</script>
+</body>
+</html>

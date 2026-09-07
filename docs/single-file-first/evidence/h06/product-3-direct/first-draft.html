@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PPTe · 让 HTML 成为作品本身</title>
+<style>
+:root{--paper:#f4f1e9;--ink:#202623;--muted:#6d746c;--line:#d4d8ce;--accent:#d94c29;--green:#315d4c;--dark:#1e3028;--light:#e5eddf}
+*{box-sizing:border-box}
+body{margin:0;background:#d8ddd5;color:var(--ink);font-family:Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+button{font:inherit}
+.deck{padding:32px 24px 100px;display:grid;gap:32px}
+.slide{position:relative;container-type:inline-size;width:min(1280px,100%);aspect-ratio:16/9;margin:auto;padding:4.5% 5%;background:var(--paper);overflow:hidden;display:flex;flex-direction:column;box-shadow:0 12px 45px #20302614}
+@media(min-width:1330px){.slide{padding:54px 64px}}
+.top,.foot{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.top{font-size:clamp(10px,1.05vw,14px);letter-spacing:.08em;font-weight:650}
+.brand{display:flex;align-items:center;gap:10px}
+.mark{height:14px;width:14px;background:var(--accent);display:inline-block;transform:rotate(-12deg)}
+.tag{padding:6px 11px;border:1px solid currentColor;border-radius:30px;letter-spacing:.02em;font-size:.85em;opacity:.8}
+.foot{margin-top:auto;padding-top:18px;font-size:clamp(9px,.9vw,12px);color:var(--muted)}
+.foot span:last-child{font-variant-numeric:tabular-nums}
+h1,h2,h3,p{margin:0}
+h1{font-size:5.6cqw;line-height:1.12;letter-spacing:-.06em;font-weight:780}
+h2{font-size:3.65cqw;line-height:1.18;letter-spacing:-.045em;font-weight:750;margin-top:3.1cqw}
+h3{font-size:1.85cqw;line-height:1.35;letter-spacing:-.025em}
+p,li{font-size:1.5cqw;line-height:1.65}
+.subtitle{margin-top:1.4cqw;color:var(--muted);max-width:90%;font-size:1.55cqw}
+.eyebrow{font-size:1.05cqw;letter-spacing:.13em;color:var(--accent);font-weight:700}
+.small{font-size:1.08cqw;line-height:1.6}
+.muted{color:var(--muted)}
+.accent{color:var(--accent)}
+.green{color:var(--green)}
+.dark{background:var(--dark);color:var(--paper)}
+.dark .muted,.dark .subtitle,.dark .foot{color:#b7c6b9}
+.dark .tag{color:#c8d9bd}
+.dark .eyebrow{color:#f09c77}
+.split{display:grid;grid-template-columns:1.12fr 1fr;gap:4cqw;align-items:center;flex:1}
+.stack{display:flex;flex-direction:column;gap:1.5cqw}
+.rule{height:1px;background:var(--line);margin:2cqw 0}
+.panel{padding:2.2cqw;border:1px solid var(--line);border-radius:12px}
+.big{font-size:7.5cqw;line-height:1;font-weight:750;letter-spacing:-.07em}
+.pill{display:inline-flex;align-items:center;gap:7px;border-radius:30px;padding:7px 12px;font-size:1cqw;background:#e5e9df;color:var(--green)}
+.code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+.file{background:var(--paper);color:var(--ink);padding:3cqw;border-radius:8px;position:relative;box-shadow:14px 15px 0 #a9b99b26}
+.file:before{content:"";position:absolute;right:0;top:0;border-top:3cqw solid var(--dark);border-left:3cqw solid #d1d8c9}
+.file-name{font-size:2.5cqw;font-weight:730;margin:3cqw 0 1cqw}
+.file-ext{font-size:5cqw;font-weight:700;color:var(--accent);letter-spacing:-.06em}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:2cqw}
+.chips span{font-size:1.1cqw;padding:8px 12px;border:1px solid var(--line);border-radius:5px}
+.feedback{margin-top:2.5cqw;display:grid;grid-template-columns:1fr 1fr;gap:0 4cqw}
+.feedback-item{padding:1.5cqw 0;border-top:1px solid var(--line);display:grid;grid-template-columns:2.8cqw 1fr;gap:1cqw}
+.feedback-item b{font-size:1cqw;color:var(--accent);padding-top:.3cqw}
+.feedback-item p{font-size:1.23cqw;color:var(--muted);margin-top:.35cqw}
+.path{display:grid;grid-template-columns:repeat(5,1fr);gap:1.2cqw;margin:3cqw 0}
+.step{position:relative;border-top:2px solid var(--green);padding-top:1.4cqw}
+.step:not(:last-child):after{content:"→";position:absolute;right:0;top:1.2cqw;color:var(--accent)}
+.step span{font-size:1cqw;color:var(--muted)}
+.step h3{margin:.7cqw 0}
+.step p{font-size:1.13cqw;max-width:90%}
+.banner{padding:1.5cqw 2cqw;background:var(--light);border-left:4px solid var(--green);font-size:1.4cqw}
+.diagram{width:100%;height:auto;display:block}
+.editor{margin-top:2.3cqw;display:grid;grid-template-rows:3.7cqw 1fr;border:1px solid #bdc5b8;border-radius:10px;background:#e8ece4;overflow:hidden;min-height:26cqw}
+.editor-top{display:flex;justify-content:space-between;align-items:center;padding:0 1.4cqw;background:#f9faf5;border-bottom:1px solid var(--line);font-size:1cqw}
+.editor-tools{display:flex;gap:1.3cqw;align-items:center}
+.mock-btn{padding:.4cqw .85cqw;border-radius:4px;background:#dce6d6;color:var(--dark)}
+.editor-body{display:grid;grid-template-columns:12% 1fr 20%}
+.thumbs{padding:1cqw;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:.8cqw}
+.thumb{aspect-ratio:16/9;display:grid;place-items:center;background:#f7f5ef;font-size:.85cqw;color:var(--muted);border:1px solid #cbd1c5}
+.thumb.active{outline:2px solid var(--green);outline-offset:2px}
+.canvas-area{padding:3cqw 2cqw 2cqw;display:grid;place-items:center;position:relative}
+.mini-slide{aspect-ratio:16/9;width:100%;background:var(--dark);color:var(--paper);padding:2cqw;display:flex;flex-direction:column;justify-content:center}
+.mini-title{font-size:2.5cqw;line-height:1.25;border:1px solid #b8d1a4;padding:.4cqw}
+.mini-slide p{font-size:.9cqw;margin-top:1cqw;color:#becfbd}
+.floating{position:absolute;top:1cqw;background:#fff;padding:.5cqw 1cqw;border-radius:5px;box-shadow:0 4px 15px #0002;font-size:.9cqw;display:flex;gap:1.1cqw}
+.properties{padding:1.4cqw;background:#f4f6f0;border-left:1px solid var(--line);font-size:1cqw}
+.prop-row{margin-top:1.2cqw;border-top:1px solid var(--line);padding-top:.8cqw;color:var(--muted)}
+.swatches{display:flex;gap:.4cqw;margin-top:.65cqw}
+.swatches i{width:1.25cqw;height:1.25cqw;background:var(--dark);border-radius:50%}
+.swatches i:nth-child(2){background:var(--accent)}
+.swatches i:nth-child(3){background:#768a69}
+.side-note{border-top:1px solid var(--line);padding-top:1.2cqw}
+.matrix{width:100%;border-collapse:collapse;margin-top:2.4cqw;font-size:1.22cqw;line-height:1.6}
+.matrix th{text-align:left;font-size:1cqw;color:var(--muted);font-weight:550;padding:1cqw 1.3cqw;border-bottom:1px solid var(--ink)}
+.matrix td{padding:1.5cqw 1.3cqw;vertical-align:top;border-bottom:1px solid var(--line)}
+.matrix td:first-child{width:26%;font-weight:700}
+.matrix tr.recommended{background:#e4eadb}
+.matrix small{display:block;font-size:1cqw;font-weight:400;color:var(--muted);margin-top:.4cqw}
+.status-track{display:flex;align-items:center;gap:1cqw;margin:2.7cqw 0}
+.status{padding:1cqw 1.4cqw;border:1px solid #536c5b;border-radius:6px;font-size:1.5cqw}
+.status.current{background:#d7e7c7;color:var(--dark);border-color:#d7e7c7}
+.arrow{color:#b5c7b0}
+.two-cols{display:grid;grid-template-columns:1fr 1fr;gap:3cqw}
+.dark .panel{border-color:#536c5b}
+.dark .rule{background:#536c5b}
+.list{list-style:none;padding:0;margin:1cqw 0 0}
+.list li{padding:.8cqw 0;border-bottom:1px solid var(--line);font-size:1.25cqw}
+.list li:before{content:"↗";color:var(--accent);margin-right:.8cqw}
+.reopen{display:grid;grid-template-columns:1fr auto 1fr;gap:2cqw;align-items:center;margin-top:2.5cqw}
+.reopen-card{padding:2cqw;background:#e6eadf;border:1px solid var(--line)}
+.reopen-card .label{font-size:1cqw;color:var(--muted);margin-bottom:1.3cqw}
+.reopen-card .sample{font-size:2.3cqw;font-weight:700;line-height:1.3}
+.reopen-card .image-shape{height:4cqw;margin-top:1.5cqw;background:linear-gradient(120deg,#365f4b 50%,#b8c6a8 50%);border-radius:3px}
+.checkline{display:flex;gap:1.3cqw;margin-top:2.1cqw;align-items:flex-start}
+.checkline strong{font-size:3cqw;line-height:1;color:var(--green)}
+.screen{background:#0e1512;padding:1cqw;border-radius:8px;box-shadow:0 14px 30px #0002}
+.screen-inner{aspect-ratio:16/9;background:var(--dark);color:var(--paper);padding:2.5cqw;display:flex;justify-content:center;flex-direction:column}
+.screen-inner h3{font-size:3cqw}
+.screen-inner p{font-size:1cqw;color:#bbcab8;margin-top:1cqw}
+.pdf{display:flex;gap:1cqw;align-items:center;margin-top:1.7cqw}
+.pdf-icon{width:3.3cqw;height:4.1cqw;border:1px solid var(--line);display:grid;place-items:center;font-size:.9cqw;font-weight:700;color:var(--accent)}
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 3cqw;margin-top:2.5cqw}
+.metric{border-top:1px solid var(--line);padding:1.4cqw 0}
+.metric .value{font-size:4.5cqw;letter-spacing:-.05em;font-weight:740;line-height:1.15}
+.metric h3{font-size:1.3cqw;margin-top:.5cqw}
+.metric p{font-size:1.02cqw;color:var(--muted);margin-top:.5cqw}
+.timeline{display:flex;gap:.6cqw;margin:2.4cqw 0}
+.phase{flex:1;border-top:2px solid #74896e;padding-top:1cqw}
+.phase b{font-size:1.3cqw;color:#c1d6ad}
+.phase p{font-size:1cqw;margin-top:.8cqw;max-width:90%}
+.finish{font-size:3.8cqw;line-height:1.3;letter-spacing:-.04em;margin-top:1.8cqw}
+.stop{margin-top:2cqw;padding:1.2cqw 1.5cqw;border:1px solid #6b826e;color:#cedbc9;font-size:1.15cqw}
+.nav{position:fixed;z-index:20;bottom:18px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px;padding:7px;background:#18251fed;color:white;border:1px solid #687d6c;border-radius:40px;box-shadow:0 5px 22px #0003}
+.nav button{background:transparent;color:inherit;border:0;border-radius:25px;padding:9px 14px;cursor:pointer;font-size:13px}
+.nav button:hover{background:#ffffff20}
+.nav button:disabled{opacity:.3;cursor:default}
+.nav .counter{font-size:12px;min-width:48px;text-align:center;font-variant-numeric:tabular-nums}
+button:focus-visible{outline:3px solid #f4af88;outline-offset:3px}
+body.present{background:#080d0a;overflow:hidden}
+body.present .deck{padding:0;display:block}
+body.present .slide{display:none;box-shadow:none}
+body.present .slide.shown{display:flex;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(100vw,177.7778vh);max-width:none;height:auto;padding:4.2cqw 5cqw}
+body.present .nav{transition:opacity .2s}
+body.present.quiet .nav{opacity:0;pointer-events:none}
+body.present .nav:focus-within{opacity:1;pointer-events:auto}
+#blackout{display:none;position:fixed;inset:0;background:#000;z-index:100}
+body.black #blackout{display:block}
+@media(max-width:700px){
+.deck{padding:12px 8px 90px;gap:14px}
+.slide{padding:4.2% 5%}
+.top{font-size:7px}.tag{padding:3px 6px}
+.foot{font-size:6px;padding-top:8px}
+.chips{gap:4px}.chips span{padding:4px 6px}
+.pill{padding:4px 6px}
+.panel{border-radius:6px}
+}
+@media print{
+@page{size:320mm 180mm;margin:0}
+body{background:white}
+.deck,body.present .deck{display:block;padding:0}
+.slide,body.present .slide,body.present .slide.shown{display:flex!important;position:relative;transform:none;top:auto;left:auto;width:320mm;height:180mm;max-width:none;aspect-ratio:auto;padding:14mm 16mm;margin:0;box-shadow:none;break-after:page;page-break-after:always;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+.slide:last-child{break-after:auto;page-break-after:auto}
+.nav,#blackout{display:none!important}
+.top{font-size:10pt}.foot{font-size:8pt}
+}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="deck" aria-label="PPTe 产品介绍，共十二页">
+
+<section class="slide dark" data-ppte-slide aria-label="第1页：让 HTML 成为作品本身">
+<div class="top"><span class="brand"><i class="mark"></i> PPTe / 产品介绍</span><span class="tag">设计方案 · 尚未实现</span></div>
+<div class="split">
+<div>
+<div class="eyebrow">面向演示稿作者 · HTML-FIRST 1.0</div>
+<h1 style="margin-top:1.7cqw">让 HTML<br>成为作品本身<span class="accent">。</span></h1>
+<p class="subtitle">从直接创作，到编辑保存、重开与放映。<br>设计目标：让一份作品贯穿整个过程。</p>
+<p class="small muted" style="margin-top:2.3cqw">设计决策已确认 · 2026-09-06<br>本稿中的产品能力、流程与指标均为设计目标，待实现与验证。</p>
+</div>
+<div class="file">
+<div class="eyebrow">唯一默认交付物 · 设计目标</div>
+<div class="file-ext">.html</div>
+<div class="file-name">演示稿.html</div>
+<div class="rule"></div>
+<p>作品 · 编辑源 · 放映入口</p>
+<div class="chips"><span>直接创作</span><span>编辑保存</span><span>原路径重开</span></div>
+</div>
+</div>
+<div class="foot"><span>PPTe 重设计：让 HTML 成为作品本身</span><span>01 / 12</span></div>
+</section>
+
+<section class="slide" data-ppte-slide aria-label="第2页：六项反馈，六个改变">
+<div class="top"><span class="brand"><i class="mark"></i> 为什么重设计</span><span class="tag">设计目标</span></div>
+<h2>把作者的负担，<br>从工作流里拿掉。</h2>
+<div class="feedback">
+<div class="feedback-item"><b>01</b><div><h3>格式更少</h3><p>传统格式增加负担 → 只保留 HTML 与按需 PDF，退出 Office 适配。</p></div></div>
+<div class="feedback-item"><b>02</b><div><h3>路径更短</h3><p>慢、耗 token → Agent 直接写 HTML/CSS，工具做增强和少量检查。</p></div></div>
+<div class="feedback-item"><b>03</b><div><h3>构图更自由</h3><p>配方限制审美 → 模型控制布局、字级、图形与页面节奏。</p></div></div>
+<div class="feedback-item"><b>04</b><div><h3>交付更清楚</h3><p>一堆文件难辨认 → 默认只返回一个明确的 HTML 作品。</p></div></div>
+<div class="feedback-item"><b>05</b><div><h3>保存更可信</h3><p>没有可靠保存 → 写回当前文件，成功落盘才显示“已保存”。</p></div></div>
+<div class="feedback-item"><b>06</b><div><h3>编辑更安静</h3><p>菜单像控件堆砌 → 统一界面，按选中对象显示上下文工具。</p></div></div>
+</div>
+<div class="foot"><span>六项实际反馈是设计输入，不代表问题已经解决。</span><span>02 / 12</span></div>
+</section>
+
+<section class="slide" data-ppte-slide aria-label="第3页：从头到尾，一个作品">
+<div class="top"><span class="brand"><i class="mark"></i> 作者的完整路径</span><span class="tag">设计目标</span></div>
+<h2>从头到尾，<span class="green">只面对一个作品。</span></h2>
+<p class="subtitle">你提出内容与用途，Agent 完成叙事和页面设计，工具增强后交付一个 HTML 链接。</p>
+<div class="path">
+<div class="step"><span>创作</span><h3>说清需求</h3><p>材料、受众与用途，成为设计起点。</p></div>
+<div class="step"><span>交付</span><h3>打开 HTML</h3><p>进入适应窗口的阅读画面。</p></div>
+<div class="step"><span>修改</span><h3>进入编辑</h3><p>文字、图片与布局在作品中调整。</p></div>
+<div class="step"><span>保留</span><h3>保存重开</h3><p>写回原文件，关闭后修改仍在。</p></div>
+<div class="step"><span>演示</span><h3>开始放映</h3><p>只向观众呈现当前幻灯片。</p></div>
+</div>
+<div class="banner"><strong>演示稿.html</strong> 同时承担作品、编辑源和放映入口。</div>
+<div class="two-cols" style="margin-top:2cqw">
+<p class="small muted">PDF、另存为与开发报告，由明确动作触发。<br>不自动生成 ZIP、编辑器副本、.ppte 或 PPTX。</p>
+<p class="small muted">诊断、草稿和测试证据留在工作区或应用缓存，<br>不混入用户交付清单。</p>
+</div>
+<div class="foot"><span>默认单文件；资源默认内嵌。</span><span>03 / 12</span></div>
+</section>
+
+<section class="slide dark" data-ppte-slide aria-label="第4页：模型直接设计最终页面">
+<div class="top"><span class="brand"><i class="mark"></i> HTML/CSS 原生创作</span><span class="tag">设计目标</span></div>
+<div class="split">
+<div>
+<div class="eyebrow">模型写的，就是页面</div>
+<h2 style="margin-top:1.4cqw">让设计能力<br>直达最终作品。</h2>
+<p class="subtitle">完整构图、字体层级、Grid / Flex、渐变与 SVG，由模型直接组织。</p>
+<div class="rule"></div>
+<p>工具增强作品，保留设计 CSS。<br>不再用固定槽位重绘成低保真版本。</p>
+<p class="small muted" style="margin-top:1.5cqw">DOM / CSS 是作品的表示方式。<br>最小约定只补充页面标记、稳定对象 ID 与轻量元数据。</p>
+</div>
+<div>
+<svg class="diagram" viewBox="0 0 440 340" role="img" aria-label="原生创作流程：材料与用途，经模型直接构图，成为 HTML 作品">
+<rect x="1" y="1" width="438" height="338" rx="12" fill="#273e32" stroke="#536c5b"/>
+<text x="28" y="40" fill="#c5d4bd" font-size="13" font-family="sans-serif">设计目标 / 直接创作</text>
+<rect x="28" y="64" width="384" height="49" rx="5" fill="#3c5340"/>
+<text x="48" y="95" fill="#f4f1e9" font-size="19" font-family="sans-serif">材料 + 受众 + 用途</text>
+<path d="M220 122v22m-6-6 6 6 6-6" stroke="#e79570" fill="none" stroke-width="2"/>
+<rect x="28" y="156" width="235" height="139" rx="5" fill="#f4f1e9"/>
+<text x="46" y="186" fill="#d94c29" font-size="12" font-family="sans-serif">HTML / CSS</text>
+<text x="46" y="225" fill="#202623" font-size="26" font-weight="700" font-family="sans-serif">观点先行</text>
+<path d="M46 242h167m-167 13h130m-130 13h155" stroke="#abb5a2" stroke-width="4"/>
+<rect x="277" y="156" width="135" height="62" rx="5" fill="#d94c29"/>
+<circle cx="310" cy="187" r="16" fill="#f4f1e9"/>
+<path d="M336 199v-24l20 12z" fill="#f4f1e9"/>
+<rect x="277" y="230" width="135" height="65" rx="5" fill="#b5c7a4"/>
+<path d="M294 282v-17h20v17m9 0v-30h20v30m9 0v-41h20v41" fill="#315d4c"/>
+<text x="28" y="323" fill="#c5d4bd" font-size="12" font-family="sans-serif">构图、字级与图形直接进入最终 HTML</text>
+</svg>
+<p class="small muted" style="margin-top:1cqw">表格用原生 table；图形与图表优先 SVG；媒体用 HTML 元素。</p>
+</div>
+</div>
+<div class="foot"><span>退出默认中间表示往返；不在新核心中重建旧 Presentation IR。</span><span>04 / 12</span></div>
+</section>
+
+<section class="slide" data-ppte-slide aria-label="第5页：统一编辑界面">
+<div class="top"><span class="brand"><i class="mark"></i> 日常编辑体验</span><span class="tag">设计目标 · 界面示意</span></div>
+<h2>选中什么，就出现什么工具。</h2>
+<p class="subtitle">安静的中性色外壳，让作品保持主角；进入编辑后再显示缩略图、选择反馈与属性。</p>
+<div class="editor" role="img" aria-label="设计目标示意：左侧缩略图，中间画布和文字浮动工具栏，右侧精简文字属性；此示意不保存文件">
+<div class="editor-top"><span>← &nbsp; 演示稿.html &nbsp; <span class="accent">有修改 · 状态示意</span></span><div class="editor-tools"><span>撤销 / 重做</span><span class="mock-btn">保存</span><span>放映</span><span>更多 ···</span></div></div>
+<div class="editor-body">
+<div class="thumbs"><div class="thumb active">01</div><div class="thumb">02</div><div class="thumb">03</div><span class="small muted">＋ 添加页</span></div>
+<div class="canvas-area"><div class="floating"><span>字号</span><strong>B</strong><span>颜色</span><span>对齐</span><span>···</span></div><div class="mini-slide"><div class="mini-title">让 HTML<br>成为作品本身。</div><p>从直接创作，到可靠保存。</p></div></div>
+<div class="properties"><strong>文字</strong><div class="prop-row">字级与段落<br><span style="color:var(--ink)">标题 / 正文</span></div><div class="prop-row">颜色<div class="swatches"><i></i><i></i><i></i></div></div><div class="prop-row">更多设置<br>按需展开</div></div>
+</div>
+</div>
+<div style="display:flex;justify-content:space-between;margin-top:1.2cqw;gap:2cqw">
+<p class="small muted">文字附近浮动工具；图片、形状、表格只显示相关操作。</p>
+<p class="small muted">设计要求：键盘路径、可见焦点、可读标签。</p>
+</div>
+<div class="foot"><span>界面仅为设计表达，不是已实现编辑器或保存证据。</span><span>05 / 12</span></div>
+</section>
+
+<section class="slide" data-ppte-slide aria-label="第6页：自由布局与可控修改">
+<div class="top"><span class="brand"><i class="mark"></i> 作者保有控制权</span><span class="tag">设计目标</span></div>
+<h2>改一句话，<br>不该重做整份演示稿。</h2>
+<div class="split" style="grid-template-columns:1fr 1fr;margin-top:2cqw;align-items:start">
+<div>
+<div class="eyebrow">日常编辑</div>
+<ul class="list">
+<li>文字内容与选区格式可编辑。</li>
+<li>图片、视频可替换；表格可编辑单元格及行列。</li>
+<li>绝对定位对象支持拖动、尺寸与旋转。</li>
+<li>Grid / Flex 调整重排、间距与轨道，保留流式布局。</li>
+</ul>
+</div>
+<div class="panel" style="background:#e6eadf">
+<div class="eyebrow">AI 局部修改</div>
+<h3 style="margin-top:1cqw">修改范围跟随你的选择。</h3>
+<p style="margin-top:1cqw;font-size:1.3cqw">默认只改选定对象或页面；修改前检查内容基准，避免覆盖新的人工作业。</p>
+<div class="rule"></div>
+<p class="small">人工编辑进入统一撤销栈。<br>整页重排保留人工保护节点。</p>
+</div>
+</div>
+<p class="small muted side-note">能力边界：复杂 SVG 默认整体移动或替换，可解锁深入编辑。不承诺任意外部网页的全部 CSS 都能通过通用控件无损修改；应给出能力标记与原因，并保留 Agent 修改 HTML/CSS 的路径。</p>
+<div class="foot"><span>先保障基本编辑链路，再逐项完成日常表格、形状与媒体能力。</span><span>06 / 12</span></div>
+</section>
+
+<section class="slide" data-ppte-slide aria-label="第7页：三种入口的保存边界">
+<div class="top"><span class="brand"><i class="mark"></i> 文件保存的真实边界</span><span class="tag">设计目标 · 待实测支持矩阵</span></div>
+<h2>能否写回原文件，<br>取决于入口与授权。</h2>
+<table class="matrix">
+<thead><tr><th>打开方式</th><th>保存到哪里</th><th>自动保存承诺</th></tr></thead>
+<tbody>
+<tr class="recommended"><td>NPM 本地编辑入口<small>推荐完整编辑路径</small></td><td>绑定用户选择的 HTML，<br>检查冲突后写回同一路径。</td><td>默认开启；输入停顿约 800 ms 后保存。<small>这是设计目标，成功状态须有落盘确认。</small></td></tr>
+<tr><td>浏览器支持写入 API<small>且已获得文件写权限</small></td><td>首次保存选择并绑定文件，<br>后续通过授权写回。</td><td>授权有效时自动保存。<small>重新打开需检查权限，必要时重新授权。</small></td></tr>
+<tr><td>缺少 API 或写权限</td><td>提供本地编辑入口，<br>或显式下载保存。</td><td>只能标明草稿暂存或未写入文件。<small>不能承诺原文件自动更新。</small></td></tr>
+</tbody>
+</table>
+<p class="small" style="margin-top:1.6cqw"><strong>浏览器边界：</strong>单个 file:// HTML 无法在任意浏览器中、零授权地改写自身磁盘文件。</p>
+<div class="foot"><span>推荐命令：ppte edit ./作品.html · 使用同一套界面，不生成第二个编辑器文件。</span><span>07 / 12</span></div>
+</section>
+
+<section class="slide dark" data-ppte-slide aria-label="第8页：已保存必须有落盘确认">
+<div class="top"><span class="brand"><i class="mark"></i> 保存状态与恢复</span><span class="tag">设计目标</span></div>
+<h2>“已保存”，<br>必须是一件已经发生的事。</h2>
+<div class="status-track" aria-label="设计目标状态流程">
+<span class="status">已保存</span><span class="arrow">→</span><span class="status">有修改</span><span class="arrow">→</span><span class="status">保存中</span><span class="arrow">→</span><span class="status current">落盘确认 · 已保存</span>
+</div>
+<div class="two-cols">
+<div class="panel"><div class="eyebrow">作者看得懂</div><h3 style="margin-top:1cqw">草稿，不冒充文件。</h3><p style="margin-top:1cqw;font-size:1.3cqw">无文件授权、仅草稿、冲突与失败分别表达。失败时保留修改，状态持续可见。</p><p class="small muted" style="margin-top:1cqw">主操作为“保存”；Cmd / Ctrl + S 可重试。</p></div>
+<div class="panel"><div class="eyebrow">写入有秩序</div><h3 style="margin-top:1cqw">发现冲突，停止覆盖。</h3><p style="margin-top:1cqw;font-size:1.3cqw">串行写入并绑定版本；保存前检查磁盘变化。外部修改出现时，提供重新读取或保留当前修改。</p><p class="small muted" style="margin-top:1cqw">中文输入组合期间，不提交半个汉字。</p></div>
+</div>
+<p class="small muted" style="margin-top:1.5cqw">可靠性目标：本地服务校验后替换文件，保留可恢复版本。浏览器直写仍存在与外部进程并发的边界；断电耐久性必须通过目标系统实测确定。</p>
+<div class="foot"><span>发起请求、写入缓存或暂存草稿，都不是显示“已保存”的依据。</span><span>08 / 12</span></div>
+</section>
+
+<section class="slide" data-ppte-slide aria-label="第9页：从原路径重新打开">
+<div class="top"><span class="brand"><i class="mark"></i> 主体验的验收动作</span><span class="tag">设计目标 · 待验证</span></div>
+<h2>关掉，再从原路径打开。<br><span class="green">修改仍然在。</span></h2>
+<div class="reopen">
+<div class="reopen-card"><div class="label">编辑后 · 示意</div><div class="sample">修改后的标题</div><div class="image-shape"></div><p class="small muted" style="margin-top:1cqw">替换后的图片 · 写回作品.html</p></div>
+<div style="text-align:center"><div style="font-size:3cqw;color:var(--accent)">→</div><p class="small">关闭页面<br>原路径重开</p></div>
+<div class="reopen-card" style="background:#f8f6ef"><div class="label">重新打开 · 期望结果</div><div class="sample">修改后的标题</div><div class="image-shape"></div><p class="small muted" style="margin-top:1cqw">同一标题 · 同一图片 · 内容保留</p></div>
+</div>
+<div class="two-cols" style="margin-top:1cqw">
+<div class="checkline"><strong>↻</strong><div><h3 style="font-size:1.4cqw">恢复要匹配文件基准</h3><p class="small muted">草稿仅在基准匹配时自动恢复；移动或复制文件后，不凭文档 ID 覆盖另一份内容。</p></div></div>
+<div class="checkline"><strong>!</strong><div><h3 style="font-size:1.4cqw">异常必须留下可恢复的修改</h3><p class="small muted">断网、崩溃、只读、磁盘满和外部改动，都是待验证场景；关闭警告只作补充。</p></div></div>
+</div>
+<div class="foot"><span>重开测试是验收门槛；示意图不是保存成功的实测证据。</span><span>09 / 12</span></div>
+</section>
+
+<section class="slide" data-ppte-slide aria-label="第10页：干净放映与按需 PDF">
+<div class="top"><span class="brand"><i class="mark"></i> 面向观众的最后一步</span><span class="tag">设计目标</span></div>
+<div class="split">
+<div>
+<h2 style="margin-top:0">放映时，<br>只留下作品。</h2>
+<p class="subtitle">编辑界面完全退出观众画面。控制在唤出、悬停或键盘聚焦时出现，闲置后隐藏。</p>
+<ul class="list">
+<li>黑屏是真正黑幕；退出和恢复可由键盘完成。</li>
+<li>演讲者备注、预览与计时放在专用视图。</li>
+<li>HTML 默认可离线阅读和放映。</li>
+</ul>
+</div>
+<div>
+<div class="screen"><div class="screen-inner"><div class="eyebrow">观众视图 · 设计示意</div><h3 style="margin-top:1.5cqw">让 HTML<br>成为作品本身。</h3><p>没有编辑面板，没有常驻工具条。</p></div></div>
+<div class="pdf"><div class="pdf-icon">PDF</div><div><h3 style="font-size:1.4cqw">更多 → 导出 PDF</h3><p class="small muted">仅按需生成；一页幻灯片对应一页 PDF。</p></div></div>
+<p class="small muted" style="margin-top:1cqw">静态显示所有内容与步骤；视频用封面；编辑器不进入打印。尽可能保留文字与链接。</p>
+</div>
+</div>
+<div class="foot"><span>产品范围：HTML + 按需 PDF；移除 PPTX / PPT / ODP / Keynote 入口与 Office 验收。</span><span>10 / 12</span></div>
+</section>
+
+<section class="slide" data-ppte-slide aria-label="第11页：速度体积审美的验证目标">
+<div class="top"><span class="brand"><i class="mark"></i> 让体验由证据说话</span><span class="tag">初始设计目标 · 待实测冻结</span></div>
+<h2>更快、更轻、更好看。<br>先对照测量，再作承诺。</h2>
+<div class="metric-grid">
+<div class="metric"><div class="value">≤ 1.25<span style="font-size:2cqw"> 倍</span></div><h3>热环境总耗时中位数</h3><p>相对直接 HTML 基线；token 总量中位数目标 ≤ 1.20 倍。</p></div>
+<div class="metric"><div class="value">≤ 2<span style="font-size:2cqw"> 秒</span></div><h3>十二页轻资源稿的纯增强处理</h3><p>不含模型生成、研究与浏览器渲染，不等于端到端耗时。</p></div>
+<div class="metric"><div class="value">≤ 1<span style="font-size:2cqw"> MB</span></div><h3>不含用户媒体与可选字体的完整 HTML</h3><p>无媒体时可信运行时目标 ≤ 250 KB gzip；另报原始与媒体字节。</p></div>
+<div class="metric"><div class="value">6 / 9<span style="font-size:2cqw"> 对</span></div><h3>首轮盲评至少不逊于直接 HTML</h3><p>由项目负责人及两名目标使用者评价；不能由模型自评分替代。</p></div>
+</div>
+<div class="banner" style="padding:1.1cqw 1.5cqw;font-size:1.15cqw">同模型、同配置、同材料、同页数与资源。分开记录冷安装和日常生成；保留全部首稿与失败。</div>
+<div class="foot"><span>没有受控数据支持“必然慢数十倍”；丢事实、遮挡、保存丢失均为独立失败。</span><span>11 / 12</span></div>
+</section>
+
+<section class="slide dark" data-ppte-slide aria-label="第12页：先交付完整的小版本">
+<div class="top"><span class="brand"><i class="mark"></i> 从设计目标走向可体验版本</span><span class="tag">路线图 · 尚未实现</span></div>
+<h2>先把一条完整的体验，做通。</h2>
+<div class="timeline">
+<div class="phase"><b>H00</b><p>冻结合同<br>与基线</p></div>
+<div class="phase"><b>H01</b><p>HTML 原生<br>生成与增强</p></div>
+<div class="phase"><b>H02</b><p>原文件保存<br>与自动恢复</p></div>
+<div class="phase"><b>H03</b><p>统一 UI<br>与日常编辑</p></div>
+<div class="phase"><b>H04</b><p>放映<br>与 PDF</p></div>
+<div class="phase"><b>H05</b><p>旧链路退出<br>与发布包</p></div>
+<div class="phase"><b>H06</b><p>同模型<br>对照验收</p></div>
+</div>
+<div class="eyebrow">第一轮可体验交付 · 设计目标</div>
+<div class="finish">生成十二页好看的 HTML。<br>能改标题和图片，自动写回。<br><span style="color:#bcd2a7">原路径重开仍在，放映干净。</span></div>
+<div class="stop">停止线：这条链通过之前，不扩充表格高级能力、动画种类、插件或兼容格式。</div>
+<p class="small muted" style="margin-top:1.4cqw">主线保持 NPM + 原生 Skill，无需第二个模型或新模型密钥。<br>实施与实际证据齐备之前，不把方案标为完成；架构改版不等于缺陷修复。</p>
+<div class="foot"><span>固定来源：PPTe 重设计 · HTML-first 1.0 · 2026-09-06</span><span>12 / 12</span></div>
+</section>
+
+</main>
+<nav class="nav" aria-label="本演示稿浏览控制">
+<button id="prev" type="button" aria-label="上一页">←</button>
+<span class="counter" id="counter" aria-live="polite">01 / 12</span>
+<button id="next" type="button" aria-label="下一页">→</button>
+<button id="present" type="button" title="进入放映；方向键翻页，B 黑屏，Esc 退出">放映</button>
+</nav>
+<div id="blackout" aria-hidden="true"></div>
+<script>
+(function(){
+"use strict";
+const slides=Array.from(document.querySelectorAll(".slide"));
+const prev=document.getElementById("prev");
+const next=document.getElementById("next");
+const counter=document.getElementById("counter");
+const present=document.getElementById("present");
+let index=0,playing=false,timer;
+function update(){
+slides.forEach((slide,i)=>slide.classList.toggle("shown",i===index));
+counter.textContent=String(index+1).padStart(2,"0")+" / "+slides.length;
+prev.disabled=index===0;
+next.disabled=index===slides.length-1;
+}
+function go(n){
+index=Math.max(0,Math.min(slides.length-1,n));
+update();
+if(!playing)slides[index].scrollIntoView({behavior:"auto",block:"center"});
+}
+function reveal(){
+document.body.classList.remove("quiet");
+clearTimeout(timer);
+if(playing)timer=setTimeout(()=>document.body.classList.add("quiet"),2200);
+}
+function toggle(){
+playing=!playing;
+document.body.classList.toggle("present",playing);
+document.body.classList.remove("black","quiet");
+present.textContent=playing?"退出放映":"放映";
+present.setAttribute("aria-pressed",String(playing));
+update();
+if(!playing){
+clearTimeout(timer);
+slides[index].scrollIntoView({behavior:"auto",block:"center"});
+}else reveal();
+}
+prev.addEventListener("click",()=>go(index-1));
+next.addEventListener("click",()=>go(index+1));
+present.addEventListener("click",toggle);
+document.addEventListener("mousemove",reveal);
+document.addEventListener("pointerdown",()=>{if(playing)reveal();});
+document.addEventListener("focusin",reveal);
+document.addEventListener("keydown",e=>{
+if(e.key==="Escape"){
+document.body.classList.remove("black");
+if(playing)toggle();
+return;
+}
+if(!playing)return;
+if(e.key.toLowerCase()==="b"){
+e.preventDefault();
+document.body.classList.toggle("black");
+return;
+}
+if(document.body.classList.contains("black"))return;
+if(e.target.closest("button")&&(e.key===" "||e.key==="Enter"))return;
+if(["ArrowRight","ArrowDown","PageDown"," "].includes(e.key)){e.preventDefault();go(index+1);}
+if(["ArrowLeft","ArrowUp","PageUp"].includes(e.key)){e.preventDefault();go(index-1);}
+if(e.key==="Home"){e.preventDefault();go(0);}
+if(e.key==="End"){e.preventDefault();go(slides.length-1);}
+if(e.key==="Tab")reveal();
+});
+const observer=new IntersectionObserver(entries=>{
+if(playing)return;
+const visible=entries.filter(e=>e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio);
+if(visible.length){index=slides.indexOf(visible[0].target);update();}
+},{threshold:[.35,.6,.85]});
+slides.forEach(s=>observer.observe(s));
+update();
+})();
+</script>
+</body>
+</html>

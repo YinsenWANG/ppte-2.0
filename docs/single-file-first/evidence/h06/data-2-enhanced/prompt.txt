@@ -1,0 +1,91 @@
+You are in a controlled generation benchmark. Follow every rule literally.
+TASK: 面向维护者，用固定依赖盘点制作十二页汇报。保留真实原生表格和数值，解释统计口径、旧 CLI 可达链、候选复用与退休边界。不把静态边数说成性能。
+FIXED SOURCE MATERIAL (the only basis; do not fabricate beyond it):
+<<<MATERIAL
+# PPTe 源码依赖实测表
+
+来源：提交 bbcd46bde2c608b5a56e617f316c5dcb5534857e，scripts/html-import-inventory.mjs；单位为静态 import/export/require 边（含 type-only），不是运行调用次数。
+
+| 模块 | 静态边数 |
+|---|---:|
+| apps/cli | 22 |
+| apps/contract-deck | 26 |
+| apps/host | 10 |
+| apps/mcp | 15 |
+| packages/agent-tools | 23 |
+| packages/authoring | 6 |
+| packages/canonical-json | 1 |
+| packages/capability | 9 |
+| packages/change-contract | 5 |
+| packages/charts | 1 |
+| packages/compatibility | 4 |
+| packages/core | 20 |
+| packages/design-compiler | 33 |
+| packages/design-system | 3 |
+| packages/diff | 2 |
+| packages/editor-controller | 36 |
+| packages/editor-dom | 24 |
+| packages/editor-react | 78 |
+| packages/exporter-pdf | 12 |
+| packages/exporter-pptx | 14 |
+| packages/facts | 3 |
+| packages/file-format | 24 |
+| packages/geometry | 1 |
+| packages/importer-legacy | 6 |
+| packages/layout-recipes | 7 |
+| packages/macros | 2 |
+| packages/node-runtime | 34 |
+| packages/operations | 10 |
+| packages/patch-format | 16 |
+| packages/performance-budget | 1 |
+| packages/portable-runtime | 81 |
+| packages/recovery-journal | 13 |
+| packages/renderer-react | 7 |
+| packages/reviewer | 7 |
+| packages/richtext-adapter | 18 |
+| packages/schema | 31 |
+| packages/semantic-identity | 3 |
+| packages/validation | 8 |
+| packages/widgets | 8 |
+
+扫描源文件 117；总边 624；CLI 可达文件 86；计算型引用 0。可达集忽略直接 type-only 边，但不等于打包后执行图，也不证明已退休。
+
+MATERIAL>>>
+HARD OUTPUT RULES:
+- Produce ONE self-contained HTML presentation: exactly 12 slides (each slide element carries the data-ppte-slide attribute, exactly 12 occurrences), starts with <!doctype html>, uses CSS Grid/Flex/SVG and font hierarchy freely.
+- Planning/roadmap items must be labeled as design goals; no fabricated dates or numbers.
+- Do NOT ask questions, do NOT delegate, do NOT use web access.
+- In your working directory, write your authored deck to draft.html, then run exactly once: ppte enhance draft.html --out final.html . Confirm final.html starts with <!doctype html>. Then make your ENTIRE final message exactly the complete text of final.html, nothing else.
+
+CURRENT PPTe SKILL (author workflow guidance to follow while authoring):
+<<<SKILL
+---
+name: ppte
+description: Create native HTML/CSS presentations and deliver one self-contained .ppte.html using the local PPTe HTML-first enhancer.
+metadata:
+  requires:
+    bins: ["node"]
+---
+
+Use the current Agent to understand materials, verify facts and write ordinary HTML/CSS. Do not start an MCP server. No second model, model key, Python, Office tool or browser installation is required for static generation.
+
+Use the installed `ppte enhance /workspace/draft.html --out /user/作品.ppte.html`. Install the candidate and this skill once following README.md; reuse them on subsequent requests. Do not install browsers or fonts during ordinary generation.
+
+Treat aesthetics as part of the work: make each page's focus clear, use restraint and whitespace, and establish hierarchy through size, position, weight and contrast. Attend to alignment, spacing, rhythm and balance; keep typography, color and graphic language coherent. Design freely for the content: these are reminders, not templates, fixed palette/word-count/layout rules or aesthetic-score rejection gates.
+
+When the user provides images, actually view and understand them with the current Agent's visual capability before selecting and laying them out; no extra model account or key is needed. For a larger batch, inspect a contact sheet with stable source labels, then inspect candidate originals and relevant text/chart details; visually inspect every image used. Match page intent to the subject, expression, key text and suitable crop; do not mechanically use all attachments. Keep a short, free-form selection note connecting intent, image content and crop, including what was not viewed and any uncertainty; filenames/OCR do not replace viewing and unclear facts must not be guessed. Preserve original pixels, important subjects and text, use originals rather than low-resolution contact-sheet tiles in the work, and recheck the rendered affected pages while keeping crops adjustable. If tools cannot show an image or important detail, record the gap instead of claiming verification. With text-only materials, skip image analysis, contact sheets and image-preprocessing installation entirely; reuse available tools when images are present.
+
+1. Read the actual materials using the Agent's existing tools. Preserve facts, citations and meaningful text. Consider at most two style directions, choose one, then write the complete HTML directly. Continue directly within existing user authorization; making the presentation authorizes routine design choices.
+2. Use native Grid, Flex, typography, gradients, SVG, images and tables. Mark pages with `data-ppte-slide`; otherwise the whole body becomes one page. Optionally supply stable `data-ppte-id` values; the program deterministically fills missing IDs. Keep text as text. Do not turn the design into a layout recipe or another presentation representation.
+3. Place authorized local media and CSS beneath the draft directory. CSS imports and URLs, images, video posters and font bytes are embedded by the program. Prefer system Chinese fonts and original lightweight SVG. Do not generate Base64 by hand or download full font families by default. Remote resources, paths outside the input directory, executable HTML and unsupported resource forms fail explicitly; fix the source before delivery.
+4. Run the enhancer once. JSON output is a short summary. A nonzero exit or `ok:false` means failure. The output must be a new `.ppte.html` by default (explicit legacy `.html` output remains supported); existing files are never overwritten by this generation command. Keep draft/source material in the workspace, outside the user output directory.
+5. When browser tools are already available, inspect the full presentation for overflow and layout. Otherwise report visual verification as unverified. Perform at most two automatic local repair rounds as an absolute ceiling; the HTML-first path allows at most one necessary correction and then reports remaining issues. Never delete facts or shrink all text to satisfy a gate.
+6. Return only `作品.ppte.html`. Do not automatically deliver reports, PDF, ZIP, an editor copy or project sidecars. This file already contains the trusted viewing runtime and its single persistent source template.
+
+Use the file directly in a supported browser (file://): the contract makes it the work, editor and presenter without Node, network or a service for readers. Existing `.html` remains readable. The loopback recommendation is retired, including as a required fallback. Original-file autosave requires actual write authorization and confirmed close/readback; otherwise provide full editing and a complete updated-file download. Drafts/downloads are never saved to the original file; download initiation is not proof of disk completion.
+
+S01/S02 acceptance partial: Direct-open controls are implemented; native browser and capability-based save acceptance remains incomplete. `ppte edit FILE` now opens the file and exits; `ppte serve FILE` is an explicit development-only service. Do not recommend that legacy command as the main entry or claim it proves single-file acceptance. PDF is optional through More → Export PDF using browser printing. Safari, native file-picker and human acceptance remain pending.
+
+Preserve selected-node IDs, author CSS, source notes and locked content when making requested HTML changes. Never regenerate a whole deck to change one sentence. Existing HTML is not upgraded automatically; enhancement refuses to overwrite any existing output.
+
+SKILL>>>

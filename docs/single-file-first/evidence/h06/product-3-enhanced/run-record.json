@@ -1,0 +1,53 @@
+{
+  "id": "product:3:enhanced",
+  "status": "failure",
+  "heat": "hot",
+  "rebuiltAt": "2026-09-07T05:11:48.039Z",
+  "rebuildReason": "runner crashed writing record (Buffer bug); model call itself completed",
+  "commit": "61310c789ffe7e99311fb48b4580101803d3f40a",
+  "model": {
+    "model": "gpt-6-astra",
+    "reasoning": "medium",
+    "verification": "pending",
+    "note": "Pinned to observed Codex launcher requested model/reasoning configuration. Provider response identity and per-run usage receipts are not available; exploratory drafts are not controlled runs."
+  },
+  "environment": {
+    "device": "yinsenMac-mini M4",
+    "node": "v24.19.0",
+    "timing": "provider session span (session_meta -> last event)",
+    "caveat": "shared background load with pipeline v7 after 12:32; ratios are the verdict metric"
+  },
+  "timings": {
+    "installation": 0,
+    "research": null,
+    "generation": 414655,
+    "tool": null,
+    "correction": null,
+    "total": 414655
+  },
+  "phaseNotes": "provider session span covers model generation incl. in-session tool calls; research/tool/correction split unavailable for rebuilt records",
+  "tokens": {
+    "input": 161638,
+    "cachedInput": 136960,
+    "output": 13074,
+    "reasoning": 467,
+    "total": 174712
+  },
+  "calls": 1,
+  "retries": 0,
+  "manifestSha256": "ff9e4c74bbe7951b335d0bc573a023a60ec0a17c0849efc731b3876fe30e6e17",
+  "telemetry": {
+    "path": "product-3-enhanced/telemetry-rollout.jsonl",
+    "sha256": "0ebc5fece79c2fb1dc1b30f0634c2dc60e2acddce75e40f8452b15ba60c2ea75"
+  },
+  "firstDraft": {
+    "path": "product-3-enhanced/first-draft.html",
+    "sha256": "7ce8060c0f954bef99e89daf2475067b9f94ba2e62b48ccb34ba9693f8b04e35"
+  },
+  "bytes": 19444,
+  "gzipBytes": 7745,
+  "mediaBytes": 0,
+  "failures": [
+    "final identical to draft: CLI NOT executed"
+  ]
+}

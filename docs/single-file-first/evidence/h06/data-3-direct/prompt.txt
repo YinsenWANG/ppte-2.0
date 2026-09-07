@@ -1,0 +1,58 @@
+You are in a controlled generation benchmark. Follow every rule literally.
+TASK: 面向维护者，用固定依赖盘点制作十二页汇报。保留真实原生表格和数值，解释统计口径、旧 CLI 可达链、候选复用与退休边界。不把静态边数说成性能。
+FIXED SOURCE MATERIAL (the only basis; do not fabricate beyond it):
+<<<MATERIAL
+# PPTe 源码依赖实测表
+
+来源：提交 bbcd46bde2c608b5a56e617f316c5dcb5534857e，scripts/html-import-inventory.mjs；单位为静态 import/export/require 边（含 type-only），不是运行调用次数。
+
+| 模块 | 静态边数 |
+|---|---:|
+| apps/cli | 22 |
+| apps/contract-deck | 26 |
+| apps/host | 10 |
+| apps/mcp | 15 |
+| packages/agent-tools | 23 |
+| packages/authoring | 6 |
+| packages/canonical-json | 1 |
+| packages/capability | 9 |
+| packages/change-contract | 5 |
+| packages/charts | 1 |
+| packages/compatibility | 4 |
+| packages/core | 20 |
+| packages/design-compiler | 33 |
+| packages/design-system | 3 |
+| packages/diff | 2 |
+| packages/editor-controller | 36 |
+| packages/editor-dom | 24 |
+| packages/editor-react | 78 |
+| packages/exporter-pdf | 12 |
+| packages/exporter-pptx | 14 |
+| packages/facts | 3 |
+| packages/file-format | 24 |
+| packages/geometry | 1 |
+| packages/importer-legacy | 6 |
+| packages/layout-recipes | 7 |
+| packages/macros | 2 |
+| packages/node-runtime | 34 |
+| packages/operations | 10 |
+| packages/patch-format | 16 |
+| packages/performance-budget | 1 |
+| packages/portable-runtime | 81 |
+| packages/recovery-journal | 13 |
+| packages/renderer-react | 7 |
+| packages/reviewer | 7 |
+| packages/richtext-adapter | 18 |
+| packages/schema | 31 |
+| packages/semantic-identity | 3 |
+| packages/validation | 8 |
+| packages/widgets | 8 |
+
+扫描源文件 117；总边 624；CLI 可达文件 86；计算型引用 0。可达集忽略直接 type-only 边，但不等于打包后执行图，也不证明已退休。
+
+MATERIAL>>>
+HARD OUTPUT RULES:
+- Produce ONE self-contained HTML presentation: exactly 12 slides (each slide element carries the data-ppte-slide attribute, exactly 12 occurrences), starts with <!doctype html>, uses CSS Grid/Flex/SVG and font hierarchy freely.
+- Planning/roadmap items must be labeled as design goals; no fabricated dates or numbers.
+- Do NOT ask questions, do NOT delegate, do NOT use web access.
+- Your ENTIRE final message must be exactly the complete HTML document text: first characters are <!doctype html>, no markdown fences, no commentary before or after. Do NOT write files.

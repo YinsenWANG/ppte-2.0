@@ -1,0 +1,47 @@
+{
+ "protocol": "docs/single-file-first/evidence/s08/collection-protocol.md (machine layer)",
+ "rebuiltMethod": "runner crashed before record-write (Buffer bug, fixed); model calls completed; wall=reprovider session span; all raw artifacts+telemetry retained",
+ "direct": {
+  "success": "9/9",
+  "wall_s_median": 267,
+  "tokens_median": 35124
+ },
+ "enhanced": {
+  "success": "0/9",
+  "wall_s_median_all_attempts": 516,
+  "tokens_median_all_attempts": 215875
+ },
+ "ratios_vs_thresholds": {
+  "wall_median_ratio_all_attempts": 1.93,
+  "tokens_median_ratio_all_attempts": 6.15,
+  "thresholds": {
+   "wall": 1.25,
+   "tokens": 1.2
+  },
+  "speed_verdict": "FAIL (~1.9x)",
+  "tokens_verdict": "FAIL (~6.3x)"
+ },
+ "enhanced_failure_attribution": {
+  "draft_eq_final_no_enhance": [
+   "cherry:1",
+   "cherry:3",
+   "product:3"
+  ],
+  "final_not_enhance_output": [
+   "cherry:2",
+   "data:1",
+   "data:2",
+   "data:3",
+   "product:1"
+  ],
+  "single_true_success": [
+   "product:2"
+  ],
+  "root_cause_sample": "enhance rejected decks containing external URLs (CONTENT_URL_REMOVED, ok:false); skill does not warn about rejection upfront, so agents worked around the CLI instead of delivering through it"
+ },
+ "caveats": [
+  "shared background load with pipeline v7 after 12:32 (both arms equally affected; ratio metric)",
+  "enhanced tokens include in-session tool loops (read skill, retry) — real end-to-end cost per protocol definition"
+ ],
+ "next": "speed/token machine verdict FAIL as-is; aesthetic nine-pair blind review still requires humans; product fix candidate: skill must state rejection rules + enhance should report actionable error text"
+}

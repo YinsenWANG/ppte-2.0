@@ -1,0 +1,117 @@
+<!doctype html><html lang="zh-CN"><head>
+<meta charset="utf-8" data-ppte-id="ppte-1">
+<meta name="viewport" content="width=device-width,initial-scale=1" data-ppte-id="ppte-2">
+<title>PPTe · 让 HTML 成为作品本身</title>
+<style>
+:root{--ink:#182c30;--muted:#61716f;--paper:#f3f1e9;--green:#cde96a;--line:#cbd2c6;--teal:#154e4b}*{box-sizing:border-box}body{margin:0;background:#d8ddd5;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}section{width:1280px;height:720px;padding:48px 64px;position:relative;overflow:hidden;background:var(--paper);margin:24px auto;display:flex;flex-direction:column;gap:24px}h1,h2,h3,p{margin:0}h1{font-size:76px;line-height:1.12;letter-spacing:-3px}h2{font-size:48px;line-height:1.2;letter-spacing:-1.6px}h3{font-size:25px;line-height:1.35}p,li{font-size:22px;line-height:1.55}.eyebrow{font-size:14px;letter-spacing:2px;font-weight:700;display:flex;justify-content:space-between;align-items:center}.tag{border:1px solid currentColor;padding:6px 12px;border-radius:30px;letter-spacing:1px;font-size:13px}.muted{color:var(--muted)}.lead{font-size:26px;max-width:900px}.big{font-size:100px;line-height:1;font-weight:750;letter-spacing:-5px}.grid{display:grid;gap:24px}.two{grid-template-columns:1fr 1fr}.three{grid-template-columns:repeat(3,1fr)}.panel{border:1px solid var(--line);border-radius:18px;padding:26px}.accent{background:var(--green);border-color:var(--green)}.dark{background:var(--ink);color:var(--paper)}.dark .muted{color:#b6c5bf}.dark .panel{border-color:#52615e}.foot{margin-top:auto;display:flex;justify-content:space-between;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:13px}.dark .foot{color:#b6c5bf;border-color:#52615e}.number{font-size:15px;font-weight:700;letter-spacing:2px}.line{height:1px;background:var(--line);margin:16px 0}.row{display:flex;gap:24px;align-items:center}.stack{display:flex;flex-direction:column;gap:18px}.small{font-size:17px;line-height:1.55}.pill{display:inline-block;padding:8px 14px;background:#e1e7dc;border-radius:8px;font-size:17px}.dark .pill{background:#304648}.arrow{font-size:34px;color:var(--teal)}.window{border:1px solid #a7b4a6;border-radius:16px;overflow:hidden;background:#e2e6dc}.bar{padding:14px 20px;display:flex;justify-content:space-between;background:#fafbf6;font-size:15px;border-bottom:1px solid var(--line)}.screen{margin:20px;background:var(--teal);color:white;padding:34px;border-radius:6px;min-height:220px}.screen h3{font-size:38px}.screen p{font-size:18px;margin-top:20px}.step{padding:20px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:65px 1fr;gap:10px}.step b{font-size:28px;color:var(--teal)}table{border-collapse:collapse;width:100%;font-size:19px;line-height:1.5}th{text-align:left;font-size:15px;color:var(--muted);padding:13px 16px;border-bottom:2px solid var(--ink)}td{padding:17px 16px;border-bottom:1px solid var(--line);vertical-align:top}td:first-child{font-weight:650;width:22%}.quote{font-size:34px;line-height:1.45;border-left:5px solid var(--green);padding-left:24px}svg{display:block;width:100%;height:auto}a{color:inherit}code{font-family:ui-monospace,monospace;font-size:18px}.status{font-size:15px;background:#e2e7dc;padding:8px 12px;border-radius:7px;display:inline-block}@media print{body{background:white}section{margin:0;break-after:page;page-break-after:always}@page{size:1280px 720px;margin:0}}
+@media screen and (max-width:1279px){section{zoom:calc(100vw / 1280px);margin:24px 0}}
+</style>
+</head>
+<body data-ppte-id="ppte-3">
+<section data-ppte-slide="ppte-4" class="dark" data-ppte-id="ppte-4">
+<div class="eyebrow" data-ppte-id="ppte-5"><span data-ppte-id="ppte-6">PPTe / HTML-FIRST 1.0</span><span class="tag" data-ppte-id="ppte-7">设计方案 · 尚未实现</span></div>
+<div class="grid two" style="align-items:center;flex:1;gap:70px" data-ppte-id="ppte-8">
+<div class="stack" data-ppte-id="ppte-9"><h1 data-ppte-id="ppte-10">让 HTML<br data-ppte-id="ppte-11">成为作品本身</h1><p class="lead muted" data-ppte-id="ppte-12">面向演示稿作者的产品重设计</p><p style="color:#cde96a" data-ppte-id="ppte-13">一个文件。直接创作。编辑保存。重开放映。</p></div>
+<svg viewBox="0 0 440 390" role="img" aria-label="一个 HTML 文件承载作品、编辑源与放映入口" data-ppte-id="ppte-14"><rect x="60" y="18" width="316" height="352" rx="20" fill="#cde96a" data-ppte-id="ppte-15"></rect><path d="M306 18v70h70" fill="none" stroke="#182c30" stroke-width="2" data-ppte-id="ppte-16"></path><text x="91" y="156" fill="#182c30" font-size="55" font-weight="700" data-ppte-id="ppte-17">.html</text><path d="M92 190h250" stroke="#182c30" data-ppte-id="ppte-18"></path><text x="92" y="235" fill="#182c30" font-size="23" data-ppte-id="ppte-19">作品</text><text x="92" y="277" fill="#182c30" font-size="23" data-ppte-id="ppte-20">编辑源</text><text x="92" y="319" fill="#182c30" font-size="23" data-ppte-id="ppte-21">放映入口</text></svg>
+</div>
+<div class="foot" data-ppte-id="ppte-22"><span data-ppte-id="ppte-23">设计决策已确认 · 2026-09-06</span><span data-ppte-id="ppte-24">01 / 12</span></div>
+</section>
+<section data-ppte-slide="ppte-25" data-ppte-id="ppte-25">
+<div class="eyebrow" data-ppte-id="ppte-26"><span data-ppte-id="ppte-27">01 / 为什么重做</span><span class="tag" data-ppte-id="ppte-28">设计目标</span></div>
+<h2 data-ppte-id="ppte-29">把精力还给作品，<br data-ppte-id="ppte-30">把复杂性留在工具内部。</h2>
+<div class="grid two" style="gap:60px;flex:1" data-ppte-id="ppte-31">
+<div data-ppte-id="ppte-32"><div class="step" data-ppte-id="ppte-33"><b data-ppte-id="ppte-34">−</b><div data-ppte-id="ppte-35"><h3 data-ppte-id="ppte-36">格式与文件的负担</h3><p class="muted" data-ppte-id="ppte-37">退出 Office 转换；默认交付一个 HTML。</p></div></div><div class="step" data-ppte-id="ppte-38"><b data-ppte-id="ppte-39">−</b><div data-ppte-id="ppte-40"><h3 data-ppte-id="ppte-41">慢与反复转换</h3><p class="muted" data-ppte-id="ppte-42">去掉强制中间表示，让 Agent 直接写页面。</p></div></div><div class="step" data-ppte-id="ppte-43"><b data-ppte-id="ppte-44">−</b><div data-ppte-id="ppte-45"><h3 data-ppte-id="ppte-46">固定配方限制审美</h3><p class="muted" data-ppte-id="ppte-47">释放构图、字体、网格与页面节奏。</p></div></div></div>
+<div data-ppte-id="ppte-48"><div class="step" data-ppte-id="ppte-49"><b data-ppte-id="ppte-50">+</b><div data-ppte-id="ppte-51"><h3 data-ppte-id="ppte-52">保存要真实</h3><p class="muted" data-ppte-id="ppte-53">文件落盘成功，才显示“已保存”。</p></div></div><div class="step" data-ppte-id="ppte-54"><b data-ppte-id="ppte-55">+</b><div data-ppte-id="ppte-56"><h3 data-ppte-id="ppte-57">编辑要统一</h3><p class="muted" data-ppte-id="ppte-58">按选择显示工具，告别常驻表单墙。</p></div></div><div class="panel accent" data-ppte-id="ppte-59"><p class="small" data-ppte-id="ppte-60">纠偏来自六项实际反馈。架构改变不等于问题已解决；速度提升与体验改善都需要新的实测证据。</p></div></div>
+</div>
+<div class="foot" data-ppte-id="ppte-61"><span data-ppte-id="ppte-62">依据：固定方案 §1–2 · 无数据支持“必然慢数十倍”</span><span data-ppte-id="ppte-63">02 / 12</span></div>
+</section>
+<section data-ppte-slide="ppte-64" data-ppte-id="ppte-64">
+<div class="eyebrow" data-ppte-id="ppte-65"><span data-ppte-id="ppte-66">02 / 交付边界</span><span class="tag" data-ppte-id="ppte-67">设计目标</span></div>
+<h2 data-ppte-id="ppte-68">你收到的，只有一个明确的作品。</h2>
+<div class="grid two" style="flex:1;align-items:center;gap:70px" data-ppte-id="ppte-69">
+<div class="panel accent" style="padding:45px" data-ppte-id="ppte-70"><p class="number" data-ppte-id="ppte-71">默认交付</p><div style="font-size:54px;font-weight:750;margin:30px 0" data-ppte-id="ppte-72">演示稿.html</div><p data-ppte-id="ppte-73">它同时是作品、编辑源与放映入口。<br data-ppte-id="ppte-74">资源默认内嵌，面向离线阅读与放映。</p></div>
+<div class="stack" data-ppte-id="ppte-75"><h3 data-ppte-id="ppte-76">其他输出，由你的动作触发。</h3><div class="line" data-ppte-id="ppte-77"></div><p data-ppte-id="ppte-78"><b data-ppte-id="ppte-79">PDF</b><br data-ppte-id="ppte-80"><span class="muted" data-ppte-id="ppte-81">更多 → 导出 PDF；按需静态输出。</span></p><p data-ppte-id="ppte-82"><b data-ppte-id="ppte-83">另存为</b><br data-ppte-id="ppte-84"><span class="muted" data-ppte-id="ppte-85">次级菜单项，不再替代日常保存。</span></p><p class="small muted" data-ppte-id="ppte-86">不自动附送 ZIP、编辑器副本、.ppte 或 PDF；PPTX / PPT / ODP / Keynote 退出产品范围。诊断与开发证据留在工作区或缓存。</p></div>
+</div>
+<div class="foot" data-ppte-id="ppte-87"><span data-ppte-id="ppte-88">依据：固定方案 §3、§9 · 所述交付能力均为待验收目标</span><span data-ppte-id="ppte-89">03 / 12</span></div>
+</section>
+<section data-ppte-slide="ppte-90" data-ppte-id="ppte-90">
+<div class="eyebrow" data-ppte-id="ppte-91"><span data-ppte-id="ppte-92">03 / 直接创作</span><span class="tag" data-ppte-id="ppte-93">设计目标</span></div>
+<h2 data-ppte-id="ppte-94">模型写的，就是最后看到的页面。</h2>
+<p class="lead muted" data-ppte-id="ppte-95">叙事与 HTML/CSS 一起完成，让设计能力直接进入成品。</p>
+<div class="row" style="margin:20px 0" data-ppte-id="ppte-96"><div class="panel" style="flex:1" data-ppte-id="ppte-97"><h3 data-ppte-id="ppte-98">理解材料与用途</h3><p class="small muted" data-ppte-id="ppte-99">观点先行，保留事实与来源</p></div><span class="arrow" data-ppte-id="ppte-100">→</span><div class="panel accent" style="flex:1" data-ppte-id="ppte-101"><h3 data-ppte-id="ppte-102">AI 直接写 HTML/CSS</h3><p class="small" data-ppte-id="ppte-103">完整构图、字级与页面节奏</p></div><span class="arrow" data-ppte-id="ppte-104">→</span><div class="panel" style="flex:1" data-ppte-id="ppte-105"><h3 data-ppte-id="ppte-106">工具增强与检查</h3><p class="small muted" data-ppte-id="ppte-107">一次增强，最多一次必要修正</p></div></div>
+<div class="grid two" data-ppte-id="ppte-108"><div class="panel dark" data-ppte-id="ppte-109"><h3 data-ppte-id="ppte-110">自由表达</h3><p style="margin-top:15px" data-ppte-id="ppte-111">Grid / Flex、渐变、原生表格、SVG 图形与图表。文字保持为文字。</p></div><div class="panel" data-ppte-id="ppte-112"><h3 data-ppte-id="ppte-113">轻量约定</h3><p style="margin-top:15px" data-ppte-id="ppte-114">页面容器与稳定对象 ID 即可开始。DOM/CSS 是作品的表示，不再维护整套内容的 JSON 镜像。</p></div></div>
+<div class="foot" data-ppte-id="ppte-115"><span data-ppte-id="ppte-116">依据：固定方案 §4、§7 · NPM + 原生 Skill；不需第二个模型或新密钥</span><span data-ppte-id="ppte-117">04 / 12</span></div>
+</section>
+<section data-ppte-slide="ppte-118" data-ppte-id="ppte-118">
+<div class="eyebrow" data-ppte-id="ppte-119"><span data-ppte-id="ppte-120">04 / 打开与编辑</span><span class="tag" data-ppte-id="ppte-121">界面示意 · 设计目标</span></div>
+<h2 data-ppte-id="ppte-122">先看作品，需要时再进入编辑。</h2>
+<div class="grid" style="grid-template-columns:1.55fr 1fr;gap:40px;align-items:center;flex:1" data-ppte-id="ppte-123">
+<div class="window" data-ppte-id="ppte-124"><div class="bar" data-ppte-id="ppte-125"><span data-ppte-id="ppte-126">演示稿.html　·　尚未写入文件</span><span data-ppte-id="ppte-127">编辑　　放映</span></div><div class="screen" data-ppte-id="ppte-128"><span class="small" data-ppte-id="ppte-129">PPTe / PRODUCT</span><h3 style="margin-top:28px" data-ppte-id="ppte-130">让 HTML<br data-ppte-id="ppte-131">成为作品本身</h3><p data-ppte-id="ppte-132">一个文件，贯穿创作与表达。</p></div><div style="padding:0 20px 18px;font-size:13px;color:#61716f" data-ppte-id="ppte-133">阅读画面示意，不代表编辑器已实现</div></div>
+<div class="stack" data-ppte-id="ppte-134"><h3 data-ppte-id="ppte-135">阅读时，界面退后。</h3><p class="muted" data-ppte-id="ppte-136">顶部保留文稿名称、保存状态、编辑与放映。</p><div class="line" data-ppte-id="ppte-137"></div><h3 data-ppte-id="ppte-138">编辑时，工具跟随对象。</h3><p class="muted" data-ppte-id="ppte-139">缩略图用于导航；选择文字才出现文字工具。图片、形状和表格各有相关操作。</p></div>
+</div>
+<div class="foot" data-ppte-id="ppte-140"><span data-ppte-id="ppte-141">依据：固定方案 §3、§6 · 安静中性色外壳，作品颜色与编辑器分离</span><span data-ppte-id="ppte-142">05 / 12</span></div>
+</section>
+<section data-ppte-slide="ppte-143" data-ppte-id="ppte-143">
+<div class="eyebrow" data-ppte-id="ppte-144"><span data-ppte-id="ppte-145">05 / 日常修改</span><span class="tag" data-ppte-id="ppte-146">设计目标 · 能力逐项验收</span></div>
+<h2 data-ppte-id="ppte-147">改内容，也尊重原来的布局。</h2>
+<div class="grid two" style="gap:48px;flex:1" data-ppte-id="ppte-148">
+<div class="stack" data-ppte-id="ppte-149"><div class="panel accent" data-ppte-id="ppte-150"><p class="number" data-ppte-id="ppte-151">先打通主体验</p><h3 style="font-size:35px;margin:16px 0" data-ppte-id="ppte-152">改标题 · 换图片</h3><p data-ppte-id="ppte-153">编辑、自动写回、重开保留，构成首轮可体验交付的核心。</p></div><p class="small muted" data-ppte-id="ppte-154">文字选区格式、表格行列、常用图形属性与媒体能力，仍需在后续阶段逐项完成。</p></div>
+<div class="stack" data-ppte-id="ppte-155"><div data-ppte-id="ppte-156"><h3 data-ppte-id="ppte-157">自由布局，不被拖坏</h3><p class="muted" data-ppte-id="ppte-158">绝对定位对象可拖动、缩放与旋转；Grid/Flex 调整重排、间距与容器。</p></div><div class="line" data-ppte-id="ppte-159"></div><div data-ppte-id="ppte-160"><h3 data-ppte-id="ppte-161">局部修改，保留人工工作</h3><p class="muted" data-ppte-id="ppte-162">统一撤销栈；AI 默认只改选定节点或页面，以基准摘要避免覆盖新修改。</p></div><p class="small muted" data-ppte-id="ppte-163">复杂 SVG 默认整体处理，可解锁深入编辑。不承诺所有外部网页 CSS 都能由通用控件无损修改。</p></div>
+</div>
+<div class="foot" data-ppte-id="ppte-164"><span data-ppte-id="ppte-165">依据：固定方案 §4.3、§11 · 能力受限时说明原因，仍可由 Agent 修改 HTML/CSS</span><span data-ppte-id="ppte-166">06 / 12</span></div>
+</section>
+<section data-ppte-slide="ppte-167" class="dark" data-ppte-id="ppte-167">
+<div class="eyebrow" data-ppte-id="ppte-168"><span data-ppte-id="ppte-169">06 / 可信保存</span><span class="tag" data-ppte-id="ppte-170">设计目标</span></div>
+<h2 data-ppte-id="ppte-171">“已保存”，必须意味着写入了文件。</h2>
+<p class="lead muted" data-ppte-id="ppte-172">缓存是恢复草稿。下载发起，也不是原文件已更新的证据。</p>
+<div class="row" style="justify-content:space-between;margin:30px 0" data-ppte-id="ppte-173"><span class="pill" data-ppte-id="ppte-174">已保存</span><span data-ppte-id="ppte-175">→</span><span class="pill" data-ppte-id="ppte-176">有修改</span><span data-ppte-id="ppte-177">→</span><span class="pill" data-ppte-id="ppte-178">保存中</span><span data-ppte-id="ppte-179">→</span><span class="pill" style="background:#cde96a;color:#182c30" data-ppte-id="ppte-180">写入确认后：已保存</span></div>
+<div class="grid three" data-ppte-id="ppte-181"><div class="panel" data-ppte-id="ppte-182"><h3 data-ppte-id="ppte-183">无授权 / 仅草稿</h3><p class="muted" style="margin-top:16px" data-ppte-id="ppte-184">明确提示尚未写入文件，不把浏览器缓存包装成落盘。</p></div><div class="panel" data-ppte-id="ppte-185"><h3 data-ppte-id="ppte-186">外部修改 / 冲突</h3><p class="muted" style="margin-top:16px" data-ppte-id="ppte-187">停止覆盖，提供重新读取与保留当前修改的恢复分支。</p></div><div class="panel" data-ppte-id="ppte-188"><h3 data-ppte-id="ppte-189">写入失败</h3><p class="muted" style="margin-top:16px" data-ppte-id="ppte-190">保留修改与可见状态；Cmd/Ctrl+S 可重试。</p></div></div>
+<div class="foot" data-ppte-id="ppte-191"><span data-ppte-id="ppte-192">依据：固定方案 §5 · 串行版本写入；中文输入组合期间不提交半个汉字</span><span data-ppte-id="ppte-193">07 / 12</span></div>
+</section>
+<section data-ppte-slide="ppte-194" data-ppte-id="ppte-194">
+<div class="eyebrow" data-ppte-id="ppte-195"><span data-ppte-id="ppte-196">07 / 保存与重开</span><span class="tag" data-ppte-id="ppte-197">固定方案支持矩阵 · 待实测合同</span></div>
+<h2 data-ppte-id="ppte-198">一个文件，不等于零授权写盘。</h2>
+<p class="lead muted" data-ppte-id="ppte-199">单个 file:// HTML 无法在任意浏览器里，无授权地改写自身磁盘文件。</p>
+<table data-ppte-id="ppte-200"><thead data-ppte-id="ppte-201"><tr data-ppte-id="ppte-202"><th data-ppte-id="ppte-203">固定方案入口</th><th data-ppte-id="ppte-204">原文件保存的设计目标</th><th data-ppte-id="ppte-205">自动保存边界</th></tr></thead><tbody data-ppte-id="ppte-206"><tr data-ppte-id="ppte-207"><td data-ppte-id="ppte-208">NPM 本地编辑入口</td><td data-ppte-id="ppte-209">轻量服务绑定所选 HTML，检查冲突后写回同一路径</td><td data-ppte-id="ppte-210">目标为停顿约 800 ms 后保存；成功后显示落盘状态</td></tr><tr data-ppte-id="ppte-211"><td data-ppte-id="ppte-212">浏览器支持且已授权</td><td data-ppte-id="ppte-213">首次选择 / 绑定目标文件，后续通过文件写入 API 保存</td><td data-ppte-id="ppte-214">授权有效时自动保存；重开检查权限，必要时重新授权</td></tr><tr data-ppte-id="ppte-215"><td data-ppte-id="ppte-216">缺少写入 API / 权限</td><td data-ppte-id="ppte-217">明确无法直接覆盖；提供本地入口或显式下载保存</td><td data-ppte-id="ppte-218">仅显示草稿 / 尚未写入文件，不能承诺原文件自动更新</td></tr></tbody></table>
+<div class="panel accent" style="padding:18px 24px" data-ppte-id="ppte-219"><p data-ppte-id="ppte-220"><b data-ppte-id="ppte-221">验收动作：</b>修改 → 写入确认 → 关闭 → 从原路径重开 → 内容仍在。</p></div>
+<div class="foot" data-ppte-id="ppte-222"><span data-ppte-id="ppte-223">依据：固定方案 §5.1–5.3 · 此页描述该方案的目标，不宣称当前 CLI 已支持</span><span data-ppte-id="ppte-224">08 / 12</span></div>
+</section>
+<section data-ppte-slide="ppte-225" data-ppte-id="ppte-225">
+<div class="eyebrow" data-ppte-id="ppte-226"><span data-ppte-id="ppte-227">08 / 放映与输出</span><span class="tag" data-ppte-id="ppte-228">设计目标</span></div>
+<h2 data-ppte-id="ppte-229">观众只看内容，作者保留控制。</h2>
+<div class="grid two" style="flex:1;gap:45px" data-ppte-id="ppte-230">
+<div class="panel dark" style="display:flex;flex-direction:column;justify-content:center;padding:40px" data-ppte-id="ppte-231"><p class="number" style="color:#cde96a" data-ppte-id="ppte-232">放映画面示意</p><h3 style="font-size:53px;margin:30px 0" data-ppte-id="ppte-233">让表达<br data-ppte-id="ppte-234">占满舞台。</h3><p class="muted" data-ppte-id="ppte-235">只显示当前幻灯片，编辑工具退出观众画面。</p></div>
+<div class="stack" data-ppte-id="ppte-236"><h3 data-ppte-id="ppte-237">控制按需出现</h3><p class="muted" data-ppte-id="ppte-238">唤出、悬停或键盘聚焦时显示；闲置后隐藏。备注、预览和计时放入专用视图。</p><h3 data-ppte-id="ppte-239">黑幕与退出可预期</h3><p class="muted" data-ppte-id="ppte-240">黑屏是真实黑幕；键盘可以退出并恢复到正确编辑位置。</p><div class="line" data-ppte-id="ppte-241"></div><h3 data-ppte-id="ppte-242">PDF，按需静态交付</h3><p class="small muted" data-ppte-id="ppte-243">更多 → 导出 PDF。一页对应一张幻灯片；步骤静态可见，视频使用封面，编辑器与控制条不进入打印。检查分页、裁切、字体和透明度。</p></div>
+</div>
+<div class="foot" data-ppte-id="ppte-244"><span data-ppte-id="ppte-245">依据：固定方案 §3、§6、§9 · 优先浏览器打印，尽可能保留文字与链接</span><span data-ppte-id="ppte-246">09 / 12</span></div>
+</section>
+<section data-ppte-slide="ppte-247" data-ppte-id="ppte-247">
+<div class="eyebrow" data-ppte-id="ppte-248"><span data-ppte-id="ppte-249">09 / 轻量且可信</span><span class="tag" data-ppte-id="ppte-250">设计目标</span></div>
+<h2 data-ppte-id="ppte-251">一份内容，一套运行时。</h2>
+<div class="grid" style="grid-template-columns:1.05fr 1fr;gap:55px;flex:1;align-items:center" data-ppte-id="ppte-252">
+<div class="panel" style="padding:30px" data-ppte-id="ppte-253"><div class="panel accent" data-ppte-id="ppte-254"><h3 data-ppte-id="ppte-255">单 HTML</h3><p class="small" data-ppte-id="ppte-256">页面 HTML/CSS + 内嵌资源<br data-ppte-id="ppte-257">轻量元数据 + 可信编辑 / 放映运行时</p></div><div style="text-align:center;font-size:30px;padding:10px" data-ppte-id="ppte-258">↓</div><div class="panel" data-ppte-id="ppte-259"><h3 data-ppte-id="ppte-260">隔离的作品画布</h3><p class="small muted" data-ppte-id="ppte-261">保留 Grid / Flex / SVG 与字体能力<br data-ppte-id="ppte-262">作者内容默认不能执行任意脚本</p></div></div>
+<div class="stack" data-ppte-id="ppte-263"><h3 data-ppte-id="ppte-264">保存不积累副本</h3><p class="muted" data-ppte-id="ppte-265">从活动 DOM 序列化一次，清除选区、拖拽柄与临时工具 UI；不重复嵌入旧模板和项目包。</p><div class="line" data-ppte-id="ppte-266"></div><h3 data-ppte-id="ppte-267">轻资源，少依赖</h3><p class="muted" data-ppte-id="ppte-268">默认使用系统中文字体与轻量 SVG；不下载完整字体，不让简单文本生成依赖浏览器安装。</p><p class="small muted" data-ppte-id="ppte-269">资源默认内嵌并限制外部请求。被拒绝的可执行内容要明确报告，不能静默破坏版式后宣称成功。</p></div>
+</div>
+<div class="foot" data-ppte-id="ppte-270"><span data-ppte-id="ppte-271">依据：固定方案 §4.2、§7 · 具体封装须先通过保真与体积原型</span><span data-ppte-id="ppte-272">10 / 12</span></div>
+</section>
+<section data-ppte-slide="ppte-273" data-ppte-id="ppte-273">
+<div class="eyebrow" data-ppte-id="ppte-274"><span data-ppte-id="ppte-275">10 / 如何证明更好</span><span class="tag" data-ppte-id="ppte-276">初始设计目标 · 待实测冻结</span></div>
+<h2 data-ppte-id="ppte-277">速度与审美，用同条件对照说话。</h2>
+<div class="grid three" data-ppte-id="ppte-278"><div class="panel" data-ppte-id="ppte-279"><div class="big" data-ppte-id="ppte-280">1.25<span style="font-size:32px" data-ppte-id="ppte-281">×</span></div><h3 style="margin-top:18px" data-ppte-id="ppte-282">热环境总耗时中位数上限</h3><p class="small muted" data-ppte-id="ppte-283">相对直接 HTML 基线</p></div><div class="panel" data-ppte-id="ppte-284"><div class="big" data-ppte-id="ppte-285">1.20<span style="font-size:32px" data-ppte-id="ppte-286">×</span></div><h3 style="margin-top:18px" data-ppte-id="ppte-287">Token 总量中位数上限</h3><p class="small muted" data-ppte-id="ppte-288">同模型、配置、材料与资源</p></div><div class="panel accent" data-ppte-id="ppte-289"><div class="big" data-ppte-id="ppte-290">2<span style="font-size:32px" data-ppte-id="ppte-291">秒</span></div><h3 style="margin-top:18px" data-ppte-id="ppte-292">十二页轻资源纯增强目标</h3><p class="small" data-ppte-id="ppte-293">不含模型、研究与浏览器渲染</p></div></div>
+<div class="grid two" style="gap:45px" data-ppte-id="ppte-294"><div data-ppte-id="ppte-295"><h3 data-ppte-id="ppte-296">体积也要透明</h3><p class="small muted" style="margin-top:10px" data-ppte-id="ppte-297">无媒体 runtime 目标 ≤ 250 KB gzip；不含用户媒体和可选字体的完整 HTML 目标 ≤ 1 MB。同时报告原始、gzip 与媒体字节。</p></div><div data-ppte-id="ppte-298"><h3 data-ppte-id="ppte-299">盲评不替代可靠性</h3><p class="small muted" style="margin-top:10px" data-ppte-id="ppte-300">三类材料各三对；负责人和两名目标用户盲评。首轮九对至少六对不逊于直接 HTML。丢事实、遮挡、保存丢失均为独立失败。</p></div></div>
+<div class="foot" data-ppte-id="ppte-301"><span data-ppte-id="ppte-302">依据：固定方案 §8 · 分开记录冷安装与日常生成；保留首稿、尾部与失败，不是已测结果</span><span data-ppte-id="ppte-303">11 / 12</span></div>
+</section>
+<section data-ppte-slide="ppte-304" class="dark" data-ppte-id="ppte-304">
+<div class="eyebrow" data-ppte-id="ppte-305"><span data-ppte-id="ppte-306">11 / 下一步</span><span class="tag" data-ppte-id="ppte-307">路线图均为设计目标 · 尚未实现</span></div>
+<h2 data-ppte-id="ppte-308">先完成一条真实可用的链。</h2>
+<div style="font-size:39px;line-height:1.5;color:#cde96a;margin:8px 0" data-ppte-id="ppte-309">十二页 HTML → 改标题与图片 → 自动写回<br data-ppte-id="ppte-310">→ 关闭原路径重开 → 干净放映</div>
+<p class="quote" data-ppte-id="ppte-311">这条链没通过之前，不扩充高级表格、<br data-ppte-id="ppte-312">动画种类、插件或兼容格式。</p>
+<div class="grid" style="grid-template-columns:repeat(7,1fr);gap:12px;margin-top:15px" data-ppte-id="ppte-313">
+<div data-ppte-id="ppte-314"><p class="number" data-ppte-id="ppte-315">H00</p><p class="small muted" data-ppte-id="ppte-316">合同与基线</p></div><div data-ppte-id="ppte-317"><p class="number" data-ppte-id="ppte-318">H01</p><p class="small muted" data-ppte-id="ppte-319">生成 / 增强</p></div><div data-ppte-id="ppte-320"><p class="number" data-ppte-id="ppte-321">H02</p><p class="small muted" data-ppte-id="ppte-322">保存 / 恢复</p></div><div data-ppte-id="ppte-323"><p class="number" data-ppte-id="ppte-324">H03</p><p class="small muted" data-ppte-id="ppte-325">统一编辑 UI</p></div><div data-ppte-id="ppte-326"><p class="number" data-ppte-id="ppte-327">H04</p><p class="small muted" data-ppte-id="ppte-328">放映 / PDF</p></div><div data-ppte-id="ppte-329"><p class="number" data-ppte-id="ppte-330">H05</p><p class="small muted" data-ppte-id="ppte-331">旧链路退出</p></div><div data-ppte-id="ppte-332"><p class="number" data-ppte-id="ppte-333">H06</p><p class="small muted" data-ppte-id="ppte-334">同模型验收</p></div>
+</div>
+<p class="small muted" data-ppte-id="ppte-335">以可体验 HTML、代码提交和实际证据验收。架构改版不等于缺陷修复；实施完成前，不标记完成。</p>
+<div class="foot" data-ppte-id="ppte-336"><span data-ppte-id="ppte-337">唯一内容来源：《PPTe 重设计：让 HTML 成为作品本身》· HTML-first 1.0 · 2026-09-06</span><span data-ppte-id="ppte-338">12 / 12</span></div>
+</section>
+
+
+</body></html>

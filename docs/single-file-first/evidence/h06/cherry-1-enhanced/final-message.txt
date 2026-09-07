@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cherry Studio · 与开源贡献者共建</title>
+<style>
+:root{--bg:#f7f5ef;--ink:#202b2a;--muted:#697572;--red:#c83750;--pink:#f3dce0;--line:#d7ddd6;--green:#d9e6d9}*{box-sizing:border-box}body{margin:0;background:#202b2a;color:var(--ink);font-family:"PingFang SC","Microsoft YaHei",sans-serif}section{width:1280px;height:720px;background:var(--bg);padding:48px 64px 42px;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:25px;margin:0 auto 24px}header,footer,.row{display:flex;align-items:center;justify-content:space-between}header{font-size:13px;letter-spacing:2px;color:var(--muted)}.brand{font-weight:800;color:var(--red);letter-spacing:1px}h1,h2,h3,p{margin:0}h1{font-size:76px;line-height:1.13;letter-spacing:-3px}h2{font-size:43px;line-height:1.25;letter-spacing:-1px}h3{font-size:23px;line-height:1.4}.lead{font-size:21px;line-height:1.7;color:var(--muted);max-width:1000px}.kicker{font-size:15px;letter-spacing:3px;color:var(--red);font-weight:700}.grid{display:grid;gap:20px}.two{grid-template-columns:1fr 1fr}.three{grid-template-columns:repeat(3,1fr)}.four{grid-template-columns:repeat(4,1fr)}.card{border:1px solid var(--line);padding:25px;border-radius:6px;display:flex;flex-direction:column;gap:15px}.card p,.copy{font-size:19px;line-height:1.7}.muted{color:var(--muted)}.pink{background:var(--pink);border-color:var(--pink)}.green{background:var(--green);border-color:var(--green)}.dark{background:var(--ink);color:var(--bg)}.dark .lead,.dark header,.dark footer{color:#b7c6bd}.dark .brand,.dark .kicker{color:#ff91a2}.big{font-size:64px;line-height:1.1;font-weight:750;letter-spacing:-2px}.num{font-size:14px;color:var(--red);font-weight:750;letter-spacing:2px}.tag{font-size:13px;border:1px solid currentColor;border-radius:30px;padding:5px 11px;display:inline-block;width:max-content}.tags{display:flex;gap:9px;flex-wrap:wrap}.bar{padding:18px 24px;background:var(--green);border-radius:6px;font-size:19px;line-height:1.5}.rule{border-top:1px solid var(--line);padding-top:18px}.small{font-size:14px;line-height:1.65}.link{color:inherit;text-decoration:none;border-bottom:1px solid #9fa9a1}a{color:inherit}footer{margin-top:auto;padding-top:15px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);gap:20px}footer span:last-child{white-space:nowrap}.cover{display:grid;grid-template-columns:1.45fr 1fr;align-items:center;flex:1}.cover-art{width:100%;height:330px}.stack{display:flex;flex-direction:column;gap:17px}.indexline{display:flex;gap:20px;align-items:baseline;border-top:1px solid var(--line);padding:17px 0;font-size:20px}.indexline b{font-size:14px;color:var(--red)}.wide{grid-column:1/-1}.steps{counter-reset:step}.step{padding:25px 20px;border-top:3px solid var(--red)}.step h3{margin:25px 0 13px}.step p{font-size:18px;line-height:1.65}.step .big{color:var(--red);font-size:46px}.road .card{padding:21px}.road p{font-size:17px;line-height:1.8}.road h3{font-size:21px}.road .tag{color:var(--red)}table{width:100%;border-collapse:collapse;font-size:18px;line-height:1.55}th,td{text-align:left;padding:17px 20px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:15px;color:var(--muted)}td:first-child{width:19%;font-weight:700}td:nth-child(2){width:32%}td:nth-child(3){background:#e8ede4}.cta{font-size:27px;line-height:1.55}.enterprise{display:grid;grid-template-columns:.75fr 1.5fr;gap:40px}.dark .card{border-color:#56665e}.dark .rule,.dark footer{border-color:#56665e}.dark .card p{color:#cbd4ce}.dark .tag{color:#ff91a2}.dark a{color:#ffb5c0}@media print{body{background:white}section{margin:0;break-after:page}}@page{size:1280px 720px;margin:0}
+</style>
+</head>
+<body>
+<section data-ppte-slide>
+<header><span class="brand">CHERRY STUDIO / 开源共建</span><span>CONTRIBUTOR BRIEF</span></header>
+<div class="cover"><div class="stack"><p class="kicker">面向开源贡献者</p><h1>一个桌面入口<br>一起拓展 AI 可能</h1><p class="lead">Cherry Studio 支持多家大语言模型提供商，<br>覆盖 Windows、Mac 与 Linux。</p><div class="tags"><span class="tag">产品</span><span class="tag">生态</span><span class="tag">贡献</span><span class="tag">共创</span></div></div><svg class="cover-art" viewBox="0 0 420 340" xmlns="http://www.w3.org/2000/svg" aria-label="抽象樱桃与连接节点"><circle cx="214" cy="173" r="148" fill="#ede9df"/><path d="M134 219Q143 68 266 51Q201 137 286 233" fill="none" stroke="#59785c" stroke-width="10" stroke-linecap="round"/><path d="M223 86Q258 8 325 51Q283 105 223 86" fill="#8eaa8b"/><circle cx="128" cy="229" r="66" fill="#c83750"/><circle cx="288" cy="243" r="62" fill="#dd6073"/><circle cx="109" cy="204" r="13" fill="#ef9aaa"/><circle cx="267" cy="222" r="12" fill="#f4b1bc"/><g fill="#202b2a"><circle cx="52" cy="112" r="6"/><circle cx="368" cy="153" r="6"/><circle cx="200" cy="323" r="6"/></g><g stroke="#aebbae" fill="none"><path d="M58 112H108M318 153H362M200 276V317"/></g></svg></div>
+<footer><span>依据用户提供的固定 README · 不引入外部数据</span><span>01 / 12</span></footer>
+</section>
+<section data-ppte-slide>
+<header><span class="brand">CHERRY STUDIO</span><span>01 / 产品定位</span></header>
+<h2>把多模型能力，放进熟悉的桌面工作流</h2><p class="lead">从模型接入到对话、文档与日常工具，README 描述的是一个跨平台 AI 桌面客户端。</p>
+<div class="grid three"><div class="card pink"><span class="num">CONNECT</span><h3>连接不同模型</h3><p>云端 LLM 服务<br>AI Web 服务集成<br>本地模型支持</p></div><div class="card"><span class="num">WORK</span><h3>组织 AI 工作</h3><p>预配置与自定义助手<br>多模型同时对话<br>文档与数据处理</p></div><div class="card"><span class="num">USE</span><h3>降低使用门槛</h3><p>即装即用，无需环境配置<br>Windows / Mac / Linux<br>内容分享与主题体验</p></div></div>
+<div class="bar">贡献视角：可以从模型、对话、数据处理或用户体验，选择自己的切入点。</div>
+<footer><span>来源：README · 产品介绍 / Key Features；贡献视角为本稿整理</span><span>02 / 12</span></footer>
+</section>
+<section data-ppte-slide>
+<header><span class="brand">CHERRY STUDIO</span><span>02 / 接入生态</span></header>
+<h2>云服务、Web 服务、本地模型，三类接入</h2>
+<div class="grid three"><div class="card"><span class="num">01 / CLOUD</span><h3>LLM 云服务</h3><div class="big" style="font-size:36px">OpenAI<br>Gemini<br>Anthropic</div><p class="muted">以及其他主流提供商</p></div><div class="card"><span class="num">02 / WEB</span><h3>AI Web 服务集成</h3><div class="big" style="font-size:36px">Claude<br>Perplexity<br>Poe</div><p class="muted">README 所列服务示例</p></div><div class="card green"><span class="num">03 / LOCAL</span><h3>本地模型</h3><div class="big" style="font-size:36px">Ollama<br>LM Studio</div><p class="muted">让本地模型进入桌面工作流</p></div></div>
+<p class="copy rule">围绕同一个客户端使用不同来源的模型能力，是产品的核心定位。</p>
+<footer><span>来源：README · Diverse LLM Provider Support</span><span>03 / 12</span></footer>
+</section>
+<section data-ppte-slide>
+<header><span class="brand">CHERRY STUDIO</span><span>03 / 现有功能</span></header>
+<h2>从对话到内容处理，形成日常工具集</h2>
+<div class="grid two"><div class="card pink"><h3>助手与对话</h3><p><strong>300+</strong> 个预配置 AI 助手；支持自定义助手，<br>以及多模型同时对话。</p></div><div class="card"><h3>文档与数据</h3><p>文本、图片、Office、PDF 等格式；<br>WebDAV 文件管理与备份。</p></div><div class="card"><h3>工具与扩展</h3><p>全局搜索、话题管理、AI 翻译、拖拽排序；<br>小程序支持与 MCP Server。</p></div><div class="card"><h3>阅读与呈现</h3><p>完整 Markdown 渲染、Mermaid 图表、代码高亮；<br>明暗主题、透明窗口与便捷内容分享。</p></div></div>
+<footer><span>来源：README · Key Features；300+ 为原文口径</span><span>04 / 12</span></footer>
+</section>
+<section data-ppte-slide>
+<header><span class="brand">CHERRY STUDIO</span><span>04 / 社区生态</span></header>
+<h2>生态不止于代码：主题、关联项目与交流</h2>
+<div class="grid three"><div class="card pink"><h3>主题创作</h3><p><a class="link" href="https://cherrycss.com">Theme Gallery</a><br><a class="link" href="https://github.com/hakadao/CherryStudio-Aero">Aero</a><br><a class="link" href="https://github.com/rainoffallingstar/CherryStudio-PaperMaterial">PaperMaterial</a><br><a class="link" href="https://github.com/bjl101501/CherryStudio-Claudestyle-dynamic">Claude dynamic-style</a><br><a class="link" href="https://github.com/BoningtonChen/CherryStudio_themes">Maple Neon</a></p><p class="small muted">README 欢迎提交更多主题 PR。</p></div><div class="card"><h3>README 关联项目</h3><p><a class="link" href="https://github.com/QuantumNous/new-api">new-api</a> · LLM 网关与资产管理<br><a class="link" href="https://github.com/songquanpeng/one-api">one-api</a> · API 管理与分发<br><a class="link" href="https://poe.com/">Poe</a> · AI 服务平台<br><a class="link" href="https://github.com/iorate/ublacklist">ublacklist</a> · 搜索站点屏蔽</p><p class="small muted">此处为关联项目清单，不代表均已集成为功能。</p></div><div class="card"><h3>社区连接</h3><p><a class="link" href="https://t.me/CherryStudioAI">Telegram</a><br><a class="link" href="https://discord.gg/wez8HtpxqQ">Discord</a><br><a class="link" href="https://qm.qq.com/q/lo0D4qVZKi">QQ群 575014769</a><br><a class="link" href="https://github.com/CherryHQ/cherry-studio/discussions">GitHub Discussions</a></p><p class="small muted">参与讨论、帮助用户、分享使用经验。</p></div></div>
+<footer><span>来源：README · Theme / Related Projects / 社区链接 / Contributing</span><span>05 / 12</span></footer>
+</section>
+<section data-ppte-slide class="road">
+<header><span class="brand">CHERRY STUDIO</span><span>05 / 共建方向</span></header>
+<div class="row"><h2>路线图：下一步可以共同塑造什么</h2><span class="tag">设计目标 · 非已上线承诺</span></div>
+<div class="grid two"><div class="card"><h3>核心功能 / 设计目标</h3><p>选择助手与智能内容选择增强 · 深度研究<br>文档预处理 · MCP Marketplace</p></div><div class="card"><h3>知识管理 / 设计目标</h3><p>笔记与收藏 · 动态画布可视化<br>OCR · TTS（文本转语音）</p></div><div class="card"><h3>平台支持 / 设计目标</h3><p>HarmonyOS PC 版 · Android / iOS 应用（第一阶段）<br>多窗口 · 窗口置顶 · Intel AI PC（Core Ultra）支持</p></div><div class="card"><h3>高级能力 / 设计目标</h3><p>插件系统 · ASR（自动语音识别）<br>助手与话题交互重构</p></div></div>
+<p class="copy">在 <a href="https://github.com/orgs/CherryHQ/projects/7">项目看板</a> 跟踪进展，在 <a href="https://github.com/CherryHQ/cherry-studio/discussions">Discussions</a> 提出想法。原文未给出这些目标的交付日期。</p>
+<footer><span>来源：README · Roadmap；所有条目均按设计目标展示</span><span>06 / 12</span></footer>
+</section>
+<section data-ppte-slide>
+<header><span class="brand">CHERRY STUDIO</span><span>06 / 贡献入口</span></header>
+<h2>不只有写代码，七种方式都能参与</h2><p class="lead">选择与你的经验相匹配的贡献方式，从一项具体改进开始。</p>
+<div class="grid four"><div class="card pink"><span class="num">01</span><h3>贡献代码</h3><p>开发新功能<br>优化现有代码</p></div><div class="card"><span class="num">02</span><h3>修复问题</h3><p>提交发现的<br>Bug 修复</p></div><div class="card"><span class="num">03</span><h3>维护 Issues</h3><p>协助管理<br>GitHub 问题</p></div><div class="card"><span class="num">04</span><h3>产品设计</h3><p>参与设计讨论</p></div></div>
+<div class="grid three"><div class="bar"><b>05 / 编写文档</b><br>完善用户手册与指南</div><div class="bar"><b>06 / 社区参与</b><br>讨论交流，帮助用户</div><div class="bar"><b>07 / 推广使用</b><br>让更多人了解 Cherry Studio</div></div>
+<footer><span>来源：README · Contributing</span><span>07 / 12</span></footer>
+</section>
+<section data-ppte-slide>
+<header><span class="brand">CHERRY STUDIO</span><span>07 / 第一个 PR</span></header>
+<h2>把想法变成一个可审阅的 Pull Request</h2><p class="lead">从仓库探索、一个 good first issue，或你提出的改进建议开始。</p>
+<div class="grid four steps"><div class="step"><span class="big">01</span><h3>Fork 与克隆</h3><p>Fork 仓库，<br>克隆到本地。</p></div><div class="step"><span class="big">02</span><h3>创建分支</h3><p>为本次修改<br>建立工作分支。</p></div><div class="step"><span class="big">03</span><h3>提交修改</h3><p>Commit 并推送<br>你的变更。</p></div><div class="step"><span class="big">04</span><h3>发起 PR</h3><p>描述修改内容<br>以及修改原因。</p></div></div>
+<div class="card green"><h3>开始前，阅读贡献约定</h3><p><a href="https://github.com/CherryHQ/cherry-studio/blob/main/docs/contrib/development.md">开发文档</a>　 / 　<a href="https://github.com/CherryHQ/cherry-studio/blob/main/docs/contrib/branching-strategy.md">分支策略</a>　 / 　<a href="https://github.com/CherryHQ/cherry-studio/blob/main/CONTRIBUTING.md">贡献指南</a></p></div>
+<footer><span>来源：README · Getting Started / How to Get Started；相对文档链接按仓库路径展开</span><span>08 / 12</span></footer>
+</section>
+<section data-ppte-slide class="dark">
+<header><span class="brand">CHERRY STUDIO</span><span>08 / 开发者共创计划</span></header>
+<h2>以持续贡献，获得长期支持</h2><p class="lead">README 提出的激励计划，希望让开发者、社区与项目共同成长。</p>
+<div class="grid" style="grid-template-columns:.9fr 1.6fr"><div class="stack"><span class="tag">原文资格条件</span><div class="big" style="font-size:82px">&gt; 30</div><h3>有意义的 commits</h3><p class="copy">在任一统计周期内，向 Cherry Studio 的任一 GitHub 开源项目贡献超过 30 次有意义的提交。</p></div><div class="stack"><div class="card"><h3>Cursor 订阅赞助 · 70 美元</h3><p>以额度或报销形式支持 Cursor 订阅。</p></div><div class="card"><h3>DeepSeek 与 Qwen · 无限 API 调用</h3><p>按原文列示的贡献者福利。</p></div><div class="card"><h3>前沿技术 · 不定期福利</h3><p>包括 Claude、Gemini、OpenAI 等模型 API 访问。</p></div></div></div>
+<footer><span>来源：README · Contributor Rewards Program；首期：2025 年 Q3（7–9 月），原文安排 10 月 1 日发放。非当前开放或已兑现核验。</span><span>09 / 12</span></footer>
+</section>
+<section data-ppte-slide>
+<header><span class="brand">CHERRY STUDIO</span><span>09 / 版本边界</span></header>
+<h2>社区版与企业版：开放方式与管理能力不同</h2>
+<table><thead><tr><th>比较维度</th><th>社区版</th><th>企业版</th></tr></thead><tbody><tr><td>源码开放</td><td>开源</td><td>向客户部分开放</td></tr><tr><td>许可 / 费用</td><td>AGPL-3.0</td><td>买断 / 订阅费用</td></tr><tr><td>管理后台</td><td>README 对比表未列出</td><td>模型集中接入、员工管理、共享知识库、<br>访问控制、数据备份</td></tr><tr><td>服务器</td><td>README 对比表未列出</td><td>专属私有化部署</td></tr></tbody></table>
+<div class="bar"><strong>社区版允许商业用途，前提是完整遵守 AGPL-3.0。</strong><br>如需豁免 AGPL-3.0 要求的商业许可，README 指向 bd@cherry-ai.com。</div>
+<footer><span>来源：README · Version Comparison / License；此页为原文边界摘要</span><span>10 / 12</span></footer>
+</section>
+<section data-ppte-slide>
+<header><span class="brand">CHERRY STUDIO</span><span>10 / 企业版定位</span></header>
+<h2>企业版把 AI 资源、知识与权限集中管理</h2>
+<div class="enterprise"><div class="stack"><p class="kicker">面向团队与企业</p><p class="cta">基于社区版构建的<br>可私有部署 AI<br>生产力与管理平台。</p><p class="copy muted">README 描述后端可部署在本地服务器或私有云，以支持组织对数据的控制。</p><p class="small">演示：<a href="https://enterprise.cherry-ai.com">enterprise.cherry-ai.com</a><br>商务咨询：<a href="mailto:bd@cherry-ai.com">bd@cherry-ai.com</a></p></div><div class="stack"><div class="indexline"><b>01</b><span><strong>统一模型管理</strong>　云端与私有模型集中接入</span></div><div class="indexline"><b>02</b><span><strong>企业知识库</strong>　团队知识构建、管理与共享</span></div><div class="indexline"><b>03</b><span><strong>细粒度访问控制</strong>　员工账号与角色权限</span></div><div class="indexline"><b>04</b><span><strong>完整私有部署</strong>　本地服务器或私有云</span></div><div class="indexline"><b>05</b><span><strong>可靠后端服务</strong>　API、数据备份与恢复</span></div></div></div>
+<footer><span>来源：README · Enterprise Edition / Core Advantages；产品描述不等同于独立合规认证</span><span>11 / 12</span></footer>
+</section>
+<section data-ppte-slide class="dark">
+<header><span class="brand">CHERRY STUDIO / LET’S BUILD TOGETHER</span><span>11 / 开始共建</span></header>
+<div class="stack" style="margin:14px 0"><p class="kicker">下一个改进，可以从你开始</p><h1 style="font-size:65px">选一个入口，<br>提交你的第一次贡献。</h1></div>
+<div class="grid three"><div class="card"><h3>发现与反馈</h3><p><a href="https://github.com/CherryHQ/cherry-studio/issues">浏览 Issues</a><br>选择 good first issue<br>或提出发现的问题</p></div><div class="card"><h3>讨论与规划</h3><p><a href="https://github.com/CherryHQ/cherry-studio/discussions">加入 Discussions</a><br><a href="https://github.com/orgs/CherryHQ/projects/7">查看项目看板</a><br>参与设计目标讨论</p></div><div class="card"><h3>实现与支持</h3><p><a href="https://github.com/CherryHQ/cherry-studio">Fork 仓库并发起 PR</a><br>完善文档、分享主题<br>Star 或 <a href="https://github.com/CherryHQ/cherry-studio/blob/main/docs/sponsor.md">赞助开发</a></p></div></div>
+<footer><span>全稿唯一事实来源：用户提供的固定 README · 未查询外部网页、实时版本或统计数据</span><span>12 / 12</span></footer>
+</section>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PPTe · 让 HTML 成为作品本身</title>
+<style>
+:root{--ink:#182c30;--muted:#61716f;--paper:#f3f1e9;--green:#cde96a;--line:#cbd2c6;--teal:#154e4b}*{box-sizing:border-box}body{margin:0;background:#d8ddd5;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}section{width:1280px;height:720px;padding:48px 64px;position:relative;overflow:hidden;background:var(--paper);margin:24px auto;display:flex;flex-direction:column;gap:24px}h1,h2,h3,p{margin:0}h1{font-size:76px;line-height:1.12;letter-spacing:-3px}h2{font-size:48px;line-height:1.2;letter-spacing:-1.6px}h3{font-size:25px;line-height:1.35}p,li{font-size:22px;line-height:1.55}.eyebrow{font-size:14px;letter-spacing:2px;font-weight:700;display:flex;justify-content:space-between;align-items:center}.tag{border:1px solid currentColor;padding:6px 12px;border-radius:30px;letter-spacing:1px;font-size:13px}.muted{color:var(--muted)}.lead{font-size:26px;max-width:900px}.big{font-size:100px;line-height:1;font-weight:750;letter-spacing:-5px}.grid{display:grid;gap:24px}.two{grid-template-columns:1fr 1fr}.three{grid-template-columns:repeat(3,1fr)}.panel{border:1px solid var(--line);border-radius:18px;padding:26px}.accent{background:var(--green);border-color:var(--green)}.dark{background:var(--ink);color:var(--paper)}.dark .muted{color:#b6c5bf}.dark .panel{border-color:#52615e}.foot{margin-top:auto;display:flex;justify-content:space-between;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:13px}.dark .foot{color:#b6c5bf;border-color:#52615e}.number{font-size:15px;font-weight:700;letter-spacing:2px}.line{height:1px;background:var(--line);margin:16px 0}.row{display:flex;gap:24px;align-items:center}.stack{display:flex;flex-direction:column;gap:18px}.small{font-size:17px;line-height:1.55}.pill{display:inline-block;padding:8px 14px;background:#e1e7dc;border-radius:8px;font-size:17px}.dark .pill{background:#304648}.arrow{font-size:34px;color:var(--teal)}.window{border:1px solid #a7b4a6;border-radius:16px;overflow:hidden;background:#e2e6dc}.bar{padding:14px 20px;display:flex;justify-content:space-between;background:#fafbf6;font-size:15px;border-bottom:1px solid var(--line)}.screen{margin:20px;background:var(--teal);color:white;padding:34px;border-radius:6px;min-height:220px}.screen h3{font-size:38px}.screen p{font-size:18px;margin-top:20px}.step{padding:20px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:65px 1fr;gap:10px}.step b{font-size:28px;color:var(--teal)}table{border-collapse:collapse;width:100%;font-size:19px;line-height:1.5}th{text-align:left;font-size:15px;color:var(--muted);padding:13px 16px;border-bottom:2px solid var(--ink)}td{padding:17px 16px;border-bottom:1px solid var(--line);vertical-align:top}td:first-child{font-weight:650;width:22%}.quote{font-size:34px;line-height:1.45;border-left:5px solid var(--green);padding-left:24px}svg{display:block;width:100%;height:auto}a{color:inherit}code{font-family:ui-monospace,monospace;font-size:18px}.status{font-size:15px;background:#e2e7dc;padding:8px 12px;border-radius:7px;display:inline-block}@media print{body{background:white}section{margin:0;break-after:page;page-break-after:always}@page{size:1280px 720px;margin:0}}
+</style>
+</head>
+<body>
+<section data-ppte-slide class="dark">
+<div class="eyebrow"><span>PPTe / HTML-FIRST 1.0</span><span class="tag">设计方案 · 尚未实现</span></div>
+<div class="grid two" style="align-items:center;flex:1;gap:70px">
+<div class="stack"><h1>让 HTML<br>成为作品本身</h1><p class="lead muted">面向演示稿作者的产品重设计</p><p style="color:#cde96a">一个文件。直接创作。编辑保存。重开放映。</p></div>
+<svg viewBox="0 0 440 390" role="img" aria-label="一个 HTML 文件承载作品、编辑源与放映入口"><rect x="60" y="18" width="316" height="352" rx="20" fill="#cde96a"/><path d="M306 18v70h70" fill="none" stroke="#182c30" stroke-width="2"/><text x="91" y="156" fill="#182c30" font-size="55" font-weight="700">.html</text><path d="M92 190h250" stroke="#182c30"/><text x="92" y="235" fill="#182c30" font-size="23">作品</text><text x="92" y="277" fill="#182c30" font-size="23">编辑源</text><text x="92" y="319" fill="#182c30" font-size="23">放映入口</text></svg>
+</div>
+<div class="foot"><span>设计决策已确认 · 2026-09-06</span><span>01 / 12</span></div>
+</section>
+<section data-ppte-slide>
+<div class="eyebrow"><span>01 / 为什么重做</span><span class="tag">设计目标</span></div>
+<h2>把精力还给作品，<br>把复杂性留在工具内部。</h2>
+<div class="grid two" style="gap:60px;flex:1">
+<div><div class="step"><b>−</b><div><h3>格式与文件的负担</h3><p class="muted">退出 Office 转换；默认交付一个 HTML。</p></div></div><div class="step"><b>−</b><div><h3>慢与反复转换</h3><p class="muted">去掉强制中间表示，让 Agent 直接写页面。</p></div></div><div class="step"><b>−</b><div><h3>固定配方限制审美</h3><p class="muted">释放构图、字体、网格与页面节奏。</p></div></div></div>
+<div><div class="step"><b>+</b><div><h3>保存要真实</h3><p class="muted">文件落盘成功，才显示“已保存”。</p></div></div><div class="step"><b>+</b><div><h3>编辑要统一</h3><p class="muted">按选择显示工具，告别常驻表单墙。</p></div></div><div class="panel accent"><p class="small">纠偏来自六项实际反馈。架构改变不等于问题已解决；速度提升与体验改善都需要新的实测证据。</p></div></div>
+</div>
+<div class="foot"><span>依据：固定方案 §1–2 · 无数据支持“必然慢数十倍”</span><span>02 / 12</span></div>
+</section>
+<section data-ppte-slide>
+<div class="eyebrow"><span>02 / 交付边界</span><span class="tag">设计目标</span></div>
+<h2>你收到的，只有一个明确的作品。</h2>
+<div class="grid two" style="flex:1;align-items:center;gap:70px">
+<div class="panel accent" style="padding:45px"><p class="number">默认交付</p><div style="font-size:54px;font-weight:750;margin:30px 0">演示稿.html</div><p>它同时是作品、编辑源与放映入口。<br>资源默认内嵌，面向离线阅读与放映。</p></div>
+<div class="stack"><h3>其他输出，由你的动作触发。</h3><div class="line"></div><p><b>PDF</b><br><span class="muted">更多 → 导出 PDF；按需静态输出。</span></p><p><b>另存为</b><br><span class="muted">次级菜单项，不再替代日常保存。</span></p><p class="small muted">不自动附送 ZIP、编辑器副本、.ppte 或 PDF；PPTX / PPT / ODP / Keynote 退出产品范围。诊断与开发证据留在工作区或缓存。</p></div>
+</div>
+<div class="foot"><span>依据：固定方案 §3、§9 · 所述交付能力均为待验收目标</span><span>03 / 12</span></div>
+</section>
+<section data-ppte-slide>
+<div class="eyebrow"><span>03 / 直接创作</span><span class="tag">设计目标</span></div>
+<h2>模型写的，就是最后看到的页面。</h2>
+<p class="lead muted">叙事与 HTML/CSS 一起完成，让设计能力直接进入成品。</p>
+<div class="row" style="margin:20px 0"><div class="panel" style="flex:1"><h3>理解材料与用途</h3><p class="small muted">观点先行，保留事实与来源</p></div><span class="arrow">→</span><div class="panel accent" style="flex:1"><h3>AI 直接写 HTML/CSS</h3><p class="small">完整构图、字级与页面节奏</p></div><span class="arrow">→</span><div class="panel" style="flex:1"><h3>工具增强与检查</h3><p class="small muted">一次增强，最多一次必要修正</p></div></div>
+<div class="grid two"><div class="panel dark"><h3>自由表达</h3><p style="margin-top:15px">Grid / Flex、渐变、原生表格、SVG 图形与图表。文字保持为文字。</p></div><div class="panel"><h3>轻量约定</h3><p style="margin-top:15px">页面容器与稳定对象 ID 即可开始。DOM/CSS 是作品的表示，不再维护整套内容的 JSON 镜像。</p></div></div>
+<div class="foot"><span>依据：固定方案 §4、§7 · NPM + 原生 Skill；不需第二个模型或新密钥</span><span>04 / 12</span></div>
+</section>
+<section data-ppte-slide>
+<div class="eyebrow"><span>04 / 打开与编辑</span><span class="tag">界面示意 · 设计目标</span></div>
+<h2>先看作品，需要时再进入编辑。</h2>
+<div class="grid" style="grid-template-columns:1.55fr 1fr;gap:40px;align-items:center;flex:1">
+<div class="window"><div class="bar"><span>演示稿.html　·　尚未写入文件</span><span>编辑　　放映</span></div><div class="screen"><span class="small">PPTe / PRODUCT</span><h3 style="margin-top:28px">让 HTML<br>成为作品本身</h3><p>一个文件，贯穿创作与表达。</p></div><div style="padding:0 20px 18px;font-size:13px;color:#61716f">阅读画面示意，不代表编辑器已实现</div></div>
+<div class="stack"><h3>阅读时，界面退后。</h3><p class="muted">顶部保留文稿名称、保存状态、编辑与放映。</p><div class="line"></div><h3>编辑时，工具跟随对象。</h3><p class="muted">缩略图用于导航；选择文字才出现文字工具。图片、形状和表格各有相关操作。</p></div>
+</div>
+<div class="foot"><span>依据：固定方案 §3、§6 · 安静中性色外壳，作品颜色与编辑器分离</span><span>05 / 12</span></div>
+</section>
+<section data-ppte-slide>
+<div class="eyebrow"><span>05 / 日常修改</span><span class="tag">设计目标 · 能力逐项验收</span></div>
+<h2>改内容，也尊重原来的布局。</h2>
+<div class="grid two" style="gap:48px;flex:1">
+<div class="stack"><div class="panel accent"><p class="number">先打通主体验</p><h3 style="font-size:35px;margin:16px 0">改标题 · 换图片</h3><p>编辑、自动写回、重开保留，构成首轮可体验交付的核心。</p></div><p class="small muted">文字选区格式、表格行列、常用图形属性与媒体能力，仍需在后续阶段逐项完成。</p></div>
+<div class="stack"><div><h3>自由布局，不被拖坏</h3><p class="muted">绝对定位对象可拖动、缩放与旋转；Grid/Flex 调整重排、间距与容器。</p></div><div class="line"></div><div><h3>局部修改，保留人工工作</h3><p class="muted">统一撤销栈；AI 默认只改选定节点或页面，以基准摘要避免覆盖新修改。</p></div><p class="small muted">复杂 SVG 默认整体处理，可解锁深入编辑。不承诺所有外部网页 CSS 都能由通用控件无损修改。</p></div>
+</div>
+<div class="foot"><span>依据：固定方案 §4.3、§11 · 能力受限时说明原因，仍可由 Agent 修改 HTML/CSS</span><span>06 / 12</span></div>
+</section>
+<section data-ppte-slide class="dark">
+<div class="eyebrow"><span>06 / 可信保存</span><span class="tag">设计目标</span></div>
+<h2>“已保存”，必须意味着写入了文件。</h2>
+<p class="lead muted">缓存是恢复草稿。下载发起，也不是原文件已更新的证据。</p>
+<div class="row" style="justify-content:space-between;margin:30px 0"><span class="pill">已保存</span><span>→</span><span class="pill">有修改</span><span>→</span><span class="pill">保存中</span><span>→</span><span class="pill" style="background:#cde96a;color:#182c30">写入确认后：已保存</span></div>
+<div class="grid three"><div class="panel"><h3>无授权 / 仅草稿</h3><p class="muted" style="margin-top:16px">明确提示尚未写入文件，不把浏览器缓存包装成落盘。</p></div><div class="panel"><h3>外部修改 / 冲突</h3><p class="muted" style="margin-top:16px">停止覆盖，提供重新读取与保留当前修改的恢复分支。</p></div><div class="panel"><h3>写入失败</h3><p class="muted" style="margin-top:16px">保留修改与可见状态；Cmd/Ctrl+S 可重试。</p></div></div>
+<div class="foot"><span>依据：固定方案 §5 · 串行版本写入；中文输入组合期间不提交半个汉字</span><span>07 / 12</span></div>
+</section>
+<section data-ppte-slide>
+<div class="eyebrow"><span>07 / 保存与重开</span><span class="tag">固定方案支持矩阵 · 待实测合同</span></div>
+<h2>一个文件，不等于零授权写盘。</h2>
+<p class="lead muted">单个 file:// HTML 无法在任意浏览器里，无授权地改写自身磁盘文件。</p>
+<table><thead><tr><th>固定方案入口</th><th>原文件保存的设计目标</th><th>自动保存边界</th></tr></thead><tbody><tr><td>NPM 本地编辑入口</td><td>轻量服务绑定所选 HTML，检查冲突后写回同一路径</td><td>目标为停顿约 800 ms 后保存；成功后显示落盘状态</td></tr><tr><td>浏览器支持且已授权</td><td>首次选择 / 绑定目标文件，后续通过文件写入 API 保存</td><td>授权有效时自动保存；重开检查权限，必要时重新授权</td></tr><tr><td>缺少写入 API / 权限</td><td>明确无法直接覆盖；提供本地入口或显式下载保存</td><td>仅显示草稿 / 尚未写入文件，不能承诺原文件自动更新</td></tr></tbody></table>
+<div class="panel accent" style="padding:18px 24px"><p><b>验收动作：</b>修改 → 写入确认 → 关闭 → 从原路径重开 → 内容仍在。</p></div>
+<div class="foot"><span>依据：固定方案 §5.1–5.3 · 此页描述该方案的目标，不宣称当前 CLI 已支持</span><span>08 / 12</span></div>
+</section>
+<section data-ppte-slide>
+<div class="eyebrow"><span>08 / 放映与输出</span><span class="tag">设计目标</span></div>
+<h2>观众只看内容，作者保留控制。</h2>
+<div class="grid two" style="flex:1;gap:45px">
+<div class="panel dark" style="display:flex;flex-direction:column;justify-content:center;padding:40px"><p class="number" style="color:#cde96a">放映画面示意</p><h3 style="font-size:53px;margin:30px 0">让表达<br>占满舞台。</h3><p class="muted">只显示当前幻灯片，编辑工具退出观众画面。</p></div>
+<div class="stack"><h3>控制按需出现</h3><p class="muted">唤出、悬停或键盘聚焦时显示；闲置后隐藏。备注、预览和计时放入专用视图。</p><h3>黑幕与退出可预期</h3><p class="muted">黑屏是真实黑幕；键盘可以退出并恢复到正确编辑位置。</p><div class="line"></div><h3>PDF，按需静态交付</h3><p class="small muted">更多 → 导出 PDF。一页对应一张幻灯片；步骤静态可见，视频使用封面，编辑器与控制条不进入打印。检查分页、裁切、字体和透明度。</p></div>
+</div>
+<div class="foot"><span>依据：固定方案 §3、§6、§9 · 优先浏览器打印，尽可能保留文字与链接</span><span>09 / 12</span></div>
+</section>
+<section data-ppte-slide>
+<div class="eyebrow"><span>09 / 轻量且可信</span><span class="tag">设计目标</span></div>
+<h2>一份内容，一套运行时。</h2>
+<div class="grid" style="grid-template-columns:1.05fr 1fr;gap:55px;flex:1;align-items:center">
+<div class="panel" style="padding:30px"><div class="panel accent"><h3>单 HTML</h3><p class="small">页面 HTML/CSS + 内嵌资源<br>轻量元数据 + 可信编辑 / 放映运行时</p></div><div style="text-align:center;font-size:30px;padding:10px">↓</div><div class="panel"><h3>隔离的作品画布</h3><p class="small muted">保留 Grid / Flex / SVG 与字体能力<br>作者内容默认不能执行任意脚本</p></div></div>
+<div class="stack"><h3>保存不积累副本</h3><p class="muted">从活动 DOM 序列化一次，清除选区、拖拽柄与临时工具 UI；不重复嵌入旧模板和项目包。</p><div class="line"></div><h3>轻资源，少依赖</h3><p class="muted">默认使用系统中文字体与轻量 SVG；不下载完整字体，不让简单文本生成依赖浏览器安装。</p><p class="small muted">资源默认内嵌并限制外部请求。被拒绝的可执行内容要明确报告，不能静默破坏版式后宣称成功。</p></div>
+</div>
+<div class="foot"><span>依据：固定方案 §4.2、§7 · 具体封装须先通过保真与体积原型</span><span>10 / 12</span></div>
+</section>
+<section data-ppte-slide>
+<div class="eyebrow"><span>10 / 如何证明更好</span><span class="tag">初始设计目标 · 待实测冻结</span></div>
+<h2>速度与审美，用同条件对照说话。</h2>
+<div class="grid three"><div class="panel"><div class="big">1.25<span style="font-size:32px">×</span></div><h3 style="margin-top:18px">热环境总耗时中位数上限</h3><p class="small muted">相对直接 HTML 基线</p></div><div class="panel"><div class="big">1.20<span style="font-size:32px">×</span></div><h3 style="margin-top:18px">Token 总量中位数上限</h3><p class="small muted">同模型、配置、材料与资源</p></div><div class="panel accent"><div class="big">2<span style="font-size:32px">秒</span></div><h3 style="margin-top:18px">十二页轻资源纯增强目标</h3><p class="small">不含模型、研究与浏览器渲染</p></div></div>
+<div class="grid two" style="gap:45px"><div><h3>体积也要透明</h3><p class="small muted" style="margin-top:10px">无媒体 runtime 目标 ≤ 250 KB gzip；不含用户媒体和可选字体的完整 HTML 目标 ≤ 1 MB。同时报告原始、gzip 与媒体字节。</p></div><div><h3>盲评不替代可靠性</h3><p class="small muted" style="margin-top:10px">三类材料各三对；负责人和两名目标用户盲评。首轮九对至少六对不逊于直接 HTML。丢事实、遮挡、保存丢失均为独立失败。</p></div></div>
+<div class="foot"><span>依据：固定方案 §8 · 分开记录冷安装与日常生成；保留首稿、尾部与失败，不是已测结果</span><span>11 / 12</span></div>
+</section>
+<section data-ppte-slide class="dark">
+<div class="eyebrow"><span>11 / 下一步</span><span class="tag">路线图均为设计目标 · 尚未实现</span></div>
+<h2>先完成一条真实可用的链。</h2>
+<div style="font-size:39px;line-height:1.5;color:#cde96a;margin:8px 0">十二页 HTML → 改标题与图片 → 自动写回<br>→ 关闭原路径重开 → 干净放映</div>
+<p class="quote">这条链没通过之前，不扩充高级表格、<br>动画种类、插件或兼容格式。</p>
+<div class="grid" style="grid-template-columns:repeat(7,1fr);gap:12px;margin-top:15px">
+<div><p class="number">H00</p><p class="small muted">合同与基线</p></div><div><p class="number">H01</p><p class="small muted">生成 / 增强</p></div><div><p class="number">H02</p><p class="small muted">保存 / 恢复</p></div><div><p class="number">H03</p><p class="small muted">统一编辑 UI</p></div><div><p class="number">H04</p><p class="small muted">放映 / PDF</p></div><div><p class="number">H05</p><p class="small muted">旧链路退出</p></div><div><p class="number">H06</p><p class="small muted">同模型验收</p></div>
+</div>
+<p class="small muted">以可体验 HTML、代码提交和实际证据验收。架构改版不等于缺陷修复；实施完成前，不标记完成。</p>
+<div class="foot"><span>唯一内容来源：《PPTe 重设计：让 HTML 成为作品本身》· HTML-first 1.0 · 2026-09-06</span><span>12 / 12</span></div>
+</section>
+</body>
+</html>

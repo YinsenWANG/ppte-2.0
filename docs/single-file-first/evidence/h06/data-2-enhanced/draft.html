@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PPTe 源码依赖实测 · 维护者汇报</title>
+<style>
+:root{--bg:#101d29;--card:#182b3a;--ink:#f3f5f3;--muted:#a9bac6;--accent:#b8ed82;--line:#365061;--warm:#ffd296}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"PingFang SC","Microsoft YaHei",sans-serif}section{width:1280px;height:720px;padding:48px 64px;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:24px;break-after:page}h1,h2,h3,p{margin:0}h1{font-size:64px;line-height:1.15;letter-spacing:-2px}h2{font-size:40px;line-height:1.25}h3{font-size:24px;line-height:1.4}p{font-size:23px;line-height:1.65}.eyebrow{color:var(--accent);font-size:15px;letter-spacing:3px;font-weight:700}.lead{font-size:27px;color:var(--muted);max-width:990px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.two{display:grid;grid-template-columns:1fr 1fr;gap:28px}.card{background:var(--card);padding:28px;border-top:2px solid var(--line)}.card h3{margin-bottom:16px}.card p{font-size:21px;color:var(--muted)}.big{font-size:76px;font-weight:700;color:var(--accent);line-height:1.1}.sub{color:var(--muted);font-size:18px;line-height:1.6}.tag{display:inline-block;color:var(--warm);font-size:16px;border:1px solid var(--line);padding:6px 12px;align-self:flex-start}.foot{margin-top:auto;border-top:1px solid var(--line);padding-top:14px;display:flex;justify-content:space-between;color:var(--muted);font-size:14px}.source{font-family:monospace;font-size:15px;line-height:1.8;color:var(--muted)}table{border-collapse:collapse;width:100%;font-size:21px}th{text-align:left;color:var(--accent);font-weight:500;border-bottom:2px solid var(--line);padding:10px 18px}td{padding:7px 18px;border-bottom:1px solid #29404f}th:last-child,td:last-child{text-align:right;width:190px;font-variant-numeric:tabular-nums}tbody tr:nth-child(even){background:#152735}.tablepage{gap:14px}.tablepage h2{font-size:35px}.tablepage .sub{font-size:16px}.statement{font-size:39px;line-height:1.5;max-width:1040px}.accent{color:var(--accent)}.flow{display:flex;gap:16px;align-items:stretch}.flow .card{flex:1;padding:22px}.arrow{align-self:center;font-size:32px;color:var(--accent)}.rows{display:grid;gap:16px}.row{display:grid;grid-template-columns:320px 1fr 60px;gap:20px;align-items:center;font-size:22px}.track{height:22px;background:var(--card)}.bar{height:100%;background:var(--accent)}.note{border-left:3px solid var(--accent);padding:10px 20px;color:var(--muted);font-size:21px;line-height:1.6}strong{color:var(--ink)}
+</style>
+</head>
+<body>
+<section data-ppte-slide>
+<div class="eyebrow">PPTe / SOURCE DEPENDENCY INVENTORY</div>
+<h1>依赖盘点，<br>为维护决策划清边界。</h1>
+<p class="lead">固定提交的源码实测：静态边、旧 CLI 可达性，<br>以及候选复用与退休判断需要补齐的证据。</p>
+<div class="two"><div><div class="big">624</div><p>静态 import / export / require 边</p></div><div class="note">含 type-only。<br>不是运行调用次数，也不是性能指标。</div></div>
+<div class="source">来源提交：bbcd46bde2c608b5a56e617f316c5dcb5534857e<br>扫描脚本：scripts/html-import-inventory.mjs</div>
+<footer class="foot"><span>维护者汇报 · 固定源码快照</span><span>01 / 12</span></footer>
+</section>
+<section data-ppte-slide>
+<div class="eyebrow">READOUT / 核心读数</div><h2>四个读数，回答不同问题</h2>
+<div class="grid"><div class="card"><div class="big">117</div><h3>扫描源文件</h3><p>描述本次源码扫描范围。</p></div><div class="card"><div class="big">624</div><h3>静态边总数</h3><p>包含 type-only 引用。</p></div><div class="card"><div class="big">86</div><h3>CLI 可达文件</h3><p>可达集忽略直接 type-only 边。</p></div></div>
+<div class="two"><div class="card"><h3><span class="accent">0</span> 个计算型引用</h3><p>本次扫描报告值；不延伸为对所有运行行为的保证。</p></div><p class="note">边数和文件数单位不同。<br>不能把 86 当成边数，也不能用它证明某模块已退休。</p></div>
+<footer class="foot"><span>数据来源：固定提交与指定扫描脚本</span><span>02 / 12</span></footer>
+</section>
+<section data-ppte-slide>
+<div class="eyebrow">METHOD / 统计口径</div><h2>数的是源码关系，不是执行成本</h2>
+<div class="grid"><div class="card"><h3>计数对象</h3><p>静态 import / export / require 边，包含 type-only。表中数值沿用原始盘点。</p></div><div class="card"><h3>可达口径</h3><p>CLI 可达集忽略直接 type-only 边。它与总边数的统计处理不同。</p></div><div class="card"><h3>解释边界</h3><p>可达集不等于打包后执行图；静态边数不说明耗时、体积或运行频率。</p></div></div>
+<p class="statement">可用于定位<span class="accent">依赖审查入口</span>。<br>不能直接转译为性能结论。</p>
+<footer class="foot"><span>材料未提供逐边清单、运行测量或打包结果</span><span>03 / 12</span></footer>
+</section>
+<section data-ppte-slide class="tablepage">
+<div class="eyebrow">INVENTORY / 原始盘点 A</div><h2>应用入口与基础包</h2><p class="sub">单位：静态 import/export/require 边（含 type-only）。按原材料顺序呈现。</p>
+<table><thead><tr><th>模块</th><th>静态边数</th></tr></thead><tbody>
+<tr><td>apps/cli</td><td>22</td></tr><tr><td>apps/contract-deck</td><td>26</td></tr><tr><td>apps/host</td><td>10</td></tr><tr><td>apps/mcp</td><td>15</td></tr><tr><td>packages/agent-tools</td><td>23</td></tr><tr><td>packages/authoring</td><td>6</td></tr><tr><td>packages/canonical-json</td><td>1</td></tr><tr><td>packages/capability</td><td>9</td></tr><tr><td>packages/change-contract</td><td>5</td></tr><tr><td>packages/charts</td><td>1</td></tr><tr><td>packages/compatibility</td><td>4</td></tr><tr><td>packages/core</td><td>20</td></tr><tr><td>packages/design-compiler</td><td>33</td></tr>
+</tbody></table><footer class="foot"><span>原始数值 · 原生 HTML 表格</span><span>04 / 12</span></footer>
+</section>
+<section data-ppte-slide class="tablepage">
+<div class="eyebrow">INVENTORY / 原始盘点 B</div><h2>编辑、格式与导出相关命名模块</h2><p class="sub">单位：静态 import/export/require 边（含 type-only）。名称不构成功能边界证明。</p>
+<table><thead><tr><th>模块</th><th>静态边数</th></tr></thead><tbody>
+<tr><td>packages/design-system</td><td>3</td></tr><tr><td>packages/diff</td><td>2</td></tr><tr><td>packages/editor-controller</td><td>36</td></tr><tr><td>packages/editor-dom</td><td>24</td></tr><tr><td>packages/editor-react</td><td>78</td></tr><tr><td>packages/exporter-pdf</td><td>12</td></tr><tr><td>packages/exporter-pptx</td><td>14</td></tr><tr><td>packages/facts</td><td>3</td></tr><tr><td>packages/file-format</td><td>24</td></tr><tr><td>packages/geometry</td><td>1</td></tr><tr><td>packages/importer-legacy</td><td>6</td></tr><tr><td>packages/layout-recipes</td><td>7</td></tr><tr><td>packages/macros</td><td>2</td></tr>
+</tbody></table><footer class="foot"><span>原始数值 · 原生 HTML 表格</span><span>05 / 12</span></footer>
+</section>
+<section data-ppte-slide class="tablepage">
+<div class="eyebrow">INVENTORY / 原始盘点 C</div><h2>运行时、协议与校验相关命名模块</h2><p class="sub">单位：静态 import/export/require 边（含 type-only）。全部模块表在本页续完。</p>
+<table><thead><tr><th>模块</th><th>静态边数</th></tr></thead><tbody>
+<tr><td>packages/node-runtime</td><td>34</td></tr><tr><td>packages/operations</td><td>10</td></tr><tr><td>packages/patch-format</td><td>16</td></tr><tr><td>packages/performance-budget</td><td>1</td></tr><tr><td>packages/portable-runtime</td><td>81</td></tr><tr><td>packages/recovery-journal</td><td>13</td></tr><tr><td>packages/renderer-react</td><td>7</td></tr><tr><td>packages/reviewer</td><td>7</td></tr><tr><td>packages/richtext-adapter</td><td>18</td></tr><tr><td>packages/schema</td><td>31</td></tr><tr><td>packages/semantic-identity</td><td>3</td></tr><tr><td>packages/validation</td><td>8</td></tr><tr><td>packages/widgets</td><td>8</td></tr>
+</tbody></table><footer class="foot"><span>扫描源文件 117 · 总边 624 · CLI 可达文件 86 · 计算型引用 0</span><span>06 / 12</span></footer>
+</section>
+<section data-ppte-slide>
+<div class="eyebrow">REVIEW FOCUS / 静态边数排序</div><h2>较高边数提供审查线索</h2><p class="lead">以下为表中静态边数最高的模块；条长按同一比例呈现。</p>
+<div class="rows"><div class="row"><span>portable-runtime</span><div class="track"><div class="bar" style="width:100%"></div></div><strong>81</strong></div><div class="row"><span>editor-react</span><div class="track"><div class="bar" style="width:96.296%"></div></div><strong>78</strong></div><div class="row"><span>editor-controller</span><div class="track"><div class="bar" style="width:44.444%"></div></div><strong>36</strong></div><div class="row"><span>node-runtime</span><div class="track"><div class="bar" style="width:41.975%"></div></div><strong>34</strong></div><div class="row"><span>design-compiler</span><div class="track"><div class="bar" style="width:40.741%"></div></div><strong>33</strong></div></div>
+<p class="note">模块路径均以 packages/ 开头。高边数不等于性能瓶颈、变更风险或复用价值；低边数也不意味着可以安全删除。</p>
+<footer class="foot"><span>排序来自原表 · 单位仍为静态边</span><span>07 / 12</span></footer>
+</section>
+<section data-ppte-slide>
+<div class="eyebrow">LEGACY CLI / 可达链边界</div><h2>可达规模已知，具体链路仍需逐边核验</h2>
+<div class="two"><div class="card"><div class="big">22</div><h3>apps/cli 静态边</h3><p>模块计数包含 type-only。</p></div><div class="card"><div class="big">86</div><h3>CLI 可达文件</h3><p>遍历时忽略直接 type-only 边。</p></div></div>
+<div class="tag">设计目标 · 可达链核验流程，非已测模块链</div>
+<div class="flow"><div class="card"><h3>定位 CLI 入口</h3><p>核对起始文件</p></div><div class="arrow">→</div><div class="card"><h3>追踪静态引用</h3><p>区分直接 type-only</p></div><div class="arrow">→</div><div class="card"><h3>核对可达文件集</h3><p>记录逐边来源</p></div></div>
+<p class="sub">原材料没有文件清单与逐边路径，不能据此断言旧 CLI 连接了哪个具体包，也不能画出真实调用链。</p>
+<footer class="foot"><span>静态可达 ≠ 打包后执行图 ≠ 退休状态</span><span>08 / 12</span></footer>
+</section>
+<section data-ppte-slide>
+<div class="eyebrow">REUSE / 候选复用</div><h2>把候选视为待验证假设</h2><div class="tag">设计目标 · 以下按模块名称提出审查方向</div>
+<div class="grid"><div class="card"><h3>格式与约束候选</h3><p>schema · 31<br>file-format · 24<br>validation · 8</p><p style="margin-top:20px">核验数据契约、输入输出与依赖闭包。</p></div><div class="card"><h3>基础能力候选</h3><p>canonical-json · 1<br>geometry · 1<br>semantic-identity · 3</p><p style="margin-top:20px">核验职责独立性与隐含环境要求。</p></div><div class="card"><h3>运行时候选</h3><p>portable-runtime · 81<br>node-runtime · 34</p><p style="margin-top:20px">核验平台耦合与可抽离边界。</p></div></div>
+<p class="note">全部名称均为 packages/ 下模块；数值是静态边数。材料没有接口、行为或兼容性证据，尚不能确认任何候选可直接复用。</p>
+<footer class="foot"><span>候选清单是设计目标，不是已验证能力清单</span><span>09 / 12</span></footer>
+</section>
+<section data-ppte-slide>
+<div class="eyebrow">RETIREMENT / 退休边界</div><h2>没有退休证据，就不作退休结论</h2>
+<div class="two"><div class="card"><h3>本次事实能够说明</h3><p>固定提交下存在模块静态边计数，CLI 可达文件为 86，计算型引用为 0。</p></div><div class="card"><h3>本次事实不能说明</h3><p>某模块无人使用、某入口已替代、某文件可删除，或旧 CLI 已完成退休。</p></div></div>
+<div class="tag">设计目标 · 退休判断的证据门槛</div>
+<div class="grid"><div><h3>入口与消费者</h3><p class="sub">核对可达集之外的入口、对外使用与兼容承诺。</p></div><div><h3>替代与行为</h3><p class="sub">确认替代路径，验证需要保留的行为。</p></div><div><h3>删除与回退</h3><p class="sub">限定删除范围，验证构建与测试并准备回退。</p></div></div>
+<footer class="foot"><span>名称包含 legacy，也不能单独证明已退休</span><span>10 / 12</span></footer>
+</section>
+<section data-ppte-slide>
+<div class="eyebrow">MAINTAINER PLAN / 后续维护</div><h2>让每项判断都有可审查产物</h2><div class="tag">设计目标 · 无排期与完成承诺</div>
+<table><thead><tr><th>审查方向</th><th style="text-align:left;width:auto">目标产物</th><th style="width:340px;text-align:left">用于支持</th></tr></thead><tbody><tr><td>固定口径复核</td><td>提交、脚本与统计口径记录</td><td style="text-align:left">盘点可重复核对</td></tr><tr><td>旧 CLI 可达链</td><td>逐边路径与可达文件清单</td><td style="text-align:left">识别保留依赖边界</td></tr><tr><td>候选复用验证</td><td>接口与依赖闭包核验记录</td><td style="text-align:left">判断复用适用条件</td></tr><tr><td>退休边界验证</td><td>消费者、替代与回退证据</td><td style="text-align:left">形成删除决策依据</td></tr></tbody></table>
+<p class="note">若要讨论性能，设计目标是另行建立运行测量。静态边盘点本身不提供性能验收结论。</p>
+<footer class="foot"><span>本页全部为设计目标，未声明已实施</span><span>11 / 12</span></footer>
+</section>
+<section data-ppte-slide>
+<div class="eyebrow">DECISION / 维护者结论</div><h2>先确认事实，再决定复用与退出</h2>
+<p class="statement"><span class="accent">624 条静态边</span>描述源码依赖。<br><span class="accent">86 个 CLI 可达文件</span>描述可达规模。<br>二者都不直接证明性能或退休。</p>
+<div class="two"><div class="card"><h3>现在可以做</h3><p>以原始表格安排依赖审查，保持统计单位与可达口径清晰。</p></div><div class="card"><h3>设计目标</h3><p>补齐逐边链路、复用验证与退休证据，再形成具体改动决策。</p></div></div>
+<div class="source">唯一事实来源：提交 bbcd46bde2c608b5a56e617f316c5dcb5534857e<br>scripts/html-import-inventory.mjs · 扫描源文件 117 · 计算型引用 0</div>
+<footer class="foot"><span>保留原始数值 · 不将静态边数解释为性能</span><span>12 / 12</span></footer>
+</section>
+</body>
+</html>

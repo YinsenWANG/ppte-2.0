@@ -1,0 +1,20 @@
+{
+  "cold": {
+    "heat": "cold",
+    "elapsedMs": 164,
+    "status": "observed",
+    "exit": 0,
+    "sha256": "c0fa4959612ce0a65a2f4f03c22b497ab0425dcc2e21c8ec29e85d515997eac0",
+    "log": "\nadded 1 package in 122ms\n"
+  },
+  "hot": {
+    "heat": "hot",
+    "elapsedMs": 152,
+    "status": "observed",
+    "exit": 0,
+    "sha256": "c0fa4959612ce0a65a2f4f03c22b497ab0425dcc2e21c8ec29e85d515997eac0",
+    "log": "\nadded 1 package in 109ms\n"
+  },
+  "measuredAt": "2026-09-07T03:07:25.698Z",
+  "note": "isolated dirs, separate npm caches; candidate tarball of merged main"
+}
