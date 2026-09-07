@@ -69,3 +69,5 @@ R3–R5 不能用旧 probe 的截图或 iframe 外框单独判定：当前测试
 - `b00acc5531a7fce75b73412cf5cf5985cfecf2e2` — fix(GAPS): include offline CLI sample and reproducible performance fixtures
 
 CLOSING 的签名提交由最终 verification/result.json 及后续签名记录引用；不 push。预先存在的流水线 brief/output 文件仅作本地输入保留，不纳入交付；精确文件名本地排除，非删除。
+
+CLOSING 实现/交付提交：`adc7d1f66fe23a503134bde54e2a7d12aa8b65c7`，GPG 验证通过，Signed-off-by/DCO 已附。后续提交只记录该签名与 hash，不改测试或样稿。

@@ -4,8 +4,7 @@
   "baseCommit": "f5ba1900cb1467126cc3edd911ce762413280cdb",
   "testedProductCommit": "86c8ce3669047e5de14575f0d515f04cc387e285",
   "testedParentCommit": "b00acc5531a7fce75b73412cf5cf5985cfecf2e2",
-  "implementationCommit": null,
-  "implementationCommitReason": "Closing test/docs commit recorded by subsequent signed evidence commit; no self-referential hash.",
+  "implementationCommit": "adc7d1f66fe23a503134bde54e2a7d12aa8b65c7",
   "status": "partial",
   "bundleStatus": "complete",
   "statusByLayer": {
@@ -21,7 +20,8 @@
       "exitCode": 0,
       "commit": "b00acc5531a7fce75b73412cf5cf5985cfecf2e2",
       "completedAt": "2026-09-07T09:52:01.416688+00:00",
-      "log": "typecheck.log"
+      "log": "typecheck.log",
+      "testedWorkingTreeCommit": "adc7d1f66fe23a503134bde54e2a7d12aa8b65c7"
     },
     {
       "command": "pnpm build",
@@ -29,7 +29,8 @@
       "exitCode": 0,
       "commit": "b00acc5531a7fce75b73412cf5cf5985cfecf2e2",
       "completedAt": "2026-09-07T09:52:02.643162+00:00",
-      "log": "build.log"
+      "log": "build.log",
+      "testedWorkingTreeCommit": "adc7d1f66fe23a503134bde54e2a7d12aa8b65c7"
     },
     {
       "command": "pnpm test",
@@ -37,7 +38,8 @@
       "exitCode": 0,
       "commit": "b00acc5531a7fce75b73412cf5cf5985cfecf2e2",
       "completedAt": "2026-09-07T09:52:59.275549+00:00",
-      "log": "test.log"
+      "log": "test.log",
+      "testedWorkingTreeCommit": "adc7d1f66fe23a503134bde54e2a7d12aa8b65c7"
     },
     {
       "command": "node docs/audits/2026-09-07-ui-d96f211/probe.mjs",
@@ -45,7 +47,8 @@
       "exitCode": 0,
       "commit": "b00acc5531a7fce75b73412cf5cf5985cfecf2e2",
       "completedAt": "2026-09-07T09:53:21.745582+00:00",
-      "log": "probe.log"
+      "log": "probe.log",
+      "testedWorkingTreeCommit": "adc7d1f66fe23a503134bde54e2a7d12aa8b65c7"
     },
     {
       "command": "node docs/audits/2026-09-07-ui-d96f211/followup.mjs",
@@ -53,7 +56,8 @@
       "exitCode": 0,
       "commit": "b00acc5531a7fce75b73412cf5cf5985cfecf2e2",
       "completedAt": "2026-09-07T09:53:25.171597+00:00",
-      "log": "followup.log"
+      "log": "followup.log",
+      "testedWorkingTreeCommit": "adc7d1f66fe23a503134bde54e2a7d12aa8b65c7"
     },
     {
       "command": "node dist/apps/html-cli/index.js enhance docs/audits/2026-09-07-ui-d96f211/sample/source.html --out docs/ui-redesign/evidence/delivery/r8-same-prototype.ppte.html",
@@ -61,7 +65,8 @@
       "exitCode": 0,
       "commit": "b00acc5531a7fce75b73412cf5cf5985cfecf2e2",
       "completedAt": "2026-09-07T09:48:18.928635+00:00",
-      "log": "cli.log"
+      "log": "cli.log",
+      "testedWorkingTreeCommit": "adc7d1f66fe23a503134bde54e2a7d12aa8b65c7"
     }
   ],
   "executionNote": "Commands ran on testedParentCommit plus closing test; no product code changes in CLOSING. Initial original probes ran first against available dist; final sequential probes followed successful rebuilt suite.",
@@ -1299,7 +1304,16 @@
       "title": "fix(GAPS): include offline CLI sample and reproducible performance fixtures",
       "gpgVerified": true,
       "signoff": "Signed-off-by: yinsen <cherryai001@yinsenMac-mini.local>"
+    },
+    {
+      "commit": "adc7d1f66fe23a503134bde54e2a7d12aa8b65c7",
+      "title": "fix(CLOSING): deliver verified offline sample and complete R8 handoff",
+      "gpgVerified": true,
+      "signoff": "Signed-off-by: yinsen <cherryai001@yinsenMac-mini.local>"
     }
   ],
-  "signing": "All 15 pre-closing commits verified with git verify-commit and Signed-off-by/DCO. Closing signature recorded in follow-up evidence commit. No push."
+  "signing": "All implementation commits including CLOSING verified GPG and Signed-off-by/DCO. Following metadata-only evidence commit is identified by git log and final response; no self-referential hash. No push.",
+  "verifiedAt": "2026-09-07T09:55:01.696588+00:00",
+  "sourceIntegrity": "source-integrity.json",
+  "diffCheck": "Passed excluding raw *.log only: test-first.log contains verbatim Playwright blank-line trailing spaces; raw evidence preserved."
 }

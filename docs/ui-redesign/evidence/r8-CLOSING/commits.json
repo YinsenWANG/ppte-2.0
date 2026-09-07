@@ -88,5 +88,11 @@
     "title": "fix(GAPS): include offline CLI sample and reproducible performance fixtures",
     "gpgVerified": true,
     "signoff": "Signed-off-by: yinsen <cherryai001@yinsenMac-mini.local>"
+  },
+  {
+    "commit": "adc7d1f66fe23a503134bde54e2a7d12aa8b65c7",
+    "title": "fix(CLOSING): deliver verified offline sample and complete R8 handoff",
+    "gpgVerified": true,
+    "signoff": "Signed-off-by: yinsen <cherryai001@yinsenMac-mini.local>"
   }
 ]
