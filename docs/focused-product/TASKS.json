@@ -1,5 +1,5 @@
 {
-  "version": "focused-product-1.0",
+  "version": "focused-product-1.1",
   "status": "proposed",
   "plan": "PLAN.md",
   "precedence": "Latest user scope overrides conflicting earlier UI and feature breadth requirements; historical evidence is immutable.",
@@ -46,16 +46,31 @@
       "evidence": []
     },
     {
+      "id": "F04A",
+      "title": "验证无系统打印且视觉与文字均保真的PDF路线",
+      "status": "pending",
+      "dependsOn": [],
+      "acceptance": [
+        "最多两个候选，对照同稿PDF与逐页屏幕效果",
+        "中文复制/搜索/选区/字体与视觉同时验证",
+        "记录依赖、file协议能力、耗时内存体积与失败夹具",
+        "仅外部工具通过时交回架构取舍，不默认增服务或降级图片PDF"
+      ],
+      "evidence": []
+    },
+    {
       "id": "F04",
       "title": "一级整稿PDF",
       "status": "pending",
       "dependsOn": [
-        "F01"
+        "F01",
+        "F04A"
       ],
       "acceptance": [
-        "整稿页数顺序正确，所有媒体就绪",
-        "无编辑控件，文本可选",
-        "取消后原模式/内容/状态保持"
+        "不依赖系统打印，路线通过后实现，必要架构变更经用户确认",
+        "整稿视觉保真且文字可选择搜索复制，无控件或缺页",
+        "直接导出一个PDF，进度取消重试且原稿状态不变",
+        "真实声明支持路径验证，外部工具证据不能冒充单HTML内能力"
       ],
       "evidence": []
     },
@@ -91,5 +106,6 @@
       ],
       "evidence": []
     }
-  ]
+  ],
+  "supplement": "PDF-AND-CORE-REVIEW.md"
 }
