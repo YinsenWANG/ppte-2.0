@@ -1,0 +1,65 @@
+{
+  "task": "UI07-close",
+  "status": "passed",
+  "commit": "b2b3ba02e0066391877aa932d8533fde030150b0",
+  "timestamp": "2026-09-07T06:05:08.011674+00:00",
+  "platform": {
+    "system": "Darwin",
+    "release": "25.6.0",
+    "machine": "arm64",
+    "node": "v22.23.2"
+  },
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/ui-redesign/evidence/UI07-close/verification/typecheck.log",
+      "logSha256": "0ae79858d1378de4a49bb6bdcaf88acb5b1de35ec309f992f3d1193e86a2a4a2",
+      "commit": "b2b3ba02e0066391877aa932d8533fde030150b0",
+      "completedAt": "2026-09-07T06:04:32.715146+00:00"
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/ui-redesign/evidence/UI07-close/verification/build.log",
+      "logSha256": "981710c4773357321873464210550419258feecb6af85bb9df41b33c0f6bd351",
+      "commit": "b2b3ba02e0066391877aa932d8533fde030150b0",
+      "completedAt": "2026-09-07T06:04:34.001026+00:00"
+    },
+    {
+      "command": "pnpm test",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/ui-redesign/evidence/UI07-close/verification/test.log",
+      "logSha256": "d8f2ab0b50f6da10408edf3d3632014959fceec926d660ab7f879c279dd67928",
+      "commit": "b2b3ba02e0066391877aa932d8533fde030150b0",
+      "completedAt": "2026-09-07T06:05:08.011610+00:00"
+    },
+    {
+      "command": "node scripts/verify-ui-delivery.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/ui-redesign/evidence/UI07-close/verification/delivery.log",
+      "logSha256": "98df08580b99775bec89d43a6f66d9431d8205a21b66206cae01343c4be6390d",
+      "commit": "b2b3ba02e0066391877aa932d8533fde030150b0",
+      "completedAt": "2026-09-07T06:05:36.328Z"
+    }
+  ],
+  "tests": {
+    "framework": "node --test dist/tests/*.test.js",
+    "total": 104,
+    "passed": 104,
+    "failed": 0,
+    "skipped": 0,
+    "existingAssertionsChanged": 0
+  },
+  "productAcceptance": "partial",
+  "codeCommitNote": "Baseline HEAD identifies verified runtime; closing worktree changes are documentation and delivery probe only.",
+  "sample": {
+    "path": "docs/ui-redesign/evidence/delivery/\u628a\u4f5c\u54c1\u5e26\u8d70.ppte.html",
+    "sha256": "1b01007e5f752822ce1b904338818b1709a7672b94f6ffa6537918609c1fc591",
+    "bytes": 368304
+  }
+}

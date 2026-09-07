@@ -1,0 +1,86 @@
+[
+  {
+    "commit": "5ad4f2c6e1b70ecca10e24993559b47aa2bebc58",
+    "signature": "G",
+    "signoff": true,
+    "title": "UI01: implement reading shell contextual editing and clean presentation"
+  },
+  {
+    "commit": "e9e31a6365b7b94fca99886e6584ebd931945dc4",
+    "signature": "G",
+    "signoff": true,
+    "title": "UI01: record acceptance layers verification and offline sample"
+  },
+  {
+    "commit": "abe467c87347cb6c8c52b0ecaff16968cba1a168",
+    "signature": "G",
+    "signoff": true,
+    "title": "UI04: implement bounded autosave queue and truthful file saving controls"
+  },
+  {
+    "commit": "5a13265797212c031c0ec85b1762c6a75d9948ee",
+    "signature": "G",
+    "signoff": true,
+    "title": "UI04: record saving acceptance layers and offline verification evidence"
+  },
+  {
+    "commit": "a8d9039f7e028a13dd892de84d0d5b3b3d086c35",
+    "signature": "G",
+    "signoff": true,
+    "title": "UI07: implement portable HTML checkpoints and version management"
+  },
+  {
+    "commit": "cf497105d324b8c96fc04ab6fb6830ff2062185c",
+    "signature": "G",
+    "signoff": true,
+    "title": "UI07: record portable history evidence and remaining media gap"
+  },
+  {
+    "commit": "dbd7ed643f07de02793a406c9ad84304b7d97515",
+    "signature": "G",
+    "signoff": true,
+    "title": "UI02: unify native object insertion and contextual properties"
+  },
+  {
+    "commit": "dd79fede619ceeac038fea39d8365f8d1536c7b9",
+    "signature": "G",
+    "signoff": true,
+    "title": "UI02: record acceptance evidence and offline product sample"
+  },
+  {
+    "commit": "e340d48392ae06080f72ec51ec7ea6880aed90c9",
+    "signature": "G",
+    "signoff": true,
+    "title": "UI03: preserve native page layout and add accessible page ordering"
+  },
+  {
+    "commit": "8976071b7c46ca83406b69873c54893dec22cfbb",
+    "signature": "G",
+    "signoff": true,
+    "title": "UI03: record acceptance evidence and offline page-layout samples"
+  },
+  {
+    "commit": "6fca967b968327f5f7f730fd23bb260dd2376116",
+    "signature": "G",
+    "signoff": true,
+    "title": "UI05: adapt shell layout and complete keyboard accessibility"
+  },
+  {
+    "commit": "3a4c6895b9193886ee0cee7eae1d667daa79721f",
+    "signature": "G",
+    "signoff": true,
+    "title": "UI05: record responsive accessibility acceptance evidence"
+  },
+  {
+    "commit": "536674af1cbb4163434761804d487a57aae9982a",
+    "signature": "G",
+    "signoff": true,
+    "title": "UI06: verify portable four-object journey and deduplicate small history media"
+  },
+  {
+    "commit": "b2b3ba02e0066391877aa932d8533fde030150b0",
+    "signature": "G",
+    "signoff": true,
+    "title": "UI06: record full journey evidence and honest acceptance gaps"
+  }
+]

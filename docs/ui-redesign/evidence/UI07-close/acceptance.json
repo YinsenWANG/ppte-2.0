@@ -1,0 +1,553 @@
+{
+  "status": "partial",
+  "basis": "Per-task archived verification; closing full suite 104/104; no native/human promotion",
+  "items": [
+    {
+      "task": "UI01",
+      "index": 1,
+      "requirement": "默认阅读与重开默认阅读",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "partial: installed Chrome headless passed; Safari/native/physical touch pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI01/verification/result.json",
+      "evidence": [
+        "tests/ui01-shell.test.ts — UI01 acceptance 1",
+        "docs/ui-redesign/evidence/UI01/reading.json"
+      ],
+      "reason": "pending: no reviewer, screen reader or manual native evidence"
+    },
+    {
+      "task": "UI01",
+      "index": 2,
+      "requirement": "编辑按上下文展开",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "partial: installed Chrome headless passed; Safari/native/physical touch pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI01/verification/result.json",
+      "evidence": [
+        "tests/ui01-shell.test.ts — UI01 acceptance 2",
+        "docs/ui-redesign/evidence/UI01/context.json"
+      ],
+      "reason": "pending: no reviewer, screen reader or manual native evidence"
+    },
+    {
+      "task": "UI01",
+      "index": 3,
+      "requirement": "放映无菜单和鼠标召回",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "partial: installed Chrome headless passed; Safari/native/physical touch pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI01/verification/result.json",
+      "evidence": [
+        "tests/ui01-shell.test.ts — UI01 acceptance 3",
+        "docs/ui-redesign/evidence/UI01/audience.json"
+      ],
+      "reason": "pending: no reviewer, screen reader or manual native evidence"
+    },
+    {
+      "task": "UI01",
+      "index": 4,
+      "requirement": "Esc/全屏失败返回正确模式",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "partial: installed Chrome headless passed; Safari/native/physical touch pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI01/verification/result.json",
+      "evidence": [
+        "tests/ui01-shell.test.ts — UI01 acceptance 4",
+        "docs/ui-redesign/evidence/UI01/transitions.json"
+      ],
+      "reason": "pending: no reviewer, screen reader or manual native evidence"
+    },
+    {
+      "task": "UI02",
+      "index": 1,
+      "requirement": "四类对象可插入和调整",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "partial: installed Chrome headless file:// UI passed; Safari, native permissions, OS IME and physical touch pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI02/verification/result.json",
+      "evidence": [
+        "tests/ui02-objects.test.ts — UI02 acceptance 1",
+        "docs/ui-redesign/evidence/UI02/objects.json"
+      ],
+      "reason": "pending: no owner/target-user visual review or screen reader evidence"
+    },
+    {
+      "task": "UI02",
+      "index": 2,
+      "requirement": "真实作者布局不被强制绝对化",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "partial: installed Chrome headless file:// UI passed; Safari, native permissions, OS IME and physical touch pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI02/verification/result.json",
+      "evidence": [
+        "tests/ui02-objects.test.ts — UI02 acceptance 2",
+        "docs/ui-redesign/evidence/UI02/layout.json"
+      ],
+      "reason": "pending: no owner/target-user visual review or screen reader evidence"
+    },
+    {
+      "task": "UI02",
+      "index": 3,
+      "requirement": "保护范围和历史正确",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "partial: installed Chrome headless file:// UI passed; Safari, native permissions, OS IME and physical touch pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI02/verification/result.json",
+      "evidence": [
+        "tests/ui02-objects.test.ts — UI02 acceptance 3",
+        "docs/ui-redesign/evidence/UI02/protection.json"
+      ],
+      "reason": "pending: no owner/target-user visual review or screen reader evidence"
+    },
+    {
+      "task": "UI02",
+      "index": 4,
+      "requirement": "图标/控件/焦点一致",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "partial: installed Chrome headless file:// UI passed; Safari, native permissions, OS IME and physical touch pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI02/verification/result.json",
+      "evidence": [
+        "tests/ui02-objects.test.ts — UI02 acceptance 4",
+        "docs/ui-redesign/evidence/UI02/focus.json"
+      ],
+      "reason": "pending: no owner/target-user visual review or screen reader evidence"
+    },
+    {
+      "task": "UI03",
+      "index": 1,
+      "requirement": "添加页无控制条遮挡",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "partial: installed Chrome headless file:// passed; Safari/native/system IME/physical touch pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI03/verification/result.json",
+      "evidence": [
+        "tests/ui03-pages.test.ts — UI03 acceptance 1",
+        "docs/ui-redesign/evidence/UI03/rail.json",
+        "docs/ui-redesign/evidence/UI03/rail.png"
+      ],
+      "reason": "pending: no screen reader, owner or target-user review evidence"
+    },
+    {
+      "task": "UI03",
+      "index": 2,
+      "requirement": "响应式新页保真",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "partial: installed Chrome headless file:// passed; Safari/native/system IME/physical touch pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI03/verification/result.json",
+      "evidence": [
+        "tests/ui03-pages.test.ts — UI03 acceptance 2",
+        "docs/ui-redesign/evidence/UI03/responsive.json",
+        "docs/ui-redesign/evidence/UI03/responsive.png"
+      ],
+      "reason": "pending: no screen reader, owner or target-user review evidence"
+    },
+    {
+      "task": "UI03",
+      "index": 3,
+      "requirement": "图片不被标题挡住且可调整",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "partial: installed Chrome headless file:// passed; Safari/native/system IME/physical touch pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI03/verification/result.json",
+      "evidence": [
+        "tests/ui03-pages.test.ts — UI03 acceptance 3",
+        "docs/ui-redesign/evidence/UI03/image.json",
+        "docs/ui-redesign/evidence/UI03/image.png"
+      ],
+      "reason": "pending: no screen reader, owner or target-user review evidence"
+    },
+    {
+      "task": "UI03",
+      "index": 4,
+      "requirement": "页面排序具备键盘等效",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "partial: installed Chrome headless file:// passed; Safari/native/system IME/physical touch pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI03/verification/result.json",
+      "evidence": [
+        "tests/ui03-pages.test.ts — UI03 acceptance 4",
+        "docs/ui-redesign/evidence/UI03/sorting.json",
+        "docs/ui-redesign/evidence/UI03/sorting.png"
+      ],
+      "reason": "pending: no screen reader, owner or target-user review evidence"
+    },
+    {
+      "task": "UI04",
+      "index": 1,
+      "requirement": "无关联可进入编辑",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "passed: Chrome headless",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI04/verification/result.json",
+      "evidence": [
+        "tests/ui04-saving.test.ts",
+        "tests/single-file-save.test.ts",
+        "tests/html-save.test.ts",
+        "docs/ui-redesign/evidence/UI04/IMPLEMENTATION.md"
+      ],
+      "reason": "pending: no human/native reviewer evidence"
+    },
+    {
+      "task": "UI04",
+      "index": 2,
+      "requirement": "原生授权后实际写回",
+      "code": "passed",
+      "automated": "passed: mocked/interface bridge or synthetic transaction; native outcome pending",
+      "real-browser": "pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI04/verification/result.json",
+      "evidence": [
+        "tests/ui04-saving.test.ts",
+        "tests/single-file-save.test.ts",
+        "tests/html-save.test.ts",
+        "docs/ui-redesign/evidence/UI04/IMPLEMENTATION.md"
+      ],
+      "reason": "pending: no human/native reviewer evidence"
+    },
+    {
+      "task": "UI04",
+      "index": 3,
+      "requirement": "未写回文案准确",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "passed: Chrome headless",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI04/verification/result.json",
+      "evidence": [
+        "tests/ui04-saving.test.ts",
+        "tests/single-file-save.test.ts",
+        "tests/html-save.test.ts",
+        "docs/ui-redesign/evidence/UI04/IMPLEMENTATION.md"
+      ],
+      "reason": "pending: no human/native reviewer evidence"
+    },
+    {
+      "task": "UI04",
+      "index": 4,
+      "requirement": "失败/权限撤销/外部修改可恢复",
+      "code": "passed",
+      "automated": "passed: mocked/interface bridge or synthetic transaction; native outcome pending",
+      "real-browser": "pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI04/verification/result.json",
+      "evidence": [
+        "tests/ui04-saving.test.ts",
+        "tests/single-file-save.test.ts",
+        "tests/html-save.test.ts",
+        "docs/ui-redesign/evidence/UI04/IMPLEMENTATION.md"
+      ],
+      "reason": "pending: no human/native reviewer evidence"
+    },
+    {
+      "task": "UI04",
+      "index": 5,
+      "requirement": "防抖和持续输入调度，原生授权后自动写回",
+      "code": "passed",
+      "automated": "passed: mocked/interface bridge or synthetic transaction; native outcome pending",
+      "real-browser": "pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI04/verification/result.json",
+      "evidence": [
+        "tests/ui04-saving.test.ts",
+        "tests/single-file-save.test.ts",
+        "tests/html-save.test.ts",
+        "docs/ui-redesign/evidence/UI04/IMPLEMENTATION.md"
+      ],
+      "reason": "pending: no human/native reviewer evidence"
+    },
+    {
+      "task": "UI04",
+      "index": 6,
+      "requirement": "写入队列与修订号防止旧快照覆盖新修改",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "passed: Chrome headless",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI04/verification/result.json",
+      "evidence": [
+        "tests/ui04-saving.test.ts",
+        "tests/single-file-save.test.ts",
+        "tests/html-save.test.ts",
+        "docs/ui-redesign/evidence/UI04/IMPLEMENTATION.md"
+      ],
+      "reason": "pending: no human/native reviewer evidence"
+    },
+    {
+      "task": "UI04",
+      "index": 7,
+      "requirement": "同名不同文档、外部改动和权限失效正确处理",
+      "code": "passed",
+      "automated": "passed: mocked/interface bridge or synthetic transaction; native outcome pending",
+      "real-browser": "pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI04/verification/result.json",
+      "evidence": [
+        "tests/ui04-saving.test.ts",
+        "tests/single-file-save.test.ts",
+        "tests/html-save.test.ts",
+        "docs/ui-redesign/evidence/UI04/IMPLEMENTATION.md"
+      ],
+      "reason": "pending: no human/native reviewer evidence"
+    },
+    {
+      "task": "UI04",
+      "index": 8,
+      "requirement": "IME完整事务与新进程重开实测",
+      "code": "passed",
+      "automated": "passed: mocked/interface bridge or synthetic transaction; native outcome pending",
+      "real-browser": "pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI04/verification/result.json",
+      "evidence": [
+        "tests/ui04-saving.test.ts",
+        "tests/single-file-save.test.ts",
+        "tests/html-save.test.ts",
+        "docs/ui-redesign/evidence/UI04/IMPLEMENTATION.md"
+      ],
+      "reason": "pending: no human/native reviewer evidence"
+    },
+    {
+      "task": "UI05",
+      "index": 1,
+      "requirement": "1440/1024/820/390窗口",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "partial: installed Chrome headless offline file://; native zoom, system font, physical touch, Safari and screen reader pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI05/verification/result.json",
+      "evidence": [
+        "tests/ui05-accessibility.test.ts — UI05 acceptance 1",
+        "docs/ui-redesign/evidence/UI05/windows.json"
+      ],
+      "reason": "pending: no owner or target-user review"
+    },
+    {
+      "task": "UI05",
+      "index": 2,
+      "requirement": "200%缩放和触控目标",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "partial: installed Chrome headless offline file://; native zoom, system font, physical touch, Safari and screen reader pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI05/verification/result.json",
+      "evidence": [
+        "tests/ui05-accessibility.test.ts — UI05 acceptance 2",
+        "docs/ui-redesign/evidence/UI05/zoom-touch.json"
+      ],
+      "reason": "pending: no owner or target-user review"
+    },
+    {
+      "task": "UI05",
+      "index": 3,
+      "requirement": "菜单键盘与焦点恢复",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "partial: installed Chrome headless offline file://; native zoom, system font, physical touch, Safari and screen reader pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI05/verification/result.json",
+      "evidence": [
+        "tests/ui05-accessibility.test.ts — UI05 acceptance 3",
+        "docs/ui-redesign/evidence/UI05/keyboard.json"
+      ],
+      "reason": "pending: no owner or target-user review"
+    },
+    {
+      "task": "UI05",
+      "index": 4,
+      "requirement": "图标标签和重要文字对比",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "partial: installed Chrome headless offline file://; native zoom, system font, physical touch, Safari and screen reader pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI05/verification/result.json",
+      "evidence": [
+        "tests/ui05-accessibility.test.ts — UI05 acceptance 4",
+        "docs/ui-redesign/evidence/UI05/contrast.json"
+      ],
+      "reason": "pending: no owner or target-user review"
+    },
+    {
+      "task": "UI06",
+      "index": 1,
+      "requirement": "离线阅读编辑保存重开放映PDF",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "partial: installed Chrome headless; Safari/native pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI06/verification/result.json",
+      "evidence": [
+        "tests/ui06-acceptance.test.ts",
+        "docs/ui-redesign/evidence/UI06/journey.json",
+        "docs/ui-redesign/evidence/UI06/pdf-inspection.json"
+      ],
+      "reason": "Actual offline downloads and two full browser exits; PDF API/PDFKit checked. Original-file native authorization remains pending; UI04 bridge remains separate."
+    },
+    {
+      "task": "UI06",
+      "index": 2,
+      "requirement": "四类对象历史持久化",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "partial: installed Chrome headless; Safari/native pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI06/verification/result.json",
+      "evidence": [
+        "tests/ui06-acceptance.test.ts",
+        "docs/ui-redesign/evidence/UI06/journey.json",
+        "docs/ui-redesign/evidence/UI06/pdf-inspection.json"
+      ],
+      "reason": "Exact full-content comparison and four-type preview assertions; two named versions plus before-restore survive portable file; small PNG stored once. UI07 A4 current-media lifecycle still incomplete."
+    },
+    {
+      "task": "UI06",
+      "index": 3,
+      "requirement": "真实Chrome/Safari与原生权限",
+      "code": "passed",
+      "automated": "partial",
+      "real-browser": "partial: installed Chrome headless; Safari/native pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI06/verification/result.json",
+      "evidence": [
+        "tests/ui06-acceptance.test.ts",
+        "docs/ui-redesign/evidence/UI06/journey.json",
+        "docs/ui-redesign/evidence/UI06/environment-matrix.json"
+      ],
+      "reason": "Only installed Chrome headless ran. Evidence-contract test enforces null+reason; it is not a Safari or native-permission pass."
+    },
+    {
+      "task": "UI06",
+      "index": 4,
+      "requirement": "用户UI反馈与样稿审美分别记录",
+      "code": "passed",
+      "automated": "passed: collection record contract only; reviews absent",
+      "real-browser": "not-applicable: collection records",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI06/verification/result.json",
+      "evidence": [
+        "tests/ui06-acceptance.test.ts",
+        "docs/ui-redesign/evidence/UI06/journey.json",
+        "docs/ui-redesign/evidence/UI06/ui-feedback.json",
+        "docs/ui-redesign/evidence/UI06/sample-aesthetics.json"
+      ],
+      "reason": "UI and aesthetic records are separate and schema-tested, with three unfilled reviewers and independent vetoes. No human rating or nine-pair completion claim."
+    },
+    {
+      "task": "UI07",
+      "index": 1,
+      "requirement": "命名、预览、恢复并保留恢复前内容",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "partial: Chrome headless; native and Safari pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI07/verification/result.json",
+      "evidence": [
+        "tests/ui07-versions.test.ts",
+        "docs/ui-redesign/evidence/UI07/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/UI07/journey.json",
+        "docs/ui-redesign/evidence/UI07/media-performance.json"
+      ],
+      "reason": "Framework assertions and recorded product journey pass; no native/human completion claim."
+    },
+    {
+      "task": "UI07",
+      "index": 2,
+      "requirement": "历史随唯一HTML复制并在无原缓存环境恢复",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "partial: Chrome headless; native and Safari pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI07/verification/result.json",
+      "evidence": [
+        "tests/ui07-versions.test.ts",
+        "docs/ui-redesign/evidence/UI07/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/UI07/journey.json",
+        "docs/ui-redesign/evidence/UI07/media-performance.json"
+      ],
+      "reason": "Framework assertions and recorded product journey pass; no native/human completion claim."
+    },
+    {
+      "task": "UI07",
+      "index": 3,
+      "requirement": "版本数量/历史容量控制，不静默删除命名版本",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "partial: Chrome headless; native and Safari pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI07/verification/result.json",
+      "evidence": [
+        "tests/ui07-versions.test.ts",
+        "docs/ui-redesign/evidence/UI07/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/UI07/journey.json",
+        "docs/ui-redesign/evidence/UI07/media-performance.json"
+      ],
+      "reason": "Framework assertions and recorded product journey pass; no native/human completion claim."
+    },
+    {
+      "task": "UI07",
+      "index": 4,
+      "requirement": "资源去重、差量依赖/检查点和按需解码正确",
+      "code": "partial",
+      "automated": "partial",
+      "real-browser": "partial: Chrome headless; native and Safari pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI07/verification/result.json",
+      "evidence": [
+        "tests/ui07-versions.test.ts",
+        "docs/ui-redesign/evidence/UI07/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/UI07/journey.json",
+        "docs/ui-redesign/evidence/UI07/media-performance.json"
+      ],
+      "reason": "Historical checkpoints and on-demand historical decoding pass; S06 current live DOM still expands data URLs. Strict shared-current-media requirement is not complete."
+    },
+    {
+      "task": "UI07",
+      "index": 5,
+      "requirement": "历史损坏安全降级，提供不含历史的按需下载",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "partial: Chrome headless; native and Safari pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI07/verification/result.json",
+      "evidence": [
+        "tests/ui07-versions.test.ts",
+        "docs/ui-redesign/evidence/UI07/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/UI07/journey.json",
+        "docs/ui-redesign/evidence/UI07/media-performance.json"
+      ],
+      "reason": "Framework assertions and recorded product journey pass; no native/human completion claim."
+    },
+    {
+      "task": "UI07",
+      "index": 6,
+      "requirement": "真实保存/预览/恢复与文件体积性能证据",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "partial: Chrome headless; native and Safari pending",
+      "human": "pending",
+      "source": "docs/ui-redesign/evidence/UI07/verification/result.json",
+      "evidence": [
+        "tests/ui07-versions.test.ts",
+        "docs/ui-redesign/evidence/UI07/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/UI07/journey.json",
+        "docs/ui-redesign/evidence/UI07/media-performance.json"
+      ],
+      "reason": "Framework assertions and recorded product journey pass; no native/human completion claim."
+    }
+  ]
+}

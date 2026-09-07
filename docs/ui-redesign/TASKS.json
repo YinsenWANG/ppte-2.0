@@ -25,7 +25,10 @@
         "docs/ui-redesign/evidence/UI01/IMPLEMENTATION.md",
         "docs/ui-redesign/evidence/UI01/verification/result.json",
         "tests/ui01-shell.test.ts",
-        "docs/ui-redesign/evidence/UI01/sample.ppte.html"
+        "docs/ui-redesign/evidence/UI01/sample.ppte.html",
+        "docs/ui-redesign/evidence/UI07-close/HANDOFF.md",
+        "docs/ui-redesign/evidence/UI07-close/acceptance.json",
+        "docs/ui-redesign/evidence/UI07-close/verification/result.json"
       ],
       "implementationCommit": "5ad4f2c6e1b70ecca10e24993559b47aa2bebc58",
       "statusByLayer": {
@@ -33,7 +36,8 @@
         "automated": "passed: 76/76 tests; four UI01 acceptance tests",
         "real-browser": "partial: installed Chrome headless passed; Safari/native/physical touch pending",
         "human": "pending: no reviewer, screen reader or manual native evidence"
-      }
+      },
+      "closingAcceptance": "partial: code/automated task status is not four-layer product acceptance"
     },
     {
       "id": "UI02",
@@ -52,7 +56,10 @@
         "docs/ui-redesign/evidence/UI02/IMPLEMENTATION.md",
         "docs/ui-redesign/evidence/UI02/verification/result.json",
         "tests/ui02-objects.test.ts",
-        "docs/ui-redesign/evidence/UI02/sample.ppte.html"
+        "docs/ui-redesign/evidence/UI02/sample.ppte.html",
+        "docs/ui-redesign/evidence/UI07-close/HANDOFF.md",
+        "docs/ui-redesign/evidence/UI07-close/acceptance.json",
+        "docs/ui-redesign/evidence/UI07-close/verification/result.json"
       ],
       "implementationCommit": "dbd7ed643f07de02793a406c9ad84304b7d97515",
       "statusByLayer": {
@@ -60,7 +67,8 @@
         "automated": "passed: 92/92 tests; four UI02 acceptance tests",
         "real-browser": "partial: installed Chrome headless file:// UI passed; Safari, native permissions, OS IME and physical touch pending",
         "human": "pending: no owner/target-user visual review or screen reader evidence"
-      }
+      },
+      "closingAcceptance": "partial: code/automated task status is not four-layer product acceptance"
     },
     {
       "id": "UI03",
@@ -80,7 +88,10 @@
         "docs/ui-redesign/evidence/UI03/verification/result.json",
         "tests/ui03-pages.test.ts",
         "docs/ui-redesign/evidence/UI03/sample.ppte.html",
-        "docs/ui-redesign/evidence/UI03/audit.png"
+        "docs/ui-redesign/evidence/UI03/audit.png",
+        "docs/ui-redesign/evidence/UI07-close/HANDOFF.md",
+        "docs/ui-redesign/evidence/UI07-close/acceptance.json",
+        "docs/ui-redesign/evidence/UI07-close/verification/result.json"
       ],
       "implementationCommit": "e340d48392ae06080f72ec51ec7ea6880aed90c9",
       "statusByLayer": {
@@ -88,7 +99,8 @@
         "automated": "passed: 97/97 tests; four UI03 acceptance tests and original audit-source composition regression",
         "real-browser": "partial: installed Chrome headless file:// passed; Safari/native/system IME/physical touch pending",
         "human": "pending: no screen reader, owner or target-user review evidence"
-      }
+      },
+      "closingAcceptance": "partial: code/automated task status is not four-layer product acceptance"
     },
     {
       "id": "UI04",
@@ -113,7 +125,10 @@
         "tests/ui04-saving.test.ts",
         "docs/ui-redesign/evidence/UI04/journey.json",
         "docs/ui-redesign/evidence/UI04/file-interface-bridge.json",
-        "docs/ui-redesign/evidence/UI04/sample.ppte.html"
+        "docs/ui-redesign/evidence/UI04/sample.ppte.html",
+        "docs/ui-redesign/evidence/UI07-close/HANDOFF.md",
+        "docs/ui-redesign/evidence/UI07-close/acceptance.json",
+        "docs/ui-redesign/evidence/UI07-close/verification/result.json"
       ],
       "implementationCommit": "abe467c87347cb6c8c52b0ecaff16968cba1a168",
       "statusByLayer": {
@@ -121,7 +136,8 @@
         "automated": "passed: 80/80 tests; existing native-interface bridge and four new UI04 tests",
         "real-browser": "partial: Chrome headless passed; native picker, system IME, Safari pending",
         "human": "pending: no human/native reviewer evidence"
-      }
+      },
+      "closingAcceptance": "partial: code/automated task status is not four-layer product acceptance"
     },
     {
       "id": "UI05",
@@ -142,7 +158,10 @@
         "tests/ui05-accessibility.test.ts",
         "docs/ui-redesign/evidence/UI05/touch-targets.json",
         "docs/ui-redesign/evidence/UI05/contrast-ratios.json",
-        "docs/ui-redesign/evidence/UI05/sample.ppte.html"
+        "docs/ui-redesign/evidence/UI05/sample.ppte.html",
+        "docs/ui-redesign/evidence/UI07-close/HANDOFF.md",
+        "docs/ui-redesign/evidence/UI07-close/acceptance.json",
+        "docs/ui-redesign/evidence/UI07-close/verification/result.json"
       ],
       "implementationCommit": "6fca967b968327f5f7f730fd23bb260dd2376116",
       "statusByLayer": {
@@ -150,7 +169,8 @@
         "automated": "passed: 101/101 tests; four UI05 acceptance tests on dist",
         "real-browser": "partial: installed Chrome headless offline file://; native zoom, system font, physical touch, Safari and screen reader pending",
         "human": "pending: no owner or target-user review"
-      }
+      },
+      "closingAcceptance": "partial: code/automated task status is not four-layer product acceptance"
     },
     {
       "id": "UI06",
@@ -179,7 +199,10 @@
         "docs/ui-redesign/evidence/UI06/ui-feedback.json",
         "docs/ui-redesign/evidence/UI06/sample-aesthetics.json",
         "docs/ui-redesign/evidence/UI06/carry-forward.md",
-        "docs/ui-redesign/evidence/delivery/把作品带走.ppte.html"
+        "docs/ui-redesign/evidence/delivery/把作品带走.ppte.html",
+        "docs/ui-redesign/evidence/UI07-close/HANDOFF.md",
+        "docs/ui-redesign/evidence/UI07-close/acceptance.json",
+        "docs/ui-redesign/evidence/UI07-close/verification/result.json"
       ],
       "implementationCommit": "536674af1cbb4163434761804d487a57aae9982a",
       "statusByLayer": {
@@ -187,7 +210,8 @@
         "automated": "104/104 passed; full UI06 Chrome journey and evidence contracts; native/Safari criterion not established",
         "real-browser": "partial: installed Chrome headless file://; native picker, Safari, OS IME, native print and independent device pending",
         "human": "pending: owner and two target-user UI and aesthetic reviews absent"
-      }
+      },
+      "closingAcceptance": "partial: code/automated task status is not four-layer product acceptance"
     },
     {
       "id": "UI07",
@@ -211,7 +235,10 @@
         "docs/ui-redesign/evidence/UI07/journey.json",
         "docs/ui-redesign/evidence/UI07/media-performance.json",
         "docs/ui-redesign/evidence/UI07/history-restored.png",
-        "docs/ui-redesign/evidence/UI07/sample.ppte.html"
+        "docs/ui-redesign/evidence/UI07/sample.ppte.html",
+        "docs/ui-redesign/evidence/UI07-close/HANDOFF.md",
+        "docs/ui-redesign/evidence/UI07-close/acceptance.json",
+        "docs/ui-redesign/evidence/UI07-close/verification/result.json"
       ],
       "implementationCommit": "a8d9039f7e028a13dd892de84d0d5b3b3d086c35",
       "statusByLayer": {
@@ -219,8 +246,17 @@
         "automated": "88/88 tests passed; eight UI07 tests; A4 strict current-DOM criterion remains partial",
         "real-browser": "partial: Chrome headless file journey and disk bridge passed; native/Safari/system IME pending",
         "human": "pending: no reviewer or independent device evidence"
-      }
+      },
+      "closingAcceptance": "partial: code/automated task status is not four-layer product acceptance"
     }
   ],
-  "savingAndVersions": "SAVING-VERSIONS.md"
+  "savingAndVersions": "SAVING-VERSIONS.md",
+  "closingHandoff": {
+    "status": "partial",
+    "report": "docs/ui-redesign/evidence/UI07-close/HANDOFF.md",
+    "acceptance": "docs/ui-redesign/evidence/UI07-close/acceptance.json",
+    "sample": "docs/ui-redesign/evidence/delivery/把作品带走.ppte.html",
+    "manifest": "docs/ui-redesign/evidence/delivery/manifest.json",
+    "verification": "docs/ui-redesign/evidence/UI07-close/verification/result.json"
+  }
 }

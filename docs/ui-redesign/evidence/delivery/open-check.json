@@ -1,11 +1,50 @@
 {
-  "timestamp": "2026-09-07T06:02:28.161Z",
-  "command": "node --input-type=module (Playwright installed Chrome offline delivery-path read/history preview check)",
+  "timestamp": "2026-09-07T06:05:36.328Z",
+  "commit": "b2b3ba02e0066391877aa932d8533fde030150b0",
+  "command": "node scripts/verify-ui-delivery.mjs",
+  "cli": {
+    "command": "node dist/apps/html-cli/index.js enhance /private/tmp/ppte7/docs/ui-redesign/evidence/UI07-close/authored.html --out /var/folders/00/4ydbn_v17qs1pwsgy6lj2x700000gn/T/ppte-closing-gjsQiU/initial.ppte.html",
+    "result": {
+      "ok": true,
+      "path": "/var/folders/00/4ydbn_v17qs1pwsgy6lj2x700000gn/T/ppte-closing-gjsQiU/initial.ppte.html",
+      "pages": 2,
+      "bytes": 358877,
+      "mediaBytes": 0,
+      "visual": "unverified"
+    }
+  },
   "status": "passed",
-  "browser": "152.0.7977.76",
-  "headless": true,
   "file": "docs/ui-redesign/evidence/delivery/把作品带走.ppte.html",
-  "sha256": "1c2e5df4578196e68261a7c120a02835887d43acf75b7773ef2fd054b1e6972c",
+  "source": "docs/ui-redesign/evidence/UI07-close/authored.html",
+  "sha256": "1b01007e5f752822ce1b904338818b1709a7672b94f6ffa6537918609c1fc591",
+  "bytes": 368304,
+  "headless": true,
+  "offline": true,
+  "sessions": [
+    {
+      "browser": "152.0.7977.76",
+      "protocol": "file:",
+      "emptyLocalStorage": true
+    },
+    {
+      "browser": "152.0.7977.76",
+      "protocol": "file:",
+      "emptyLocalStorage": true
+    }
+  ],
+  "wholeBrowserShutdowns": 1,
   "network": [],
-  "errors": []
+  "errors": [],
+  "checks": [
+    "CLI enhance authored HTML",
+    "UI two named versions and restore-before checkpoint",
+    "actual download",
+    "fresh Chrome process file:// read",
+    "read-only second-version preview",
+    "four current objects",
+    "clean presentation and Escape"
+  ],
+  "nativePermissions": null,
+  "humanReview": null,
+  "reason": "Chrome headless download evidence only; native authorization and human review unavailable."
 }
