@@ -1,0 +1,291 @@
+{
+  "task": "R2",
+  "time": "2026-09-07T08:25:45.761748+00:00",
+  "baseCommit": "f5ba1900cb1467126cc3edd911ce762413280cdb",
+  "testedParentCommit": "0e9d978a224c8e2a526be006d10c94cb999ebc42",
+  "implementationCommit": "a142e4798f6a54b8f573b33233a116902fc47ab5",
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "status": "passed",
+      "commit": "a142e4798f6a54b8f573b33233a116902fc47ab5",
+      "log": "typecheck.log",
+      "executionHead": "0e9d978a224c8e2a526be006d10c94cb999ebc42"
+    },
+    {
+      "command": "pnpm build",
+      "exitCode": 0,
+      "status": "passed",
+      "commit": "a142e4798f6a54b8f573b33233a116902fc47ab5",
+      "log": "build.log",
+      "executionHead": "0e9d978a224c8e2a526be006d10c94cb999ebc42"
+    },
+    {
+      "command": "pnpm test",
+      "exitCode": 0,
+      "status": "passed",
+      "commit": "a142e4798f6a54b8f573b33233a116902fc47ab5",
+      "log": "test.log",
+      "executionHead": "0e9d978a224c8e2a526be006d10c94cb999ebc42"
+    },
+    {
+      "command": "node --test dist/tests/ui03-pages.test.js dist/tests/r8-r2-insertion.test.js",
+      "exitCode": 0,
+      "status": "passed",
+      "commit": "a142e4798f6a54b8f573b33233a116902fc47ab5",
+      "log": "targeted-test.log",
+      "executionHead": "0e9d978a224c8e2a526be006d10c94cb999ebc42"
+    },
+    {
+      "command": "node docs/audits/2026-09-07-ui-d96f211/probe.mjs",
+      "exitCode": 0,
+      "status": "passed",
+      "commit": "a142e4798f6a54b8f573b33233a116902fc47ab5",
+      "log": "probe.log",
+      "executionHead": "0e9d978a224c8e2a526be006d10c94cb999ebc42"
+    },
+    {
+      "command": "node docs/audits/2026-09-07-ui-d96f211/followup.mjs",
+      "exitCode": 0,
+      "status": "passed",
+      "commit": "a142e4798f6a54b8f573b33233a116902fc47ab5",
+      "log": "followup.log",
+      "executionHead": "0e9d978a224c8e2a526be006d10c94cb999ebc42"
+    },
+    {
+      "command": "node dist/apps/html-cli/index.js enhance docs/audits/2026-09-07-ui-d96f211/sample/source.html --out docs/ui-redesign/evidence/r8-R2/sample.ppte.html",
+      "exitCode": 0,
+      "status": "passed",
+      "commit": "a142e4798f6a54b8f573b33233a116902fc47ab5",
+      "log": "enhance.log",
+      "executionHead": "a142e4798f6a54b8f573b33233a116902fc47ab5"
+    },
+    {
+      "command": "node docs/ui-redesign/evidence/r8-R2/verify-sample.mjs",
+      "exitCode": 0,
+      "status": "passed",
+      "commit": "a142e4798f6a54b8f573b33233a116902fc47ab5",
+      "log": "cli-smoke.log",
+      "executionHead": "a142e4798f6a54b8f573b33233a116902fc47ab5"
+    }
+  ],
+  "tests": {
+    "total": 116,
+    "passed": 116,
+    "failed": 0,
+    "newR2Tests": 9,
+    "targetedR2AndUI03": {
+      "total": 14,
+      "passed": 14
+    },
+    "framework": "node --test dist/tests/*.test.js",
+    "initialFailures": [
+      "first-full-test.log: screenshot caret-color snapshot and 12-page clipped flow placement",
+      "second-full-test.log: 12-page clipped flow placement; fixed by scaling inserted media in flow"
+    ]
+  },
+  "probeComparison": {
+    "before": {
+      "text": {
+        "x": 0,
+        "y": 0,
+        "width": 280,
+        "height": 40,
+        "top": 0,
+        "right": 280,
+        "bottom": 40,
+        "left": 0
+      },
+      "imageBefore": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 240,
+          "top": 0,
+          "right": 320,
+          "bottom": 240,
+          "left": 0
+        },
+        "heading": {
+          "x": 55,
+          "y": 165,
+          "width": 600,
+          "height": 183.59375,
+          "top": 165,
+          "right": 655,
+          "bottom": 348.59375,
+          "left": 55
+        },
+        "style": "width: 320px; height: 240px; max-width: 100%; object-fit: contain !important; object-position: 50% 50% !important; position: relative; z-index: 1;",
+        "overlap": true
+      },
+      "imageAfter": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 240,
+          "top": 0,
+          "right": 320,
+          "bottom": 240,
+          "left": 0
+        },
+        "heading": {
+          "x": 55,
+          "y": 165,
+          "width": 600,
+          "height": 183.59375,
+          "top": 165,
+          "right": 655,
+          "bottom": 348.59375,
+          "left": 55
+        },
+        "style": "width: 320px; height: 240px; max-width: 100%; object-fit: contain !important; object-position: 50% 50% !important; position: relative; z-index: 1;",
+        "overlap": true
+      },
+      "keyboardDeltaX": 0,
+      "moveFeedback": "操作未完成 · Error: LAYOUT_UNSUPPORTED: 此对象使用普通文档流",
+      "R2": "failed",
+      "addedCount": 13
+    },
+    "after": {
+      "text": {
+        "x": 516,
+        "y": 484,
+        "width": 280,
+        "height": 40,
+        "top": 484,
+        "right": 796,
+        "bottom": 524,
+        "left": 516
+      },
+      "imageBefore": {
+        "rect": {
+          "x": 55,
+          "y": 384.296875,
+          "width": 96,
+          "height": 72,
+          "top": 384.296875,
+          "right": 151,
+          "bottom": 456.296875,
+          "left": 55
+        },
+        "heading": {
+          "x": 55,
+          "y": 165,
+          "width": 600,
+          "height": 183.59375,
+          "top": 165,
+          "right": 655,
+          "bottom": 348.59375,
+          "left": 55
+        },
+        "style": "width: 96px; height: 72px; max-width: 100%; object-fit: contain !important; object-position: 50% 50% !important; position: absolute; margin: 0px; transform: none; inset: 384.297px auto auto 55px;",
+        "overlap": false
+      },
+      "imageAfter": {
+        "rect": {
+          "x": 63,
+          "y": 384.296875,
+          "width": 96,
+          "height": 72,
+          "top": 384.296875,
+          "right": 159,
+          "bottom": 456.296875,
+          "left": 63
+        },
+        "heading": {
+          "x": 55,
+          "y": 165,
+          "width": 600,
+          "height": 183.59375,
+          "top": 165,
+          "right": 655,
+          "bottom": 348.59375,
+          "left": 55
+        },
+        "style": "width: 96px; height: 72px; max-width: 100%; object-fit: contain !important; object-position: 50% 50% !important; position: absolute; margin: 0px; transform: translate(8px, 0px); inset: 384.297px auto auto 55px;",
+        "overlap": false
+      },
+      "keyboardDeltaX": 8,
+      "moveFeedback": "",
+      "R2": "passed",
+      "addedCount": 13
+    },
+    "scope": "R2 metrics and user-path assertions only; probe exit zero is not whole-audit acceptance"
+  },
+  "statusByLayer": {
+    "code": "passed: R2",
+    "automated": "passed: 116/116",
+    "real-browser": "partial: installed Chrome headless offline file:// passed; native/Safari/OS IME/physical touch pending",
+    "human": "pending: no reviewer or screen-reader session"
+  },
+  "pending": [
+    {
+      "item": "native authorization",
+      "result": null,
+      "reason": "No real OS picker authorization/writeback evidence; download and automated file input only"
+    },
+    {
+      "item": "Safari",
+      "result": null,
+      "reason": "No Safari session"
+    },
+    {
+      "item": "OS IME / physical touch / screen reader",
+      "result": null,
+      "reason": "No system or human session"
+    },
+    {
+      "item": "human visual review",
+      "result": null,
+      "reason": "No owner or target-user review"
+    },
+    {
+      "item": "R3–R6 / final CLOSING",
+      "result": null,
+      "reason": "Reserved sequential pipeline tasks; current probe still records remaining audit findings"
+    },
+    {
+      "item": "PDF N04 / S04 performance / UI07 A4 media",
+      "result": null,
+      "reason": "Reserved GAPS investigations; existing test pass does not close root cause or lifecycle requirements"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "image-saved.ppte.html",
+      "sha256": "c5569564f6ff5eab006a1d0d92f209a7a841bbb6d42181ba3fef9a599be8771e",
+      "bytes": 464562
+    },
+    {
+      "path": "sample.ppte.html",
+      "sha256": "c6a709b12520d1357f5d13036a810862b11990106833269809cbcc9350397c8d",
+      "bytes": 368336
+    },
+    {
+      "path": "shape-saved.ppte.html",
+      "sha256": "447a1c3eafac796acc2620a3e1f35824c727062aa2977678889d9a4006c9e9aa",
+      "bytes": 378755
+    },
+    {
+      "path": "table-saved.ppte.html",
+      "sha256": "499cb9ea82f41348efd08bf49fb175ea3d534105edf8ed7a3058d17aa037298d",
+      "bytes": 379347
+    },
+    {
+      "path": "text-saved.ppte.html",
+      "sha256": "9f21f70480019b8bcf63ba773e099beb42d244214aa4076a93d6b776a853ce42",
+      "bytes": 378679
+    }
+  ],
+  "workspace": "Existing untracked supervisor/pipeline files preserved; tracked work clean after signed evidence commit; no push.",
+  "source": {
+    "path": "docs/audits/2026-09-07-ui-d96f211/sample/source.html",
+    "sha256": "db6dd16104be24df2e93684b35e4827c3b08c0d569ab563af70bb257866882ef",
+    "modified": false
+  },
+  "testProvenance": "Tests ran on the final working tree before a142e47 was created; that exact source/test tree was committed unchanged. CLI sample smoke ran after the implementation commit."
+}

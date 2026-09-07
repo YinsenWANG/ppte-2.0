@@ -1,0 +1,34 @@
+{
+  "kind": "image",
+  "browser": "152.0.7977.76",
+  "before": {
+    "rect": {
+      "x": 55,
+      "y": 384.296875,
+      "width": 96,
+      "height": 72,
+      "top": 384.296875,
+      "right": 151,
+      "bottom": 456.296875,
+      "left": 55
+    },
+    "inside": true,
+    "overlaps": []
+  },
+  "moved": {
+    "rect": {
+      "x": 63,
+      "y": 384.296875,
+      "width": 96,
+      "height": 72,
+      "top": 384.296875,
+      "right": 159,
+      "bottom": 456.296875,
+      "left": 63
+    },
+    "inside": true,
+    "overlaps": []
+  },
+  "authorUnchanged": true,
+  "downloadReopen": true
+}

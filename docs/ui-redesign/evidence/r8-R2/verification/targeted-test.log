@@ -1,0 +1,94 @@
+TAP version 13
+# Subtest: R2 audit text: mouse insertion/selection, actual Alt+Right, resize, undo/redo and offline download/new-process reopen
+ok 1 - R2 audit text: mouse insertion/selection, actual Alt+Right, resize, undo/redo and offline download/new-process reopen
+  ---
+  duration_ms: 3150.190458
+  type: 'test'
+  ...
+# Subtest: R2 audit image: mouse insertion/selection, actual Alt+Right, resize, undo/redo and offline download/new-process reopen
+ok 2 - R2 audit image: mouse insertion/selection, actual Alt+Right, resize, undo/redo and offline download/new-process reopen
+  ---
+  duration_ms: 3218.934875
+  type: 'test'
+  ...
+# Subtest: R2 audit shape: mouse insertion/selection, actual Alt+Right, resize, undo/redo and offline download/new-process reopen
+ok 3 - R2 audit shape: mouse insertion/selection, actual Alt+Right, resize, undo/redo and offline download/new-process reopen
+  ---
+  duration_ms: 2380.74525
+  type: 'test'
+  ...
+# Subtest: R2 audit table: mouse insertion/selection, actual Alt+Right, resize, undo/redo and offline download/new-process reopen
+ok 4 - R2 audit table: mouse insertion/selection, actual Alt+Right, resize, undo/redo and offline download/new-process reopen
+  ---
+  duration_ms: 3303.64125
+  type: 'test'
+  ...
+# Subtest: R2 block: all four types use real order, spacing/alignment and retain native layout after download
+ok 5 - R2 block: all four types use real order, spacing/alignment and retain native layout after download
+  ---
+  duration_ms: 6664.849042
+  type: 'test'
+  ...
+# Subtest: R2 flex: all four types use real order, spacing/alignment and retain native layout after download
+ok 6 - R2 flex: all four types use real order, spacing/alignment and retain native layout after download
+  ---
+  duration_ms: 7786.154083
+  type: 'test'
+  ...
+# Subtest: R2 grid: all four types use real order, spacing/alignment and retain native layout after download
+ok 7 - R2 grid: all four types use real order, spacing/alignment and retain native layout after download
+  ---
+  duration_ms: 8417.113834
+  type: 'test'
+  ...
+# Subtest: R2 no available space: each menu insertion rolls back DOM and undo history with an accurate visible error
+ok 8 - R2 no available space: each menu insertion rolls back DOM and undo history with an accurate visible error
+  ---
+  duration_ms: 2047.84375
+  type: 'test'
+  ...
+# Subtest: R2 native media wrapper and mixed text: insert beside the canvas object, and protect non-heading direct text
+ok 9 - R2 native media wrapper and mixed text: insert beside the canvas object, and protect non-heading direct text
+  ---
+  duration_ms: 2211.309708
+  type: 'test'
+  ...
+# Subtest: UI03 acceptance 1: long page rail has independent scroll, fixed add footer and unobstructed controls
+ok 10 - UI03 acceptance 1: long page rail has independent scroll, fixed add footer and unobstructed controls
+  ---
+  duration_ms: 2353.886292
+  type: 'test'
+  ...
+# Subtest: UI03 acceptance 2: new pages retain responsive/fixed/Grid declarations across modes, resize and download
+ok 11 - UI03 acceptance 2: new pages retain responsive/fixed/Grid declarations across modes, resize and download
+  ---
+  duration_ms: 5153.225958
+  type: 'test'
+  ...
+# Subtest: UI03 acceptance 3: nested stacking title and image do not overlap; real hit selection, layout, crop, undo and saved content
+ok 12 - UI03 acceptance 3: nested stacking title and image do not overlap; real hit selection, layout, crop, undo and saved content
+  ---
+  duration_ms: 2064.590667
+  type: 'test'
+  ...
+# Subtest: UI03 acceptance 4: keyboard buttons/Alt arrows and drag reorder share undo history, identity and boundaries
+ok 13 - UI03 acceptance 4: keyboard buttons/Alt arrows and drag reorder share undo history, identity and boundaries
+  ---
+  duration_ms: 1712.483458
+  type: 'test'
+  ...
+# Subtest: UI03 audit N01–N03 regression: original 12-page author source, responsive blank page and image hit
+ok 14 - UI03 audit N01–N03 regression: original 12-page author source, responsive blank page and image hit
+  ---
+  duration_ms: 2228.531959
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 39389.395125

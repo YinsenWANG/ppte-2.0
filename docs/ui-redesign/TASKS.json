@@ -61,7 +61,10 @@
         "docs/ui-redesign/evidence/UI07-close/acceptance.json",
         "docs/ui-redesign/evidence/UI07-close/verification/result.json",
         "docs/ui-redesign/evidence/r8-R1/IMPLEMENTATION.md",
-        "docs/ui-redesign/evidence/r8-R1/verification/result.json"
+        "docs/ui-redesign/evidence/r8-R1/verification/result.json",
+        "docs/ui-redesign/evidence/r8-R2/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/r8-R2/verification/result.json",
+        "tests/r8-r2-insertion.test.ts"
       ],
       "implementationCommit": "dbd7ed643f07de02793a406c9ad84304b7d97515",
       "statusByLayer": {
@@ -77,6 +80,13 @@
         "tests": "tests/r8-r1-text.test.ts",
         "evidence": "docs/ui-redesign/evidence/r8-R1/verification/result.json",
         "remaining": "R2 and R4 object/UI regressions plus existing four-layer pending remain; no full UI02 reacceptance"
+      },
+      "regressionR2": {
+        "status": "passed: code and automated R2 only",
+        "implementationCommit": "a142e4798f6a54b8f573b33233a116902fc47ab5",
+        "tests": "tests/r8-r2-insertion.test.ts",
+        "evidence": "docs/ui-redesign/evidence/r8-R2/verification/result.json",
+        "remaining": "R3–R6, existing GAPS and four-layer pending remain; no full UI02 or product reacceptance"
       }
     },
     {

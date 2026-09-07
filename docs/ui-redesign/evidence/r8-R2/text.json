@@ -1,0 +1,34 @@
+{
+  "kind": "text",
+  "browser": "152.0.7977.76",
+  "before": {
+    "rect": {
+      "x": 516,
+      "y": 484,
+      "width": 280,
+      "height": 40,
+      "top": 484,
+      "right": 796,
+      "bottom": 524,
+      "left": 516
+    },
+    "inside": true,
+    "overlaps": []
+  },
+  "moved": {
+    "rect": {
+      "x": 524,
+      "y": 484,
+      "width": 280,
+      "height": 40,
+      "top": 484,
+      "right": 804,
+      "bottom": 524,
+      "left": 524
+    },
+    "inside": true,
+    "overlaps": []
+  },
+  "authorUnchanged": true,
+  "downloadReopen": true
+}

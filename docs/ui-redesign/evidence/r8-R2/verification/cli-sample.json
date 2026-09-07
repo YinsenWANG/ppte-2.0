@@ -1,0 +1,26 @@
+{
+  "timestamp": "2026-09-07T08:24:04.756Z",
+  "status": "passed",
+  "browser": "152.0.7977.76",
+  "headless": true,
+  "offline": true,
+  "entry": "file://",
+  "path": "sample.ppte.html",
+  "initialMode": "read",
+  "mouseInsert": true,
+  "before": {
+    "x": 275,
+    "y": 505.296875,
+    "width": 154,
+    "height": 66
+  },
+  "after": {
+    "x": 283,
+    "y": 505.296875,
+    "width": 154,
+    "height": 66
+  },
+  "keyboardDelta": 8,
+  "errors": [],
+  "network": []
+}
