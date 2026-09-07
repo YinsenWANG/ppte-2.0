@@ -25,8 +25,12 @@ async function open(name:string, history?:'valid'|'broken'|'unknown') {
  const html=initial.html.replace('<script id="ppte-runtime"',historyHTML(wire)+'<script id="ppte-runtime"');const file=join(out,name+'.ppte.html');await writeFile(file,html);
  const browser=await chromium.launch({channel:'chrome',headless:true});const page=await browser.newPage({offline:true,acceptDownloads:true,viewport:{width:1440,height:1000}});
  const errors:string[]=[],network:string[]=[];page.setDefaultTimeout(10000);page.on('pageerror',e=>errors.push(String(e)));page.on('request',r=>{if(/^https?:/.test(r.url()))network.push(r.url());});
+ // Playwright enables chooser interception asynchronously when its first listener
+ // is added. Subscribe before navigation and retain it across both one-shot waits:
+ // an immediate keyboard press must not race interception setup or teardown.
+ let chooserCount=0;page.on('filechooser',()=>{chooserCount++;});
  await page.goto(pathToFileURL(file).href);await page.waitForFunction(()=>!!(window as any).PPTeSave);
- return {page,browser,file,html,wire,async close(){await browser.close();assert.deepEqual(errors,[]);assert.deepEqual(network,[]);}};
+ return {page,browser,file,html,wire,chooserCount:()=>chooserCount,async close(){await browser.close();assert.deepEqual(errors,[]);assert.deepEqual(network,[]);}};
 }
 async function content(p:Page){return p.evaluate(()=>(window as any).PPTeHTML.content());}
 async function noRetiredControls(p:Page){
@@ -51,8 +55,11 @@ test('F01 A1/A2: one direct image chooser, no retired shortcuts/menus, disabled 
   assert.equal(await p.evaluate(()=>typeof (window as any).PPTePrint),'undefined');await p.evaluate(()=>window.dispatchEvent(new Event('beforeprint')));assert.equal(await p.locator('#ppte-print').count(),0);assert.equal(await p.evaluate(()=>(window as any).printCalls),0);
   await p.frameLocator('#ppte-frame').locator('svg').click();await p.keyboard.press('t');await p.keyboard.press('T');assert.equal(await content(p),original);assert.equal(await p.evaluate(()=>(window as any).PPTeSave.dirty),false);
   const insert=p.getByRole('button',{name:'插入图片',exact:true});assert.equal(await insert.getAttribute('aria-haspopup'),null);
+  assert.equal(f.chooserCount(),0);
   await insert.focus();const cancelled=p.waitForEvent('filechooser');await p.keyboard.press('Enter');await(await cancelled).setFiles([]);assert.equal(await content(p),original);assert.equal(await p.getByRole('button',{name:'撤销',exact:true}).isDisabled(),true);
+  assert.equal(f.chooserCount(),1);
   const chooser=p.waitForEvent('filechooser');await insert.click();await(await chooser).setFiles({name:'local.png',mimeType:'image/png',buffer:png});await p.frameLocator('#ppte-frame').locator('img[data-ppte-editor-selected]').waitFor();
+  assert.equal(f.chooserCount(),2);
   assert.equal(await p.frameLocator('#ppte-frame').locator('img').count(),2);await p.getByRole('button',{name:'撤销',exact:true}).click();assert.equal(await content(p),original);await p.getByRole('button',{name:'重做',exact:true}).click();assert.equal(await p.frameLocator('#ppte-frame').locator('img').count(),2);
   await noRetiredControls(p);
   for(const width of [1440,1024,390]){await resizeViewport(p,{width,height:1000});for(const mode of ['阅读','编辑']){await p.getByRole('button',{name:mode,exact:true}).click();for(const selector of ['#ppte-save-ui','#ppte-edit-toolbar']){if(!await p.locator(selector).isVisible())continue;const r=(await p.locator(selector).boundingBox())!;assert.ok(r.x>=0&&r.x+r.width<=width+1,JSON.stringify({selector,width,r}));}const r=(await p.getByRole('button',{name:'导出为 PDF',exact:true}).boundingBox())!;assert.ok(r.x>=0&&r.x+r.width<=width+1);await p.screenshot({path:join(out,`${mode}-${width}.png`)});}}
