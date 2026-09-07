@@ -63,7 +63,7 @@ test('F05 A1/A2/A3: same Cherry draft at 1440/1024/390, unclipped centered page,
   await fits(p,'#ppte-save-ui button:visible,#ppte-edit-toolbar button:visible,#ppte-canvas-controls button:visible');
   await p.screenshot({caret:'initial',path:join(out,`edit-${width}.png`)});
   await btn(p,'字号 ＋').click();assert.equal(await p.locator('#ppte-save-ui [role=status]:visible').count(),1);
-  await p.locator('#ppte-save-panel summary').click();await p.waitForFunction(()=>document.querySelector('#ppte-save-panel summary')?.getAttribute('aria-expanded')==='true');await fits(p,'#ppte-save-panel > div');assert.match(await p.locator('.save-detail').innerText(),/尚未写入/);
+  await p.locator('#ppte-save-panel summary').click();await p.waitForFunction(()=>document.querySelector('#ppte-save-panel summary')?.getAttribute('aria-expanded')==='true');await fits(p,'#ppte-save-panel > div');assert.match(await p.locator('.save-detail').innerText(),/尚未写入/);assert.equal(await btn(p,'下载更新后的文件').innerText(),'下载更新后的文件');
   await p.screenshot({caret:'initial',path:join(out,`save-${width}.png`)});await p.keyboard.press('Escape');
   await btn(p,'关闭属性').click();await btn(p,'撤销').click();
   await btn(p,'放映').click();assert.equal(await p.locator('#ppte-save-ui').isVisible(),false);assert.equal(await p.locator('#ppte-canvas-controls').isVisible(),false);await p.keyboard.press('Escape');
@@ -82,7 +82,7 @@ test('F05 A3: 40-page rail scrolls independently; last page/add footer and keybo
   assert.ok(geometry.scrollTop>0);assert.ok(geometry.scrollHeight>geometry.height);assert.ok(geometry.list.bottom<=geometry.footer.top+1);assert.equal(geometry.bodyScroll,0);await fits(p,'#ppte-page-footer button');
   await last.press('Alt+ArrowUp');assert.equal(await p.frameLocator('#ppte-frame').locator('[data-ppte-slide]').nth(count-2).isVisible(),true);
   await btn(p,'添加页').click();assert.equal(await p.frameLocator('#ppte-frame').locator('[data-ppte-slide]').count(),count+1);
-  await p.screenshot({caret:'initial',path:join(out,`long-${width}.png`)});await btn(p,'撤销').click();await p.waitForFunction(count=>document.querySelector<HTMLIFrameElement>('#ppte-frame')!.contentDocument!.querySelectorAll('[data-ppte-slide]').length===count,count);assert.equal(await p.frameLocator('#ppte-frame').locator('[data-ppte-slide]').count(),count);rows.push({width,...geometry});
+  await fits(p,'#ppte-save-ui button:visible,#ppte-edit-toolbar button:visible,#ppte-canvas-controls button:visible');const beforeCapture=await p.evaluate(()=>(window as any).PPTeHTML.content());await p.screenshot({caret:'initial',path:join(out,`long-${width}.png`)});assert.equal(await p.evaluate(()=>(window as any).PPTeHTML.content()),beforeCapture,'evidence capture must not mutate author HTML');await btn(p,'撤销').click();await p.waitForFunction(count=>document.querySelector<HTMLIFrameElement>('#ppte-frame')!.contentDocument!.querySelectorAll('[data-ppte-slide]').length===count,count);assert.equal(await p.frameLocator('#ppte-frame').locator('[data-ppte-slide]').count(),count);rows.push({width,...geometry});
  }
  await writeFile(join(out,'long.json'),JSON.stringify({browser:f.browser.version(),headless:true,rows},null,2));
  }finally{await f.close();}

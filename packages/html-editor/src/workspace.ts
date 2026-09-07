@@ -815,7 +815,6 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     // Attach to the current document after editor initialization below.
     let player: ReturnType<typeof installPlayer>;
     const present=button(bar, '放映', () => { if (!composing) player.start(); });present.classList.add('primary');
-    for(const b of Array.from(bar.children))if(b instanceof HTMLButtonElement && b.textContent==='下载更新后的文件')iconButton(b,'下载更新后的文件');
     frame.addEventListener('load', attach);
     attach();
     player = installPlayer(frame, { suspend, resume, current: () => currentSlide, moved: i => currentSlide = i });
