@@ -1,0 +1,35 @@
+TAP version 13
+# Subtest: F05 A1/A2: scoped controls, no retired menu/gutter, honest PDF state, navigation endpoints and keyboard focus
+ok 1 - F05 A1/A2: scoped controls, no retired menu/gutter, honest PDF state, navigation endpoints and keyboard focus
+  ---
+  duration_ms: 2424.510333
+  type: 'test'
+  ...
+# Subtest: F05 A1/A2/A3: same Cherry draft at 1440/1024/390, unclipped centered page, inspector, save status and pure presentation
+ok 2 - F05 A1/A2/A3: same Cherry draft at 1440/1024/390, unclipped centered page, inspector, save status and pure presentation
+  ---
+  duration_ms: 6844.695667
+  type: 'test'
+  ...
+# Subtest: F05 A3: 40-page rail scrolls independently; last page/add footer and keyboard reorder remain reachable at desktop and narrow width
+not ok 3 - F05 A3: 40-page rail scrolls independently; last page/add footer and keyboard reorder remain reachable at desktop and narrow width
+  ---
+  duration_ms: 31811.330625
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/focused-product-f05.test.js:127:1'
+  failureType: 'testCodeFailure'
+  error: 'page.waitForFunction: Timeout 30000ms exceeded.'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TimeoutError'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/ppte8/dist/tests/focused-product-f05.test.js:153:21)
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 2
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 41268.642375

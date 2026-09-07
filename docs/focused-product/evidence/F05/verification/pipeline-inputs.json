@@ -1,0 +1,14 @@
+[
+  {
+    "original": "brief9-F05.md",
+    "preservedAt": "/tmp/ppte8-F05-pipeline-inputs/brief9-F05.md",
+    "sha256": "acbb41c66ba2e8161ed6bc5c5907cafdb0fb67f6e2a4c58a88f317456e7f0b6e",
+    "reason": "Pre-existing untracked pipeline input retained outside the repository to meet clean-tree delivery; not product code."
+  },
+  {
+    "original": "out9-F04.txt",
+    "preservedAt": "/tmp/ppte8-F05-pipeline-inputs/out9-F04.txt",
+    "sha256": "9b13ba3102ad52787015f0bdda25b7b3a7e6ff69c9de2f958f5efeb2a0830ac8",
+    "reason": "Pre-existing untracked pipeline input retained outside the repository to meet clean-tree delivery; not product code."
+  }
+]

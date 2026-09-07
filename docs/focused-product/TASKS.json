@@ -169,7 +169,7 @@
     {
       "id": "F05",
       "title": "整体UI细节打磨",
-      "status": "pending",
+      "status": "implemented-pending-validation",
       "dependsOn": [
         "F02",
         "F03",
@@ -181,7 +181,24 @@
         "桌面/窄屏/长稿可用",
         "用户人工UI确认"
       ],
-      "evidence": []
+      "evidence": [
+        "evidence/F05/IMPLEMENTATION.md",
+        "evidence/F05/verification/result.json",
+        "evidence/F05/HUMAN-VALIDATION.md",
+        "evidence/F05/COMPARE.html",
+        "evidence/F05/Cherry-F05.ppte.html",
+        "evidence/F05/screenshots/",
+        "evidence/F05/journeys/",
+        "evidence/F05/SHA256SUMS"
+      ],
+      "verification": {
+        "code": "passed",
+        "automated": "passed",
+        "real-browser": "pending",
+        "human": "pending",
+        "implementationCommit": "46e102df0c1a18f75d3396168c285d6a919f5330",
+        "reason": "F05 independent UI changes and 3 new Chrome headless file:// journeys pass; all gates green (146 passed, 0 failed, 16 existing skips). F04 dependency remains pending after F04A conclusion 3. Target-device physical keyboard/touch/native zoom/Safari and user UI/aesthetic confirmation remain pending; no PDF or architecture-change claim."
+      }
     },
     {
       "id": "F06",

@@ -1,0 +1,9 @@
+{
+  "browser": "152.0.7977.76",
+  "headless": true,
+  "offline": true,
+  "noContentMutation": true,
+  "endpointStates": true,
+  "focus": true,
+  "pdf": "disabled; no qualified route"
+}

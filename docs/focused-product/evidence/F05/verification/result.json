@@ -1,0 +1,135 @@
+{
+  "task": "F05",
+  "status": "implemented-pending-validation",
+  "time": "2026-09-07T15:20:43.605834+00:00",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "implementationCommit": "46e102df0c1a18f75d3396168c285d6a919f5330",
+  "implementationCommits": [
+    "8bb0234cedc6cf7bf4d46c18faa768230e7ea38d",
+    "46e102df0c1a18f75d3396168c285d6a919f5330"
+  ],
+  "layers": {
+    "code": "passed",
+    "automated": "passed",
+    "real-browser": "pending",
+    "human": "pending"
+  },
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "pnpm-typecheck.log",
+      "commit": "46e102df0c1a18f75d3396168c285d6a919f5330",
+      "time": "2026-09-07T15:18:45.036146+00:00",
+      "durationSeconds": 1.23,
+      "platform": "macOS-26.6.2-arm64-arm-64bit"
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "pnpm-build.log",
+      "commit": "46e102df0c1a18f75d3396168c285d6a919f5330",
+      "time": "2026-09-07T15:18:46.275069+00:00",
+      "durationSeconds": 1.48,
+      "platform": "macOS-26.6.2-arm64-arm-64bit"
+    },
+    {
+      "command": "pnpm test",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "pnpm-test.log",
+      "commit": "46e102df0c1a18f75d3396168c285d6a919f5330",
+      "time": "2026-09-07T15:18:47.758417+00:00",
+      "durationSeconds": 75.06,
+      "platform": "macOS-26.6.2-arm64-arm-64bit"
+    }
+  ],
+  "suite": {
+    "tests": 162,
+    "passed": 146,
+    "failed": 0,
+    "existingSkipped": 16,
+    "newF05Tests": 3
+  },
+  "acceptance": [
+    {
+      "item": "没有多余菜单或空位",
+      "code": "passed",
+      "automated": "passed",
+      "tests": [
+        "F05 A1/A2",
+        "F05 A1/A2/A3"
+      ],
+      "real-browser": "pending",
+      "human": "pending",
+      "pendingReason": "Target-device operation and user visual judgment unavailable; PDF dependency remains pending."
+    },
+    {
+      "item": "统一控件与状态",
+      "code": "passed",
+      "automated": "passed",
+      "tests": [
+        "F05 A1/A2",
+        "F05 A1/A2/A3"
+      ],
+      "real-browser": "pending",
+      "human": "pending",
+      "pendingReason": "Physical keyboard/screen-reader and user UI confirmation not recorded."
+    },
+    {
+      "item": "桌面/窄屏/长稿可用",
+      "code": "passed",
+      "automated": "passed",
+      "tests": [
+        "F05 A1/A2/A3",
+        "F05 A3 40-page"
+      ],
+      "real-browser": "pending",
+      "human": "pending",
+      "pendingReason": "1440/1024/390 and 40-page journeys are Chrome headless automation; physical touch/native zoom/target Safari remain pending."
+    },
+    {
+      "item": "用户人工UI确认",
+      "code": "passed",
+      "automated": "not-applicable",
+      "real-browser": "pending",
+      "human": "pending",
+      "evidence": [
+        "../COMPARE.html",
+        "../HUMAN-VALIDATION.md"
+      ],
+      "pendingReason": "Review artifacts prepared; user has not approved this UI or draft aesthetics. No automated test can establish user approval."
+    }
+  ],
+  "dependencies": {
+    "F02": "implemented; native validation pending",
+    "F03": "implemented; native validation pending",
+    "F04": "pending; F04A conclusion 3, neither route qualified"
+  },
+  "browser": {
+    "name": "Chrome",
+    "version": "152.0.7977.76",
+    "headless": true,
+    "protocol": "file://",
+    "offline": true,
+    "classification": "automated, not target-device or human evidence"
+  },
+  "extraCapabilityRemovals": [],
+  "openAuditItems": [
+    "B1 original-file/OS IME evidence remains pending under F02",
+    "B2 safe navigation link contract remains open; not fixed or removed by F05",
+    "Reference-machine performance, media physical memory and generation telemetry retain previous pending states"
+  ],
+  "captureReview": {
+    "reviewer": "assistant screenshot inspection",
+    "classification": "not user acceptance",
+    "observed": [
+      "Neutral shell and author artwork retained",
+      "Centered current page; inspector outside canvas at 1440/1024/390",
+      "Visible download wording in narrow save panel"
+    ]
+  },
+  "preexistingFiles": "pipeline-inputs.json"
+}
