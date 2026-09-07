@@ -27,9 +27,9 @@ test('H04 acceptance 1/2: clean audience, idle controls, black pixels, steps, me
  assert.equal(await p.frameLocator('#ppte-frame').locator('[data-ppte-slide=two]').isVisible(),false);
  assert.equal(await p.frameLocator('#ppte-frame').locator('[data-ppte-step]').first().isVisible(),false);
  assert.equal(await p.frameLocator('#ppte-frame').locator('h1').first().evaluate(n=>getComputedStyle(n).outlineStyle),'none');
- assert.equal(await p.locator('#ppte-player-controls').evaluate(n=>getComputedStyle(n).opacity),'0');
- await p.mouse.move(100,100);await p.waitForFunction(()=>document.querySelector('#ppte-player-controls')!.hasAttribute('data-visible'));
- await p.waitForFunction(()=>!document.querySelector('#ppte-player-controls')!.hasAttribute('data-visible'));
+ assert.equal(await p.locator('#ppte-player-controls').count(),0);
+ await p.mouse.move(100,100);await p.waitForTimeout(2000);
+ assert.equal(await p.locator('#ppte-player-controls').count(),0);
  await p.keyboard.press('ArrowRight');assert.equal(await p.evaluate(()=>(window as any).PPTePlayer.step),1);
  await p.frameLocator('#ppte-frame').locator('video').click();assert.equal(await p.evaluate(()=>(window as any).PPTePlayer.step),1);
  await p.frameLocator('#ppte-frame').locator('video').evaluate(n=>(n as HTMLVideoElement).play());
@@ -52,7 +52,8 @@ test('H04 acceptance 1/2: clean audience, idle controls, black pixels, steps, me
 test('H04 acceptance 2: blocked presenter leaves audience usable; real popup has notes/next preview and shared navigation',async()=>{
  const f=await setup();try{const p=f.page;await p.getByRole('button',{name:'放映',exact:true}).click();
  await p.evaluate(()=>{(window as any).savedOpen=window.open;window.open=()=>null;});await p.keyboard.press('p');
- assert.match(await p.locator('#ppte-player-controls [aria-live]').textContent()??'',/被阻止/);
+ assert.equal(await p.evaluate(()=>(window as any).PPTePlayer.presenterBlocked),true);
+ assert.equal(await p.locator('#ppte-player-controls').count(),0);
  await p.keyboard.press('ArrowRight');assert.equal(await p.evaluate(()=>(window as any).PPTePlayer.step),1);
  await p.evaluate(()=>window.open=(window as any).savedOpen);
  const popupPromise=p.waitForEvent('popup');await p.keyboard.press('p');const popup=await popupPromise;
@@ -82,7 +83,7 @@ test('H04 acceptance 3: actual browser PDF has two sized pages, selectable revea
 test('H04 acceptance 4: generation and reading create only HTML; new export/runtime graph excludes retired formats',async()=>{
  const f=await setup();try{assert.deepEqual(await readdir(f.root),['作品.html']);assert.equal(await f.page.locator('#ppte-print').count(),0);
  for(const file of ['packages/html-player/src/index.ts','packages/html-print/src/index.ts','apps/html-cli/index.ts']) assert.doesNotMatch(await readFile(file,'utf8'),/pptx|keynote|\.odp|exporter-ppt|portable|html-to-image/i);
- await f.page.locator('summary').click();assert.equal(await f.page.getByRole('button',{name:'导出 PDF',exact:true}).count(),1);
+ await f.page.locator('#ppte-save-ui summary').click();assert.equal(await f.page.getByRole('button',{name:'导出 PDF',exact:true}).count(),1);
  await f.page.evaluate(()=>{(window as any).printCalls=0;window.print=()=>{(window as any).printCalls++;window.dispatchEvent(new Event('afterprint'));};});
  await f.page.getByRole('button',{name:'导出 PDF',exact:true}).click();
  await f.page.waitForFunction(()=>(window as any).printCalls===1);

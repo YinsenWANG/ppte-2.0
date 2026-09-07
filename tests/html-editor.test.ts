@@ -142,7 +142,8 @@ test('H03 acceptance 2: computed normal text contrast >=4.5, visible keyboard fo
             nodes.at(-1)!.focus();
         });
         await page.keyboard.press('Tab');
-        assert.equal(await page.evaluate(() => document.activeElement?.textContent), '编辑');
+        assert.equal(await page.evaluate(() => document.activeElement?.textContent), '阅读');
+        assert.equal(await page.getByRole('group',{name:'文档模式'}).getByRole('button',{name:'编辑',exact:true}).getAttribute('aria-pressed'),'true');
         await page.screenshot({ path: join(evidence, 'keyboard-focus.png') });
     }
     finally {
@@ -375,7 +376,8 @@ test('H03 original-file persisted range formatting and keyboard/pointer layout; 
         assert.equal(await page.locator('#ppte-save-ui').isVisible(), false);
         assert.equal(await page.frameLocator('#ppte-frame').locator('[data-ppte-slide=second]').isVisible(), false);
         await page.keyboard.press('Escape');
-        assert.equal(await page.locator('#ppte-properties').isVisible(), true);
+        assert.equal(await page.locator('#ppte-properties').isVisible(), false);
+        assert.equal(await page.locator('#ppte-workspace').getAttribute('data-open'), '');
         assert.equal(await page.locator('#ppte-save-ui').isVisible(), true);
     }
     finally {

@@ -5,11 +5,11 @@ export function installPrint(frame: HTMLIFrameElement, hooks: { suspend(): void;
     function prepare() {
         if (host) return;
         hooks.exitPresentation();
+        hooks.suspend();
         const doc=frame.contentDocument!;
         const slides=Array.from(doc.querySelectorAll<HTMLElement>('[data-ppte-slide]'));
         const sizes=slides.map(n=>{const r=n.getBoundingClientRect();return {width:Math.max(1,r.width),height:Math.max(1,r.height),display:doc.defaultView!.getComputedStyle(n).display};});
         const size=sizes[0]; if(!size)throw Error('NO_SLIDES');
-        hooks.suspend();
         host=document.createElement('div');host.id='ppte-print';host.dataset.ppteTransient='';
         style=document.createElement('style');style.dataset.ppteTransient='';
         style.textContent=`@page{size:${size.width}px ${size.height}px;margin:0}@media print{html,body{margin:0!important;padding:0!important;width:auto!important;height:auto!important;background:white!important}body>:not(#ppte-print){display:none!important}#ppte-print{display:block!important}}@media screen{#ppte-print{display:none}}`;

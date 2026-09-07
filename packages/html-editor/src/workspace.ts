@@ -1,3 +1,4 @@
+import { readingView } from './reading.js';
 import { installPlayer } from '../../html-player/src/index.js';
 import { installPrint } from '../../html-print/src/index.js';
 import { Commands, editable, snapshot } from './commands.js';
@@ -5,8 +6,15 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     const style = document.createElement('style');
     style.dataset.ppteTransient = '';
     style.textContent = `
- html:has(#ppte-workspace[data-open]){background:#f4f5f7!important}#ppte-save-ui,#ppte-workspace{font:14px/1.5 system-ui;color:#20252c}#ppte-save-ui{background:#fff!important;color:#20252c!important;inset:0 0 auto!important;padding:12px 20px!important;border-radius:0!important;border-bottom:1px solid #dce1e8;min-height:48px;flex-wrap:wrap}#ppte-save-ui button,#ppte-workspace button{font:inherit;color:#20252c;background:#f2f4f8;border:1px solid #dce1e8;border-radius:8px;min-height:36px;padding:6px 12px;cursor:pointer}#ppte-save-ui button:hover,#ppte-workspace button:hover{background:#e4eaf5}#ppte-save-ui :focus-visible,#ppte-workspace :focus-visible{outline:3px solid #335cff;outline-offset:3px}#ppte-save-ui svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8}#ppte-save-ui details{position:relative}#ppte-save-ui details>div{position:absolute;right:0;top:36px;width:256px;background:#fff;box-shadow:0 8px 32px #20252c30;padding:16px;display:grid;gap:8px}#ppte-workspace{display:none}#ppte-workspace[data-open]{display:block}#ppte-pages{position:fixed;left:0;top:var(--top);bottom:0;width:184px;background:#fafbfc;overflow:auto;padding:16px;box-sizing:border-box}#ppte-pages button[aria-current=true]{border-color:#335cff;box-shadow:0 0 0 2px #335cff20}#ppte-pages button{display:block;width:100%;margin-bottom:16px;overflow:hidden;text-align:left}#ppte-pages .preview{display:block;height:80px;overflow:hidden;pointer-events:none;position:relative;background:#fff}#ppte-pages .preview>div{transform:scale(.12);transform-origin:top left;width:1080px;height:640px}#ppte-properties{position:fixed;right:0;top:var(--top);bottom:0;width:232px;background:#fff;padding:20px;overflow:auto;box-sizing:border-box;border-left:1px solid #dce1e8}#ppte-properties h3{font-size:14px;margin:0 0 16px}#ppte-properties section{border-top:1px solid #dce1e8;padding:16px 0;display:grid;gap:8px}#ppte-workspace label{display:grid;gap:6px;color:#46515e}#ppte-workspace input{font:inherit;border:1px solid #ccd3de;border-radius:8px;padding:8px;color:#20252c;background:#f6f7f9;width:100%;box-sizing:border-box}#ppte-floating{position:fixed;z-index:101;bottom:24px;left:calc(50% - 24px);transform:translateX(-50%);display:flex;gap:8px;padding:8px;border:1px solid #dce1e8;border-radius:12px;background:#fff;box-shadow:0 8px 24px #20252c20;max-width:calc(100vw - 450px);flex-wrap:wrap}#ppte-floating:empty{display:none}#ppte-feedback{position:fixed;bottom:88px;left:208px;max-width:calc(100% - 464px);background:#fff;color:#20252c;border-radius:8px;padding:8px}#ppte-feedback:empty{display:none}#ppte-workspace button[aria-pressed=true]{background:#e4eafe;border-color:#335cff}#ppte-save-ui summary{cursor:pointer;border-radius:8px;padding:8px}#ppte-workspace .hint{color:#46515e;font-size:12px}`;
+ body{background:#f3f4f6!important}html:has(#ppte-workspace[data-open]){background:#f4f5f7!important}#ppte-save-ui,#ppte-workspace{font:14px/1.5 system-ui;color:#20252c}#ppte-save-ui{background:#fff!important;color:#20252c!important;inset:0 0 auto!important;padding:12px 20px!important;border-radius:0!important;border-bottom:1px solid #dce1e8;min-height:48px;flex-wrap:wrap}#ppte-save-ui button,#ppte-workspace button{font:inherit;color:#20252c;background:#f2f4f8;border:1px solid #dce1e8;border-radius:8px;min-height:36px;padding:6px 12px;cursor:pointer}#ppte-save-ui button:hover,#ppte-workspace button:hover{background:#e4eaf5}#ppte-save-ui :focus-visible,#ppte-workspace :focus-visible{outline:3px solid #335cff;outline-offset:3px}#ppte-save-ui svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8}#ppte-save-ui details{position:relative}#ppte-save-ui details>div{position:absolute;right:0;top:36px;width:256px;background:#fff;box-shadow:0 8px 32px #20252c30;padding:16px;display:grid;gap:8px}#ppte-workspace{display:none}#ppte-workspace[data-open]{display:block}#ppte-pages{position:fixed;left:0;top:var(--top);bottom:0;width:184px;background:#fafbfc;overflow:auto;padding:16px;box-sizing:border-box}#ppte-pages button[aria-current=true]{border-color:#335cff;box-shadow:0 0 0 2px #335cff20}#ppte-pages button{display:block;width:100%;margin-bottom:16px;overflow:hidden;text-align:left}#ppte-pages .preview{display:block;height:80px;overflow:hidden;pointer-events:none;position:relative;background:#fff}#ppte-pages .preview>div{transform:scale(.12);transform-origin:top left;width:1080px;height:640px}#ppte-properties{position:fixed;right:0;top:var(--top);bottom:0;width:232px;background:#fff;padding:20px;overflow:auto;box-sizing:border-box;border-left:1px solid #dce1e8}#ppte-properties h3{font-size:14px;margin:0 0 16px}#ppte-properties section{border-top:1px solid #dce1e8;padding:16px 0;display:grid;gap:8px}#ppte-workspace label{display:grid;gap:6px;color:#46515e}#ppte-workspace input{font:inherit;border:1px solid #ccd3de;border-radius:8px;padding:8px;color:#20252c;background:#f6f7f9;width:100%;box-sizing:border-box}#ppte-floating{position:fixed;z-index:101;bottom:24px;left:calc(50% - 24px);transform:translateX(-50%);display:flex;gap:8px;padding:8px;border:1px solid #dce1e8;border-radius:12px;background:#fff;box-shadow:0 8px 24px #20252c20;max-width:calc(100vw - 450px);flex-wrap:wrap}#ppte-floating:empty{display:none}#ppte-feedback{position:fixed;bottom:88px;left:208px;max-width:calc(100% - 464px);background:#fff;color:#20252c;border-radius:8px;padding:8px}#ppte-feedback:empty{display:none}#ppte-workspace button[aria-pressed=true]{background:#e4eafe;border-color:#335cff}#ppte-save-ui summary{cursor:pointer;border-radius:8px;padding:8px}#ppte-workspace .hint{color:#46515e;font-size:12px}`;
     style.textContent += '#ppte-pages[hidden],#ppte-properties[hidden]{display:none}#ppte-canvas-controls{position:fixed;bottom:8px;left:16px;display:flex;align-items:center;gap:8px;background:white;padding:8px;border-radius:12px}';
+    style.textContent += `
+#ppte-save-ui{box-sizing:border-box;height:56px;min-height:56px;padding:0 20px!important;flex-wrap:nowrap;font-size:13px;gap:8px}#ppte-save-ui strong{margin-right:auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}#ppte-save-ui button{min-height:32px;background:white;border:0}#ppte-save-ui button[aria-pressed=true]{background:#eef0ff;color:#5261d8}
+#ppte-edit-toolbar{position:fixed;top:56px;left:0;right:0;height:46px;box-sizing:border-box;background:white;border-bottom:1px solid #e7e9ee;display:flex;align-items:center;gap:8px;padding:0 16px;font:13px system-ui;color:#20242d;z-index:90}#ppte-edit-toolbar[hidden]{display:none}#ppte-edit-toolbar button{height:32px;border:0;border-radius:6px;background:#f0f1f5;padding:6px 12px;color:inherit}#ppte-edit-toolbar svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.65}
+#ppte-pages{width:204px;bottom:36px}#ppte-properties{width:264px;bottom:36px}#ppte-workspace[data-reading-nav]{display:block}#ppte-workspace[data-reading-nav]>:not(#ppte-pages){display:none}#ppte-workspace[data-reading-nav] #ppte-pages>button:not([aria-current]){display:none}
+#ppte-canvas-controls{box-sizing:border-box;left:0;bottom:0;width:100%;height:36px;padding:0 16px;border-radius:0;border-top:1px solid #e7e9ee;font:12px system-ui;z-index:90}#ppte-canvas-controls button{border:0;background:white;color:#20242d;padding:4px 8px}#ppte-canvas-controls details{margin-left:auto}#ppte-canvas-controls details p{position:absolute;bottom:36px;right:8px;width:300px;padding:16px;background:white;border:1px solid #e7e9ee}
+#ppte-save-ui[data-pristine] [role=status]{display:none}#ppte-save-ui [role=status]{max-width:36vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#ppte-save-ui .modes{display:flex;gap:2px;border:1px solid #e7e9ee;border-radius:8px;padding:2px}
+`;
     document.head.append(style);
     const root = document.createElement('div');
     root.id = 'ppte-workspace';
@@ -14,6 +22,8 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     root.innerHTML = '<aside id="ppte-pages" aria-label="幻灯片"></aside><aside id="ppte-properties" aria-label="对象属性"></aside><div id="ppte-floating" role="toolbar" aria-label="选区格式"></div><div id="ppte-feedback" aria-live="polite"></div>';
     document.body.append(root);
     const pages = root.querySelector<HTMLElement>('#ppte-pages')!, panel = root.querySelector<HTMLElement>('#ppte-properties')!, floating = root.querySelector<HTMLElement>('#ppte-floating')!, feedback = root.querySelector<HTMLElement>('#ppte-feedback')!;
+    const reading = readingView(frame);
+    let pageSettings = false, suspended = false;
     let active = false, selected: string[] = [], commands: Commands, range: Range | null = null, currentSlide = 0;
     const report = (e: unknown) => {
         feedback.textContent = '操作未完成 · ' + String(e);
@@ -44,11 +54,12 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         container.append(b);
         return b;
     };
-    const undo = button(bar, '撤销', () => commands.history());
+    const toolbar = document.createElement('div'); toolbar.id='ppte-edit-toolbar'; toolbar.dataset.ppteTransient=''; toolbar.setAttribute('role','toolbar'); toolbar.setAttribute('aria-label','编辑工具'); document.body.append(toolbar);
+    const undo = button(toolbar, '撤销', () => commands.history());
     undo.title = '撤销 · Cmd/Ctrl+Z';
     undo.setAttribute('aria-label', '撤销');
     undo.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 5 4 10l5 5M4 10h9a6 6 0 0 1 0 12"/></svg>';
-    const redo = button(bar, '重做', () => commands.history(true));
+    const redo = button(toolbar, '重做', () => commands.history(true));
     redo.title = '重做 · Cmd/Ctrl+Shift+Z';
     redo.setAttribute('aria-label', '重做');
     redo.innerHTML = '<svg viewBox="0 0 24 24"><path d="m15 5 5 5-5 5m5-5h-9a6 6 0 0 0 0 12"/></svg>';
@@ -126,7 +137,10 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         undo.disabled = !commands.undoStack.length;
         redo.disabled = !commands.redoStack.length;
         if (composing || panel.contains(document.activeElement) && document.activeElement?.tagName === 'INPUT') { positionTools(); return; }
+        panel.hidden = !active || propertiesCollapsed || (!selected.length && !pageSettings);
+        resize();
         panel.replaceChildren();
+        button(panel, '关闭属性', () => { propertiesCollapsed = true; refresh(); });
         floating.replaceChildren();
         const upload = field(panel, '插入本地图片', '', () => {});
         upload.type = 'file'; upload.accept = 'image/png,image/jpeg,image/webp,image/gif,image/avif';
@@ -303,6 +317,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     }
     window.addEventListener('resize', positionTools);
     function scrollSlide(slide: HTMLElement) {
+        if (!active && !suspended) { reading.draw(currentSlide); updatePageCount(); return; }
         const view = commands.doc.defaultView!;
         view.scrollTo({ top: slide.getBoundingClientRect().top + view.scrollY, left: 0 });
         positionTools();
@@ -385,6 +400,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
                 return;
             const n = selectTarget(e.target) as HTMLElement | null;
             const id = n?.dataset.ppteId;
+            propertiesCollapsed=false; pageSettings=false;
             selected = id ? (e.shiftKey ? [...new Set([...selected, id])] : [id]) : [];
             const selection = doc.getSelection();
             range = selection?.rangeCount && !selection.isCollapsed ? selection.getRangeAt(0).cloneRange() : null;
@@ -484,7 +500,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         (window as any).PPTeEditor = { get commands() {
                 return commands;
             }, select(ids: string[]) {
-                selected = ids;
+                selected = ids; propertiesCollapsed=false; pageSettings=false;
                 refresh();
             }, get selection() {
                 return [...selected];
@@ -500,61 +516,85 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         }
     };
     document.addEventListener('keydown', keys, true);
-    let collapsed = false, propertiesCollapsed = false, zoom = 1;
-    const controls = document.createElement('div'); controls.id = 'ppte-canvas-controls'; root.append(controls);
+    let collapsed = true, propertiesCollapsed = false, zoom = 1;
+    const controls = document.createElement('div'); controls.id = 'ppte-canvas-controls'; controls.dataset.ppteTransient=''; document.body.append(controls);
     const viewButton = (label: string, action: () => void) => {
         const b = document.createElement('button'); b.textContent = label; b.type = 'button';
         b.onmousedown = e => e.preventDefault(); b.onclick = () => { action(); resize(); positionTools(); }; controls.append(b); return b;
     };
-    const leftToggle = viewButton('折叠缩略图', () => { collapsed = !collapsed; pages.hidden = collapsed; leftToggle.textContent = collapsed ? '展开缩略图' : '折叠缩略图'; });
-    const rightToggle = viewButton('折叠属性', () => { propertiesCollapsed = !propertiesCollapsed; panel.hidden = propertiesCollapsed; rightToggle.textContent = propertiesCollapsed ? '展开属性' : '折叠属性'; });
-    viewButton('缩小画布', () => zoom = Math.max(.25, zoom - .1));
+    const leftToggle = viewButton('展开缩略图', () => { collapsed = !collapsed; pages.hidden = collapsed; leftToggle.textContent = collapsed ? '展开缩略图' : '折叠缩略图'; });
+    button(toolbar, '页面设置', () => { selected=[]; pageSettings=true; propertiesCollapsed=false; refresh(); });
+    const zoomOut = viewButton('缩小画布', () => zoom = Math.max(.25, zoom - .1));
     const zoomLabel = document.createElement('span'); controls.append(zoomLabel);
-    viewButton('放大画布', () => zoom = Math.min(1.5, zoom + .1));
-    viewButton('重置缩放', () => zoom = 1);
+    const zoomIn = viewButton('放大画布', () => zoom = Math.min(1.5, zoom + .1));
+    const zoomReset = viewButton('重置缩放', () => zoom = 1);
+    const pageCount = document.createElement('span'); controls.prepend(pageCount);
+    function updatePageCount() { pageCount.textContent = `${currentSlide+1} / ${commands.doc.querySelectorAll('[data-ppte-slide]').length}`; }
+    const navigate = (delta: number) => { currentSlide=Math.max(0,Math.min(commands.doc.querySelectorAll('[data-ppte-slide]').length-1,currentSlide+delta)); selected=[]; refresh(); scrollSlide(commands.doc.querySelectorAll<HTMLElement>('[data-ppte-slide]')[currentSlide]); thumbs(); };
+    viewButton('上一页', () => navigate(-1)); viewButton('下一页', () => navigate(1));
+    const help = document.createElement('details'); help.innerHTML='<summary>快捷键与帮助</summary><p>放映：← / →、PageUp / PageDown、空格翻页；B 黑屏；Esc 返回。横向滑动翻页。</p>'; controls.append(help);
     const resize = () => {
-        const top = bar.getBoundingClientRect().height + 16;
+        if (suspended) return;
+        toolbar.hidden = !active;
+        bar.dataset.mode = active ? 'edit' : 'read';
+        for (const b of Array.from(bar.querySelectorAll('button'))) if (b.textContent === '阅读' || b.textContent === '编辑') b.setAttribute('aria-pressed', String((b.textContent === '编辑') === active));
+        pages.hidden = collapsed;
+        leftToggle.textContent = collapsed ? '展开缩略图' : '折叠缩略图';
+        root.toggleAttribute('data-reading-nav', !active && !collapsed);
+        const top = 56 + (active ? 46 : 0);
+        updatePageCount();
         frame.style.transformOrigin = 'top left';
         frame.style.transform = active ? `scale(${zoom})` : '';
-        zoomLabel.textContent = `${Math.round(zoom * 100)}%`;
+        zoomLabel.textContent = active ? `${Math.round(zoom * 100)}%` : '适应画布';
+        zoomOut.hidden = zoomIn.hidden = zoomReset.hidden = !active;
         root.style.setProperty('--top', `${top}px`);
         if (!active) {
             frame.style.marginLeft = '0';
             frame.style.width = '100%';
             frame.style.marginTop = `${top}px`;
-            frame.style.height = `calc(100% - ${top}px)`;
+            frame.style.marginLeft = collapsed ? '0' : '204px';
+            frame.style.width = collapsed ? '100%' : 'calc(100% - 204px)';
+            frame.style.height = `calc(100% - ${top+36}px)`;
+            reading.draw(currentSlide);
         }
         if (active) {
-            frame.style.marginLeft = collapsed ? '16px' : '200px';
-            frame.style.width = `calc((100% - ${(collapsed ? 32 : 216) + (propertiesCollapsed ? 0 : 232)}px) / ${zoom})`;
+            reading.clear();
+            frame.style.marginLeft = collapsed ? '16px' : '220px';
+            frame.style.width = `calc((100% - ${(collapsed ? 32 : 236) + (panel.hidden ? 0 : 264)}px) / ${zoom})`;
             frame.style.marginTop = `${top}px`;
             frame.style.height = `calc(100% - ${top + 96}px)`;
         }
     };
     new ResizeObserver(resize).observe(bar);
+    window.addEventListener('resize', resize);
     button(bar, '阅读', () => {
-        active = false;
+        if (composing) return;
+        active = false; collapsed=true; reading.clear();
         root.removeAttribute('data-open');
         frame.style.marginLeft = '0';
         frame.style.width = '100%';
         resize();
         refresh();
     });
+    const modes = document.createElement('div'); modes.className='modes'; modes.setAttribute('role','group'); modes.setAttribute('aria-label','文档模式');
+    const modeButtons = Array.from(bar.querySelectorAll('button')).filter(b=>b.textContent==='阅读'||b.textContent==='编辑');
+    modeButtons.sort((a)=>a.textContent==='阅读'?-1:1).forEach(b=>modes.append(b));
+    bar.insertBefore(modes,bar.querySelector('[role=status]'));
     let wasActive = false;
     const suspend = () => {
-        wasActive = active; active = false; root.removeAttribute('data-open');
+        wasActive = active; suspended=true; reading.clear(); more.open=false; help.open=false; active = false; root.removeAttribute('data-open');
         bar.style.display = 'none'; frame.style.transform = ''; refresh();
     };
     const resume = () => {
-        active = wasActive; bar.style.display = 'flex'; root.toggleAttribute('data-open', active);
+        suspended=false; active = wasActive; bar.style.display = 'flex'; root.toggleAttribute('data-open', active);
         refresh(); resize();
         const slide = commands.doc.querySelectorAll<HTMLElement>('[data-ppte-slide]')[currentSlide];
         if (slide) scrollSlide(slide);
-        if (active && selected[0]) commands.node(selected[0]).focus();
+        if (active && selected[0]) commands.node(selected[0]).focus({ preventScroll:true });
     };
     // Attach to the current document after editor initialization below.
     let player: ReturnType<typeof installPlayer>;
-    button(bar, '放映', () => player.start());
+    button(bar, '放映', () => { if (!composing) player.start(); });
     frame.addEventListener('load', attach);
     attach();
     player = installPlayer(frame, { suspend, resume, current: () => currentSlide, moved: i => currentSlide = i });
@@ -562,12 +602,16 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     button(more.lastElementChild as HTMLElement, '导出 PDF', () => printing.print());
     Object.assign(window, { PPTePlayer: player, PPTePrint: printing });
     return { get active() { return active; }, enable() {
-            active = true;
+            if (composing) return;
+            reading.clear(); active = true; collapsed=false;
             root.setAttribute('data-open', '');
             refresh();
             resize();
+            const slide = commands.doc.querySelectorAll<HTMLElement>('[data-ppte-slide]')[currentSlide];
+            if (slide) scrollSlide(slide);
         }, hide() {
-            active = false;
+            if (composing) return;
+            active = false; collapsed=true;
             root.removeAttribute('data-open');
             frame.style.marginLeft = '0';
             frame.style.width = '100%';
