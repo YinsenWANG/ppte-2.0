@@ -82,14 +82,21 @@
         "evidence/F04A/manual-selection.json",
         "evidence/F04A/inputs/",
         "evidence/F04A/cherry-browser.pdf",
-        "evidence/F04A/cherry-chromium.pdf"
+        "evidence/F04A/cherry-chromium.pdf",
+        "evidence/F04A/prototype-browser.pdf",
+        "evidence/F04A/prototype-chromium.pdf",
+        "evidence/F04A/fixtures-browser.pdf",
+        "evidence/F04A/fixtures-chromium.pdf",
+        "evidence/F04A/whole-inspection.json",
+        "evidence/F04A/SHA256SUMS"
       ],
       "verification": {
         "code": "passed",
-        "automated": "pending",
+        "automated": "passed",
         "real-browser": "pending",
         "human": "pending",
-        "reason": "Bounded two-candidate validation executed on 20 frozen content pages; conclusion ③ neither qualified. Browser candidate fails layout/font fidelity; Chromium PDFKit search/order failures and transform viewport discrepancy retained. F04 remains pending. Headless file:// is automated evidence only; physical desktop selection/copy and human visual approval unavailable. Repository checks in progress."
+        "reason": "Bounded two-candidate validation executed on 20 frozen content pages; conclusion ③ neither qualified. Browser fails font/layout fidelity; Chromium PDFKit search/order and transform consistency failures retained. F04 remains pending. All repository gates pass (131 passed, 0 failed, 16 existing skips); physical desktop operations and human selection/visual approval remain pending.",
+        "implementationCommit": "fca916ed9da1c2c497aa66e3339b7ba1fad53e8e"
       }
     },
     {

@@ -1,13 +1,96 @@
 {
   "task": "F04A",
-  "status": "pending-full-verification",
-  "commit": null,
+  "status": "validation-passed-routes-not-qualified",
+  "commit": "fca916ed9da1c2c497aa66e3339b7ba1fad53e8e",
+  "tree": "140e9efe173ad4582a61359c8f5b826a61295947",
+  "branch": "feat/focused-product-v9",
+  "startedAt": "2026-09-07T14:21:53.619Z",
+  "platform": {
+    "os": "darwin",
+    "release": "25.6.0",
+    "arch": "arm64",
+    "node": "v22.23.2"
+  },
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "startedAt": "2026-09-07T14:21:53.620Z",
+      "finishedAt": "2026-09-07T14:21:54.787Z",
+      "durationMs": 1167.3736250000002,
+      "log": "typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "startedAt": "2026-09-07T14:21:54.788Z",
+      "finishedAt": "2026-09-07T14:21:56.162Z",
+      "durationMs": 1374.459125,
+      "log": "build.log"
+    },
+    {
+      "command": "pnpm test",
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "startedAt": "2026-09-07T14:21:56.163Z",
+      "finishedAt": "2026-09-07T14:22:50.027Z",
+      "durationMs": 53864.16975,
+      "log": "test.log"
+    }
+  ],
   "verification": {
     "code": "passed",
-    "automated": "pending",
+    "automated": "passed",
     "real-browser": "pending",
     "human": "pending"
   },
-  "reason": "Focused tests passed 5/5; complete repository gates will be run against the signed implementation commit. Neither PDF route is qualified.",
-  "commands": []
+  "conclusion": 3,
+  "routeQuality": "neither-qualified",
+  "reason": "Validation tools and regression success do not qualify PDF fidelity. Headless file:// is automated only; desktop drag-selection/copy/search and human visual acceptance unavailable.",
+  "initialUntrackedFilesPreserved": [
+    "brief9-F04A.md",
+    "out9-F01.txt"
+  ],
+  "finishedAt": "2026-09-07T14:22:50.027Z",
+  "tests": {
+    "total": 147,
+    "passed": 131,
+    "failed": 0,
+    "skipped": 16,
+    "newF04ATestsPassed": 5,
+    "newSkips": 0,
+    "baseline": "F01 verification: 126 passed, 0 failed, 16 skipped"
+  },
+  "experiments": [
+    {
+      "command": "node scripts/f04a/run.mjs",
+      "status": "executed-routes-not-qualified",
+      "log": "probe.log",
+      "baseCommit": "fc0abb2329de326e4e86ef3660cab102fb9d36cb",
+      "sourceCapturedInCommit": "fca916ed9da1c2c497aa66e3339b7ba1fad53e8e",
+      "startedAt": "2026-09-07T14:08:20.532Z",
+      "finishedAt": "2026-09-07T14:08:52.887Z",
+      "platform": {
+        "platform": "darwin",
+        "release": "25.6.0",
+        "arch": "arm64",
+        "node": "v22.23.2",
+        "browser": "152.0.7977.76",
+        "headless": true,
+        "offline": true,
+        "viewport": {
+          "width": 1440,
+          "height": 960
+        },
+        "deviceScaleFactor": 1
+      },
+      "note": "Executed in the F04A working tree before its signed commit. Subsequent whole-document repair and precise failures are retained in whole-chromium.json and whole-inspection.json."
+    }
+  ],
+  "initialUntrackedDisposition": "Original pipeline input and F01 output preserved byte-for-byte; exact filenames added only to local .git/info/exclude, not task commits."
 }
