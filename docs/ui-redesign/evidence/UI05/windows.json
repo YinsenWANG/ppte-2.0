@@ -1,0 +1,9 @@
+{
+  "browser": "152.0.7977.76",
+  "headless": true,
+  "offline": true,
+  "errors": [],
+  "network": [],
+  "time": "2026-09-07T05:52:23.850Z",
+  "verdict": "node --test assertions in TAP; not human evidence"
+}

@@ -126,7 +126,7 @@
     {
       "id": "UI05",
       "title": "适配与可访问性",
-      "status": "pending",
+      "status": "done",
       "dependsOn": [
         "UI01"
       ],
@@ -136,7 +136,21 @@
         "菜单键盘与焦点恢复",
         "图标标签和重要文字对比"
       ],
-      "evidence": []
+      "evidence": [
+        "docs/ui-redesign/evidence/UI05/IMPLEMENTATION.md",
+        "docs/ui-redesign/evidence/UI05/verification/result.json",
+        "tests/ui05-accessibility.test.ts",
+        "docs/ui-redesign/evidence/UI05/touch-targets.json",
+        "docs/ui-redesign/evidence/UI05/contrast-ratios.json",
+        "docs/ui-redesign/evidence/UI05/sample.ppte.html"
+      ],
+      "implementationCommit": "6fca967b968327f5f7f730fd23bb260dd2376116",
+      "statusByLayer": {
+        "code": "passed",
+        "automated": "passed: 101/101 tests; four UI05 acceptance tests on dist",
+        "real-browser": "partial: installed Chrome headless offline file://; native zoom, system font, physical touch, Safari and screen reader pending",
+        "human": "pending: no owner or target-user review"
+      }
     },
     {
       "id": "UI06",

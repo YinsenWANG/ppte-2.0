@@ -1,0 +1,47 @@
+{
+  "native200PercentZoom": {
+    "status": "pending",
+    "measurement": null,
+    "reason": "720×450 CSS layout viewport is a 200% reflow equivalent of 1440×900, not an OS/browser zoom-menu session."
+  },
+  "systemLargeFont": {
+    "status": "pending",
+    "measurement": null,
+    "reason": "20px shell font injection is a layout stress test, not OS accessibility font settings."
+  },
+  "physicalTouch": {
+    "status": "pending",
+    "measurement": null,
+    "reason": "Coarse-pointer browser context and target geometry only; no physical touch device."
+  },
+  "screenReader": {
+    "status": "pending",
+    "measurement": null,
+    "reason": "No screen reader session or reviewer available."
+  },
+  "Safari": {
+    "status": "pending",
+    "measurement": null,
+    "reason": "No Safari automation or human Safari session collected."
+  },
+  "nativePermissions": {
+    "status": "pending",
+    "measurement": null,
+    "reason": "No original-file picker authorization session collected; existing UI04 pending unchanged."
+  },
+  "systemIME": {
+    "status": "pending",
+    "measurement": null,
+    "reason": "No operating-system IME session collected."
+  },
+  "humanReview": {
+    "status": "pending",
+    "measurement": null,
+    "reason": "No owner or target-user UI/aesthetic ratings available."
+  },
+  "realLowPerformanceDevice": {
+    "status": "pending",
+    "measurement": null,
+    "reason": "Development Mac is not a low-performance target device."
+  }
+}
