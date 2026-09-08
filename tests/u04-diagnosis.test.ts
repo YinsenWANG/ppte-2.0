@@ -69,8 +69,22 @@ test('U04 decision gate: no qualified route, no product integration, explicit na
  const report=await read('verification/result.json');
  for(const row of report.acceptance){assert.ok(row.tests.length);for(const layer of ['code','automated','real-browser','human']){assert.ok(row.layers[layer]);if(row.layers[layer].status==='pending')assert.ok(row.layers[layer].reason.length>20)}}
  assert.equal(report.qualified,false);assert.equal(report.productIntegration,false);
- const tasks=JSON.parse(await readFile('docs/usability-reset/TASKS.json','utf8')).tasks;
+ // Preserve the pre-decision gate against its committed evidence; the subsequent
+ // authorised decision changes workflow status, not PDF qualification.
+ const tasks=JSON.parse(execFileSync('git',['show','24f489bdd3e983ff8ed280ae21a39d1ceec78e35:docs/usability-reset/TASKS.json'],{encoding:'utf8'})).tasks;
  assert.equal(tasks.find((t:any)=>t.id==='U04').status,'awaiting-user-decision');
  assert.match(await readFile('docs/usability-reset/DECISIONS.md','utf8'),/U04[\s\S]*awaiting-user-decision/);
+ const currentTasks=JSON.parse(await readFile('docs/usability-reset/TASKS.json','utf8')).tasks;
+ const current=currentTasks.find((t:any)=>t.id==='U04');
+ assert.equal(current.status,'decided-option-1-pdf-incomplete');
+ assert.ok(current.evidence.includes('DECISIONS.md#u04-裁决'));
+ assert.equal(current.verification['real-browser'],'pending');
+ assert.equal(current.verification.human,'reopened');
+ const decisions=await readFile('docs/usability-reset/DECISIONS.md','utf8');
+ const decision=decisions.slice(decisions.indexOf('## U04 — 裁决：'));
+ assert.match(decision,/采纳选项 1（2026-09-08 20:35，用户授权助理代为裁决）/);
+ assert.match(decision,/PDF 保持未完成，不新增依赖、不进入产品集成/);
+ assert.match(decision,/不得标 done/);
+ assert.match(decision,/不得虚构已完成的真机证据/);
  const environment=await read('environment.json');assert.equal(environment.dependenciesAdded,0);
 });

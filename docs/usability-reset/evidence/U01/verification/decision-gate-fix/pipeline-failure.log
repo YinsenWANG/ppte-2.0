@@ -1,0 +1,54 @@
+ (12789.912958ms)
+✔ U02 grid: real pointers, all corners, crop/cancel, transaction undo, siblings and saved restart (10466.51675ms)
+✔ U02 flex: real pointers, all corners, crop/cancel, transaction undo, siblings and saved restart (12149.76875ms)
+✔ U02 insert/replace: portrait, landscape, transparent, tiny and large; frame retention, decoding cancel/error and history (7101.308917ms)
+U02 coordinates: zoom
+U02 coordinates: cancel drag
+U02 coordinates: text
+U02 coordinates: IME
+U02 coordinates: bounded drag
+U02 coordinates: modes
+✔ U02 zoom/scroll/resize, bounded drag, pointer cancellation, text/IME and read/present guards (5136.209667ms)
+✔ U02 unsupported transformed author image reports boundary before handles; no accidental multi-image selection (944.58625ms)
+✔ U02 static multi-page author coordinates survive save and preserve prior image insertion undo chain (2434.373959ms)
+✔ U03 A1/A2/A3: discoverable primary save, explanatory gesture, manual/automatic disk bridge then full browser restart (6152.66075ms)
+✔ U03 A1/A3/A4: unsupported primary action downloads exactly one complete file; cache failure and beforeunload retain dirty state (1620.976833ms)
+✔ U03 A4: recovery requires preview, keeps editing and pre-recovery content, cancellation and storage errors are independent of file saves (3100.369ms)
+✔ U03 A4: corrupt recovery does not become a file-write failure; quota cannot block verified manual save (1.002334ms)
+✔ U03 A2/A4 performance: large raster, real keyboard edits, natural cache quota, crop and verified manual write survive fresh browser (15346.42475ms)
+✔ U03 A4: known cache failure backs off repeated checkpoints, retains cached content and retries on manual save (0.699208ms)
+✔ U03 A4: failed disk reread/mount cannot clear unsaved revision or replace the confirmed baseline (1281.397834ms)
+ℹ tests 195
+ℹ suites 0
+ℹ pass 178
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 16
+ℹ todo 0
+ℹ duration_ms 119787.199166
+
+✖ failing tests:
+
+test at dist/tests/u04-diagnosis.test.js:105:1
+✖ U04 decision gate: no qualified route, no product integration, explicit native/human pending (1.178ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'decided-option-1-pdf-incomplete'
+  - 'awaiting-user-decision'
+  
+      at TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/u04-diagnosis.test.js:118:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'decided-option-1-pdf-incomplete',
+    expected: 'awaiting-user-decision',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+[ELIFECYCLE] Test failed. See above for more details.
+$ node scripts/build-html.mjs && tsc --noEmit
+$ node scripts/build-html.mjs --clean && tsc -p tsconfig.build.json
+$ pnpm build && node --test dist/tests/*.test.js
+$ node scripts/build-html.mjs --clean && tsc -p tsconfig.build.json

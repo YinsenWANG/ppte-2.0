@@ -1,7 +1,7 @@
 {
   "task": "U01-FULL",
   "status": "full-deck-awaiting-user-acceptance",
-  "verifiedAt": "2026-09-08T12:34:13.549847+00:00",
+  "verifiedAt": "2026-09-08T12:40:29.136450+00:00",
   "baseCommit": "24f489bdd3e983ff8ed280ae21a39d1ceec78e35",
   "delivery": {
     "path": "Cherry-Studio-开源之路.ppte.html",
@@ -23,21 +23,24 @@
       "gates": [
         {
           "command": "pnpm typecheck",
-          "startedAt": "2026-09-08T12:31:15.782Z",
-          "durationMs": 1260.81325,
-          "status": 0
+          "startedAt": "2026-09-08T12:37:49.877664+00:00",
+          "durationMs": 1340.4256249999999,
+          "status": 0,
+          "log": "verification/decision-gate-fix/typecheck.log"
         },
         {
           "command": "pnpm build",
-          "startedAt": "2026-09-08T12:31:17.043Z",
-          "durationMs": 1495.4374999999998,
-          "status": 0
+          "startedAt": "2026-09-08T12:37:51.218466+00:00",
+          "durationMs": 1535.6706250000002,
+          "status": 0,
+          "log": "verification/decision-gate-fix/build.log"
         },
         {
           "command": "pnpm test",
-          "startedAt": "2026-09-08T12:31:18.539Z",
-          "durationMs": 121785.043666,
-          "status": 0
+          "startedAt": "2026-09-08T12:37:52.819554+00:00",
+          "durationMs": 120583.544667,
+          "status": 0,
+          "log": "verification/decision-gate-fix/test.log"
         }
       ]
     },
@@ -95,8 +98,20 @@
     "verification/full-deck/sources.json",
     "verification/full-deck/provenance.json",
     "verification/full-deck/targeted.log",
-    "verification/full-deck/targeted-fixed.log"
+    "verification/full-deck/targeted-fixed.log",
+    "verification/decision-gate-fix/"
   ],
   "testRepair": "First full-deck tests navigated as if image remained at slide 2. Corrected navigation to slide 4; same image decode assertions preserved. No deck regeneration or local repair.",
-  "previousResult": "verification/full-deck/previous-result.json"
+  "previousResult": "verification/full-deck/previous-result.json",
+  "decisionGateFix": {
+    "baseCommit": "4d256e4",
+    "reproduced": true,
+    "reason": "U04 authorised option-1 decision superseded the current awaiting-user-decision expectation. Preserve exact historical assertion and strictly assert the current incomplete decision and native/human states.",
+    "commands": "verification/decision-gate-fix/commands.json",
+    "enhanceCalls": 0,
+    "localRepairCalls": 0,
+    "deliveryUnchanged": true,
+    "priorManifestMismatches": [],
+    "supervisorFiles": "Pre-existing supervisor scripts/logs preserved in place and locally excluded through .git/info/exclude; not part of the deliverable."
+  }
 }

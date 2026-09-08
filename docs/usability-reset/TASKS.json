@@ -20,14 +20,15 @@
         "evidence/U01/verification/fix-round/",
         "DECISIONS.md#u01-用户签收",
         "evidence/U01/verification/full-deck/",
-        "evidence/U01/verification/representative-snapshot.html"
+        "evidence/U01/verification/representative-snapshot.html",
+        "evidence/U01/verification/decision-gate-fix/"
       ],
       "verification": {
         "code": "passed",
         "automated": "passed",
         "real-browser": "pending",
         "human": "pending",
-        "reason": "Nine-page full deck completed under the signed-off direction. pnpm typecheck/build/test passed: 179 passed, 0 failed, 16 existing skips. Offline Chrome headless nine-page layout and editing/download/fresh-process reopen passed; physical desktop and final full-deck user acceptance remain pending.",
+        "reason": "Nine-page full deck completed under the signed-off direction. pnpm typecheck/build/test passed: 179 passed, 0 failed, 16 existing skips. Offline Chrome headless nine-page layout and editing/download/fresh-process reopen passed; physical desktop and final full-deck user acceptance remain pending. Fix round 1 reproduced the stale U04 decision assertion, retained historical checks and added exact current-decision checks; all three gates rerun successfully (179 passed, 0 failed, 16 existing skips).",
         "gateFixCommit": "e419e2028cc57dda65c483f83cb7fc5f623616bc",
         "representativeImplementationCommit": "7b2666570653c9ffbef056e4e907124b4708a2be"
       },

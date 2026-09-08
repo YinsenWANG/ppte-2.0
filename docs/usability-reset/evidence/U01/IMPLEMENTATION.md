@@ -77,3 +77,11 @@
 本轮仅修自动化兼容；已有干净三页 HTML 和截图哈希保持不变。U01 仍 awaiting-user-decision，code partial、human reopened；完整稿、目标桌面和新视觉签收仍有明确 pending 原因，见 result.json 和 DECISIONS.md。完整门禁和两版 npm 实际安装结果将在本轮 result.json 中记录；截图不重新包装为原生证据。
 
 本轮最终结果：pnpm typecheck、pnpm build、pnpm test 均 RC=0；169 passed / 0 failed / 16 existing skipped。npm 10 和 npm 12 的 A4 回归与真实离线安装均 RC=0（各 2 项通过）。命令时间、平台、日志、打包回执与安装字节哈希见 verification/fix-round/ 和 verification/result.json。
+
+## FULL 修复轮 1：裁决后的 U04 门禁
+
+在 `4d256e4` 上定向复现管道失败：U04 当前状态已按 20:35 授权裁决改为 `decided-option-1-pdf-incomplete`，旧测试仍要求 `awaiting-user-decision`。保留原停机断言，读取裁决前提交 `24f489bdd3e983ff8ed280ae21a39d1ceec78e35` 的 TASKS；另对当前状态、裁决证据链接、选项 1 正文、禁止完成/集成和真机待验作严格断言。没有将当前状态改回等待裁决，没有放宽 PDF 几何/文字/质量要求，也未删除或跳过既有断言。
+
+本修复轮成稿增强 0 次、成稿局部修复 0 次；继承 FULL 的一次增强耗时 75.815417 ms。交付、源码、三代表页及全部旧证据的既有 SHA256 清单核验全部匹配。无需为测试重新生成成稿。复现及门禁日志保存于 `verification/decision-gate-fix/`，最新门禁结果写入 `verification/result.json`。code/automated 与 real-browser/human 分层保持；最终完整稿未经用户认可，U01 不标 done。
+
+本轮最终门禁：`pnpm typecheck`、`pnpm build`、`pnpm test` 全部退出 0；179 passed / 0 failed / 16 既有 skips。定向复现退出 1，修复后定向回归退出 0。既有 supervisor 脚本与日志原地保留，仅在本地 `.git/info/exclude` 排除，未纳入交付或删除。

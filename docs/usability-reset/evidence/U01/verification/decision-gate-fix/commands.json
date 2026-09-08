@@ -1,0 +1,30 @@
+[
+  {
+    "command": "pnpm typecheck",
+    "startedAt": "2026-09-08T12:37:49.877664+00:00",
+    "durationMs": 1340.4256249999999,
+    "status": 0,
+    "log": "typecheck.log"
+  },
+  {
+    "command": "pnpm build",
+    "startedAt": "2026-09-08T12:37:51.218466+00:00",
+    "durationMs": 1535.6706250000002,
+    "status": 0,
+    "log": "build.log"
+  },
+  {
+    "command": "node --test --test-name-pattern=U04 decision gate dist/tests/u04-diagnosis.test.js",
+    "startedAt": "2026-09-08T12:37:52.754451+00:00",
+    "durationMs": 64.87270799999978,
+    "status": 0,
+    "log": "targeted.log"
+  },
+  {
+    "command": "pnpm test",
+    "startedAt": "2026-09-08T12:37:52.819554+00:00",
+    "durationMs": 120583.544667,
+    "status": 0,
+    "log": "test.log"
+  }
+]
