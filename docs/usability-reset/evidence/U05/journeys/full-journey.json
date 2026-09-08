@@ -1,12 +1,12 @@
 {
-  "time": "2026-09-08T12:47:38.601Z",
+  "time": "2026-09-08T12:54:01.520Z",
   "browser": "152.0.7977.76",
   "headless": true,
   "nativePicker": false,
   "physicalDesktop": false,
   "offline": true,
   "sourceSha256": "891e41ed89c19c6b27bbe7444c35d2adc50653a03464f4c29689dc0564628c54",
-  "savedSha256": "9dbfeb61d7c612f02af5bd41820a7a08cf1b74a7cee1300ea3a169fdf3ac6890",
+  "savedSha256": "b4f974974f3d01d01e4b975991ee2cb125d8e262cf9dbdcc4369ef3687c72e54",
   "steps": [
     {
       "step": "read",
@@ -17,7 +17,7 @@
     },
     {
       "step": "insert",
-      "imageId": "image-04d617f3-6a43-4da6-befb-93ecc1184747"
+      "imageId": "image-b6cc5699-8d25-4527-ba7d-3201d75cb7e1"
     },
     {
       "step": "drag"
@@ -36,7 +36,7 @@
       "step": "save-original-path",
       "nativePicker": false,
       "diskBridge": true,
-      "sha256": "9dbfeb61d7c612f02af5bd41820a7a08cf1b74a7cee1300ea3a169fdf3ac6890"
+      "sha256": "b4f974974f3d01d01e4b975991ee2cb125d8e262cf9dbdcc4369ef3687c72e54"
     },
     {
       "step": "exit-browser",
@@ -53,8 +53,8 @@
   ],
   "writes": [
     {
-      "sha256": "9dbfeb61d7c612f02af5bd41820a7a08cf1b74a7cee1300ea3a169fdf3ac6890",
-      "time": "2026-09-08T12:47:35.560Z"
+      "sha256": "b4f974974f3d01d01e4b975991ee2cb125d8e262cf9dbdcc4369ef3687c72e54",
+      "time": "2026-09-08T12:53:57.858Z"
     }
   ],
   "errors": [],

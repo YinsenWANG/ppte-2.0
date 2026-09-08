@@ -135,14 +135,15 @@
         "evidence/U05/samples/",
         "evidence/U05/journeys/",
         "evidence/U05/screenshots/",
-        "evidence/U05/SHA256SUMS"
+        "evidence/U05/SHA256SUMS",
+        "evidence/U05/verification/fix-round-1/"
       ],
       "verification": {
         "code": "passed",
         "automated": "passed",
         "real-browser": "pending",
         "human": "reopened",
-        "reason": "B2 original unchanged link sample and nine-page headless full journey verified. Native picker/original-file manual and automatic saves on target physical desktop remain unverified: no callable desktop tool; read-only accessibility probe timed out after 8 seconds. Explicit user rejections remain open. PDF is incomplete and EXCLUDED from U05 acceptance by U04 option 1. Final gate receipt: evidence/U05/verification/result.json."
+        "reason": "B2 original unchanged link sample and nine-page headless full journey verified. Native picker/original-file manual and automatic saves on target physical desktop remain unverified: no callable desktop tool; read-only accessibility probe timed out after 8 seconds. Explicit user rejections remain open. PDF is incomplete and EXCLUDED from U05 acceptance by U04 option 1. Final gate receipt: evidence/U05/verification/result.json. Fix round 1 reproduced screenshot caret-style pollution and corrected capture without weakening assertions; added exact screenshot content check. Gates: 180 passed, 0 failed, 16 existing skips. Fresh headless full-journey evidence archived; target desktop and user revalidation still missing."
       },
       "humanRevalidation": {
         "status": "pending",

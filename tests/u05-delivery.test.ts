@@ -45,7 +45,10 @@ test('U05 delivery: nine-page reading, text, insert, drag/resize/crop, undo/redo
   await btn(p,'裁切').click();await drag(p,(await btn(p,'图片右下角').boundingBox())!,-45,-25);await drag(p,(await p.getByLabel('拖动原图调整主体',{exact:true}).boundingBox())!,-12,-8);await btn(p,'完成').click();
   const cropped=await content(p);assert.notEqual(cropped,resized);steps.push({step:'crop'});
   await btn(p,'撤销').click();assert.equal(await content(p),resized);await btn(p,'重做').click();assert.equal(await content(p),cropped);steps.push({step:'undo-redo',exactContentEquality:true});
-  const geometry=await model();assert.ok(geometry);await p.screenshot({path:join(out,'02-edited.png')});
+  // Playwright's default caret hiding mutates inline styles while screenshotting.
+  // Autosave observes those mutations: capture the actual UI without injecting them.
+  const geometry=await model();assert.ok(geometry);await p.screenshot({path:join(out,'02-edited.png'),caret:'initial'});
+  assert.equal(await content(p),cropped,'evidence capture must leave author content unchanged');
   await btn(p,'保存').click();await btn(p,'选择当前文件并保存').click();await p.waitForFunction(()=>(window as any).PPTeSave.state==='saved');
   const saved=await readFile(file,'utf8');assert.equal(readEnhanced(saved).content,await content(p));assert.ok(writes.length>=1);assert.notEqual(sha(saved),sha(original));
   assert.doesNotMatch(readEnhanced(saved).content,/data-ppte-transient|data-ppte-editor-|contenteditable/);steps.push({step:'save-original-path',nativePicker:false,diskBridge:true,sha256:sha(saved)});

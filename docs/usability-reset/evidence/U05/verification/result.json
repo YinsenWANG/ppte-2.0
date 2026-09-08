@@ -1,8 +1,8 @@
 {
   "task": "U05",
   "status": "reopened",
-  "time": "2026-09-08T12:49:33.865425+00:00",
-  "checkedBaseCommit": "87cacadbd5cc5834a71ae45a94a9a3c23d80dc17",
+  "time": "2026-09-08T12:55:43.851169+00:00",
+  "checkedBaseCommit": "7270e85abc52a1779ee5943674f3bc40f232f30f",
   "workingTreeChangesIncluded": true,
   "layers": {
     "code": {
@@ -11,11 +11,11 @@
     },
     "automated": {
       "status": "passed",
-      "reason": "All gates pass; original unchanged links and headless disk-bridge full journey verified."
+      "reason": "Fix round 1 reproduced screenshot caret-style contamination and disabled screenshot DOM mutation; all existing assertions retained, screenshot content equality added. All three gates pass: 180 passed, 0 failed, 16 existing skips."
     },
     "real-browser": {
       "status": "pending",
-      "reason": "No callable physical desktop control tool. Read-only System Events accessibility query timed out after 8 seconds; no native picker/manual or automatic file write on target desktop was operated. Headless evidence is automated only."
+      "reason": "No callable physical desktop control tool in this fix round. Prior accessibility probe timed out after 8 seconds; no new native picker/target-desktop manual or automatic write evidence. Headless disk-bridge evidence is automated only."
     },
     "human": {
       "status": "reopened",
@@ -34,19 +34,19 @@
       "command": "pnpm typecheck",
       "rc": 0,
       "status": "passed",
-      "log": "verification/typecheck.log"
+      "log": "verification/fix-round-1/typecheck.log"
     },
     {
       "command": "pnpm build",
       "rc": 0,
       "status": "passed",
-      "log": "verification/build.log"
+      "log": "verification/fix-round-1/build.log"
     },
     {
       "command": "pnpm test",
       "rc": 0,
       "status": "passed",
-      "log": "verification/tests.log"
+      "log": "verification/fix-round-1/test.log"
     }
   ],
   "acceptance": [
@@ -137,5 +137,19 @@
     "Whole product not declared release-ready."
   ],
   "provenance": "verification/provenance.json",
-  "initialFailure": "verification/targeted-initial.log (SVG selected for raster-only insertion; corrected test input, no weakened assertions)"
+  "initialFailure": "verification/targeted-initial.log (SVG selected for raster-only insertion; corrected test input, no weakened assertions)",
+  "fixRound1": {
+    "rootCause": "Playwright screenshot default caret hiding temporarily mutates contenteditable inline styles captured by the save snapshot.",
+    "fix": "Editing screenshot uses caret: 'initial'; new full-content equality assertion after capture. No existing assertions changed or removed.",
+    "reproduction": "verification/fix-round-1/reproduced-failure.log",
+    "suppliedLog": "verification/fix-round-1/pipeline-failure.log",
+    "gate": {
+      "total": 196,
+      "passed": 180,
+      "failed": 0,
+      "skipped": 16
+    },
+    "testSourceSha256": "1ce190ce06783b69c928456b8ed96f254b43833e40f3efe4457643847a063e93",
+    "desktopToolAvailable": false
+  }
 }
