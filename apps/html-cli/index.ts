@@ -14,7 +14,7 @@ export async function runHTMLCli(args: string[]) {
     entry:'Open 作品.ppte.html directly (file://). Readers require no Node or service. Existing .html remains readable.',
     save:'Original-file autosave requires actual write authorization; otherwise download a complete updated file. Draft/download is not saved to the original.',
     migration:'S01/S02 acceptance partial: ppte edit opens file and exits; loopback recommendation is retired. Explicit serve is a development tool. --port is only accepted by serve.',
-    pdf:'Optional browser print: More → Export PDF. Node.js is for authoring only.',
+    pdf:'PDF export is unfinished; the product entry is disabled. No qualified route meets visual fidelity and selectable/searchable text. Browser printing is not the product export path.',
   };
   if (args[0] === 'skill-install') {
     if(args.length!==3 || args[1]!=='--out')throw Error('USAGE: ppte skill-install --out DIRECTORY');

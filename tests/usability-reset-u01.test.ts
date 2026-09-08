@@ -106,7 +106,8 @@ test('U01 A4: actual packed, offline installed and skill-installed instructions 
  const pkg=join(install,'node_modules/ppte-html'),skill=join(root,'skill');run(process.execPath,[join(pkg,'ppte.js'),'skill-install','--out',skill]);
  const source=await readFile('skills/ppte/SKILL.md');assert.deepEqual(await readFile(join(pkg,'skills/ppte/SKILL.md')),source);assert.deepEqual(await readFile(join(skill,'SKILL.md')),source);
  const readme=await readFile('README-AGENT.md');assert.deepEqual(await readFile(join(pkg,'README.md')),readme);
- for(const bytes of [source,readme,await readFile('README.md')]){assert.doesNotMatch(bytes.toString(),/More → Export PDF|PDF is an explicit browser print action/);assert.match(bytes.toString(),/unfinished/);}
+ const help=JSON.parse(run(process.execPath,[join(pkg,'ppte.js'),'--help']));assert.equal(help.ok,true);assert.match(help.pdf,/unfinished/);assert.match(help.pdf,/disabled/);
+ for(const bytes of [source,readme,await readFile('README.md'),help.pdf]){assert.doesNotMatch(bytes.toString(),/More → Export PDF|PDF is an explicit browser print action/);assert.match(bytes.toString(),/unfinished/);}
  assert.ok(source.length<6500);await writeFile(join(out,'package.json'),JSON.stringify({commands,skillSha256:sha(source),readmeSha256:sha(readme),tarballSha256:sha(await readFile(join(root,receipt.filename))),receipt},null,2));
  }finally{await rm(root,{recursive:true,force:true});}
 });
