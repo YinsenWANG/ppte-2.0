@@ -1,0 +1,210 @@
+{
+  "task": "U01",
+  "status": "awaiting-user-decision",
+  "implementationCommit": "7b2666570653c9ffbef056e4e907124b4708a2be",
+  "time": "2026-09-08T11:59:33.529Z",
+  "platform": {
+    "system": "Darwin",
+    "release": "25.6.0",
+    "arch": "arm64",
+    "node": "v22.23.2",
+    "browser": "152.0.7977.76",
+    "headless": true
+  },
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "startedAt": "2026-09-08T11:56:31.827Z",
+      "finishedAt": "2026-09-08T11:56:33.081Z",
+      "durationMs": 1253.153125,
+      "log": "verification/typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "exitCode": 0,
+      "startedAt": "2026-09-08T11:56:33.082Z",
+      "finishedAt": "2026-09-08T11:56:34.563Z",
+      "durationMs": 1480.867417,
+      "log": "verification/build.log"
+    },
+    {
+      "command": "pnpm test",
+      "status": "passed",
+      "exitCode": 0,
+      "startedAt": "2026-09-08T11:56:34.563Z",
+      "finishedAt": "2026-09-08T11:58:23.101Z",
+      "durationMs": 108537.272834,
+      "log": "verification/test.log"
+    }
+  ],
+  "tests": {
+    "tests": 184,
+    "pass": 168,
+    "fail": 0,
+    "skipped": 16,
+    "newTests": 4,
+    "newSkips": 0
+  },
+  "verification": {
+    "code": "partial",
+    "automated": "passed",
+    "real-browser": "pending",
+    "human": "reopened"
+  },
+  "codeReason": "Three representative pages and Skill/documentation corrections implemented and tested. Full deck remains blocked by explicit user visual approval.",
+  "realBrowserReason": "No callable physical-desktop control tool is exposed in this session. Chrome headless file:// pointer/keyboard/screenshot/new-process checks are automated evidence only; target-device viewing, OS input and user visual judgment have not been performed.",
+  "humanRevalidation": {
+    "status": "pending",
+    "reason": "Previous aesthetic delivery was explicitly rejected. No user decision on these three newly designed pages has arrived; revalidation is pending and prior human status stays reopened."
+  },
+  "fullDeck": {
+    "status": "pending",
+    "blockedBy": "U01-user-visual-approval",
+    "reason": "Explicit user U01 stop gate: complete deck must wait for representative-page visual approval; no full deck generated."
+  },
+  "acceptance": [
+    {
+      "item": "三个新代表页",
+      "code": "passed",
+      "automated": "passed",
+      "tests": [
+        "U01 A1/A2",
+        "U01 A1 text roundtrip"
+      ],
+      "real-browser": "pending",
+      "human": "reopened",
+      "pendingReason": "No callable physical-desktop control tool is exposed in this session. Chrome headless file:// pointer/keyboard/screenshot/new-process checks are automated evidence only; target-device viewing, OS input and user visual judgment have not been performed. Previous aesthetic delivery was explicitly rejected. No user decision on these three newly designed pages has arrived; revalidation is pending and prior human status stays reopened."
+    },
+    {
+      "item": "完整稿",
+      "code": "pending",
+      "automated": "pending",
+      "tests": [],
+      "gateTest": "U01 A3/full-deck tests only the stopping boundary",
+      "real-browser": "pending",
+      "human": "pending",
+      "pendingReason": "Explicit user U01 stop gate: complete deck must wait for representative-page visual approval; no full deck generated."
+    },
+    {
+      "item": "不复用旧设计冒充提升",
+      "code": "passed",
+      "automated": "passed",
+      "tests": [
+        "U01 A1/A2 source/native composition and legacy motif checks"
+      ],
+      "provenance": "verification/provenance.json",
+      "real-browser": "pending",
+      "human": "reopened",
+      "pendingReason": "Previous aesthetic delivery was explicitly rejected. No user decision on these three newly designed pages has arrived; revalidation is pending and prior human status stays reopened. No aesthetic score is inferred from source difference."
+    },
+    {
+      "item": "用户视觉确认",
+      "code": "passed",
+      "automated": "passed",
+      "tests": [
+        "U01 A3/full-deck enforces awaiting-user-decision; it cannot approve visuals"
+      ],
+      "real-browser": "pending",
+      "human": "reopened",
+      "pendingReason": "Previous aesthetic delivery was explicitly rejected. No user decision on these three newly designed pages has arrived; revalidation is pending and prior human status stays reopened.",
+      "decision": "../../DECISIONS.md"
+    },
+    {
+      "item": "源码与安装说明一致",
+      "code": "passed",
+      "automated": "passed",
+      "tests": [
+        "U01 A4 actual stage/npm pack/offline install/skill-install byte equality; live PDF disabled in A1/A2"
+      ],
+      "real-browser": "pending",
+      "human": "pending",
+      "pendingReason": "Isolated CLI install was actually executed. No global personal installation replaced; no target-desktop/user review claimed."
+    }
+  ],
+  "delivery": {
+    "path": "Cherry-Studio-开源之路.ppte.html",
+    "sha256": "d9089cc721060b7e95ab17e3a2534d032c6567428e2b5ef7e8cef63d069facab",
+    "pages": 3,
+    "fullDeck": false,
+    "clean": true,
+    "enhancement": "verification/enhancement.json",
+    "localRepair": "verification/local-repair.json",
+    "enhanceCalls": 1,
+    "localRepairCalls": 1
+  },
+  "screenshots": [
+    {
+      "path": "screenshots/edit-roundtrip.png",
+      "sha256": "8dbb6dc8cc3c853356df80afa0f42bb73fee52209963487ecd4b4032bbf70308",
+      "layer": "automated-headless; material and three presentation pages also viewed by Agent"
+    },
+    {
+      "path": "screenshots/material-confluence.png",
+      "sha256": "6f738ebf1ae787894a9a3bbf56b78f87f10fd8de03ca21dfc6b7ca06c6e61d5f",
+      "layer": "automated-headless; material and three presentation pages also viewed by Agent"
+    },
+    {
+      "path": "screenshots/present-1.png",
+      "sha256": "71aec5c5303c9344af3ff1791533156ae46481ecdc4bd9e5e911f4e7043da30f",
+      "layer": "automated-headless; material and three presentation pages also viewed by Agent"
+    },
+    {
+      "path": "screenshots/present-2.png",
+      "sha256": "ea90010601519a9619f20d483ad837b2fe17b42a537790e883868a1890fc8d49",
+      "layer": "automated-headless; material and three presentation pages also viewed by Agent"
+    },
+    {
+      "path": "screenshots/present-3.png",
+      "sha256": "079d11b1b215ad2c611a55bdecd34e27e045a45af03201f7bf2ddc7fed8b1438",
+      "layer": "automated-headless; material and three presentation pages also viewed by Agent"
+    },
+    {
+      "path": "screenshots/read-1.png",
+      "sha256": "d41fdb75dc83e7fc05e2e82995e69b68f1cfba77a18fe685efffa536c5887b5d",
+      "layer": "automated-headless; material and three presentation pages also viewed by Agent"
+    },
+    {
+      "path": "screenshots/read-2.png",
+      "sha256": "82932f215aa651dc4cab72de80e9e766ddd26818ff1383e6881386347ea2919d",
+      "layer": "automated-headless; material and three presentation pages also viewed by Agent"
+    },
+    {
+      "path": "screenshots/read-3.png",
+      "sha256": "b51e9377f575b5862cf235a4834e593b3876e0f1c48f1970e7142460a6d87132",
+      "layer": "automated-headless; material and three presentation pages also viewed by Agent"
+    }
+  ],
+  "priorRuns": [
+    {
+      "log": "verification/targeted-initial.log",
+      "reason": "New test incorrectly expected input slide labels to survive ID normalization; Escape exits editor."
+    },
+    {
+      "log": "verification/targeted.log",
+      "reason": "Visible CJK font overflow is not clipping; initial box-only check needed actual range/clipping semantics."
+    },
+    {
+      "log": "verification/targeted-repair.log",
+      "reason": "Font metric false positive remained; keyboard.type emits separate input transactions. Corrected new test to inspect visible glyph/page bounds and insert one text transaction."
+    },
+    {
+      "log": "verification/targeted-fixed.log",
+      "result": "3 selected tests passed"
+    },
+    {
+      "log": "verification/u01-before-commit.log",
+      "result": "4 U01 tests passed"
+    }
+  ],
+  "testedTree": "Full gates ran against implementationCommit. Subsequent changes only record evidence and verification status; no runtime, Skill, source deck or test edits.",
+  "knownLimitations": [
+    "Explicit user U01 stop gate: complete deck must wait for representative-page visual approval; no full deck generated.",
+    "No callable physical-desktop control tool is exposed in this session. Chrome headless file:// pointer/keyboard/screenshot/new-process checks are automated evidence only; target-device viewing, OS input and user visual judgment have not been performed.",
+    "Previous aesthetic delivery was explicitly rejected. No user decision on these three newly designed pages has arrived; revalidation is pending and prior human status stays reopened.",
+    "U02/U03 native acceptance and U04 PDF route remain open; U01 has not integrated or selected PDF architecture.",
+    "Download roundtrip uses a test capability override and does not prove native original-file saving."
+  ]
+}

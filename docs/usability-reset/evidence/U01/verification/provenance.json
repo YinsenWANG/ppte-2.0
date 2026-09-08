@@ -1,0 +1,70 @@
+{
+  "time": "2026-09-08T11:57:37.294Z",
+  "factSourceCommit": "67ca175cc833ba6a286464343f64ec1e426d443a",
+  "facts": [
+    {
+      "page": 1,
+      "source": "fixed README Key Features / project positioning",
+      "claim": "multi-model AI desktop client"
+    },
+    {
+      "page": 2,
+      "source": "fixed README Contributing lines 136–146",
+      "claim": "code, design, documentation, issue management, community participation"
+    },
+    {
+      "page": 3,
+      "source": "fixed README Getting Started lines 150–157; author suggestions explicitly labeled",
+      "claim": "branch and PR; checklist is editorial advice"
+    }
+  ],
+  "newDesign": {
+    "authoredFromScratch": true,
+    "previousDesignPreserved": true,
+    "changes": [
+      "oversized typographic cover with narrow editorial contents",
+      "original branching-contribution concept asset and editable external labels",
+      "four-row action/handoff matrix"
+    ],
+    "notClaimed": "No automated aesthetic score or user approval; source difference is provenance only"
+  },
+  "materialInspection": {
+    "original": "source/confluence.svg",
+    "preview": "screenshots/material-confluence.png",
+    "agentViewed": true,
+    "finalPagesViewed": [
+      "screenshots/present-1.png",
+      "screenshots/present-2.png",
+      "screenshots/present-3.png"
+    ],
+    "crop": "contain, all three branches and merge point visible",
+    "human": "pending"
+  },
+  "files": [
+    {
+      "path": "docs/html-first/evidence/h00/materials/cherry-readme.md",
+      "sha256": "e775f21999c1bf39e7b7dcf00bedb693c5cd28d0f059bd153fdaf18535b52ef4",
+      "bytes": 19398
+    },
+    {
+      "path": "docs/audits/2026-09-07-main-d1db13d/sample/source.html",
+      "sha256": "ee75cf0ee3533c20017daf211226ee5b4b335279fab8c96cd62093826c027d5a",
+      "bytes": 12277
+    },
+    {
+      "path": "docs/usability-reset/evidence/U01/source/representatives.html",
+      "sha256": "9918dc66f765b5e996e4b51f4410d4d815dd8bfeb4bc0f742a946c415817112b",
+      "bytes": 7000
+    },
+    {
+      "path": "docs/usability-reset/evidence/U01/source/confluence.svg",
+      "sha256": "155fbb99313dbf3cda762b33b68d9a61076ff7643a20be2db31620b36911ac6f",
+      "bytes": 1159
+    },
+    {
+      "path": "docs/usability-reset/evidence/U01/REQUEST.md",
+      "sha256": "edcdecd8273c9567a85b901fa624b435dbe8a7e13d8a9a38c635da785b3c19e6",
+      "bytes": 4496
+    }
+  ]
+}

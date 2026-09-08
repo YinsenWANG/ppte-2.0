@@ -32,3 +32,5 @@
 原生步骤：在目标桌面直接打开唯一 HTML → 阅读三页 → 切编辑选中正文并修改/撤销 → 放映翻页 → 返回；由用户评价封面留白、图文比例、密集页可读性。保存与图片新交互的原生验收仍由 U03/U02 承接，本任务下载能力覆盖测试不是原文件保存证明。没有原生输入通道/用户评审结果，暂记 pending + 具体缺口，不关闭先前拒收。
 
 开发期失败如实保留：首次 TS NodeList/DOMRectList 迭代需 Array.from；初始测试误将 data-ppte-slide 的输入标签当作稳定 ID（增强器规范化为节点 ID），改为实际构图结构验证；Esc 会退出整个编辑模式；逐字 keyboard.type 产生多个输入事务，改用一次 keyboard.insertText 验证一次文本事务并点击属性关闭提交。保留 initial/repair/fixed 日志，未删除或弱化历史测试。门禁结果、时间、平台、提交和文件哈希见 verification/result.json 与 SHA256SUMS。
+
+最终门禁：pnpm typecheck、pnpm build、pnpm test 均 RC=0；168 passed / 0 failed / 16 existing skipped。实现提交 `7b2666570653c9ffbef056e4e907124b4708a2be`（签名有效，含 signoff）。后续仅补充验证状态与证据，未再修改产品、Skill、样稿或测试。
