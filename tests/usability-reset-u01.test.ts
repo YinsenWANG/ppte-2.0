@@ -14,6 +14,24 @@ const out=resolve('artifacts/usability-reset-u01');
 const file=join(evidence,'Cherry-Studio-开源之路.ppte.html');
 const btn=(p:Page,name:string)=>p.getByRole('button',{name,exact:true});
 const sha=(s:string|Buffer)=>createHash('sha256').update(s).digest('hex');
+function packReceipt(stdout:string):{name:string;filename:string}{
+ const parsed:unknown=JSON.parse(stdout);
+ assert.ok(parsed!==null&&typeof parsed==='object','npm pack must return a receipt collection');
+ const receipts=Object.values(parsed);
+ assert.equal(receipts.length,1,'npm pack must produce exactly one package');
+ const receipt=receipts[0];
+ assert.equal(receipt?.name,'ppte-html','npm pack must identify the staged package');
+ assert.equal(typeof receipt.filename,'string','npm pack must report a tarball filename');
+ assert.match(receipt.filename,/^ppte-html-[\w.-]+\.tgz$/);
+ return receipt;
+}
+test('U01 A4 receipts: array and keyed results identify one tarball; malformed or ambiguous output fails',()=>{
+ const receipt={name:'ppte-html',filename:'ppte-html-1.0.0-html.0.tgz'};
+ for(const collection of [[receipt],{'ppte-html':receipt}])assert.deepEqual(packReceipt(JSON.stringify(collection)),receipt);
+ for(const collection of [null,[],{},[receipt,receipt],[{}],[{...receipt,name:'wrong'}],[{name:'ppte-html'}],[{...receipt,filename:'../outside.tgz'}]]){
+  assert.throws(()=>packReceipt(JSON.stringify(collection)),assert.AssertionError);
+ }
+});
 async function open(){
  await mkdir(out,{recursive:true});const browser=await chromium.launch({channel:'chrome',headless:true});
  const p=await browser.newPage({offline:true,acceptDownloads:true,viewport:{width:1440,height:960}});p.setDefaultTimeout(10000);
@@ -82,7 +100,7 @@ test('U01 A4: actual packed, offline installed and skill-installed instructions 
  await mkdir(out,{recursive:true});const root=await mkdtemp(join(tmpdir(),'u01-package-'));const commands:unknown[]=[];
  const run=(cmd:string,args:string[])=>{const r=spawnSync(cmd,args,{encoding:'utf8'});commands.push({cmd,args,status:r.status,stdout:r.stdout,stderr:r.stderr});assert.equal(r.status,0,r.stdout+'\n'+r.stderr);return r.stdout;};
  try{
- const stage=join(root,'stage');run(process.execPath,['scripts/stage-package.mjs',stage]);const receipt=JSON.parse(run('npm',['pack',stage,'--pack-destination',root,'--json']))[0];
+ const stage=join(root,'stage');run(process.execPath,['scripts/stage-package.mjs',stage]);const receipt=packReceipt(run('npm',['pack',stage,'--pack-destination',root,'--json']));
  const install=join(root,'install');run('npm',['install','--prefix',install,'--offline','--ignore-scripts','--no-audit','--no-fund',join(root,receipt.filename)]);
  const pkg=join(install,'node_modules/ppte-html'),skill=join(root,'skill');run(process.execPath,[join(pkg,'ppte.js'),'skill-install','--out',skill]);
  const source=await readFile('skills/ppte/SKILL.md');assert.deepEqual(await readFile(join(pkg,'skills/ppte/SKILL.md')),source);assert.deepEqual(await readFile(join(skill,'SKILL.md')),source);
