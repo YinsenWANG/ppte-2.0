@@ -233,5 +233,8 @@
       }
     }
   ],
-  "supplement": "PDF-AND-CORE-REVIEW.md"
+  "supplement": "PDF-AND-CORE-REVIEW.md",
+  "activePlan": "../usability-reset/PLAN.md",
+  "activeTasks": "../usability-reset/TASKS.json",
+  "latestUserAcceptance": "rejected-2026-09-08; see active plan; historical evidence preserved"
 }

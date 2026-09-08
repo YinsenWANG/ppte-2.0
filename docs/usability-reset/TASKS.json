@@ -1,0 +1,43 @@
+{
+  "version": "usability-reset-1.0",
+  "baseline": "bf7d6ea4bb00df85ebe14da9c8d5d8099cf1c870",
+  "status": "reopened-after-user-rejection",
+  "plan": "PLAN.md",
+  "tasks": [
+    {
+      "id": "U01",
+      "title": "重新设计成稿并修正Skill",
+      "status": "pending",
+      "acceptance": "三个新代表页及完整稿；不复用旧设计冒充提升；用户视觉确认；源码与安装说明一致",
+      "evidence": []
+    },
+    {
+      "id": "U02",
+      "title": "重做图片直接操作",
+      "status": "pending",
+      "acceptance": "拖动、四角等比缩放、直接裁切、取消与事务撤销；四类布局及保存重开",
+      "evidence": []
+    },
+    {
+      "id": "U03",
+      "title": "重做并验证保存主流程",
+      "status": "pending",
+      "acceptance": "可发现的主入口；真实手动与自动写回后退出重开；无复制HTML技术入口；失败不丢修改",
+      "evidence": []
+    },
+    {
+      "id": "U04",
+      "title": "诊断现有PDF路线并回交架构取舍",
+      "status": "pending",
+      "acceptance": "原失败样本跨阅读器/固定视口核验；保留视觉和文字要求；外部路线集成前用户决策",
+      "evidence": []
+    },
+    {
+      "id": "U05",
+      "title": "修复B2并完成真实交付",
+      "status": "pending",
+      "acceptance": "原带链接样本；一个干净成稿；全旅程；用户拒收项逐项重新确认",
+      "evidence": []
+    }
+  ]
+}
