@@ -1,0 +1,5 @@
+已完成[三页单 HTML 样稿](/tmp/ppte8/docs/usability-reset/evidence/U01/Cherry-Studio-开源之路.ppte.html)，并修正源码、包内及安装 Skill 的 PDF 说明。
+
+门禁全绿：168 passed / 0 failed / 16 既有 skipped。签名提交 `7b26665`、`a628227`；未 push，工作树干净。[逐项证据](/tmp/ppte8/docs/usability-reset/evidence/U01/verification/result.json)
+
+按你设定的停机门，U01 已标记 `awaiting-user-decision`，未生成全稿，原生及人工验收仍待完成。请查看[三页截图与设计说明](/tmp/ppte8/docs/usability-reset/DECISIONS.md)，确认是否认可此方向并据此扩展全稿。
