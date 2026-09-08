@@ -1,8 +1,0 @@
-U02 已实现，门禁全绿：**164 通过、0 失败、16 项既有跳过**。
-
-- [单 HTML 交付](/tmp/ppte8/docs/usability-reset/evidence/U02/Cherry-U02.ppte.html)：既有稿运行时升级，非 U01 新美学稿。
-- [逐项证据](/tmp/ppte8/docs/usability-reset/evidence/U02/IMPLEMENTATION.md)：含测试、截图、保存重开记录及 SHA256。
-
-已签名提交 `f902bea`、`f811ec2`、`1be0cd9`；未 push，工作树干净。
-
-U02 保持 **reopened**：原生保存、触控及用户体验复验仍待完成。

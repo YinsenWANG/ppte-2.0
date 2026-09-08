@@ -1,8 +1,0 @@
-已复现并修复：npm 12 返回对象形式回执，旧测试按数组读取导致报错；原有断言全部保留。
-
-- 门禁全绿：169 passed / 0 failed / 16 skipped。
-- npm 10、12 真实离线安装均通过。
-- 已签名提交 `e419e20`、`327a42d`；未 push，工作树干净。
-- [验证证据](/tmp/ppte8/docs/usability-reset/evidence/U01/verification/result.json)已更新。
-
-U01 仍为 `awaiting-user-decision`：[三页样稿](/tmp/ppte8/docs/usability-reset/evidence/U01/Cherry-Studio-开源之路.ppte.html)待视觉签收；遵守停机门，未生成全稿。
