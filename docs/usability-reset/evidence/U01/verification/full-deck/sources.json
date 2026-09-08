@@ -1,0 +1,52 @@
+{
+  "basis": "docs/html-first/evidence/h00/materials/cherry-readme.md",
+  "sha256": "e775f21999c1bf39e7b7dcf00bedb693c5cd28d0f059bd153fdaf18535b52ef4",
+  "revision": "67ca175cc833ba6a286464343f64ec1e426d443a",
+  "claims": [
+    {
+      "pages": [
+        1,
+        2
+      ],
+      "sections": [
+        "Introduction",
+        "Key Features"
+      ],
+      "claims": "Multi-provider desktop client; Windows/Mac/Linux; cloud and Ollama/LM Studio support; assistants/conversations/topics."
+    },
+    {
+      "pages": [
+        4
+      ],
+      "sections": [
+        "Contributing"
+      ],
+      "claims": "Code, design, documentation, issues and community participation."
+    },
+    {
+      "pages": [
+        6
+      ],
+      "sections": [
+        "Getting Started",
+        "Contributing"
+      ],
+      "claims": "Fork/clone, branch, commit/push and PR; links to guidelines."
+    }
+  ],
+  "authorAdvicePages": [
+    3,
+    5,
+    7,
+    8,
+    9
+  ],
+  "newCurrentFacts": false,
+  "liveMetrics": false,
+  "image": {
+    "file": "source/confluence.svg",
+    "viewed": "screenshots/material-confluence.png and full-present-4.png",
+    "selection": "Three paths and central junction explain shared maintenance; contain keeps all endpoints. Explicit concept-image caption.",
+    "unviewedImagesUsed": []
+  }
+}

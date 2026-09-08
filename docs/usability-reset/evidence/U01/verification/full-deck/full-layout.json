@@ -1,0 +1,3498 @@
+{
+  "browser": "152.0.7977.76",
+  "headless": true,
+  "offline": true,
+  "fileSha256": "891e41ed89c19c6b27bbe7444c35d2adc50653a03464f4c29689dc0564628c54",
+  "rows": [
+    {
+      "page": {
+        "x": 80,
+        "y": 74,
+        "width": 1280,
+        "height": 720,
+        "top": 74,
+        "right": 1360,
+        "bottom": 794,
+        "left": 80
+      },
+      "overflow": [],
+      "textBounds": [
+        {
+          "text": "CHERRY STUDIO产品与社区 / 开源参与导览",
+          "rect": {
+            "x": 144,
+            "y": 118,
+            "width": 1152,
+            "height": 36,
+            "top": 118,
+            "right": 1296,
+            "bottom": 154,
+            "left": 144
+          },
+          "client": [
+            1152,
+            35
+          ],
+          "scroll": [
+            1152,
+            35
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "CHERRY STUDIO",
+          "rect": {
+            "x": 144,
+            "y": 115.5,
+            "width": 131.53125,
+            "height": 20,
+            "top": 115.5,
+            "right": 275.53125,
+            "bottom": 135.5,
+            "left": 144
+          },
+          "client": [
+            132,
+            20
+          ],
+          "scroll": [
+            132,
+            20
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "产品与社区 / 开源参与导览",
+          "rect": {
+            "x": 1108.875,
+            "y": 115.5,
+            "width": 187.125,
+            "height": 20,
+            "top": 115.5,
+            "right": 1296,
+            "bottom": 135.5,
+            "left": 1108.875
+          },
+          "client": [
+            187,
+            20
+          ],
+          "scroll": [
+            187,
+            20
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "从一个桌面入口，到共同建设",
+          "rect": {
+            "x": 144,
+            "y": 204,
+            "width": 768,
+            "height": 21,
+            "top": 204,
+            "right": 912,
+            "bottom": 225,
+            "left": 144
+          },
+          "client": [
+            768,
+            21
+          ],
+          "scroll": [
+            768,
+            21
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "开源之路一起，向前。",
+          "rect": {
+            "x": 144,
+            "y": 247,
+            "width": 768,
+            "height": 291.1875,
+            "top": 247,
+            "right": 912,
+            "bottom": 538.1875,
+            "left": 144
+          },
+          "client": [
+            768,
+            291
+          ],
+          "scroll": [
+            768,
+            297
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "工具连接模型。开放，让使用者也能参与改变工具。",
+          "rect": {
+            "x": 144,
+            "y": 568.1875,
+            "width": 768,
+            "height": 80,
+            "top": 568.1875,
+            "right": 912,
+            "bottom": 648.1875,
+            "left": 144
+          },
+          "client": [
+            768,
+            80
+          ],
+          "scroll": [
+            768,
+            80
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "Cherry Studio多模型 AI 桌面客户端",
+          "rect": {
+            "x": 1011,
+            "y": 432.625,
+            "width": 285,
+            "height": 54.375,
+            "top": 432.625,
+            "right": 1296,
+            "bottom": 487,
+            "left": 1011
+          },
+          "client": [
+            285,
+            54
+          ],
+          "scroll": [
+            285,
+            54
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "01选择自己的工具",
+          "rect": {
+            "x": 1011,
+            "y": 513,
+            "width": 285,
+            "height": 59,
+            "top": 513,
+            "right": 1296,
+            "bottom": 572,
+            "left": 1011
+          },
+          "client": [
+            285,
+            58
+          ],
+          "scroll": [
+            285,
+            58
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "01",
+          "rect": {
+            "x": 1011,
+            "y": 530,
+            "width": 14.015625,
+            "height": 26,
+            "top": 530,
+            "right": 1025.015625,
+            "bottom": 556,
+            "left": 1011
+          },
+          "client": [
+            14,
+            26
+          ],
+          "scroll": [
+            14,
+            26
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "02找到参与的位置",
+          "rect": {
+            "x": 1011,
+            "y": 572,
+            "width": 285,
+            "height": 59,
+            "top": 572,
+            "right": 1296,
+            "bottom": 631,
+            "left": 1011
+          },
+          "client": [
+            285,
+            58
+          ],
+          "scroll": [
+            285,
+            58
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "02",
+          "rect": {
+            "x": 1011,
+            "y": 589,
+            "width": 16.8125,
+            "height": 26,
+            "top": 589,
+            "right": 1027.8125,
+            "bottom": 615,
+            "left": 1011
+          },
+          "client": [
+            17,
+            26
+          ],
+          "scroll": [
+            17,
+            26
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "03完成一次小贡献",
+          "rect": {
+            "x": 1011,
+            "y": 631,
+            "width": 285,
+            "height": 59,
+            "top": 631,
+            "right": 1296,
+            "bottom": 690,
+            "left": 1011
+          },
+          "client": [
+            285,
+            58
+          ],
+          "scroll": [
+            285,
+            58
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "03",
+          "rect": {
+            "x": 1011,
+            "y": 648,
+            "width": 16.8125,
+            "height": 26,
+            "top": 648,
+            "right": 1027.8125,
+            "bottom": 674,
+            "left": 1011
+          },
+          "client": [
+            17,
+            26
+          ],
+          "scroll": [
+            17,
+            26
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "基于项目固定版本资料 · 不含实时增长统计01 / 09",
+          "rect": {
+            "x": 144,
+            "y": 728,
+            "width": 1152,
+            "height": 30,
+            "top": 728,
+            "right": 1296,
+            "bottom": 758,
+            "left": 144
+          },
+          "client": [
+            1152,
+            30
+          ],
+          "scroll": [
+            1152,
+            30
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "基于项目固定版本资料 · 不含实时增长统计",
+          "rect": {
+            "x": 144,
+            "y": 734,
+            "width": 249.171875,
+            "height": 18,
+            "top": 734,
+            "right": 393.171875,
+            "bottom": 752,
+            "left": 144
+          },
+          "client": [
+            249,
+            18
+          ],
+          "scroll": [
+            249,
+            18
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "01 / 09",
+          "rect": {
+            "x": 1252.21875,
+            "y": 734,
+            "width": 43.78125,
+            "height": 18,
+            "top": 734,
+            "right": 1296,
+            "bottom": 752,
+            "left": 1252.21875
+          },
+          "client": [
+            44,
+            18
+          ],
+          "scroll": [
+            44,
+            18
+          ],
+          "overflow": "visible"
+        }
+      ],
+      "background": "rgb(248, 246, 240)"
+    },
+    {
+      "page": {
+        "x": 80,
+        "y": 74,
+        "width": 1280,
+        "height": 720,
+        "top": 74,
+        "right": 1360,
+        "bottom": 794,
+        "left": 80
+      },
+      "overflow": [],
+      "textBounds": [
+        {
+          "text": "CHERRY STUDIO工具 / 先理解它的位置",
+          "rect": {
+            "x": 144,
+            "y": 118,
+            "width": 1152,
+            "height": 36,
+            "top": 118,
+            "right": 1296,
+            "bottom": 154,
+            "left": 144
+          },
+          "client": [
+            1152,
+            35
+          ],
+          "scroll": [
+            1152,
+            35
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "CHERRY STUDIO",
+          "rect": {
+            "x": 144,
+            "y": 115.5,
+            "width": 131.53125,
+            "height": 20,
+            "top": 115.5,
+            "right": 275.53125,
+            "bottom": 135.5,
+            "left": 144
+          },
+          "client": [
+            132,
+            20
+          ],
+          "scroll": [
+            132,
+            20
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "工具 / 先理解它的位置",
+          "rect": {
+            "x": 1139.265625,
+            "y": 115.5,
+            "width": 156.734375,
+            "height": 20,
+            "top": 115.5,
+            "right": 1296,
+            "bottom": 135.5,
+            "left": 1139.265625
+          },
+          "client": [
+            157,
+            20
+          ],
+          "scroll": [
+            157,
+            20
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "01 / 选择自己的工具",
+          "rect": {
+            "x": 144,
+            "y": 200,
+            "width": 1152,
+            "height": 21,
+            "top": 200,
+            "right": 1296,
+            "bottom": 221,
+            "left": 144
+          },
+          "client": [
+            1152,
+            21
+          ],
+          "scroll": [
+            1152,
+            21
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "一个桌面入口，连接多种模型。",
+          "rect": {
+            "x": 144,
+            "y": 239,
+            "width": 1152,
+            "height": 62.5,
+            "top": 239,
+            "right": 1296,
+            "bottom": 301.5,
+            "left": 144
+          },
+          "client": [
+            1152,
+            63
+          ],
+          "scroll": [
+            1152,
+            66
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "Cherry Studio 是支持多家大语言模型提供商的桌面客户端，可运行于 Windows、macOS 与 Linux。",
+          "rect": {
+            "x": 144,
+            "y": 329.5,
+            "width": 920,
+            "height": 92.375,
+            "top": 329.5,
+            "right": 1064,
+            "bottom": 421.875,
+            "left": 144
+          },
+          "client": [
+            920,
+            92
+          ],
+          "scroll": [
+            920,
+            92
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "连接模型",
+          "rect": {
+            "x": 144,
+            "y": 493.875,
+            "width": 541,
+            "height": 37,
+            "top": 493.875,
+            "right": 685,
+            "bottom": 530.875,
+            "left": 144
+          },
+          "client": [
+            541,
+            37
+          ],
+          "scroll": [
+            541,
+            37
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "固定版本资料列出云端服务接入，也列出 Ollama、LM Studio 本地模型支持。",
+          "rect": {
+            "x": 144,
+            "y": 545.875,
+            "width": 541,
+            "height": 72,
+            "top": 545.875,
+            "right": 685,
+            "bottom": 617.875,
+            "left": 144
+          },
+          "client": [
+            541,
+            72
+          ],
+          "scroll": [
+            541,
+            72
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "组织使用",
+          "rect": {
+            "x": 755,
+            "y": 493.875,
+            "width": 541,
+            "height": 37,
+            "top": 493.875,
+            "right": 1296,
+            "bottom": 530.875,
+            "left": 755
+          },
+          "client": [
+            541,
+            37
+          ],
+          "scroll": [
+            541,
+            37
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "围绕助手、对话与主题管理组织工作，把模型能力带入具体的使用场景。",
+          "rect": {
+            "x": 755,
+            "y": 545.875,
+            "width": 541,
+            "height": 72,
+            "top": 545.875,
+            "right": 1296,
+            "bottom": 617.875,
+            "left": 755
+          },
+          "client": [
+            541,
+            72
+          ],
+          "scroll": [
+            541,
+            72
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "来源：CherryHQ/cherry-studio · README · 固定版本 67ca175 / Introduction、Key Features02 / 09",
+          "rect": {
+            "x": 144,
+            "y": 728,
+            "width": 1152,
+            "height": 30,
+            "top": 728,
+            "right": 1296,
+            "bottom": 758,
+            "left": 144
+          },
+          "client": [
+            1152,
+            30
+          ],
+          "scroll": [
+            1152,
+            30
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "来源：CherryHQ/cherry-studio · README · 固定版本 67ca175 / Introduction、Key Features",
+          "rect": {
+            "x": 144,
+            "y": 734,
+            "width": 557.34375,
+            "height": 18,
+            "top": 734,
+            "right": 701.34375,
+            "bottom": 752,
+            "left": 144
+          },
+          "client": [
+            557,
+            18
+          ],
+          "scroll": [
+            557,
+            18
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "02 / 09",
+          "rect": {
+            "x": 1249.640625,
+            "y": 734,
+            "width": 46.359375,
+            "height": 18,
+            "top": 734,
+            "right": 1296,
+            "bottom": 752,
+            "left": 1249.640625
+          },
+          "client": [
+            46,
+            18
+          ],
+          "scroll": [
+            46,
+            18
+          ],
+          "overflow": "visible"
+        }
+      ],
+      "background": "rgb(248, 246, 240)"
+    },
+    {
+      "page": {
+        "x": 80,
+        "y": 74,
+        "width": 1280,
+        "height": 720,
+        "top": 74,
+        "right": 1360,
+        "bottom": 794,
+        "left": 80
+      },
+      "overflow": [],
+      "textBounds": [
+        {
+          "text": "CHERRY STUDIO开放 / 使用经验也是起点",
+          "rect": {
+            "x": 144,
+            "y": 118,
+            "width": 1152,
+            "height": 36,
+            "top": 118,
+            "right": 1296,
+            "bottom": 154,
+            "left": 144
+          },
+          "client": [
+            1152,
+            35
+          ],
+          "scroll": [
+            1152,
+            35
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "CHERRY STUDIO",
+          "rect": {
+            "x": 144,
+            "y": 115.5,
+            "width": 131.53125,
+            "height": 20,
+            "top": 115.5,
+            "right": 275.53125,
+            "bottom": 135.5,
+            "left": 144
+          },
+          "client": [
+            132,
+            20
+          ],
+          "scroll": [
+            132,
+            20
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "开放 / 使用经验也是起点",
+          "rect": {
+            "x": 1124.0625,
+            "y": 115.5,
+            "width": 171.9375,
+            "height": 20,
+            "top": 115.5,
+            "right": 1296,
+            "bottom": 135.5,
+            "left": 1124.0625
+          },
+          "client": [
+            172,
+            20
+          ],
+          "scroll": [
+            172,
+            20
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "从个人体验出发",
+          "rect": {
+            "x": 144,
+            "y": 222,
+            "width": 310,
+            "height": 21,
+            "top": 222,
+            "right": 454,
+            "bottom": 243,
+            "left": 144
+          },
+          "client": [
+            310,
+            21
+          ],
+          "scroll": [
+            310,
+            21
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "先用起来。再说清楚。",
+          "rect": {
+            "x": 144,
+            "y": 243,
+            "width": 310,
+            "height": 156.78125,
+            "top": 243,
+            "right": 454,
+            "bottom": 399.78125,
+            "left": 144
+          },
+          "client": [
+            310,
+            157
+          ],
+          "scroll": [
+            310,
+            157
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "你在使用中遇到的一个障碍，可能就是参与的起点。",
+          "rect": {
+            "x": 524,
+            "y": 222,
+            "width": 772,
+            "height": 139.78125,
+            "top": 222,
+            "right": 1296,
+            "bottom": 361.78125,
+            "left": 524
+          },
+          "client": [
+            772,
+            139
+          ],
+          "scroll": [
+            772,
+            139
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "先说明自己想完成什么，再记录哪里受阻。把“感觉不好用”转成可以讨论的具体场景，让其他人理解问题，也让改进有据可循。",
+          "rect": {
+            "x": 524,
+            "y": 389.78125,
+            "width": 772,
+            "height": 115.5,
+            "top": 389.78125,
+            "right": 1296,
+            "bottom": 505.28125,
+            "left": 524
+          },
+          "client": [
+            772,
+            116
+          ],
+          "scroll": [
+            772,
+            116
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "这是一种参与思路，并非官方处理时限或采纳承诺。",
+          "rect": {
+            "x": 524,
+            "y": 529.28125,
+            "width": 772,
+            "height": 24.75,
+            "top": 529.28125,
+            "right": 1296,
+            "bottom": 554.03125,
+            "left": 524
+          },
+          "client": [
+            772,
+            25
+          ],
+          "scroll": [
+            772,
+            25
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "作者参与建议 · 具体要求以项目贡献指南为准03 / 09",
+          "rect": {
+            "x": 144,
+            "y": 728,
+            "width": 1152,
+            "height": 30,
+            "top": 728,
+            "right": 1296,
+            "bottom": 758,
+            "left": 144
+          },
+          "client": [
+            1152,
+            30
+          ],
+          "scroll": [
+            1152,
+            30
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "作者参与建议 · 具体要求以项目贡献指南为准",
+          "rect": {
+            "x": 144,
+            "y": 734,
+            "width": 262.171875,
+            "height": 18,
+            "top": 734,
+            "right": 406.171875,
+            "bottom": 752,
+            "left": 144
+          },
+          "client": [
+            262,
+            18
+          ],
+          "scroll": [
+            262,
+            18
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "03 / 09",
+          "rect": {
+            "x": 1249.640625,
+            "y": 734,
+            "width": 46.359375,
+            "height": 18,
+            "top": 734,
+            "right": 1296,
+            "bottom": 752,
+            "left": 1249.640625
+          },
+          "client": [
+            46,
+            18
+          ],
+          "scroll": [
+            46,
+            18
+          ],
+          "overflow": "visible"
+        }
+      ],
+      "background": "rgb(248, 246, 240)"
+    },
+    {
+      "page": {
+        "x": 80,
+        "y": 74,
+        "width": 1280,
+        "height": 720,
+        "top": 74,
+        "right": 1360,
+        "bottom": 794,
+        "left": 80
+      },
+      "overflow": [],
+      "textBounds": [
+        {
+          "text": "CHERRY STUDIO参与 / 多条路径，同一方向",
+          "rect": {
+            "x": 144,
+            "y": 118,
+            "width": 1152,
+            "height": 36,
+            "top": 118,
+            "right": 1296,
+            "bottom": 154,
+            "left": 144
+          },
+          "client": [
+            1152,
+            35
+          ],
+          "scroll": [
+            1152,
+            35
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "CHERRY STUDIO",
+          "rect": {
+            "x": 144,
+            "y": 115.5,
+            "width": 131.53125,
+            "height": 20,
+            "top": 115.5,
+            "right": 275.53125,
+            "bottom": 135.5,
+            "left": 144
+          },
+          "client": [
+            132,
+            20
+          ],
+          "scroll": [
+            132,
+            20
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "参与 / 多条路径，同一方向",
+          "rect": {
+            "x": 1108.875,
+            "y": 115.5,
+            "width": 187.125,
+            "height": 20,
+            "top": 115.5,
+            "right": 1296,
+            "bottom": 135.5,
+            "left": 1108.875
+          },
+          "client": [
+            187,
+            20
+          ],
+          "scroll": [
+            187,
+            20
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "从使用者到共建者",
+          "rect": {
+            "x": 144,
+            "y": 202,
+            "width": 430,
+            "height": 21,
+            "top": 202,
+            "right": 574,
+            "bottom": 223,
+            "left": 144
+          },
+          "client": [
+            430,
+            21
+          ],
+          "scroll": [
+            430,
+            21
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "写代码，只是其中一条路。",
+          "rect": {
+            "x": 144,
+            "y": 249,
+            "width": 430,
+            "height": 125,
+            "top": 249,
+            "right": 574,
+            "bottom": 374,
+            "left": 144
+          },
+          "client": [
+            430,
+            125
+          ],
+          "scroll": [
+            430,
+            129
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "项目也欢迎设计讨论、文档维护、问题管理与社区答疑。从自己的经验出发，就能找到一个具体的切入点。",
+          "rect": {
+            "x": 144,
+            "y": 402,
+            "width": 430,
+            "height": 147,
+            "top": 402,
+            "right": 574,
+            "bottom": 549,
+            "left": 144
+          },
+          "client": [
+            430,
+            147
+          ],
+          "scroll": [
+            430,
+            147
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "这里呈现的是参与关系，并非项目实际开发流程或贡献统计。",
+          "rect": {
+            "x": 144,
+            "y": 573,
+            "width": 430,
+            "height": 49.5,
+            "top": 573,
+            "right": 574,
+            "bottom": 622.5,
+            "left": 144
+          },
+          "client": [
+            430,
+            50
+          ],
+          "scroll": [
+            430,
+            50
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "反馈",
+          "rect": {
+            "x": 697,
+            "y": 202,
+            "width": 178,
+            "height": 22,
+            "top": 202,
+            "right": 875,
+            "bottom": 224,
+            "left": 697
+          },
+          "client": [
+            178,
+            22
+          ],
+          "scroll": [
+            178,
+            22
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "代码",
+          "rect": {
+            "x": 875,
+            "y": 202,
+            "width": 178,
+            "height": 22,
+            "top": 202,
+            "right": 1053,
+            "bottom": 224,
+            "left": 875
+          },
+          "client": [
+            178,
+            22
+          ],
+          "scroll": [
+            178,
+            22
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "文档",
+          "rect": {
+            "x": 1053,
+            "y": 202,
+            "width": 178,
+            "height": 22,
+            "top": 202,
+            "right": 1231,
+            "bottom": 224,
+            "left": 1053
+          },
+          "client": [
+            178,
+            22
+          ],
+          "scroll": [
+            178,
+            22
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "共同维护，持续完善原创概念图 · 非产品截图",
+          "rect": {
+            "x": 632,
+            "y": 620,
+            "width": 664,
+            "height": 28.796875,
+            "top": 620,
+            "right": 1296,
+            "bottom": 648.796875,
+            "left": 632
+          },
+          "client": [
+            664,
+            29
+          ],
+          "scroll": [
+            664,
+            29
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "原创概念图 · 非产品截图",
+          "rect": {
+            "x": 1139.671875,
+            "y": 620,
+            "width": 156.328125,
+            "height": 28.796875,
+            "top": 620,
+            "right": 1296,
+            "bottom": 648.796875,
+            "left": 1139.671875
+          },
+          "client": [
+            156,
+            29
+          ],
+          "scroll": [
+            156,
+            29
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "来源：CherryHQ/cherry-studio · README / Contributing · 固定版本 67ca17504 / 09",
+          "rect": {
+            "x": 144,
+            "y": 728,
+            "width": 1152,
+            "height": 30,
+            "top": 728,
+            "right": 1296,
+            "bottom": 758,
+            "left": 144
+          },
+          "client": [
+            1152,
+            30
+          ],
+          "scroll": [
+            1152,
+            30
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "来源：CherryHQ/cherry-studio · README / Contributing · 固定版本 67ca175",
+          "rect": {
+            "x": 144,
+            "y": 734,
+            "width": 467.640625,
+            "height": 18,
+            "top": 734,
+            "right": 611.640625,
+            "bottom": 752,
+            "left": 144
+          },
+          "client": [
+            468,
+            18
+          ],
+          "scroll": [
+            468,
+            18
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "04 / 09",
+          "rect": {
+            "x": 1249.640625,
+            "y": 734,
+            "width": 46.359375,
+            "height": 18,
+            "top": 734,
+            "right": 1296,
+            "bottom": 752,
+            "left": 1249.640625
+          },
+          "client": [
+            46,
+            18
+          ],
+          "scroll": [
+            46,
+            18
+          ],
+          "overflow": "visible"
+        }
+      ],
+      "background": "rgb(248, 246, 240)"
+    },
+    {
+      "page": {
+        "x": 80,
+        "y": 74,
+        "width": 1280,
+        "height": 720,
+        "top": 74,
+        "right": 1360,
+        "bottom": 794,
+        "left": 80
+      },
+      "overflow": [],
+      "textBounds": [
+        {
+          "text": "CHERRY STUDIO反馈 / 把体验变成可讨论的信息",
+          "rect": {
+            "x": 144,
+            "y": 118,
+            "width": 1152,
+            "height": 36,
+            "top": 118,
+            "right": 1296,
+            "bottom": 154,
+            "left": 144
+          },
+          "client": [
+            1152,
+            35
+          ],
+          "scroll": [
+            1152,
+            35
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "CHERRY STUDIO",
+          "rect": {
+            "x": 144,
+            "y": 115.5,
+            "width": 131.53125,
+            "height": 20,
+            "top": 115.5,
+            "right": 275.53125,
+            "bottom": 135.5,
+            "left": 144
+          },
+          "client": [
+            132,
+            20
+          ],
+          "scroll": [
+            132,
+            20
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "反馈 / 把体验变成可讨论的信息",
+          "rect": {
+            "x": 1078.46875,
+            "y": 115.5,
+            "width": 217.53125,
+            "height": 20,
+            "top": 115.5,
+            "right": 1296,
+            "bottom": 135.5,
+            "left": 1078.46875
+          },
+          "client": [
+            218,
+            20
+          ],
+          "scroll": [
+            218,
+            20
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "让别人能重走你的路径",
+          "rect": {
+            "x": 144,
+            "y": 202,
+            "width": 360,
+            "height": 21,
+            "top": 202,
+            "right": 504,
+            "bottom": 223,
+            "left": 144
+          },
+          "client": [
+            360,
+            21
+          ],
+          "scroll": [
+            360,
+            21
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "一份反馈，先把问题讲清。",
+          "rect": {
+            "x": 144,
+            "y": 245,
+            "width": 360,
+            "height": 125,
+            "top": 245,
+            "right": 504,
+            "bottom": 370,
+            "left": 144
+          },
+          "client": [
+            360,
+            125
+          ],
+          "scroll": [
+            360,
+            129
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "不用先知道修复答案。清楚的上下文，已经能减少来回追问。",
+          "rect": {
+            "x": 144,
+            "y": 398,
+            "width": 360,
+            "height": 73.5,
+            "top": 398,
+            "right": 504,
+            "bottom": 471.5,
+            "left": 144
+          },
+          "client": [
+            360,
+            74
+          ],
+          "scroll": [
+            360,
+            74
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "右侧为虚构写作示例，不代表已发现的产品缺陷。",
+          "rect": {
+            "x": 144,
+            "y": 495.5,
+            "width": 360,
+            "height": 49.5,
+            "top": 495.5,
+            "right": 504,
+            "bottom": 545,
+            "left": 144
+          },
+          "client": [
+            360,
+            50
+          ],
+          "scroll": [
+            360,
+            50
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "反馈写作示例 · 非真实缺陷",
+          "rect": {
+            "x": 602,
+            "y": 210,
+            "width": 694,
+            "height": 21,
+            "top": 210,
+            "right": 1296,
+            "bottom": 231,
+            "left": 602
+          },
+          "client": [
+            694,
+            21
+          ],
+          "scroll": [
+            694,
+            21
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "某个操作后，结果与预期不同",
+          "rect": {
+            "x": 602,
+            "y": 246,
+            "width": 694,
+            "height": 37,
+            "top": 246,
+            "right": 1296,
+            "bottom": 283,
+            "left": 602
+          },
+          "client": [
+            694,
+            37
+          ],
+          "scroll": [
+            694,
+            37
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "场景与步骤",
+          "rect": {
+            "x": 602,
+            "y": 306,
+            "width": 694,
+            "height": 20,
+            "top": 306,
+            "right": 1296,
+            "bottom": 326,
+            "left": 602
+          },
+          "client": [
+            694,
+            20
+          ],
+          "scroll": [
+            694,
+            20
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "我想完成什么？从哪个页面开始？按顺序列出触发问题的操作。",
+          "rect": {
+            "x": 602,
+            "y": 332,
+            "width": 694,
+            "height": 67.1875,
+            "top": 332,
+            "right": 1296,
+            "bottom": 399.1875,
+            "left": 602
+          },
+          "client": [
+            694,
+            67
+          ],
+          "scroll": [
+            694,
+            67
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "预期与实际",
+          "rect": {
+            "x": 602,
+            "y": 419.1875,
+            "width": 694,
+            "height": 20,
+            "top": 419.1875,
+            "right": 1296,
+            "bottom": 439.1875,
+            "left": 602
+          },
+          "client": [
+            694,
+            20
+          ],
+          "scroll": [
+            694,
+            20
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "我以为会出现什么？实际出现了什么？补充可以帮助定位的环境与版本。",
+          "rect": {
+            "x": 602,
+            "y": 445.1875,
+            "width": 694,
+            "height": 67.1875,
+            "top": 445.1875,
+            "right": 1296,
+            "bottom": 512.375,
+            "left": 602
+          },
+          "client": [
+            694,
+            67
+          ],
+          "scroll": [
+            694,
+            67
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "可复现的边界",
+          "rect": {
+            "x": 602,
+            "y": 532.375,
+            "width": 694,
+            "height": 20,
+            "top": 532.375,
+            "right": 1296,
+            "bottom": 552.375,
+            "left": 602
+          },
+          "client": [
+            694,
+            20
+          ],
+          "scroll": [
+            694,
+            20
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "每次都出现，还是偶尔发生？如需附素材，先去除其中的私人信息。",
+          "rect": {
+            "x": 602,
+            "y": 558.375,
+            "width": 694,
+            "height": 67.1875,
+            "top": 558.375,
+            "right": 1296,
+            "bottom": 625.5625,
+            "left": 602
+          },
+          "client": [
+            694,
+            67
+          ],
+          "scroll": [
+            694,
+            67
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "作者参与建议 · 具体要求以项目贡献指南为准05 / 09",
+          "rect": {
+            "x": 144,
+            "y": 728,
+            "width": 1152,
+            "height": 30,
+            "top": 728,
+            "right": 1296,
+            "bottom": 758,
+            "left": 144
+          },
+          "client": [
+            1152,
+            30
+          ],
+          "scroll": [
+            1152,
+            30
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "作者参与建议 · 具体要求以项目贡献指南为准",
+          "rect": {
+            "x": 144,
+            "y": 734,
+            "width": 262.171875,
+            "height": 18,
+            "top": 734,
+            "right": 406.171875,
+            "bottom": 752,
+            "left": 144
+          },
+          "client": [
+            262,
+            18
+          ],
+          "scroll": [
+            262,
+            18
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "05 / 09",
+          "rect": {
+            "x": 1249.640625,
+            "y": 734,
+            "width": 46.359375,
+            "height": 18,
+            "top": 734,
+            "right": 1296,
+            "bottom": 752,
+            "left": 1249.640625
+          },
+          "client": [
+            46,
+            18
+          ],
+          "scroll": [
+            46,
+            18
+          ],
+          "overflow": "visible"
+        }
+      ],
+      "background": "rgb(248, 246, 240)"
+    },
+    {
+      "page": {
+        "x": 80,
+        "y": 74,
+        "width": 1280,
+        "height": 720,
+        "top": 74,
+        "right": 1360,
+        "bottom": 794,
+        "left": 80
+      },
+      "overflow": [],
+      "textBounds": [
+        {
+          "text": "CHERRY STUDIO协作 / 让一次修改容易理解",
+          "rect": {
+            "x": 144,
+            "y": 118,
+            "width": 1152,
+            "height": 36,
+            "top": 118,
+            "right": 1296,
+            "bottom": 154,
+            "left": 144
+          },
+          "client": [
+            1152,
+            35
+          ],
+          "scroll": [
+            1152,
+            35
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "CHERRY STUDIO",
+          "rect": {
+            "x": 144,
+            "y": 115.5,
+            "width": 131.53125,
+            "height": 20,
+            "top": 115.5,
+            "right": 275.53125,
+            "bottom": 135.5,
+            "left": 144
+          },
+          "client": [
+            132,
+            20
+          ],
+          "scroll": [
+            132,
+            20
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "协作 / 让一次修改容易理解",
+          "rect": {
+            "x": 1108.875,
+            "y": 115.5,
+            "width": 187.125,
+            "height": 20,
+            "top": 115.5,
+            "right": 1296,
+            "bottom": 135.5,
+            "left": 1108.875
+          },
+          "client": [
+            187,
+            20
+          ],
+          "scroll": [
+            187,
+            20
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "把改动交给共同维护",
+          "rect": {
+            "x": 144,
+            "y": 200,
+            "width": 1152,
+            "height": 21,
+            "top": 200,
+            "right": 1296,
+            "bottom": 221,
+            "left": 144
+          },
+          "client": [
+            1152,
+            21
+          ],
+          "scroll": [
+            1152,
+            21
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "从独立分支，到一个清楚的 PR。",
+          "rect": {
+            "x": 144,
+            "y": 239,
+            "width": 1152,
+            "height": 62.5,
+            "top": 239,
+            "right": 1296,
+            "bottom": 301.5,
+            "left": 144
+          },
+          "client": [
+            1152,
+            63
+          ],
+          "scroll": [
+            1152,
+            66
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "01Fork 与克隆建立自己的工作副本，先阅读贡献指南与分支策略。",
+          "rect": {
+            "x": 144,
+            "y": 331.5,
+            "width": 544,
+            "height": 127.6875,
+            "top": 331.5,
+            "right": 688,
+            "bottom": 459.1875,
+            "left": 144
+          },
+          "client": [
+            544,
+            127
+          ],
+          "scroll": [
+            544,
+            127
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "01",
+          "rect": {
+            "x": 144,
+            "y": 350.5,
+            "width": 42,
+            "height": 108.6875,
+            "top": 350.5,
+            "right": 186,
+            "bottom": 459.1875,
+            "left": 144
+          },
+          "client": [
+            42,
+            109
+          ],
+          "scroll": [
+            42,
+            109
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "Fork 与克隆",
+          "rect": {
+            "x": 198,
+            "y": 350.5,
+            "width": 490,
+            "height": 36,
+            "top": 350.5,
+            "right": 688,
+            "bottom": 386.5,
+            "left": 198
+          },
+          "client": [
+            490,
+            36
+          ],
+          "scroll": [
+            490,
+            36
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "建立自己的工作副本，先阅读贡献指南与分支策略。",
+          "rect": {
+            "x": 198,
+            "y": 396.5,
+            "width": 490,
+            "height": 62.6875,
+            "top": 396.5,
+            "right": 688,
+            "bottom": 459.1875,
+            "left": 198
+          },
+          "client": [
+            490,
+            63
+          ],
+          "scroll": [
+            490,
+            63
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "02创建分支围绕一个明确的问题组织改动，保持范围便于解释与审阅。",
+          "rect": {
+            "x": 752,
+            "y": 331.5,
+            "width": 544,
+            "height": 127.6875,
+            "top": 331.5,
+            "right": 1296,
+            "bottom": 459.1875,
+            "left": 752
+          },
+          "client": [
+            544,
+            127
+          ],
+          "scroll": [
+            544,
+            127
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "02",
+          "rect": {
+            "x": 752,
+            "y": 350.5,
+            "width": 42,
+            "height": 108.6875,
+            "top": 350.5,
+            "right": 794,
+            "bottom": 459.1875,
+            "left": 752
+          },
+          "client": [
+            42,
+            109
+          ],
+          "scroll": [
+            42,
+            109
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "创建分支",
+          "rect": {
+            "x": 806,
+            "y": 350.5,
+            "width": 490,
+            "height": 36,
+            "top": 350.5,
+            "right": 1296,
+            "bottom": 386.5,
+            "left": 806
+          },
+          "client": [
+            490,
+            36
+          ],
+          "scroll": [
+            490,
+            36
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "围绕一个明确的问题组织改动，保持范围便于解释与审阅。",
+          "rect": {
+            "x": 806,
+            "y": 396.5,
+            "width": 490,
+            "height": 62.6875,
+            "top": 396.5,
+            "right": 1296,
+            "bottom": 459.1875,
+            "left": 806
+          },
+          "client": [
+            490,
+            63
+          ],
+          "scroll": [
+            490,
+            63
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "03提交修改完成修改并提交、推送，交代做了什么以及如何验证。",
+          "rect": {
+            "x": 144,
+            "y": 487.1875,
+            "width": 544,
+            "height": 127.6875,
+            "top": 487.1875,
+            "right": 688,
+            "bottom": 614.875,
+            "left": 144
+          },
+          "client": [
+            544,
+            127
+          ],
+          "scroll": [
+            544,
+            127
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "03",
+          "rect": {
+            "x": 144,
+            "y": 506.1875,
+            "width": 42,
+            "height": 108.6875,
+            "top": 506.1875,
+            "right": 186,
+            "bottom": 614.875,
+            "left": 144
+          },
+          "client": [
+            42,
+            109
+          ],
+          "scroll": [
+            42,
+            109
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "提交修改",
+          "rect": {
+            "x": 198,
+            "y": 506.1875,
+            "width": 490,
+            "height": 36,
+            "top": 506.1875,
+            "right": 688,
+            "bottom": 542.1875,
+            "left": 198
+          },
+          "client": [
+            490,
+            36
+          ],
+          "scroll": [
+            490,
+            36
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "完成修改并提交、推送，交代做了什么以及如何验证。",
+          "rect": {
+            "x": 198,
+            "y": 552.1875,
+            "width": 490,
+            "height": 62.6875,
+            "top": 552.1875,
+            "right": 688,
+            "bottom": 614.875,
+            "left": 198
+          },
+          "client": [
+            490,
+            63
+          ],
+          "scroll": [
+            490,
+            63
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "04发起 Pull Request说明修改的原因，跟进讨论并补充必要的信息。",
+          "rect": {
+            "x": 752,
+            "y": 487.1875,
+            "width": 544,
+            "height": 127.6875,
+            "top": 487.1875,
+            "right": 1296,
+            "bottom": 614.875,
+            "left": 752
+          },
+          "client": [
+            544,
+            127
+          ],
+          "scroll": [
+            544,
+            127
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "04",
+          "rect": {
+            "x": 752,
+            "y": 506.1875,
+            "width": 42,
+            "height": 108.6875,
+            "top": 506.1875,
+            "right": 794,
+            "bottom": 614.875,
+            "left": 752
+          },
+          "client": [
+            42,
+            109
+          ],
+          "scroll": [
+            42,
+            109
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "发起 Pull Request",
+          "rect": {
+            "x": 806,
+            "y": 506.1875,
+            "width": 490,
+            "height": 36,
+            "top": 506.1875,
+            "right": 1296,
+            "bottom": 542.1875,
+            "left": 806
+          },
+          "client": [
+            490,
+            36
+          ],
+          "scroll": [
+            490,
+            36
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "说明修改的原因，跟进讨论并补充必要的信息。",
+          "rect": {
+            "x": 806,
+            "y": 552.1875,
+            "width": 490,
+            "height": 62.6875,
+            "top": 552.1875,
+            "right": 1296,
+            "bottom": 614.875,
+            "left": 806
+          },
+          "client": [
+            490,
+            63
+          ],
+          "scroll": [
+            490,
+            63
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "来源：CherryHQ/cherry-studio · README · 固定版本 67ca175 / Getting Started；范围与验证为作者建议06 / 09",
+          "rect": {
+            "x": 144,
+            "y": 728,
+            "width": 1152,
+            "height": 30,
+            "top": 728,
+            "right": 1296,
+            "bottom": 758,
+            "left": 144
+          },
+          "client": [
+            1152,
+            30
+          ],
+          "scroll": [
+            1152,
+            30
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "来源：CherryHQ/cherry-studio · README · 固定版本 67ca175 / Getting Started；范围与验证为作者建议",
+          "rect": {
+            "x": 144,
+            "y": 734,
+            "width": 628.875,
+            "height": 18,
+            "top": 734,
+            "right": 772.875,
+            "bottom": 752,
+            "left": 144
+          },
+          "client": [
+            629,
+            18
+          ],
+          "scroll": [
+            629,
+            18
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "06 / 09",
+          "rect": {
+            "x": 1249.640625,
+            "y": 734,
+            "width": 46.359375,
+            "height": 18,
+            "top": 734,
+            "right": 1296,
+            "bottom": 752,
+            "left": 1249.640625
+          },
+          "client": [
+            46,
+            18
+          ],
+          "scroll": [
+            46,
+            18
+          ],
+          "overflow": "visible"
+        }
+      ],
+      "background": "rgb(248, 246, 240)"
+    },
+    {
+      "page": {
+        "x": 80,
+        "y": 74,
+        "width": 1280,
+        "height": 720,
+        "top": 74,
+        "right": 1360,
+        "bottom": 794,
+        "left": 80
+      },
+      "overflow": [],
+      "textBounds": [
+        {
+          "text": "CHERRY STUDIO行动 / 一次小而完整的贡献",
+          "rect": {
+            "x": 144,
+            "y": 118,
+            "width": 1152,
+            "height": 36,
+            "top": 118,
+            "right": 1296,
+            "bottom": 154,
+            "left": 144
+          },
+          "client": [
+            1152,
+            35
+          ],
+          "scroll": [
+            1152,
+            35
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "CHERRY STUDIO",
+          "rect": {
+            "x": 144,
+            "y": 115.5,
+            "width": 131.53125,
+            "height": 20,
+            "top": 115.5,
+            "right": 275.53125,
+            "bottom": 135.5,
+            "left": 144
+          },
+          "client": [
+            132,
+            20
+          ],
+          "scroll": [
+            132,
+            20
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "行动 / 一次小而完整的贡献",
+          "rect": {
+            "x": 1108.875,
+            "y": 115.5,
+            "width": 187.125,
+            "height": 20,
+            "top": 115.5,
+            "right": 1296,
+            "bottom": 135.5,
+            "left": 1108.875
+          },
+          "client": [
+            187,
+            20
+          ],
+          "scroll": [
+            187,
+            20
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "把参与变成可执行的下一步",
+          "rect": {
+            "x": 144,
+            "y": 192,
+            "width": 578.5,
+            "height": 21,
+            "top": 192,
+            "right": 722.5,
+            "bottom": 213,
+            "left": 144
+          },
+          "client": [
+            579,
+            21
+          ],
+          "scroll": [
+            579,
+            21
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "从你最了解的那个问题开始。",
+          "rect": {
+            "x": 144,
+            "y": 225,
+            "width": 578.5,
+            "height": 57.5,
+            "top": 225,
+            "right": 722.5,
+            "bottom": 282.5,
+            "left": 144
+          },
+          "client": [
+            579,
+            58
+          ],
+          "scroll": [
+            579,
+            61
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "下列是作者的参与建议，具体要求以项目贡献指南为准。",
+          "rect": {
+            "x": 1058,
+            "y": 224.71875,
+            "width": 238,
+            "height": 57.78125,
+            "top": 224.71875,
+            "right": 1296,
+            "bottom": 282.5,
+            "left": 1058
+          },
+          "client": [
+            238,
+            58
+          ],
+          "scroll": [
+            238,
+            58
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "你看到的机会",
+          "rect": {
+            "x": 144,
+            "y": 310.5,
+            "width": 241.90625,
+            "height": 35.390625,
+            "top": 310.5,
+            "right": 385.90625,
+            "bottom": 345.890625,
+            "left": 144
+          },
+          "client": [
+            242,
+            34
+          ],
+          "scroll": [
+            242,
+            34
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "可以做的一件事",
+          "rect": {
+            "x": 385.90625,
+            "y": 310.5,
+            "width": 483.828125,
+            "height": 35.390625,
+            "top": 310.5,
+            "right": 869.734375,
+            "bottom": 345.890625,
+            "left": 385.90625
+          },
+          "client": [
+            484,
+            34
+          ],
+          "scroll": [
+            484,
+            34
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "让协作者容易接手",
+          "rect": {
+            "x": 869.734375,
+            "y": 310.5,
+            "width": 426.265625,
+            "height": 35.390625,
+            "top": 310.5,
+            "right": 1296,
+            "bottom": 345.890625,
+            "left": 869.734375
+          },
+          "client": [
+            426,
+            34
+          ],
+          "scroll": [
+            426,
+            34
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "01使用中遇到障碍",
+          "rect": {
+            "x": 144,
+            "y": 345.890625,
+            "width": 241.90625,
+            "height": 67.890625,
+            "top": 345.890625,
+            "right": 385.90625,
+            "bottom": 413.78125,
+            "left": 144
+          },
+          "client": [
+            242,
+            66
+          ],
+          "scroll": [
+            242,
+            66
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "01",
+          "rect": {
+            "x": 144,
+            "y": 371.890625,
+            "width": 32,
+            "height": 20.796875,
+            "top": 371.890625,
+            "right": 176,
+            "bottom": 392.6875,
+            "left": 144
+          },
+          "client": [
+            32,
+            21
+          ],
+          "scroll": [
+            32,
+            21
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "把问题整理为可复现的反馈",
+          "rect": {
+            "x": 385.90625,
+            "y": 345.890625,
+            "width": 483.828125,
+            "height": 67.890625,
+            "top": 345.890625,
+            "right": 869.734375,
+            "bottom": 413.78125,
+            "left": 385.90625
+          },
+          "client": [
+            484,
+            66
+          ],
+          "scroll": [
+            484,
+            66
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "写明操作步骤、预期与实际结果",
+          "rect": {
+            "x": 869.734375,
+            "y": 345.890625,
+            "width": 426.265625,
+            "height": 67.890625,
+            "top": 345.890625,
+            "right": 1296,
+            "bottom": 413.78125,
+            "left": 869.734375
+          },
+          "client": [
+            426,
+            66
+          ],
+          "scroll": [
+            426,
+            66
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "02说明不够清楚",
+          "rect": {
+            "x": 144,
+            "y": 413.78125,
+            "width": 241.90625,
+            "height": 67.390625,
+            "top": 413.78125,
+            "right": 385.90625,
+            "bottom": 481.171875,
+            "left": 144
+          },
+          "client": [
+            242,
+            66
+          ],
+          "scroll": [
+            242,
+            66
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "02",
+          "rect": {
+            "x": 144,
+            "y": 439.28125,
+            "width": 32,
+            "height": 20.796875,
+            "top": 439.28125,
+            "right": 176,
+            "bottom": 460.078125,
+            "left": 144
+          },
+          "client": [
+            32,
+            21
+          ],
+          "scroll": [
+            32,
+            21
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "补充一段文档或一个具体例子",
+          "rect": {
+            "x": 385.90625,
+            "y": 413.78125,
+            "width": 483.828125,
+            "height": 67.390625,
+            "top": 413.78125,
+            "right": 869.734375,
+            "bottom": 481.171875,
+            "left": 385.90625
+          },
+          "client": [
+            484,
+            66
+          ],
+          "scroll": [
+            484,
+            66
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "说明适用场景，核对步骤是否可用",
+          "rect": {
+            "x": 869.734375,
+            "y": 413.78125,
+            "width": 426.265625,
+            "height": 67.390625,
+            "top": 413.78125,
+            "right": 1296,
+            "bottom": 481.171875,
+            "left": 869.734375
+          },
+          "client": [
+            426,
+            66
+          ],
+          "scroll": [
+            426,
+            66
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "03交互可以更顺",
+          "rect": {
+            "x": 144,
+            "y": 481.171875,
+            "width": 241.90625,
+            "height": 67.390625,
+            "top": 481.171875,
+            "right": 385.90625,
+            "bottom": 548.5625,
+            "left": 144
+          },
+          "client": [
+            242,
+            66
+          ],
+          "scroll": [
+            242,
+            66
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "03",
+          "rect": {
+            "x": 144,
+            "y": 506.671875,
+            "width": 32,
+            "height": 20.796875,
+            "top": 506.671875,
+            "right": 176,
+            "bottom": 527.46875,
+            "left": 144
+          },
+          "client": [
+            32,
+            21
+          ],
+          "scroll": [
+            32,
+            21
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "在设计讨论中提出改进方案",
+          "rect": {
+            "x": 385.90625,
+            "y": 481.171875,
+            "width": 483.828125,
+            "height": 67.390625,
+            "top": 481.171875,
+            "right": 869.734375,
+            "bottom": 548.5625,
+            "left": 385.90625
+          },
+          "client": [
+            484,
+            66
+          ],
+          "scroll": [
+            484,
+            66
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "带上使用场景，解释取舍与影响",
+          "rect": {
+            "x": 869.734375,
+            "y": 481.171875,
+            "width": 426.265625,
+            "height": 67.390625,
+            "top": 481.171875,
+            "right": 1296,
+            "bottom": 548.5625,
+            "left": 869.734375
+          },
+          "client": [
+            426,
+            66
+          ],
+          "scroll": [
+            426,
+            66
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "04找到了修复方法",
+          "rect": {
+            "x": 144,
+            "y": 548.5625,
+            "width": 241.90625,
+            "height": 67.390625,
+            "top": 548.5625,
+            "right": 385.90625,
+            "bottom": 615.953125,
+            "left": 144
+          },
+          "client": [
+            242,
+            66
+          ],
+          "scroll": [
+            242,
+            66
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "04",
+          "rect": {
+            "x": 144,
+            "y": 574.0625,
+            "width": 32,
+            "height": 20.796875,
+            "top": 574.0625,
+            "right": 176,
+            "bottom": 594.859375,
+            "left": 144
+          },
+          "client": [
+            32,
+            21
+          ],
+          "scroll": [
+            32,
+            21
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "在独立分支完成修改并提交 PR",
+          "rect": {
+            "x": 385.90625,
+            "y": 548.5625,
+            "width": 483.828125,
+            "height": 67.390625,
+            "top": 548.5625,
+            "right": 869.734375,
+            "bottom": 615.953125,
+            "left": 385.90625
+          },
+          "client": [
+            484,
+            66
+          ],
+          "scroll": [
+            484,
+            66
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "描述原因、改动与验证结果",
+          "rect": {
+            "x": 869.734375,
+            "y": 548.5625,
+            "width": 426.265625,
+            "height": 67.390625,
+            "top": 548.5625,
+            "right": 1296,
+            "bottom": 615.953125,
+            "left": 869.734375
+          },
+          "client": [
+            426,
+            66
+          ],
+          "scroll": [
+            426,
+            66
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "选一个问题 → 读贡献指南 → 讨论或提交 → 跟进反馈",
+          "rect": {
+            "x": 253,
+            "y": 638.453125,
+            "width": 407.96875,
+            "height": 27.1875,
+            "top": 638.453125,
+            "right": 660.96875,
+            "bottom": 665.640625,
+            "left": 253
+          },
+          "client": [
+            408,
+            27
+          ],
+          "scroll": [
+            408,
+            27
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "贡献入口依据固定 README；行动清单为作者建议，不代表官方流程承诺07 / 09",
+          "rect": {
+            "x": 144,
+            "y": 728,
+            "width": 1152,
+            "height": 30,
+            "top": 728,
+            "right": 1296,
+            "bottom": 758,
+            "left": 144
+          },
+          "client": [
+            1152,
+            30
+          ],
+          "scroll": [
+            1152,
+            30
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "贡献入口依据固定 README；行动清单为作者建议，不代表官方流程承诺",
+          "rect": {
+            "x": 144,
+            "y": 734,
+            "width": 422.875,
+            "height": 18,
+            "top": 734,
+            "right": 566.875,
+            "bottom": 752,
+            "left": 144
+          },
+          "client": [
+            423,
+            18
+          ],
+          "scroll": [
+            423,
+            18
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "07 / 09",
+          "rect": {
+            "x": 1250.328125,
+            "y": 734,
+            "width": 45.671875,
+            "height": 18,
+            "top": 734,
+            "right": 1296,
+            "bottom": 752,
+            "left": 1250.328125
+          },
+          "client": [
+            46,
+            18
+          ],
+          "scroll": [
+            46,
+            18
+          ],
+          "overflow": "visible"
+        }
+      ],
+      "background": "rgb(248, 246, 240)"
+    },
+    {
+      "page": {
+        "x": 80,
+        "y": 74,
+        "width": 1280,
+        "height": 720,
+        "top": 74,
+        "right": 1360,
+        "bottom": 794,
+        "left": 80
+      },
+      "overflow": [],
+      "textBounds": [
+        {
+          "text": "CHERRY STUDIO持续 / 提交之后，协作仍在继续",
+          "rect": {
+            "x": 144,
+            "y": 118,
+            "width": 1152,
+            "height": 36,
+            "top": 118,
+            "right": 1296,
+            "bottom": 154,
+            "left": 144
+          },
+          "client": [
+            1152,
+            35
+          ],
+          "scroll": [
+            1152,
+            35
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "CHERRY STUDIO",
+          "rect": {
+            "x": 144,
+            "y": 115.5,
+            "width": 131.53125,
+            "height": 20,
+            "top": 115.5,
+            "right": 275.53125,
+            "bottom": 135.5,
+            "left": 144
+          },
+          "client": [
+            132,
+            20
+          ],
+          "scroll": [
+            132,
+            20
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "持续 / 提交之后，协作仍在继续",
+          "rect": {
+            "x": 1078.46875,
+            "y": 115.5,
+            "width": 217.53125,
+            "height": 20,
+            "top": 115.5,
+            "right": 1296,
+            "bottom": 135.5,
+            "left": 1078.46875
+          },
+          "client": [
+            218,
+            20
+          ],
+          "scroll": [
+            218,
+            20
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "贡献不止于提交",
+          "rect": {
+            "x": 144,
+            "y": 222,
+            "width": 310,
+            "height": 21,
+            "top": 222,
+            "right": 454,
+            "bottom": 243,
+            "left": 144
+          },
+          "client": [
+            310,
+            21
+          ],
+          "scroll": [
+            310,
+            21
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "留出空间，接住反馈。",
+          "rect": {
+            "x": 144,
+            "y": 243,
+            "width": 310,
+            "height": 156.78125,
+            "top": 243,
+            "right": 454,
+            "bottom": 399.78125,
+            "left": 144
+          },
+          "client": [
+            310,
+            157
+          ],
+          "scroll": [
+            310,
+            157
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "把讨论看作共同理解问题的过程。",
+          "rect": {
+            "x": 524,
+            "y": 222,
+            "width": 772,
+            "height": 85.390625,
+            "top": 222,
+            "right": 1296,
+            "bottom": 307.390625,
+            "left": 524
+          },
+          "client": [
+            772,
+            84
+          ],
+          "scroll": [
+            772,
+            84
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "信息不够时",
+          "rect": {
+            "x": 524,
+            "y": 361.390625,
+            "width": 368.5,
+            "height": 37,
+            "top": 361.390625,
+            "right": 892.5,
+            "bottom": 398.390625,
+            "left": 524
+          },
+          "client": [
+            369,
+            37
+          ],
+          "scroll": [
+            369,
+            37
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "补充复现步骤、例子或验证结果，帮助协作者缩小不确定性。",
+          "rect": {
+            "x": 524,
+            "y": 413.390625,
+            "width": 368.5,
+            "height": 72,
+            "top": 413.390625,
+            "right": 892.5,
+            "bottom": 485.390625,
+            "left": 524
+          },
+          "client": [
+            369,
+            72
+          ],
+          "scroll": [
+            369,
+            72
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "意见不同时",
+          "rect": {
+            "x": 927.5,
+            "y": 361.390625,
+            "width": 368.5,
+            "height": 37,
+            "top": 361.390625,
+            "right": 1296,
+            "bottom": 398.390625,
+            "left": 927.5
+          },
+          "client": [
+            369,
+            37
+          ],
+          "scroll": [
+            369,
+            37
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "回到使用场景，解释取舍；必要时把大方案拆成小改动。",
+          "rect": {
+            "x": 927.5,
+            "y": 413.390625,
+            "width": 368.5,
+            "height": 72,
+            "top": 413.390625,
+            "right": 1296,
+            "bottom": 485.390625,
+            "left": 927.5
+          },
+          "client": [
+            369,
+            72
+          ],
+          "scroll": [
+            369,
+            72
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "建议持续跟进，但不预设维护者的响应速度或合并结果。",
+          "rect": {
+            "x": 524,
+            "y": 509.390625,
+            "width": 772,
+            "height": 24.75,
+            "top": 509.390625,
+            "right": 1296,
+            "bottom": 534.140625,
+            "left": 524
+          },
+          "client": [
+            772,
+            25
+          ],
+          "scroll": [
+            772,
+            25
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "作者参与建议 · 具体要求以项目贡献指南为准08 / 09",
+          "rect": {
+            "x": 144,
+            "y": 728,
+            "width": 1152,
+            "height": 30,
+            "top": 728,
+            "right": 1296,
+            "bottom": 758,
+            "left": 144
+          },
+          "client": [
+            1152,
+            30
+          ],
+          "scroll": [
+            1152,
+            30
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "作者参与建议 · 具体要求以项目贡献指南为准",
+          "rect": {
+            "x": 144,
+            "y": 734,
+            "width": 262.171875,
+            "height": 18,
+            "top": 734,
+            "right": 406.171875,
+            "bottom": 752,
+            "left": 144
+          },
+          "client": [
+            262,
+            18
+          ],
+          "scroll": [
+            262,
+            18
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "08 / 09",
+          "rect": {
+            "x": 1249.640625,
+            "y": 734,
+            "width": 46.359375,
+            "height": 18,
+            "top": 734,
+            "right": 1296,
+            "bottom": 752,
+            "left": 1249.640625
+          },
+          "client": [
+            46,
+            18
+          ],
+          "scroll": [
+            46,
+            18
+          ],
+          "overflow": "visible"
+        }
+      ],
+      "background": "rgb(248, 246, 240)"
+    },
+    {
+      "page": {
+        "x": 80,
+        "y": 74,
+        "width": 1280,
+        "height": 720,
+        "top": 74,
+        "right": 1360,
+        "bottom": 794,
+        "left": 80
+      },
+      "overflow": [],
+      "textBounds": [
+        {
+          "text": "CHERRY STUDIO下一步 / 从一个问题开始",
+          "rect": {
+            "x": 144,
+            "y": 118,
+            "width": 1152,
+            "height": 36,
+            "top": 118,
+            "right": 1296,
+            "bottom": 154,
+            "left": 144
+          },
+          "client": [
+            1152,
+            35
+          ],
+          "scroll": [
+            1152,
+            35
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "CHERRY STUDIO",
+          "rect": {
+            "x": 144,
+            "y": 115.5,
+            "width": 131.53125,
+            "height": 20,
+            "top": 115.5,
+            "right": 275.53125,
+            "bottom": 135.5,
+            "left": 144
+          },
+          "client": [
+            132,
+            20
+          ],
+          "scroll": [
+            132,
+            20
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "下一步 / 从一个问题开始",
+          "rect": {
+            "x": 1124.0625,
+            "y": 115.5,
+            "width": 171.9375,
+            "height": 20,
+            "top": 115.5,
+            "right": 1296,
+            "bottom": 135.5,
+            "left": 1124.0625
+          },
+          "client": [
+            172,
+            20
+          ],
+          "scroll": [
+            172,
+            20
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "03 / 完成一次小贡献",
+          "rect": {
+            "x": 144,
+            "y": 206,
+            "width": 1152,
+            "height": 21,
+            "top": 206,
+            "right": 1296,
+            "bottom": 227,
+            "left": 144
+          },
+          "client": [
+            1152,
+            21
+          ],
+          "scroll": [
+            1152,
+            21
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "选一个你在意的问题。让下一步，具体一点。",
+          "rect": {
+            "x": 144,
+            "y": 251,
+            "width": 1152,
+            "height": 194.375,
+            "top": 251,
+            "right": 1296,
+            "bottom": 445.375,
+            "left": 144
+          },
+          "client": [
+            1152,
+            194
+          ],
+          "scroll": [
+            1152,
+            195
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "读一段指南，补一个例子，或写下一份清楚的反馈。从自己能完成的范围开始，和社区一起向前。",
+          "rect": {
+            "x": 144,
+            "y": 473.375,
+            "width": 1152,
+            "height": 73.5,
+            "top": 473.375,
+            "right": 1296,
+            "bottom": 546.875,
+            "left": 144
+          },
+          "client": [
+            1152,
+            74
+          ],
+          "scroll": [
+            1152,
+            74
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "项目仓库 ↗",
+          "rect": {
+            "x": 144,
+            "y": 609.875,
+            "width": 90.671875,
+            "height": 50.375,
+            "top": 609.875,
+            "right": 234.671875,
+            "bottom": 660.25,
+            "left": 144
+          },
+          "client": [
+            91,
+            50
+          ],
+          "scroll": [
+            91,
+            50
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "贡献指南 ↗",
+          "rect": {
+            "x": 282.671875,
+            "y": 609.875,
+            "width": 90.671875,
+            "height": 50.375,
+            "top": 609.875,
+            "right": 373.34375,
+            "bottom": 660.25,
+            "left": 282.671875
+          },
+          "client": [
+            91,
+            50
+          ],
+          "scroll": [
+            91,
+            50
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "本稿事实依据固定 README 67ca175。不含实时统计；参与建议与概念图均为作者表达。",
+          "rect": {
+            "x": 421.34375,
+            "y": 609.875,
+            "width": 308,
+            "height": 50.375,
+            "top": 609.875,
+            "right": 729.34375,
+            "bottom": 660.25,
+            "left": 421.34375
+          },
+          "client": [
+            308,
+            50
+          ],
+          "scroll": [
+            308,
+            50
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "资料：固定 README 的 Introduction / Key Features / Contributing / Getting Started09 / 09",
+          "rect": {
+            "x": 144,
+            "y": 728,
+            "width": 1152,
+            "height": 30,
+            "top": 728,
+            "right": 1296,
+            "bottom": 758,
+            "left": 144
+          },
+          "client": [
+            1152,
+            30
+          ],
+          "scroll": [
+            1152,
+            30
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "资料：固定 README 的 Introduction / Key Features / Contributing / Getting Started",
+          "rect": {
+            "x": 144,
+            "y": 734,
+            "width": 510.421875,
+            "height": 18,
+            "top": 734,
+            "right": 654.421875,
+            "bottom": 752,
+            "left": 144
+          },
+          "client": [
+            510,
+            18
+          ],
+          "scroll": [
+            510,
+            18
+          ],
+          "overflow": "visible"
+        },
+        {
+          "text": "09 / 09",
+          "rect": {
+            "x": 1249.640625,
+            "y": 734,
+            "width": 46.359375,
+            "height": 18,
+            "top": 734,
+            "right": 1296,
+            "bottom": 752,
+            "left": 1249.640625
+          },
+          "client": [
+            46,
+            18
+          ],
+          "scroll": [
+            46,
+            18
+          ],
+          "overflow": "visible"
+        }
+      ],
+      "background": "rgb(248, 246, 240)"
+    }
+  ],
+  "errors": [],
+  "network": []
+}

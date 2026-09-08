@@ -1,0 +1,28 @@
+{
+  "baseCommit": "24f489bdd3e983ff8ed280ae21a39d1ceec78e35",
+  "representativeSnapshotSha256": "d9089cc721060b7e95ab17e3a2534d032c6567428e2b5ef7e8cef63d069facab",
+  "representativeSnapshotByteIdentical": true,
+  "fullDeckSha256": "891e41ed89c19c6b27bbe7444c35d2adc50653a03464f4c29689dc0564628c54",
+  "sourceSha256": "453acbd415f7a741ca08ead0c1b86a39daaa5e70916f76cfbfc5340e60d43c81",
+  "skillSha256": "40fa1f60fdee7ac323d9df4e432346a9e1ccb35004fea75439df0437ae6651bc",
+  "representativeScreenshots": [
+    {
+      "path": "docs/usability-reset/evidence/U01/screenshots/present-1.png",
+      "sha256": "71aec5c5303c9344af3ff1791533156ae46481ecdc4bd9e5e911f4e7043da30f",
+      "unchanged": true
+    },
+    {
+      "path": "docs/usability-reset/evidence/U01/screenshots/present-2.png",
+      "sha256": "ea90010601519a9619f20d483ad837b2fe17b42a537790e883868a1890fc8d49",
+      "unchanged": true
+    },
+    {
+      "path": "docs/usability-reset/evidence/U01/screenshots/present-3.png",
+      "sha256": "079d11b1b215ad2c611a55bdecd34e27e045a45af03201f7bf2ddc7fed8b1438",
+      "unchanged": true
+    }
+  ],
+  "node": "v22.23.2",
+  "platform": "darwin",
+  "arch": "arm64"
+}

@@ -1,3 +1,33 @@
+# U01 FULL：九页完整稿待最终签收
+
+当前状态：`full-deck-awaiting-user-acceptance`。用户 2026-09-08 20:13「可以，先这么做吧」已授权从三页扩展；不等于最终九页签收。code passed；automated passed（179 passed / 0 failed / 16 既有 skips）；real-browser/human pending。旧稿拒收及三页停机历史保留在下文。
+
+## 本轮交付与叙事
+
+唯一当前 `.ppte.html` 为 `Cherry-Studio-开源之路.ppte.html`，九页、406666 bytes，原生可编辑 HTML/CSS，内嵌一张 SVG 概念图与当前 PPTe 运行时。已签收三页在第 1/4/7 页保留正文与构图，只更新页码。新增第 2/3/5/6/8/9 页由本轮撰写；不是旧拒收稿换日期。封面大字、产品概述双栏、非对称观点页、图文页、反馈示例、分步协作、密集表格与收尾形成阅读变化，统一纸白/墨色/少量朱红与系统中文字体。没有改编辑器 UI 或恢复旧格式/PDF。
+
+事实仍依据项目固定 README 67ca175，逐页出处见 `verification/full-deck/sources.json`；无实时数字、新版本或增长推断。新增行动细节明确为作者建议；反馈示例明确虚构，不虚构产品缺陷。复查了概念图素材与最终第 4 页，三条路径、汇合节点、全部端点完整，contain 裁切适当；没有使用未查看图片或整页截图。Skill 已符合轻量提醒要求，本轮不添加规则，既有源码/包/安装一致性测试继续执行。
+
+## 一次生成与实测
+
+本轮完整稿增强 **1 次，75.815417 ms；成稿局部修复 0 次**。增强日志含真实时间戳、参数与返回值；没有为门禁反复生成。作者构建是编译运行时，不是第二次成稿增强。九页均在真实 Chrome headless file:// 离线运行时逐页截图，Agent 已逐张查看，未见文字截断、重叠或主体裁切；不是目标机人工体验确认。
+
+新增两项 FULL 回归：九页全部页面及文字 Range 边界（含 h3/dt/dd/a）、统一背景、离线图片解码、无控件放映、无网络/脚本错误；真实文本编辑→撤销重做→下载内容与编辑源逐字一致→关闭浏览器进程→重开九页并确认修改与图片。下载副本只在 ignored artifacts 中，交付文件哈希始终不变。首次 FULL 测试错误沿用三页导航位置，图片不在激活页导致解码断言失败；修正为第 4 页后通过。初始/修正日志都保留；无成稿修复、无断言弱化。
+
+原六项三页/安装回归完整保留，原三页增强文件逐字节移至 `verification/representative-snapshot.html`，历史截图不变，三页断言未改成更宽松的页数检查。历史停机断言仍从 d51c729 读取；当前状态断言按真实签收阶段更新，并新增完整稿页数与 pending 检查。两项 FULL 回归加入同一仓库测试文件，随 `pnpm test` 执行。
+
+全仓库门禁：`pnpm typecheck`、`pnpm build`、`pnpm test` 均 RC=0；179 passed / 0 failed / 16 既有 skips。签名提交使用 U01 前缀、YinsenW 作者及 signoff，不 push。
+
+## 证据与未决项
+
+`verification/full-deck/` 保存增强、事实映射、初始及修正测试日志、全门禁、布局与重开证据；`screenshots/full-present-1.png` 至 `9.png` 为全稿放映截图。`present-1/2/3.png` 仍是原三页开发证据。`verification/full-deck/previous-result.json` 保存先前结果原字节，当前结果见 `verification/result.json`。SHA256SUMS 覆盖本目录证据（自身除外）。
+
+目标桌面缺少可调用物理桌面通道，原生输入法、file:// 真实人工操作及最终视觉签收仍 pending；自动化不能替用户签收。最终用户需打开九页文件评审连贯性、留白与可读性，给出认可或具体修改。TASKS.json 不标 done；U02/U03/U04/U05 不在本轮关闭范围。
+
+---
+
+# 以下为三页阶段与门禁修复历史（非当前状态）
+
 # U01：新代表页与 Skill 源头修正
 
 状态：**awaiting-user-decision**。先前成稿美学被用户拒收，human 继续 reopened；新方向已形成三个可操作代表页，等待用户视觉签收。完整稿未生成，不能称 U01 全部完成。

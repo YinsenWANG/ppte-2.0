@@ -1,8 +1,16 @@
 # 待用户裁决
 
+## U01 — 完整稿最终签收：pending
+
+已按 2026-09-08 20:13 的三页签收方向扩展为 [九页完整稿](evidence/U01/Cherry-Studio-开源之路.ppte.html)，同一单文件可直接阅读、编辑和放映。完整稿包括工具定位、使用经验、参与路径、反馈示例、PR 协作、行动清单、后续反馈与结束页；原三个代表页对应完整稿第 1、4、7 页。
+
+最终整稿尚未收到用户认可，U01 保持 `full-deck-awaiting-user-acceptance`，不得标 done。目标桌面实测没有可调用的物理桌面通道，继续 pending；Chrome headless 截图与编辑重开仅属自动化证据。请用户打开九页完整稿评审整体连贯性与可读性，给出最终认可或具体修改页。
+
+以下三页提案与签收记录为历史记录；原三页文件字节保留于 [历史样稿快照](evidence/U01/verification/representative-snapshot.html)，原截图不变。
+
 ## U01 — 美学签收：awaiting-user-decision
 
-本轮唯一可打开交付：[Cherry Studio · 开源之路（三代表页）](evidence/U01/Cherry-Studio-开源之路.ppte.html)。文件只含封面、图文页、信息密集页；不是完整稿。直接打开，在同一 PPTe 运行时翻页或放映。
+当时三页交付（现已归档）：[Cherry Studio · 开源之路（三代表页）](evidence/U01/verification/representative-snapshot.html)。文件只含封面、图文页、信息密集页；不是完整稿。直接打开，在同一 PPTe 运行时翻页或放映。
 
 |代表页|同一运行时的纯净放映截图|设计说明|
 |---|---|---|

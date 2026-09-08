@@ -1,0 +1,20 @@
+[
+  {
+    "command": "pnpm typecheck",
+    "startedAt": "2026-09-08T12:31:15.782Z",
+    "durationMs": 1260.81325,
+    "status": 0
+  },
+  {
+    "command": "pnpm build",
+    "startedAt": "2026-09-08T12:31:17.043Z",
+    "durationMs": 1495.4374999999998,
+    "status": 0
+  },
+  {
+    "command": "pnpm test",
+    "startedAt": "2026-09-08T12:31:18.539Z",
+    "durationMs": 121785.043666,
+    "status": 0
+  }
+]

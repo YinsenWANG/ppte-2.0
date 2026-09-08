@@ -1,0 +1,57 @@
+TAP version 13
+# Subtest: U01 FULL A1/A2: nine native native pages in one offline runtime, text/image bounds and clean presentation
+not ok 1 - U01 FULL A1/A2: nine native native pages in one offline runtime, text/image bounds and clean presentation
+  ---
+  duration_ms: 6134.455542
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/usability-reset-u01.test.js:220:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/usability-reset-u01.test.js:279:16)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: U01 FULL A1: actual text editing, undo/redo, explicit download and new browser process retain the representative source
+not ok 2 - U01 FULL A1: actual text editing, undo/redo, explicit download and new browser process retain the representative source
+  ---
+  duration_ms: 2527.28675
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/usability-reset-u01.test.js:290:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/usability-reset-u01.test.js:329:16)
+    runNextTicks (node:internal/process/task_queues:64:5)
+    process.processImmediate (node:internal/timers:452:9)
+    process.callbackTrampoline (node:internal/async_hooks:130:17)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8851.137542

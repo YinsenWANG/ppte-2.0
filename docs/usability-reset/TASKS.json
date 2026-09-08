@@ -7,7 +7,7 @@
     {
       "id": "U01",
       "title": "重新设计成稿并修正Skill",
-      "status": "signed-off-awaiting-full-deck",
+      "status": "full-deck-awaiting-user-acceptance",
       "acceptance": "三个新代表页及完整稿；不复用旧设计冒充提升；用户视觉确认；源码与安装说明一致",
       "evidence": [
         "evidence/U01/IMPLEMENTATION.md",
@@ -18,25 +18,27 @@
         "evidence/U01/SHA256SUMS",
         "DECISIONS.md",
         "evidence/U01/verification/fix-round/",
-        "DECISIONS.md#u01-用户签收"
+        "DECISIONS.md#u01-用户签收",
+        "evidence/U01/verification/full-deck/",
+        "evidence/U01/verification/representative-snapshot.html"
       ],
       "verification": {
-        "code": "partial",
+        "code": "passed",
         "automated": "passed",
         "real-browser": "pending",
-        "human": "reopened",
-        "implementationCommit": "7b2666570653c9ffbef056e4e907124b4708a2be",
-        "reason": "Three representative pages and source/package/installed Skill parity verified. npm 12 keyed pack receipt failure reproduced and fixed without weakening assertions; actual npm 10/12 offline installs pass. Final gates: 169 passed / 0 failed / 16 existing skips. Code remains partial: full deck requires user visual approval. Physical desktop pending; prior human aesthetic rejection remains reopened.",
-        "gateFixCommit": "e419e2028cc57dda65c483f83cb7fc5f623616bc"
+        "human": "pending",
+        "reason": "Nine-page full deck completed under the signed-off direction. pnpm typecheck/build/test passed: 179 passed, 0 failed, 16 existing skips. Offline Chrome headless nine-page layout and editing/download/fresh-process reopen passed; physical desktop and final full-deck user acceptance remain pending.",
+        "gateFixCommit": "e419e2028cc57dda65c483f83cb7fc5f623616bc",
+        "representativeImplementationCommit": "7b2666570653c9ffbef056e4e907124b4708a2be"
       },
       "humanRevalidation": {
         "status": "pending",
-        "reason": "No user has accepted the three new representative pages. Explicit U01 stop gate: review DECISIONS.md before authoring a full deck."
+        "reason": "Three-page direction accepted; no final nine-page review from user yet."
       },
       "fullDeck": {
-        "status": "pending",
-        "blockedBy": "U01-user-visual-approval",
-        "reason": "User requires three-page visual approval before full-deck generation; no complete deck has been generated."
+        "status": "complete-awaiting-user-acceptance",
+        "pages": 9,
+        "reason": "Single full deck authored under accepted visual direction; final user approval still required."
       }
     },
     {

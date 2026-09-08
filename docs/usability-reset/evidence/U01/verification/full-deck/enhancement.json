@@ -1,0 +1,18 @@
+{
+  "startedAt": "2026-09-08T12:29:05.523Z",
+  "finishedAt": "2026-09-08T12:29:05.600Z",
+  "durationMs": 75.815417,
+  "enhanceCalls": 1,
+  "localRepairCalls": 0,
+  "command": [
+    "/Users/cherryai001/.hermes/node/bin/node",
+    "dist/apps/html-cli/index.js",
+    "enhance",
+    "docs/usability-reset/evidence/U01/source/full-deck.html",
+    "--out",
+    "docs/usability-reset/evidence/U01/Cherry-Studio-开源之路.ppte.html"
+  ],
+  "status": 0,
+  "stdout": "{\"ok\":true,\"path\":\"/private/tmp/ppte8/docs/usability-reset/evidence/U01/Cherry-Studio-开源之路.ppte.html\",\"pages\":9,\"bytes\":406666,\"mediaBytes\":1159,\"visual\":\"unverified\"}\n",
+  "stderr": ""
+}
