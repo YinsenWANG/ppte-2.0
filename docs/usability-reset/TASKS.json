@@ -172,5 +172,23 @@
         }
       ]
     }
+  ],
+  "latestFollowup": "../audits/2026-09-08-main-52e3bf0/FOLLOWUP.md",
+  "additionalOpenFindings": [
+    {
+      "id": "R01",
+      "status": "open",
+      "title": "顶栏模式与保存状态位移"
+    },
+    {
+      "id": "R02",
+      "status": "open",
+      "title": "裁切未完成时保存旧稿与切换丢弃预览"
+    },
+    {
+      "id": "R03",
+      "status": "open",
+      "title": "图片像素定位误解析改变取景"
+    }
   ]
 }

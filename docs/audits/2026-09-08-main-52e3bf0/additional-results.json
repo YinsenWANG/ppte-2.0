@@ -1,0 +1,25 @@
+{
+  "initial": {
+    "fit": "cover",
+    "pos": "-20px 0px",
+    "w": 300,
+    "h": 260,
+    "nw": 640,
+    "nh": 440
+  },
+  "previewUncommitted": true,
+  "downloadIgnoresPreview": true,
+  "cropStillOpen": true,
+  "status": "此浏览器不能覆盖原文件 · 未改动 · 已发起下载，原文件未覆盖（下载是否落盘由浏览器决定）",
+  "modeSwitchDiscardsPreview": true,
+  "noGestureCropModel": {
+    "x": 100,
+    "y": 160,
+    "w": 300,
+    "h": 260,
+    "iw": 378.1818181818182,
+    "ih": 260,
+    "ox": 0,
+    "oy": 0
+  }
+}
