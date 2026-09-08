@@ -1,0 +1,8 @@
+{
+  "time": "2026-09-08T14:08:49.363294+00:00",
+  "status": "pending",
+  "probe": "Current callable tool metadata inspected for native desktop/input/OS-picker control; no such control tool is exposed. Browser automation is Playwright Chrome headless.",
+  "nativePicker": false,
+  "human": "pending",
+  "handoff": "FOLLOWUP.md item 4 remains local: native permission, manual/automatic original-file write, quit whole browser and reopen, recording and before/after bytes."
+}

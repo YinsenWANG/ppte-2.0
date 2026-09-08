@@ -1,0 +1,181 @@
+{
+  "task": "R01",
+  "time": "2026-09-08T14:10:00.312467+00:00",
+  "implementationCommit": "ffe888ddce4e003e57e819c23f8b8a1a10fbd0c2",
+  "baseCommit": "747c03b6f148a5564752d2404d99f0d79e508c5d",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "startedAt": "2026-09-08T14:06:43.080780+00:00",
+      "endedAt": "2026-09-08T14:06:44.448715+00:00",
+      "log": "typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "exitCode": 0,
+      "startedAt": "2026-09-08T14:06:44.464829+00:00",
+      "endedAt": "2026-09-08T14:06:46.051322+00:00",
+      "log": "build.log"
+    },
+    {
+      "command": "pnpm test",
+      "status": "passed",
+      "exitCode": 0,
+      "startedAt": "2026-09-08T14:06:46.059823+00:00",
+      "endedAt": "2026-09-08T14:09:08.336380+00:00",
+      "log": "test.log"
+    }
+  ],
+  "verification": {
+    "code": "passed",
+    "automated": "passed",
+    "real-browser": "pending",
+    "human": "pending"
+  },
+  "tests": {
+    "total": 214,
+    "passed": 198,
+    "failed": 0,
+    "skipped": 16,
+    "newR01": 6,
+    "newR01Skipped": 0
+  },
+  "matrix": [
+    {
+      "file": "1024-download-positions.json",
+      "viewport": 1024,
+      "path": "download",
+      "states": [
+        "read",
+        "edit",
+        "dirty",
+        "success",
+        "saving-render-fixture",
+        "failed",
+        "conflict",
+        "read-again"
+      ],
+      "maxDeltaCSSPx": 0,
+      "browser": "152.0.7977.76",
+      "headless": true,
+      "nativePicker": false,
+      "savedBytesSha256": "2b07876ae5e53e090a72f51e175da243850849f136fc9c9b883f622958b7c165"
+    },
+    {
+      "file": "1024-write-positions.json",
+      "viewport": 1024,
+      "path": "write",
+      "states": [
+        "read",
+        "edit",
+        "dirty",
+        "saving",
+        "success",
+        "failed",
+        "conflict",
+        "read-again"
+      ],
+      "maxDeltaCSSPx": 0,
+      "browser": "152.0.7977.76",
+      "headless": true,
+      "nativePicker": false,
+      "savedBytesSha256": "a22df5adaabcb2c85aec25c593ea9f808a5b02c56540e4c4c871fc7bfb072893"
+    },
+    {
+      "file": "1440-download-positions.json",
+      "viewport": 1440,
+      "path": "download",
+      "states": [
+        "read",
+        "edit",
+        "dirty",
+        "success",
+        "saving-render-fixture",
+        "failed",
+        "conflict",
+        "read-again"
+      ],
+      "maxDeltaCSSPx": 0,
+      "browser": "152.0.7977.76",
+      "headless": true,
+      "nativePicker": false,
+      "savedBytesSha256": "e526ed8f23a7961a199e7e8a96f4e1d6cd2d153d572693ce89c459cad9237dbe"
+    },
+    {
+      "file": "1440-write-positions.json",
+      "viewport": 1440,
+      "path": "write",
+      "states": [
+        "read",
+        "edit",
+        "dirty",
+        "saving",
+        "success",
+        "failed",
+        "conflict",
+        "read-again"
+      ],
+      "maxDeltaCSSPx": 0,
+      "browser": "152.0.7977.76",
+      "headless": true,
+      "nativePicker": false,
+      "savedBytesSha256": "9cbd1a9e0abee51e9e4d8a46499f17821ccf6ec0b610c468e4654febbe50d028"
+    },
+    {
+      "file": "390-download-positions.json",
+      "viewport": 390,
+      "path": "download",
+      "states": [
+        "read",
+        "edit",
+        "dirty",
+        "success",
+        "saving-render-fixture",
+        "failed",
+        "conflict",
+        "read-again"
+      ],
+      "maxDeltaCSSPx": 0,
+      "browser": "152.0.7977.76",
+      "headless": true,
+      "nativePicker": false,
+      "savedBytesSha256": "241b6ea76513e95dc4a26cab18a9ee55dd2b9b08e24bdd08e05eac7622750538"
+    },
+    {
+      "file": "390-write-positions.json",
+      "viewport": 390,
+      "path": "write",
+      "states": [
+        "read",
+        "edit",
+        "dirty",
+        "saving",
+        "success",
+        "failed",
+        "conflict",
+        "read-again"
+      ],
+      "maxDeltaCSSPx": 0,
+      "browser": "152.0.7977.76",
+      "headless": true,
+      "nativePicker": false,
+      "savedBytesSha256": "5779cdb0bef27d0ec5b5bd85e4835ae49328222ebf8fc557c4d3123cac7747a3"
+    }
+  ],
+  "scope": "Real Chrome headless geometry; real local file bytes through injected handle and actual downloads; separate-page reopen. Not native OS picker/desktop acceptance.",
+  "injectedFallbackStates": [
+    "saving",
+    "failed",
+    "conflict"
+  ],
+  "nativeReason": "No native desktop input/system picker control channel exposed; native permission/manual/autosave/whole-browser restart must be performed locally.",
+  "humanReason": "No target-device or user acceptance received.",
+  "pdf": "incomplete; U04 option 1 unchanged",
+  "firstRun": "first-run/gate-run.json",
+  "testMigration": "S02 preserves original content and recovery-message assertions; adds hidden/accessibility checks then enters edit to inspect visible recovery status.",
+  "cleanDelivery": "clean-delivery.json"
+}

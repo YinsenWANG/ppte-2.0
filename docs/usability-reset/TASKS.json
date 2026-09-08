@@ -177,8 +177,20 @@
   "additionalOpenFindings": [
     {
       "id": "R01",
-      "status": "open",
-      "title": "顶栏模式与保存状态位移"
+      "status": "implemented-awaiting-native-human",
+      "title": "顶栏模式与保存状态位移",
+      "evidence": [
+        "../audits/2026-09-08-main-52e3bf0/evidence/R01/IMPLEMENTATION.md",
+        "../audits/2026-09-08-main-52e3bf0/evidence/R01/verification/result.json"
+      ],
+      "verification": {
+        "code": "passed",
+        "automated": "passed",
+        "real-browser": "pending",
+        "human": "pending",
+        "reason": "R01 reserved save slots and common controls verified by 6 Chrome headless repository tests: 48 state snapshots across 1440/1024/390 and write/download paths, max geometry delta 0 CSS px, focus/accessibility, real byte and reopen assertions. Final typecheck/build/test passed: 198 pass, 0 fail, 16 existing skips. Native OS picker/desktop control and user revalidation unavailable; headless disk bridge is automated evidence only.",
+        "implementationCommit": "ffe888ddce4e003e57e819c23f8b8a1a10fbd0c2"
+      }
     },
     {
       "id": "R02",

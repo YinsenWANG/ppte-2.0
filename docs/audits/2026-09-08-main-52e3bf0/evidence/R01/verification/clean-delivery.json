@@ -1,0 +1,14 @@
+{
+  "time": "2026-09-08T14:05:39.633Z",
+  "source": "docs/usability-reset/evidence/U01/source/full-deck.html",
+  "sourceSha256": "453acbd415f7a741ca08ead0c1b86a39daaa5e70916f76cfbfc5340e60d43c81",
+  "file": "Cherry-Studio-开源之路.ppte.html",
+  "sha256": "eafb37cd77594e0cc2058f1c5713251c265e2d04b4a1fbe11e8f96753ef7ddd4",
+  "pages": 9,
+  "heading": "开源之路\n一起，向前。",
+  "pristine": true,
+  "headless": true,
+  "browser": "152.0.7977.76",
+  "status": "passed",
+  "sameUntouchedContentAsMatrix": true
+}

@@ -1,0 +1,31 @@
+{
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "baseCommit": "747c03b6f148a5564752d2404d99f0d79e508c5d",
+  "workingTreeImplementation": true,
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "startedAt": "2026-09-08T14:03:52.067573+00:00",
+      "endedAt": "2026-09-08T14:03:53.361395+00:00",
+      "log": "typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "exitCode": 0,
+      "startedAt": "2026-09-08T14:03:53.378997+00:00",
+      "endedAt": "2026-09-08T14:03:54.945410+00:00",
+      "log": "build.log"
+    },
+    {
+      "command": "pnpm test",
+      "status": "failed",
+      "exitCode": 1,
+      "startedAt": "2026-09-08T14:03:54.953817+00:00",
+      "endedAt": "2026-09-08T14:06:11.907256+00:00",
+      "log": "test.log"
+    }
+  ]
+}

@@ -1,0 +1,603 @@
+{
+  "time": "2026-09-08T14:07:10.814Z",
+  "platform": "darwin",
+  "browser": "152.0.7977.76",
+  "headless": true,
+  "nativePicker": false,
+  "path": "write",
+  "sha256": "5779cdb0bef27d0ec5b5bd85e4835ae49328222ebf8fc557c4d3123cac7747a3",
+  "rows": [
+    {
+      "state": "read",
+      "controls": [
+        {
+          "label": "title",
+          "x": 8,
+          "y": 16,
+          "width": 122,
+          "height": 20,
+          "visible": true
+        },
+        {
+          "label": "阅读",
+          "x": 11,
+          "y": 50,
+          "width": 44,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "编辑",
+          "x": 57,
+          "y": 50,
+          "width": 44,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "save",
+          "x": 134,
+          "y": 4,
+          "width": 122,
+          "height": 44,
+          "visible": false
+        },
+        {
+          "label": "导出为 PDF",
+          "x": 286,
+          "y": 50,
+          "width": 96,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "放映",
+          "x": 196,
+          "y": 50,
+          "width": 60,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "status",
+          "x": 260,
+          "y": 4,
+          "width": 122,
+          "height": 44,
+          "visible": false
+        }
+      ],
+      "bar": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 100
+      },
+      "overflow": false,
+      "frame": {
+        "x": 0,
+        "y": 100,
+        "width": 390,
+        "height": 812
+      }
+    },
+    {
+      "state": "edit",
+      "controls": [
+        {
+          "label": "title",
+          "x": 8,
+          "y": 16,
+          "width": 122,
+          "height": 20,
+          "visible": true
+        },
+        {
+          "label": "阅读",
+          "x": 11,
+          "y": 50,
+          "width": 44,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "编辑",
+          "x": 57,
+          "y": 50,
+          "width": 44,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "save",
+          "x": 134,
+          "y": 4,
+          "width": 122,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "导出为 PDF",
+          "x": 286,
+          "y": 50,
+          "width": 96,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "放映",
+          "x": 196,
+          "y": 50,
+          "width": 60,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "status",
+          "x": 260,
+          "y": 4,
+          "width": 122,
+          "height": 44,
+          "visible": true
+        }
+      ],
+      "bar": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 100
+      },
+      "overflow": false,
+      "frame": {
+        "x": 12,
+        "y": 429.0625,
+        "width": 366,
+        "height": 274.5
+      }
+    },
+    {
+      "state": "dirty",
+      "controls": [
+        {
+          "label": "title",
+          "x": 8,
+          "y": 16,
+          "width": 122,
+          "height": 20,
+          "visible": true
+        },
+        {
+          "label": "阅读",
+          "x": 11,
+          "y": 50,
+          "width": 44,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "编辑",
+          "x": 57,
+          "y": 50,
+          "width": 44,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "save",
+          "x": 134,
+          "y": 4,
+          "width": 122,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "导出为 PDF",
+          "x": 286,
+          "y": 50,
+          "width": 96,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "放映",
+          "x": 196,
+          "y": 50,
+          "width": 60,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "status",
+          "x": 260,
+          "y": 4,
+          "width": 122,
+          "height": 44,
+          "visible": true
+        }
+      ],
+      "bar": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 100
+      },
+      "overflow": false,
+      "frame": {
+        "x": 12,
+        "y": 429.0625,
+        "width": 366,
+        "height": 274.5
+      }
+    },
+    {
+      "state": "saving",
+      "controls": [
+        {
+          "label": "title",
+          "x": 8,
+          "y": 16,
+          "width": 122,
+          "height": 20,
+          "visible": true
+        },
+        {
+          "label": "阅读",
+          "x": 11,
+          "y": 50,
+          "width": 44,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "编辑",
+          "x": 57,
+          "y": 50,
+          "width": 44,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "save",
+          "x": 134,
+          "y": 4,
+          "width": 122,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "导出为 PDF",
+          "x": 286,
+          "y": 50,
+          "width": 96,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "放映",
+          "x": 196,
+          "y": 50,
+          "width": 60,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "status",
+          "x": 260,
+          "y": 4,
+          "width": 122,
+          "height": 44,
+          "visible": true
+        }
+      ],
+      "bar": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 100
+      },
+      "overflow": false,
+      "frame": {
+        "x": 12,
+        "y": 429.0625,
+        "width": 366,
+        "height": 274.5
+      }
+    },
+    {
+      "state": "success",
+      "controls": [
+        {
+          "label": "title",
+          "x": 8,
+          "y": 16,
+          "width": 122,
+          "height": 20,
+          "visible": true
+        },
+        {
+          "label": "阅读",
+          "x": 11,
+          "y": 50,
+          "width": 44,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "编辑",
+          "x": 57,
+          "y": 50,
+          "width": 44,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "save",
+          "x": 134,
+          "y": 4,
+          "width": 122,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "导出为 PDF",
+          "x": 286,
+          "y": 50,
+          "width": 96,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "放映",
+          "x": 196,
+          "y": 50,
+          "width": 60,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "status",
+          "x": 260,
+          "y": 4,
+          "width": 122,
+          "height": 44,
+          "visible": true
+        }
+      ],
+      "bar": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 100
+      },
+      "overflow": false,
+      "frame": {
+        "x": 12,
+        "y": 429.0625,
+        "width": 366,
+        "height": 274.5
+      }
+    },
+    {
+      "state": "failed",
+      "controls": [
+        {
+          "label": "title",
+          "x": 8,
+          "y": 16,
+          "width": 122,
+          "height": 20,
+          "visible": true
+        },
+        {
+          "label": "阅读",
+          "x": 11,
+          "y": 50,
+          "width": 44,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "编辑",
+          "x": 57,
+          "y": 50,
+          "width": 44,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "save",
+          "x": 134,
+          "y": 4,
+          "width": 122,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "导出为 PDF",
+          "x": 286,
+          "y": 50,
+          "width": 96,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "放映",
+          "x": 196,
+          "y": 50,
+          "width": 60,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "status",
+          "x": 260,
+          "y": 4,
+          "width": 122,
+          "height": 44,
+          "visible": true
+        }
+      ],
+      "bar": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 100
+      },
+      "overflow": false,
+      "frame": {
+        "x": 12,
+        "y": 429.0625,
+        "width": 366,
+        "height": 274.5
+      }
+    },
+    {
+      "state": "conflict",
+      "controls": [
+        {
+          "label": "title",
+          "x": 8,
+          "y": 16,
+          "width": 122,
+          "height": 20,
+          "visible": true
+        },
+        {
+          "label": "阅读",
+          "x": 11,
+          "y": 50,
+          "width": 44,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "编辑",
+          "x": 57,
+          "y": 50,
+          "width": 44,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "save",
+          "x": 134,
+          "y": 4,
+          "width": 122,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "导出为 PDF",
+          "x": 286,
+          "y": 50,
+          "width": 96,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "放映",
+          "x": 196,
+          "y": 50,
+          "width": 60,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "status",
+          "x": 260,
+          "y": 4,
+          "width": 122,
+          "height": 44,
+          "visible": true
+        }
+      ],
+      "bar": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 100
+      },
+      "overflow": false,
+      "frame": {
+        "x": 12,
+        "y": 429.0625,
+        "width": 366,
+        "height": 274.5
+      }
+    },
+    {
+      "state": "read-again",
+      "controls": [
+        {
+          "label": "title",
+          "x": 8,
+          "y": 16,
+          "width": 122,
+          "height": 20,
+          "visible": true
+        },
+        {
+          "label": "阅读",
+          "x": 11,
+          "y": 50,
+          "width": 44,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "编辑",
+          "x": 57,
+          "y": 50,
+          "width": 44,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "save",
+          "x": 134,
+          "y": 4,
+          "width": 122,
+          "height": 44,
+          "visible": false
+        },
+        {
+          "label": "导出为 PDF",
+          "x": 286,
+          "y": 50,
+          "width": 96,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "放映",
+          "x": 196,
+          "y": 50,
+          "width": 60,
+          "height": 44,
+          "visible": true
+        },
+        {
+          "label": "status",
+          "x": 260,
+          "y": 4,
+          "width": 122,
+          "height": 44,
+          "visible": false
+        }
+      ],
+      "bar": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 100
+      },
+      "overflow": false,
+      "frame": {
+        "x": 0,
+        "y": 100,
+        "width": 390,
+        "height": 812
+      }
+    }
+  ]
+}
