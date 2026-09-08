@@ -1,0 +1,186 @@
+{
+  "task": "U02",
+  "status": "reopened",
+  "implementationCommit": "f902bea474df0bfb3cc4476eba044b6360fb3c12",
+  "testedTree": "6ea43697d541993e0233b55521f2f15b9ae2f5ba",
+  "time": "2026-09-08T11:42:19.766372+00:00",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "browser": "152.0.7977.76",
+  "entry": "file://",
+  "headless": true,
+  "code": "passed",
+  "automated": "passed",
+  "real-browser": "pending",
+  "human": "reopened",
+  "humanRevalidation": {
+    "status": "pending",
+    "reason": "The user rejected the prior image controls. No target-device or user revalidation of U02 has been received."
+  },
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "startedAt": "2026-09-08T11:36:37.586447+00:00",
+      "finishedAt": "2026-09-08T11:36:38.825087+00:00",
+      "elapsedSeconds": 1.238558792,
+      "log": "docs/usability-reset/evidence/U02/verification/typecheck.log",
+      "commit": "f902bea474df0bfb3cc4476eba044b6360fb3c12",
+      "platform": "macOS-26.6.2-arm64-arm-64bit"
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "exitCode": 0,
+      "startedAt": "2026-09-08T11:36:38.835885+00:00",
+      "finishedAt": "2026-09-08T11:36:40.309673+00:00",
+      "elapsedSeconds": 1.4737998749999999,
+      "log": "docs/usability-reset/evidence/U02/verification/build.log",
+      "commit": "f902bea474df0bfb3cc4476eba044b6360fb3c12",
+      "platform": "macOS-26.6.2-arm64-arm-64bit"
+    },
+    {
+      "command": "pnpm test",
+      "status": "passed",
+      "exitCode": 0,
+      "startedAt": "2026-09-08T11:36:40.309912+00:00",
+      "finishedAt": "2026-09-08T11:38:33.445402+00:00",
+      "elapsedSeconds": 113.13497637500001,
+      "log": "docs/usability-reset/evidence/U02/verification/test.log",
+      "commit": "f902bea474df0bfb3cc4476eba044b6360fb3c12",
+      "platform": "macOS-26.6.2-arm64-arm-64bit"
+    }
+  ],
+  "totals": {
+    "tests": 180,
+    "passed": 164,
+    "failed": 0,
+    "skipped": 16,
+    "newSkipped": 0,
+    "newU02Tests": 8
+  },
+  "acceptance": [
+    {
+      "id": "drag",
+      "testFile": "tests/usability-reset-u02.test.ts",
+      "coverage": "four layout pointer down/move/up + captured pointer + zoom/scroll/resize",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "pending",
+      "human": "reopened",
+      "revalidation": {
+        "status": "pending",
+        "reason": "Physical mouse/touch and native window scaling not exercised; only headless input events."
+      }
+    },
+    {
+      "id": "four-corner-proportional-resize",
+      "testFile": "tests/usability-reset-u02.test.ts",
+      "coverage": "four corners, ratio, 44px hit area, small-frame hit, per-gesture undo",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "pending",
+      "human": "reopened",
+      "revalidation": {
+        "status": "pending",
+        "reason": "Physical touch hit testing and user handling judgment unavailable."
+      }
+    },
+    {
+      "id": "direct-crop",
+      "testFile": "tests/usability-reset-u02.test.ts",
+      "coverage": "portrait into landscape frame; source drag, corner range, double-click, Enter",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "pending",
+      "human": "reopened",
+      "revalidation": {
+        "status": "pending",
+        "reason": "Human subject/crop preference, physical wheel and touch gesture behavior not confirmed."
+      }
+    },
+    {
+      "id": "cancel-and-history",
+      "testFile": "tests/usability-reset-u02.test.ts",
+      "coverage": "Esc/cancel preserve source; one transaction, undo/redo, delete undo, insertion chain",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "pending",
+      "human": "reopened",
+      "revalidation": {
+        "status": "pending",
+        "reason": "OS pointercancel and native IME interaction pending; synthetic IME and keyboard guard separately tested."
+      }
+    },
+    {
+      "id": "insert-and-replace",
+      "testFile": "tests/usability-reset-u02.test.ts",
+      "coverage": "portrait/landscape/alpha/tiny/large; native frame retained, decode failure/cancel",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "pending",
+      "human": "reopened",
+      "revalidation": {
+        "status": "pending",
+        "reason": "Playwright filechooser is automated, not the OS file chooser; native picker pending."
+      }
+    },
+    {
+      "id": "four-layout-save-reopen",
+      "testFile": "tests/usability-reset-u02.test.ts",
+      "coverage": "absolute/block/grid/flex siblings; page border coordinates; actual download + fresh browser process; static multi-page",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "pending",
+      "human": "reopened",
+      "revalidation": {
+        "status": "pending",
+        "reason": "Original-file manual and automatic native writes remain U03 pending; download is not original-file save."
+      }
+    },
+    {
+      "id": "simple-ui-and-boundaries",
+      "testFile": "tests/usability-reset-u02.test.ts",
+      "coverage": "no image parameters, no Shift image multiselect, unsupported transforms report before handles",
+      "code": "passed",
+      "automated": "passed",
+      "real-browser": "pending",
+      "human": "reopened",
+      "revalidation": {
+        "status": "pending",
+        "reason": "User has rejected prior handling and has not revalidated this UI; arbitrary HTML adaptation is not claimed."
+      }
+    }
+  ],
+  "ancillaryDeliverySmoke": {
+    "status": "passed",
+    "command": "node docs/usability-reset/evidence/U02/verification/delivery-smoke.mjs",
+    "log": "docs/usability-reset/evidence/U02/verification/delivery-smoke.log",
+    "record": "docs/usability-reset/evidence/U02/journeys/delivery-smoke.json",
+    "commit": "f902bea474df0bfb3cc4476eba044b6360fb3c12"
+  },
+  "nativeBoundary": "No desktop pointer/OS file-chooser tool in this session. Headless Chrome, downloads and synthetic IME are automated only. Native original-file writeback remains U03 pending. Saving rejection cause is not claimed to be diagnosed.",
+  "delivery": "Cherry-U02.ppte.html",
+  "deliveryScope": "Existing Cherry author content and history unchanged; embedded runtime upgrade only. Not a new U01 aesthetic draft.",
+  "evidenceHashManifest": "SHA256SUMS",
+  "failedRounds": "verification/failed-rounds/",
+  "screenshots": [
+    "screenshots/Cherry-crop-smoke.png",
+    "screenshots/Cherry-read.png",
+    "screenshots/absolute-crop.png",
+    "screenshots/absolute-preview.png",
+    "screenshots/absolute-reopened.png",
+    "screenshots/block-crop.png",
+    "screenshots/block-preview.png",
+    "screenshots/block-reopened.png",
+    "screenshots/flex-crop.png",
+    "screenshots/flex-preview.png",
+    "screenshots/flex-reopened.png",
+    "screenshots/grid-crop.png",
+    "screenshots/grid-preview.png",
+    "screenshots/grid-reopened.png",
+    "screenshots/insert-errors-retained.png",
+    "screenshots/mode-guards.png"
+  ]
+}

@@ -1,0 +1,1 @@
+$ node scripts/build-html.mjs --clean && tsc -p tsconfig.build.json

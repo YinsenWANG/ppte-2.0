@@ -14,9 +14,31 @@
     {
       "id": "U02",
       "title": "重做图片直接操作",
-      "status": "pending",
+      "status": "reopened",
       "acceptance": "拖动、四角等比缩放、直接裁切、取消与事务撤销；四类布局及保存重开",
-      "evidence": []
+      "evidence": [
+        "evidence/U02/IMPLEMENTATION.md",
+        "evidence/U02/verification/result.json",
+        "evidence/U02/TEST-MIGRATION.json",
+        "evidence/U02/NATIVE-VALIDATION.md",
+        "evidence/U02/Cherry-U02.ppte.html",
+        "evidence/U02/screenshots/",
+        "evidence/U02/journeys/",
+        "evidence/U02/samples/",
+        "evidence/U02/SHA256SUMS"
+      ],
+      "verification": {
+        "code": "passed",
+        "automated": "passed",
+        "real-browser": "pending",
+        "human": "reopened",
+        "implementationCommit": "f902bea474df0bfb3cc4476eba044b6360fb3c12",
+        "reason": "U02 implemented with 8 new repository tests. Final gates: 164 passed, 0 failed, 16 existing skips. Four-layout actual pointer/crop/undo/download/fresh-process journeys are headless automated evidence only. Native picker/touch/original-file save and user handling revalidation remain pending; prior rejection remains reopened."
+      },
+      "humanRevalidation": {
+        "status": "pending",
+        "reason": "User explicitly rejected prior image handling; no target-device/user revalidation of the new controls has been received."
+      }
     },
     {
       "id": "U03",

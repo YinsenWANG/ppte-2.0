@@ -1,0 +1,108 @@
+TAP version 13
+# (node:21075) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: F02 errors survive editing and draft quota failure; pending automatic timer cannot retry without consent
+ok 1 - F02 errors survive editing and draft quota failure; pending automatic timer cannot retry without consent
+  ---
+  duration_ms: 0.818958
+  type: 'test'
+  ...
+# Subtest: F02 recovery serializes and stores once per revision/base; next acknowledged baseline checkpoints latest revision
+ok 2 - F02 recovery serializes and stores once per revision/base; next acknowledged baseline checkpoints latest revision
+  ---
+  duration_ms: 0.134417
+  type: 'test'
+  ...
+# Subtest: F02 cancel, denial, picker/read errors and unsupported save never download; explicit download retains content
+ok 3 - F02 cancel, denial, picker/read errors and unsupported save never download; explicit download retains content
+  ---
+  duration_ms: 7321.772666
+  type: 'test'
+  ...
+# Subtest: F02 B1 actual Enter/Shift+Enter, inline formatting, multiline clipboard event, undo/redo, download and fresh process editing
+ok 4 - F02 B1 actual Enter/Shift+Enter, inline formatting, multiline clipboard event, undo/redo, download and fresh process editing
+  ---
+  duration_ms: 4289.806084
+  type: 'test'
+  ...
+# Subtest: R1 audit native div: actual click, keyboard input, styles, undo/redo and offline download/new-process reopen
+ok 5 - R1 audit native div: actual click, keyboard input, styles, undo/redo and offline download/new-process reopen
+  ---
+  duration_ms: 3298.932667
+  type: 'test'
+  ...
+# Subtest: R1 native span and nested inline runs use one safe host; range style, input, undo and saved markup survive
+ok 6 - R1 native span and nested inline runs use one safe host; range style, input, undo and saved markup survive
+  ---
+  duration_ms: 2280.352833
+  type: 'test'
+  ...
+# Subtest: R1 mixed media/block/positioned/declared containers stay noneditable and explain unsupported text structure
+ok 7 - R1 mixed media/block/positioned/declared containers stay noneditable and explain unsupported text structure
+  ---
+  duration_ms: 1723.110166
+  type: 'test'
+  ...
+# Subtest: U02 absolute: real pointers, all corners, crop/cancel, transaction undo, siblings and saved restart
+ok 8 - U02 absolute: real pointers, all corners, crop/cancel, transaction undo, siblings and saved restart
+  ---
+  duration_ms: 11175.364792
+  type: 'test'
+  ...
+# Subtest: U02 block: real pointers, all corners, crop/cancel, transaction undo, siblings and saved restart
+ok 9 - U02 block: real pointers, all corners, crop/cancel, transaction undo, siblings and saved restart
+  ---
+  duration_ms: 11600.09525
+  type: 'test'
+  ...
+# Subtest: U02 grid: real pointers, all corners, crop/cancel, transaction undo, siblings and saved restart
+ok 10 - U02 grid: real pointers, all corners, crop/cancel, transaction undo, siblings and saved restart
+  ---
+  duration_ms: 16055.662708
+  type: 'test'
+  ...
+# Subtest: U02 flex: real pointers, all corners, crop/cancel, transaction undo, siblings and saved restart
+ok 11 - U02 flex: real pointers, all corners, crop/cancel, transaction undo, siblings and saved restart
+  ---
+  duration_ms: 11431.14425
+  type: 'test'
+  ...
+# Subtest: U02 insert/replace: portrait, landscape, transparent, tiny and large; frame retention, decoding cancel/error and history
+ok 12 - U02 insert/replace: portrait, landscape, transparent, tiny and large; frame retention, decoding cancel/error and history
+  ---
+  duration_ms: 10471.199833
+  type: 'test'
+  ...
+# U02 coordinates: zoom
+# U02 coordinates: cancel drag
+# U02 coordinates: text
+# U02 coordinates: IME
+# U02 coordinates: bounded drag
+# U02 coordinates: modes
+# Subtest: U02 zoom/scroll/resize, bounded drag, pointer cancellation, text/IME and read/present guards
+ok 13 - U02 zoom/scroll/resize, bounded drag, pointer cancellation, text/IME and read/present guards
+  ---
+  duration_ms: 4598.863791
+  type: 'test'
+  ...
+# Subtest: U02 unsupported transformed author image reports boundary before handles; no accidental multi-image selection
+ok 14 - U02 unsupported transformed author image reports boundary before handles; no accidental multi-image selection
+  ---
+  duration_ms: 958.989292
+  type: 'test'
+  ...
+# Subtest: U02 static multi-page author coordinates survive save and preserve prior image insertion undo chain
+ok 15 - U02 static multi-page author coordinates survive save and preserve prior image insertion undo chain
+  ---
+  duration_ms: 4272.486542
+  type: 'test'
+  ...
+1..15
+# tests 15
+# suites 0
+# pass 15
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 70798.842167

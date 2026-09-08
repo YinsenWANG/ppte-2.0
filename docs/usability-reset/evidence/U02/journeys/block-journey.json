@@ -1,0 +1,28 @@
+{
+  "layout": "block",
+  "headless": true,
+  "nativePicker": false,
+  "fullBrowserRestart": true,
+  "version": "152.0.7977.76",
+  "time": "2026-09-08T11:37:54.862Z",
+  "originalSha256": "2f4609182fc0f0dc6b414447d5df675850b130a80e4795acb58cc62ab6fd0ab4",
+  "movedSha256": "c2f35f62a967ef44ae2dc6cb76c48710e3649e913a7e594201673b6a2b476f7e",
+  "croppedSha256": "7e342c644dfad3fc1ad22e14cf673c93d95e70ee54772d323c03be7043ecd701",
+  "final": {
+    "x": 55.719228868017765,
+    "y": 145.54430301532378,
+    "w": 381.0615422639644,
+    "h": 201.80425111220956,
+    "iw": 381.0615422639643,
+    "ih": 762.1230845279287,
+    "ox": 5.684341886080802e-14,
+    "oy": -313.37370242214524
+  },
+  "beforeSibling": [
+    43,
+    319.875,
+    874,
+    33
+  ],
+  "errors": []
+}

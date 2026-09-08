@@ -1,0 +1,75 @@
+{
+  "baseline": "77bf2f438d7fa656de76bf49726d933e555977a6",
+  "helper": "tests/helpers/legacy-image.ts",
+  "currentAcceptance": "tests/usability-reset-u02.test.ts",
+  "newSkips": 0,
+  "assertionCounts": [
+    {
+      "file": "tests/focused-product-f03.test.ts",
+      "beforeAssertions": 58,
+      "afterAssertions": 58,
+      "migration": "Retired image parameter/insertion/layout UI paths explicitly run retained Commands compatibility; numeric, content, safety, history and saving assertions retained. Current image UI is covered separately in usability-reset-u02.test.ts."
+    },
+    {
+      "file": "tests/focused-product-f06.test.ts",
+      "beforeAssertions": 58,
+      "afterAssertions": 58,
+      "migration": "Retired image parameter/insertion/layout UI paths explicitly run retained Commands compatibility; numeric, content, safety, history and saving assertions retained. Current image UI is covered separately in usability-reset-u02.test.ts."
+    },
+    {
+      "file": "tests/html-editor.test.ts",
+      "beforeAssertions": 60,
+      "afterAssertions": 60,
+      "migration": "Retired image parameter/insertion/layout UI paths explicitly run retained Commands compatibility; numeric, content, safety, history and saving assertions retained. Current image UI is covered separately in usability-reset-u02.test.ts."
+    },
+    {
+      "file": "tests/r8-gaps.test.ts",
+      "beforeAssertions": 37,
+      "afterAssertions": 37,
+      "migration": "Retired image parameter/insertion/layout UI paths explicitly run retained Commands compatibility; numeric, content, safety, history and saving assertions retained. Current image UI is covered separately in usability-reset-u02.test.ts."
+    },
+    {
+      "file": "tests/r8-r1-text.test.ts",
+      "beforeAssertions": 40,
+      "afterAssertions": 40,
+      "migration": "Retired image parameter/insertion/layout UI paths explicitly run retained Commands compatibility; numeric, content, safety, history and saving assertions retained. Current image UI is covered separately in usability-reset-u02.test.ts."
+    },
+    {
+      "file": "tests/r8-r2-insertion.test.ts",
+      "beforeAssertions": 38,
+      "afterAssertions": 38,
+      "migration": "Retired image parameter/insertion/layout UI paths explicitly run retained Commands compatibility; numeric, content, safety, history and saving assertions retained. Current image UI is covered separately in usability-reset-u02.test.ts."
+    },
+    {
+      "file": "tests/single-file-media.test.ts",
+      "beforeAssertions": 35,
+      "afterAssertions": 35,
+      "migration": "Retired image parameter/insertion/layout UI paths explicitly run retained Commands compatibility; numeric, content, safety, history and saving assertions retained. Current image UI is covered separately in usability-reset-u02.test.ts."
+    },
+    {
+      "file": "tests/ui02-objects.test.ts",
+      "beforeAssertions": 77,
+      "afterAssertions": 77,
+      "migration": "Retired image parameter/insertion/layout UI paths explicitly run retained Commands compatibility; numeric, content, safety, history and saving assertions retained. Current image UI is covered separately in usability-reset-u02.test.ts."
+    },
+    {
+      "file": "tests/ui03-pages.test.ts",
+      "beforeAssertions": 49,
+      "afterAssertions": 49,
+      "migration": "Retired image parameter/insertion/layout UI paths explicitly run retained Commands compatibility; numeric, content, safety, history and saving assertions retained. Current image UI is covered separately in usability-reset-u02.test.ts."
+    },
+    {
+      "file": "tests/ui06-acceptance.test.ts",
+      "beforeAssertions": 60,
+      "afterAssertions": 60,
+      "migration": "Retired image parameter/insertion/layout UI paths explicitly run retained Commands compatibility; numeric, content, safety, history and saving assertions retained. Current image UI is covered separately in usability-reset-u02.test.ts."
+    },
+    {
+      "file": "tests/usability-reset-u03.test.ts",
+      "beforeAssertions": 60,
+      "afterAssertions": 60,
+      "migration": "Retired image parameter/insertion/layout UI paths explicitly run retained Commands compatibility; numeric, content, safety, history and saving assertions retained. Current image UI is covered separately in usability-reset-u02.test.ts."
+    }
+  ],
+  "countsAreNotAcceptance": true
+}

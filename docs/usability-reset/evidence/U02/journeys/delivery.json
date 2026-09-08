@@ -1,0 +1,20 @@
+{
+  "input": "docs/usability-reset/evidence/U03/Cherry-U03.ppte.html",
+  "out": "docs/usability-reset/evidence/U02/Cherry-U02.ppte.html",
+  "enhanceCalls": 3,
+  "elapsedMs": 117.58545899999999,
+  "authorContentUnchanged": true,
+  "historyUnchanged": true,
+  "inputSha256": "6ec88ded45d903e0b3614f9ba133bdc318ecd41c0d505ab87fef72dd837252ae",
+  "outputSha256": "c02af716502d525aee8c48dc274d8a491311408bfb21b398b7d1344846e40e8c",
+  "time": "2026-09-08T11:12:45.047Z",
+  "purpose": "Existing Cherry runtime upgrade only; not U01 generation or aesthetic acceptance",
+  "finalEnvelopeRefreshCalls": 1,
+  "refreshElapsedMs": 23.108209000000002,
+  "finalRefreshAt": "2026-09-08T11:37:33.716Z",
+  "reason": "Refresh embedded runtime after necessary interaction fixes; author content and history unchanged.",
+  "envelopeRefreshCalls": 1,
+  "authoringOrFullDraftGenerationCalls": 0,
+  "finalElapsedMs": 202.85620899999998,
+  "callAccounting": "Initial runtime enhance, one intermediate envelope refresh, one diagnostic enhance into /tmp, final runtime enhance after necessary fixes. All use unchanged existing author content; no new U01 draft generated."
+}

@@ -1,0 +1,95 @@
+TAP version 13
+# 2026-09-08T11:08:39.854Z pw:api => browserType.launch started
+# 2026-09-08T11:08:40.083Z pw:api <= browserType.launch succeeded
+# 2026-09-08T11:08:40.084Z pw:api => browser.newPage started
+# 2026-09-08T11:08:40.209Z pw:api <= browser.newPage succeeded
+# 2026-09-08T11:08:40.209Z pw:api => page.goto started
+# 2026-09-08T11:08:40.209Z pw:api navigating to "file:///private/tmp/ppte8/artifacts/usability-reset-u02/coordinates.ppte.html", waiting until "load"
+# 2026-09-08T11:08:40.214Z pw:api   "commit" event fired
+# 2026-09-08T11:08:40.214Z pw:api   navigated to "file:///private/tmp/ppte8/artifacts/usability-reset-u02/coordinates.ppte.html"
+# 2026-09-08T11:08:40.218Z pw:api   navigated to "about:blank"
+# 2026-09-08T11:08:40.253Z pw:api   "domcontentloaded" event fired
+# 2026-09-08T11:08:40.254Z pw:api   navigated to "about:srcdoc"
+# 2026-09-08T11:08:40.278Z pw:api   "load" event fired
+# 2026-09-08T11:08:40.279Z pw:api <= page.goto succeeded
+# 2026-09-08T11:08:40.279Z pw:api => page.waitForFunction started
+# 2026-09-08T11:08:40.287Z pw:api <= page.waitForFunction succeeded
+# 2026-09-08T11:08:40.287Z pw:api => locator.click started
+# 2026-09-08T11:08:40.288Z pw:api waiting for getByRole('button', { name: '编辑', exact: true })
+# 2026-09-08T11:08:40.296Z pw:api   locator resolved to <button aria-pressed="false">编辑</button>
+# 2026-09-08T11:08:40.296Z pw:api attempting click action
+# 2026-09-08T11:08:40.297Z pw:api   waiting for element to be visible, enabled and stable
+# 2026-09-08T11:08:40.443Z pw:api   element is visible, enabled and stable
+# 2026-09-08T11:08:40.443Z pw:api   scrolling into view if needed
+# 2026-09-08T11:08:40.444Z pw:api   done scrolling
+# 2026-09-08T11:08:40.446Z pw:api   performing click action
+# 2026-09-08T11:08:40.458Z pw:api   click action done
+# 2026-09-08T11:08:40.458Z pw:api   waiting for scheduled navigations to finish
+# 2026-09-08T11:08:40.462Z pw:api   navigations have finished
+# 2026-09-08T11:08:40.462Z pw:api <= locator.click succeeded
+# U02 coordinates: zoom
+# 2026-09-08T11:08:40.462Z pw:api => locator.click started
+# 2026-09-08T11:08:40.464Z pw:api waiting for locator('\#ppte-frame').contentFrame().locator('img[data-ppte-id]')
+# 2026-09-08T11:08:40.482Z pw:api   locator resolved to <img data-ppte-id="ppte-4" data-ppte-editor-focus="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAJYCAYAAADYJts/AAKcMElEQVR4nOzUVRcVBNut4dXdRXd3d3d396RDwEAUg1SwExSUVMKWUFLBAIMwwaIVDFQEsSXmN9nj+Qn7PXCMdXD/g2vcDocDvJrTAbocoNsBehyg1/I5QL8DDDjAoAMMOcCwFXGAUQcYc4BxB5hwgEkr5QDTDjDjALMOMGcVcIAFHWAhB1jYARZxgEWtYg6wuAMs4QBLOsBSDrC0VcYBlnWA5RxgeQdYwaroACs5wMoOsIoDrOoAq1nVHWANB1jTAdZygLUdYB2rrgOs5wDrO8AGDrCh1cgBNnaATRxgUwfYzAE2t1o4wJYOsJUDbO0A2zjAtlY7B9jeAXZwgB0dYCerswPs4gC7OsBuDrC7A+xh9XSAvRxgbwf…/>
+# 2026-09-08T11:08:40.482Z pw:api attempting click action
+# 2026-09-08T11:08:40.483Z pw:api   waiting for element to be visible, enabled and stable
+# 2026-09-08T11:08:40.728Z pw:api   element is visible, enabled and stable
+# 2026-09-08T11:08:40.728Z pw:api   scrolling into view if needed
+# 2026-09-08T11:08:40.728Z pw:api   done scrolling
+# 2026-09-08T11:08:40.747Z pw:api   performing click action
+# 2026-09-08T11:08:40.755Z pw:api   "networkidle" event fired
+# 2026-09-08T11:08:40.757Z pw:api   click action done
+# 2026-09-08T11:08:40.757Z pw:api   waiting for scheduled navigations to finish
+# 2026-09-08T11:08:40.758Z pw:api   navigations have finished
+# 2026-09-08T11:08:40.758Z pw:api <= locator.click succeeded
+# 2026-09-08T11:08:40.759Z pw:api => locator.click started
+# 2026-09-08T11:08:40.759Z pw:api waiting for getByRole('button', { name: '放大画布', exact: true })
+# 2026-09-08T11:08:40.761Z pw:api   locator resolved to <button title="放大画布" type="button" aria-label="放大画布" class="icon-button">…</button>
+# 2026-09-08T11:08:40.762Z pw:api attempting click action
+# 2026-09-08T11:08:40.762Z pw:api   waiting for element to be visible, enabled and stable
+# 2026-09-08T11:08:40.808Z pw:api   element is visible, enabled and stable
+# 2026-09-08T11:08:40.808Z pw:api   scrolling into view if needed
+# 2026-09-08T11:08:40.808Z pw:api   done scrolling
+# 2026-09-08T11:08:40.810Z pw:api   performing click action
+# 2026-09-08T11:08:40.813Z pw:api   click action done
+# 2026-09-08T11:08:40.813Z pw:api   waiting for scheduled navigations to finish
+# 2026-09-08T11:08:40.813Z pw:api   navigations have finished
+# 2026-09-08T11:08:40.813Z pw:api <= locator.click succeeded
+# 2026-09-08T11:08:40.813Z pw:api => locator.click started
+# 2026-09-08T11:08:40.814Z pw:api waiting for getByRole('button', { name: '放大画布', exact: true })
+# 2026-09-08T11:08:40.815Z pw:api   locator resolved to <button title="放大画布" type="button" aria-label="放大画布" class="icon-button">…</button>
+# 2026-09-08T11:08:40.815Z pw:api attempting click action
+# 2026-09-08T11:08:40.815Z pw:api   waiting for element to be visible, enabled and stable
+# 2026-09-08T11:08:40.934Z pw:api   element is visible, enabled and stable
+# 2026-09-08T11:08:40.935Z pw:api   scrolling into view if needed
+# 2026-09-08T11:08:40.935Z pw:api   done scrolling
+# 2026-09-08T11:08:40.938Z pw:api   performing click action
+# 2026-09-08T11:08:40.945Z pw:api   click action done
+# 2026-09-08T11:08:40.945Z pw:api   waiting for scheduled navigations to finish
+# 2026-09-08T11:08:40.946Z pw:api   navigations have finished
+# 2026-09-08T11:08:40.946Z pw:api <= locator.click succeeded
+# 2026-09-08T11:08:40.947Z pw:api => locator.evaluate started
+# 2026-09-08T11:08:40.948Z pw:api waiting for locator('\#ppte-edit-canvas')
+# 2026-09-08T11:08:40.951Z pw:api   locator resolved to visible <div role="region" aria-label="当前页工作区" id="ppte-edit-canvas" data-ppte-transient="">…</div>
+# 2026-09-08T11:08:40.954Z pw:api <= locator.evaluate succeeded
+# 2026-09-08T11:08:40.954Z pw:api => page.setViewportSize started
+# 2026-09-08T11:08:40.959Z pw:api <= page.setViewportSize succeeded
+# 2026-09-08T11:08:40.959Z pw:api => page.evaluate started
+# 2026-09-08T11:08:40.978Z pw:api <= page.evaluate succeeded
+# 2026-09-08T11:08:40.978Z pw:api => locator.boundingBox started
+# 2026-09-08T11:08:40.979Z pw:api waiting for locator('\#ppte-frame').contentFrame().locator('img[data-ppte-id]')
+# 2026-09-08T11:08:40.989Z pw:api   locator resolved to visible <img tabindex="0" data-ppte-id="ppte-4" data-ppte-editor-focus="" data-ppte-editor-selected="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAJYCAYAAADYJts/AAKcMElEQVR4nOzUVRcVBNut4dXdRXd3d3d396RDwEAUg1SwExSUVMKWUFLBAIMwwaIVDFQEsSXmN9nj+Qn7PXCMdXD/g2vcDocDvJrTAbocoNsBehyg1/I5QL8DDDjAoAMMOcCwFXGAUQcYc4BxB5hwgEkr5QDTDjDjALMOMGcVcIAFHWAhB1jYARZxgEWtYg6wuAMs4QBLOsBSDrC0VcYBlnWA5RxgeQdYwaroACs5wMoOsIoDrOoAq1nVHWANB1jTAdZygLUdYB2rrgOs5wDrO8AGDrCh1cgBNnaATRxgUwfYzAE2t1o4wJYOsJUDbO0A2zjAtlY7B9jeA…/>
+# 2026-09-08T11:08:40.998Z pw:api <= locator.boundingBox succeeded
+# 2026-09-08T11:08:40.998Z pw:api => locator.evaluate started
+# 2026-09-08T11:08:40.998Z pw:api waiting for locator('\#ppte-frame')
+# 2026-09-08T11:08:40.999Z pw:api   locator resolved to visible <iframe title="演示稿" id="ppte-frame" sandbox="allow-same-origin" referrerpolicy="no-referrer" srcdoc="<html><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'none'; style-src 'unsafe-inline' data:; img-src data:; font-src data:; media-src data:; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"><style>body{margin:0}section{position:relative;width:960px;height:700px;background:\#f8f7f2;padding:40px;box-sizing:border-box}h…></iframe>
+# 2026-09-08T11:08:41.007Z pw:api <= locator.evaluate succeeded
+# 2026-09-08T11:08:41.007Z pw:api => locator.evaluate started
+# 2026-09-08T11:08:41.008Z pw:api waiting for locator('\#ppte-frame').contentFrame().locator('img[data-ppte-id]')
+# 2026-09-08T11:08:41.015Z pw:api   locator resolved to visible <img tabindex="0" data-ppte-id="ppte-4" data-ppte-editor-focus="" data-ppte-editor-selected="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAJYCAYAAADYJts/AAKcMElEQVR4nOzUVRcVBNut4dXdRXd3d3d396RDwEAUg1SwExSUVMKWUFLBAIMwwaIVDFQEsSXmN9nj+Qn7PXCMdXD/g2vcDocDvJrTAbocoNsBehyg1/I5QL8DDDjAoAMMOcCwFXGAUQcYc4BxB5hwgEkr5QDTDjDjALMOMGcVcIAFHWAhB1jYARZxgEWtYg6wuAMs4QBLOsBSDrC0VcYBlnWA5RxgeQdYwaroACs5wMoOsIoDrOoAq1nVHWANB1jTAdZygLUdYB2rrgOs5wDrO8AGDrCh1cgBNnaATRxgUwfYzAE2t1o4wJYOsJUDbO0A2zjAtlY7B9jeA…/>
+# 2026-09-08T11:08:41.018Z pw:api <= locator.evaluate succeeded
+# 2026-09-08T11:08:41.018Z pw:api => mouse.move started
+# 2026-09-08T11:08:41.043Z pw:api <= mouse.move succeeded
+# 2026-09-08T11:08:41.043Z pw:api => mouse.down started
+# 2026-09-08T11:08:41.046Z pw:api <= mouse.down succeeded
+# 2026-09-08T11:08:41.046Z pw:api => mouse.move started

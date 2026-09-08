@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "headless": true,
+  "nativePicker": false,
+  "version": "152.0.7977.76",
+  "time": "2026-09-08T11:40:12.580Z",
+  "entry": "file://",
+  "actions": [
+    "read",
+    "edit",
+    "insert via actual chooser event",
+    "crop",
+    "cancel",
+    "undo insertion"
+  ],
+  "diskUnchanged": true,
+  "sha256": "c02af716502d525aee8c48dc274d8a491311408bfb21b398b7d1344846e40e8c",
+  "authorContentRestored": true,
+  "caret": "initial"
+}
