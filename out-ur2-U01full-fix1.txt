@@ -1,0 +1,8 @@
+已复现并修复 U04 裁决状态门禁，保留历史断言并新增当前裁决检查，未弱化质量要求。
+
+- 三项门禁全绿：179 passed、0 failed、16 既有 skips。
+- 九页完整稿未重复生成，证据与 SHA256SUMS 已更新。
+- 已签名提交 `2f897c6`，未 push，Git 工作树干净。
+- 真机与最终人工验收仍 pending，U01 未标 done。
+
+[打开九页完整稿](/tmp/ppte8/docs/usability-reset/evidence/U01/Cherry-Studio-开源之路.ppte.html)，待你最终认可。
