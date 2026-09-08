@@ -1,0 +1,368 @@
+TAP version 13
+# Subtest: R03 cover negative-px: browser preview, no-op bytes/history, actual move/download/fresh reopen
+not ok 1 - R03 cover negative-px: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 1724.615625
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:44:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    undefined !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:62:24)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: R03 cover positive-px: browser preview, no-op bytes/history, actual move/download/fresh reopen
+not ok 2 - R03 cover positive-px: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 1564.170416
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:44:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    undefined !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:62:24)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: R03 cover percentage: browser preview, no-op bytes/history, actual move/download/fresh reopen
+not ok 3 - R03 cover percentage: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 1647.445041
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:44:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    undefined !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:62:24)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: R03 cover left-top: browser preview, no-op bytes/history, actual move/download/fresh reopen
+not ok 4 - R03 cover left-top: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 1550.645208
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:44:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    undefined !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:62:24)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: R03 cover right-bottom: browser preview, no-op bytes/history, actual move/download/fresh reopen
+not ok 5 - R03 cover right-bottom: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 1267.090166
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:44:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    undefined !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:62:24)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: R03 cover edge-lengths: browser preview, no-op bytes/history, actual move/download/fresh reopen
+not ok 6 - R03 cover edge-lengths: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 1516.221833
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:44:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    undefined !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:62:24)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: R03 cover calc: browser preview, no-op bytes/history, actual move/download/fresh reopen
+not ok 7 - R03 cover calc: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 1466.625667
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:44:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    undefined !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:62:24)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: R03 cover math: browser preview, no-op bytes/history, actual move/download/fresh reopen
+not ok 8 - R03 cover math: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 1398.536542
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:44:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    undefined !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:62:24)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: R03 contain negative-px: browser preview, no-op bytes/history, actual move/download/fresh reopen
+not ok 9 - R03 contain negative-px: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 1387.495625
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:44:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    undefined !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:62:24)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: R03 contain positive-px: browser preview, no-op bytes/history, actual move/download/fresh reopen
+not ok 10 - R03 contain positive-px: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 1515.720833
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:44:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    undefined !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:62:24)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: R03 contain percentage: browser preview, no-op bytes/history, actual move/download/fresh reopen
+not ok 11 - R03 contain percentage: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 1397.127459
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:44:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    undefined !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:62:24)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: R03 contain left-top: browser preview, no-op bytes/history, actual move/download/fresh reopen
+not ok 12 - R03 contain left-top: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 1787.38325
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:44:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    undefined !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:62:24)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: R03 contain right-bottom: browser preview, no-op bytes/history, actual move/download/fresh reopen
+not ok 13 - R03 contain right-bottom: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 1567.270833
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:44:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    undefined !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:62:24)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: R03 contain edge-lengths: browser preview, no-op bytes/history, actual move/download/fresh reopen
+not ok 14 - R03 contain edge-lengths: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 1447.213916
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:44:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    undefined !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:62:24)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: R03 contain calc: browser preview, no-op bytes/history, actual move/download/fresh reopen
+not ok 15 - R03 contain calc: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 1600.478375
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:44:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    undefined !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:62:24)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: R03 contain math: browser preview, no-op bytes/history, actual move/download/fresh reopen
+not ok 16 - R03 contain math: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 1589.573375
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:44:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    undefined !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:62:24)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: R03 unsupported contextual math reports before interaction and preserves content/history
+not ok 17 - R03 unsupported contextual math reports before interaction and preserves content/history
+  ---
+  duration_ms: 909.403125
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:115:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /object-position.*暂无法解析/. Input:
+    
+    '此浏览器不能覆盖原文件 · 未改动'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: '此浏览器不能覆盖原文件 · 未改动'
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/audit-followup-r03.test.js:122:16)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..17
+# tests 17
+# suites 0
+# pass 0
+# fail 17
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 25529.181792

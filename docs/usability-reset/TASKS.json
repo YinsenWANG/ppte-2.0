@@ -210,8 +210,20 @@
     },
     {
       "id": "R03",
-      "status": "open",
-      "title": "图片像素定位误解析改变取景"
+      "status": "implemented-awaiting-native-human",
+      "title": "图片像素定位误解析改变取景",
+      "evidence": [
+        "../audits/2026-09-08-main-52e3bf0/evidence/R03/IMPLEMENTATION.md",
+        "../audits/2026-09-08-main-52e3bf0/evidence/R03/verification/result.json"
+      ],
+      "verification": {
+        "code": "passed",
+        "automated": "passed",
+        "real-browser": "pending",
+        "human": "pending",
+        "implementationCommit": "1ebf5603d845a4994c6ce3e047cdfd75a6100c86",
+        "reason": "R03 browser-resolved signed object-position and no-op crop preservation verified by 18 repository tests. Full gates: 216 pass, 0 fail, 16 existing skips. Geometry, exact content/pixel equality, real downloads and fresh Chrome headless process reopen tested. Native desktop authorization/original-file writes and user revalidation remain pending; PDF incomplete."
+      }
     }
   ]
 }

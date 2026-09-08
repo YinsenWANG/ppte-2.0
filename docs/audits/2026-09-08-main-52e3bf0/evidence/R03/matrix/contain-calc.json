@@ -1,0 +1,29 @@
+{
+  "fit": "contain",
+  "position": "calc(25% - 20px) calc(75% + 8px)",
+  "expected": {
+    "iw": 300,
+    "ih": 206.25,
+    "ox": -20,
+    "oy": 48.3125
+  },
+  "preview": {
+    "x": 316.671875,
+    "y": 400.734375,
+    "width": 280,
+    "height": 192.5
+  },
+  "model": {
+    "x": 101,
+    "y": 160,
+    "w": 300,
+    "h": 260,
+    "iw": 300,
+    "ih": 206.25,
+    "ox": -20,
+    "oy": 48.3125
+  },
+  "browser": "152.0.7977.76",
+  "headless": true,
+  "freshProcess": true
+}

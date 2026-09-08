@@ -1,0 +1,29 @@
+{
+  "fit": "contain",
+  "position": "min(25%, -10px) clamp(-30px, 75%, 40px)",
+  "expected": {
+    "iw": 300,
+    "ih": 206.25,
+    "ox": -10,
+    "oy": 40
+  },
+  "preview": {
+    "x": 326,
+    "y": 392.984375,
+    "width": 280,
+    "height": 192.5
+  },
+  "model": {
+    "x": 101,
+    "y": 160,
+    "w": 300,
+    "h": 260,
+    "iw": 300,
+    "ih": 206.25,
+    "ox": -10,
+    "oy": 40
+  },
+  "browser": "152.0.7977.76",
+  "headless": true,
+  "freshProcess": true
+}

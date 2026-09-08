@@ -1,0 +1,29 @@
+{
+  "fit": "contain",
+  "position": "right bottom",
+  "expected": {
+    "iw": 300,
+    "ih": 206.25,
+    "ox": 0,
+    "oy": 53.75
+  },
+  "preview": {
+    "x": 335.328125,
+    "y": 405.8125,
+    "width": 280,
+    "height": 192.5
+  },
+  "model": {
+    "x": 101,
+    "y": 160,
+    "w": 300,
+    "h": 260,
+    "iw": 300,
+    "ih": 206.25,
+    "ox": 0,
+    "oy": 53.75
+  },
+  "browser": "152.0.7977.76",
+  "headless": true,
+  "freshProcess": true
+}

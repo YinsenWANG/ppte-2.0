@@ -1,0 +1,118 @@
+TAP version 13
+# Subtest: R03 cover negative-px: browser preview, no-op bytes/history, actual move/download/fresh reopen
+ok 1 - R03 cover negative-px: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 4911.588958
+  type: 'test'
+  ...
+# Subtest: R03 cover positive-px: browser preview, no-op bytes/history, actual move/download/fresh reopen
+ok 2 - R03 cover positive-px: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 5101.530167
+  type: 'test'
+  ...
+# Subtest: R03 cover percentage: browser preview, no-op bytes/history, actual move/download/fresh reopen
+ok 3 - R03 cover percentage: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 5384.328417
+  type: 'test'
+  ...
+# Subtest: R03 cover left-top: browser preview, no-op bytes/history, actual move/download/fresh reopen
+ok 4 - R03 cover left-top: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 5350.363333
+  type: 'test'
+  ...
+# Subtest: R03 cover right-bottom: browser preview, no-op bytes/history, actual move/download/fresh reopen
+ok 5 - R03 cover right-bottom: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 5399.817416
+  type: 'test'
+  ...
+# Subtest: R03 cover edge-lengths: browser preview, no-op bytes/history, actual move/download/fresh reopen
+ok 6 - R03 cover edge-lengths: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 5234.382167
+  type: 'test'
+  ...
+# Subtest: R03 cover calc: browser preview, no-op bytes/history, actual move/download/fresh reopen
+ok 7 - R03 cover calc: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 5967.248334
+  type: 'test'
+  ...
+# Subtest: R03 cover math: browser preview, no-op bytes/history, actual move/download/fresh reopen
+ok 8 - R03 cover math: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 5246.948542
+  type: 'test'
+  ...
+# Subtest: R03 contain negative-px: browser preview, no-op bytes/history, actual move/download/fresh reopen
+ok 9 - R03 contain negative-px: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 5551.315084
+  type: 'test'
+  ...
+# Subtest: R03 contain positive-px: browser preview, no-op bytes/history, actual move/download/fresh reopen
+ok 10 - R03 contain positive-px: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 5499.244166
+  type: 'test'
+  ...
+# Subtest: R03 contain percentage: browser preview, no-op bytes/history, actual move/download/fresh reopen
+ok 11 - R03 contain percentage: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 5235.081916
+  type: 'test'
+  ...
+# Subtest: R03 contain left-top: browser preview, no-op bytes/history, actual move/download/fresh reopen
+ok 12 - R03 contain left-top: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 5947.554375
+  type: 'test'
+  ...
+# Subtest: R03 contain right-bottom: browser preview, no-op bytes/history, actual move/download/fresh reopen
+ok 13 - R03 contain right-bottom: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 5398.884166
+  type: 'test'
+  ...
+# Subtest: R03 contain edge-lengths: browser preview, no-op bytes/history, actual move/download/fresh reopen
+ok 14 - R03 contain edge-lengths: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 5434.721416
+  type: 'test'
+  ...
+# Subtest: R03 contain calc: browser preview, no-op bytes/history, actual move/download/fresh reopen
+ok 15 - R03 contain calc: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 5617.24675
+  type: 'test'
+  ...
+# Subtest: R03 contain math: browser preview, no-op bytes/history, actual move/download/fresh reopen
+ok 16 - R03 contain math: browser preview, no-op bytes/history, actual move/download/fresh reopen
+  ---
+  duration_ms: 5299.751791
+  type: 'test'
+  ...
+# Subtest: R03 unsupported contextual math reports before interaction and preserves content/history
+ok 17 - R03 unsupported contextual math reports before interaction and preserves content/history
+  ---
+  duration_ms: 670.76425
+  type: 'test'
+  ...
+# Subtest: R03 clean nine-page delivery: latest runtime, unchanged source, offline reading/edit/no-op/download/reopen
+ok 18 - R03 clean nine-page delivery: latest runtime, unchanged source, offline reading/edit/no-op/download/reopen
+  ---
+  duration_ms: 3300.483417
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 90754.47025

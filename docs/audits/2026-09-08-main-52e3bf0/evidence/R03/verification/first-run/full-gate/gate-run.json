@@ -1,0 +1,29 @@
+{
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "status": "passed",
+      "startedAt": "2026-09-08T14:18:32.623689+00:00",
+      "endedAt": "2026-09-08T14:18:33.932549+00:00",
+      "log": "typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "exitCode": 0,
+      "status": "passed",
+      "startedAt": "2026-09-08T14:18:33.947622+00:00",
+      "endedAt": "2026-09-08T14:18:35.511912+00:00",
+      "log": "build.log"
+    },
+    {
+      "command": "pnpm test",
+      "exitCode": 1,
+      "status": "failed",
+      "startedAt": "2026-09-08T14:18:35.512203+00:00",
+      "endedAt": "2026-09-08T14:21:09.081733+00:00",
+      "log": "test.log"
+    }
+  ]
+}
