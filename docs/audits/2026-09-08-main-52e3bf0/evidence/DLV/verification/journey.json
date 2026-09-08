@@ -1,0 +1,63 @@
+{
+  "time": "2026-09-08T14:37:50.814Z",
+  "browser": "152.0.7977.76",
+  "headless": true,
+  "nativePicker": false,
+  "physicalDesktop": false,
+  "offline": true,
+  "sourceSha256": "4cf0ddbfcc4f6cd3d1e1a713a0e60fbde703f43adb0533cc13737af7a2bba897",
+  "savedSha256": "8e11482c66e47cf63d4c073ac71359bc8ba3a06c65dcde740e5b4ce960d3f91f",
+  "steps": [
+    {
+      "step": "read",
+      "pages": 9
+    },
+    {
+      "step": "edit-text"
+    },
+    {
+      "step": "insert",
+      "imageId": "image-b97b50de-b75f-440f-aad0-8046af6c014a"
+    },
+    {
+      "step": "drag"
+    },
+    {
+      "step": "resize"
+    },
+    {
+      "step": "crop"
+    },
+    {
+      "step": "undo-redo",
+      "exactContentEquality": true
+    },
+    {
+      "step": "save-original-path",
+      "nativePicker": false,
+      "diskBridge": true,
+      "sha256": "8e11482c66e47cf63d4c073ac71359bc8ba3a06c65dcde740e5b4ce960d3f91f"
+    },
+    {
+      "step": "exit-browser",
+      "fullProcess": true
+    },
+    {
+      "step": "reopen",
+      "textImageGeometryRetained": true
+    },
+    {
+      "step": "present",
+      "pages": 9
+    }
+  ],
+  "writes": [
+    {
+      "sha256": "8e11482c66e47cf63d4c073ac71359bc8ba3a06c65dcde740e5b4ce960d3f91f",
+      "time": "2026-09-08T14:37:48.428Z"
+    }
+  ],
+  "errors": [],
+  "network": [],
+  "pdf": "excluded by U04 option 1; incomplete"
+}

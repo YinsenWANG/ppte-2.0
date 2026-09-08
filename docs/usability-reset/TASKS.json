@@ -237,10 +237,11 @@
     ],
     "verification": {
       "code": "passed",
-      "automated": "pending",
+      "automated": "passed",
       "real-browser": "pending",
       "human": "pending",
-      "reason": "Installed current CLI/Skill and generated the unchanged nine-page source once; targeted layout/download/fresh-process tests passed. Full gate receipt pending. No callable native desktop channel; original-file manual/autosave and human revalidation pending. Prior rejection remains reopened; PDF incomplete."
+      "implementationCommit": "a5937ab8c69d169c657c71340060699c04e949f4",
+      "reason": "Latest installed CLI/Skill and clean nine-page delivery verified: 220 pass / 0 fail / 16 existing skips. Real bounding boxes, exact runtime/source, actual download bytes and full-process reopen; disk bridge is automated only. No native desktop channel or human acceptance; prior rejection remains reopened; PDF incomplete."
     }
   }
 }
