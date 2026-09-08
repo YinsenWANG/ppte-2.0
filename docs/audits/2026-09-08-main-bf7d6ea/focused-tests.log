@@ -1,0 +1,33 @@
+✔ F01 A1/A2: one direct image chooser, no retired shortcuts/menus, disabled truthful top-level PDF and responsive shell (2943.945542ms)
+✔ F01 A3: no history and all author content survive edit/download/full browser restart (2337.096667ms)
+✔ F01 A3: valid history and all author content survive edit/download/full browser restart (2165.70975ms)
+✔ F01 A3: broken history and all author content survive edit/download/full browser restart (2198.495417ms)
+✔ F01 A3: unknown history and all author content survive edit/download/full browser restart (1894.155542ms)
+✔ F01 A3: simulated native adapter writes real disk and preserves old media history without new snapshots (2157.107958ms)
+✔ F01 A1–A3: audited Cherry ten-page document upgrades without content loss and keeps focused controls (1902.665833ms)
+✔ F02 errors survive editing and draft quota failure; pending automatic timer cannot retry without consent (1.004208ms)
+✔ F02 recovery serializes and stores once per revision/base; next acknowledged baseline checkpoints latest revision (0.132291ms)
+✔ F02 cancel, denial, picker/read errors and unsupported save never download; explicit download retains content (7867.089417ms)
+✔ F02 B1 actual Enter/Shift+Enter, inline formatting, multiline clipboard event, undo/redo, download and fresh process editing (2770.17175ms)
+✔ F03 A1/A2/A3 absolute: image UI placement, pointer/order, resize/crop/replace, undo/redo and fresh-process saved reopen (6775.728791ms)
+✔ F03 A1/A2/A3 block: image UI placement, pointer/order, resize/crop/replace, undo/redo and fresh-process saved reopen (5322.146125ms)
+✔ F03 A1/A2/A3 flex: image UI placement, pointer/order, resize/crop/replace, undo/redo and fresh-process saved reopen (4347.679209ms)
+✔ F03 A1/A2/A3 grid: image UI placement, pointer/order, resize/crop/replace, undo/redo and fresh-process saved reopen (4131.107834ms)
+✔ F03 failures/cancel: cancelled chooser, invalid bytes/type/oversize preserve original and undo stack; same replacement can be retried (1700.712416ms)
+✔ F03 bounded async image import: progress, cancel and leaving edit discard delayed decode without dirty/history changes (5103.790375ms)
+✔ F03 A1/A2 prototype: actual author draft, consecutive images, pointer resize, resource reuse and author content preserved (1379.335792ms)
+✔ F03 A1/A2 cherry: actual author draft, consecutive images, pointer resize, resource reuse and author content preserved (1489.391333ms)
+✔ F05 A1/A2: scoped controls, no retired menu/gutter, honest PDF state, navigation endpoints and keyboard focus (2324.644ms)
+✔ F05 A1/A2/A3: same Cherry draft at 1440/1024/390, unclipped centered page, inspector, save status and pure presentation (3278.454583ms)
+✔ F05 A3: 40-page rail scrolls independently; last page/add footer and keyboard reorder remain reachable at desktop and narrow width (1954.995959ms)
+✔ F06 A1/A4: same offline Cherry draft edits text and image, downloads once, reopens in fresh process and presents all pages; PDF stays unqualified (4113.590542ms)
+✔ F06 A2/A3: native acceptance and audit gaps cannot be closed by automated evidence (14.666875ms)
+✔ F06 A4: frozen delivered HTML matches recorded download hash and carries ten editable pages without external runtime dependencies (21.612041ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 30699.842792
