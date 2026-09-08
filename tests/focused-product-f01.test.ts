@@ -1,3 +1,4 @@
+import { confirmFirstSave } from './helpers/focused-product.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
@@ -88,7 +89,7 @@ test('F01 A3: simulated native adapter writes real disk and preserves old media 
  const f=await open('bridge','valid');const p=f.page;try{
   await p.exposeFunction('f01Read',()=>readFile(f.file,'utf8'));await p.exposeFunction('f01Write',(s:string)=>writeFile(f.file,s));
   await p.evaluate(()=>{const w=window as any;w.PPTeHTML.versions.automatic=()=>{throw Error('automatic history called');};w.showOpenFilePicker=async()=>[{name:'bridge.ppte.html',requestPermission:async()=>'granted',queryPermission:async()=>'granted',getFile:async()=>({text:()=>w.f01Read()}),createWritable:async()=>{let data='';return {write:async(s:string)=>{data=s;},close:()=>w.f01Write(data),abort:async()=>{}};}}];});
-  await p.getByRole('button',{name:'编辑',exact:true}).click();await p.frameLocator('#ppte-frame').locator('[data-ppte-id=title]').fill('磁盘修改');await p.getByRole('button',{name:'保存',exact:true}).click();await p.waitForFunction(()=>(window as any).PPTeSave.state==='saved');
+  await p.getByRole('button',{name:'编辑',exact:true}).click();await p.frameLocator('#ppte-frame').locator('[data-ppte-id=title]').fill('磁盘修改');await p.getByRole('button',{name:'保存',exact:true}).click();await confirmFirstSave(p);await p.waitForFunction(()=>(window as any).PPTeSave.state==='saved');
   // Remove the current shared image through UI; old checkpoint must retain its media.
   await p.getByRole('button',{name:'页面设置',exact:true}).click();await p.frameLocator('#ppte-frame').locator('img').click();await p.getByRole('button',{name:'删除对象',exact:true}).click();await p.waitForFunction(()=>(window as any).PPTeSave.state==='saved'&&!(window as any).PPTeSave.dirty);
   const disk=await readFile(f.file,'utf8'),parsed=readEnhanced(disk);assert.match(parsed.content,/磁盘修改/);assert.deepEqual(readHistory(disk),f.wire);

@@ -61,7 +61,12 @@ export class SaveController {
     }
     catch { this.draftAvailable=false;this.draftError='草稿存储不可用或配额已满；文件保存仍可重试';if(!this.detail)this.detail=this.draftError;this.notify(); }
   }
-  recover():Draft|undefined { try { const raw=this.storage?.getItem(this.key);if(!raw)return;const d=JSON.parse(raw);if(typeof d.content!=='string'||d.documentId!==this.base.metadata.documentId)throw Error();if(d.base!==(this.base.recoveryHash ?? this.base.hash)){this.set('conflict','草稿基准已变化；可保留草稿或重新读取文件');}return d; }catch{this.set('failed','草稿不可读取');} }
+  preserveRecovery(content:string, draft?:Draft) {
+    try { this.storage?.setItem(this.key+':retained',JSON.stringify(draft ?? {documentId:this.base.metadata.documentId,base:this.base.recoveryHash??this.base.hash,revision:this.revision,time:Date.now(),content})); }
+    catch { this.draftError='恢复副本暂仅保留在当前页面；浏览器缓存不可用';this.notify(); }
+  }
+  dismissRecovery() { try { this.storage?.removeItem(this.key+':retained');if(!this.dirty)this.storage?.removeItem(this.key); } catch {} if(this.dirty){this.draftAvailable=false;this.draft();} }
+  recover():Draft|undefined { try { const raw=this.storage?.getItem(this.key) ?? this.storage?.getItem(this.key+':retained');if(!raw)return;const d=JSON.parse(raw);if(typeof d.content!=='string'||d.documentId!==this.base.metadata.documentId)throw Error();if(d.base!==(this.base.recoveryHash ?? this.base.hash)){this.set('conflict','草稿基准已变化；可保留草稿或重新读取文件');}return d; }catch{this.draftError='草稿不可读取；文件保存仍可使用';this.notify();} }
   change() { this.dirty=true;this.revision++;if(!['conflict','failed','unauthorized'].includes(this.state)||this.state==='unauthorized'&&(!this.detail||this.detail.startsWith('尚未关联写入文件')))this.set(this.running?'saving':this.adapter?'dirty':'draft');if(!this.composing)this.schedule(); }
   exported(revision:number) { this.exportedRevision=revision;this.set(this.state,'已发起下载，原文件未覆盖（下载是否落盘由浏览器决定）'); }
   // First edit is recoverable immediately; sustained typing checkpoints at most every
@@ -69,10 +74,13 @@ export class SaveController {
   schedule() {
     clearTimeout(this.timer);
     if(!this.draftTimer) {
-      if(this.lastDraft===undefined)this.draft();
-      this.draftTimer=setTimeout(()=>{this.draftTimer=undefined;if(this.dirty)this.draft();},200);
+      if(this.lastDraft===undefined && !this.draftError)this.draft();
+      // A known unavailable cache should not repeatedly block typing with a full
+      // large-document JSON write. Retry during continued editing after 2s; explicit
+      // save/visibility/close checkpoints still attempt immediately. No draft is deleted.
+      this.draftTimer=setTimeout(()=>{this.draftTimer=undefined;if(this.dirty)this.draft();},this.draftError?2000:200);
     }
-    if(this.autoSave && !['conflict','failed','unauthorized'].includes(this.state)) {
+    if(this.adapter && this.autoSave && !['conflict','failed','unauthorized'].includes(this.state)) {
       this.timer=setTimeout(()=>void this.flush(false),1000);
       this.deadline ??= setTimeout(()=>void this.flush(false),10000);
     }

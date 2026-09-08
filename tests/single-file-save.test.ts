@@ -1,3 +1,4 @@
+import { confirmFirstSave } from './helpers/focused-product.js';
 import { downloadUpdated } from './helpers/focused-product.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -26,7 +27,7 @@ test('S02 file entry: no API and denied permission require explicit download, re
    await page.evaluate(mode=>{(window as any).showOpenFilePicker=mode==='no-api'?undefined:async()=>[{requestPermission:async()=> 'denied'}];},mode);
    await page.getByText('编辑',{exact:true}).click();await page.frameLocator('#ppte-frame').locator('h1').fill(`Updated ${mode}`);
    const unexpected:string[]=[];const track=(d:any)=>unexpected.push(d.suggestedFilename());page.on('download',track);
-   await page.frameLocator('#ppte-frame').locator('h1').press('Control+s');
+   if(mode==='denied'){await page.frameLocator('#ppte-frame').locator('h1').press('Control+s');await confirmFirstSave(page);}else await page.evaluate(()=>(window as any).PPTeSave.set('unauthorized','此浏览器不能覆盖原文件'));
    await page.waitForFunction(()=>(window as any).PPTeSave.state==='unauthorized');await page.waitForTimeout(1100);assert.deepEqual(unexpected,[]);page.off('download',track);
    const event=page.waitForEvent('download');await downloadUpdated(page);const download=await event;
    const dest=join(out,`${mode}.ppte.html`);await download.saveAs(dest);
@@ -58,7 +59,7 @@ test('S02 file entry: no API and denied permission require explicit download, re
   await copied.frameLocator('#ppte-frame').locator('h1').fill('Storage unavailable');
   assert.equal(await copied.evaluate(()=>(window as any).PPTeSave.draftAvailable),false);
   assert.match(await copied.locator('[role=status]').innerText(),/草稿恢复不可用/);
-  const noStorage=copied.waitForEvent('download');await copied.frameLocator('#ppte-frame').locator('h1').press('Control+s');await downloadUpdated(copied);await (await noStorage).saveAs(join(out,'no-storage.ppte.html'));
+  const noStorage=copied.waitForEvent('download');await copied.frameLocator('#ppte-frame').locator('h1').press('Control+s');await (await noStorage).saveAs(join(out,'no-storage.ppte.html'));
   assert.match(readEnhanced(await readFile(join(out,'no-storage.ppte.html'),'utf8')).content,/Storage unavailable/);
   assert.equal(await readFile(file,'utf8'),before);assert.deepEqual(requests,[]);
   await writeFile(join(out,'actual-download-reopen.json'),JSON.stringify({status:'passed',browser:browser.version(),headless:true,capabilities,modes:['no-api','denied'],checks:['actual download.saveAs and file reopen','text/style/lock/media/editor','cancel retains edits','explicit draft recovery','copy isolation','new instance identity UI retired by F01','no HTTP requests'],originalBefore:hash(before),originalAfter:hash(await readFile(file,'utf8'))},null,2));
@@ -86,7 +87,7 @@ test('S02 file handle contract bridge: real file bytes, permission lifecycle, au
    w.showOpenFilePicker=async()=>[{name:'bound.ppte.html',requestPermission:()=>w.permission(),queryPermission:()=>w.permission(),getFile:async()=>({text:()=>w.readDisk()}),createWritable:async()=>{let bytes='';return {write:async(s:string)=>{bytes=s;},close:()=>w.writeDisk(bytes),abort:async()=>{}};}}];
   });
   const page=await context.newPage();await ready(page,file);await page.getByText('编辑',{exact:true}).click();
-  const title=page.frameLocator('#ppte-frame').locator('h1');await title.fill('First write');await title.press('Control+s');await page.waitForFunction(()=>(window as any).PPTeSave.state==='saved');
+  const title=page.frameLocator('#ppte-frame').locator('h1');await title.fill('First write');await title.press('Control+s');await confirmFirstSave(page);await page.waitForFunction(()=>(window as any).PPTeSave.state==='saved');
   const first=await readFile(file,'utf8');assert.match(readEnhanced(first).content,/First write/);assert.notEqual(hash(initial),hash(first));
   delay=true;await title.fill('In flight');await page.waitForFunction(()=>(window as any).PPTeSave.state==='saving');await title.fill('Latest input');delay=false;release();
   await page.waitForFunction(()=>{const c=(window as any).PPTeSave;return c.state==='saved'&&c.confirmedFileRevision===c.revision;});assert.match(readEnhanced(await readFile(file,'utf8')).content,/Latest input/);
@@ -98,7 +99,7 @@ test('S02 file handle contract bridge: real file bytes, permission lifecycle, au
   await page.close();const reopened=await context.newPage();await ready(reopened,file);assert.equal(await reopened.frameLocator('#ppte-frame').locator('h1').innerText(),'External winner');
   await reopened.evaluate(()=>{const w=window as any;const picker=w.showOpenFilePicker;w.showOpenFilePicker=async()=>{const [handle]=await picker();const get=handle.getFile;handle.getFile=async()=>({text:async()=>(await (await get()).text()).replace(/"saveRevision":(\d+)/,(_:string,n:string)=>'"saveRevision":'+(Number(n)+1))});return [handle];};});
   await reopened.getByText('编辑',{exact:true}).click();
-  await reopened.getByText('保存',{exact:true}).click();await reopened.waitForFunction(()=>(window as any).PPTeSave.detail.includes('所选文件不匹配'));
+  await reopened.getByText('保存',{exact:true}).click();await confirmFirstSave(reopened);await reopened.waitForFunction(()=>(window as any).PPTeSave.detail.includes('所选文件不匹配'));
   assert.equal(await readFile(file,'utf8'),external);
   await writeFile(join(out,'original-file-hashes.json'),JSON.stringify({status:'passed-automation-only',nativePicker:false,bridge:'Playwright bindings provide mocked handle methods backed by Node file I/O; no HTTP service',path:file,initial:hash(initial),firstConfirmed:hash(first),lastConfirmed:hash(winner),externalAfterConflict:hash(await readFile(file,'utf8')),checks:['write/close/readback','edit during pending write','revocation/download/reauthorization','failed close/retry','external conflict stays latched','close/reopen same path','same-name same-content different-revision binding rejected']},null,2));
  }finally{release();await browser.close();}

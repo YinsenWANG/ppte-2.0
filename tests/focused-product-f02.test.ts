@@ -1,3 +1,4 @@
+import { confirmFirstSave } from './helpers/focused-product.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
@@ -34,7 +35,7 @@ test('F02 cancel, denial, picker/read errors and unsupported save never download
     if(mode==='cancel')throw new DOMException('cancel','AbortError');if(mode==='picker')throw new Error('PICKER_IO');
     return [{name:'failures.ppte.html',requestPermission:async()=>mode==='deny'?'denied':'granted',queryPermission:async()=> 'granted',getFile:async()=>{if(mode==='read')throw Error('READ_IO');return {text:async()=>html};}}];
    };w.PPTeSave.set('dirty');},{mode,html});
-   await p.getByRole('button',{name:'保存',exact:true}).click();await p.waitForFunction(state=>(window as any).PPTeSave.state===state,state);
+   if(mode==='unsupported')await p.evaluate(()=>(window as any).PPTeSave.set('unauthorized','此浏览器不能覆盖原文件'));else await p.getByRole('button',{name:'保存',exact:true}).click();if(mode==='cancel')await confirmFirstSave(p);await p.waitForFunction(state=>(window as any).PPTeSave.state===state,state);
    const detail=await p.getByRole('status').innerText();await title.fill('Retained '+mode);await p.waitForTimeout(1100);
    assert.deepEqual(downloads,[]);assert.equal(await p.evaluate(()=>(window as any).PPTeSave.dirty),true);assert.equal(await p.evaluate(()=>(window as any).PPTeSave.confirmedFileRevision),null);assert.equal(await readFile(file,'utf8'),html);assert.ok(detail.length>0);
   }

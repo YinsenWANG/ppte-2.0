@@ -30,7 +30,7 @@ test('S01 file URL: offline visible entry, native canvas, text/format/undo, pres
       for(const name of ['编辑','放映','导出为 PDF']) assert.equal(await page.getByRole('button',{name,exact:true}).isVisible(),true);
       assert.equal(await page.getByRole('button',{name:'保存',exact:true}).isVisible(),false);
       assert.equal(await page.getByRole('button',{name:'下载更新后的文件',exact:true}).isVisible(),false);
-      assert.match(await page.locator('[role=status]').textContent()??'',/尚未关联写入文件/);
+      assert.match(await page.evaluate(()=>(window as any).PPTeSave.detail),/尚未关联写入文件/);assert.equal(await page.locator('#ppte-save-ui').getAttribute('data-pristine'),'');
       assert.equal(await page.locator('[role=status]').isVisible(),false);
       const frame=page.frameLocator('#ppte-frame');
       await frame.locator('img').evaluate(async n=>{await (n as HTMLImageElement).decode();});

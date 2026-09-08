@@ -31,7 +31,7 @@ test('H02 acceptance 1: original path autosave, close/reopen and service restart
     assert.match(readEnhanced(await readFile(f.file,'utf8')).content,/原文件自动保存/);assert.deepEqual(downloads,[]);
     await page.close();const port=Number(new URL(s.origin).port);await s.close();s=await startEditor(f.file,{cacheDir:f.cacheDir,port});
     page=await browser.newPage();await ready(page,s.url);assert.equal(await page.frameLocator('#ppte-frame').locator('h1').textContent(),'原文件自动保存');
-    assert.equal(await page.locator('[role=status]').textContent(),'已保存到原文件');
+    assert.equal(await page.locator('[role=status]').textContent(),'未改动');assert.equal(await page.evaluate(()=>(window as any).PPTeSave.confirmedFileRevision),null);
     await page.reload();await page.waitForFunction(()=>(window as any).PPTeSave?.state==='saved');
     await page.screenshot({path:join(evidence,'chrome-original-reopened.png')});
     await writeFile(join(evidence,'example.html'),await readFile(f.file));
@@ -180,9 +180,9 @@ test('H02 acceptance 5: real installed Chrome file URL shows limitation, keeps d
  const f=await fixture();const browser=await chromium.launch({channel:'chrome',headless:true});try{
   const before=await readFile(f.file,'utf8');const page=await browser.newPage();await ready(page,pathToFileURL(f.file).href);
   assert.equal(await page.getByText('编辑',{exact:true}).isVisible(),true);await page.getByText('编辑',{exact:true}).click();
-  assert.match(await page.locator('[role=status]').textContent()??'',/不能自动覆盖原文件/);
+  assert.match(await page.evaluate(()=>(window as any).PPTeSave.detail),/不能自动覆盖原文件/);assert.equal(await page.locator('#ppte-save-ui').getAttribute('data-pristine'),'');
   await page.frameLocator('#ppte-frame').locator('h1').fill('Draft only');await page.waitForTimeout(1000);
-  assert.match(await page.locator('[role=status]').textContent()??'',/仅草稿/);assert.equal(await readFile(f.file,'utf8'),before);
+  assert.match(await page.locator('[role=status]').textContent()??'',/有修改未保存/);assert.equal(await page.evaluate(()=>(window as any).PPTeSave.state),'draft');assert.equal(await readFile(f.file,'utf8'),before);
   await page.screenshot({path:join(evidence,'chrome-file-limitation.png')});
   await writeFile(join(evidence,'chrome-capabilities.json'),JSON.stringify(await page.evaluate(()=>({userAgent:navigator.userAgent,url:location.protocol,secure:isSecureContext,picker:typeof(window as any).showOpenFilePicker,locks:!!navigator.locks,state:(window as any).PPTeSave.state})),null,2));
  }finally{await browser.close();await f.clean();}
@@ -269,6 +269,7 @@ test('H02 acceptance 2/3: failed-save draft survives page close, restores on mat
   const context=await browser.newContext();const page=await context.newPage();await ready(page,s.url);
   await page.route('**/api/save',r=>r.abort());await page.frameLocator('#ppte-frame').locator('h1').fill('Recovered draft');await page.waitForFunction(()=>(window as any).PPTeSave.state==='failed');await page.close();
   const reopened=await context.newPage();await ready(reopened,s.url);
+  await reopened.locator('#ppte-save-panel summary').click();await reopened.getByRole('button',{name:'预览恢复草稿',exact:true}).click();await reopened.getByRole('button',{name:'恢复草稿',exact:true}).click();
   assert.equal(await reopened.frameLocator('#ppte-frame').locator('h1').textContent(),'Recovered draft');await reopened.waitForFunction(()=>(window as any).PPTeSave.state==='saved');assert.match(readEnhanced(await readFile(f.file,'utf8')).content,/Recovered draft/);
  }finally{await browser.close();await s.close();await f.clean();}
 });

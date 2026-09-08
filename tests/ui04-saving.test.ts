@@ -1,3 +1,4 @@
+import { confirmFirstSave } from './helpers/focused-product.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { SaveController, type Snapshot } from '../packages/html-editor/src/save.js';
@@ -34,9 +35,9 @@ test('UI04 A1/A3/A7/A8: product save panel, wrong same-name document refusal, co
  let browser=await chromium.launch({channel:'chrome',headless:true});
  try{let page=await browser.newPage({offline:true});await page.goto(pathToFileURL(file).href);await page.waitForFunction(()=>!!(window as any).PPTeSave);
  await page.getByRole('button',{name:'编辑',exact:true}).click();const title=page.frameLocator('#ppte-frame').locator('h1');await title.fill('Changed');
- await page.locator('[role=status]').click();await page.getByLabel('自动保存',{exact:true}).uncheck();assert.equal(await page.evaluate(()=>(window as any).PPTeSave.autoSave),false);
+ await page.locator('[role=status]').click();assert.equal(await page.evaluate(()=>(window as any).PPTeSave.autoSave),true);await page.evaluate(()=>(window as any).PPTeSave.setAutoSave(false));assert.equal(await page.evaluate(()=>(window as any).PPTeSave.autoSave),false);
  await page.evaluate(html=>{(window as any).showOpenFilePicker=async()=>[{name:'same.ppte.html',requestPermission:async()=> 'granted',getFile:async()=>({text:async()=>html.replace(/"documentId":"[^"]+"/,'"documentId":"different"')}),createWritable:()=>{throw Error('MUST_NOT_WRITE');}}];},html);
- await page.getByRole('button',{name:'保存',exact:true}).click();await page.waitForFunction(()=>(window as any).PPTeSave.state==='conflict');assert.equal(await readFile(file,'utf8'),html);
+ await page.getByRole('button',{name:'保存',exact:true}).click();await confirmFirstSave(page);await page.waitForFunction(()=>(window as any).PPTeSave.state==='conflict');assert.equal(await readFile(file,'utf8'),html);
  await title.evaluate(e=>{e.dispatchEvent(new CompositionEvent('compositionstart',{bubbles:true}));e.textContent='中';e.dispatchEvent(new InputEvent('input',{bubbles:true,isComposing:true}));});
  await page.getByRole('button',{name:'下载更新后的文件',exact:true}).click();assert.match(await page.getByRole('status').innerText(),/完成输入法/);
  await title.evaluate(e=>{e.textContent='中文完整事务';e.dispatchEvent(new CompositionEvent('compositionend',{bubbles:true}));});

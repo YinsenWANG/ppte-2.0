@@ -32,6 +32,8 @@ body{background:#f3f4f6!important}
 #ppte-save-ui details>div{width:300px;background:#fff;border:1px solid #e7e9ee;border-radius:12px;box-shadow:0 8px 32px #20242d20;padding:16px;display:grid;gap:8px}
 #ppte-save-ui [role=status]{display:block;width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}
 #ppte-save-ui[data-pristine] [role=status]{display:none}#ppte-save-ui[data-pristine] #ppte-save-panel summary:after{content:'保存状态'}
+#ppte-save-ui[data-download-only] [role=status]{white-space:normal;line-height:1.3;max-height:46px}
+#ppte-save-panel [hidden]{display:none!important}
 #ppte-save-panel .save-detail{white-space:normal;overflow-wrap:anywhere;margin:0;color:#20242d}
 #ppte-edit-toolbar{position:fixed;left:0;right:0;top:56px;height:46px;background:#fff;border-bottom:1px solid #e7e9ee;display:flex;align-items:center;gap:8px;padding:0 16px;z-index:90}
 #ppte-edit-toolbar button{border:0}#ppte-edit-toolbar[hidden]{display:none}
