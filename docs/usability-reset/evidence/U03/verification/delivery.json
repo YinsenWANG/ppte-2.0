@@ -1,0 +1,26 @@
+{
+  "time": "2026-09-08T10:44:47.773Z",
+  "command": "enhanceHTML(existing clean Cherry) + exact content/history assertions",
+  "status": "passed",
+  "source": "docs/audits/2026-09-07-main-d1db13d/sample/Cherry-Studio-开源之路.ppte.html",
+  "output": "Cherry-U03.ppte.html",
+  "enhanceCalls": 1,
+  "elapsedMs": 160.75587499999997,
+  "sha256": "6ec88ded45d903e0b3614f9ba133bdc318ecd41c0d505ab87fef72dd837252ae",
+  "bytes": 384246,
+  "contentPreserved": true,
+  "historyPreserved": true,
+  "newAestheticClaim": false,
+  "note": "Existing draft runtime upgrade only; U01 full-deck generation not performed.",
+  "smoke": {
+    "status": "passed",
+    "headless": true,
+    "browser": "152.0.7977.76",
+    "offline": true,
+    "pages": 10,
+    "defaultMode": "read",
+    "editPrimarySaveVisible": true,
+    "dirty": false,
+    "pageErrors": []
+  }
+}

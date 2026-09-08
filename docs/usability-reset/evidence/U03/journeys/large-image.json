@@ -1,0 +1,39 @@
+{
+  "time": "2026-09-08T10:45:36.543Z",
+  "headless": true,
+  "nativePicker": false,
+  "browser": "152.0.7977.76",
+  "fileBytes": 9172826,
+  "sha256": "be18b3e3ed75edb026e4791eae8b82157b962c16163d05c39561eb92b014a6b6",
+  "imageBytes": 6606634,
+  "keyboardRoundTripMs": [
+    283,
+    2,
+    3,
+    46,
+    2,
+    1,
+    2,
+    1,
+    1,
+    1
+  ],
+  "longTasksMs": [
+    625,
+    52,
+    627,
+    283,
+    71,
+    72,
+    269,
+    682,
+    977,
+    834,
+    816
+  ],
+  "naturalQuotaFailure": true,
+  "manualWritePassed": true,
+  "crop": "70% 50%",
+  "fullBrowserRestart": true,
+  "note": "Timings include automation/host contention; no human smoothness claim."
+}

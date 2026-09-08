@@ -1,0 +1,188 @@
+{
+  "task": "U03",
+  "status": "reopened",
+  "implementationCommit": "f61a407aa93205c84d18fdced26413fd38ec6287",
+  "time": "2026-09-08T10:46:57.223256+00:00",
+  "platform": {
+    "system": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "node": "v22.23.2",
+    "browser": "Chrome 152.0.7977.76 headless"
+  },
+  "verification": {
+    "code": "passed",
+    "automated": "passed",
+    "real-browser": "pending",
+    "human": "reopened"
+  },
+  "humanRevalidation": {
+    "status": "pending",
+    "reason": "User explicitly rejected saving in the 2026-09-08 feedback. This remains reopened; no user revalidation of the new flow has been received."
+  },
+  "realBrowserReason": "No callable desktop-control tool; local System Events queries hung and were terminated without a result. Native picker, OS permissions, manual/autosave and full-browser restart on the user desktop remain unverified. Mock FileHandle backed by real Node disk I/O is automated evidence only.",
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "verification/typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "verification/build.log"
+    },
+    {
+      "command": "pnpm test",
+      "expansion": "pnpm build && node --test dist/tests/*.test.js",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "verification/test.log",
+      "tests": 172,
+      "pass": 156,
+      "fail": 0,
+      "skipped": 16,
+      "newTests": 7,
+      "newSkips": 0
+    }
+  ],
+  "testedTree": "All final code/test changes are in implementationCommit; final gates began before this commit and completed with no subsequent source changes. Evidence-only commit follows.",
+  "acceptance": [
+    {
+      "item": "可发现的主入口",
+      "code": "passed",
+      "automated": "passed",
+      "tests": [
+        "U03 A1/A2/A3 discoverable primary save",
+        "U03 A1/A3/A4 unsupported primary action",
+        "F05 layout at 1440/1024/390"
+      ],
+      "real-browser": "pending",
+      "human": "reopened",
+      "pendingReason": "No callable desktop-control tool; local System Events queries hung and were terminated without a result. Native picker, OS permissions, manual/autosave and full-browser restart on the user desktop remain unverified. Mock FileHandle backed by real Node disk I/O is automated evidence only. User explicitly rejected saving in the 2026-09-08 feedback. This remains reopened; no user revalidation of the new flow has been received."
+    },
+    {
+      "item": "真实手动与自动写回后退出重开",
+      "code": "passed",
+      "automated": "passed",
+      "tests": [
+        "U03 disk bridge manual/automatic + full process restart",
+        "U03 large image/crop + manual write + full process restart",
+        "S02 permission/conflict/queue disk bridge"
+      ],
+      "real-browser": "pending",
+      "human": "reopened",
+      "pendingReason": "No callable desktop-control tool; local System Events queries hung and were terminated without a result. Native picker, OS permissions, manual/autosave and full-browser restart on the user desktop remain unverified. Mock FileHandle backed by real Node disk I/O is automated evidence only.",
+      "evidence": [
+        "journeys/disk-bridge.json",
+        "journeys/large-image.json",
+        "journeys/s02-errors-and-queue.json"
+      ]
+    },
+    {
+      "item": "无复制HTML技术入口",
+      "code": "passed",
+      "automated": "passed",
+      "tests": [
+        "U03 A3 no copy/persistent disk controls or autosave switch",
+        "F01/F05 retired-controls regressions"
+      ],
+      "real-browser": "pending",
+      "human": "reopened",
+      "pendingReason": "User explicitly rejected saving in the 2026-09-08 feedback. This remains reopened; no user revalidation of the new flow has been received."
+    },
+    {
+      "item": "失败不丢修改",
+      "code": "passed",
+      "automated": "passed",
+      "tests": [
+        "U03 recovery preview/keep/restore/return",
+        "U03 quota/corrupt recovery/beforeunload",
+        "U03 failed reread/mount retains baseline and dirty",
+        "U03 failed cache backoff/manual retry",
+        "F02 cancellation/denial/read error",
+        "UI04 same-name mismatch/IME/queue",
+        "S02 revocation/external conflict/failed close/retry",
+        "H02 multi-window recovery and preserved history"
+      ],
+      "real-browser": "pending",
+      "human": "reopened",
+      "pendingReason": "No callable desktop-control tool; local System Events queries hung and were terminated without a result. Native picker, OS permissions, manual/autosave and full-browser restart on the user desktop remain unverified. Mock FileHandle backed by real Node disk I/O is automated evidence only. Native IME, actual write failures, permissions and subjective responsiveness remain unverified."
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "screenshots/clean-edit.png",
+      "sha256": "742cca4afe76b736b36c943ec9e14850632f0351a091afe8ebeb0420aa3248cc",
+      "layer": "automated-headless"
+    },
+    {
+      "path": "screenshots/clean-read.png",
+      "sha256": "b19e6d7bf255ef364004589964c8623d394374997783f990f598837762a8ad5c",
+      "layer": "automated-headless"
+    },
+    {
+      "path": "screenshots/fallback.png",
+      "sha256": "1b9e4a403024480286987b2db24d82c4ed023879418eeecce90f07e0a709fe37",
+      "layer": "automated-headless"
+    },
+    {
+      "path": "screenshots/first-save.png",
+      "sha256": "51128fe0cfc560cd3d15f44eb97a679d51e42cdf16eac1d6d636b38694bf35cc",
+      "layer": "automated-headless"
+    },
+    {
+      "path": "screenshots/large-image.png",
+      "sha256": "2338171b5d098ed594e3ac8fe32ad70fe82344a79ddd2e5db363636225051982",
+      "layer": "automated-headless"
+    },
+    {
+      "path": "screenshots/recovery.png",
+      "sha256": "1ed18cc0b98bfbbeb9a56b2886d710c69e810e1e9448f0ce7d66b0bce81413cf",
+      "layer": "automated-headless"
+    },
+    {
+      "path": "screenshots/reopened.png",
+      "sha256": "2320c4294fdee2c1f287585a64e6241acd118b8660cdff2bfb9ac6865687c510",
+      "layer": "automated-headless"
+    },
+    {
+      "path": "screenshots/saved.png",
+      "sha256": "d9bae598691b76fb1f51b1b7e0db5a3246c922fcf1a10f2563a08cd3206a9e8f",
+      "layer": "automated-headless"
+    }
+  ],
+  "nativeProbe": "verification/desktop-probe.json",
+  "delivery": "verification/delivery.json",
+  "knownLimitations": [
+    "Original user save failure remains unlocalized; no fabricated cause.",
+    "Large-document input still exhibits main-thread long tasks; metrics retained, no smoothness claim.",
+    "First double click across inspector-induced workspace recenter may select container; performance test uses select then edit; not claimed fixed by U03.",
+    "Existing Cherry runtime upgrade only, not U01 new aesthetics/full-deck generation.",
+    "No U04 architecture change/PDF integration.",
+    "Physical desktop, Safari/embedded-browser actual capability and human reacceptance pending."
+  ],
+  "priorRuns": [
+    {
+      "log": "verification/first-gate.log",
+      "result": "147 passed / 6 failed / 16 skipped",
+      "reason": "First-save panel occluded next action plus legacy interaction/status migration; fixed."
+    },
+    {
+      "log": "verification/targeted-before-fixture-fix.log",
+      "result": "26 passed / 1 failed",
+      "reason": "Large-image test double-click crossed workspace recenter; selected container. Changed to actual select-then-edit gesture; content assertion retained."
+    },
+    {
+      "log": "verification/backoff-gate.log",
+      "result": "154 passed / 1 failed / 16 skipped",
+      "reason": "Unbound 1s file flush defeated failed-cache backoff; removed pointless unbound flush scheduling."
+    },
+    {
+      "log": "verification/pre-final-green.log",
+      "result": "155 passed / 0 failed / 16 skipped",
+      "reason": "Before final reread/mount regression test; final gate supersedes."
+    }
+  ]
+}

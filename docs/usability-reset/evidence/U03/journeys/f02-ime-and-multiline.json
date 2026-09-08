@@ -1,0 +1,12 @@
+{
+  "status": "passed-automated",
+  "time": "2026-09-08T10:44:40.992Z",
+  "browser": "152.0.7977.76",
+  "headless": true,
+  "protocol": "file:",
+  "offline": true,
+  "nativePicker": false,
+  "systemIME": false,
+  "systemClipboard": false,
+  "freshBrowserProcess": true
+}

@@ -21,9 +21,29 @@
     {
       "id": "U03",
       "title": "重做并验证保存主流程",
-      "status": "pending",
+      "status": "reopened",
       "acceptance": "可发现的主入口；真实手动与自动写回后退出重开；无复制HTML技术入口；失败不丢修改",
-      "evidence": []
+      "evidence": [
+        "evidence/U03/IMPLEMENTATION.md",
+        "evidence/U03/verification/result.json",
+        "evidence/U03/NATIVE-VALIDATION.md",
+        "evidence/U03/Cherry-U03.ppte.html",
+        "evidence/U03/screenshots/",
+        "evidence/U03/journeys/",
+        "evidence/U03/SHA256SUMS"
+      ],
+      "verification": {
+        "code": "passed",
+        "automated": "passed",
+        "real-browser": "pending",
+        "human": "reopened",
+        "implementationCommit": "f61a407aa93205c84d18fdced26413fd38ec6287",
+        "reason": "U03 code and 7 new tests implemented; final gates 156 passed, 0 failed, 16 existing skips. User rejection remains reopened. Native original-file picker/manual/autosave and physical full-browser restart pending; disk-bridge/headless evidence is automated only. Large-document smoothness not claimed."
+      },
+      "humanRevalidation": {
+        "status": "pending",
+        "reason": "User explicitly rejected saving in the 2026-09-08 feedback. This remains reopened; no user revalidation of the new flow has been received."
+      }
     },
     {
       "id": "U04",
