@@ -130,12 +130,17 @@ export function installEditor(api: API) {
                 boundFileName = handle.name;
                 controller.adapter = adapter;
                 controller.base = target;
+                // The association action disappears when the file becomes bound.
+                if (savePanel.contains(document.activeElement)) save.focus();
                 controller.set(controller.dirty ? 'dirty' : 'unauthorized');
             }
             await controller.adapter?.authorize?.();
             associating=false;
             await controller.flush();
-            if (controller.state === 'saved') savePanel.open=false;
+            if (controller.state === 'saved') {
+                if (savePanel.contains(document.activeElement)) save.focus();
+                savePanel.open=false;
+            }
             if (!controller.dirty && controller.confirmedFileRevision === null) controller.set('unauthorized', '已关联所选文件，尚无本次写入记录。');
         }
         catch (e) {

@@ -28,7 +28,11 @@ export function disclosure(details:HTMLDetailsElement, menu=false) {
  const items=()=>Array.from(body.querySelectorAll<HTMLElement>('button:not(:disabled),input,a[href]'));
  const semantics=()=>{if(menu)for(const b of Array.from(body.querySelectorAll('button,input,a[href]')))b.setAttribute('role','menuitem');};
  semantics();new MutationObserver(semantics).observe(body,{childList:true,subtree:true});
- const place=()=>{if(!details.open)return;body.style.position='fixed';body.style.bottom='auto';body.style.margin='0';const r=trigger.getBoundingClientRect();body.style.left=Math.max(8,Math.min(r.left,innerWidth-body.offsetWidth-8))+'px';body.style.right='auto';body.style.top=Math.max(8,Math.min(r.bottom+4,innerHeight-body.offsetHeight-8))+'px';};
+ const place=()=>{if(!details.open)return;body.style.position='fixed';body.style.bottom='auto';body.style.margin='0';const r=trigger.getBoundingClientRect();body.style.left=Math.max(8,Math.min(r.left,innerWidth-body.offsetWidth-8))+'px';body.style.right='auto';if(details.id==='ppte-save-panel') {
+  // Both narrow-screen rows remain reachable while save details are open.
+  const top=(details.closest('nav')?.getBoundingClientRect().bottom??r.bottom)+4;
+  body.style.top=top+'px';body.style.maxHeight=Math.max(0,innerHeight-top-8)+'px';
+ } else body.style.top=Math.max(8,Math.min(r.bottom+4,innerHeight-body.offsetHeight-8))+'px';};
  const close=(focus=true)=>{details.open=false;trigger.setAttribute('aria-expanded','false');if(focus)trigger.focus();};
  details.addEventListener('toggle',()=>{trigger.setAttribute('aria-expanded',String(details.open));semantics();place();});
  trigger.setAttribute('aria-expanded','false');

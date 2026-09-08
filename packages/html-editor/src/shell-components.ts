@@ -24,15 +24,17 @@ body{background:#f3f4f6!important}
 :is(#ppte-save-ui,#ppte-workspace,#ppte-edit-toolbar,#ppte-canvas-controls) .icon-button{width:32px;flex:none;padding:4px}
 :is(#ppte-save-ui,#ppte-workspace) button[aria-pressed=true]{background:#eef0ff;color:#5261d8}
 #ppte-save-ui{color:#20242d!important;inset:0 0 auto!important;height:56px;padding:0 20px!important;background:#fff!important;border-radius:0!important;border-bottom:1px solid #e7e9ee;flex-wrap:nowrap;gap:8px!important}
-#ppte-save-ui strong{font-size:14px;min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#ppte-save-ui strong{order:0;font-size:14px;min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #ppte-save-ui button{border:0;flex-shrink:0}#ppte-save-ui button:disabled{color:#737a88;cursor:not-allowed;background:#f3f4f6}#ppte-save-ui .primary{background:#5261d8;color:#fff;padding:6px 16px}#ppte-save-ui .primary:hover{background:#424fb8}
-#ppte-save-ui[data-mode=read] .save-action,#ppte-save-ui[data-mode=read] #ppte-save-panel{display:none}
-#ppte-save-ui .modes{display:flex;gap:2px;border:1px solid #e7e9ee;border-radius:8px;padding:2px}
-#ppte-save-ui summary{cursor:pointer;list-style:none;padding:6px;border-radius:6px;white-space:nowrap}
+#ppte-save-ui[data-mode=read] .save-action,#ppte-save-ui[data-mode=read] #ppte-save-panel{visibility:hidden}
+#ppte-save-ui .save-action{order:1;width:140px;min-width:0;box-sizing:border-box}
+#ppte-save-panel{order:2;width:142px;flex:none;min-width:0}
+#ppte-save-ui .modes{order:3;flex:none;display:flex;gap:2px;border:1px solid #e7e9ee;border-radius:8px;padding:2px}
+#ppte-save-ui>.primary{order:5;width:60px}
+#ppte-save-ui>button[aria-label="导出为 PDF"]{order:4;width:96px}
+#ppte-save-ui summary{display:flex;align-items:center;height:32px;box-sizing:border-box;cursor:pointer;list-style:none;padding:6px;border-radius:6px;white-space:nowrap}
 #ppte-save-ui details>div{width:300px;background:#fff;border:1px solid #e7e9ee;border-radius:12px;box-shadow:0 8px 32px #20242d20;padding:16px;display:grid;gap:8px}
-#ppte-save-ui [role=status]{display:block;width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}
-#ppte-save-ui[data-pristine] [role=status]{display:none}#ppte-save-ui[data-pristine] #ppte-save-panel summary:after{content:'保存状态'}
-#ppte-save-ui[data-download-only] [role=status]{white-space:normal;line-height:1.3;max-height:46px}
+#ppte-save-ui [role=status]{display:block;width:100%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}
 #ppte-save-panel [hidden]{display:none!important}
 #ppte-save-panel .save-detail{white-space:normal;overflow-wrap:anywhere;margin:0;color:#20242d}
 #ppte-edit-toolbar{position:fixed;left:0;right:0;top:56px;height:46px;background:#fff;border-bottom:1px solid #e7e9ee;display:flex;align-items:center;gap:8px;padding:0 16px;z-index:90}
@@ -64,6 +66,12 @@ body{background:#f3f4f6!important}
 #ppte-canvas-controls button{border:0;min-height:30px}#ppte-canvas-controls .zoom-group{margin-left:auto}#ppte-canvas-controls summary{list-style:none;padding:4px}
 #ppte-canvas-controls .zoom-options>div{position:fixed;display:flex;padding:8px;background:white;border:1px solid #e7e9ee;border-radius:8px}#ppte-canvas-controls .zoom-options:not([open])>div{display:none}
 #ppte-canvas-controls details p{position:absolute;bottom:36px;right:8px;width:300px;padding:16px;background:white;border:1px solid #e7e9ee}
-@media(max-width:580px){#ppte-save-ui{height:100px;display:grid!important;grid-template-columns:minmax(0,1fr) auto auto;padding:4px 8px!important;gap:2px!important}#ppte-save-ui strong{grid-column:1/3}#ppte-save-ui[data-mode=read] .save-action,#ppte-save-ui[data-mode=read] #ppte-save-panel{display:none}
-#ppte-save-ui .modes{grid-row:2;grid-column:1}#ppte-save-panel{grid-row:1;grid-column:2/4}#ppte-save-ui [role=status]{width:120px}#ppte-save-ui .primary{grid-row:2;grid-column:2}#ppte-save-ui>button[aria-label='导出为 PDF']{grid-row:2;grid-column:3;padding:4px 8px}#ppte-save-ui strong{grid-column:1}#ppte-save-ui[data-mode=read] strong{grid-column:1/-1}#ppte-save-ui .save-action{grid-row:1;grid-column:2}#ppte-save-ui[data-mode=edit] #ppte-save-panel{grid-column:3}#ppte-edit-toolbar{height:52px}#ppte-canvas-controls{height:48px;padding:0 4px;gap:0}#ppte-canvas-controls .control-row{gap:0}#ppte-canvas-controls .zoom-group{gap:0}#ppte-canvas-controls .zoom-group span{max-width:48px;line-height:1.2}#ppte-page-list .thumb-row{padding-right:44px}#ppte-page-list summary{width:44px}}
+@media(max-width:580px){#ppte-save-ui{height:100px;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:44px 48px;padding:4px 8px!important;gap:0 4px!important}
+#ppte-save-ui strong{grid-row:1;grid-column:1}
+#ppte-save-ui .save-action{grid-row:1;grid-column:2;width:100%;height:44px;white-space:normal;line-height:1.2;padding:4px}
+#ppte-save-panel{grid-row:1;grid-column:3;width:100%}
+#ppte-save-ui .modes{grid-row:2;grid-column:1;justify-self:start}
+#ppte-save-ui>.primary{grid-row:2;grid-column:2;justify-self:end}
+#ppte-save-ui>button[aria-label='导出为 PDF']{grid-row:2;grid-column:3;justify-self:end;padding:4px 8px}
+#ppte-edit-toolbar{height:52px}#ppte-canvas-controls{height:48px;padding:0 4px;gap:0}#ppte-canvas-controls .control-row{gap:0}#ppte-canvas-controls .zoom-group{gap:0}#ppte-canvas-controls .zoom-group span{max-width:48px;line-height:1.2}#ppte-page-list .thumb-row{padding-right:44px}#ppte-page-list summary{width:44px}}
 `;

@@ -48,7 +48,12 @@ test('S02 file entry: no API and denied permission require explicit download, re
   await page.evaluate(()=>{(window as any).showOpenFilePicker=async()=>{throw new DOMException('cancel','AbortError');};});
   await page.getByText('保存',{exact:true}).click();await page.waitForFunction(()=>(window as any).PPTeSave.detail.includes('已取消'));
   await page.evaluate(()=>(window as any).PPTeSave.draft());await page.close();const again=await context.newPage();await ready(again,file);
-  assert.equal(await again.frameLocator('#ppte-frame').locator('h1').innerText(),'Original');assert.match(await again.locator('[role=status]').innerText(),/发现匹配草稿/);
+  assert.equal(await again.frameLocator('#ppte-frame').locator('h1').innerText(),'Original');
+  // R01 reserves the reading-mode save slot but hides its accessible content.
+  assert.equal(await again.locator('[role=status]').isVisible(),false);
+  assert.equal(await again.getByRole('status').count(),0);
+  await again.getByRole('button',{name:'编辑',exact:true}).click();
+  assert.match(await again.locator('[role=status]').innerText(),/发现匹配草稿/);
   const copy=join(out,'copy.ppte.html');await copyFile(file,copy);const copied=await context.newPage();await ready(copied,copy);assert.equal(await copied.evaluate(()=>(window as any).PPTeSave.recover()),undefined);
   await t.test('Retired new-file-instance menu', {skip:'F01 confirmed removal; identity compatibility covered by focused-product-f01'},async()=>{
   const dl=copied.waitForEvent('download');await copied.getByText('更多',{exact:true}).click();await copied.getByText('另存为新文件',{exact:true}).click();await (await dl).saveAs(join(out,'new-instance.ppte.html'));
