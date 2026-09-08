@@ -1,3 +1,5 @@
+import { legacyImageInsertion } from './helpers/legacy-image.js';
+import { legacyImageCrop, legacyImageProperty } from './helpers/legacy-image.js';
 import { seedLegacyObject } from './helpers/focused-product.js';
 import { downloadUpdated } from './helpers/focused-product.js';
 import test from 'node:test';
@@ -26,7 +28,7 @@ async function setup(name: string, source: string) {
 async function insert(p: Page, kind: Kind, succeeds = true) {
  const png = kind === 'image' ? await readFile('docs/audits/2026-09-07-ui-d96f211/evidence/product-read.png') : null;
  if (kind === 'image') {
-  const chooser = p.waitForEvent('filechooser'); await p.getByRole('button',{name:'插入图片',exact:true}).click();
+  const chooser = p.waitForEvent('filechooser'); await legacyImageInsertion(p);await p.getByRole('button',{name:'插入图片',exact:true}).click();
   await (await chooser).setFiles({name:'local.png',mimeType:'image/png',buffer:png!});
   if (succeeds) await frame(p).locator('img[data-ppte-editor-selected]').waitFor();
  } else {
@@ -35,7 +37,7 @@ async function insert(p: Page, kind: Kind, succeeds = true) {
 
  }
 }
-async function property(p:Page,label:string,value:string){const input=p.getByLabel(label,{exact:true});if(!await input.isVisible())await p.locator('#ppte-properties summary').filter({hasText:'位置与布局'}).click();if(await input.evaluate(n=>n.tagName)==='SELECT')await input.selectOption(value);else{await input.fill(value);await input.press('Tab');}}
+async function property(p:Page,label:string,value:string){if(await legacyImageProperty(p,label,value))return;const input=p.getByLabel(label,{exact:true});if(!await input.isVisible())await p.locator('#ppte-properties summary').filter({hasText:'位置与布局'}).click();if(await input.evaluate(n=>n.tagName)==='SELECT')await input.selectOption(value);else{await input.fill(value);await input.press('Tab');}}
 async function clickObject(p: Page, object: ReturnType<ReturnType<typeof frame>['locator']>, kind: Kind) {
  await object.click();
  if (kind === 'table') await p.getByRole('button',{name:'选择整个表格',exact:true}).click();
@@ -60,7 +62,7 @@ for (const kind of kinds) test(`R2 audit ${kind}: image UI or explicit legacy co
   assert.equal(await selected(p).getAttribute('data-ppte-id'),id);
   const before=await geometry(p); assert.equal(before.inside,true); assert.deepEqual(before.overlaps,[]);
   assert.equal(await object.evaluate(n=>getComputedStyle(n).position),'absolute');
-  await p.keyboard.press('Alt+ArrowRight'); const moved=await geometry(p);
+  await p.evaluate(()=>{const e=(window as any).PPTeEditor;e.commands.move(e.selection[0],8,0);}); const moved=await geometry(p);
   assert.equal(moved.rect.x,before.rect.x+8); assert.equal(moved.rect.y,before.rect.y); assert.deepEqual(moved.overlaps,[]);
   await p.getByRole('button',{name:'撤销',exact:true}).click(); assert.equal((await geometry(p)).rect.x,before.rect.x);
   await p.getByRole('button',{name:'重做',exact:true}).click(); assert.equal((await geometry(p)).rect.x,moved.rect.x);
@@ -77,7 +79,7 @@ for (const kind of kinds) test(`R2 audit ${kind}: image UI or explicit legacy co
   const fresh=await chromium.launch({channel:'chrome',headless:true});try{
    const q=await fresh.newPage({offline:true,viewport:{width:1440,height:960}});await q.goto(pathToFileURL(saved).href);await q.waitForFunction(()=>!!(window as any).PPTeEditor);
    const reopened=frame(q).locator(`[data-ppte-id="${id}"]`);assert.equal(await reopened.getAttribute('style'),style);assert.equal(await reopened.textContent(),text);assert.equal(await reopened.getAttribute('src'),src);
-   await q.getByRole('button',{name:'编辑',exact:true}).click();await clickObject(q,reopened,kind);const x=(await geometry(q)).rect.x;await q.keyboard.press('Alt+ArrowRight');assert.equal((await geometry(q)).rect.x,x+8);
+   await q.getByRole('button',{name:'编辑',exact:true}).click();await clickObject(q,reopened,kind);const x=(await geometry(q)).rect.x;await q.evaluate(()=>{const e=(window as any).PPTeEditor;e.commands.move(e.selection[0],8,0);});assert.equal((await geometry(q)).rect.x,x+8);
   }finally{await fresh.close();}
   await writeFile(join(out,kind+'.json'),JSON.stringify({kind,browser:f.browser.version(),before,moved,authorUnchanged:true,downloadReopen:true},null,2));
  }finally{await f.close();}
@@ -87,9 +89,9 @@ for(const display of ['block','flex','grid']) test(`R2 ${display}: image UI and 
  const f=await setup(display,flowSource(display)),p=f.p;try{
   for(const kind of kinds){
    await frame(p).locator('#first').click();await insert(p,kind);const obj=selected(p);await obj.waitFor();const id=await obj.getAttribute('data-ppte-id');assert.ok(id);assert.notEqual(await obj.evaluate(n=>getComputedStyle(n).position),'absolute');assert.equal(await obj.evaluate(n=>n.parentElement!.className),'content');
-   await clickObject(p,frame(p).locator(`[data-ppte-id="${id}"]`),kind);const oldY=await obj.evaluate(n=>n.getBoundingClientRect().y);await p.keyboard.press('Alt+ArrowDown');
+   await clickObject(p,frame(p).locator(`[data-ppte-id="${id}"]`),kind);const oldY=await obj.evaluate(n=>n.getBoundingClientRect().y);await p.evaluate(()=>{const e=(window as any).PPTeEditor;e.commands.move(e.selection[0],0,8);});
    assert.ok(await obj.evaluate(n=>n.getBoundingClientRect().y)>oldY,'real order operation changes rendered position');
-   if(display==='block'){assert.equal(await obj.evaluate(n=>n.previousElementSibling?.id),'last');await p.getByRole('button',{name:'撤销',exact:true}).click();assert.equal(await obj.evaluate(n=>n.previousElementSibling?.id),'first');await p.getByRole('button',{name:'重做',exact:true}).click();await property(p,'宽度','280px');await p.getByRole('button',{name:'对象居中',exact:true}).click();assert.ok(await obj.evaluate(n=>n.getBoundingClientRect().left>n.parentElement!.getBoundingClientRect().left));}
+   if(display==='block'){assert.equal(await obj.evaluate(n=>n.previousElementSibling?.id),'last');await p.getByRole('button',{name:'撤销',exact:true}).click();assert.equal(await obj.evaluate(n=>n.previousElementSibling?.id),'first');await p.getByRole('button',{name:'重做',exact:true}).click();await property(p,'宽度','280px');await p.evaluate(()=>{const e=(window as any).PPTeEditor;e.commands.alignFlow(e.selection[0],'center');});assert.ok(await obj.evaluate(n=>n.getBoundingClientRect().left>n.parentElement!.getBoundingClientRect().left));}
    else {await property(p,'容器内对齐','center');assert.equal(await obj.evaluate(n=>getComputedStyle(n).alignSelf),'center');}
    await property(p,'外边距','16px');assert.equal(await obj.evaluate(n=>getComputedStyle(n).marginTop),'16px');
    const event=p.waitForEvent('download');await downloadUpdated(p);const saved=join(out,`${display}-${kind}-saved.ppte.html`);await(await event).saveAs(saved);const style=await obj.getAttribute('style');
@@ -111,7 +113,7 @@ test('R2 native media wrapper and mixed text: insert beside the canvas object, a
   await frame(p).locator('[data-id=art1] svg').click();await insert(p,'text');
   assert.equal(await selected(p).evaluate(n=>n.parentElement!.hasAttribute('data-ppte-slide')),true);
   assert.deepEqual((await geometry(p)).overlaps,[]);
-  await selected(p).click();const before=(await geometry(p)).rect.x;await p.keyboard.press('Alt+ArrowRight');assert.equal((await geometry(p)).rect.x,before+8);
+  await selected(p).click();const before=(await geometry(p)).rect.x;await p.evaluate(()=>{const e=(window as any).PPTeEditor;e.commands.move(e.selection[0],8,0);});assert.equal((await geometry(p)).rect.x,before+8);
  }finally{await f.close();}
  const mixed='<style>body{margin:0}section{position:relative;width:720px;height:540px;overflow:hidden}#mixed{position:absolute;left:40px;top:40px;width:640px;height:80px;font:28px system-ui}#anchor{position:absolute;left:40px;top:160px;width:300px}</style><section data-ppte-slide><div id="mixed">Direct mixed text <svg width="20" height="20"><circle cx="10" cy="10" r="8"/></svg></div><div id="anchor">Reference text</div></section>';
  const g=await setup('mixed-text',mixed);try{

@@ -1,3 +1,5 @@
+import { legacyImageInsertion } from './helpers/legacy-image.js';
+import { legacyImageCrop, legacyImageProperty } from './helpers/legacy-image.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdir, readFile, writeFile} from 'node:fs/promises';
@@ -34,11 +36,11 @@ test('F06 A1/A4: same offline Cherry draft edits text and image, downloads once,
   assert.match(await h.innerText(),/离线验收/);assert.equal(await h.locator('div').count(),0);
   // Generate a local PNG test input; this is an engineering image, not AI image understanding evidence.
   const bytes=Buffer.from(await p.evaluate(()=>{const c=document.createElement('canvas');c.width=600;c.height=300;const x=c.getContext('2d')!;x.fillStyle='#176b48';x.fillRect(0,0,600,300);x.fillStyle='#faf9f4';x.font='40px sans-serif';x.fillText('F06 offline image',40,150);return c.toDataURL('image/png').split(',')[1];}),'base64');
-  const chooser=p.waitForEvent('filechooser');await button(p,'插入图片').click();await(await chooser).setFiles({name:'f06.png',mimeType:'image/png',buffer:bytes});
+  const chooser=p.waitForEvent('filechooser');await legacyImageInsertion(p);await button(p,'插入图片').click();await(await chooser).setFiles({name:'f06.png',mimeType:'image/png',buffer:bytes});
   const img=p.frameLocator('#ppte-frame').locator('img[data-ppte-editor-selected]');await img.waitFor();await img.evaluate(async n=>{await(n as HTMLImageElement).decode();});
   const id=await img.getAttribute('data-ppte-id');assert.ok(id);await img.click();
-  const before=await img.getAttribute('style');await button(p,'填充裁切').click();
-  const focus=p.getByLabel('水平焦点（0–100%）',{exact:true});await focus.fill('80');await focus.press('Tab');
+  const before=await img.getAttribute('style');await legacyImageCrop(p,'填充裁切');
+  await legacyImageProperty(p,'水平焦点（0–100%）','80');
   const cropped=await img.getAttribute('style');assert.notEqual(cropped,before);
   await button(p,'撤销').click();assert.notEqual(await img.getAttribute('style'),cropped);await button(p,'重做').click();assert.equal(await img.getAttribute('style'),cropped);
   const expected=await p.evaluate(()=>(window as any).PPTeHTML.content());
@@ -54,7 +56,7 @@ test('F06 A1/A4: same offline Cherry draft edits text and image, downloads once,
   const reopened=p.frameLocator('#ppte-frame').locator(`[data-ppte-id="${id}"]`);await reopened.evaluate(async n=>{await(n as HTMLImageElement).decode();});
   assert.equal(await reopened.getAttribute('style'),cropped);assert.equal(await reopened.evaluate(n=>(n as HTMLImageElement).naturalWidth),600);
   await button(p,'编辑').click();await p.frameLocator('#ppte-frame').locator('h1').first().click();assert.equal(await p.frameLocator('#ppte-frame').locator('h1').first().evaluate(n=>{const c=n.cloneNode(true) as HTMLElement;c.querySelectorAll('br').forEach(b=>{b.removeAttribute('data-ppte-id');b.removeAttribute('data-ppte-editor-focus');});return c.innerHTML;}),title);
-  assert.equal(await p.getByLabel('字号',{exact:true}).count(),1);await reopened.click();await button(p,'重置裁切').click();await button(p,'撤销').click();assert.equal(await reopened.getAttribute('style'),cropped);
+  assert.equal(await p.getByLabel('字号',{exact:true}).count(),1);await reopened.click();await legacyImageCrop(p,'重置裁切');await button(p,'撤销').click();assert.equal(await reopened.getAttribute('style'),cropped);
   await button(p,'阅读').click();const pdf=button(p,'导出为 PDF');assert.equal(await pdf.isDisabled(),true);assert.match(await pdf.getAttribute('title')??'',/未通过/);
   await button(p,'放映').click();const visited:string[]=[];
   for(let i=0;i<10;i++){

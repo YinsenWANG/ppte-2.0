@@ -51,6 +51,8 @@ export function editCanvas(frame: HTMLIFrameElement, moved: () => void) {
         const slide = doc.querySelectorAll<HTMLElement>('[data-ppte-slide]')[index];
         if (!slide) { clear(); return 1; }
         const rect = slide.getBoundingClientRect(), computed = view.getComputedStyle(slide);
+        slide.dataset.ppteEditorAuthorPosition = computed.position;
+        slide.dataset.ppteEditorPageFrameSafe = String(computed.position !== 'static' || !Array.from(slide.querySelectorAll<HTMLElement>('*')).some(n=>view.getComputedStyle(n).position==='absolute' && !slide.contains(n.offsetParent)));
         const width = Math.max(1,rect.width), height = Math.max(1,rect.height), display = computed.display;
         frame.style.width = `${Math.max(innerWidth,width)}px`;
         frame.style.height = `${Math.max(innerHeight,height)}px`;

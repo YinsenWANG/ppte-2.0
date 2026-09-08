@@ -2,6 +2,7 @@ import { deferMedia, materializeMedia } from './media-demand.js';
 import { shellCSS, icon, iconButton, group, selectField } from './shell-components.js';
 import { accessibleShellCSS, disclosure } from './accessibility.js';
 import { readingView } from './reading.js';
+import { imageDirect } from './image-direct.js';
 import { editCanvas } from './edit-canvas.js';
 import { installPlayer } from '../../html-player/src/index.js';
 import { Commands, editable, isTextObject, textObject, snapshot } from './commands.js';
@@ -56,10 +57,10 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         return b;
     };
     const toolbar = document.createElement('div'); toolbar.id='ppte-edit-toolbar'; toolbar.dataset.ppteTransient=''; toolbar.setAttribute('role','toolbar'); toolbar.setAttribute('aria-label','编辑工具'); document.body.append(toolbar);
-    const undo = button(toolbar, '撤销', () => commands.history());
+    const undo = button(toolbar, '撤销', () => {images.cancel();commands.history();});
     undo.title = '撤销 · Cmd/Ctrl+Z';
     undo.setAttribute('aria-label', '撤销');
-    const redo = button(toolbar, '重做', () => commands.history(true));
+    const redo = button(toolbar, '重做', () => {images.cancel();commands.history(true);});
     redo.title = '重做 · Cmd/Ctrl+Shift+Z';
     redo.setAttribute('aria-label', '重做');
     const insertionContext = () => ({slide:commands.doc.querySelectorAll<HTMLElement>('[data-ppte-slide]')[currentSlide].dataset.ppteId!, reference:selected.length===1?selected[0]:undefined});
@@ -83,7 +84,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     };
     imageInput.onchange = () => {
         const file = imageInput.files?.[0], point = imagePoint; imageInput.value = '';
-        if (file && point) imageAction(async signal => selectInserted(await commands.insertImage(point.slide, file, point.reference, signal)));
+        if (file && point) imageAction(async signal => selectInserted(await commands.insertImageFrame(point.slide, file, point.reference, signal)));
     };
     const insertImageButton = button(toolbar, '插入图片', () => {
         if (!active || composing || imageJob) return;
@@ -144,6 +145,8 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         else
             commands.style(selected, key, value);
     };
+    const images = imageDirect(frame, root, () => commands, () => active && !composing && !suspended,
+        () => selected, id => { selected=[id]; refresh(); }, report);
     let composing = false;
     function refresh() {
         if (imageJob && (!active || currentSlide !== imageJob.slide)) imageJob.controller.abort();
@@ -208,6 +211,25 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
                 state.textContent = computed.backgroundImage !== 'none' ? '复杂背景 · 保留渐变或图像' : computed.backgroundColor === 'rgba(0, 0, 0, 0)' ? '透明 · 显示下层背景' : '纯色背景';
                 s.append(state);
             }
+        }
+        else if (nodes.some(n => n.tagName === 'IMG')) {
+            // Images have one direct-manipulation surface, no numeric inspector.
+            const s = document.createElement('div'); panel.append(s);
+            if (nodes.length === 1) {
+                const input = document.createElement('input'); input.type='file'; input.accept=imageInput.accept;
+                input.hidden=true; input.setAttribute('aria-label','替换本地资源'); s.append(input);
+                input.onchange=()=>{const file=input.files?.[0], id=selected[0];input.value='';if(file)imageAction(signal=>commands.media(id,file,signal));};
+                const replace=button(s,'替换图片',()=>{images.cancel();input.click();});
+                const crop=button(s,'裁切',()=>images.crop());
+                const remove=button(s,'删除对象',()=>{images.cancel();commands.remove(selected[0]);selected=[];range=null;});
+                for(const [b,path,label] of [[replace,'M4 5h10v9H4z M6 8l2 2 2-3 3 5 M5 3h9','替换图片'],[crop,'M5 2v11h11 M2 5h11v11','裁切'],[remove,'M3 5h12 M6 5V3h6v2 M5 5l1 11h6l1-11','删除对象']] as const){
+                    b.innerHTML=`<svg aria-hidden="true" viewBox="0 0 18 18" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.5"><path d="${path}"/></svg><span>${label}</span>`;
+                    b.style.cssText='display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-bottom:8px';
+                }
+                const hint=document.createElement('p');hint.className='hint';
+                hint.textContent='拖动图片移动，拖四角等比缩放。双击裁切；拖原图调整主体，拖边角调整范围。方向键微调。';s.append(hint);
+                if(commands.protected(nodes[0])){s.querySelectorAll('button').forEach(b=>b.disabled=true);hint.textContent='此图片受保护，请先在源稿解除保护。';}
+            } else { const hint=document.createElement('p');hint.textContent='请单独选择一张图片。';s.append(hint); }
         }
         else {
             const s = section('外观');
@@ -400,11 +422,12 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     };
     function positionTools() {
         handle.hidden = true;
+        images?.update();
         if (!commands || !selected.length) return;
         let n: HTMLElement; try { n = commands.node(selected[0]); } catch { return; }
         const r = n.getBoundingClientRect(), f = frame.getBoundingClientRect();
         const scale = f.width / frame.clientWidth;
-        handle.hidden = !active || selected.length !== 1 || commands.protected(n) || isTextObject(n);
+        handle.hidden = !active || selected.length !== 1 || commands.protected(n) || isTextObject(n) || n.tagName === 'IMG';
         handle.style.left = `${f.left + r.right * scale - 12}px`;
         handle.style.top = `${f.top + r.bottom * scale - 12}px`;
         floating.style.bottom = 'auto'; floating.style.transform = 'none';
@@ -546,6 +569,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         selected = [];
         range = null;
         const doc = commands.doc;
+        images.bind(doc);
         doc.addEventListener('load', e => { if (!suspended && (e.target as Element).tagName === 'IMG') resize(); }, true);
         doc.defaultView?.addEventListener('scroll', positionTools);
         const css = doc.createElement('style');
@@ -562,7 +586,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
             const n = selectTarget(e.target) as HTMLElement | null;
             const id = n?.dataset.ppteId;
             propertiesCollapsed=false; pageSettings=false;
-            selected = id ? (e.shiftKey ? [...new Set([...selected, id])] : [id]) : [];
+            selected = id ? (e.shiftKey && n?.tagName !== 'IMG' && !selectedNodes().some(n=>n.tagName==='IMG') ? [...new Set([...selected, id])] : [id]) : [];
             // Non-text objects must own keyboard focus after a real pointer
             // selection, including when pointerdown prevented native dragging.
             if (n && !isTextObject(n)) { n.setAttribute('tabindex', '0'); n.focus({preventScroll:true}); }
@@ -634,7 +658,9 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
             if(n && !before)before={id:n.dataset.ppteId!,html:snapshot(n)};
         });
         doc.addEventListener('compositionend', () => { composing = false; record(); });
+        doc.addEventListener('dblclick',e=>{if(active&&(e.target as Element).tagName==='IMG')images.crop();});
         doc.addEventListener('keydown', e => {
+            if(images.key(e))return;
             if (e.isComposing || composing) return;
             if (!active)
                 return;
@@ -655,7 +681,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
                     refresh();
                 }
             }
-            if (e.altKey && e.key.startsWith('Arrow')) {
+            if (!(e.target as Element).closest('input,textarea,select,[contenteditable="true"]') && e.altKey && e.key.startsWith('Arrow')) {
                 e.preventDefault();
                 run(() => commands.move(selected[0], e.key === 'ArrowLeft' ? -8 : e.key === 'ArrowRight' ? 8 : 0, e.key === 'ArrowUp' ? -8 : e.key === 'ArrowDown' ? 8 : 0));
             }
@@ -670,7 +696,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
             if (!active)
                 return;
             const n = selectTarget(e.target) as HTMLElement | null;
-            if (n && !isTextObject(n) && doc.defaultView!.getComputedStyle(n).position === 'absolute') {
+            if (n && n.tagName !== 'IMG' && !isTextObject(n) && doc.defaultView!.getComputedStyle(n).position === 'absolute') {
                 e.preventDefault();
                 drag = { id: n.dataset.ppteId!, x: e.clientX, y: e.clientY };
             }
@@ -696,6 +722,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         thumbs();
     }
     const keys = (e: KeyboardEvent) => {
+        if (images.key(e)) return;
         if (e.isComposing || composing) return;
         const target=e.target as HTMLElement;
         if(target.closest?.('dialog[open]'))return;
@@ -703,10 +730,11 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         if(active&&!input&&selected.length===1&&['Delete','Backspace'].includes(e.key)){e.preventDefault();run(()=>{commands.remove(selected[0]);selected=[];range=null;});return;}
         if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') {
             e.preventDefault();
-            run(() => commands.history(e.shiftKey));
+            run(() => {images.cancel();commands.history(e.shiftKey);});
         }
     };
     document.addEventListener('keydown', keys, true);
+    document.addEventListener('pointerdown',e=>{if(active && (e.target as HTMLElement).closest?.('#ppte-edit-canvas')){images.cancel();selected=[];refresh();}});
     let collapsed = true, propertiesCollapsed = false, zoom = 1;
     const controls = document.createElement('div'); controls.id = 'ppte-canvas-controls'; controls.dataset.ppteTransient=''; document.body.append(controls);
     const viewButton = (label: string, action: () => void) => {

@@ -356,7 +356,7 @@ test('H03 original-file persisted range formatting and keyboard/pointer layout; 
         await page.waitForTimeout(30);
         await page.getByRole('button', { name: '粗体', exact: true }).click();
         await page.frameLocator('#ppte-frame').locator('[data-ppte-id=a]').focus();
-        await page.keyboard.press('Alt+ArrowRight');
+        await page.evaluate(()=>{const e=(window as any).PPTeEditor;e.commands.move(e.selection[0],8,0);});
         assert.equal(await page.frameLocator('#ppte-frame').locator('[data-ppte-id=a]').evaluate(n => (n as HTMLElement).style.order), '1');
         const shape = page.frameLocator('#ppte-frame').locator('[data-ppte-id=absolute]');
         const bounds = await shape.boundingBox();

@@ -1,3 +1,4 @@
+import { legacyImageCrop, legacyImageProperty } from './helpers/legacy-image.js';
 import { downloadUpdated } from './helpers/focused-product.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -18,7 +19,7 @@ async function setup(name:string, source:string){
  await p.getByRole('button',{name:'编辑',exact:true}).click();
  return {p,browser,async close(){await browser.close();assert.deepEqual(errors,[]);assert.deepEqual(network,[]);}};
 }
-async function property(p:Page,label:string,value:string){await p.getByLabel(label,{exact:true}).fill(value);await p.getByLabel(label,{exact:true}).press('Tab');}
+async function property(p:Page,label:string,value:string){if(await legacyImageProperty(p,label,value))return;await p.getByLabel(label,{exact:true}).fill(value);await p.getByLabel(label,{exact:true}).press('Tab');}
 async function download(p:Page,name:string){const event=p.waitForEvent('download');await downloadUpdated(p);const file=join(out,name+'.ppte.html');await(await event).saveAs(file);return file;}
 test('R1 audit native div: actual click, keyboard input, styles, undo/redo and offline download/new-process reopen',async()=>{
  const source=await readFile('docs/audits/2026-09-07-ui-d96f211/sample/source.html','utf8');

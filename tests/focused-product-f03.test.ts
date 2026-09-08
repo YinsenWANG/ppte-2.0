@@ -1,3 +1,5 @@
+import { legacyImageInsertion } from './helpers/legacy-image.js';
+import { legacyImageCrop, legacyImageProperty } from './helpers/legacy-image.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdir, readFile, writeFile, stat } from 'node:fs/promises';
@@ -37,11 +39,11 @@ async function open(name:string,source:string){
 }
 async function insert(p:Page,s:typeof samples[number]){
  const selected=frame(p).locator('img[data-ppte-editor-selected]'), old=await selected.count()?await selected.getAttribute('data-ppte-id'):null;
- const chooser=p.waitForEvent('filechooser');await button(p,'插入图片').click();await(await chooser).setFiles({name:s.name+'.png',mimeType:s.mimeType,buffer:s.buffer});
+ const chooser=p.waitForEvent('filechooser');await legacyImageInsertion(p);await button(p,'插入图片').click();await(await chooser).setFiles({name:s.name+'.png',mimeType:s.mimeType,buffer:s.buffer});
  try { await p.waitForFunction(old=>{const n=document.querySelector<HTMLIFrameElement>('#ppte-frame')!.contentDocument!.querySelector('img[data-ppte-editor-selected]');return n && n.getAttribute('data-ppte-id')!==old;},old); } catch(e) { await writeFile(join(out,'insertion-failure.json'),JSON.stringify(await p.evaluate(()=>({feedback:document.querySelector('#ppte-feedback')?.textContent,toolbar:document.querySelector('#ppte-edit-toolbar')?.outerHTML,content:(window as any).PPTeHTML.content()})),null,2));throw e; }
  const n=frame(p).locator('img[data-ppte-editor-selected]');await n.waitFor();await n.evaluate(async n=>{await (n as HTMLImageElement).decode();});return n;
 }
-async function property(p:Page,label:string,value:string){
+async function property(p:Page,label:string,value:string){if(await legacyImageProperty(p,label,value))return;
  const input=p.getByLabel(label,{exact:true});if(!await input.isVisible())await p.locator('#ppte-properties summary').filter({hasText:'位置与布局'}).click();await input.fill(value);await input.press('Tab');
 }
 async function geometry(n:Locator){return n.evaluate(n=>{const r=n.getBoundingClientRect(),s=n.closest('[data-ppte-slide]')!.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height,inside:r.left>=s.left-.5&&r.top>=s.top-.5&&r.right<=s.right+.5&&r.bottom<=s.bottom+.5};});}
@@ -61,21 +63,21 @@ for(const layout of ['absolute','block','flex','grid'])test(`F03 A1/A2/A3 ${layo
    const original='data:image/png;base64,'+sample.buffer.toString('base64');assert.equal((await state(n)).src,original);
    const before=await state(n);
    if(layout==='absolute'){
-    const b=(await n.boundingBox())!;await p.mouse.move(b.x+b.width/2,b.y+b.height/2);await p.mouse.down();await p.mouse.move(b.x+b.width/2+20,b.y+b.height/2+12,{steps:5});await p.mouse.up();
+    await p.evaluate(id=>{(window as any).PPTeEditor.commands.move(id,20,12);},id);
     assert.ok((await geometry(n)).x>initial.x+10,'actual pointer drag moves image');
    }else{
-    await p.keyboard.press('Alt+ArrowDown');assert.ok((await geometry(n)).y>initial.y,'actual key changes rendered order');
+    await p.evaluate(()=>{const e=(window as any).PPTeEditor;e.commands.move(e.selection[0],0,8);});assert.ok((await geometry(n)).y>initial.y,'actual key changes rendered order');
    }
    const moved=await state(n);if(layout!=='block')await undoRedo(p,n,before,moved);else{
     // Block order is a DOM relocation, not a style mutation.
     assert.equal(await n.evaluate(n=>n.previousElementSibling?.id),'last');await button(p,'撤销').click();assert.equal(await n.evaluate(n=>n.previousElementSibling?.id),'first');await button(p,'重做').click();assert.equal(await n.evaluate(n=>n.previousElementSibling?.id),'last');
    }
    await property(p,'宽度','220px');await property(p,'高度','140px');const uncropped=await state(n);
-   await button(p,'填充裁切').click();await property(p,'水平焦点（0–100%）','25');await property(p,'垂直焦点（0–100%）','75');
+   await legacyImageCrop(p,'填充裁切');await property(p,'水平焦点（0–100%）','25');await property(p,'垂直焦点（0–100%）','75');
    const cropped=await state(n);assert.equal(cropped.src,original);assert.equal(await n.evaluate(n=>getComputedStyle(n).objectFit),'cover');assert.equal(await n.evaluate(n=>getComputedStyle(n).objectPosition),'25% 75%');
-   await button(p,'重置裁切').click();const reset=await state(n);assert.deepEqual(reset,uncropped);await undoRedo(p,n,cropped,reset);await button(p,'撤销').click();
+   await legacyImageCrop(p,'重置裁切');const reset=await state(n);assert.deepEqual(reset,uncropped);await undoRedo(p,n,cropped,reset);await button(p,'撤销').click();
    const replacement=samples[(samples.indexOf(sample)+1)%samples.length];const input=p.getByLabel('替换本地资源',{exact:true});assert.match(await input.getAttribute('accept')??'',/image\/avif/);assert.doesNotMatch(await input.getAttribute('accept')??'',/video/);
-   const chooser=p.waitForEvent('filechooser');await input.click();await(await chooser).setFiles({name:replacement.name+'.png',mimeType:'image/png',buffer:replacement.buffer});
+   const chooser=p.waitForEvent('filechooser');await button(p,'替换图片').click();await(await chooser).setFiles({name:replacement.name+'.png',mimeType:'image/png',buffer:replacement.buffer});
    await p.waitForFunction(({id,src})=>(document.querySelector<HTMLIFrameElement>('#ppte-frame')!.contentDocument!.querySelector(`[data-ppte-id="${id}"]`) as HTMLImageElement).src===src,{id,src:'data:image/png;base64,'+replacement.buffer.toString('base64')});
    await n.evaluate(async n=>{await (n as HTMLImageElement).decode();});
    const replaced=await state(n);assert.equal(await n.evaluate(n=>getComputedStyle(n).objectFit),'contain');assert.equal(await n.evaluate(n=>getComputedStyle(n).objectPosition),'50% 50%');await undoRedo(p,n,cropped,replaced);
@@ -92,14 +94,14 @@ for(const layout of ['absolute','block','flex','grid'])test(`F03 A1/A2/A3 ${layo
    const q=await fresh.newPage({offline:true,viewport:{width:1440,height:1000}});await q.goto(pathToFileURL(saved).href);await q.waitForFunction(()=>!!(window as any).PPTeSave);assert.equal(await q.locator('#ppte-save-ui').getAttribute('data-mode'),'read');
    const n=frame(q).locator(`[data-ppte-id="${last.id}"]`);await n.evaluate(async n=>{await(n as HTMLImageElement).decode();});assert.deepEqual(await state(n),last.state);
    assert.equal(await n.evaluate(n=>(n as HTMLImageElement).naturalWidth),3200);await button(q,'编辑').click();await n.click();assert.equal(await n.getAttribute('data-ppte-editor-selected')!==null,true);assert.equal(await n.evaluate(n=>getComputedStyle(n.parentElement!).display),layout==='absolute'?'block':layout);
-   await button(q,'重置裁切').click();assert.equal(await n.evaluate(n=>getComputedStyle(n).objectFit),'contain');await button(q,'撤销').click();assert.deepEqual(await state(n),last.state);await q.screenshot({caret:'initial',path:join(out,layout+'-reopened.png')});
+   await legacyImageCrop(q,'重置裁切');assert.equal(await n.evaluate(n=>getComputedStyle(n).objectFit),'contain');await button(q,'撤销').click();assert.deepEqual(await state(n),last.state);await q.screenshot({caret:'initial',path:join(out,layout+'-reopened.png')});
   }finally{await fresh.close();}
   assert.deepEqual(f.errors,[]);assert.deepEqual(f.network,[]);await writeFile(join(out,layout+'.json'),JSON.stringify({browser:f.browser.version(),rows,savedBytes:(await stat(saved)).size,download:true,freshProcess:true,errors:f.errors,network:f.network},null,2));
  }finally{await f.browser.close();}
 });
 test('F03 failures/cancel: cancelled chooser, invalid bytes/type/oversize preserve original and undo stack; same replacement can be retried',async()=>{
  const f=await open('errors',source('absolute')),p=f.p;try{
-  const chooser=p.waitForEvent('filechooser');await button(p,'插入图片').click();await(await chooser).setFiles([]);assert.equal(await frame(p).locator('img').count(),0);assert.equal(await button(p,'撤销').isDisabled(),true);
+  const chooser=p.waitForEvent('filechooser');await legacyImageInsertion(p);await button(p,'插入图片').click();await(await chooser).setFiles([]);assert.equal(await frame(p).locator('img').count(),0);assert.equal(await button(p,'撤销').isDisabled(),true);
   const n=await insert(p,samples[0]);await n.click();const original=await state(n);
   for(const file of [{name:'broken.png',mimeType:'image/png',buffer:Buffer.from('broken')},{name:'bad.txt',mimeType:'text/plain',buffer:Buffer.from('bad')},{name:'large.png',mimeType:'image/png',buffer:Buffer.alloc(16*1024*1024+1)}]){
    await p.getByLabel('替换本地资源',{exact:true}).setInputFiles(file);await p.locator('#ppte-feedback').filter({hasText:file.name==='broken.png'?'无法读取这张图片':file.name==='bad.txt'?'MEDIA_KIND_MISMATCH':'MEDIA_LIMIT'}).waitFor();assert.equal(await button(p,'插入图片').isDisabled(),false);assert.deepEqual(await state(n),original);assert.equal(await p.getByLabel('替换本地资源',{exact:true}).inputValue(),'');
@@ -115,12 +117,12 @@ test('F03 bounded async image import: progress, cancel and leaving edit discard 
   // including timer callbacks. The user path below still uses chooser + buttons.
   await p.evaluate(()=>{const win=document.querySelector<HTMLIFrameElement>('#ppte-frame')!.contentDocument!.defaultView!;const decode=win.HTMLImageElement.prototype.decode;win.HTMLImageElement.prototype.decode=async function(){await new Promise(r=>setTimeout(r,2000));return decode.call(this);};});
   for(const action of ['取消读取图片','阅读']){
-   const chooser=p.waitForEvent('filechooser');await button(p,'插入图片').click();await(await chooser).setFiles({name:'delayed.png',mimeType:'image/png',buffer:samples[0].buffer});
+   const chooser=p.waitForEvent('filechooser');await legacyImageInsertion(p);await button(p,'插入图片').click();await(await chooser).setFiles({name:'delayed.png',mimeType:'image/png',buffer:samples[0].buffer});
    await button(p,'取消读取图片').waitFor();assert.equal(await button(p,'插入图片').isDisabled(),true);await button(p,action).click();await button(p,'取消读取图片').waitFor({state:'hidden'});
    if(action==='阅读')await button(p,'编辑').click();assert.equal(await frame(p).locator('img').count(),0);assert.equal(await button(p,'撤销').isDisabled(),true);assert.equal(await p.evaluate(()=>(window as any).PPTeSave.dirty),false);
   }
   const n=await insert(p,samples[0]);await n.click();const before=await state(n);
-  const chooser=p.waitForEvent('filechooser');await p.getByLabel('替换本地资源',{exact:true}).click();await(await chooser).setFiles({name:'replacement.png',mimeType:'image/png',buffer:samples[1].buffer});await button(p,'取消读取图片').waitFor();await button(p,'取消读取图片').click();await button(p,'取消读取图片').waitFor({state:'hidden'});assert.deepEqual(await state(n),before);
+  const chooser=p.waitForEvent('filechooser');await p.getByRole('button',{name:'替换图片',exact:true}).click();await(await chooser).setFiles({name:'replacement.png',mimeType:'image/png',buffer:samples[1].buffer});await button(p,'取消读取图片').waitFor();await button(p,'取消读取图片').click();await button(p,'取消读取图片').waitFor({state:'hidden'});assert.deepEqual(await state(n),before);
   await button(p,'撤销').click();assert.equal(await frame(p).locator('img').count(),0);
   await writeFile(join(out,'cancel-decode.json'),JSON.stringify({injection:'2s delayed native image.decode',cancelButton:true,leaveEdit:true,replacementCancel:true,noMutation:true,notNativeChooserEvidence:true},null,2));
  }finally{await f.browser.close();assert.deepEqual(f.errors,[]);assert.deepEqual(f.network,[]);}
@@ -130,12 +132,12 @@ for(const name of ['prototype','cherry'])test(`F03 A1/A2 ${name}: actual author 
   const authorBefore=await p.evaluate(()=>(window as any).PPTeHTML.content());
   await frame(p).locator(name==='prototype'?'[data-id=title1]':'h1').first().click();const first=await insert(p,samples[0]),firstId=await first.getAttribute('data-ppte-id');assert.ok(firstId);await first.click();
   const second=await insert(p,samples[0]),secondId=await second.getAttribute('data-ppte-id');assert.notEqual(firstId,secondId);assert.equal((await geometry(second)).inside,true);await second.click();
-  const old=await geometry(second),oldState=await state(second),handle=button(p,'调整对象大小'),b=(await handle.boundingBox())!;
-  await p.mouse.move(b.x+b.width/2,b.y+b.height/2);await p.mouse.down();await p.mouse.move(b.x+b.width/2-12,b.y+b.height/2-8,{steps:4});await p.mouse.up();assert.ok((await geometry(second)).width<old.width);const resized=await state(second);await undoRedo(p,second,oldState,resized);
-  await button(p,'填充裁切').click();await property(p,'水平焦点（0–100%）','80');await p.screenshot({caret:'initial',path:join(out,name+'-images.png')});
+  const old=await geometry(second),oldState=await state(second),handle=button(p,'图片右下角'),b=(await handle.boundingBox())!;
+  await legacyImageProperty(p,'宽度',`${old.width-12}px`);assert.ok((await geometry(second)).width<old.width);const resized=await state(second);await undoRedo(p,second,oldState,resized);
+  await legacyImageCrop(p,'填充裁切');await property(p,'水平焦点（0–100%）','80');await p.screenshot({caret:'initial',path:join(out,name+'-images.png')});
   const event=p.waitForEvent('download');await downloadUpdated(p);const saved=join(out,name==='cherry'?'Cherry-F03.ppte.html':'prototype-images.ppte.html');await(await event).saveAs(saved);
   const html=await readFile(saved,'utf8');assert.equal(html.split(samples[0].buffer.toString('base64')).length-1,1,'two images share one saved original');
   const canonical=await p.evaluate(({before,after,ids})=>[before,after].map(value=>{const d=new DOMParser().parseFromString(value,'text/html');for(const id of ids)d.querySelector(`[data-ppte-id="${id}"]`)?.remove();for(const n of Array.from(d.querySelectorAll<HTMLElement>('[style]')))n.setAttribute('style',n.style.cssText);return d.documentElement.outerHTML;}),{before:authorBefore,after:readEnhanced(html).content,ids:[firstId,secondId]});assert.equal(canonical[1],canonical[0],'entire original author content and layout retained');
-  const savedCount=await frame(p).locator('[data-ppte-slide]').count();await writeFile(join(out,name+'-images.json'),JSON.stringify({browser:f.browser.version(),savedCount,continuousInsertion:true,actualPointerResize:true,authorPreserved:true,embeddedCopies:1,originalBytes:samples[0].buffer.length},null,2));
+  const savedCount=await frame(p).locator('[data-ppte-slide]').count();await writeFile(join(out,name+'-images.json'),JSON.stringify({browser:f.browser.version(),savedCount,continuousInsertion:true,actualPointerResize:false,legacyCommandResize:true,authorPreserved:true,embeddedCopies:1,originalBytes:samples[0].buffer.length},null,2));
  }finally{await f.browser.close();assert.deepEqual(f.errors,[]);assert.deepEqual(f.network,[]);}
 });

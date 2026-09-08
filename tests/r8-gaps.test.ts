@@ -1,3 +1,4 @@
+import { legacyImageCrop, legacyImageProperty } from './helpers/legacy-image.js';
 import { downloadUpdated } from './helpers/focused-product.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -52,7 +53,7 @@ test('GAPS A4: real navigation, image edit undo, versions, download/reopen, pres
   // Only intersecting rail thumbnails receive URLs, and closing the rail releases them.
   await page.waitForFunction(()=>{const roots=Array.from(document.querySelectorAll('.preview')).map(n=>n.shadowRoot!);const loaded=roots.reduce((sum,r)=>sum+r.querySelectorAll('img[src]').length,0);return loaded>0&&loaded<12;});
   const imageBox=await frame.getByAltText('Image 2',{exact:true}).boundingBox();assert.ok(imageBox && imageBox.y>0 && imageBox.y+imageBox.height<960);
-  await page.mouse.click(imageBox.x+imageBox.width/2,imageBox.y+imageBox.height/2);await page.getByRole('button',{name:'填充裁切',exact:true}).click();
+  await page.mouse.click(imageBox.x+imageBox.width/2,imageBox.y+imageBox.height/2);await legacyImageCrop(page,'填充裁切');
   assert.equal(await frame.getByAltText('Image 2',{exact:true}).evaluate(n=>(n as HTMLElement).style.objectFit),'cover');
   await page.getByRole('button',{name:'撤销',exact:true}).click();assert.equal(await frame.getByAltText('Image 2',{exact:true}).evaluate(n=>(n as HTMLElement).style.objectFit),'');
   await page.getByRole('button',{name:'重做',exact:true}).click();

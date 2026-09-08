@@ -45,6 +45,12 @@ type Entry = {
     relocation?: { parent: HTMLElement; from: Element | null; to: Element | null };
     insertion?: { parent: HTMLElement; previous: HTMLElement | null; node: HTMLElement };
 };
+/** The edit viewport temporarily forces slides to fixed positioning. Never
+ * serialize that computed value as the author's containing-block contract. */
+export function imagePagePosition(slide:HTMLElement) {
+    if(slide.dataset.ppteEditorPageFrameSafe==='false')throw Error('此页面的图片定位会影响已有跨页定位对象，请先在源稿建立页面局部定位基准。');
+    return slide.dataset.ppteEditorAuthorPosition ?? slide.ownerDocument.defaultView!.getComputedStyle(slide).position;
+}
 export class Commands {
     undoStack: Entry[][] = [];
     redoStack: Entry[][] = [];
@@ -175,12 +181,31 @@ export class Commands {
         t.innerHTML = html;
         const c = n.tagName === 'BODY' ? new DOMParser().parseFromString(html, 'text/html').body : t.content.firstElementChild!;
         for (const a of Array.from(n.attributes))
-            if (!c.hasAttribute(a.name) && a.name !== 'contenteditable' && a.name !== 'tabindex' && !a.name.startsWith('data-ppte-editor-'))
+            if (a.name !== 'contenteditable' && a.name !== 'tabindex' && !a.name.startsWith('data-ppte-editor-'))
                 n.removeAttribute(a.name);
         for (const a of Array.from(c.attributes))
             n.setAttribute(a.name, a.value);
-        if (clean(n).innerHTML !== c.innerHTML)
-            n.replaceChildren(...Array.from(c.childNodes));
+        for(const a of Array.from(n.attributes).filter(a=>a.name==='contenteditable'||a.name==='tabindex'||a.name.startsWith('data-ppte-editor-'))){n.removeAttribute(a.name);n.setAttribute(a.name,a.value);}
+        if (clean(n).innerHTML !== c.innerHTML) {
+            // Preserve identified author nodes across local frame transactions:
+            // earlier insertion/relocation history retains these node references.
+            const pool=new Map(Array.from(n.querySelectorAll<HTMLElement>('[data-ppte-id]')).map(e=>[e.dataset.ppteId!,e]));
+            const reconcile=(parent:Element, desired:Element)=>{
+                const children=Array.from(desired.childNodes).map(child=>{
+                    if(child.nodeType!==1)return child.cloneNode(true);
+                    const element=child as HTMLElement,key=element.dataset.ppteId,existing=key?pool.get(key):undefined;
+                    if(!existing||existing.tagName!==element.tagName){
+                        const copy=element.cloneNode(false) as Element;reconcile(copy,element);return copy;
+                    }
+                    for(const a of Array.from(existing.attributes))if(a.name!=='contenteditable'&&a.name!=='tabindex'&&!a.name.startsWith('data-ppte-editor-'))existing.removeAttribute(a.name);
+                    for(const a of Array.from(element.attributes))existing.setAttribute(a.name,a.value);
+                    for(const a of Array.from(existing.attributes).filter(a=>a.name==='contenteditable'||a.name==='tabindex'||a.name.startsWith('data-ppte-editor-'))){existing.removeAttribute(a.name);existing.setAttribute(a.name,a.value);}
+                    reconcile(existing,element);return existing;
+                });
+                parent.replaceChildren(...children);
+            };
+            reconcile(n,c);
+        }
     }
     history(redo = false) {
         const from = redo ? this.redoStack : this.undoStack, to = redo ? this.undoStack : this.redoStack;
@@ -430,6 +455,13 @@ export class Commands {
     remove(id: string) {
         const n = this.node(id), parent = n.parentElement!;
         if (n.hasAttribute('data-ppte-slide') || n.matches('td,th') || this.protected(n)) throw Error('OBJECT_PROTECTED_OR_UNSUPPORTED');
+        if (n.tagName === 'IMG' && parent.hasAttribute('data-ppte-image-frame')) {
+            const slide=n.closest<HTMLElement>('[data-ppte-slide]')!;
+            this.transaction([slide.dataset.ppteId!],copy=>{
+                copy.querySelector(`[data-ppte-id="${CSS.escape(id)}"]`)!.parentElement!.remove();
+                copy.querySelector(`[data-ppte-image-placeholder="${CSS.escape(id)}"]`)?.remove();
+            });return;
+        }
         const entry: Entry = {id,before:snapshot(n),after:'',removed:true,insertion:{parent,previous:n.previousElementSibling as HTMLElement | null,node:n}};
         n.remove(); this.record([entry]);
     }
@@ -446,6 +478,42 @@ export class Commands {
         image.style.cssText = `width:${width * scale}px;height:${height * scale}px;max-width:100%;object-fit:contain!important;object-position:50% 50%!important`;
         return this.appendObject(image, point);
     }
+    async insertImageFrame(slideId:string,file:File,referenceId?:string,signal?:AbortSignal) {
+        const slide=this.node(slideId),before=snapshot(slide);
+        if(this.protected(slide))throw Error('OBJECT_PROTECTED');
+        const {src,width,height}=await this.readMedia(file,true,signal);
+        signal?.throwIfAborted();
+        if(snapshot(this.node(slideId))!==before)throw Error('CONFLICT');
+        const rect=slide.getBoundingClientRect(),area={left:rect.left+slide.clientLeft,top:rect.top+slide.clientTop,width:slide.clientWidth,height:slide.clientHeight},win=this.doc.defaultView!;
+        const blocks=Array.from(slide.querySelectorAll<HTMLElement>('*')).filter(n=>
+            !n.hasAttribute('data-ppte-image-placeholder') && (isTextObject(n)||n.matches('img,video,svg,table,[data-ppte-kind="shape"],[data-ppte-image-frame]')) &&
+            win.getComputedStyle(n).visibility==='visible').map(n=>n.getBoundingClientRect()).filter(r=>r.width&&r.height);
+        const reference=referenceId?this.node(referenceId).getBoundingClientRect():undefined;
+        const scale=Math.min(Math.max(1,32/Math.min(width,height)),320/width,240/height);
+        let box:{x:number;y:number;w:number;h:number;iw:number;ih:number;ox:number;oy:number}|undefined;
+        for(const shrink of [1,.85,.7,.55,.4,.3]){
+            const w=width*scale*shrink,h=height*scale*shrink;
+            const xs=[reference?reference.left-area.left:40,40,...blocks.map(r=>r.right-area.left+16)];
+            const ys=[reference?reference.bottom-area.top+16:40,40,...blocks.map(r=>r.bottom-area.top+16)];
+            for(const y of ys)for(const x of xs){
+                if(x<16||y<16||x+w>area.width-16||y+h>area.height-16)continue;
+                if(blocks.some(r=>x+area.left<r.right+8&&x+w+area.left>r.left-8&&y+area.top<r.bottom+8&&y+h+area.top>r.top-8))continue;
+                box={x,y,w,h,iw:w,ih:h,ox:0,oy:0};break;
+            }
+            if(box)break;
+        }
+        if(!box)throw Error('OBJECT_PLACEMENT: 当前页面没有可用空白，请选择其他页；原稿未改变');
+        const b=box,id=`image-${crypto.randomUUID()}`,position=imagePagePosition(slide);
+        this.transaction([slideId],copy=>{
+            if(position==='static')copy.style.position='relative';
+            const wrapper=this.doc.createElement('div');wrapper.dataset.ppteId=`frame-${id}`;wrapper.dataset.ppteImageFrame=JSON.stringify(b);
+            wrapper.style.cssText=`position:absolute!important;left:${b.x}px!important;top:${b.y}px!important;width:${b.w}px!important;height:${b.h}px!important;overflow:hidden!important;margin:0!important;padding:0!important;border:0!important`;
+            const image=this.doc.createElement('img');image.dataset.ppteId=id;image.src=src;image.alt='';
+            image.style.cssText=`position:absolute!important;left:0!important;top:0!important;width:${b.w}px!important;height:${b.h}px!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;object-fit:fill!important`;
+            wrapper.append(image);copy.append(wrapper);
+        });
+        return this.node(id);
+    }
     async poster(id: string, file: File) {
         const n = this.node(id);
         if (n.tagName !== 'VIDEO') throw Error('NOT_VIDEO');
@@ -460,10 +528,20 @@ export class Commands {
         if (n.tagName === 'IMG' && !file.type.startsWith('image/') || n.tagName === 'VIDEO' && !file.type.startsWith('video/')) throw Error('MEDIA_KIND_MISMATCH: 图片只能替换为图片，视频只能替换为视频；原对象已保留');
         if (this.protected(n)) throw Error('OBJECT_PROTECTED');
         const original = snapshot(n);
-        const {src} = await this.readMedia(file, false, signal);
+        const {src, width, height} = await this.readMedia(file, false, signal);
         signal?.throwIfAborted();
         if (snapshot(this.node(id)) !== original)
             throw Error('CONFLICT');
+        const wrapper=n.parentElement!;
+        if(n.tagName==='IMG' && wrapper.dataset.ppteImageFrame){
+            const b=JSON.parse(wrapper.dataset.ppteImageFrame),scale=Math.min(b.w/width,b.h/height);
+            b.iw=width*scale;b.ih=height*scale;b.ox=(b.w-b.iw)/2;b.oy=(b.h-b.ih)/2;
+            this.transaction([wrapper.dataset.ppteId!],copy=>{
+                copy.dataset.ppteImageFrame=JSON.stringify(b);
+                const image=copy.querySelector('img')!;image.src=src;image.alt='';image.removeAttribute('srcset');
+                for(const [key,value] of Object.entries({left:b.ox,top:b.oy,width:b.iw,height:b.ih}))image.style.setProperty(key,`${value}px`,'important');
+            });return;
+        }
         this.transaction([id], n => {
             n.setAttribute('src', src);
             n.style.setProperty('object-fit', 'contain', 'important');

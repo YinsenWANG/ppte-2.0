@@ -1,3 +1,5 @@
+import { legacyImageInsertion } from './helpers/legacy-image.js';
+import { legacyImageCrop, legacyImageProperty } from './helpers/legacy-image.js';
 import { downloadUpdated } from './helpers/focused-product.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -63,23 +65,23 @@ test('S06 file journey: mixed ratios, insert/replace/focus/reset, guarded histor
   await page.waitForFunction(src=>(window as any).PPTeEditor.commands.node('i0').getAttribute('src')===src,fixtures[1].src);
   const replacement=await page.evaluate(()=>{const c=(window as any).PPTeEditor.commands,n=c.node('i0');return {fit:n.style.objectFit,position:n.style.objectPosition,alt:n.getAttribute('alt')};});
   assert.deepEqual(replacement,{fit:'contain',position:'50% 50%',alt:''});
-  assert.equal(await page.getByLabel('水平焦点（0–100%）').inputValue(),'50');
+  assert.equal(await page.evaluate(()=>parseFloat((window as any).PPTeEditor.commands.node('i0').style.objectPosition).toString()),'50');
   await page.screenshot({path:join(evidence,'crop-after.png')});
   await page.evaluate(()=>{const c=(window as any).PPTeEditor.commands;c.history();});
   assert.equal(await page.frameLocator('#ppte-frame').locator('[data-ppte-id=i0]').getAttribute('src'),fixtures[0].src);
   await page.evaluate(()=>{const c=(window as any).PPTeEditor.commands;c.history(true);});
-  await page.getByRole('button',{name:'填充裁切',exact:true}).click();
-  await page.getByLabel('水平焦点（0–100%）').fill('25');await page.getByLabel('水平焦点（0–100%）').press('Tab');
-  await page.getByLabel('垂直焦点（0–100%）').fill('75');await page.getByLabel('垂直焦点（0–100%）').press('Tab');
+  await legacyImageCrop(page,'填充裁切');
+  await legacyImageProperty(page,'水平焦点（0–100%）','25');
+  await legacyImageProperty(page,'垂直焦点（0–100%）','75');
   assert.equal(await page.frameLocator('#ppte-frame').locator('[data-ppte-id=i0]').evaluate(n=>(n as HTMLElement).style.objectPosition),'25% 75%');
-  await page.getByRole('button',{name:'重置裁切',exact:true}).click();
+  await legacyImageCrop(page,'重置裁切');
   await page.evaluate(()=>{const e=(window as any).PPTeEditor;e.select(['film']);});
   await page.getByLabel('替换视频封面').setInputFiles({name:'poster.webp',mimeType:fixtures[2].mime,buffer:Buffer.from(fixtures[2].src.split(',')[1],'base64')});
   await page.waitForFunction(src=>(window as any).PPTeEditor.commands.node('film').getAttribute('poster')===src,fixtures[2].src);
   await page.evaluate(()=>{const c=(window as any).PPTeEditor.commands;c.history();c.history(true);c.lock(['t0'],true);});
 
   const imageChooser=page.waitForEvent('filechooser');
-  await page.getByRole('button',{name:'插入图片',exact:true}).click();
+  await legacyImageInsertion(page);await page.getByRole('button',{name:'插入图片',exact:true}).click();
   await (await imageChooser).setFiles({name:'new.png',mimeType:'image/png',buffer:Buffer.from(fixtures[0].src.split(',')[1],'base64')});
   await page.waitForFunction(()=>(window as any).PPTeEditor.commands.doc.querySelectorAll('img').length===13);
   const history=await page.evaluate(async()=>{
