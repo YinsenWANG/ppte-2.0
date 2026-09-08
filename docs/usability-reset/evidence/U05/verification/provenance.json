@@ -1,0 +1,16 @@
+[
+  {
+    "source": "docs/usability-reset/evidence/U01/Cherry-Studio-开源之路.ppte.html",
+    "delivery": "docs/usability-reset/evidence/U05/Cherry-Studio-开源之路.ppte.html",
+    "sourceSha256": "891e41ed89c19c6b27bbe7444c35d2adc50653a03464f4c29689dc0564628c54",
+    "deliverySha256": "891e41ed89c19c6b27bbe7444c35d2adc50653a03464f4c29689dc0564628c54",
+    "byteIdentical": true
+  },
+  {
+    "source": "docs/audits/2026-09-07-main-d1db13d/sample/source-with-links.html",
+    "delivery": "docs/usability-reset/evidence/U05/samples/source-with-links.html",
+    "sourceSha256": "ce169ca7bed95332f30effa6ec54dec869fdf1c6e4a09b66247948125e66cb0d",
+    "deliverySha256": "ce169ca7bed95332f30effa6ec54dec869fdf1c6e4a09b66247948125e66cb0d",
+    "byteIdentical": true
+  }
+]

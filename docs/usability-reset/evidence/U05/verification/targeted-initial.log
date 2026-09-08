@@ -1,0 +1,45 @@
+TAP version 13
+# Subtest: U05 delivery: nine-page reading, text, insert, drag/resize/crop, undo/redo, disk bridge, full process restart and presentation
+not ok 1 - U05 delivery: nine-page reading, text, insert, drag/resize/crop, undo/redo, disk bridge, full process restart and presentation
+  ---
+  duration_ms: 18848.436417
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/u05-delivery.test.js:15:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    locator.waitFor: Timeout 15000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('#ppte-frame').contentFrame().locator('img[data-ppte-editor-selected]') to be visible[22m
+    
+  code: 'ERR_TEST_FAILURE'
+  name: 'TimeoutError'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/ppte8/dist/tests/u05-delivery.test.js:56:21)
+  ...
+# Subtest: U05 B2: original source-with-links enhances and round-trips both explicit web links
+ok 2 - U05 B2: original source-with-links enhances and round-trips both explicit web links
+  ---
+  duration_ms: 51.273833
+  type: 'test'
+  ...
+# Subtest: U05 B2: navigation allowlist rejects executable/relative URLs and automatic loads
+ok 3 - U05 B2: navigation allowlist rejects executable/relative URLs and automatic loads
+  ---
+  duration_ms: 1.120209
+  type: 'test'
+  ...
+# Subtest: U05 B2: actual file clicks open isolated navigation; no automatic fetch; links survive save/reopen
+ok 4 - U05 B2: actual file clicks open isolated navigation; no automatic fetch; links survive save/reopen
+  ---
+  duration_ms: 3975.987875
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 3
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 19049.741125

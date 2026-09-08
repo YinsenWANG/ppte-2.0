@@ -1,0 +1,8 @@
+{
+  "time": "2026-09-08T12:44:05.063688+00:00",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "toolDiscovery": "No callable desktop/browser-control tool exposed; Playwright available",
+  "command": "osascript -e tell application \"System Events\" to get UI elements enabled",
+  "nativePicker": false,
+  "observation": "Read-only desktop accessibility query timed out after 8 seconds; subprocess terminated. No native UI operated."
+}

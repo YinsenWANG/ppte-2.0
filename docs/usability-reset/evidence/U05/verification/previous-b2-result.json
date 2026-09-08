@@ -1,0 +1,70 @@
+{
+  "task": "U05-B2",
+  "status": "implemented-pending-native-validation",
+  "commit": "e82116fbe76344bfc1064f32c12ba89827bef5a7",
+  "time": "2026-09-08T12:23:04.151327+00:00",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "rc": 0,
+      "log": "docs/usability-reset/evidence/U04/verification/typecheck.log",
+      "time": "2026-09-08T12:23:04.151327+00:00",
+      "commit": "e82116fbe76344bfc1064f32c12ba89827bef5a7"
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "rc": 0,
+      "log": "docs/usability-reset/evidence/U04/verification/build.log",
+      "time": "2026-09-08T12:23:04.151327+00:00",
+      "commit": "e82116fbe76344bfc1064f32c12ba89827bef5a7"
+    },
+    {
+      "command": "pnpm test",
+      "status": "passed",
+      "rc": 0,
+      "log": "docs/usability-reset/evidence/U04/verification/test.log",
+      "time": "2026-09-08T12:23:04.151327+00:00",
+      "commit": "e82116fbe76344bfc1064f32c12ba89827bef5a7"
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "original source with links; click navigation distinct from automatic loads; save reopen",
+      "tests": [
+        "U05 B2 original source",
+        "U05 B2 allowlist",
+        "U05 B2 actual file clicks",
+        "F06 historical baseline replay"
+      ],
+      "layers": {
+        "code": {
+          "status": "passed"
+        },
+        "automated": {
+          "status": "passed"
+        },
+        "real-browser": {
+          "status": "pending",
+          "reason": "Only headless Chrome pointer/keyboard automation is available; no target physical desktop navigation performed."
+        },
+        "human": {
+          "status": "reopened",
+          "reason": "No user revalidation of B2 or final complete journey; prior rejection remains open."
+        }
+      }
+    }
+  ],
+  "wholeU05": "pending: full clean-deck/native-save/PDF journey depends on U01/U03/U04",
+  "checkedBaseCommit": "e82116fbe76344bfc1064f32c12ba89827bef5a7",
+  "workingTreeChangesIncluded": true,
+  "gate": {
+    "passed": 177,
+    "failed": 0,
+    "skipped": 16,
+    "total": 193
+  },
+  "implementationCommit": "6819e5e68ad1b04a66ab0d9cf6da00a6aced4239"
+}

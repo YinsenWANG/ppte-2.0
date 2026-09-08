@@ -37,6 +37,11 @@ test('U05 B2: actual file clicks open isolated navigation; no automatic fetch; l
   const popupPromise=context.waitForEvent('page');await link.click();const popup=await popupPromise;await popup.waitForLoadState();
   assert.equal(popup.url(),'https://github.com/CherryHQ/cherry-studio');assert.equal(await popup.evaluate(()=>window.opener),null);
   assert.equal(p.url(),pathToFileURL(path).href);await popup.close();
+  await p.getByRole('button',{name:'编辑',exact:true}).click();
+  await link.click();
+  assert.equal(context.pages().length,1,'editing a linked text never opens another page');
+  assert.deepEqual(requests,['https://github.com/CherryHQ/cherry-studio']);
+  await p.getByRole('button',{name:'阅读',exact:true}).click();
   await p.screenshot({path:`${out}/navigation.png`});
   const saved=await p.evaluate(()=>(window as any).PPTeHTML.serialize());
   await writeFile(`${out}/reopen.ppte.html`,saved);await p.goto(pathToFileURL(`${out}/reopen.ppte.html`).href);await p.waitForFunction(()=>!!(window as any).PPTeSave);

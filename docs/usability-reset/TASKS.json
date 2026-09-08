@@ -130,16 +130,46 @@
       "evidence": [
         "evidence/U05/IMPLEMENTATION.md",
         "evidence/U05/verification/result.json",
+        "evidence/U05/verification/desktop-probe.json",
+        "evidence/U05/Cherry-Studio-开源之路.ppte.html",
+        "evidence/U05/samples/",
+        "evidence/U05/journeys/",
+        "evidence/U05/screenshots/",
         "evidence/U05/SHA256SUMS"
       ],
       "verification": {
-        "code": "partial",
-        "automated": "partial",
+        "code": "passed",
+        "automated": "passed",
         "real-browser": "pending",
         "human": "reopened",
-        "reason": "B2 code and automated mouse/Enter/save-reopen/security tests passed; full U05 remains partial pending clean-deck/native-save/PDF journey and user revalidation.",
-        "implementationCommit": "6819e5e68ad1b04a66ab0d9cf6da00a6aced4239"
-      }
+        "reason": "B2 original unchanged link sample and nine-page headless full journey verified. Native picker/original-file manual and automatic saves on target physical desktop remain unverified: no callable desktop tool; read-only accessibility probe timed out after 8 seconds. Explicit user rejections remain open. PDF is incomplete and EXCLUDED from U05 acceptance by U04 option 1. Final gate receipt: evidence/U05/verification/result.json."
+      },
+      "humanRevalidation": {
+        "status": "pending",
+        "reason": "No target-device results or final nine-page user acceptance received; explicit prior rejection remains reopened."
+      },
+      "rejectedItems": [
+        {
+          "item": "美感未提升",
+          "status": "待真机及九页人工签收",
+          "rejection": "reopened"
+        },
+        {
+          "item": "图片控件难用",
+          "status": "代码已修复，待真机",
+          "rejection": "reopened"
+        },
+        {
+          "item": "PDF不可用",
+          "status": "仍不可用；按U04不纳入U05验收",
+          "rejection": "reopened"
+        },
+        {
+          "item": "保存基本不可用",
+          "status": "代码已修复，待真机",
+          "rejection": "reopened"
+        }
+      ]
     }
   ]
 }
