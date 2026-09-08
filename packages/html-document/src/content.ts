@@ -66,6 +66,11 @@ export function checkCss(css: string, depth = 0) {
 const forbidden = new Set(['script','iframe','frame','frameset','object','embed','base','meta','link','form','input','button','textarea','select','option','portal','applet','animate','animatemotion','animatetransform','set','discard']);
 const transient = new Set(['contenteditable','autofocus','tabindex','draggable','spellcheck']);
 const urls = new Set(['src','href','poster','background','action','formaction','data','cite','longdesc']);
+/** Only explicit absolute web navigation; never resolve relative author URLs against file://. */
+export function safeWebNavigation(value: string): boolean {
+  if (!/^https?:\/\//i.test(value) || /[\u0000-\u0020\u007f\\]/.test(value)) return false;
+  try { const url = new URL(value); return !!url.hostname && !url.username && !url.password; } catch { return false; }
+}
 /** Parse without executing. No layout schema: the HTML tree and CSS remain the representation. */
 export function cleanContent(input: string, addIds = true, depth = 0) {
   const document = parse(input, { scriptingEnabled: false });
@@ -83,6 +88,7 @@ export function cleanContent(input: string, addIds = true, depth = 0) {
       if (name.startsWith('on') || ['srcdoc','srcset','ping','download','target','is','http-equiv','nonce'].includes(name)) { report('CONTENT_ATTRIBUTE_REMOVED', `${tag}.${name}`); return false; }
       if (urls.has(name)) {
         if (a.value.startsWith('#') && name === 'href') return true;
+        if (name === 'href' && ['a','area'].includes(tag) && !a.namespace && safeWebNavigation(a.value)) return true;
         if (['src','poster','background','href'].includes(name) && dataAllowed(a.value, depth) && !(tag === 'a' || tag === 'area')) return true;
         report('CONTENT_URL_REMOVED', `${tag}.${name}`); return false;
       }

@@ -1,6 +1,6 @@
 import { materializeMedia } from '../../html-editor/src/media-demand.js';
 import { Versions, type HistoryWire } from '../../html-editor/src/versions.js';
-import { cleanContent, frameContent } from './content.js';
+import { cleanContent, frameContent, safeWebNavigation } from './content.js';
 import { packMedia, unpackMedia } from './media-table.js';
 import { installEditor } from '../../html-editor/src/index.js';
 
@@ -21,7 +21,14 @@ frame.srcdoc = frameContent(initial.html, true);
 frame.addEventListener('load', () => {
   const doc = frame.contentDocument!;
   doc.addEventListener('click', event => {
-    if ((event.target as Element).closest('a,area')) event.preventDefault();
+    const link = (event.target as Element).closest('a,area');
+    if (!link) return;
+    event.preventDefault();
+    // Keep the work and unsaved edits open. Author content gets no popup/script capability.
+    const href = link.getAttribute('href') ?? '';
+    if (event.isTrusted && safeWebNavigation(href) && !doc.querySelector('[contenteditable=true]')) {
+      window.open(href, '_blank', 'noopener,noreferrer');
+    }
   }, true);
   doc.addEventListener('submit', event => event.preventDefault(), true);
 });

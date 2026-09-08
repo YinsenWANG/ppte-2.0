@@ -1,0 +1,11 @@
+{
+  "requests": [
+    "https://github.com/CherryHQ/cherry-studio",
+    "https://www.cherry-ai.com/"
+  ],
+  "externalRequestsIntercepted": true,
+  "syntheticBlocked": true,
+  "opener": null,
+  "reopen": true,
+  "headless": true
+}

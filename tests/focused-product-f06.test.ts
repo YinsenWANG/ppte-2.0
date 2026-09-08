@@ -6,6 +6,8 @@ import {mkdir, readFile, writeFile} from 'node:fs/promises';
 import {resolve, join} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {createHash} from 'node:crypto';
+import {execFileSync} from 'node:child_process';
+import {build} from 'esbuild';
 import {chromium, type Page} from 'playwright';
 import {enhanceHTML, readEnhanced} from '../packages/html-document/src/index.js';
 import {downloadUpdated} from './helpers/focused-product.js';
@@ -80,9 +82,15 @@ test('F06 A2/A3: native acceptance and audit gaps cannot be closed by automated 
  for(const id of ['PDF','B1','B2','NATIVE-SAVE','PERFORMANCE','MEDIA','HUMAN-UI','GENERATION','COMPATIBILITY','RECOVERY'])assert.ok(report.openItems.some((x:any)=>x.id===id&&x.reason&&x.evidence.length));
  const assessment=JSON.parse(await readFile('docs/focused-product/evidence/F04A/assessment.json','utf8'));assert.equal(assessment.canStartF04,false);
  const tasks=JSON.parse(await readFile('docs/focused-product/TASKS.json','utf8')).tasks;assert.equal(tasks.find((x:any)=>x.id==='F04').status,'pending');assert.notEqual(tasks.find((x:any)=>x.id==='F06').status,'completed');
- // Reproduce, rather than silently retire, the unresolved navigation contract gap.
+ // Preserve the original rejected baseline assertion by executing its frozen cleaner; U05 tests the repaired current path.
  const source=await readFile('docs/audits/2026-09-07-main-d1db13d/sample/source-with-links.html','utf8');
- const result=await enhanceHTML(source,{root:out,base:out});assert.ok(result.issues.some(x=>x.code==='CONTENT_URL_REMOVED'));
+ await mkdir(out,{recursive:true});
+ const historical=execFileSync('git',['show','bad07df:packages/html-document/src/content.ts'],{encoding:'utf8'});
+ await build({stdin:{contents:historical,loader:'ts',resolveDir:resolve('packages/html-document/src')},bundle:true,packages:'external',platform:'node',format:'esm',outfile:join(out,'historical-cleaner.mjs')});
+ const {cleanContent}=await import(pathToFileURL(join(out,'historical-cleaner.mjs')).href);
+ const result=cleanContent(source);assert.ok(result.issues.some((x:any)=>x.code==='CONTENT_URL_REMOVED'));
+ const repaired=await enhanceHTML(source,{root:out,base:out});assert.deepEqual(repaired.issues,[]);
+ assert.match(readEnhanced(repaired.html).content,/href="https:\/\/github.com\/CherryHQ\/cherry-studio"/);
 });
 
 test('F06 A4: frozen delivered HTML matches recorded download hash and carries ten editable pages without external runtime dependencies',async()=>{
