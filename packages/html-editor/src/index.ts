@@ -60,12 +60,12 @@ export function installEditor(api: API) {
     const render = () => {
         const pristine = controller.revision === 0 && !controller.dirty && !pendingRecovery && !['failed','conflict'].includes(controller.state);
         bar.toggleAttribute('data-download-only', !canWrite());
-        bar.toggleAttribute('data-pristine', pristine && canWrite());
+        bar.toggleAttribute('data-pristine', pristine && canWrite() && !ui?.cropping);
         save.textContent = canWrite() ? '保存' : '下载更新后的文件';
         save.title = canWrite() ? '保存当前修改；Cmd/Ctrl+S' : '此浏览器不能覆盖原文件';
         if(panelInfo) panelInfo.textContent = `当前文件：${boundFileName || controller.base.name} · 最近成功：${controller.lastSavedAt ? new Date(controller.lastSavedAt).toLocaleTimeString() : '尚无写入记录'}`;
         const names = { saved: controller.lastSavedAt ? '已保存 · ' + new Date(controller.lastSavedAt).toLocaleTimeString() : '未改动', dirty: '有修改未保存 · 尚未写入文件', saving: '保存中 · 等待文件确认', draft: '有修改未保存 · 尚未写入文件', unauthorized: controller.dirty ? '有修改未保存' : '未改动', conflict: '冲突 · 修改已保留', failed: '保存失败 · 修改已保留' };
-        status.textContent = (!canWrite() ? '此浏览器不能覆盖原文件 · ' : '') + names[controller.state] + (controller.detail && !controller.detail.startsWith('尚未关联写入文件') ? ' · ' + controller.detail : '') + (controller.draftError ? ' · 草稿恢复不可用；手动保存仍可使用' : '') + (api.versions.warning ? ' · '+api.versions.warning : '');
+        status.textContent = (ui?.cropping ? '裁切中 · 裁切仍在调整；' + (controller.lastSavedAt && !controller.dirty ? '已提交修改已保存 · ' : '') : '') + (!canWrite() ? '此浏览器不能覆盖原文件 · ' : '') + names[controller.state] + (controller.detail && !controller.detail.startsWith('尚未关联写入文件') ? ' · ' + controller.detail : '') + (controller.draftError ? ' · 草稿恢复不可用；手动保存仍可使用' : '') + (api.versions.warning ? ' · '+api.versions.warning : '');
         if(saveDetail)saveDetail.textContent=status.textContent;
         status.title=status.textContent??'';
         if(savePanel) {
@@ -96,7 +96,8 @@ export function installEditor(api: API) {
 
     });
     bar.append(status);
-    const saveNow = async () => {
+    const saveNow = () => ui.resolvePending(() => performSave(), true);
+    const performSave = async () => {
         if(associating || !controller)return;
         if(controller.composing){controller.set(controller.state, '请完成输入法组合后再保存；修改仍保留。');return;}
         if (!canWrite()) { try { download(); } catch(e) { controller.set('failed', String(e)); } return; }
@@ -188,7 +189,7 @@ export function installEditor(api: API) {
             controller.set(controller.state, '已恢复本机草稿，尚未写入文件');
         } catch(e) { controller.set('failed', '恢复失败；原内容仍可返回：' + String(e)); }
     })());
-    const download = () => {
+    const download = () => ui.resolvePending(() => {
         if (controller.composing) { controller.set(controller.state, '请完成输入法组合后再下载；修改仍保留。'); return; }
         const revision = controller.revision;
         const url = URL.createObjectURL(new Blob([api.encode(controller.snapshotContent(), controller.base.metadata.saveRevision + 1)], { type: 'text/html' }));
@@ -198,11 +199,11 @@ export function installEditor(api: API) {
         link.click();
         setTimeout(() => URL.revokeObjectURL(url), 30000);
         controller.exported(revision);
-    };
+    }, true);
     const downloadButton = button('下载更新后的文件', () => { try { download(); } catch (e) { controller.set('failed', String(e)); } });
     document.body.append(bar);
     const frame = document.querySelector<HTMLIFrameElement>('#ppte-frame')!;
-    ui = workspace(frame, bar, () => controller?.change());
+    ui = workspace(frame, bar, () => controller?.change(), () => {if(controller)render();});
     savePanel = document.createElement('details');
     savePanel.id = 'ppte-save-panel';
     savePanel.innerHTML = '<summary>保存状态</summary><div></div>';
@@ -282,7 +283,7 @@ export function installEditor(api: API) {
     document.querySelector('#ppte-frame')!.addEventListener('load', attach);
     attach();
     window.addEventListener('beforeunload', event => {
-        if (controller?.dirty) {
+        if (controller?.dirty || ui?.pendingInteraction) {
             controller.draft();
             event.preventDefault();
             event.returnValue = '';

@@ -182,8 +182,19 @@
     },
     {
       "id": "R02",
-      "status": "open",
-      "title": "裁切未完成时保存旧稿与切换丢弃预览"
+      "status": "implemented-awaiting-native-human",
+      "title": "裁切未完成时保存旧稿与切换丢弃预览",
+      "evidence": [
+        "../audits/2026-09-08-main-52e3bf0/evidence/R02/IMPLEMENTATION.md",
+        "../audits/2026-09-08-main-52e3bf0/evidence/R02/verification/result.json"
+      ],
+      "verification": {
+        "code": "passed",
+        "automated": "passed",
+        "real-browser": "pending",
+        "human": "pending",
+        "reason": "R02 unified crop transaction exit implemented; 12 repository Chrome headless tests cover manual save/download/autosave, modes, object/page selection, delete/replace, Esc and beforeunload. Final full-gate receipt is in R02 verification/result.json. Native OS authorization/manual and automatic original-file writes require a desktop control channel, unavailable in this turn. No user revalidation; prior rejection remains open."
+      }
     },
     {
       "id": "R03",

@@ -4,7 +4,7 @@ type Box = {x:number;y:number;w:number;h:number;iw:number;ih:number;ox:number;oy
 /** Persisted author coordinates. Previews live exclusively in the outer editor,
  * so autosave never observes an unfinished pointer/crop transaction. */
 export function imageDirect(frame:HTMLIFrameElement, root:HTMLElement, get:()=>Commands,
-    enabled:()=>boolean, selected:()=>string[], select:(id:string)=>void, report:(e:unknown)=>void) {
+    enabled:()=>boolean, selected:()=>string[], select:(id:string)=>void, report:(e:unknown)=>void, notify:()=>void = () => {}) {
     const layer=document.createElement('div'); layer.dataset.ppteTransient='';
     layer.style.cssText='position:fixed;z-index:103;pointer-events:none'; root.append(layer);
     const hint=document.createElement('span');hint.textContent='位置预览 · 松开以应用';hint.style.cssText='position:absolute;white-space:nowrap;font:12px system-ui;background:#5261d8;color:white;padding:4px 8px;border-radius:4px;pointer-events:none';layer.append(hint);
@@ -23,6 +23,7 @@ export function imageDirect(frame:HTMLIFrameElement, root:HTMLElement, get:()=>C
     });
     let id:string|undefined, box:Box|undefined, cropping=false, session=false;
     let gesture:{start:Box;corner:string;pointer:number;target:HTMLElement;sx:number;sy:number;originX:number;originY:number}|undefined;
+    let initial:Box|undefined;
     let lastClick:{id:string;time:number}|undefined;
     let slide:HTMLElement|undefined, original:string|undefined, conceal:HTMLStyleElement|undefined;
     const commands=()=>get();
@@ -85,11 +86,12 @@ export function imageDirect(frame:HTMLIFrameElement, root:HTMLElement, get:()=>C
     }
     function begin(){
         if(!id||!box||!slide)return false;
-        if(!session){original=commands().node(id).outerHTML+(commands().node(id).parentElement?.dataset.ppteImageFrame??'');session=true;conceal=commands().doc.createElement('style');conceal.dataset.ppteTransient='';conceal.textContent='';commands().doc.head.append(conceal);}return true;
+        if(!session){original=commands().node(id).outerHTML+(commands().node(id).parentElement?.dataset.ppteImageFrame??'');session=true;initial={...box};conceal=commands().doc.createElement('style');conceal.dataset.ppteTransient='';conceal.textContent='';commands().doc.head.append(conceal);}return true;
     }
     function crop(){
+        if(cropping)return;
         update();if(!begin())return;cropping=true;if(conceal)conceal.textContent=`[data-ppte-id="${CSS.escape(id!)}"]{visibility:hidden!important}`;
-        cover(box!);draw();done.focus();
+        cover(box!);initial={...box!};draw();notify();done.focus();
     }
     function cover(b:Box){
         const k=Math.max(1,b.w/b.iw,b.h/b.ih);
@@ -99,8 +101,10 @@ export function imageDirect(frame:HTMLIFrameElement, root:HTMLElement, get:()=>C
     function constrain(b:Box){
         const r={width:slide!.clientWidth,height:slide!.clientHeight};b.x=Math.max(24-b.w,Math.min(r.width-24,b.x));b.y=Math.max(24-b.h,Math.min(r.height-24,b.y));
     }
+    function changed(){return session && JSON.stringify(box)!==JSON.stringify(initial);}
     function commit(){
         if(!id||!box||!session||!slide)return;
+        if(!changed()){cancelSession();return true;}
         const c=commands(),n=c.node(id),b={...box},imageId=id,slideId=slide.dataset.ppteId!;
         if(n.outerHTML+(n.parentElement?.dataset.ppteImageFrame??'')!==original){cancelSession();report('图片在调整期间已改变，请重试');return;}
         conceal?.remove();conceal=undefined;
@@ -130,9 +134,9 @@ export function imageDirect(frame:HTMLIFrameElement, root:HTMLElement, get:()=>C
             wrapper.style.cssText=`position:absolute!important;left:${b.x}px!important;top:${b.y}px!important;width:${b.w}px!important;height:${b.h}px!important;overflow:hidden!important;margin:0!important;padding:0!important;border:0!important;box-sizing:border-box!important`;
             image.style.cssText=`position:absolute!important;left:${b.ox}px!important;top:${b.oy}px!important;width:${b.iw}px!important;height:${b.ih}px!important;max-width:none!important;max-height:none!important;min-width:0!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;transform:none!important;object-fit:fill!important;${effects}`;
         });
-        select(imageId);update(); } catch(e){cancelSession();report(e);}
+        select(imageId);update();notify();return true; } catch(e){cancelSession();report(e);return false;}
     }
-    function cancelSession(){conceal?.remove();conceal=undefined;session=cropping=false;gesture=undefined;original=undefined;update();}
+    function cancelSession(){conceal?.remove();conceal=undefined;session=cropping=false;gesture=undefined;original=undefined;initial=undefined;update();notify();}
     function start(e:PointerEvent,corner='', fromFrame=false){
         if(e.button!==0||!begin())return;e.preventDefault();e.stopPropagation();
         const p=locate(),target=(fromFrame?e.target:e.currentTarget) as HTMLElement;
@@ -184,6 +188,7 @@ export function imageDirect(frame:HTMLIFrameElement, root:HTMLElement, get:()=>C
         b.ox-=(b.iw*k-b.iw)/2;b.oy-=(b.ih*k-b.ih)/2;b.iw*=k;b.ih*=k;cover(b);draw();
     },{passive:false});
     function key(e:KeyboardEvent){
+        if((e.target as Element).closest?.('dialog[open]'))return false;
         if(!enabled()||e.isComposing||(e.target as Element).closest?.('input,textarea,select,[contenteditable="true"]'))return false;
         if(cropping&&(e.key==='Enter'||e.key==='Escape')){e.preventDefault();e.stopImmediatePropagation();if(e.key==='Enter')commit();else cancelSession();return true;}
         if(session&&e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();cancelSession();return true;}
@@ -195,7 +200,7 @@ export function imageDirect(frame:HTMLIFrameElement, root:HTMLElement, get:()=>C
         doc.addEventListener('dragstart',e=>{if(enabled()&&(e.target as Element).tagName==='IMG')e.preventDefault();});
         doc.addEventListener('pointerdown',e=>{
             const n=e.target as HTMLElement;
-            if(!enabled()||n.tagName!=='IMG'||commands().protected(n))return;
+            if(!enabled()||cropping||n.tagName!=='IMG'||commands().protected(n))return;
             // Do not open/resize the inspector between down and up: that moves
             // the iframe under a stationary pointer and turns a click into a drag.
             try {box=measure(n as HTMLImageElement);id=n.dataset.ppteId;bitmap.src=ghost.src=(n as HTMLImageElement).src;}
@@ -207,5 +212,24 @@ export function imageDirect(frame:HTMLIFrameElement, root:HTMLElement, get:()=>C
         doc.addEventListener('pointercancel',cancelSession);
         doc.addEventListener('lostpointercapture',()=>{if(gesture)cancelSession();});
     }
-    return {bind,update,crop,key,cancel:cancelSession,get cropping(){return cropping;}};
+    // Resolve once, synchronously in the user's confirmation gesture (file picker /
+    // fullscreen activation must not be lost to an asynchronous prompt).
+    let prompt:HTMLDialogElement|undefined;
+    function resolvePending(action:()=>unknown, saving=false) {
+        if(prompt)return;
+        if(!session){action();return;}
+        if(!changed()){cancelSession();action();return;}
+        const dialog=document.createElement('dialog');prompt=dialog;dialog.dataset.ppteTransient='';
+        dialog.setAttribute('aria-label','未完成的裁切');
+        dialog.style.cssText='max-width:420px;padding:24px;border:1px solid #ddd;border-radius:12px;color:#20242c;background:white';
+        const text=document.createElement('p');text.textContent=saving?'裁切仍在调整，完成后再保存或下载。':'裁切仍在调整，要如何继续？';dialog.append(text);
+        const close=()=>{dialog.close();dialog.remove();prompt=undefined;};
+        const add=(label:string,fn:()=>void)=>{const b=document.createElement('button');b.textContent=label;b.style.cssText='margin:4px;min-height:40px';b.onclick=fn;dialog.append(b);};
+        add(saving?'完成裁切并继续':'应用并继续',()=>{close();if(commit())action();});
+        if(!saving)add('放弃并继续',()=>{close();cancelSession();action();});
+        add(saving?'继续调整':'留在当前',()=>{close();done.focus();});
+        dialog.addEventListener('cancel',e=>{e.preventDefault();close();done.focus();});
+        document.body.append(dialog);dialog.showModal();
+    }
+    return {bind,update,crop,key,resolvePending,cancel:cancelSession,get pending(){return changed();},get cropping(){return cropping;}};
 }

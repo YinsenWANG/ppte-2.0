@@ -6,7 +6,7 @@ import { imageDirect } from './image-direct.js';
 import { editCanvas } from './edit-canvas.js';
 import { installPlayer } from '../../html-player/src/index.js';
 import { Commands, editable, isTextObject, textObject, snapshot } from './commands.js';
-export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: () => void) {
+export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: () => void, interactionChange:()=>void = () => {}) {
     const style = document.createElement('style');
     style.dataset.ppteTransient = '';
     style.textContent = shellCSS + accessibleShellCSS;
@@ -24,7 +24,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     const report = (e: unknown) => {
         feedback.textContent = '操作未完成 · ' + String(e);
     };
-    const run = (fn: () => unknown) => {
+    const run = (fn: () => unknown) => images.resolvePending(() => {
         const focused=document.activeElement as HTMLElement | null;
         const restoreFocus=()=>{if(focused && !focused.isConnected && document.activeElement===document.body){
             const label=focused.getAttribute('aria-label')??focused.textContent;
@@ -45,7 +45,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         catch (e) {
             report(e);
         }
-    };
+    });
     const button = (container: HTMLElement, label: string, fn: () => unknown) => {
         const b = document.createElement('button');
         b.textContent = label; b.title = label;
@@ -146,7 +146,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
             commands.style(selected, key, value);
     };
     const images = imageDirect(frame, root, () => commands, () => active && !composing && !suspended,
-        () => selected, id => { selected=[id]; refresh(); }, report);
+        () => selected, id => { selected=[id]; refresh(); }, report, interactionChange);
     let composing = false;
     function refresh() {
         if (imageJob && (!active || currentSlide !== imageJob.slide)) imageJob.controller.abort();
@@ -219,9 +219,9 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
                 const input = document.createElement('input'); input.type='file'; input.accept=imageInput.accept;
                 input.hidden=true; input.setAttribute('aria-label','替换本地资源'); s.append(input);
                 input.onchange=()=>{const file=input.files?.[0], id=selected[0];input.value='';if(file)imageAction(signal=>commands.media(id,file,signal));};
-                const replace=button(s,'替换图片',()=>{images.cancel();input.click();});
+                const replace=button(s,'替换图片',()=>{input.click();});
                 const crop=button(s,'裁切',()=>images.crop());
-                const remove=button(s,'删除对象',()=>{images.cancel();commands.remove(selected[0]);selected=[];range=null;});
+                const remove=button(s,'删除对象',()=>{commands.remove(selected[0]);selected=[];range=null;});
                 for(const [b,path,label] of [[replace,'M4 5h10v9H4z M6 8l2 2 2-3 3 5 M5 3h9','替换图片'],[crop,'M5 2v11h11 M2 5h11v11','裁切'],[remove,'M3 5h12 M6 5V3h6v2 M5 5l1 11h6l1-11','删除对象']] as const){
                     b.innerHTML=`<svg aria-hidden="true" viewBox="0 0 18 18" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.5"><path d="${path}"/></svg><span>${label}</span>`;
                     b.style.cssText='display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-bottom:8px';
@@ -585,6 +585,8 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
                 return;
             const n = selectTarget(e.target) as HTMLElement | null;
             const id = n?.dataset.ppteId;
+            images.resolvePending(() => {
+            const n = id ? commands.node(id) : null;
             propertiesCollapsed=false; pageSettings=false;
             selected = id ? (e.shiftKey && n?.tagName !== 'IMG' && !selectedNodes().some(n=>n.tagName==='IMG') ? [...new Set([...selected, id])] : [id]) : [];
             // Non-text objects must own keyboard focus after a real pointer
@@ -595,6 +597,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
             const slide = n?.closest('[data-ppte-slide]');
             if (slide) currentSlide = Array.from(doc.querySelectorAll('[data-ppte-slide]')).indexOf(slide);
             refresh();
+            });
         });
         doc.addEventListener('selectionchange', () => {
             const s = doc.getSelection();
@@ -674,11 +677,14 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
                         bar.querySelector<HTMLButtonElement>('button')?.focus();
                         return;
                     }
-                    const n = objects[next];
+                    const nextId = objects[next].dataset.ppteId!;
+                    images.resolvePending(() => {
+                    const n = commands.node(nextId);
                     selected = [n.dataset.ppteId!];
                     n.setAttribute('tabindex', '0');
                     n.focus();
                     refresh();
+                    });
                 }
             }
             if (!(e.target as Element).closest('input,textarea,select,[contenteditable="true"]') && e.altKey && e.key.startsWith('Arrow')) {
@@ -710,11 +716,13 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
                     run(() => commands.move(d.id, e.clientX - d.x, e.clientY - d.y));
             }
         });
-        (window as any).PPTeEditor = { get commands() {
+        (window as any).PPTeEditor = { get pendingInteraction(){return images.pending;}, get cropping(){return images.cropping;}, get commands() {
                 return commands;
             }, select(ids: string[]) {
+                images.resolvePending(() => {
                 selected = ids; propertiesCollapsed=false; pageSettings=false;
                 refresh();
+                });
             }, get selection() {
                 return [...selected];
             }, hash: (id: string) => commands.hash(id), patch: (id: string, hash: string, patch: any) => commands.agent(id, hash, patch) };
@@ -734,7 +742,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         }
     };
     document.addEventListener('keydown', keys, true);
-    document.addEventListener('pointerdown',e=>{if(active && (e.target as HTMLElement).closest?.('#ppte-edit-canvas')){images.cancel();selected=[];refresh();}});
+    document.addEventListener('pointerdown',e=>{if(active && (e.target as HTMLElement).closest?.('#ppte-edit-canvas')){images.resolvePending(()=>{selected=[];refresh();});}});
     let collapsed = true, propertiesCollapsed = false, zoom = 1;
     const controls = document.createElement('div'); controls.id = 'ppte-canvas-controls'; controls.dataset.ppteTransient=''; document.body.append(controls);
     const viewButton = (label: string, action: () => void) => {
@@ -756,7 +764,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
         prev.disabled = currentSlide === 0;
         next.disabled = currentSlide >= count - 1;
     }
-    const navigate = (delta: number) => { currentSlide=Math.max(0,Math.min(commands.doc.querySelectorAll('[data-ppte-slide]').length-1,currentSlide+delta)); selected=[]; refresh(); scrollSlide(commands.doc.querySelectorAll<HTMLElement>('[data-ppte-slide]')[currentSlide]); thumbs(); };
+    const navigate = (delta: number) => images.resolvePending(() => { currentSlide=Math.max(0,Math.min(commands.doc.querySelectorAll('[data-ppte-slide]').length-1,currentSlide+delta)); selected=[]; refresh(); scrollSlide(commands.doc.querySelectorAll<HTMLElement>('[data-ppte-slide]')[currentSlide]); thumbs(); });
     const prev=viewButton('上一页', () => navigate(-1)),next=viewButton('下一页', () => navigate(1));
     const navigation=group(controls,'页面导航');navigation.append(prev,pageCount,next);controls.prepend(leftToggle,navigation);
     const zoomGroup=group(controls,'画布缩放');zoomGroup.classList.add('zoom-group');zoomGroup.append(zoomOut,zoomLabel,zoomIn,zoomReset);
@@ -853,7 +861,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
     pdf.setAttribute('aria-label', '导出为 PDF');
     bar.insertBefore(pdf, present);
     Object.assign(window, { PPTePlayer: player });
-    return { get active() { return active; }, enable() {
+    return { resolvePending:images.resolvePending, get pendingInteraction(){return images.pending;}, get cropping(){return images.cropping;}, get active() { return active; }, enable() {
             if (composing) return;
             reading.clear(); active = true; collapsed=innerWidth<=580;
             root.setAttribute('data-open', '');
@@ -862,6 +870,7 @@ export function workspace(frame: HTMLIFrameElement, bar: HTMLElement, change: ()
             const slide = commands.doc.querySelectorAll<HTMLElement>('[data-ppte-slide]')[currentSlide];
             if (slide) scrollSlide(slide);
         }, hide() {
+            if(images.cropping){images.cancel();return;}
             if (composing) return;
             active = false; collapsed=true;
             root.removeAttribute('data-open');
