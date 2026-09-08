@@ -20,3 +20,8 @@ packages/html-document/src/runtime-bundle.ts
 # pipeline artifacts (codex transcripts, not deliverable)
 out-ur*.txt
 out-ur*.log
+
+out-af*.txt
+brief-af-*.md
+sup-af-*.md
+gate-fail-*.log
