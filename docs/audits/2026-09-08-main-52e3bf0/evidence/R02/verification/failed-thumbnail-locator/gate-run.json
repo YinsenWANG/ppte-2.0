@@ -1,0 +1,35 @@
+{
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "startedAt": "2026-09-08T13:48:31.279619+00:00",
+      "finishedAt": "2026-09-08T13:48:32.635640+00:00",
+      "log": "typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "exitCode": 0,
+      "startedAt": "2026-09-08T13:48:32.667856+00:00",
+      "finishedAt": "2026-09-08T13:48:34.216815+00:00",
+      "log": "build.log"
+    },
+    {
+      "command": "pnpm test",
+      "exitCode": 1,
+      "startedAt": "2026-09-08T13:48:34.234856+00:00",
+      "finishedAt": "2026-09-08T13:50:47.240098+00:00",
+      "log": "test.log"
+    }
+  ],
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "node": "v22.23.2",
+  "baseCommit": "040698f7a3b543a7b32c0d9d7c9aca54787a1311",
+  "sourceSHA256": {
+    "packages/html-editor/src/image-direct.ts": "f9cc2ecabac267ee01eb8b9ec0d50863d9f179d620d8ef41c8f55d4cebf2ad8a",
+    "packages/html-editor/src/index.ts": "47b8806f19d34d7b84a17eeeb54776f58f0e612463b578f124cad3b79126b7a9",
+    "packages/html-editor/src/workspace.ts": "7e39520e7cbff73e5ec898225b78b52505c1044c08cb9cb9b59fa07d9af6207d",
+    "tests/audit-followup-r02.test.ts": "ee086fb9727b0cb40f8ffae63d0f6c670290afe684e3a9359666254da22632f2"
+  },
+  "note": "Built test used visible title instead of actual thumbnail aria-label. Locator corrected; assertions unchanged."
+}

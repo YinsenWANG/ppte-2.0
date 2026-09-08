@@ -1,0 +1,1281 @@
+$ pnpm build && node --test dist/tests/*.test.js
+$ node scripts/build-html.mjs --clean && tsc -p tsconfig.build.json
+TAP version 13
+# Subtest: R02 download: preview, explicit completion, single real download bytes, fresh browser geometry and undo
+ok 1 - R02 download: preview, explicit completion, single real download bytes, fresh browser geometry and undo
+  ---
+  duration_ms: 6184.497333
+  type: 'test'
+  ...
+# Subtest: R02 leave 阅读: stay / discard / apply through one exit
+ok 2 - R02 leave 阅读: stay / discard / apply through one exit
+  ---
+  duration_ms: 6508.162666
+  type: 'test'
+  ...
+# Subtest: R02 leave 放映: stay / discard / apply through one exit
+ok 3 - R02 leave 放映: stay / discard / apply through one exit
+  ---
+  duration_ms: 6239.37
+  type: 'test'
+  ...
+# Subtest: R02 leave 下一页: stay / discard / apply through one exit
+ok 4 - R02 leave 下一页: stay / discard / apply through one exit
+  ---
+  duration_ms: 4988.187583
+  type: 'test'
+  ...
+# Subtest: R02 leave 缩略图: stay / discard / apply through one exit
+ok 5 - R02 leave 缩略图: stay / discard / apply through one exit
+  ---
+  duration_ms: 5234.646833
+  type: 'test'
+  ...
+# Subtest: R02 leave 另一对象: stay / discard / apply through one exit
+ok 6 - R02 leave 另一对象: stay / discard / apply through one exit
+  ---
+  duration_ms: 4753.114417
+  type: 'test'
+  ...
+# Subtest: R02 leave 另一图片: stay / discard / apply through one exit
+ok 7 - R02 leave 另一图片: stay / discard / apply through one exit
+  ---
+  duration_ms: 5714.3345
+  type: 'test'
+  ...
+# Subtest: R02 leave 删除对象: stay / discard / apply through one exit
+ok 8 - R02 leave 删除对象: stay / discard / apply through one exit
+  ---
+  duration_ms: 6465.959833
+  type: 'test'
+  ...
+# Subtest: R02 leave 键盘删除: stay / discard / apply through one exit
+ok 9 - R02 leave 键盘删除: stay / discard / apply through one exit
+  ---
+  duration_ms: 4505.543667
+  type: 'test'
+  ...
+# Subtest: R02 leave 替换图片: stay / discard / apply through one exit
+ok 10 - R02 leave 替换图片: stay / discard / apply through one exit
+  ---
+  duration_ms: 5807.220958
+  type: 'test'
+  ...
+# Subtest: R02 Esc and unchanged crop: exact content and history, no reminder or leave prompt
+ok 11 - R02 Esc and unchanged crop: exact content and history, no reminder or leave prompt
+  ---
+  duration_ms: 4913.044042
+  type: 'test'
+  ...
+# Subtest: R02 manual and automatic disk bridge: committed bytes only, failure preserves crop/source, one undo
+ok 12 - R02 manual and automatic disk bridge: committed bytes only, failure preserves crop/source, one undo
+  ---
+  duration_ms: 7055.201541
+  type: 'test'
+  ...
+# Subtest: F04A acceptance 1–3: replay real PDFs, full text, fonts, colors and frozen input integrity
+    # Subtest: PDFKit reopens and re-extracts every candidate page; negative controls really discriminate
+    ok 1 - PDFKit reopens and re-extracts every candidate page; negative controls really discriminate
+      ---
+      duration_ms: 44607.449292
+      type: 'test'
+      ...
+    1..1
+ok 13 - F04A acceptance 1–3: replay real PDFs, full text, fonts, colors and frozen input integrity
+  ---
+  duration_ms: 44683.170833
+  type: 'test'
+  ...
+# Subtest: F04A acceptance 3: installed Chrome really exports frozen file:// fixture offline; not a product PDF action
+ok 14 - F04A acceptance 3: installed Chrome really exports frozen file:// fixture offline; not a product PDF action
+  ---
+  duration_ms: 645.49475
+  type: 'test'
+  ...
+# Subtest: F04A acceptance 2: every human selection and physical-browser requirement remains explicitly pending
+ok 15 - F04A acceptance 2: every human selection and physical-browser requirement remains explicitly pending
+  ---
+  duration_ms: 15.60875
+  type: 'test'
+  ...
+# Subtest: F04A acceptance 4: only external qualification requires HOLD; neither qualified cannot enable F04
+ok 16 - F04A acceptance 4: only external qualification requires HOLD; neither qualified cannot enable F04
+  ---
+  duration_ms: 11.828625
+  type: 'test'
+  ...
+# Subtest: F01 A1/A2: one direct image chooser, no retired shortcuts/menus, disabled truthful top-level PDF and responsive shell
+ok 17 - F01 A1/A2: one direct image chooser, no retired shortcuts/menus, disabled truthful top-level PDF and responsive shell
+  ---
+  duration_ms: 4264.803166
+  type: 'test'
+  ...
+# Subtest: F01 A3: no history and all author content survive edit/download/full browser restart
+ok 18 - F01 A3: no history and all author content survive edit/download/full browser restart
+  ---
+  duration_ms: 3553.919084
+  type: 'test'
+  ...
+# Subtest: F01 A3: valid history and all author content survive edit/download/full browser restart
+ok 19 - F01 A3: valid history and all author content survive edit/download/full browser restart
+  ---
+  duration_ms: 2889.464625
+  type: 'test'
+  ...
+# Subtest: F01 A3: broken history and all author content survive edit/download/full browser restart
+ok 20 - F01 A3: broken history and all author content survive edit/download/full browser restart
+  ---
+  duration_ms: 2967.406
+  type: 'test'
+  ...
+# Subtest: F01 A3: unknown history and all author content survive edit/download/full browser restart
+ok 21 - F01 A3: unknown history and all author content survive edit/download/full browser restart
+  ---
+  duration_ms: 3829.953833
+  type: 'test'
+  ...
+# Subtest: F01 A3: simulated native adapter writes real disk and preserves old media history without new snapshots
+ok 22 - F01 A3: simulated native adapter writes real disk and preserves old media history without new snapshots
+  ---
+  duration_ms: 3508.952417
+  type: 'test'
+  ...
+# Subtest: F01 A1–A3: audited Cherry ten-page document upgrades without content loss and keeps focused controls
+ok 23 - F01 A1–A3: audited Cherry ten-page document upgrades without content loss and keeps focused controls
+  ---
+  duration_ms: 6095.611041
+  type: 'test'
+  ...
+# (node:95430) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: F02 errors survive editing and draft quota failure; pending automatic timer cannot retry without consent
+ok 24 - F02 errors survive editing and draft quota failure; pending automatic timer cannot retry without consent
+  ---
+  duration_ms: 1.9925
+  type: 'test'
+  ...
+# Subtest: F02 recovery serializes and stores once per revision/base; next acknowledged baseline checkpoints latest revision
+ok 25 - F02 recovery serializes and stores once per revision/base; next acknowledged baseline checkpoints latest revision
+  ---
+  duration_ms: 0.330667
+  type: 'test'
+  ...
+# Subtest: F02 cancel, denial, picker/read errors and unsupported save never download; explicit download retains content
+ok 26 - F02 cancel, denial, picker/read errors and unsupported save never download; explicit download retains content
+  ---
+  duration_ms: 8646.939625
+  type: 'test'
+  ...
+# Subtest: F02 B1 actual Enter/Shift+Enter, inline formatting, multiline clipboard event, undo/redo, download and fresh process editing
+ok 27 - F02 B1 actual Enter/Shift+Enter, inline formatting, multiline clipboard event, undo/redo, download and fresh process editing
+  ---
+  duration_ms: 6435.986125
+  type: 'test'
+  ...
+# Subtest: F03 A1/A2/A3 absolute: image UI placement, pointer/order, resize/crop/replace, undo/redo and fresh-process saved reopen
+ok 28 - F03 A1/A2/A3 absolute: image UI placement, pointer/order, resize/crop/replace, undo/redo and fresh-process saved reopen
+  ---
+  duration_ms: 14638.344916
+  type: 'test'
+  ...
+# Subtest: F03 A1/A2/A3 block: image UI placement, pointer/order, resize/crop/replace, undo/redo and fresh-process saved reopen
+ok 29 - F03 A1/A2/A3 block: image UI placement, pointer/order, resize/crop/replace, undo/redo and fresh-process saved reopen
+  ---
+  duration_ms: 15266.60075
+  type: 'test'
+  ...
+# Subtest: F03 A1/A2/A3 flex: image UI placement, pointer/order, resize/crop/replace, undo/redo and fresh-process saved reopen
+ok 30 - F03 A1/A2/A3 flex: image UI placement, pointer/order, resize/crop/replace, undo/redo and fresh-process saved reopen
+  ---
+  duration_ms: 14496.333209
+  type: 'test'
+  ...
+# Subtest: F03 A1/A2/A3 grid: image UI placement, pointer/order, resize/crop/replace, undo/redo and fresh-process saved reopen
+ok 31 - F03 A1/A2/A3 grid: image UI placement, pointer/order, resize/crop/replace, undo/redo and fresh-process saved reopen
+  ---
+  duration_ms: 13717.428708
+  type: 'test'
+  ...
+# Subtest: F03 failures/cancel: cancelled chooser, invalid bytes/type/oversize preserve original and undo stack; same replacement can be retried
+ok 32 - F03 failures/cancel: cancelled chooser, invalid bytes/type/oversize preserve original and undo stack; same replacement can be retried
+  ---
+  duration_ms: 4914.811042
+  type: 'test'
+  ...
+# Subtest: F03 bounded async image import: progress, cancel and leaving edit discard delayed decode without dirty/history changes
+ok 33 - F03 bounded async image import: progress, cancel and leaving edit discard delayed decode without dirty/history changes
+  ---
+  duration_ms: 7378.398125
+  type: 'test'
+  ...
+# Subtest: F03 A1/A2 prototype: actual author draft, consecutive images, pointer resize, resource reuse and author content preserved
+ok 34 - F03 A1/A2 prototype: actual author draft, consecutive images, pointer resize, resource reuse and author content preserved
+  ---
+  duration_ms: 3019.628166
+  type: 'test'
+  ...
+# Subtest: F03 A1/A2 cherry: actual author draft, consecutive images, pointer resize, resource reuse and author content preserved
+ok 35 - F03 A1/A2 cherry: actual author draft, consecutive images, pointer resize, resource reuse and author content preserved
+  ---
+  duration_ms: 3133.322583
+  type: 'test'
+  ...
+# Subtest: F05 A1/A2: scoped controls, no retired menu/gutter, honest PDF state, navigation endpoints and keyboard focus
+ok 36 - F05 A1/A2: scoped controls, no retired menu/gutter, honest PDF state, navigation endpoints and keyboard focus
+  ---
+  duration_ms: 3405.630584
+  type: 'test'
+  ...
+# Subtest: F05 A1/A2/A3: same Cherry draft at 1440/1024/390, unclipped centered page, inspector, save status and pure presentation
+ok 37 - F05 A1/A2/A3: same Cherry draft at 1440/1024/390, unclipped centered page, inspector, save status and pure presentation
+  ---
+  duration_ms: 7772.774209
+  type: 'test'
+  ...
+# Subtest: F05 A3: 40-page rail scrolls independently; last page/add footer and keyboard reorder remain reachable at desktop and narrow width
+ok 38 - F05 A3: 40-page rail scrolls independently; last page/add footer and keyboard reorder remain reachable at desktop and narrow width
+  ---
+  duration_ms: 4162.152792
+  type: 'test'
+  ...
+# Subtest: F06 A1/A4: same offline Cherry draft edits text and image, downloads once, reopens in fresh process and presents all pages; PDF stays unqualified
+ok 39 - F06 A1/A4: same offline Cherry draft edits text and image, downloads once, reopens in fresh process and presents all pages; PDF stays unqualified
+  ---
+  duration_ms: 6919.587583
+  type: 'test'
+  ...
+# Subtest: F06 A2/A3: native acceptance and audit gaps cannot be closed by automated evidence
+ok 40 - F06 A2/A3: native acceptance and audit gaps cannot be closed by automated evidence
+  ---
+  duration_ms: 174.338542
+  type: 'test'
+  ...
+# Subtest: F06 A4: frozen delivered HTML matches recorded download hash and carries ten editable pages without external runtime dependencies
+ok 41 - F06 A4: frozen delivered HTML matches recorded download hash and carries ten editable pages without external runtime dependencies
+  ---
+  duration_ms: 41.983833
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 1: native Grid/Flex/SVG/font hierarchy and nested resources retain computed layout and exact pixels
+ok 42 - H01 acceptance 1: native Grid/Flex/SVG/font hierarchy and nested resources retain computed layout and exact pixels
+  ---
+  duration_ms: 1962.915083
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 1: deterministic IDs reserve author identities, repair duplicates and preserve nested template escaping
+ok 43 - H01 acceptance 1: deterministic IDs reserve author identities, repair duplicates and preserve nested template escaping
+  ---
+  duration_ms: 88.206083
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 2: 100 actual browser serialize/write/close/reopen cycles retain one payload and no editing residue
+ok 44 - H01 acceptance 2: 100 actual browser serialize/write/close/reopen cycles retain one payload and no editing residue
+  ---
+  duration_ms: 30235.81575
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 2: sanitizer reports executable content; runtime sandbox/CSP block independent script/event/network/navigation attempts
+ok 45 - H01 acceptance 2: sanitizer reports executable content; runtime sandbox/CSP block independent script/event/network/navigation attempts
+  ---
+  duration_ms: 520.356542
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 2: safe serialization fails closed for executable CSS, SVG data, remote resource and malformed metadata
+ok 46 - H01 acceptance 2: safe serialization fails closed for executable CSS, SVG data, remote resource and malformed metadata
+  ---
+  duration_ms: 69.254208
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 3: offline CLI with no PATH/keys/browser writes exactly one HTML and <=1KB summary
+ok 47 - H01 acceptance 3: offline CLI with no PATH/keys/browser writes exactly one HTML and <=1KB summary
+  ---
+  duration_ms: 718.072666
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 3: rejection creates no output; local resource root, symlinks, missing resources and import cycles fail explicitly
+ok 48 - H01 acceptance 3: rejection creates no output; local resource root, symlinks, missing resources and import cycles fail explicitly
+  ---
+  duration_ms: 110.845125
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 4: actual bundled CLI/runtime import graphs exclude old representations; all three H00 drafts enhance directly
+ok 49 - H01 acceptance 4: actual bundled CLI/runtime import graphs exclude old representations; all three H00 drafts enhance directly
+  ---
+  duration_ms: 189.396708
+  type: 'test'
+  ...
+# Subtest: H01 acceptance 1/3: embedded SVG references preserve fragment identity and diagnostics obey byte limits
+ok 50 - H01 acceptance 1/3: embedded SVG references preserve fragment identity and diagnostics obey byte limits
+  ---
+  duration_ms: 78.277916
+  type: 'test'
+  ...
+# Subtest: H03 acceptance 2/3: viewport changes retain focused format control, selection and original DOM without edits
+ok 51 - H03 acceptance 2/3: viewport changes retain focused format control, selection and original DOM without edits
+  ---
+  duration_ms: 2307.610542
+  type: 'test'
+  ...
+# Subtest: H03 acceptance 1: real object selection, empty/multiple/mixed contextual shell and screenshots
+ok 52 - H03 acceptance 1: real object selection, empty/multiple/mixed contextual shell and screenshots
+  ---
+  duration_ms: 3027.593583
+  type: 'test'
+  ...
+# Subtest: H03 acceptance 2: computed normal text contrast >=4.5, visible keyboard focus and keyboard object/format path
+ok 53 - H03 acceptance 2: computed normal text contrast >=4.5, visible keyboard focus and keyboard object/format path
+  ---
+  duration_ms: 1388.641292
+  type: 'test'
+  ...
+# Subtest: H03 acceptance 3: local text/range history preserves sibling identity, native Grid/Flex strategies and protected Agent hash
+ok 54 - H03 acceptance 3: local text/range history preserves sibling identity, native Grid/Flex strategies and protected Agent hash
+  ---
+  duration_ms: 2312.400916
+  type: 'test'
+  ...
+# Subtest: H03 acceptance 4: original-file reopen retains text, range style, layout, media, table/background/lock; errors retain work
+ok 55 - H03 acceptance 4: original-file reopen retains text, range style, layout, media, table/background/lock; errors retain work
+  ---
+  duration_ms: 4725.384583
+  type: 'test'
+  ...
+# Subtest: H03 native typing history, atomic multi-edit failure, table cell and page insertion history
+ok 56 - H03 native typing history, atomic multi-edit failure, table cell and page insertion history
+  ---
+  duration_ms: 1818.179583
+  type: 'test'
+  ...
+# Subtest: H03 original-file persisted range formatting and keyboard/pointer layout; clean preview returns to edit
+ok 57 - H03 original-file persisted range formatting and keyboard/pointer layout; clean preview returns to edit
+  ---
+  duration_ms: 4134.645208
+  type: 'test'
+  ...
+# Subtest: H03 guarded SVG replacement, protected native input, composition events coalesce and hash race rejects
+ok 58 - H03 guarded SVG replacement, protected native input, composition events coalesce and hash race rejects
+  ---
+  duration_ms: 1012.921916
+  type: 'test'
+  ...
+# Subtest: H00 acceptance 1: frozen positive HTML contract excludes retired formats and IR pipeline
+ok 59 - H00 acceptance 1: frozen positive HTML contract excludes retired formats and IR pipeline
+  ---
+  duration_ms: 6.907125
+  type: 'test'
+  ...
+# Subtest: H00 acceptance 2: real fixed materials, all nine pairs and cold/hot missing data stay pending
+ok 60 - H00 acceptance 2: real fixed materials, all nine pairs and cold/hot missing data stay pending
+  ---
+  duration_ms: 63.801583
+  type: 'test'
+  ...
+# Subtest: H00 acceptance 2: missing timings/tokens, changed model/materials, omitted runs and fake success fail
+ok 61 - H00 acceptance 2: missing timings/tokens, changed model/materials, omitted runs and fake success fail
+  ---
+  duration_ms: 13.601583
+  type: 'test'
+  ...
+# Subtest: H00 acceptance 2: observed failures are retained, never repaired away or silently excluded
+ok 62 - H00 acceptance 2: observed failures are retained, never repaired away or silently excluded
+  ---
+  duration_ms: 10.517667
+  type: 'test'
+  ...
+# Subtest: H00 acceptance 2: artifact bytes must exist inside evidence root including symlink resolution
+ok 63 - H00 acceptance 2: artifact bytes must exist inside evidence root including symlink resolution
+  ---
+  duration_ms: 42.280958
+  type: 'test'
+  ...
+# Subtest: H00 acceptance 2: capture records actual subprocess time/bytes/failure and refuses overwrite
+ok 64 - H00 acceptance 2: capture records actual subprocess time/bytes/failure and refuses overwrite
+  ---
+  duration_ms: 73.209292
+  type: 'test'
+  ...
+# Subtest: H00 retained exploratory HTML has twelve pages, no runtime/network and real data table; not timing evidence
+ok 65 - H00 retained exploratory HTML has twelve pages, no runtime/network and real data table; not timing evidence
+  ---
+  duration_ms: 2.724791
+  type: 'test'
+  ...
+# Subtest: H00 dependency inventory preserves evidence of live retired dependencies without declaring retirement
+ok 66 - H00 dependency inventory preserves evidence of live retired dependencies without declaring retirement
+  ---
+  duration_ms: 1.647583
+  type: 'test'
+  ...
+# Subtest: H05 acceptance 1: static CLI/runtime graph and actual installed npm tarball contain only HTML dependencies
+ok 67 - H05 acceptance 1: static CLI/runtime graph and actual installed npm tarball contain only HTML dependencies
+  ---
+  duration_ms: 2.634
+  type: 'test'
+  ...
+# Subtest: H05 acceptance 2: offline installed CLI generates HTML with network and external processes forbidden
+ok 68 - H05 acceptance 2: offline installed CLI generates HTML with network and external processes forbidden
+  ---
+  duration_ms: 335.114083
+  type: 'test'
+  ...
+# Subtest: H05 acceptance 3: candidate runtime <=250 KB gzip and three twelve-page light HTMLs <=1 MB measured
+ok 69 - H05 acceptance 3: candidate runtime <=250 KB gzip and three twelve-page light HTMLs <=1 MB measured
+  ---
+  duration_ms: 472.27825
+  type: 'test'
+  ...
+# Subtest: H05 acceptance 4: isolated install, reusable skill and overwrite refusal preserve existing user files
+ok 70 - H05 acceptance 4: isolated install, reusable skill and overwrite refusal preserve existing user files
+  ---
+  duration_ms: 865.534458
+  type: 'test'
+  ...
+# Subtest: H05 acceptance 2: packaged HTML prints through separately available Chrome PDF toolchain
+ok 71 - H05 acceptance 2: packaged HTML prints through separately available Chrome PDF toolchain # SKIP F01 scope retirement: docs/focused-product/evidence/F01/TEST-MIGRATION.json; not a pass
+  ---
+  duration_ms: 0.09225
+  type: 'test'
+  ...
+# Subtest: H05 retirement: all historical test files remain byte-identical to the pre-H05 manifest
+ok 72 - H05 retirement: all historical test files remain byte-identical to the pre-H05 manifest
+  ---
+  duration_ms: 11.563416
+  type: 'test'
+  ...
+# Subtest: H04 acceptance 1/2: clean audience, idle controls, black pixels, steps, media clicks, fullscreen denial and Escape restore
+ok 73 - H04 acceptance 1/2: clean audience, idle controls, black pixels, steps, media clicks, fullscreen denial and Escape restore
+  ---
+  duration_ms: 4802.074542
+  type: 'test'
+  ...
+# Subtest: H04 acceptance 2: blocked presenter leaves audience usable; real popup has notes/next preview and shared navigation
+ok 74 - H04 acceptance 2: blocked presenter leaves audience usable; real popup has notes/next preview and shared navigation
+  ---
+  duration_ms: 2230.34025
+  type: 'test'
+  ...
+# Subtest: H04 acceptance 3: actual browser PDF has two sized pages, selectable revealed text, no editor UI and print restores content
+ok 75 - H04 acceptance 3: actual browser PDF has two sized pages, selectable revealed text, no editor UI and print restores content # SKIP F01 scope retirement: docs/focused-product/evidence/F01/TEST-MIGRATION.json; not a pass
+  ---
+  duration_ms: 0.161792
+  type: 'test'
+  ...
+# Subtest: H04 acceptance 4: generation and reading create only HTML; new export/runtime graph excludes retired formats
+    # Subtest: Retired product system-print action
+    ok 1 - Retired product system-print action # SKIP F01 forbids system-print export; assertions preserved
+      ---
+      duration_ms: 0.185125
+      type: 'test'
+      ...
+    1..1
+ok 76 - H04 acceptance 4: generation and reading create only HTML; new export/runtime graph excludes retired formats
+  ---
+  duration_ms: 876.201167
+  type: 'test'
+  ...
+# Subtest: H04 actual fullscreen exit, Grid slide layout, print from presentation, mount and read return
+    # Subtest: Retired system-print product path — F04A/F04 pending
+    ok 1 - Retired system-print product path — F04A/F04 pending # SKIP F01: user forbids system printing; original assertions preserved
+      ---
+      duration_ms: 0.122833
+      type: 'test'
+      ...
+    1..1
+ok 77 - H04 actual fullscreen exit, Grid slide layout, print from presentation, mount and read return
+  ---
+  duration_ms: 1596.266458
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 1: original path autosave, close/reopen and service restart preserve text with no download
+ok 78 - H02 acceptance 1: original path autosave, close/reopen and service restart preserve text with no download
+  ---
+  duration_ms: 4355.664334
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 2: OS read-only, ENOSPC fault, interrupted replace retain original and recoverable version
+ok 79 - H02 acceptance 2: OS read-only, ENOSPC fault, interrupted replace retain original and recoverable version
+  ---
+  duration_ms: 624.460583
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 2: two services/windows serialize one winner and detect external Agent edits at replace
+ok 80 - H02 acceptance 2: two services/windows serialize one winner and detect external Agent edits at replace
+  ---
+  duration_ms: 293.895
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 2: kill process before rename, restart recovers stale lock and preserves original
+ok 81 - H02 acceptance 2: kill process before rename, restart recovers stale lock and preserves original
+  ---
+  duration_ms: 777.974458
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 2/3: browser two-window conflict keeps draft; explicit reread and retry after network failure
+ok 82 - H02 acceptance 2/3: browser two-window conflict keeps draft; explicit reread and retry after network failure
+  ---
+  duration_ms: 4502.149625
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 3: IME does not save half composition; 1000ms pause and delayed acknowledgement remain dirty/saving
+ok 83 - H02 acceptance 3: IME does not save half composition; 1000ms pause and delayed acknowledgement remain dirty/saving
+  ---
+  duration_ms: 3037.549875
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 2/3: two real windows retain the failed draft after the other file save is acknowledged
+ok 84 - H02 acceptance 2/3: two real windows retain the failed draft after the other file save is acknowledged
+  ---
+  duration_ms: 3414.905417
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 2/3: a delayed acknowledgement never deletes another window recovery draft
+ok 85 - H02 acceptance 2/3: a delayed acknowledgement never deletes another window recovery draft
+  ---
+  duration_ms: 0.511667
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 3: edits during in-flight save remain queued; draft base matching, quotas and copied identity
+ok 86 - H02 acceptance 3: edits during in-flight save remain queued; draft base matching, quotas and copied identity
+  ---
+  duration_ms: 0.400875
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 2/3: File System Access permission revoked, conflict, failed close and confirmation (API contract test)
+ok 87 - H02 acceptance 2/3: File System Access permission revoked, conflict, failed close and confirmation (API contract test)
+  ---
+  duration_ms: 4.313167
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 4: loopback bind, hostile Origin/Host, no token, traversal, arbitrary fields and unsafe content rejected
+ok 88 - H02 acceptance 4: loopback bind, hostile Origin/Host, no token, traversal, arbitrary fields and unsafe content rejected
+  ---
+  duration_ms: 105.294583
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 5: real installed Chrome file URL shows limitation, keeps draft and never claims file save
+ok 89 - H02 acceptance 5: real installed Chrome file URL shows limitation, keeps draft and never claims file save
+  ---
+  duration_ms: 2454.352834
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 5: Safari actual WebDriver journey or explicit blocked evidence (not simulated Safari)
+ok 90 - H02 acceptance 5: Safari actual WebDriver journey or explicit blocked evidence (not simulated Safari)
+  ---
+  duration_ms: 276.424042
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 1/4: explicit development ppte serve retains packaged npm install, stable restart URL and multiple file mappings
+ok 91 - H02 acceptance 1/4: explicit development ppte serve retains packaged npm install, stable restart URL and multiple file mappings
+  ---
+  duration_ms: 1747.491708
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 2: history bounded by count and rejected restoration paths never write
+ok 92 - H02 acceptance 2: history bounded by count and rejected restoration paths never write
+  ---
+  duration_ms: 1363.893083
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 2: actual bounded full disk returns ENOSPC without replacing original (macOS HFS+)
+ok 93 - H02 acceptance 2: actual bounded full disk returns ENOSPC without replacing original (macOS HFS+)
+  ---
+  duration_ms: 1991.172583
+  type: 'test'
+  ...
+# Subtest: H02 acceptance 2/3: failed-save draft survives page close, restores on matching file base and flushes to original
+ok 94 - H02 acceptance 2/3: failed-save draft survives page close, restores on matching file base and flushes to original
+  ---
+  duration_ms: 3295.2
+  type: 'test'
+  ...
+# Subtest: CLOSING: delivered CLI file supports offline editing, history, download and fresh-process reopening; same-content responsive comparisons
+ok 95 - CLOSING: delivered CLI file supports offline editing, history, download and fresh-process reopening; same-content responsive comparisons
+  ---
+  duration_ms: 6369.310541
+  type: 'test'
+  ...
+# Subtest: GAPS N04: fixed sRGB rasterization preserves original >4000 gates and rejects missing red, blue, and image
+ok 96 - GAPS N04: fixed sRGB rasterization preserves original >4000 gates and rejects missing red, blue, and image
+  ---
+  duration_ms: 4461.718917
+  type: 'test'
+  ...
+# Subtest: GAPS A4: real navigation, image edit undo, versions, download/reopen, presentation and PDF demand/release
+    # Subtest: Retired history preview UI
+    ok 1 - Retired history preview UI # SKIP F01 confirmed history UI removal
+      ---
+      duration_ms: 0.093625
+      type: 'test'
+      ...
+    # Subtest: Retired system-print action
+    ok 2 - Retired system-print action # SKIP F01 PDF pending F04A/F04
+      ---
+      duration_ms: 0.228541
+      type: 'test'
+      ...
+    1..2
+ok 97 - GAPS A4: real navigation, image edit undo, versions, download/reopen, presentation and PDF demand/release
+  ---
+  duration_ms: 4929.252458
+  type: 'test'
+  ...
+# Subtest: GAPS S04: real mouse/keyboard measurements report the unchanged 50/100ms gates, including unmet targets
+ok 98 - GAPS S04: real mouse/keyboard measurements report the unchanged 50/100ms gates, including unmet targets
+  ---
+  duration_ms: 18696.397834
+  type: 'test'
+  ...
+# Subtest: R1 audit native div: actual click, keyboard input, styles, undo/redo and offline download/new-process reopen
+ok 99 - R1 audit native div: actual click, keyboard input, styles, undo/redo and offline download/new-process reopen
+  ---
+  duration_ms: 5092.741125
+  type: 'test'
+  ...
+# Subtest: R1 native span and nested inline runs use one safe host; range style, input, undo and saved markup survive
+ok 100 - R1 native span and nested inline runs use one safe host; range style, input, undo and saved markup survive
+  ---
+  duration_ms: 3812.291625
+  type: 'test'
+  ...
+# Subtest: R1 mixed media/block/positioned/declared containers stay noneditable and explain unsupported text structure
+ok 101 - R1 mixed media/block/positioned/declared containers stay noneditable and explain unsupported text structure
+  ---
+  duration_ms: 2289.613084
+  type: 'test'
+  ...
+# Subtest: R2 audit text: image UI or explicit legacy command fixture, mouse selection, actual Alt+Right, resize, undo/redo and offline download/new-process reopen
+ok 102 - R2 audit text: image UI or explicit legacy command fixture, mouse selection, actual Alt+Right, resize, undo/redo and offline download/new-process reopen
+  ---
+  duration_ms: 4696.035875
+  type: 'test'
+  ...
+# Subtest: R2 audit image: image UI or explicit legacy command fixture, mouse selection, actual Alt+Right, resize, undo/redo and offline download/new-process reopen
+ok 103 - R2 audit image: image UI or explicit legacy command fixture, mouse selection, actual Alt+Right, resize, undo/redo and offline download/new-process reopen
+  ---
+  duration_ms: 5156.338084
+  type: 'test'
+  ...
+# Subtest: R2 audit shape: image UI or explicit legacy command fixture, mouse selection, actual Alt+Right, resize, undo/redo and offline download/new-process reopen
+ok 104 - R2 audit shape: image UI or explicit legacy command fixture, mouse selection, actual Alt+Right, resize, undo/redo and offline download/new-process reopen
+  ---
+  duration_ms: 3984.209834
+  type: 'test'
+  ...
+# Subtest: R2 audit table: image UI or explicit legacy command fixture, mouse selection, actual Alt+Right, resize, undo/redo and offline download/new-process reopen
+ok 105 - R2 audit table: image UI or explicit legacy command fixture, mouse selection, actual Alt+Right, resize, undo/redo and offline download/new-process reopen
+  ---
+  duration_ms: 4689.3035
+  type: 'test'
+  ...
+# Subtest: R2 block: image UI and legacy command fixtures use real order, spacing/alignment and retain native layout after download
+ok 106 - R2 block: image UI and legacy command fixtures use real order, spacing/alignment and retain native layout after download
+  ---
+  duration_ms: 9990.62825
+  type: 'test'
+  ...
+# Subtest: R2 flex: image UI and legacy command fixtures use real order, spacing/alignment and retain native layout after download
+ok 107 - R2 flex: image UI and legacy command fixtures use real order, spacing/alignment and retain native layout after download
+  ---
+  duration_ms: 6096.723333
+  type: 'test'
+  ...
+# Subtest: R2 grid: image UI and legacy command fixtures use real order, spacing/alignment and retain native layout after download
+ok 108 - R2 grid: image UI and legacy command fixtures use real order, spacing/alignment and retain native layout after download
+  ---
+  duration_ms: 8346.207167
+  type: 'test'
+  ...
+# Subtest: R2 no available space: image UI / legacy command fixture insertion rolls back DOM and undo history with an accurate visible error
+ok 109 - R2 no available space: image UI / legacy command fixture insertion rolls back DOM and undo history with an accurate visible error
+  ---
+  duration_ms: 1685.988
+  type: 'test'
+  ...
+# Subtest: R2 native media wrapper and mixed text: insert beside the canvas object, and protect non-heading direct text
+ok 110 - R2 native media wrapper and mixed text: insert beside the canvas object, and protect non-heading direct text
+  ---
+  duration_ms: 3833.253041
+  type: 'test'
+  ...
+# Subtest: R3 current page fits with padding through inspector, rail, viewport changes, mouse/keyboard navigation and modes
+ok 111 - R3 current page fits with padding through inspector, rail, viewport changes, mouse/keyboard navigation and modes
+  ---
+  duration_ms: 3717.604834
+  type: 'test'
+  ...
+# Subtest: R3 manual zoom scrolls only the current work area, reset fits; real drag/resize keep author units
+ok 112 - R3 manual zoom scrolls only the current work area, reset fits; real drag/resize keep author units
+  ---
+  duration_ms: 4044.016458
+  type: 'test'
+  ...
+# Subtest: R3 responsive author CSS reflows on window resize; transient fits do not change saved layouts; download/new-process reopen
+ok 113 - R3 responsive author CSS reflows on window resize; transient fits do not change saved layouts; download/new-process reopen
+  ---
+  duration_ms: 3953.712875
+  type: 'test'
+  ...
+# Subtest: R3 twelve-page audit source: current-page navigation and added page stay isolated and fitted
+ok 114 - R3 twelve-page audit source: current-page navigation and added page stay isolated and fitted
+  ---
+  duration_ms: 2058.547458
+  type: 'test'
+  ...
+# Subtest: R4 hierarchy: actual text controls, stable status, contextual page ordering, offline download and prototype comparisons
+ok 115 - R4 hierarchy: actual text controls, stable status, contextual page ordering, offline download and prototype comparisons
+  ---
+  duration_ms: 7286.759
+  type: 'test'
+  ...
+# Subtest: R5: mobile inspector reserves visible current page, closes by mouse/Escape, navigation is exclusive, primary controls remain reachable
+ok 116 - R5: mobile inspector reserves visible current page, closes by mouse/Escape, navigation is exclusive, primary controls remain reachable
+  ---
+  duration_ms: 6153.016959
+  type: 'test'
+  ...
+# Subtest: R6: audit source mouse/keyboard naming, validation, cancellation, scoped confirmations, quota review, offline history round trip
+ok 117 - R6: audit source mouse/keyboard naming, validation, cancellation, scoped confirmations, quota review, offline history round trip # SKIP F01 scope retirement: docs/focused-product/evidence/F01/TEST-MIGRATION.json; not a pass
+  ---
+  duration_ms: 0.363208
+  type: 'test'
+  ...
+# Subtest: S00 frozen current contract rejects weakened requirements and cross-version relabelling
+ok 118 - S00 frozen current contract rejects weakened requirements and cross-version relabelling
+  ---
+  duration_ms: 1.695125
+  type: 'test'
+  ...
+# Subtest: S00 version changes cannot promote the historical baseline or bypass missing telemetry
+ok 119 - S00 version changes cannot promote the historical baseline or bypass missing telemetry
+  ---
+  duration_ms: 42.821583
+  type: 'test'
+  ...
+# Subtest: S00 active instructions and actual CLI help agree on delivery and disclose migration
+ok 120 - S00 active instructions and actual CLI help agree on delivery and disclose migration
+  ---
+  duration_ms: 213.707625
+  type: 'test'
+  ...
+# Subtest: S00 no new runtime or dependency requirement and historical bytes stay unchanged
+ok 121 - S00 no new runtime or dependency requirement and historical bytes stay unchanged
+  ---
+  duration_ms: 110.854
+  type: 'test'
+  ...
+# Subtest: S00 real enhancement supports both extensions and refuses to rewrite existing user files
+ok 122 - S00 real enhancement supports both extensions and refuses to rewrite existing user files
+  ---
+  duration_ms: 392.06325
+  type: 'test'
+  ...
+# Subtest: S03 F02-F05 file UI: protected local insert/history, unique identity, native context, background, download/reopen and PDF
+    # Subtest: Retired system-print product path
+    ok 1 - Retired system-print product path # SKIP F01 PDF remains pending F04A/F04
+      ---
+      duration_ms: 0.333959
+      type: 'test'
+      ...
+    1..1
+ok 123 - S03 F02-F05 file UI: protected local insert/history, unique identity, native context, background, download/reopen and PDF
+  ---
+  duration_ms: 10942.843208
+  type: 'test'
+  ...
+# Subtest: S03 contextual UI: real cell mouse/keyboard range format, collapse/zoom focus, handles and composition refresh
+ok 124 - S03 contextual UI: real cell mouse/keyboard range format, collapse/zoom focus, handles and composition refresh
+  ---
+  duration_ms: 4375.997417
+  type: 'test'
+  ...
+# Subtest: S01 file URL: offline visible entry, native canvas, text/format/undo, present/Esc, copied file and complete download
+ok 125 - S01 file URL: offline visible entry, native canvas, text/format/undo, present/Esc, copied file and complete download
+  ---
+  duration_ms: 9284.679916
+  type: 'test'
+  ...
+# Subtest: S01 CLI edit exits with file URL, rejects service flags and leaves original bytes unchanged
+ok 126 - S01 CLI edit exits with file URL, rejects service flags and leaves original bytes unchanged
+  ---
+  duration_ms: 301.150084
+  type: 'test'
+  ...
+# Subtest: S07 continuous file journey: offline download, browser shutdown, fresh reopen, presentation and optional PDF
+    # Subtest: Retired system-print product path — F04A/F04 pending
+    ok 1 - Retired system-print product path — F04A/F04 pending # SKIP F01: user forbids system printing; original assertions preserved
+      ---
+      duration_ms: 0.291959
+      type: 'test'
+      ...
+    1..1
+ok 127 - S07 continuous file journey: offline download, browser shutdown, fresh reopen, presentation and optional PDF
+  ---
+  duration_ms: 2283.67
+  type: 'test'
+  ...
+# Subtest: S06 table: SHA-256 vectors, legacy identity, dedup, stable references, missing/corrupt resources, no CSP expansion
+ok 128 - S06 table: SHA-256 vectors, legacy identity, dedup, stable references, missing/corrupt resources, no CSP expansion
+  ---
+  duration_ms: 80.038542
+  type: 'test'
+  ...
+# Subtest: S06 file journey: mixed ratios, insert/replace/focus/reset, guarded history, download/reopen, print and speaker
+    # Subtest: Retired system-print product path — F04A/F04 pending
+    ok 1 - Retired system-print product path — F04A/F04 pending # SKIP F01: user forbids system printing; original assertions preserved
+      ---
+      duration_ms: 0.145375
+      type: 'test'
+      ...
+    1..1
+ok 129 - S06 file journey: mixed ratios, insert/replace/focus/reset, guarded history, download/reopen, print and speaker
+  ---
+  duration_ms: 4040.249584
+  type: 'test'
+  ...
+# Subtest: S04 evidence refuses changed environment, content, undersampling and nonfinite timings
+ok 130 - S04 evidence refuses changed environment, content, undersampling and nonfinite timings
+  ---
+  duration_ms: 0.512125
+  type: 'test'
+  ...
+# Subtest: S04 cache: bytes, MIME, requirement/transform context, root authorization and budget cannot be stale
+ok 131 - S04 cache: bytes, MIME, requirement/transform context, root authorization and budget cannot be stale
+  ---
+  duration_ms: 74.636208
+  type: 'test'
+  ...
+# Subtest: S04 draft: bounded checkpoints, revision reuse, latest recovery and permission checks on each flush
+ok 132 - S04 draft: bounded checkpoints, revision reuse, latest recovery and permission checks on each flush
+  ---
+  duration_ms: 252.45425
+  type: 'test'
+  ...
+# Subtest: S04 file browser: one input revision, local thumbnail, stable tools and synchronous index invalidation
+ok 133 - S04 file browser: one input revision, local thumbnail, stable tools and synchronous index invalidation
+  ---
+  duration_ms: 1176.342
+  type: 'test'
+  ...
+# Subtest: S02 file entry: no API and denied permission require explicit download, reopen content/style/lock/media offline
+    # Subtest: Retired new-file-instance menu
+    ok 1 - Retired new-file-instance menu # SKIP F01 confirmed removal; identity compatibility covered by focused-product-f01
+      ---
+      duration_ms: 0.421292
+      type: 'test'
+      ...
+    1..1
+ok 134 - S02 file entry: no API and denied permission require explicit download, reopen content/style/lock/media offline
+  ---
+  duration_ms: 5833.3725
+  type: 'test'
+  ...
+# Subtest: S02 conflict remains latched through input; exported and confirmed revisions are independent
+ok 135 - S02 conflict remains latched through input; exported and confirmed revisions are independent
+  ---
+  duration_ms: 0.853208
+  type: 'test'
+  ...
+# Subtest: S02 file handle contract bridge: real file bytes, permission lifecycle, autosave, conflicts and delayed receipts
+ok 136 - S02 file handle contract bridge: real file bytes, permission lifecycle, autosave, conflicts and delayed receipts
+  ---
+  duration_ms: 9127.177583
+  type: 'test'
+  ...
+# Subtest: U04 A1: same historical failed PDFs really replay in independent PDFKit and MuPDF parsers
+    # Subtest: native parser replay
+    ok 1 - native parser replay
+      ---
+      duration_ms: 2986.541208
+      type: 'test'
+      ...
+    1..1
+ok 137 - U04 A1: same historical failed PDFs really replay in independent PDFKit and MuPDF parsers
+  ---
+  duration_ms: 2994.887791
+  type: 'test'
+  ...
+# Subtest: U04 A2/A3: all 20 fixed-author-viewport pages retain strict geometry, raster and text diagnostics
+ok 138 - U04 A2/A3: all 20 fixed-author-viewport pages retain strict geometry, raster and text diagnostics
+  ---
+  duration_ms: 5127.743083
+  type: 'test'
+  ...
+# Subtest: U04 A3: live installed Chromium exports fixed viewport independently of caller zoom
+ok 139 - U04 A3: live installed Chromium exports fixed viewport independently of caller zoom
+  ---
+  duration_ms: 2040.239958
+  type: 'test'
+  ...
+# Subtest: U04 decision gate: no qualified route, no product integration, explicit native/human pending
+ok 140 - U04 decision gate: no qualified route, no product integration, explicit native/human pending
+  ---
+  duration_ms: 42.617875
+  type: 'test'
+  ...
+# Subtest: U05 delivery: nine-page reading, text, insert, drag/resize/crop, undo/redo, disk bridge, full process restart and presentation
+ok 141 - U05 delivery: nine-page reading, text, insert, drag/resize/crop, undo/redo, disk bridge, full process restart and presentation
+  ---
+  duration_ms: 14130.758208
+  type: 'test'
+  ...
+# Subtest: U05 B2: original source-with-links enhances and round-trips both explicit web links
+ok 142 - U05 B2: original source-with-links enhances and round-trips both explicit web links
+  ---
+  duration_ms: 65.770167
+  type: 'test'
+  ...
+# Subtest: U05 B2: navigation allowlist rejects executable/relative URLs and automatic loads
+ok 143 - U05 B2: navigation allowlist rejects executable/relative URLs and automatic loads
+  ---
+  duration_ms: 1.6565
+  type: 'test'
+  ...
+# Subtest: U05 B2: actual file clicks open isolated navigation; no automatic fetch; links survive save/reopen
+ok 144 - U05 B2: actual file clicks open isolated navigation; no automatic fetch; links survive save/reopen
+  ---
+  duration_ms: 4990.839125
+  type: 'test'
+  ...
+# Subtest: UI01 acceptance 1: offline initial, copied and downloaded files reopen in reading in a fresh process
+ok 145 - UI01 acceptance 1: offline initial, copied and downloaded files reopen in reading in a fresh process
+  ---
+  duration_ms: 2834.39
+  type: 'test'
+  ...
+# Subtest: UI01 acceptance 2: editor expands context on real selection, closes properties, keeps author DOM and input through mode switches
+ok 146 - UI01 acceptance 2: editor expands context on real selection, closes properties, keeps author DOM and input through mode switches
+  ---
+  duration_ms: 1942.447417
+  type: 'test'
+  ...
+# Subtest: UI01 acceptance 3: audience contains no menu or HUD before/after pointer, Tab, idle and black screen
+ok 147 - UI01 acceptance 3: audience contains no menu or HUD before/after pointer, Tab, idle and black screen
+  ---
+  duration_ms: 4990.8865
+  type: 'test'
+  ...
+# Subtest: UI01 acceptance 4: fullscreen reject/throw and native exit restore prior mode and current page; delayed grant cannot strand fullscreen
+ok 148 - UI01 acceptance 4: fullscreen reject/throw and native exit restore prior mode and current page; delayed grant cannot strand fullscreen
+  ---
+  duration_ms: 2923.453333
+  type: 'test'
+  ...
+# Subtest: UI02 acceptance 1: command-seeded legacy object fixtures adjust through UI and survive actual download / fresh process
+ok 149 - UI02 acceptance 1: command-seeded legacy object fixtures adjust through UI and survive actual download / fresh process
+  ---
+  duration_ms: 6191.087708
+  type: 'test'
+  ...
+# Subtest: UI02 acceptance 2: command fixture placement follows author Flex/Grid/flow and retains positioned author CSS
+ok 150 - UI02 acceptance 2: command fixture placement follows author Flex/Grid/flow and retains positioned author CSS
+  ---
+  duration_ms: 4423.618792
+  type: 'test'
+  ...
+# Subtest: UI02 acceptance 3: protection is bounded, command fixture/duplicate/delete history remains atomic and invalid actions leave content intact
+ok 151 - UI02 acceptance 3: protection is bounded, command fixture/duplicate/delete history remains atomic and invalid actions leave content intact
+  ---
+  duration_ms: 2835.085583
+  type: 'test'
+  ...
+# Subtest: UI02 acceptance 4: one labeled SVG menu, keyboard navigation/escape/outside close and focus-safe properties
+ok 152 - UI02 acceptance 4: one labeled SVG menu, keyboard navigation/escape/outside close and focus-safe properties # SKIP F01 scope retirement: docs/focused-product/evidence/F01/TEST-MIGRATION.json; not a pass
+  ---
+  duration_ms: 0.225916
+  type: 'test'
+  ...
+# Subtest: UI03 acceptance 1: long page rail has independent scroll, fixed add footer and unobstructed controls
+ok 153 - UI03 acceptance 1: long page rail has independent scroll, fixed add footer and unobstructed controls
+  ---
+  duration_ms: 3925.308083
+  type: 'test'
+  ...
+# Subtest: UI03 acceptance 2: new pages retain responsive/fixed/Grid declarations across modes, resize and download
+ok 154 - UI03 acceptance 2: new pages retain responsive/fixed/Grid declarations across modes, resize and download
+  ---
+  duration_ms: 9707.558917
+  type: 'test'
+  ...
+# Subtest: UI03 acceptance 3: nested stacking title and image do not overlap; real hit selection, layout, crop, undo and saved content
+ok 155 - UI03 acceptance 3: nested stacking title and image do not overlap; real hit selection, layout, crop, undo and saved content
+  ---
+  duration_ms: 1715.923542
+  type: 'test'
+  ...
+# Subtest: UI03 acceptance 4: keyboard buttons/Alt arrows and drag reorder share undo history, identity and boundaries
+ok 156 - UI03 acceptance 4: keyboard buttons/Alt arrows and drag reorder share undo history, identity and boundaries
+  ---
+  duration_ms: 2927.594
+  type: 'test'
+  ...
+# Subtest: UI03 audit N01–N03 regression: original 12-page author source, responsive blank page and image hit
+ok 157 - UI03 audit N01–N03 regression: original 12-page author source, responsive blank page and image hit
+  ---
+  duration_ms: 2686.354
+  type: 'test'
+  ...
+# (node:97560) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: UI04 A5: 1s debounce, 10s sustained input, default autosave and manual override
+ok 158 - UI04 A5: 1s debounce, 10s sustained input, default autosave and manual override
+  ---
+  duration_ms: 1.475625
+  type: 'test'
+  ...
+# Subtest: UI04 A6: one writer, stale acknowledgement stays dirty and manual queued revision runs with auto off
+ok 159 - UI04 A6: one writer, stale acknowledgement stays dirty and manual queued revision runs with auto off
+  ---
+  duration_ms: 0.194041
+  type: 'test'
+  ...
+# Subtest: UI04 A4/A7/A8: errors latch; composition never serializes partial drafts or writes; retry retains baseline
+ok 160 - UI04 A4/A7/A8: errors latch; composition never serializes partial drafts or writes; retry retains baseline
+  ---
+  duration_ms: 0.391583
+  type: 'test'
+  ...
+# Subtest: UI04 A1/A3/A7/A8: product save panel, wrong same-name document refusal, complete IME download and fresh browser process
+ok 161 - UI04 A1/A3/A7/A8: product save panel, wrong same-name document refusal, complete IME download and fresh browser process
+  ---
+  duration_ms: 3484.810375
+  type: 'test'
+  ...
+# Subtest: UI05 acceptance 1: 1440/1024/820/390 reading/editing, mutually exclusive drawers and reachable primary controls
+ok 162 - UI05 acceptance 1: 1440/1024/820/390 reading/editing, mutually exclusive drawers and reachable primary controls
+  ---
+  duration_ms: 6257.618334
+  type: 'test'
+  ...
+# Subtest: UI05 acceptance 2: 200% equivalent layout viewport, large font, coarse 44px targets and table grid
+ok 163 - UI05 acceptance 2: 200% equivalent layout viewport, large font, coarse 44px targets and table grid
+  ---
+  duration_ms: 1895.35525
+  type: 'test'
+  ...
+# Subtest: UI05 acceptance 3: menu arrows/Home/End/Enter/Escape/Tab, focus restoration, edge placement and disclosure semantics
+ok 164 - UI05 acceptance 3: menu arrows/Home/End/Enter/Escape/Tab, focus restoration, edge placement and disclosure semantics # SKIP F01 scope retirement: docs/focused-product/evidence/F01/TEST-MIGRATION.json; not a pass
+  ---
+  duration_ms: 0.254375
+  type: 'test'
+  ...
+# Subtest: UI05 acceptance 4: icon names/tooltips, visible focus, modes and measured important text contrast
+ok 165 - UI05 acceptance 4: icon names/tooltips, visible focus, modes and measured important text contrast
+  ---
+  duration_ms: 1606.604209
+  type: 'test'
+  ...
+# Subtest: UI06 A1/A2: product offline four-object history → download → full shutdown → copy → preview/restore → download → fresh read/show/PDF
+ok 166 - UI06 A1/A2: product offline four-object history → download → full shutdown → copy → preview/restore → download → fresh read/show/PDF # SKIP F01 scope retirement: docs/focused-product/evidence/F01/TEST-MIGRATION.json; not a pass
+  ---
+  duration_ms: 0.573583
+  type: 'test'
+  ...
+# Subtest: UI06 A3 evidence contract: native/Safari unknowns cannot inherit headless or bridge passes
+ok 167 - UI06 A3 evidence contract: native/Safari unknowns cannot inherit headless or bridge passes
+  ---
+  duration_ms: 4.630667
+  type: 'test'
+  ...
+# Subtest: UI06 A4 evidence contract: UI feedback and sample aesthetics have separate unfilled human records and vetoes
+ok 168 - UI06 A4 evidence contract: UI feedback and sample aesthetics have separate unfilled human records and vetoes
+  ---
+  duration_ms: 6.922333
+  type: 'test'
+  ...
+# Subtest: UI07 A1: named checkpoints deduplicate; restore is atomic and retains target, later and before-restore states
+ok 169 - UI07 A1: named checkpoints deduplicate; restore is atomic and retains target, later and before-restore states
+  ---
+  duration_ms: 10.690542
+  type: 'test'
+  ...
+# Subtest: UI07 A3: 5 minute generation, count/bytes quotas, named retention and failed pre-restore preserve all history
+ok 170 - UI07 A3: 5 minute generation, count/bytes quotas, named retention and failed pre-restore preserve all history
+  ---
+  duration_ms: 10.596625
+  type: 'test'
+  ...
+# Subtest: UI07 A2/A4: portable wire, shared media across current and checkpoints, lazy decode and independent checkpoints after deletion
+ok 171 - UI07 A2/A4: portable wire, shared media across current and checkpoints, lazy decode and independent checkpoints after deletion
+  ---
+  duration_ms: 12.774875
+  type: 'test'
+  ...
+# Subtest: UI07 A5: truncation, unknown schema, missing resource, bad checkpoint, hostile HTML and expansion limits are isolated
+ok 172 - UI07 A5: truncation, unknown schema, missing resource, bad checkpoint, hostile HTML and expansion limits are isolated
+  ---
+  duration_ms: 13.524875
+  type: 'test'
+  ...
+# Subtest: UI07 A2/A5: CLI re-enhancement preserves opaque history and single-file identity
+ok 173 - UI07 A2/A5: CLI re-enhancement preserves opaque history and single-file identity
+  ---
+  duration_ms: 99.393667
+  type: 'test'
+  ...
+# Subtest: UI07 A1–A6: product controls, actual offline download, copied file in fresh process, preview/restore and media timings
+ok 174 - UI07 A1–A6: product controls, actual offline download, copied file in fresh process, preview/restore and media timings # SKIP F01 scope retirement: docs/focused-product/evidence/F01/TEST-MIGRATION.json; not a pass
+  ---
+  duration_ms: 0.105125
+  type: 'test'
+  ...
+# Subtest: UI07 A3/A5/A6: real disk bridge writes media history; quota never blocks current save; no-history export removes private resources
+ok 175 - UI07 A3/A5/A6: real disk bridge writes media history; quota never blocks current save; no-history export removes private resources # SKIP F01 scope retirement: docs/focused-product/evidence/F01/TEST-MIGRATION.json; not a pass
+  ---
+  duration_ms: 0.0445
+  type: 'test'
+  ...
+# Subtest: UI07 A3/A4/A5: quota measures escaped transport bytes; reference fan-out is bounded before resource expansion
+ok 176 - UI07 A3/A4/A5: quota measures escaped transport bytes; reference fan-out is bounded before resource expansion
+  ---
+  duration_ms: 32.745875
+  type: 'test'
+  ...
+# Subtest: U01 A4 receipts: array and keyed results identify one tarball; malformed or ambiguous output fails
+ok 177 - U01 A4 receipts: array and keyed results identify one tarball; malformed or ambiguous output fails
+  ---
+  duration_ms: 1.7185
+  type: 'test'
+  ...
+# Subtest: U01 A1/A2: three newly authored native pages in one offline runtime, text/image bounds and clean presentation
+ok 178 - U01 A1/A2: three newly authored native pages in one offline runtime, text/image bounds and clean presentation
+  ---
+  duration_ms: 3005.218875
+  type: 'test'
+  ...
+# Subtest: U01 A1: actual text editing, undo/redo, explicit download and new browser process retain the representative source
+ok 179 - U01 A1: actual text editing, undo/redo, explicit download and new browser process retain the representative source
+  ---
+  duration_ms: 3583.49925
+  type: 'test'
+  ...
+# Subtest: U01 A4: actual packed, offline installed and skill-installed instructions equal source
+ok 180 - U01 A4: actual packed, offline installed and skill-installed instructions equal source
+  ---
+  duration_ms: 1265.095417
+  type: 'test'
+  ...
+# Subtest: U01 A3/full-deck: explicit decision gate preserves rejected human status and blocks expansion
+ok 181 - U01 A3/full-deck: explicit decision gate preserves rejected human status and blocks expansion
+  ---
+  duration_ms: 28.839541
+  type: 'test'
+  ...
+# Subtest: U01 FULL A1/A2: nine native pages in one offline runtime, text/image bounds and clean presentation
+ok 182 - U01 FULL A1/A2: nine native pages in one offline runtime, text/image bounds and clean presentation
+  ---
+  duration_ms: 5832.732542
+  type: 'test'
+  ...
+# Subtest: U01 FULL A1: actual text editing, undo/redo, explicit download and new browser process retain the full source
+ok 183 - U01 FULL A1: actual text editing, undo/redo, explicit download and new browser process retain the full source
+  ---
+  duration_ms: 3453.382125
+  type: 'test'
+  ...
+# Subtest: U02 absolute: real pointers, all corners, crop/cancel, transaction undo, siblings and saved restart
+ok 184 - U02 absolute: real pointers, all corners, crop/cancel, transaction undo, siblings and saved restart
+  ---
+  duration_ms: 13578.119208
+  type: 'test'
+  ...
+# Subtest: U02 block: real pointers, all corners, crop/cancel, transaction undo, siblings and saved restart
+ok 185 - U02 block: real pointers, all corners, crop/cancel, transaction undo, siblings and saved restart
+  ---
+  duration_ms: 9086.726
+  type: 'test'
+  ...
+# Subtest: U02 grid: real pointers, all corners, crop/cancel, transaction undo, siblings and saved restart
+ok 186 - U02 grid: real pointers, all corners, crop/cancel, transaction undo, siblings and saved restart
+  ---
+  duration_ms: 10817.582875
+  type: 'test'
+  ...
+# Subtest: U02 flex: real pointers, all corners, crop/cancel, transaction undo, siblings and saved restart
+ok 187 - U02 flex: real pointers, all corners, crop/cancel, transaction undo, siblings and saved restart
+  ---
+  duration_ms: 8444.996542
+  type: 'test'
+  ...
+# Subtest: U02 insert/replace: portrait, landscape, transparent, tiny and large; frame retention, decoding cancel/error and history
+ok 188 - U02 insert/replace: portrait, landscape, transparent, tiny and large; frame retention, decoding cancel/error and history
+  ---
+  duration_ms: 9642.787958
+  type: 'test'
+  ...
+# U02 coordinates: zoom
+# U02 coordinates: cancel drag
+# U02 coordinates: text
+# U02 coordinates: IME
+# U02 coordinates: bounded drag
+# U02 coordinates: modes
+# Subtest: U02 zoom/scroll/resize, bounded drag, pointer cancellation, text/IME and read/present guards
+ok 189 - U02 zoom/scroll/resize, bounded drag, pointer cancellation, text/IME and read/present guards
+  ---
+  duration_ms: 6583.141125
+  type: 'test'
+  ...
+# Subtest: U02 unsupported transformed author image reports boundary before handles; no accidental multi-image selection
+ok 190 - U02 unsupported transformed author image reports boundary before handles; no accidental multi-image selection
+  ---
+  duration_ms: 1126.737625
+  type: 'test'
+  ...
+# Subtest: U02 static multi-page author coordinates survive save and preserve prior image insertion undo chain
+ok 191 - U02 static multi-page author coordinates survive save and preserve prior image insertion undo chain
+  ---
+  duration_ms: 2986.317375
+  type: 'test'
+  ...
+# Subtest: U03 A1/A2/A3: discoverable primary save, explanatory gesture, manual/automatic disk bridge then full browser restart
+ok 192 - U03 A1/A2/A3: discoverable primary save, explanatory gesture, manual/automatic disk bridge then full browser restart
+  ---
+  duration_ms: 4979.922375
+  type: 'test'
+  ...
+# Subtest: U03 A1/A3/A4: unsupported primary action downloads exactly one complete file; cache failure and beforeunload retain dirty state
+ok 193 - U03 A1/A3/A4: unsupported primary action downloads exactly one complete file; cache failure and beforeunload retain dirty state
+  ---
+  duration_ms: 2129.439208
+  type: 'test'
+  ...
+# (node:97758) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: U03 A4: recovery requires preview, keeps editing and pre-recovery content, cancellation and storage errors are independent of file saves
+ok 194 - U03 A4: recovery requires preview, keeps editing and pre-recovery content, cancellation and storage errors are independent of file saves
+  ---
+  duration_ms: 2787.03425
+  type: 'test'
+  ...
+# Subtest: U03 A4: corrupt recovery does not become a file-write failure; quota cannot block verified manual save
+ok 195 - U03 A4: corrupt recovery does not become a file-write failure; quota cannot block verified manual save
+  ---
+  duration_ms: 0.7775
+  type: 'test'
+  ...
+# Subtest: U03 A2/A4 performance: large raster, real keyboard edits, natural cache quota, crop and verified manual write survive fresh browser
+ok 196 - U03 A2/A4 performance: large raster, real keyboard edits, natural cache quota, crop and verified manual write survive fresh browser
+  ---
+  duration_ms: 15994.784792
+  type: 'test'
+  ...
+# Subtest: U03 A4: known cache failure backs off repeated checkpoints, retains cached content and retries on manual save
+ok 197 - U03 A4: known cache failure backs off repeated checkpoints, retains cached content and retries on manual save
+  ---
+  duration_ms: 0.314166
+  type: 'test'
+  ...
+# Subtest: U03 A4: failed disk reread/mount cannot clear unsaved revision or replace the confirmed baseline
+ok 198 - U03 A4: failed disk reread/mount cannot clear unsaved revision or replace the confirmed baseline
+  ---
+  duration_ms: 1080.323292
+  type: 'test'
+  ...
+1..198
+# tests 208
+# suites 0
+# pass 192
+# fail 0
+# cancelled 0
+# skipped 16
+# todo 0
+# duration_ms 126315.7295

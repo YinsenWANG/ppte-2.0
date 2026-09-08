@@ -1,0 +1,23 @@
+{
+  "preview": {
+    "x": 335.328125,
+    "y": 364.984375,
+    "width": 280,
+    "height": 186.65625
+  },
+  "geometry": [
+    100,
+    7.5,
+    300,
+    600,
+    100,
+    170,
+    300,
+    200
+  ],
+  "downloads": 1,
+  "browser": "152.0.7977.76",
+  "headless": true,
+  "nativePicker": false,
+  "freshBrowser": true
+}

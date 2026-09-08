@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: R02 download: preview, explicit completion, single real download bytes, fresh browser geometry and undo
+ok 1 - R02 download: preview, explicit completion, single real download bytes, fresh browser geometry and undo
+  ---
+  duration_ms: 3996.841541
+  type: 'test'
+  ...
+# Subtest: R02 leave 阅读: stay / discard / apply through one exit
+ok 2 - R02 leave 阅读: stay / discard / apply through one exit
+  ---
+  duration_ms: 4271.707084
+  type: 'test'
+  ...
+# Subtest: R02 leave 放映: stay / discard / apply through one exit
+ok 3 - R02 leave 放映: stay / discard / apply through one exit
+  ---
+  duration_ms: 5351.819708
+  type: 'test'
+  ...
+# Subtest: R02 leave 下一页: stay / discard / apply through one exit
+ok 4 - R02 leave 下一页: stay / discard / apply through one exit
+  ---
+  duration_ms: 5399.997708
+  type: 'test'
+  ...
+# Subtest: R02 leave 缩略图: stay / discard / apply through one exit
+ok 5 - R02 leave 缩略图: stay / discard / apply through one exit
+  ---
+  duration_ms: 4960.662333
+  type: 'test'
+  ...
+# Subtest: R02 leave 另一对象: stay / discard / apply through one exit
+ok 6 - R02 leave 另一对象: stay / discard / apply through one exit
+  ---
+  duration_ms: 4936.947458
+  type: 'test'
+  ...
+# Subtest: R02 leave 另一图片: stay / discard / apply through one exit
+ok 7 - R02 leave 另一图片: stay / discard / apply through one exit
+  ---
+  duration_ms: 4702.080834
+  type: 'test'
+  ...
+# Subtest: R02 leave 删除对象: stay / discard / apply through one exit
+ok 8 - R02 leave 删除对象: stay / discard / apply through one exit
+  ---
+  duration_ms: 6400.792209
+  type: 'test'
+  ...
+# Subtest: R02 leave 键盘删除: stay / discard / apply through one exit
+ok 9 - R02 leave 键盘删除: stay / discard / apply through one exit
+  ---
+  duration_ms: 4864.101625
+  type: 'test'
+  ...
+# Subtest: R02 leave 替换图片: stay / discard / apply through one exit
+ok 10 - R02 leave 替换图片: stay / discard / apply through one exit
+  ---
+  duration_ms: 6899.429333
+  type: 'test'
+  ...
+# Subtest: R02 Esc and unchanged crop: exact content and history, no reminder or leave prompt
+ok 11 - R02 Esc and unchanged crop: exact content and history, no reminder or leave prompt
+  ---
+  duration_ms: 3031.882958
+  type: 'test'
+  ...
+# Subtest: R02 manual and automatic disk bridge: committed bytes only, failure preserves crop/source, one undo
+ok 12 - R02 manual and automatic disk bridge: committed bytes only, failure preserves crop/source, one undo
+  ---
+  duration_ms: 4434.9345
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 59439.849333

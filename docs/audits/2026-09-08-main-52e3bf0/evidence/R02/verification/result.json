@@ -1,0 +1,105 @@
+{
+  "task": "R02",
+  "implementationCommit": "73c79063f8447d861dbf62bee76ab50bade0233b",
+  "auditBaseCommit": "28abe2f",
+  "inheritedHead": "040698f7a3b543a7b32c0d9d7c9aca54787a1311",
+  "verifiedAt": "2026-09-08T13:56:08.958326+00:00",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "node": "v22.23.2",
+  "browser": "152.0.7977.76",
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "startedAt": "2026-09-08T13:51:29.166051+00:00",
+      "finishedAt": "2026-09-08T13:51:30.520658+00:00",
+      "log": "typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "exitCode": 0,
+      "startedAt": "2026-09-08T13:51:30.546775+00:00",
+      "finishedAt": "2026-09-08T13:51:32.093504+00:00",
+      "log": "build.log"
+    },
+    {
+      "command": "node --test dist/tests/audit-followup-r02.test.js",
+      "exitCode": 0,
+      "startedAt": "2026-09-08T13:51:32.111421+00:00",
+      "finishedAt": "2026-09-08T13:52:31.573872+00:00",
+      "log": "targeted.log"
+    },
+    {
+      "command": "pnpm test",
+      "exitCode": 0,
+      "startedAt": "2026-09-08T13:52:31.593843+00:00",
+      "finishedAt": "2026-09-08T13:54:39.746226+00:00",
+      "log": "test.log"
+    }
+  ],
+  "testedSourceSHA256": {
+    "packages/html-editor/src/image-direct.ts": "f9cc2ecabac267ee01eb8b9ec0d50863d9f179d620d8ef41c8f55d4cebf2ad8a",
+    "packages/html-editor/src/index.ts": "47b8806f19d34d7b84a17eeeb54776f58f0e612463b578f124cad3b79126b7a9",
+    "packages/html-editor/src/workspace.ts": "7e39520e7cbff73e5ec898225b78b52505c1044c08cb9cb9b59fa07d9af6207d",
+    "tests/audit-followup-r02.test.ts": "bde6b16830ecbb11112659a008494daabeda0380ec0070365801b710cd5263fe"
+  },
+  "status": {
+    "code": "passed",
+    "automated": "passed",
+    "real-browser": "pending",
+    "human": "pending"
+  },
+  "counts": {
+    "full": {
+      "tests": 208,
+      "passed": 192,
+      "failed": 0,
+      "skipped": 16
+    },
+    "R02": {
+      "tests": 12,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "automation": {
+    "headless": true,
+    "offline": true,
+    "realPointerEvents": true,
+    "actualDownloadBytes": true,
+    "freshBrowserProcessReopen": true,
+    "bitmapBoundaryToleranceCSSPx": 1,
+    "nativePicker": false,
+    "originalFileWrites": "Explicit File System Access API disk bridge, real local writes/readback; not native OS authorization",
+    "beforeunload": "Cancelable DOM event verifies installed browser handler; no native close-dialog claim"
+  },
+  "pendingReasons": {
+    "real-browser": "No callable desktop control channel. Native OS file picker/permission, physical original-file manual/autosave and close/reopen remain FOLLOWUP item 4.",
+    "human": "No target-device user revalidation; prior rejection and nine-page aesthetic acceptance remain open."
+  },
+  "contractTests": {
+    "saveDownload": "R02 download + manual and automatic disk bridge",
+    "modesPagesObjects": "R02 leave: 阅读 / 放映 / 下一页 / 缩略图 / 另一对象 / 另一图片",
+    "deleteReplace": "R02 leave: 删除对象 / 键盘删除 / 替换图片",
+    "autosaveFailure": "R02 manual and automatic disk bridge",
+    "escapeUnchangedUnload": "R02 Esc and unchanged crop + download"
+  },
+  "earlierRounds": [
+    {
+      "directory": "initial",
+      "passed": 191,
+      "failed": 0,
+      "skipped": 16,
+      "note": "Before final hardening."
+    },
+    {
+      "directory": "failed-thumbnail-locator",
+      "passed": 191,
+      "failed": 1,
+      "skipped": 16,
+      "note": "Incorrect test locator used visible title instead of actual aria-label. Fixed locator only, kept all assertions. Final targeted and full gates passed."
+    }
+  ],
+  "scope": "R02 only. R01/R03 and final clean nine-page DLV remain separate followup tasks; PDF stays incomplete."
+}

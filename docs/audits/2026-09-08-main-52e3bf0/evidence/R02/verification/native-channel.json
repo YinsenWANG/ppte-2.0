@@ -1,0 +1,9 @@
+{
+  "checkedAt": "2026-09-08T13:51:03.845744+00:00",
+  "status": "pending",
+  "method": "Inspection of callable tools in this turn",
+  "desktopControlToolAvailable": false,
+  "nativePickerTested": false,
+  "reason": "No callable desktop/computer control channel; Chrome runs headless, file-system APIs are explicitly injected disk bridges. No original-file OS authorization or physical-device acceptance performed.",
+  "handoff": "FOLLOWUP.md item 4; keep PDF incomplete and original rejection open."
+}
