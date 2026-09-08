@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: U05 delivery: nine-page reading, text, insert, drag/resize/crop, undo/redo, disk bridge, full process restart and presentation
+ok 1 - U05 delivery: nine-page reading, text, insert, drag/resize/crop, undo/redo, disk bridge, full process restart and presentation
+  ---
+  duration_ms: 14155.745875
+  type: 'test'
+  ...
+# Subtest: DLV delivery: nine-page reading, text, insert, drag/resize/crop, undo/redo, disk bridge, full process restart and presentation
+ok 2 - DLV delivery: nine-page reading, text, insert, drag/resize/crop, undo/redo, disk bridge, full process restart and presentation
+  ---
+  duration_ms: 9848.479417
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 24195.663709

@@ -6,13 +6,16 @@ import {pathToFileURL} from 'node:url';
 import {createHash} from 'node:crypto';
 import {chromium,type Page} from 'playwright';
 import {readEnhanced} from '../packages/html-document/src/index.js';
-const out=resolve('artifacts/u05-delivery');
-const source=resolve('docs/usability-reset/evidence/U01/Cherry-Studio-开源之路.ppte.html');
 const sha=(s:string|Buffer)=>createHash('sha256').update(s).digest('hex');
 const btn=(p:Page,name:string)=>p.getByRole('button',{name,exact:true});
 const content=(p:Page)=>p.evaluate(()=>(window as any).PPTeHTML.content() as string);
 async function drag(p:Page,r:{x:number;y:number;width:number;height:number},dx:number,dy:number){await p.mouse.move(r.x+r.width/2,r.y+r.height/2);await p.mouse.down();await p.mouse.move(r.x+r.width/2+dx,r.y+r.height/2+dy,{steps:8});await p.mouse.up();}
-test('U05 delivery: nine-page reading, text, insert, drag/resize/crop, undo/redo, disk bridge, full process restart and presentation',async()=>{
+for(const [label,sourcePath,outputPath] of [
+ ['U05','docs/usability-reset/evidence/U01/Cherry-Studio-开源之路.ppte.html','artifacts/u05-delivery'],
+ ['DLV','docs/audits/2026-09-08-main-52e3bf0/evidence/DLV/delivery/Cherry-Studio-开源之路.ppte.html','artifacts/audit-delivery-journey'],
+]){
+const source=resolve(sourcePath),out=resolve(outputPath);
+test(`${label} delivery: nine-page reading, text, insert, drag/resize/crop, undo/redo, disk bridge, full process restart and presentation`,async()=>{
  await mkdir(out,{recursive:true});const original=await readFile(source);const file=join(out,'journey-original.ppte.html');await copyFile(source,file);
  const steps:object[]=[],errors:string[]=[],network:string[]=[],writes:object[]=[];
  let browser=await chromium.launch({channel:'chrome',headless:true});
@@ -65,3 +68,5 @@ test('U05 delivery: nine-page reading, text, insert, drag/resize/crop, undo/redo
   await writeFile(join(out,'journey.json'),JSON.stringify({time:new Date().toISOString(),browser:browser.version(),headless:true,nativePicker:false,physicalDesktop:false,offline:true,sourceSha256:sha(original),savedSha256:sha(saved),steps,writes,errors,network,pdf:'excluded by U04 option 1; incomplete'},null,2));
  }finally{await browser.close();}
 });
+
+}

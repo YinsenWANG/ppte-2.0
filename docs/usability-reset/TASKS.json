@@ -225,5 +225,22 @@
         "reason": "R03 browser-resolved signed object-position and no-op crop preservation verified by 18 repository tests. Full gates: 216 pass, 0 fail, 16 existing skips. Geometry, exact content/pixel equality, real downloads and fresh Chrome headless process reopen tested. Native desktop authorization/original-file writes and user revalidation remain pending; PDF incomplete."
       }
     }
-  ]
+  ],
+  "auditDelivery": {
+    "id": "DLV",
+    "status": "prepared-awaiting-native-human",
+    "delivery": "../audits/2026-09-08-main-52e3bf0/evidence/DLV/delivery/Cherry-Studio-开源之路.ppte.html",
+    "evidence": [
+      "../audits/2026-09-08-main-52e3bf0/evidence/DLV/IMPLEMENTATION.md",
+      "../audits/2026-09-08-main-52e3bf0/evidence/DLV/verification/result.json",
+      "../audits/2026-09-08-main-52e3bf0/evidence/DLV/NATIVE-VALIDATION.md"
+    ],
+    "verification": {
+      "code": "passed",
+      "automated": "pending",
+      "real-browser": "pending",
+      "human": "pending",
+      "reason": "Installed current CLI/Skill and generated the unchanged nine-page source once; targeted layout/download/fresh-process tests passed. Full gate receipt pending. No callable native desktop channel; original-file manual/autosave and human revalidation pending. Prior rejection remains reopened; PDF incomplete."
+    }
+  }
 }
