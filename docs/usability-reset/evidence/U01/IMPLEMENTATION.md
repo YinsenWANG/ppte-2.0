@@ -33,4 +33,17 @@
 
 开发期失败如实保留：首次 TS NodeList/DOMRectList 迭代需 Array.from；初始测试误将 data-ppte-slide 的输入标签当作稳定 ID（增强器规范化为节点 ID），改为实际构图结构验证；Esc 会退出整个编辑模式；逐字 keyboard.type 产生多个输入事务，改用一次 keyboard.insertText 验证一次文本事务并点击属性关闭提交。保留 initial/repair/fixed 日志，未删除或弱化历史测试。门禁结果、时间、平台、提交和文件哈希见 verification/result.json 与 SHA256SUMS。
 
-最终门禁：pnpm typecheck、pnpm build、pnpm test 均 RC=0；168 passed / 0 failed / 16 existing skipped。实现提交 `7b2666570653c9ffbef056e4e907124b4708a2be`（签名有效，含 signoff）。后续仅补充验证状态与证据，未再修改产品、Skill、样稿或测试。
+前轮门禁（历史结果）：pnpm typecheck、pnpm build、pnpm test 均 RC=0；168 passed / 0 failed / 16 existing skipped。实现提交 `7b2666570653c9ffbef056e4e907124b4708a2be`（签名有效，含 signoff）。后续仅补充验证状态与证据，未再修改产品、Skill、样稿或测试。
+
+
+## 管道修复轮：npm pack 回执兼容
+
+管道报告 A4 的 `undefined.filename` 故障。本轮从 `5bbcc09` 接续，未改样稿、Skill 或产品运行时。原始修复请求与失败日志原字节移入 `verification/fix-round/REQUEST.md`、`pipeline-failure.log`，不删除输入证据。
+
+已在本机真实复现原因：默认 PATH 的 npm 10.9.8 返回数组，旧测试单独和完整门禁均通过；将 `/opt/homebrew/bin` 放到 PATH 首位后，npm 12.0.2 返回以包名为键的对象，旧测试稳定产生相同 TypeError。实际输出保存于 `npm12-pack.json`，失败保存于 `reproduce-npm12.log`。两环境分别使用 Node 22.23.2 与 24.19.0，版本及平台见 `environment.json`。这属于打包测试回执兼容问题，不是已证明的产品保存故障。
+
+修复提交 `e419e2028cc57dda65c483f83cb7fc5f623616bc`：用 Object.values 读取集合，并新增断言要求恰好一个 ppte-html 包及合法 tarball 文件名。真实 stage → pack → offline install → skill-install → 源码/包/安装内容逐字节一致性检查全部保留。新增 node --test 回归测试覆盖两类回执和空、多个、错误包名、缺失/越界文件名；不通过跳过、硬编码产物路径或削弱原断言绕过错误。
+
+本轮仅修自动化兼容；已有干净三页 HTML 和截图哈希保持不变。U01 仍 awaiting-user-decision，code partial、human reopened；完整稿、目标桌面和新视觉签收仍有明确 pending 原因，见 result.json 和 DECISIONS.md。完整门禁和两版 npm 实际安装结果将在本轮 result.json 中记录；截图不重新包装为原生证据。
+
+本轮最终结果：pnpm typecheck、pnpm build、pnpm test 均 RC=0；169 passed / 0 failed / 16 existing skipped。npm 10 和 npm 12 的 A4 回归与真实离线安装均 RC=0（各 2 项通过）。命令时间、平台、日志、打包回执与安装字节哈希见 verification/fix-round/ 和 verification/result.json。

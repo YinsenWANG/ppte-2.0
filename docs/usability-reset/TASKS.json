@@ -16,7 +16,8 @@
         "evidence/U01/source/",
         "evidence/U01/screenshots/",
         "evidence/U01/SHA256SUMS",
-        "DECISIONS.md"
+        "DECISIONS.md",
+        "evidence/U01/verification/fix-round/"
       ],
       "verification": {
         "code": "partial",
@@ -24,7 +25,8 @@
         "real-browser": "pending",
         "human": "reopened",
         "implementationCommit": "7b2666570653c9ffbef056e4e907124b4708a2be",
-        "reason": "Three new representative pages and source/package/installed Skill parity verified. Final gates: 168 passed / 0 failed / 16 existing skips. Code is partial because full deck awaits explicit user visual approval. Physical desktop and new human acceptance pending; prior aesthetic rejection remains reopened."
+        "reason": "Three representative pages and source/package/installed Skill parity verified. npm 12 keyed pack receipt failure reproduced and fixed without weakening assertions; actual npm 10/12 offline installs pass. Final gates: 169 passed / 0 failed / 16 existing skips. Code remains partial: full deck requires user visual approval. Physical desktop pending; prior human aesthetic rejection remains reopened.",
+        "gateFixCommit": "e419e2028cc57dda65c483f83cb7fc5f623616bc"
       },
       "humanRevalidation": {
         "status": "pending",

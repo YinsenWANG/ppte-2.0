@@ -1,0 +1,38 @@
+{
+  "time": "2026-09-08T12:05:42.382769+00:00",
+  "implementationCommit": "e419e2028cc57dda65c483f83cb7fc5f623616bc",
+  "platform": {
+    "system": "Darwin",
+    "release": "25.6.0",
+    "arch": "arm64",
+    "node": "v22.23.2"
+  },
+  "npm10": {
+    "path": "/Users/cherryai001/.local/bin/npm",
+    "version": "10.9.8",
+    "packShape": "array"
+  },
+  "npm12": {
+    "path": "/opt/homebrew/bin/npm",
+    "version": "12.0.2",
+    "packShape": "object keyed by package name",
+    "node": "v24.19.0"
+  },
+  "reproduction": [
+    {
+      "log": "reproduce-built.log",
+      "exitCode": 0,
+      "reason": "Unmodified test with npm 10 passes"
+    },
+    {
+      "log": "reproduce-full.log",
+      "exitCode": 0,
+      "reason": "Unmodified full suite with npm 10: 168 pass, 0 fail, 16 skips"
+    },
+    {
+      "log": "reproduce-npm12.log",
+      "exitCode": 1,
+      "reason": "Unmodified test with npm 12 reproduces the reported undefined filename TypeError"
+    }
+  ]
+}

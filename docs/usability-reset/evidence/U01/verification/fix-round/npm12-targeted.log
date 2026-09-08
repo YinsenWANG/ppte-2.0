@@ -1,0 +1,10 @@
+✔ U01 A4 receipts: array and keyed results identify one tarball; malformed or ambiguous output fails (1.316417ms)
+✔ U01 A4: actual packed, offline installed and skill-installed instructions equal source (634.119375ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 815.431875

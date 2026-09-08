@@ -1,0 +1,46 @@
+{
+  "ppte-html": {
+    "id": "ppte-html@1.0.0-html.0",
+    "name": "ppte-html",
+    "version": "1.0.0-html.0",
+    "size": 216411,
+    "unpackedSize": 823461,
+    "shasum": "c6d48018eb5cf2dc8efd5605c4e24f939e6f1a88",
+    "integrity": "sha512-HzA8hoUqvqmi4JaqFSwDXzYgwgz20fM3IoVfHKgMJ3SGgQjav33/aWC6K9xhWsk/cO4aNuQihzzv3FDZMLcRsg==",
+    "filename": "ppte-html-1.0.0-html.0.tgz",
+    "files": [
+      {
+        "path": "LICENSE",
+        "size": 11151,
+        "mode": 420
+      },
+      {
+        "path": "README.md",
+        "size": 6185,
+        "mode": 420
+      },
+      {
+        "path": "dependency-graph.json",
+        "size": 115093,
+        "mode": 420
+      },
+      {
+        "path": "package.json",
+        "size": 375,
+        "mode": 420
+      },
+      {
+        "path": "ppte.js",
+        "size": 684581,
+        "mode": 493
+      },
+      {
+        "path": "skills/ppte/SKILL.md",
+        "size": 6076,
+        "mode": 420
+      }
+    ],
+    "entryCount": 6,
+    "bundled": []
+  }
+}

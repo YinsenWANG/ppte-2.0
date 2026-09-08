@@ -1,0 +1,220 @@
+▶ F04A acceptance 1–3: replay real PDFs, full text, fonts, colors and frozen input integrity
+  ✔ PDFKit reopens and re-extracts every candidate page; negative controls really discriminate (39004.728208ms)
+✔ F04A acceptance 1–3: replay real PDFs, full text, fonts, colors and frozen input integrity (39091.06325ms)
+✔ F04A acceptance 3: installed Chrome really exports frozen file:// fixture offline; not a product PDF action (1355.888042ms)
+✔ F04A acceptance 2: every human selection and physical-browser requirement remains explicitly pending (19.526292ms)
+✔ F04A acceptance 4: only external qualification requires HOLD; neither qualified cannot enable F04 (1.641667ms)
+✔ F01 A1/A2: one direct image chooser, no retired shortcuts/menus, disabled truthful top-level PDF and responsive shell (5145.84975ms)
+✔ F01 A3: no history and all author content survive edit/download/full browser restart (2751.375875ms)
+✔ F01 A3: valid history and all author content survive edit/download/full browser restart (4212.635125ms)
+✔ F01 A3: broken history and all author content survive edit/download/full browser restart (2909.272792ms)
+✔ F01 A3: unknown history and all author content survive edit/download/full browser restart (3079.674042ms)
+✔ F01 A3: simulated native adapter writes real disk and preserves old media history without new snapshots (3447.1895ms)
+✔ F01 A1–A3: audited Cherry ten-page document upgrades without content loss and keeps focused controls (7389.732917ms)
+✔ F02 errors survive editing and draft quota failure; pending automatic timer cannot retry without consent (0.921167ms)
+✔ F02 recovery serializes and stores once per revision/base; next acknowledged baseline checkpoints latest revision (0.113875ms)
+✔ F02 cancel, denial, picker/read errors and unsupported save never download; explicit download retains content (8758.004292ms)
+✔ F02 B1 actual Enter/Shift+Enter, inline formatting, multiline clipboard event, undo/redo, download and fresh process editing (6506.072042ms)
+✔ F03 A1/A2/A3 absolute: image UI placement, pointer/order, resize/crop/replace, undo/redo and fresh-process saved reopen (14319.347208ms)
+✔ F03 A1/A2/A3 block: image UI placement, pointer/order, resize/crop/replace, undo/redo and fresh-process saved reopen (12004.986167ms)
+✔ F03 A1/A2/A3 flex: image UI placement, pointer/order, resize/crop/replace, undo/redo and fresh-process saved reopen (12060.001834ms)
+✔ F03 A1/A2/A3 grid: image UI placement, pointer/order, resize/crop/replace, undo/redo and fresh-process saved reopen (12361.108459ms)
+✔ F03 failures/cancel: cancelled chooser, invalid bytes/type/oversize preserve original and undo stack; same replacement can be retried (3297.855417ms)
+✔ F03 bounded async image import: progress, cancel and leaving edit discard delayed decode without dirty/history changes (6564.647875ms)
+✔ F03 A1/A2 prototype: actual author draft, consecutive images, pointer resize, resource reuse and author content preserved (2161.043583ms)
+✔ F03 A1/A2 cherry: actual author draft, consecutive images, pointer resize, resource reuse and author content preserved (2151.304ms)
+✔ F05 A1/A2: scoped controls, no retired menu/gutter, honest PDF state, navigation endpoints and keyboard focus (4203.303958ms)
+✔ F05 A1/A2/A3: same Cherry draft at 1440/1024/390, unclipped centered page, inspector, save status and pure presentation (6476.6615ms)
+✔ F05 A3: 40-page rail scrolls independently; last page/add footer and keyboard reorder remain reachable at desktop and narrow width (5377.955792ms)
+✔ F06 A1/A4: same offline Cherry draft edits text and image, downloads once, reopens in fresh process and presents all pages; PDF stays unqualified (6682.06325ms)
+✔ F06 A2/A3: native acceptance and audit gaps cannot be closed by automated evidence (23.124625ms)
+✔ F06 A4: frozen delivered HTML matches recorded download hash and carries ten editable pages without external runtime dependencies (50.220958ms)
+✔ H01 acceptance 1: native Grid/Flex/SVG/font hierarchy and nested resources retain computed layout and exact pixels (1953.798458ms)
+✔ H01 acceptance 1: deterministic IDs reserve author identities, repair duplicates and preserve nested template escaping (69.249334ms)
+✔ H01 acceptance 2: 100 actual browser serialize/write/close/reopen cycles retain one payload and no editing residue (25326.895916ms)
+✔ H01 acceptance 2: sanitizer reports executable content; runtime sandbox/CSP block independent script/event/network/navigation attempts (549.39425ms)
+✔ H01 acceptance 2: safe serialization fails closed for executable CSS, SVG data, remote resource and malformed metadata (21.992792ms)
+✔ H01 acceptance 3: offline CLI with no PATH/keys/browser writes exactly one HTML and <=1KB summary (337.644042ms)
+✔ H01 acceptance 3: rejection creates no output; local resource root, symlinks, missing resources and import cycles fail explicitly (133.718834ms)
+✔ H01 acceptance 4: actual bundled CLI/runtime import graphs exclude old representations; all three H00 drafts enhance directly (156.299417ms)
+✔ H01 acceptance 1/3: embedded SVG references preserve fragment identity and diagnostics obey byte limits (39.920666ms)
+✔ H03 acceptance 2/3: viewport changes retain focused format control, selection and original DOM without edits (2306.343375ms)
+✔ H03 acceptance 1: real object selection, empty/multiple/mixed contextual shell and screenshots (2433.145959ms)
+✔ H03 acceptance 2: computed normal text contrast >=4.5, visible keyboard focus and keyboard object/format path (1421.664416ms)
+✔ H03 acceptance 3: local text/range history preserves sibling identity, native Grid/Flex strategies and protected Agent hash (1835.816667ms)
+✔ H03 acceptance 4: original-file reopen retains text, range style, layout, media, table/background/lock; errors retain work (5613.950792ms)
+✔ H03 native typing history, atomic multi-edit failure, table cell and page insertion history (2380.653667ms)
+✔ H03 original-file persisted range formatting and keyboard/pointer layout; clean preview returns to edit (3233.482875ms)
+✔ H03 guarded SVG replacement, protected native input, composition events coalesce and hash race rejects (971.750708ms)
+✔ H00 acceptance 1: frozen positive HTML contract excludes retired formats and IR pipeline (2.000291ms)
+✔ H00 acceptance 2: real fixed materials, all nine pairs and cold/hot missing data stay pending (43.371875ms)
+✔ H00 acceptance 2: missing timings/tokens, changed model/materials, omitted runs and fake success fail (14.954292ms)
+✔ H00 acceptance 2: observed failures are retained, never repaired away or silently excluded (4.6565ms)
+✔ H00 acceptance 2: artifact bytes must exist inside evidence root including symlink resolution (40.723792ms)
+✔ H00 acceptance 2: capture records actual subprocess time/bytes/failure and refuses overwrite (110.603792ms)
+✔ H00 retained exploratory HTML has twelve pages, no runtime/network and real data table; not timing evidence (1.187416ms)
+✔ H00 dependency inventory preserves evidence of live retired dependencies without declaring retirement (1.265458ms)
+✔ H05 acceptance 1: static CLI/runtime graph and actual installed npm tarball contain only HTML dependencies (1.605584ms)
+✔ H05 acceptance 2: offline installed CLI generates HTML with network and external processes forbidden (148.858958ms)
+✔ H05 acceptance 3: candidate runtime <=250 KB gzip and three twelve-page light HTMLs <=1 MB measured (260.648291ms)
+✔ H05 acceptance 4: isolated install, reusable skill and overwrite refusal preserve existing user files (685.609583ms)
+﹣ H05 acceptance 2: packaged HTML prints through separately available Chrome PDF toolchain (0.072542ms) # F01 scope retirement: docs/focused-product/evidence/F01/TEST-MIGRATION.json; not a pass
+✔ H05 retirement: all historical test files remain byte-identical to the pre-H05 manifest (11.930125ms)
+✔ H04 acceptance 1/2: clean audience, idle controls, black pixels, steps, media clicks, fullscreen denial and Escape restore (4086.129667ms)
+✔ H04 acceptance 2: blocked presenter leaves audience usable; real popup has notes/next preview and shared navigation (2341.775417ms)
+﹣ H04 acceptance 3: actual browser PDF has two sized pages, selectable revealed text, no editor UI and print restores content (0.132625ms) # F01 scope retirement: docs/focused-product/evidence/F01/TEST-MIGRATION.json; not a pass
+▶ H04 acceptance 4: generation and reading create only HTML; new export/runtime graph excludes retired formats
+  ﹣ Retired product system-print action (0.165375ms) # F01 forbids system-print export; assertions preserved
+✔ H04 acceptance 4: generation and reading create only HTML; new export/runtime graph excludes retired formats (896.660042ms)
+▶ H04 actual fullscreen exit, Grid slide layout, print from presentation, mount and read return
+  ﹣ Retired system-print product path — F04A/F04 pending (0.226583ms) # F01: user forbids system printing; original assertions preserved
+✔ H04 actual fullscreen exit, Grid slide layout, print from presentation, mount and read return (1691.021042ms)
+✔ H02 acceptance 1: original path autosave, close/reopen and service restart preserve text with no download (3971.308375ms)
+✔ H02 acceptance 2: OS read-only, ENOSPC fault, interrupted replace retain original and recoverable version (672.048584ms)
+✔ H02 acceptance 2: two services/windows serialize one winner and detect external Agent edits at replace (157.336084ms)
+✔ H02 acceptance 2: kill process before rename, restart recovers stale lock and preserves original (365.026916ms)
+✔ H02 acceptance 2/3: browser two-window conflict keeps draft; explicit reread and retry after network failure (4332.966167ms)
+✔ H02 acceptance 3: IME does not save half composition; 1000ms pause and delayed acknowledgement remain dirty/saving (2893.583834ms)
+✔ H02 acceptance 2/3: two real windows retain the failed draft after the other file save is acknowledged (2994.861667ms)
+✔ H02 acceptance 2/3: a delayed acknowledgement never deletes another window recovery draft (1.123792ms)
+✔ H02 acceptance 3: edits during in-flight save remain queued; draft base matching, quotas and copied identity (0.243833ms)
+✔ H02 acceptance 2/3: File System Access permission revoked, conflict, failed close and confirmation (API contract test) (2.608625ms)
+✔ H02 acceptance 4: loopback bind, hostile Origin/Host, no token, traversal, arbitrary fields and unsafe content rejected (89.634583ms)
+✔ H02 acceptance 5: real installed Chrome file URL shows limitation, keeps draft and never claims file save (2092.059791ms)
+✔ H02 acceptance 5: Safari actual WebDriver journey or explicit blocked evidence (not simulated Safari) (304.467ms)
+✔ H02 acceptance 1/4: explicit development ppte serve retains packaged npm install, stable restart URL and multiple file mappings (2311.506209ms)
+✔ H02 acceptance 2: history bounded by count and rejected restoration paths never write (1486.816667ms)
+✔ H02 acceptance 2: actual bounded full disk returns ENOSPC without replacing original (macOS HFS+) (11962.271958ms)
+✔ H02 acceptance 2/3: failed-save draft survives page close, restores on matching file base and flushes to original (3170.590041ms)
+✔ CLOSING: delivered CLI file supports offline editing, history, download and fresh-process reopening; same-content responsive comparisons (5841.196708ms)
+✔ GAPS N04: fixed sRGB rasterization preserves original >4000 gates and rejects missing red, blue, and image (5398.480833ms)
+▶ GAPS A4: real navigation, image edit undo, versions, download/reopen, presentation and PDF demand/release
+  ﹣ Retired history preview UI (0.251208ms) # F01 confirmed history UI removal
+  ﹣ Retired system-print action (0.2805ms) # F01 PDF pending F04A/F04
+✔ GAPS A4: real navigation, image edit undo, versions, download/reopen, presentation and PDF demand/release (3401.10525ms)
+✔ GAPS S04: real mouse/keyboard measurements report the unchanged 50/100ms gates, including unmet targets (14426.451416ms)
+✔ R1 audit native div: actual click, keyboard input, styles, undo/redo and offline download/new-process reopen (4970.440833ms)
+✔ R1 native span and nested inline runs use one safe host; range style, input, undo and saved markup survive (3928.708666ms)
+✔ R1 mixed media/block/positioned/declared containers stay noneditable and explain unsupported text structure (2336.581625ms)
+✔ R2 audit text: image UI or explicit legacy command fixture, mouse selection, actual Alt+Right, resize, undo/redo and offline download/new-process reopen (4907.73325ms)
+✔ R2 audit image: image UI or explicit legacy command fixture, mouse selection, actual Alt+Right, resize, undo/redo and offline download/new-process reopen (4452.950333ms)
+✔ R2 audit shape: image UI or explicit legacy command fixture, mouse selection, actual Alt+Right, resize, undo/redo and offline download/new-process reopen (3640.512541ms)
+✔ R2 audit table: image UI or explicit legacy command fixture, mouse selection, actual Alt+Right, resize, undo/redo and offline download/new-process reopen (3740.708625ms)
+✔ R2 block: image UI and legacy command fixtures use real order, spacing/alignment and retain native layout after download (8594.169959ms)
+✔ R2 flex: image UI and legacy command fixtures use real order, spacing/alignment and retain native layout after download (9208.068875ms)
+✔ R2 grid: image UI and legacy command fixtures use real order, spacing/alignment and retain native layout after download (6433.828459ms)
+✔ R2 no available space: image UI / legacy command fixture insertion rolls back DOM and undo history with an accurate visible error (1161.740542ms)
+✔ R2 native media wrapper and mixed text: insert beside the canvas object, and protect non-heading direct text (1847.204666ms)
+✔ R3 current page fits with padding through inspector, rail, viewport changes, mouse/keyboard navigation and modes (3404.323125ms)
+✔ R3 manual zoom scrolls only the current work area, reset fits; real drag/resize keep author units (3677.419042ms)
+✔ R3 responsive author CSS reflows on window resize; transient fits do not change saved layouts; download/new-process reopen (3861.683584ms)
+✔ R3 twelve-page audit source: current-page navigation and added page stay isolated and fitted (1363.534292ms)
+✔ R4 hierarchy: actual text controls, stable status, contextual page ordering, offline download and prototype comparisons (6137.296666ms)
+✔ R5: mobile inspector reserves visible current page, closes by mouse/Escape, navigation is exclusive, primary controls remain reachable (5130.836333ms)
+﹣ R6: audit source mouse/keyboard naming, validation, cancellation, scoped confirmations, quota review, offline history round trip (0.319042ms) # F01 scope retirement: docs/focused-product/evidence/F01/TEST-MIGRATION.json; not a pass
+✔ S00 frozen current contract rejects weakened requirements and cross-version relabelling (0.92625ms)
+✔ S00 version changes cannot promote the historical baseline or bypass missing telemetry (24.201458ms)
+✔ S00 active instructions and actual CLI help agree on delivery and disclose migration (205.394583ms)
+✔ S00 no new runtime or dependency requirement and historical bytes stay unchanged (98.165416ms)
+✔ S00 real enhancement supports both extensions and refuses to rewrite existing user files (298.044334ms)
+▶ S03 F02-F05 file UI: protected local insert/history, unique identity, native context, background, download/reopen and PDF
+  ﹣ Retired system-print product path (0.7295ms) # F01 PDF remains pending F04A/F04
+✔ S03 F02-F05 file UI: protected local insert/history, unique identity, native context, background, download/reopen and PDF (12627.335917ms)
+✔ S03 contextual UI: real cell mouse/keyboard range format, collapse/zoom focus, handles and composition refresh (5059.111166ms)
+✔ S01 file URL: offline visible entry, native canvas, text/format/undo, present/Esc, copied file and complete download (9023.044917ms)
+✔ S01 CLI edit exits with file URL, rejects service flags and leaves original bytes unchanged (146.996709ms)
+▶ S07 continuous file journey: offline download, browser shutdown, fresh reopen, presentation and optional PDF
+  ﹣ Retired system-print product path — F04A/F04 pending (0.458291ms) # F01: user forbids system printing; original assertions preserved
+✔ S07 continuous file journey: offline download, browser shutdown, fresh reopen, presentation and optional PDF (2526.768125ms)
+✔ S06 table: SHA-256 vectors, legacy identity, dedup, stable references, missing/corrupt resources, no CSP expansion (183.006667ms)
+▶ S06 file journey: mixed ratios, insert/replace/focus/reset, guarded history, download/reopen, print and speaker
+  ﹣ Retired system-print product path — F04A/F04 pending (0.2345ms) # F01: user forbids system printing; original assertions preserved
+✔ S06 file journey: mixed ratios, insert/replace/focus/reset, guarded history, download/reopen, print and speaker (4156.766834ms)
+✔ S04 evidence refuses changed environment, content, undersampling and nonfinite timings (0.873959ms)
+✔ S04 cache: bytes, MIME, requirement/transform context, root authorization and budget cannot be stale (91.026291ms)
+✔ S04 draft: bounded checkpoints, revision reuse, latest recovery and permission checks on each flush (253.476542ms)
+✔ S04 file browser: one input revision, local thumbnail, stable tools and synchronous index invalidation (975.521875ms)
+▶ S02 file entry: no API and denied permission require explicit download, reopen content/style/lock/media offline
+  ﹣ Retired new-file-instance menu (0.415416ms) # F01 confirmed removal; identity compatibility covered by focused-product-f01
+✔ S02 file entry: no API and denied permission require explicit download, reopen content/style/lock/media offline (7101.487167ms)
+✔ S02 conflict remains latched through input; exported and confirmed revisions are independent (0.3965ms)
+✔ S02 file handle contract bridge: real file bytes, permission lifecycle, autosave, conflicts and delayed receipts (8543.54925ms)
+✔ UI01 acceptance 1: offline initial, copied and downloaded files reopen in reading in a fresh process (2698.553333ms)
+✔ UI01 acceptance 2: editor expands context on real selection, closes properties, keeps author DOM and input through mode switches (1717.731ms)
+✔ UI01 acceptance 3: audience contains no menu or HUD before/after pointer, Tab, idle and black screen (5247.939417ms)
+✔ UI01 acceptance 4: fullscreen reject/throw and native exit restore prior mode and current page; delayed grant cannot strand fullscreen (2452.742334ms)
+✔ UI02 acceptance 1: command-seeded legacy object fixtures adjust through UI and survive actual download / fresh process (6679.187417ms)
+✔ UI02 acceptance 2: command fixture placement follows author Flex/Grid/flow and retains positioned author CSS (3449.799125ms)
+✔ UI02 acceptance 3: protection is bounded, command fixture/duplicate/delete history remains atomic and invalid actions leave content intact (3203.299916ms)
+﹣ UI02 acceptance 4: one labeled SVG menu, keyboard navigation/escape/outside close and focus-safe properties (0.116792ms) # F01 scope retirement: docs/focused-product/evidence/F01/TEST-MIGRATION.json; not a pass
+✔ UI03 acceptance 1: long page rail has independent scroll, fixed add footer and unobstructed controls (3052.88325ms)
+✔ UI03 acceptance 2: new pages retain responsive/fixed/Grid declarations across modes, resize and download (9076.667916ms)
+✔ UI03 acceptance 3: nested stacking title and image do not overlap; real hit selection, layout, crop, undo and saved content (2045.336167ms)
+✔ UI03 acceptance 4: keyboard buttons/Alt arrows and drag reorder share undo history, identity and boundaries (1848.613875ms)
+✔ UI03 audit N01–N03 regression: original 12-page author source, responsive blank page and image hit (2418.813375ms)
+✔ UI04 A5: 1s debounce, 10s sustained input, default autosave and manual override (3.526834ms)
+✔ UI04 A6: one writer, stale acknowledgement stays dirty and manual queued revision runs with auto off (0.389ms)
+✔ UI04 A4/A7/A8: errors latch; composition never serializes partial drafts or writes; retry retains baseline (0.514042ms)
+✔ UI04 A1/A3/A7/A8: product save panel, wrong same-name document refusal, complete IME download and fresh browser process (3593.936708ms)
+✔ UI05 acceptance 1: 1440/1024/820/390 reading/editing, mutually exclusive drawers and reachable primary controls (6575.767459ms)
+✔ UI05 acceptance 2: 200% equivalent layout viewport, large font, coarse 44px targets and table grid (2090.70325ms)
+﹣ UI05 acceptance 3: menu arrows/Home/End/Enter/Escape/Tab, focus restoration, edge placement and disclosure semantics (0.21775ms) # F01 scope retirement: docs/focused-product/evidence/F01/TEST-MIGRATION.json; not a pass
+✔ UI05 acceptance 4: icon names/tooltips, visible focus, modes and measured important text contrast (891.899958ms)
+﹣ UI06 A1/A2: product offline four-object history → download → full shutdown → copy → preview/restore → download → fresh read/show/PDF (1.10675ms) # F01 scope retirement: docs/focused-product/evidence/F01/TEST-MIGRATION.json; not a pass
+✔ UI06 A3 evidence contract: native/Safari unknowns cannot inherit headless or bridge passes (3.708083ms)
+✔ UI06 A4 evidence contract: UI feedback and sample aesthetics have separate unfilled human records and vetoes (2.404458ms)
+✔ UI07 A1: named checkpoints deduplicate; restore is atomic and retains target, later and before-restore states (5.408917ms)
+✔ UI07 A3: 5 minute generation, count/bytes quotas, named retention and failed pre-restore preserve all history (6.766167ms)
+✔ UI07 A2/A4: portable wire, shared media across current and checkpoints, lazy decode and independent checkpoints after deletion (9.16825ms)
+✔ UI07 A5: truncation, unknown schema, missing resource, bad checkpoint, hostile HTML and expansion limits are isolated (25.601417ms)
+✔ UI07 A2/A5: CLI re-enhancement preserves opaque history and single-file identity (49.651542ms)
+﹣ UI07 A1–A6: product controls, actual offline download, copied file in fresh process, preview/restore and media timings (0.106875ms) # F01 scope retirement: docs/focused-product/evidence/F01/TEST-MIGRATION.json; not a pass
+﹣ UI07 A3/A5/A6: real disk bridge writes media history; quota never blocks current save; no-history export removes private resources (0.039666ms) # F01 scope retirement: docs/focused-product/evidence/F01/TEST-MIGRATION.json; not a pass
+✔ UI07 A3/A4/A5: quota measures escaped transport bytes; reference fan-out is bounded before resource expansion (31.005167ms)
+✔ U01 A1/A2: three newly authored native pages in one offline runtime, text/image bounds and clean presentation (2322.326875ms)
+✔ U01 A1: actual text editing, undo/redo, explicit download and new browser process retain the representative source (3403.913083ms)
+✖ U01 A4: actual packed, offline installed and skill-installed instructions equal source (616.313667ms)
+✔ U01 A3/full-deck: explicit decision gate preserves rejected human status and blocks expansion (2.90925ms)
+✔ U02 absolute: real pointers, all corners, crop/cancel, transaction undo, siblings and saved restart (10767.430667ms)
+✔ U02 block: real pointers, all corners, crop/cancel, transaction undo, siblings and saved restart (10966.003916ms)
+✔ U02 grid: real pointers, all corners, crop/cancel, transaction undo, siblings and saved restart (14031.901792ms)
+✔ U02 flex: real pointers, all corners, crop/cancel, transaction undo, siblings and saved restart (13918.50375ms)
+✔ U02 insert/replace: portrait, landscape, transparent, tiny and large; frame retention, decoding cancel/error and history (10366.306958ms)
+U02 coordinates: zoom
+U02 coordinates: cancel drag
+U02 coordinates: text
+U02 coordinates: IME
+U02 coordinates: bounded drag
+U02 coordinates: modes
+✔ U02 zoom/scroll/resize, bounded drag, pointer cancellation, text/IME and read/present guards (7016.034167ms)
+✔ U02 unsupported transformed author image reports boundary before handles; no accidental multi-image selection (1050.496125ms)
+✔ U02 static multi-page author coordinates survive save and preserve prior image insertion undo chain (3635.526541ms)
+✔ U03 A1/A2/A3: discoverable primary save, explanatory gesture, manual/automatic disk bridge then full browser restart (4672.837042ms)
+✔ U03 A1/A3/A4: unsupported primary action downloads exactly one complete file; cache failure and beforeunload retain dirty state (1603.510125ms)
+✔ U03 A4: recovery requires preview, keeps editing and pre-recovery content, cancellation and storage errors are independent of file saves (2399.708125ms)
+✔ U03 A4: corrupt recovery does not become a file-write failure; quota cannot block verified manual save (0.583792ms)
+✔ U03 A2/A4 performance: large raster, real keyboard edits, natural cache quota, crop and verified manual write survive fresh browser (14130.174458ms)
+✔ U03 A4: known cache failure backs off repeated checkpoints, retains cached content and retries on manual save (0.674625ms)
+✔ U03 A4: failed disk reread/mount cannot clear unsaved revision or replace the confirmed baseline (1026.582334ms)
+ℹ tests 184
+ℹ suites 0
+ℹ pass 167
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 16
+ℹ todo 0
+ℹ duration_ms 120235.709875
+
+✖ failing tests:
+
+test at dist/tests/usability-reset-u01.test.js:145:1
+✖ U01 A4: actual packed, offline installed and skill-installed instructions equal source (616.313667ms)
+  TypeError: Cannot read properties of undefined (reading 'filename')
+      at TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/usability-reset-u01.test.js:155:132)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+[ELIFECYCLE] Test failed. See above for more details.
+$ node scripts/build-html.mjs && tsc --noEmit
+$ node scripts/build-html.mjs --clean && tsc -p tsconfig.build.json
+$ pnpm build && node --test dist/tests/*.test.js
+$ node scripts/build-html.mjs --clean && tsc -p tsconfig.build.json

@@ -1,0 +1,18 @@
+✖ U01 A4: actual packed, offline installed and skill-installed instructions equal source (431.655791ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 621.882583
+
+✖ failing tests:
+
+test at dist/tests/usability-reset-u01.test.js:145:1
+✖ U01 A4: actual packed, offline installed and skill-installed instructions equal source (431.655791ms)
+  TypeError: Cannot read properties of undefined (reading 'filename')
+      at TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/usability-reset-u01.test.js:155:132)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)

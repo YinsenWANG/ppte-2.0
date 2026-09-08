@@ -1,0 +1,52 @@
+[
+  {
+    "command": "pnpm typecheck",
+    "environment": "inherited (npm 10.9.8)",
+    "status": "passed",
+    "exitCode": 0,
+    "startedAt": "2026-09-08T12:05:27.260015+00:00",
+    "finishedAt": "2026-09-08T12:05:28.600629+00:00",
+    "durationMs": 1341,
+    "log": "verification/fix-round/typecheck.log"
+  },
+  {
+    "command": "pnpm build",
+    "environment": "inherited (npm 10.9.8)",
+    "status": "passed",
+    "exitCode": 0,
+    "startedAt": "2026-09-08T12:05:28.600975+00:00",
+    "finishedAt": "2026-09-08T12:05:30.129155+00:00",
+    "durationMs": 1528,
+    "log": "verification/fix-round/build.log"
+  },
+  {
+    "command": "pnpm test",
+    "environment": "inherited (npm 10.9.8)",
+    "status": "passed",
+    "exitCode": 0,
+    "startedAt": "2026-09-08T12:05:30.129445+00:00",
+    "finishedAt": "2026-09-08T12:07:23.680517+00:00",
+    "durationMs": 113551,
+    "log": "verification/fix-round/test.log"
+  },
+  {
+    "command": "node --test --test-name-pattern=U01 A4 dist/tests/usability-reset-u01.test.js",
+    "environment": "inherited (npm 10.9.8)",
+    "status": "passed",
+    "exitCode": 0,
+    "startedAt": "2026-09-08T12:07:23.681007+00:00",
+    "finishedAt": "2026-09-08T12:07:24.307874+00:00",
+    "durationMs": 627,
+    "log": "verification/fix-round/npm10-targeted.log"
+  },
+  {
+    "command": "node --test --test-name-pattern=U01 A4 dist/tests/usability-reset-u01.test.js",
+    "environment": "PATH=/opt/homebrew/bin:$PATH",
+    "status": "passed",
+    "exitCode": 0,
+    "startedAt": "2026-09-08T12:07:24.312343+00:00",
+    "finishedAt": "2026-09-08T12:07:25.159882+00:00",
+    "durationMs": 848,
+    "log": "verification/fix-round/npm12-targeted.log"
+  }
+]

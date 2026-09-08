@@ -2,7 +2,7 @@
   "task": "U01",
   "status": "awaiting-user-decision",
   "implementationCommit": "7b2666570653c9ffbef056e4e907124b4708a2be",
-  "time": "2026-09-08T12:08:00.095558+00:00",
+  "time": "2026-09-08T11:59:33.529Z",
   "platform": {
     "system": "Darwin",
     "release": "25.6.0",
@@ -14,61 +14,38 @@
   "commands": [
     {
       "command": "pnpm typecheck",
-      "environment": "inherited (npm 10.9.8)",
       "status": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-08T12:05:27.260015+00:00",
-      "finishedAt": "2026-09-08T12:05:28.600629+00:00",
-      "durationMs": 1341,
-      "log": "verification/fix-round/typecheck.log"
+      "startedAt": "2026-09-08T11:56:31.827Z",
+      "finishedAt": "2026-09-08T11:56:33.081Z",
+      "durationMs": 1253.153125,
+      "log": "verification/typecheck.log"
     },
     {
       "command": "pnpm build",
-      "environment": "inherited (npm 10.9.8)",
       "status": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-08T12:05:28.600975+00:00",
-      "finishedAt": "2026-09-08T12:05:30.129155+00:00",
-      "durationMs": 1528,
-      "log": "verification/fix-round/build.log"
+      "startedAt": "2026-09-08T11:56:33.082Z",
+      "finishedAt": "2026-09-08T11:56:34.563Z",
+      "durationMs": 1480.867417,
+      "log": "verification/build.log"
     },
     {
       "command": "pnpm test",
-      "environment": "inherited (npm 10.9.8)",
       "status": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-08T12:05:30.129445+00:00",
-      "finishedAt": "2026-09-08T12:07:23.680517+00:00",
-      "durationMs": 113551,
-      "log": "verification/fix-round/test.log"
-    },
-    {
-      "command": "node --test --test-name-pattern=U01 A4 dist/tests/usability-reset-u01.test.js",
-      "environment": "inherited (npm 10.9.8)",
-      "status": "passed",
-      "exitCode": 0,
-      "startedAt": "2026-09-08T12:07:23.681007+00:00",
-      "finishedAt": "2026-09-08T12:07:24.307874+00:00",
-      "durationMs": 627,
-      "log": "verification/fix-round/npm10-targeted.log"
-    },
-    {
-      "command": "node --test --test-name-pattern=U01 A4 dist/tests/usability-reset-u01.test.js",
-      "environment": "PATH=/opt/homebrew/bin:$PATH",
-      "status": "passed",
-      "exitCode": 0,
-      "startedAt": "2026-09-08T12:07:24.312343+00:00",
-      "finishedAt": "2026-09-08T12:07:25.159882+00:00",
-      "durationMs": 848,
-      "log": "verification/fix-round/npm12-targeted.log"
+      "startedAt": "2026-09-08T11:56:34.563Z",
+      "finishedAt": "2026-09-08T11:58:23.101Z",
+      "durationMs": 108537.272834,
+      "log": "verification/test.log"
     }
   ],
   "tests": {
-    "tests": 185,
-    "pass": 169,
+    "tests": 184,
+    "pass": 168,
     "fail": 0,
     "skipped": 16,
-    "newTests": 5,
+    "newTests": 4,
     "newSkips": 0
   },
   "verification": {
@@ -140,8 +117,7 @@
       "code": "passed",
       "automated": "passed",
       "tests": [
-        "U01 A4 actual stage/npm pack/offline install/skill-install byte equality; live PDF disabled in A1/A2",
-        "U01 A4 receipts: array/keyed collections and malformed/ambiguous output; actual isolated npm 10 and npm 12 pack/offline install/skill-install"
+        "U01 A4 actual stage/npm pack/offline install/skill-install byte equality; live PDF disabled in A1/A2"
       ],
       "real-browser": "pending",
       "human": "pending",
@@ -221,30 +197,14 @@
     {
       "log": "verification/u01-before-commit.log",
       "result": "4 U01 tests passed"
-    },
-    {
-      "log": "verification/fix-round/pipeline-failure.log",
-      "reason": "Supplied pipeline gate: 167 passed, 1 failed, 16 skipped; npm pack [0].filename assumption. Prior green result retained in verification/fix-round/prior-result.json."
     }
   ],
-  "testedTree": "Full gates and npm 10/12 actual pack/install checks ran against gateFixCommit e419e2028cc57dda65c483f83cb7fc5f623616bc. Subsequent edits only record evidence and task status. Representative HTML, source, Skill, runtime and screenshots unchanged.",
+  "testedTree": "Full gates ran against implementationCommit. Subsequent changes only record evidence and verification status; no runtime, Skill, source deck or test edits.",
   "knownLimitations": [
     "Explicit user U01 stop gate: complete deck must wait for representative-page visual approval; no full deck generated.",
     "No callable physical-desktop control tool is exposed in this session. Chrome headless file:// pointer/keyboard/screenshot/new-process checks are automated evidence only; target-device viewing, OS input and user visual judgment have not been performed.",
     "Previous aesthetic delivery was explicitly rejected. No user decision on these three newly designed pages has arrived; revalidation is pending and prior human status stays reopened.",
     "U02/U03 native acceptance and U04 PDF route remain open; U01 has not integrated or selected PDF architecture.",
     "Download roundtrip uses a test capability override and does not prove native original-file saving."
-  ],
-  "gateFixCommit": "e419e2028cc57dda65c483f83cb7fc5f623616bc",
-  "gateFix": {
-    "status": "passed",
-    "environment": "verification/fix-round/environment.json",
-    "reproduction": "verification/fix-round/reproduce-npm12.log",
-    "actualPackReceipt": "verification/fix-round/npm12-pack.json",
-    "packageEvidence": [
-      "verification/fix-round/npm10-targeted-package.json",
-      "verification/fix-round/npm12-targeted-package.json"
-    ],
-    "reason": "npm 10 returns array; npm 12 returns keyed collection. Parse values, require exactly one expected package with safe tarball filename, retain every install and byte-equality assertion. Added malformed/ambiguous receipt regression test."
-  }
+  ]
 }
