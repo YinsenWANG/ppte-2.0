@@ -1,5 +1,35 @@
 import { Commands, imagePagePosition } from './commands.js';
 
+/** Computed CSS normalizes keywords/edge offsets and author-relative lengths.
+ * Substitute the signed free space for percentages, then let CSS evaluate math.
+ * A normal containing block cannot represent negative free space (cover).
+ * The isolated probe never enters the author document or its undo history. */
+function objectOffset(position:string, freeX:number, freeY:number):[number,number] {
+    const axes:string[]=[];let depth=0,start=0;
+    for(let i=0;i<position.length;i++){
+        if(position[i]==='(')depth++;
+        else if(position[i]===')')depth--;
+        else if(/\s/.test(position[i])&&depth===0){if(i>start)axes.push(position.slice(start,i));start=i+1;}
+    }
+    if(start<position.length)axes.push(position.slice(start));
+    const unsupported=()=>Error('此图片的 object-position 表达式暂无法解析；正文未改变，请在源稿使用长度、百分比、关键字或 calc/min/max/clamp 后再操作。');
+    if(depth!==0||axes.length!==2)throw unsupported();
+    const host=document.createElement('div');host.dataset.ppteTransient='';
+    host.style.cssText='all:initial;position:fixed;visibility:hidden;pointer-events:none';
+    const probe=document.createElement('div');host.attachShadow({mode:'closed'}).append(probe);
+    document.body.append(host);
+    try{return axes.map((axis,i)=>{
+        // Deliberately bounded math support; never guess at contextual functions.
+        if(axis.replace(/(?:calc|min|max|clamp)\(/g,'(').replace(/(?:\d*\.)?\d+(?:e[+-]?\d+)?(?:px|%)?/gi,'').replace(/[\s()+*/,.-]/g,'')!=='')throw unsupported();
+        const value=axis.replace(/([+-]?(?:\d*\.)?\d+(?:e[+-]?\d+)?)%/gi,(_,n)=>`${Number(n)*(i===0?freeX:freeY)/100}px`);
+        probe.style.cssText='all:initial;position:absolute;top:0;width:0;height:0';
+        probe.style.left=value;
+        const used=getComputedStyle(probe).left;
+        if(!probe.style.left||!/^[-+\d.e]+px$/.test(used)||!Number.isFinite(parseFloat(used)))throw unsupported();
+        return parseFloat(used);
+    }) as [number,number];}finally{host.remove();}
+}
+
 type Box = {x:number;y:number;w:number;h:number;iw:number;ih:number;ox:number;oy:number};
 /** Persisted author coordinates. Previews live exclusively in the outer editor,
  * so autosave never observes an unfinished pointer/crop transaction. */
@@ -45,10 +75,11 @@ export function imageDirect(frame:HTMLIFrameElement, root:HTMLElement, get:()=>C
         const r=n.getBoundingClientRect(),s=slide.getBoundingClientRect(),cs=n.ownerDocument.defaultView!.getComputedStyle(n);
         const ratio=n.naturalWidth/n.naturalHeight;
         if(!Number.isFinite(ratio)||!r.width||!r.height)throw Error('图片尚未解码，请稍后重试');
-        const scale=cs.objectFit==='cover'?Math.max(r.width/n.naturalWidth,r.height/n.naturalHeight):Math.min(r.width/n.naturalWidth,r.height/n.naturalHeight);
+        const contain=Math.min(r.width/n.naturalWidth,r.height/n.naturalHeight);
+        const scale=cs.objectFit==='cover'?Math.max(r.width/n.naturalWidth,r.height/n.naturalHeight):cs.objectFit==='none'?1:cs.objectFit==='scale-down'?Math.min(1,contain):contain;
         const iw=cs.objectFit==='fill'?r.width:n.naturalWidth*scale,ih=cs.objectFit==='fill'?r.height:n.naturalHeight*scale;
-        const pos=cs.objectPosition.split(' ').map(v=>parseFloat(v)/100);
-        return {x:r.left-s.left-slide.clientLeft,y:r.top-s.top-slide.clientTop,w:r.width,h:r.height,iw,ih,ox:(r.width-iw)*(pos[0]??.5),oy:(r.height-ih)*(pos[1]??.5)};
+        const [ox,oy]=objectOffset(cs.objectPosition,r.width-iw,r.height-ih);
+        return {x:r.left-s.left-slide.clientLeft,y:r.top-s.top-slide.clientTop,w:r.width,h:r.height,iw,ih,ox,oy};
     }
     function locate(){
         if(!slide)return {x:0,y:0,scale:1};
@@ -91,7 +122,7 @@ export function imageDirect(frame:HTMLIFrameElement, root:HTMLElement, get:()=>C
     function crop(){
         if(cropping)return;
         update();if(!begin())return;cropping=true;if(conceal)conceal.textContent=`[data-ppte-id="${CSS.escape(id!)}"]{visibility:hidden!important}`;
-        cover(box!);initial={...box!};draw();notify();done.focus();
+        draw();notify();done.focus();
     }
     function cover(b:Box){
         const k=Math.max(1,b.w/b.iw,b.h/b.ih);
@@ -131,7 +162,7 @@ export function imageDirect(frame:HTMLIFrameElement, root:HTMLElement, get:()=>C
                 if(stylePosition==='static')copy.style.position='relative';
             }
             wrapper.dataset.ppteImageFrame=JSON.stringify(b);
-            wrapper.style.cssText=`position:absolute!important;left:${b.x}px!important;top:${b.y}px!important;width:${b.w}px!important;height:${b.h}px!important;overflow:hidden!important;margin:0!important;padding:0!important;border:0!important;box-sizing:border-box!important`;
+            wrapper.style.cssText=`position:absolute!important;left:${b.x}px!important;top:${b.y}px!important;width:${b.w}px!important;height:${b.h}px!important;overflow:clip!important;margin:0!important;padding:0!important;border:0!important;box-sizing:border-box!important`;
             image.style.cssText=`position:absolute!important;left:${b.ox}px!important;top:${b.oy}px!important;width:${b.iw}px!important;height:${b.ih}px!important;max-width:none!important;max-height:none!important;min-width:0!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;transform:none!important;object-fit:fill!important;${effects}`;
         });
         select(imageId);update();notify();return true; } catch(e){cancelSession();report(e);return false;}
