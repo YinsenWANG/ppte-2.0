@@ -114,7 +114,8 @@
         "automated": "passed",
         "real-browser": "pending",
         "human": "reopened",
-        "reason": "U04 diagnostic code and automation passed; 177 passed / 0 failed / 16 existing skips. No qualified PDF route; awaiting architecture decision. Native viewer and user revalidation pending, human rejection remains reopened."
+        "reason": "U04 diagnostic code and automation passed; 177 passed / 0 failed / 16 existing skips. No qualified PDF route; awaiting architecture decision. Native viewer and user revalidation pending, human rejection remains reopened.",
+        "implementationCommit": "08049a224b050e4d4b5ad20a480f7fa961f771b7"
       }
     },
     {
@@ -132,7 +133,8 @@
         "automated": "partial",
         "real-browser": "pending",
         "human": "reopened",
-        "reason": "B2 code and automated mouse/Enter/save-reopen/security tests passed; full U05 remains partial pending clean-deck/native-save/PDF journey and user revalidation."
+        "reason": "B2 code and automated mouse/Enter/save-reopen/security tests passed; full U05 remains partial pending clean-deck/native-save/PDF journey and user revalidation.",
+        "implementationCommit": "6819e5e68ad1b04a66ab0d9cf6da00a6aced4239"
       }
     }
   ]

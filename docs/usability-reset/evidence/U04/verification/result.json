@@ -184,5 +184,6 @@
       "log": "verification/test-first-failure.log",
       "reason": "Historical test module loading; stale U01 pre-signoff assertion; strict PDF MediaBox mismatch (retained as qualification rejection)."
     }
-  ]
+  ],
+  "implementationCommit": "08049a224b050e4d4b5ad20a480f7fa961f771b7"
 }
