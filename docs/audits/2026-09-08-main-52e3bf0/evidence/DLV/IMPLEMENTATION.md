@@ -31,3 +31,7 @@
 另修正安装版 CLI --help 中遗留的 More → Export PDF 说明，使其与 README/Skill 一致明确 PDF unfinished / disabled；实际离线打包安装测试新增帮助输出断言。prepare-audit-delivery.mjs 接受新轮次暂存目录，仍通过增强器独占创建新文件，再核验后交付；不删除旧稿绕过覆盖保护。
 
 代码提交、最终门禁、软件合成对照及当前安装回执见 verification/result.json。原生保存仍按 NATIVE-VALIDATION.md 交回目标桌面执行，人工九页签收 pending，PDF 未完成。
+
+补充实测：DPR=1 单帧默认合成探针返回 1，前后 300×260 边界框完全相等，但有 1,109 个颜色通道字节不同，最大差 4；软件合成同操作返回 0、差异为 0。对照图与解码统计仅作诊断，不将此数值作为允许误差。默认合成配合稳定截图的新回归在本轮也通过，因此最终同时固定合成环境和等待稳定观测，不把等待失败后取另一张图称为同一次截图。证据：verification/fix-round/{single-capture-default.log,single-capture-software.log,raster-comparison.jsonl,raster/}。
+
+本轮从 b4491b3 重新安装 Skill/CLI，在 artifacts/dlv-fix-b4491b3 独占生成一次；新生成文件与唯一交付稿字节严格相等（运行时/正文没有改变），故保留原交付文件，不制造两个用户版本。当前安装路径见 verification/installation.json；旧回执保留在 verification/pre-fix。九页放映截图已逐页复看，无诊断标题/图片；只属 Agent 检查，非用户验收。

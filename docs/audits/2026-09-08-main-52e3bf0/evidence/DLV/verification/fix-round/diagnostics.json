@@ -1,0 +1,47 @@
+{
+  "commit": "b4491b3",
+  "time": "2026-09-08T14:52:57.212Z",
+  "platform": "darwin",
+  "arch": "arm64",
+  "node": "v22.23.2",
+  "commands": [
+    {
+      "command": "node --test dist/tests/audit-followup-r03.test.js",
+      "log": "baseline-targeted.log",
+      "status": 0,
+      "logRecordedAt": "2026-09-08T14:49:38.672Z"
+    },
+    {
+      "command": "pnpm test",
+      "log": "baseline-full.log",
+      "status": 0,
+      "logRecordedAt": "2026-09-08T14:49:38.669Z"
+    },
+    {
+      "command": "node docs/audits/2026-09-08-main-52e3bf0/evidence/DLV/verification/fix-round/compositor-probe.mjs",
+      "log": "single-capture-default.log",
+      "status": 1,
+      "logRecordedAt": "2026-09-08T14:51:36.918Z"
+    },
+    {
+      "command": "node docs/audits/2026-09-08-main-52e3bf0/evidence/DLV/verification/fix-round/compositor-probe.mjs --software",
+      "log": "single-capture-software.log",
+      "status": 0,
+      "logRecordedAt": "2026-09-08T14:51:48.281Z"
+    },
+    {
+      "command": "node --test --test-name-pattern='DPR 1 raster regression' dist/tests/audit-followup-r03.test.js",
+      "log": "dpr1-regression.log",
+      "status": 0,
+      "logRecordedAt": "2026-09-08T14:51:54.423Z"
+    },
+    {
+      "command": "node --test --test-name-pattern='DPR 1 raster regression' dist/tests/r03-gpu-probe.js",
+      "log": "dpr1-default-compositor.log",
+      "status": 0,
+      "logRecordedAt": "2026-09-08T14:50:55.426Z"
+    }
+  ],
+  "notes": "Log mtimes are recording times, not measured command durations. DPR 1 single-capture reproduces the raster failure; default compositor with stable observation also passed on this run. Supplied DPR 3 intermittent failure was not reproduced exactly.",
+  "defaultStableProbe": "dist/tests/r03-gpu-probe.js was a temporary copy of compiled audit-followup-r03.test.js with only --disable-gpu removed; no source assertion changed."
+}

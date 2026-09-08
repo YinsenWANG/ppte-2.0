@@ -240,8 +240,8 @@
       "automated": "passed",
       "real-browser": "pending",
       "human": "pending",
-      "implementationCommit": "a5937ab8c69d169c657c71340060699c04e949f4",
-      "reason": "Latest installed CLI/Skill and clean nine-page delivery verified: 220 pass / 0 fail / 16 existing skips. Real bounding boxes, exact runtime/source, actual download bytes and full-process reopen; disk bridge is automated only. No native desktop channel or human acceptance; prior rejection remains reopened; PDF incomplete."
+      "implementationCommit": "b4491b381b7427c0a9a6f4abd3ed23ed93c3d400",
+      "reason": "Gate fix: 223 pass / 0 fail / 16 existing skips. Exact PNG comparisons use stable software-composited Chrome observations; added DPR 1 repeated crop/download/fresh-process regression and strict capture tests. Installed CLI help now agrees with Skill: PDF unfinished. Reinstalled and re-enhanced once; clean nine-page delivery byte-identical. Native desktop and human acceptance pending; prior rejection remains reopened."
     }
   }
 }

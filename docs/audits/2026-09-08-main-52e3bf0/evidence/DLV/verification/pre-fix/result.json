@@ -1,8 +1,8 @@
 {
   "task": "DLV",
-  "implementationCommit": "b4491b381b7427c0a9a6f4abd3ed23ed93c3d400",
+  "implementationCommit": "a5937ab8c69d169c657c71340060699c04e949f4",
   "runtimeCommit": "f0322bc4366e84c325731fe61c4c07b2555eeeac",
-  "finishedAt": "2026-09-08T14:55:49.981Z",
+  "finishedAt": "2026-09-08T14:39:43.687Z",
   "platform": {
     "system": "darwin",
     "release": "25.6.0",
@@ -13,27 +13,27 @@
     {
       "command": "pnpm typecheck",
       "status": 0,
-      "startedAt": "2026-09-08T14:52:28.837Z",
-      "finishedAt": "2026-09-08T14:52:30.154Z",
-      "log": "fix-round/typecheck.log"
+      "startedAt": "2026-09-08T14:36:11.104Z",
+      "finishedAt": "2026-09-08T14:36:12.421Z",
+      "log": "typecheck.log"
     },
     {
       "command": "pnpm build",
       "status": 0,
-      "startedAt": "2026-09-08T14:52:30.155Z",
-      "finishedAt": "2026-09-08T14:52:31.738Z",
-      "log": "fix-round/build.log"
+      "startedAt": "2026-09-08T14:36:12.422Z",
+      "finishedAt": "2026-09-08T14:36:13.999Z",
+      "log": "build.log"
     },
     {
       "command": "pnpm test",
       "status": 0,
-      "startedAt": "2026-09-08T14:52:31.738Z",
-      "finishedAt": "2026-09-08T14:55:42.115Z",
-      "log": "fix-round/test.log"
+      "startedAt": "2026-09-08T14:36:13.999Z",
+      "finishedAt": "2026-09-08T14:38:42.482Z",
+      "log": "test.log"
     }
   ],
   "tests": {
-    "pass": 223,
+    "pass": 220,
     "fail": 0,
     "skipped": 16
   },
@@ -49,9 +49,9 @@
   },
   "pdf": "incomplete; U04 option 1 retained; no integration or new dependency",
   "installation": "installation.json",
-  "layout": "fix-round/full-layout.json",
-  "download": "fix-round/full-roundtrip.json",
-  "journey": "fix-round/journey.json",
+  "layout": "full-layout.json",
+  "download": "full-roundtrip.json",
+  "journey": "journey.json",
   "nativeChecklist": "../NATIVE-VALIDATION.md",
   "delivery": "../delivery/Cherry-Studio-开源之路.ppte.html",
   "deliverySha256": "4cf0ddbfcc4f6cd3d1e1a713a0e60fbde703f43adb0533cc13737af7a2bba897",
@@ -59,14 +59,5 @@
     "status": "agent-reviewed",
     "pages": 9,
     "scope": "All clean presentation screenshots; no diagnostic title or inserted test image. Not human acceptance."
-  },
-  "fixRound": {
-    "diagnostics": "fix-round/diagnostics.json",
-    "comparison": "fix-round/raster-comparison.jsonl",
-    "regeneration": "fix-round/regeneration.json",
-    "suppliedFailure": "fix-round/supplied-gate-failure.log",
-    "exactDpr3FailureReproduced": false,
-    "relatedDpr1FailureReproduced": true,
-    "observation": "Software compositing and independent stable PNG capture; zero tolerance, existing geometry/content/download/reopen assertions retained."
   }
 }

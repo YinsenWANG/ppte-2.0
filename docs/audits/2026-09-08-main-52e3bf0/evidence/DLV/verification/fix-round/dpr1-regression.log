@@ -1,0 +1,16 @@
+TAP version 13
+# Subtest: R03 DPR 1 raster regression: repeated no-op crops and fresh download reopen remain byte-identical
+ok 1 - R03 DPR 1 raster regression: repeated no-op crops and fresh download reopen remain byte-identical
+  ---
+  duration_ms: 10861.213625
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 11051.957958

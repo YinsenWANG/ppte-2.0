@@ -1,0 +1,70 @@
+[
+  {
+    "command": "pnpm",
+    "args": [
+      "package:pack"
+    ],
+    "startedAt": "2026-09-08T14:32:55.906Z",
+    "finishedAt": "2026-09-08T14:32:58.321Z",
+    "status": 0,
+    "stdout": "/private/tmp/ppte8/artifacts/npm-package\nppte-html-1.0.0-html.0.tgz\n",
+    "stderr": "$ pnpm package:stage && npm pack ./artifacts/npm-package --pack-destination artifacts\n$ pnpm build && node scripts/stage-package.mjs\n$ node scripts/build-html.mjs --clean && tsc -p tsconfig.build.json\nnpm notice\nnpm notice 📦  ppte-html@1.0.0-html.0\nnpm notice Tarball Contents\nnpm notice 11.2kB LICENSE\nnpm notice 6.2kB README.md\nnpm notice 115.1kB dependency-graph.json\nnpm notice 375B package.json\nnpm notice 689.1kB ppte.js\nnpm notice 6.1kB skills/ppte/SKILL.md\nnpm notice Tarball Details\nnpm notice name: ppte-html\nnpm notice version: 1.0.0-html.0\nnpm notice filename: ppte-html-1.0.0-html.0.tgz\nnpm notice package size: 217.9 kB\nnpm notice unpacked size: 828.0 kB\nnpm notice shasum: f5aad5f11c1279af9497e8621b783f5c47052961\nnpm notice integrity: sha512-B6lGidbdpZm1w[...]E35wixORFYh1g==\nnpm notice total files: 6\nnpm notice\n"
+  },
+  {
+    "command": "npm",
+    "args": [
+      "install",
+      "--prefix",
+      "/Users/cherryai001/.local/ppte-html-audit-followup-f0322bc-1788877975906",
+      "--offline",
+      "--ignore-scripts",
+      "/private/tmp/ppte8/artifacts/ppte-html-1.0.0-html.0.tgz"
+    ],
+    "startedAt": "2026-09-08T14:32:58.321Z",
+    "finishedAt": "2026-09-08T14:32:58.466Z",
+    "status": 0,
+    "stdout": "\nadded 1 package in 105ms\n",
+    "stderr": ""
+  },
+  {
+    "command": "/Users/cherryai001/.hermes/node/bin/node",
+    "args": [
+      "/Users/cherryai001/.local/ppte-html-audit-followup-f0322bc-1788877975906/node_modules/ppte-html/ppte.js",
+      "--help"
+    ],
+    "startedAt": "2026-09-08T14:32:58.466Z",
+    "finishedAt": "2026-09-08T14:32:58.503Z",
+    "status": 0,
+    "stdout": "{\"ok\":true,\"contract\":\"single-file-first-1.1\",\"commands\":[\"ppte enhance input.html --out 作品.ppte.html\",\"ppte edit 作品.ppte.html\",\"ppte skill-install --out DIRECTORY\"],\"entry\":\"Open 作品.ppte.html directly (file://). Readers require no Node or service. Existing .html remains readable.\",\"save\":\"Original-file autosave requires actual write authorization; otherwise download a complete updated file. Draft/download is not saved to the original.\",\"migration\":\"S01/S02 acceptance partial: ppte edit opens file and exits; loopback recommendation is retired. Explicit serve is a development tool. --port is only accepted by serve.\",\"pdf\":\"Optional browser print: More → Export PDF. Node.js is for authoring only.\"}\n",
+    "stderr": ""
+  },
+  {
+    "command": "/Users/cherryai001/.hermes/node/bin/node",
+    "args": [
+      "/Users/cherryai001/.local/ppte-html-audit-followup-f0322bc-1788877975906/node_modules/ppte-html/ppte.js",
+      "skill-install",
+      "--out",
+      "/Users/cherryai001/.codex/skills/ppte-html-audit-followup-f0322bc-1788877975906"
+    ],
+    "startedAt": "2026-09-08T14:32:58.503Z",
+    "finishedAt": "2026-09-08T14:32:58.542Z",
+    "status": 0,
+    "stdout": "{\"ok\":true,\"path\":\"/Users/cherryai001/.codex/skills/ppte-html-audit-followup-f0322bc-1788877975906\",\"hint\":\"Installed once; reuse for future presentations. Existing skills are never overwritten.\"}\n",
+    "stderr": ""
+  },
+  {
+    "command": "/Users/cherryai001/.hermes/node/bin/node",
+    "args": [
+      "/Users/cherryai001/.local/ppte-html-audit-followup-f0322bc-1788877975906/node_modules/ppte-html/ppte.js",
+      "enhance",
+      "/private/tmp/ppte8/docs/usability-reset/evidence/U01/source/full-deck.html",
+      "--out",
+      "/private/tmp/ppte8/docs/audits/2026-09-08-main-52e3bf0/evidence/DLV/delivery/Cherry-Studio-开源之路.ppte.html"
+    ],
+    "startedAt": "2026-09-08T14:32:58.544Z",
+    "finishedAt": "2026-09-08T14:32:58.601Z",
+    "status": 0,
+    "stdout": "{\"ok\":true,\"path\":\"/private/tmp/ppte8/docs/audits/2026-09-08-main-52e3bf0/evidence/DLV/delivery/Cherry-Studio-开源之路.ppte.html\",\"pages\":9,\"bytes\":410414,\"mediaBytes\":1159,\"visual\":\"unverified\"}\n",
+    "stderr": ""
+  }
+]

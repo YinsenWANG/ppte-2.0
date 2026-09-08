@@ -1,0 +1,9 @@
+{
+  "time": "2026-09-08T14:52:28.806Z",
+  "commit": "b4491b381b7427c0a9a6f4abd3ed23ed93c3d400",
+  "staged": "artifacts/dlv-fix-b4491b3",
+  "delivery": "docs/audits/2026-09-08-main-52e3bf0/evidence/DLV/delivery/Cherry-Studio-开源之路.ppte.html",
+  "sha256": "4cf0ddbfcc4f6cd3d1e1a713a0e60fbde703f43adb0533cc13737af7a2bba897",
+  "byteIdentical": true,
+  "reason": "Only CLI help and test observation changed; runtime and author content unchanged. Kept the existing delivery bytes after exact comparison with new installed enhancement."
+}
