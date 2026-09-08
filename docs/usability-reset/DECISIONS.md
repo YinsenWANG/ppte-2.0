@@ -6,6 +6,8 @@
 
 最终整稿尚未收到用户认可，U01 保持 `full-deck-awaiting-user-acceptance`，不得标 done。目标桌面实测没有可调用的物理桌面通道，继续 pending；Chrome headless 截图与编辑重开仅属自动化证据。请用户打开九页完整稿评审整体连贯性与可读性，给出最终认可或具体修改页。
 
+> 本轮审计跟进管道的收尾裁决、独立复跑数据与用户验收三步清单见 [audit DECISIONS.md](../audits/2026-09-08-main-52e3bf0/DECISIONS.md)（单一来源，不在此重复）。
+
 以下三页提案与签收记录为历史记录；原三页文件字节保留于 [历史样稿快照](evidence/U01/verification/representative-snapshot.html)，原截图不变。
 
 ## U01 — 美学签收：awaiting-user-decision
