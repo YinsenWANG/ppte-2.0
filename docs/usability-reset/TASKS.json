@@ -7,7 +7,7 @@
     {
       "id": "U01",
       "title": "重新设计成稿并修正Skill",
-      "status": "awaiting-user-decision",
+      "status": "signed-off-awaiting-full-deck",
       "acceptance": "三个新代表页及完整稿；不复用旧设计冒充提升；用户视觉确认；源码与安装说明一致",
       "evidence": [
         "evidence/U01/IMPLEMENTATION.md",
@@ -17,7 +17,8 @@
         "evidence/U01/screenshots/",
         "evidence/U01/SHA256SUMS",
         "DECISIONS.md",
-        "evidence/U01/verification/fix-round/"
+        "evidence/U01/verification/fix-round/",
+        "DECISIONS.md#u01-用户签收"
       ],
       "verification": {
         "code": "partial",
