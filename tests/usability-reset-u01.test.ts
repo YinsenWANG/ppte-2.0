@@ -4,7 +4,7 @@ import {mkdir,readFile,writeFile,mkdtemp,rm} from 'node:fs/promises';
 import {resolve,join} from 'node:path';
 import {tmpdir} from 'node:os';
 import {pathToFileURL} from 'node:url';
-import {spawnSync} from 'node:child_process';
+import {spawnSync,execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {chromium,type Page} from 'playwright';
 import {readEnhanced} from '../packages/html-document/src/index.js';
@@ -110,9 +110,16 @@ test('U01 A4: actual packed, offline installed and skill-installed instructions 
  }finally{await rm(root,{recursive:true,force:true});}
 });
 test('U01 A3/full-deck: explicit decision gate preserves rejected human status and blocks expansion',async()=>{
- const task=JSON.parse(await readFile('docs/usability-reset/TASKS.json','utf8')).tasks.find((t:any)=>t.id==='U01');
+ const task=JSON.parse(execFileSync('git',['show','d51c729:docs/usability-reset/TASKS.json'],{encoding:'utf8'})).tasks.find((t:any)=>t.id==='U01');
+ // Preserve the pre-decision stop-gate assertions; the orchestrator recorded sign-off in e82116f.
  assert.equal(task.status,'awaiting-user-decision');assert.equal(task.verification.human,'reopened');assert.equal(task.humanRevalidation.status,'pending');
  assert.equal(task.fullDeck.status,'pending');assert.equal(task.fullDeck.blockedBy,'U01-user-visual-approval');
  const decisions=await readFile('docs/usability-reset/DECISIONS.md','utf8');for(let i=1;i<=3;i++){assert.ok(decisions.includes(`present-${i}.png`));await readFile(join(evidence,`screenshots/present-${i}.png`));}
- // This tests the release boundary only, never substitutes for human visual approval.
+ const current=JSON.parse(await readFile('docs/usability-reset/TASKS.json','utf8')).tasks.find((t:any)=>t.id==='U01');
+ if(current.status!==task.status){
+  assert.equal(current.status,'signed-off-awaiting-full-deck');
+  assert.match(decisions,/U01 — 用户签收[\s\S]*可以，先这么做吧[\s\S]*同意据此扩展完整稿/);
+  assert.ok(current.evidence.includes('DECISIONS.md#u01-用户签收'));
+ }
+ // This tests recorded decision state only, never substitutes for human visual approval.
 });

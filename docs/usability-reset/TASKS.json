@@ -98,16 +98,42 @@
     {
       "id": "U04",
       "title": "诊断现有PDF路线并回交架构取舍",
-      "status": "pending",
+      "status": "awaiting-user-decision",
       "acceptance": "原失败样本跨阅读器/固定视口核验；保留视觉和文字要求；外部路线集成前用户决策",
-      "evidence": []
+      "evidence": [
+        "evidence/U04/IMPLEMENTATION.md",
+        "evidence/U04/verification/result.json",
+        "evidence/U04/historical.json",
+        "evidence/U04/rows.json",
+        "evidence/U04/transform-comparison.png",
+        "evidence/U04/SHA256SUMS",
+        "DECISIONS.md"
+      ],
+      "verification": {
+        "code": "passed",
+        "automated": "passed",
+        "real-browser": "pending",
+        "human": "reopened",
+        "reason": "U04 diagnostic code and automation passed; 177 passed / 0 failed / 16 existing skips. No qualified PDF route; awaiting architecture decision. Native viewer and user revalidation pending, human rejection remains reopened."
+      }
     },
     {
       "id": "U05",
       "title": "修复B2并完成真实交付",
-      "status": "pending",
+      "status": "reopened",
       "acceptance": "原带链接样本；一个干净成稿；全旅程；用户拒收项逐项重新确认",
-      "evidence": []
+      "evidence": [
+        "evidence/U05/IMPLEMENTATION.md",
+        "evidence/U05/verification/result.json",
+        "evidence/U05/SHA256SUMS"
+      ],
+      "verification": {
+        "code": "partial",
+        "automated": "partial",
+        "real-browser": "pending",
+        "human": "reopened",
+        "reason": "B2 code and automated mouse/Enter/save-reopen/security tests passed; full U05 remains partial pending clean-deck/native-save/PDF journey and user revalidation."
+      }
     }
   ]
 }

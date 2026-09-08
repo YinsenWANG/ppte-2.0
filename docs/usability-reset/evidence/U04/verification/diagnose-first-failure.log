@@ -1,0 +1,95 @@
+Traceback (most recent call last):
+  File "/private/tmp/ppte8/scripts/u04/inspect.py", line 2, in <module>
+    import fitz, json, sys, hashlib
+  File "/Users/cherryai001/Library/Python/3.9/lib/python/site-packages/fitz/__init__.py", line 2, in <module>
+    from pymupdf import *
+  File "/Users/cherryai001/Library/Python/3.9/lib/python/site-packages/pymupdf/__init__.py", line 14, in <module>
+    import inspect
+  File "/private/tmp/ppte8/scripts/u04/inspect.py", line 3, in <module>
+    from PIL import Image, ImageChops
+  File "/Users/cherryai001/Library/Python/3.9/lib/python/site-packages/PIL/Image.py", line 59, in <module>
+    from ._util import DeferredError, is_path
+  File "/Users/cherryai001/Library/Python/3.9/lib/python/site-packages/PIL/_util.py", line 6, in <module>
+    from ._typing import StrOrBytesPath, TypeGuard
+  File "/Users/cherryai001/Library/Python/3.9/lib/python/site-packages/PIL/_typing.py", line 33, in <module>
+    from typing_extensions import TypeGuard
+  File "/Users/cherryai001/Library/Python/3.9/lib/python/site-packages/typing_extensions.py", line 1060, in <module>
+    _TAKES_MODULE = "module" in inspect.signature(typing._type_check).parameters
+AttributeError: partially initialized module 'inspect' has no attribute 'signature' (most likely due to a circular import)
+node:internal/errors:983
+  const err = new Error(message);
+              ^
+
+Error: Command failed: python3 scripts/u04/inspect.py /private/tmp/ppte8/docs/usability-reset/evidence/U04/original-fixtures-01-chromium.pdf
+Traceback (most recent call last):
+  File "/private/tmp/ppte8/scripts/u04/inspect.py", line 2, in <module>
+    import fitz, json, sys, hashlib
+  File "/Users/cherryai001/Library/Python/3.9/lib/python/site-packages/fitz/__init__.py", line 2, in <module>
+    from pymupdf import *
+  File "/Users/cherryai001/Library/Python/3.9/lib/python/site-packages/pymupdf/__init__.py", line 14, in <module>
+    import inspect
+  File "/private/tmp/ppte8/scripts/u04/inspect.py", line 3, in <module>
+    from PIL import Image, ImageChops
+  File "/Users/cherryai001/Library/Python/3.9/lib/python/site-packages/PIL/Image.py", line 59, in <module>
+    from ._util import DeferredError, is_path
+  File "/Users/cherryai001/Library/Python/3.9/lib/python/site-packages/PIL/_util.py", line 6, in <module>
+    from ._typing import StrOrBytesPath, TypeGuard
+  File "/Users/cherryai001/Library/Python/3.9/lib/python/site-packages/PIL/_typing.py", line 33, in <module>
+    from typing_extensions import TypeGuard
+  File "/Users/cherryai001/Library/Python/3.9/lib/python/site-packages/typing_extensions.py", line 1060, in <module>
+    _TAKES_MODULE = "module" in inspect.signature(typing._type_check).parameters
+AttributeError: partially initialized module 'inspect' has no attribute 'signature' (most likely due to a circular import)
+
+    at genericNodeError (node:internal/errors:983:15)
+    at wrappedFn (node:internal/errors:537:14)
+    at checkExecSyncError (node:child_process:916:11)
+    at execFileSync (node:child_process:952:15)
+    at inspect (file:///private/tmp/ppte8/scripts/u04/diagnose.mjs:17:25)
+    at file:///private/tmp/ppte8/scripts/u04/diagnose.mjs:23:16 {
+  status: 1,
+  signal: null,
+  output: [
+    null,
+    '',
+    'Traceback (most recent call last):\n' +
+      '  File "/private/tmp/ppte8/scripts/u04/inspect.py", line 2, in <module>\n' +
+      '    import fitz, json, sys, hashlib\n' +
+      '  File "/Users/cherryai001/Library/Python/3.9/lib/python/site-packages/fitz/__init__.py", line 2, in <module>\n' +
+      '    from pymupdf import *\n' +
+      '  File "/Users/cherryai001/Library/Python/3.9/lib/python/site-packages/pymupdf/__init__.py", line 14, in <module>\n' +
+      '    import inspect\n' +
+      '  File "/private/tmp/ppte8/scripts/u04/inspect.py", line 3, in <module>\n' +
+      '    from PIL import Image, ImageChops\n' +
+      '  File "/Users/cherryai001/Library/Python/3.9/lib/python/site-packages/PIL/Image.py", line 59, in <module>\n' +
+      '    from ._util import DeferredError, is_path\n' +
+      '  File "/Users/cherryai001/Library/Python/3.9/lib/python/site-packages/PIL/_util.py", line 6, in <module>\n' +
+      '    from ._typing import StrOrBytesPath, TypeGuard\n' +
+      '  File "/Users/cherryai001/Library/Python/3.9/lib/python/site-packages/PIL/_typing.py", line 33, in <module>\n' +
+      '    from typing_extensions import TypeGuard\n' +
+      '  File "/Users/cherryai001/Library/Python/3.9/lib/python/site-packages/typing_extensions.py", line 1060, in <module>\n' +
+      '    _TAKES_MODULE = "module" in inspect.signature(typing._type_check).parameters\n' +
+      "AttributeError: partially initialized module 'inspect' has no attribute 'signature' (most likely due to a circular import)\n"
+  ],
+  pid: 44778,
+  stdout: '',
+  stderr: 'Traceback (most recent call last):\n' +
+    '  File "/private/tmp/ppte8/scripts/u04/inspect.py", line 2, in <module>\n' +
+    '    import fitz, json, sys, hashlib\n' +
+    '  File "/Users/cherryai001/Library/Python/3.9/lib/python/site-packages/fitz/__init__.py", line 2, in <module>\n' +
+    '    from pymupdf import *\n' +
+    '  File "/Users/cherryai001/Library/Python/3.9/lib/python/site-packages/pymupdf/__init__.py", line 14, in <module>\n' +
+    '    import inspect\n' +
+    '  File "/private/tmp/ppte8/scripts/u04/inspect.py", line 3, in <module>\n' +
+    '    from PIL import Image, ImageChops\n' +
+    '  File "/Users/cherryai001/Library/Python/3.9/lib/python/site-packages/PIL/Image.py", line 59, in <module>\n' +
+    '    from ._util import DeferredError, is_path\n' +
+    '  File "/Users/cherryai001/Library/Python/3.9/lib/python/site-packages/PIL/_util.py", line 6, in <module>\n' +
+    '    from ._typing import StrOrBytesPath, TypeGuard\n' +
+    '  File "/Users/cherryai001/Library/Python/3.9/lib/python/site-packages/PIL/_typing.py", line 33, in <module>\n' +
+    '    from typing_extensions import TypeGuard\n' +
+    '  File "/Users/cherryai001/Library/Python/3.9/lib/python/site-packages/typing_extensions.py", line 1060, in <module>\n' +
+    '    _TAKES_MODULE = "module" in inspect.signature(typing._type_check).parameters\n' +
+    "AttributeError: partially initialized module 'inspect' has no attribute 'signature' (most likely due to a circular import)\n"
+}
+
+Node.js v22.23.2

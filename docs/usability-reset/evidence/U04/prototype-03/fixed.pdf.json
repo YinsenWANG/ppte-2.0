@@ -1,0 +1,1688 @@
+{
+  "sha256": "3f14ea38f5a1a355fc84d9e7d404f30ba14ad588af3fde4ad13b659d34e10bc7",
+  "pdfkit": [
+    {
+      "bluePixels": 0,
+      "characters": [
+        {
+          "boundsPDFBottomLeft": [
+            43.904295045654294,
+            368.6998257262573,
+            6.310844165173144,
+            6.780761436218256
+          ],
+          "index": 0,
+          "text": "C"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            50.21513921082744,
+            368.8800015,
+            6.4939324700444665,
+            6.477538792602559
+          ],
+          "index": 1,
+          "text": "H"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            56.7090716808719,
+            368.8800015,
+            6.066959156585028,
+            6.477538792602559
+          ],
+          "index": 2,
+          "text": "E"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            62.77603083745693,
+            368.8800015,
+            6.269393673150258,
+            6.477538792602559
+          ],
+          "index": 3,
+          "text": "R"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            69.04542451060719,
+            368.8800015,
+            5.9917485503438,
+            6.477538792602559
+          ],
+          "index": 4,
+          "text": "R"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            75.03717306095099,
+            368.8800015,
+            6.065820441007467,
+            6.477538792602559
+          ],
+          "index": 5,
+          "text": "Y"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            81.10299350195845,
+            368.8800015,
+            3.5225027282290498,
+            0
+          ],
+          "index": 6,
+          "text": " "
+        },
+        {
+          "boundsPDFBottomLeft": [
+            84.62549623018751,
+            368.713009319458,
+            5.471734787636038,
+            6.833495809020974
+          ],
+          "index": 7,
+          "text": "S"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            90.09723101782355,
+            368.8800015,
+            5.820041419998255,
+            6.477538792602559
+          ],
+          "index": 8,
+          "text": "T"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            95.9172724378218,
+            368.713009319458,
+            6.320983630375679,
+            6.644530973144526
+          ],
+          "index": 9,
+          "text": "U"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            102.23825606819747,
+            368.8800015,
+            6.626495105146034,
+            6.477538792602559
+          ],
+          "index": 10,
+          "text": "D"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            108.8647511733435,
+            368.8800015,
+            2.20802297049903,
+            6.477538792602559
+          ],
+          "index": 11,
+          "text": "I"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            111.07277414384254,
+            368.6998257262573,
+            6.6254937145627295,
+            6.855468464355511
+          ],
+          "index": 12,
+          "text": "O"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            117.69826785840527,
+            368.6998257262573,
+            386.582961129876,
+            6.855468464355511
+          ],
+          "index": 13,
+          "text": " "
+        },
+        {
+          "boundsPDFBottomLeft": [
+            504.2812289882813,
+            368.7086147883911,
+            4.837938089044172,
+            6.464355199401837
+          ],
+          "index": 14,
+          "text": "0"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            509.11916707732547,
+            368.7086147883911,
+            5.28793690779429,
+            6.473144261535651
+          ],
+          "index": 15,
+          "text": "3"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            514.4071039851198,
+            368.8800015,
+            3.389859965005826,
+            0
+          ],
+          "index": 16,
+          "text": " "
+        },
+        {
+          "boundsPDFBottomLeft": [
+            517.7969639501256,
+            368.8800015,
+            3.6079101184203637,
+            6.455566137268079
+          ],
+          "index": 17,
+          "text": "/"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            521.404874068546,
+            368.8800015,
+            4.28458754022563,
+            0
+          ],
+          "index": 18,
+          "text": " "
+        },
+        {
+          "boundsPDFBottomLeft": [
+            525.6894616087716,
+            368.713009319458,
+            7.477294835321004,
+            6.798339560485829
+          ],
+          "index": 19,
+          "text": "社"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            533.1667564440926,
+            367.04308751403806,
+            7.213623196307424,
+            8.397948868835442
+          ],
+          "index": 20,
+          "text": "区"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            540.3803796404,
+            368.8800015,
+            10.500732434344513,
+            6.455566137268079
+          ],
+          "index": 21,
+          "text": "让"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            550.8811120747444,
+            374.21056768414303,
+            7.097168123034805,
+            1.2700194783325287
+          ],
+          "index": 22,
+          "text": "产"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            557.9782801977791,
+            368.69103666412354,
+            10.766601563891584,
+            8.600097297912555
+          ],
+          "index": 23,
+          "text": "品"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            568.7448817616707,
+            368.7305874437256,
+            10.390869157672057,
+            6.749999718749962
+          ],
+          "index": 24,
+          "text": "生"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            579.1357509193427,
+            368.8800015,
+            5.1547851664672635,
+            6.455566137268079
+          ],
+          "index": 25,
+          "text": "长"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            42.744138843994136,
+            307.7081290488281,
+            11.619140140869142,
+            4.166015451416001
+          ],
+          "index": 26,
+          "text": "长"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            80.53710781928703,
+            285.03234874365234,
+            26.01562481601559,
+            20.214842907714797
+          ],
+          "index": 27,
+          "text": "好"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            106.55273263530262,
+            307.3741446877441,
+            31.72851610297844,
+            5.255859156005897
+          ],
+          "index": 28,
+          "text": "好"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            138.28124873828105,
+            284.962036246582,
+            43.795898412670816,
+            34.69921730419924
+          ],
+          "index": 29,
+          "text": "的"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            182.07714715095187,
+            285.15539561352534,
+            26.12988262375484,
+            26.806639508056662
+          ],
+          "index": 30,
+          "text": "产"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            44.41406064941406,
+            236.880007,
+            29.680663725805623,
+            33.24023298999023
+          ],
+          "index": 31,
+          "text": "品"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            74.09472437521968,
+            236.880007,
+            34.11914100336907,
+            25.91015517041015
+          ],
+          "index": 32,
+          "text": "，"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            108.21386537858876,
+            242.62805363549805,
+            38.09179708784172,
+            14.308593153808573
+          ],
+          "index": 33,
+          "text": "，"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            146.30566246643048,
+            251.29406889941407,
+            29.85644586848136,
+            12.287108863037076
+          ],
+          "index": 34,
+          "text": "在"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            176.16210833491184,
+            236.880007,
+            38.75097674787591,
+            25.330077069580085
+          ],
+          "index": 35,
+          "text": "一"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            214.91308508278775,
+            236.880007,
+            26.586914754711856,
+            0
+          ],
+          "index": 36,
+          "text": "起"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            241.49999983749962,
+            236.880007,
+            47.36425763898917,
+            25.154295826904303
+          ],
+          "index": 37,
+          "text": "打"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            288.8642574764888,
+            236.21203827783205,
+            36.83496120270996,
+            33.15234236865234
+          ],
+          "index": 38,
+          "text": "磨"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            325.69921867919874,
+            236.880007,
+            29.337890302587823,
+            25.91015517041015
+          ],
+          "index": 39,
+          "text": "中"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            45.138425853607174,
+            181.48621047994996,
+            9.828369068609607,
+            10.124999578125
+          ],
+          "index": 40,
+          "text": "长"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            54.96679492221678,
+            184.3800091875,
+            14.202026450436374,
+            9.68334920590209
+          ],
+          "index": 41,
+          "text": "大"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            69.16882137265316,
+            184.12952091668703,
+            14.39648445014646,
+            12.86718696386717
+          ],
+          "index": 42,
+          "text": "。"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            83.56530582279962,
+            181.62463820855714,
+            10.556762930447356,
+            12.596923303253163
+          ],
+          "index": 43,
+          "text": "。"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            94.12206875324696,
+            184.3800091875,
+            16.828857395672586,
+            9.68334920590209
+          ],
+          "index": 44,
+          "text": "从"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            110.95092614891956,
+            184.1888470860901,
+            12.208007978832988,
+            10.019530832519507
+          ],
+          "index": 45,
+          "text": "一"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            123.15893412775254,
+            184.0965619336853,
+            14.495361399151577,
+            12.68261665905763
+          ],
+          "index": 46,
+          "text": "个"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            137.65429552690412,
+            184.3800091875,
+            12.873779435467512,
+            9.68334920590209
+          ],
+          "index": 47,
+          "text": "问"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            150.52807496237165,
+            184.1888470860901,
+            13.17041028248289,
+            10.019530832519507
+          ],
+          "index": 48,
+          "text": "题"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            163.6984852448545,
+            185.40832945715331,
+            13.852661230618253,
+            4.825195111450199
+          ],
+          "index": 49,
+          "text": "，"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            177.55114647547276,
+            190.62903236462404,
+            11.120361539776567,
+            3.4343260287780595
+          ],
+          "index": 50,
+          "text": "到"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            188.67150801524934,
+            184.1888470860901,
+            15.36218265209655,
+            10.019530832519507
+          ],
+          "index": 51,
+          "text": "一"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            204.0336906673459,
+            181.62463820855714,
+            12.369506995541371,
+            12.610106896453857
+          ],
+          "index": 52,
+          "text": "次"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            216.40319766288727,
+            184.0965619336853,
+            15.75109865151667,
+            12.68261665905763
+          ],
+          "index": 53,
+          "text": "讨"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            232.15429631440395,
+            184.3800091875,
+            12.339843910839804,
+            9.68334920590209
+          ],
+          "index": 54,
+          "text": "论"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            244.49414022524377,
+            184.3800091875,
+            11.674072454205302,
+            9.525146087493908
+          ],
+          "index": 55,
+          "text": "，"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            256.1682126794491,
+            184.3800091875,
+            13.60876475640562,
+            9.821776934509273
+          ],
+          "index": 56,
+          "text": "再"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            269.7769774358547,
+            184.0965619336853,
+            16.627807599362143,
+            10.230468323730463
+          ],
+          "index": 57,
+          "text": "到"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            286.40478503521683,
+            184.3800091875,
+            10.388671779638685,
+            9.68334920590209
+          ],
+          "index": 58,
+          "text": "一"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            61.64611559547424,
+            107.07544697883607,
+            10.44049064388578,
+            13.108886172546377
+          ],
+          "index": 59,
+          "text": "份"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            72.08660623936002,
+            113.56030998988342,
+            14.834472750646945,
+            1.022827105819701
+          ],
+          "index": 60,
+          "text": "贡"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            86.92107899000698,
+            107.07544697883607,
+            14.159546020956391,
+            13.477660571243277
+          ],
+          "index": 61,
+          "text": "献"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            101.08062501096336,
+            110.13001228125,
+            13.042785813581837,
+            7.619018237228389
+          ],
+          "index": 62,
+          "text": "。"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            114.1234108245452,
+            110.13001228125,
+            14.997985927427642,
+            7.632934252273557
+          ],
+          "index": 63,
+          "text": "。"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            129.12139675197284,
+            110.13001228125,
+            27.681877830557127,
+            0
+          ],
+          "index": 64,
+          "text": "使"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            156.80327458252998,
+            107.32593524964905,
+            8.297424326930226,
+            13.094970157501223
+          ],
+          "index": 65,
+          "text": "用"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            165.10069890946022,
+            110.13001228125,
+            29.769280087332007,
+            0
+          ],
+          "index": 66,
+          "text": "与"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            194.8699789967922,
+            107.15894306910705,
+            10.729247956072996,
+            10.590087449371339
+          ],
+          "index": 67,
+          "text": "发"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            205.5992269528652,
+            110.13001228125,
+            14.768371679182422,
+            10.22131305067444
+          ],
+          "index": 68,
+          "text": "现"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            220.36759863204765,
+            107.07544697883607,
+            13.508972317594882,
+            13.477660571243277
+          ],
+          "index": 69,
+          "text": " "
+        },
+        {
+          "boundsPDFBottomLeft": [
+            233.87657094964254,
+            111.21546145477295,
+            14.99102791990505,
+            5.093261506530766
+          ],
+          "index": 70,
+          "text": "→"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            248.86759886954758,
+            116.72620341265869,
+            11.045837654600504,
+            3.6251219192657516
+          ],
+          "index": 71,
+          "text": " "
+        },
+        {
+          "boundsPDFBottomLeft": [
+            259.9134365241481,
+            110.13001228125,
+            29.842339166319135,
+            0
+          ],
+          "index": 72,
+          "text": "反"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            289.7557756904672,
+            107.32593524964905,
+            8.29742432693024,
+            13.094970157501223
+          ],
+          "index": 73,
+          "text": "馈"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            298.05320001739744,
+            110.13001228125,
+            30.24242459886767,
+            0
+          ],
+          "index": 74,
+          "text": "与"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            328.2956246162651,
+            110.13001228125,
+            9.842101996943654,
+            10.22131305067444
+          ],
+          "index": 75,
+          "text": "讨"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            338.13772661320877,
+            107.07544697883607,
+            14.19433605856932,
+            13.477660571243277
+          ],
+          "index": 76,
+          "text": "论"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            352.3320626717781,
+            107.07544697883607,
+            14.274353145079004,
+            13.477660571243277
+          ],
+          "index": 77,
+          "text": " "
+        },
+        {
+          "boundsPDFBottomLeft": [
+            366.60641581685707,
+            110.13001228125,
+            12.813171565336631,
+            10.367431208648682
+          ],
+          "index": 78,
+          "text": "→"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            379.41958738219364,
+            109.83081795777893,
+            15.505920120326238,
+            10.798827675048827
+          ],
+          "index": 79,
+          "text": " "
+        },
+        {
+          "boundsPDFBottomLeft": [
+            43.565916153503416,
+            29.13001565625001,
+            6.535034094894403,
+            3.922118977203368
+          ],
+          "index": 80,
+          "text": "参"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            50.10095024839782,
+            29.21424416836549,
+            7.047729573532081,
+            3.654785003967284
+          ],
+          "index": 81,
+          "text": "与"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            57.1486798219299,
+            29.13001565625001,
+            6.467285261779768,
+            5.222167751159667
+          ],
+          "index": 82,
+          "text": "与"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            63.61596508370967,
+            27.52234970761109,
+            7.965087933746325,
+            6.8994137750244136
+          ],
+          "index": 83,
+          "text": "贡"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            71.58105301745599,
+            29.13001565625001,
+            4.416434065981903,
+            0
+          ],
+          "index": 84,
+          "text": "献"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            75.99748708343787,
+            29.13001565625001,
+            3.0065917653503575,
+            5.379638447723387
+          ],
+          "index": 85,
+          "text": "献"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            79.00407884878823,
+            29.13001565625001,
+            3.5338666621305634,
+            0
+          ],
+          "index": 86,
+          "text": "开"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            82.53794551091879,
+            28.97254495968629,
+            5.67226959646792,
+            5.683593513183595
+          ],
+          "index": 87,
+          "text": "源"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            88.21021510738672,
+            29.13001565625001,
+            4.844295323154341,
+            5.379638447723387
+          ],
+          "index": 88,
+          "text": "之"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            93.05451043054106,
+            29.13001565625001,
+            4.741315649320171,
+            5.379638447723387
+          ],
+          "index": 89,
+          "text": "路"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            97.79582607986123,
+            29.13001565625001,
+            4.9110429625606855,
+            5.379638447723387
+          ],
+          "index": 90,
+          "text": " "
+        },
+        {
+          "boundsPDFBottomLeft": [
+            102.70686904242191,
+            29.13001565625001,
+            3.326059230164205,
+            0
+          ],
+          "index": 91,
+          "text": "/"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            106.0329282725861,
+            29.13001565625001,
+            4.413745691093929,
+            5.379638447723387
+          ],
+          "index": 92,
+          "text": " "
+        },
+        {
+          "boundsPDFBottomLeft": [
+            110.44667396368004,
+            29.13001565625001,
+            5.06702019356166,
+            5.379638447723387
+          ],
+          "index": 93,
+          "text": "O"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            115.5136941572417,
+            29.13001565625001,
+            3.110481146959117,
+            0
+          ],
+          "index": 94,
+          "text": "P"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            118.62417530420082,
+            29.13001565625001,
+            4.888709833803752,
+            5.379638447723387
+          ],
+          "index": 95,
+          "text": "E"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            123.51288513800458,
+            29.13001565625001,
+            4.675529294248783,
+            5.379638447723387
+          ],
+          "index": 96,
+          "text": "N"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            128.18841443225335,
+            28.97254495968629,
+            4.967485227396438,
+            5.683593513183595
+          ],
+          "index": 97,
+          "text": " "
+        },
+        {
+          "boundsPDFBottomLeft": [
+            133.15589965964978,
+            29.13001565625001,
+            1.4826220913491142,
+            5.379638447723387
+          ],
+          "index": 98,
+          "text": "B"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            134.63852175099888,
+            28.987193396575936,
+            5.700582249975724,
+            5.668945076293948
+          ],
+          "index": 99,
+          "text": "Y"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            140.3391040009746,
+            29.13001565625001,
+            4.722112448557823,
+            5.379638447723387
+          ],
+          "index": 100,
+          "text": " "
+        },
+        {
+          "boundsPDFBottomLeft": [
+            145.06121644953242,
+            29.13001565625001,
+            500.97000663249884,
+            5.379638447723387
+          ],
+          "index": 101,
+          "text": "D"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            646.0312230820313,
+            28.958628944641124,
+            4.837938089044201,
+            6.464355199401854
+          ],
+          "index": 102,
+          "text": "E"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            650.8691611710755,
+            28.958628944641124,
+            4.895066992913939,
+            6.473144261535641
+          ],
+          "index": 103,
+          "text": "S"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "index": 104,
+          "text": "I"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "index": 105,
+          "text": "G"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "index": 106,
+          "text": "N"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "index": 107,
+          "text": " "
+        },
+        {
+          "boundsPDFBottomLeft": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "index": 108,
+          "text": "0"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "index": 109,
+          "text": "3"
+        }
+      ],
+      "fonts": [
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F39",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F37",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F36",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F35",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F32",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F41",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F30",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F27",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F40",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F16",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F26",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F25",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F29",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F24",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F23",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F28",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F19",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F7",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F18",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F15",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F13",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F42",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F4",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F21",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F33",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F31",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F12",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F17",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F10",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F34",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F8",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F46",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F45",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F14",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F9",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F11",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F43",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F20",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F44",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F6",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F38",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F5",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F22",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        }
+      ],
+      "heightPt": 404.88,
+      "page": 1,
+      "rasterHeight": 540,
+      "rasterWidth": 960,
+      "redPixels": 0,
+      "screenDifference": {
+        "automaticPassThreshold": null,
+        "fractionPixelsDeltaAbove32": 0.009600694444444445,
+        "meanAbsoluteChannelDifference": 0.8080298353909465
+      },
+      "search": {
+        "English 2026": [],
+        "Grid": [],
+        "SVG 文字": [],
+        "三维变换": [],
+        "甲乙丙丁": [],
+        "统计结论": []
+      },
+      "text": "CHERRY STUDIO 03 / 社区让产品生长\n好\n的产品，\n在一起打磨中长大。\n从一个问题，到一次讨论，再到一份贡献。\n使用与发现 → 反馈与讨论 → 参与与贡献\n开源之路 / OPEN BY DESIGN 03",
+      "widthPt": 720
+    }
+  ],
+  "mupdf": {
+    "version": "1.26.5",
+    "pages": [
+      {
+        "text": "CHERRY STUDIO\n03 / 社区让产品生长\n开源之路 / OPEN BY DESIGN\n03\n好的产品，\n在一起打磨中长大。\n从一个问题，到一次讨论，再到一份贡献。\n使用与发现     →     反馈与讨论     →     参与与贡献\n",
+        "sortedText": "CHERRY STUDIO                                                                       03 / 社区让产品生长\n\n好的产品，\n在一起打磨中长大。\n\n从一个问题，到一次讨论，再到一份贡献。\n\n\n\n        →        → 使用与发现    反馈与讨论    参与与贡献\n\n\n\n\n\n开源之路 / OPEN BY DESIGN                                                                                             03",
+        "size": [
+          720,
+          404.8800048828125
+        ],
+        "search": {
+          "English 2026": [],
+          "甲乙丙丁": [],
+          "三维变换": [],
+          "变换后的中文 Text": []
+        },
+        "words": [
+          [
+            43.5,
+            27.18144989013672,
+            81.2549819946289,
+            36.18144989013672,
+            "CHERRY",
+            0,
+            0,
+            0
+          ],
+          [
+            84.25196838378906,
+            27.18144989013672,
+            118.01995086669922,
+            36.18144989013672,
+            "STUDIO",
+            0,
+            0,
+            1
+          ],
+          [
+            504,
+            27.98590087890625,
+            514.800048828125,
+            36.98590087890625,
+            "03",
+            0,
+            1,
+            0
+          ],
+          [
+            517.7969970703125,
+            27.98590087890625,
+            522.2969970703125,
+            36.98590087890625,
+            "/",
+            0,
+            1,
+            1
+          ],
+          [
+            525.2939453125,
+            27.681354522705078,
+            588.2939453125,
+            36.96742630004883,
+            "社区让产品生长",
+            0,
+            1,
+            2
+          ],
+          [
+            43.5,
+            369.0489196777344,
+            73.5,
+            376.61639404296875,
+            "开源之路",
+            1,
+            0,
+            0
+          ],
+          [
+            75.99748992919922,
+            369.07159423828125,
+            79.74748992919922,
+            376.57159423828125,
+            "/",
+            1,
+            0,
+            1
+          ],
+          [
+            82.24497985839844,
+            369.07159423828125,
+            102.98247528076172,
+            376.57159423828125,
+            "OPEN",
+            1,
+            0,
+            2
+          ],
+          [
+            105.47994995117188,
+            369.07159423828125,
+            115.52245330810547,
+            376.57159423828125,
+            "BY",
+            1,
+            0,
+            3
+          ],
+          [
+            118.01992797851562,
+            369.07159423828125,
+            145.61241149902344,
+            376.57159423828125,
+            "DESIGN",
+            1,
+            0,
+            4
+          ],
+          [
+            645.75,
+            366.93145751953125,
+            656.550048828125,
+            375.93145751953125,
+            "03",
+            1,
+            1,
+            0
+          ],
+          [
+            43.5,
+            86.92764282226562,
+            223.5,
+            130.4224090576172,
+            "好的产品，",
+            2,
+            0,
+            0
+          ],
+          [
+            43.5,
+            135.78118896484375,
+            367.5,
+            183.75,
+            "在一起打磨中长大。",
+            2,
+            1,
+            0
+          ],
+          [
+            45,
+            208.3514862060547,
+            301.5,
+            226.36956787109375,
+            "从一个问题，到一次讨论，再到一份贡献。",
+            3,
+            0,
+            0
+          ],
+          [
+            61.5,
+            281.8875732421875,
+            132.75,
+            296.51055908203125,
+            "使用与发现",
+            4,
+            0,
+            0
+          ],
+          [
+            156.47622680664062,
+            276.1741027832031,
+            170.72622680664062,
+            290.4241027832031,
+            "→",
+            4,
+            0,
+            1
+          ],
+          [
+            194.4524688720703,
+            281.8875732421875,
+            265.70245361328125,
+            296.51055908203125,
+            "反馈与讨论",
+            4,
+            0,
+            2
+          ],
+          [
+            289.4287109375,
+            276.1741027832031,
+            303.6787109375,
+            290.4241027832031,
+            "→",
+            4,
+            0,
+            3
+          ],
+          [
+            327.4049377441406,
+            281.8875732421875,
+            398.6549377441406,
+            296.51055908203125,
+            "参与与贡献",
+            4,
+            0,
+            4
+          ]
+        ],
+        "rasterSHA256": "0bf7d30e7135e43472cbf8d9b01fee2fbeae31c5b641c01cbd03557a422550e5"
+      }
+    ]
+  }
+}

@@ -1,0 +1,248 @@
+{
+  "sha256": "e6124835766b9a3abbda39683dd6ab59bf87a25e7ab51f7bae9182085d6adf35",
+  "pdfkit": [
+    {
+      "bluePixels": 10000,
+      "characters": [
+        {
+          "boundsPDFBottomLeft": [
+            31.73950063064575,
+            343.796018170166,
+            20.553954934210182,
+            21.708983470458975
+          ],
+          "index": 0,
+          "text": "缺"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            52.29345556485593,
+            343.62902598962404,
+            27.685913357357734,
+            21.875975651000942
+          ],
+          "index": 1,
+          "text": "红"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            79.97936892221367,
+            343.6011939595337,
+            31.352783321758977,
+            27.038817232757538
+          ],
+          "index": 2,
+          "text": "负"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            111.33215224397264,
+            344.13000253125,
+            30.53173843409418,
+            20.512206176574693
+          ],
+          "index": 3,
+          "text": "样"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            141.8638906780668,
+            344.13000253125,
+            19.97644030983578,
+            20.512206176574693
+          ],
+          "index": 4,
+          "text": "本"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            30.36913935961914,
+            176.13000953125,
+            14.537109219287093,
+            12.91113227453613
+          ],
+          "index": 5,
+          "text": "本"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            44.90624857890623,
+            176.13000953125,
+            14.68652372556149,
+            16.505858687255852
+          ],
+          "index": 6,
+          "text": "此"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            59.592772304467715,
+            176.13000953125,
+            18.839355583776822,
+            12.91113227453613
+          ],
+          "index": 7,
+          "text": "页"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            78.43212788824454,
+            175.79602517016602,
+            21.71337890152585,
+            12.91113227453613
+          ],
+          "index": 8,
+          "text": "故"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            100.1455067897704,
+            173.880009625,
+            16.25537131644284,
+            0.8876952755126979
+          ],
+          "index": 9,
+          "text": "意"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            116.40087810621323,
+            175.79602517016602,
+            19.037109481787084,
+            13.596679120971686
+          ],
+          "index": 10,
+          "text": "没"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            135.4379875880003,
+            175.79602517016602,
+            16.12792991550289,
+            13.535155686035154
+          ],
+          "index": 11,
+          "text": "有"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            151.56591750350321,
+            172.93957997668457,
+            18.16259779947505,
+            16.10156182910157
+          ],
+          "index": 12,
+          "text": "红"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            169.72851530297825,
+            176.13000953125,
+            12.999023345874008,
+            9.413085545288084
+          ],
+          "index": 13,
+          "text": "色"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "index": 14,
+          "text": "。"
+        }
+      ],
+      "fonts": [
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F6",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F5",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F4",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        }
+      ],
+      "heightPt": 404.88,
+      "page": 1,
+      "rasterHeight": 540,
+      "rasterWidth": 960,
+      "redPixels": 0,
+      "screenDifference": {
+        "automaticPassThreshold": null,
+        "fractionPixelsDeltaAbove32": 0.003283179012345679,
+        "meanAbsoluteChannelDifference": 0.2767283950617284
+      },
+      "search": {
+        "English 2026": [],
+        "Grid": [],
+        "SVG 文字": [],
+        "三维变换": [],
+        "甲乙丙丁": [],
+        "统计结论": []
+      },
+      "text": "缺红负样本\n此页故意没有红色。",
+      "widthPt": 720
+    }
+  ],
+  "mupdf": {
+    "version": "1.26.5",
+    "pages": [
+      {
+        "text": "缺红负样本\n此页故意没有红色。\n",
+        "sortedText": "缺红负样本\n\n\n\n\n\n此页故意没有红色。",
+        "size": [
+          720,
+          404.8800048828125
+        ],
+        "search": {
+          "English 2026": [],
+          "甲乙丙丁": [],
+          "三维变换": [],
+          "变换后的中文 Text": []
+        },
+        "words": [
+          [
+            30,
+            35.01582336425781,
+            172.5,
+            63.51582336425781,
+            "缺红负样本",
+            0,
+            0,
+            0
+          ],
+          [
+            30,
+            212.17361450195312,
+            192,
+            230.3775634765625,
+            "此页故意没有红色。",
+            1,
+            0,
+            0
+          ]
+        ],
+        "rasterSHA256": "24254f11be66900c250ddce5bac7f2f08e8417b1d17dfd0986743b409800778d"
+      }
+    ]
+  }
+}

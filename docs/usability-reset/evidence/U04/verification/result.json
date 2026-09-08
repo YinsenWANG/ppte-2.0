@@ -1,0 +1,188 @@
+{
+  "task": "U04",
+  "qualified": false,
+  "productIntegration": false,
+  "status": "awaiting-user-decision",
+  "acceptance": [
+    {
+      "id": "A1 same failed PDF across parsers",
+      "tests": [
+        "U04 A1"
+      ],
+      "layers": {
+        "code": {
+          "status": "passed",
+          "reason": "Bounded diagnostics only, no PDF product implementation"
+        },
+        "automated": {
+          "status": "passed",
+          "reason": "Actual Chromium export, PDFKit and MuPDF replay; repository node tests"
+        },
+        "real-browser": {
+          "status": "pending",
+          "reason": "No physical desktop PDF viewer or target-device selection/copy operation available through this session; headless is automated only."
+        },
+        "human": {
+          "status": "reopened",
+          "reason": "User rejected PDF; no user revalidation. Manual selection/visual review pending."
+        }
+      }
+    },
+    {
+      "id": "A2 fixed author viewport transforms",
+      "tests": [
+        "U04 A2/A3",
+        "U04 A3"
+      ],
+      "layers": {
+        "code": {
+          "status": "passed",
+          "reason": "Bounded diagnostics only, no PDF product implementation"
+        },
+        "automated": {
+          "status": "passed",
+          "reason": "Actual Chromium export, PDFKit and MuPDF replay; repository node tests"
+        },
+        "real-browser": {
+          "status": "pending",
+          "reason": "No physical desktop PDF viewer or target-device selection/copy operation available through this session; headless is automated only."
+        },
+        "human": {
+          "status": "reopened",
+          "reason": "User rejected PDF; no user revalidation. Manual selection/visual review pending."
+        }
+      }
+    },
+    {
+      "id": "A3 original fixtures and all 20 pages",
+      "tests": [
+        "U04 A2/A3"
+      ],
+      "layers": {
+        "code": {
+          "status": "passed",
+          "reason": "Bounded diagnostics only, no PDF product implementation"
+        },
+        "automated": {
+          "status": "passed",
+          "reason": "Actual Chromium export, PDFKit and MuPDF replay; repository node tests"
+        },
+        "real-browser": {
+          "status": "pending",
+          "reason": "No physical desktop PDF viewer or target-device selection/copy operation available through this session; headless is automated only."
+        },
+        "human": {
+          "status": "reopened",
+          "reason": "User rejected PDF; no user revalidation. Manual selection/visual review pending."
+        }
+      }
+    },
+    {
+      "id": "A4 preserve requirements and architecture gate",
+      "tests": [
+        "U04 decision gate"
+      ],
+      "layers": {
+        "code": {
+          "status": "passed",
+          "reason": "Bounded diagnostics only, no PDF product implementation"
+        },
+        "automated": {
+          "status": "passed",
+          "reason": "Actual Chromium export, PDFKit and MuPDF replay; repository node tests"
+        },
+        "real-browser": {
+          "status": "pending",
+          "reason": "No physical desktop PDF viewer or target-device selection/copy operation available through this session; headless is automated only."
+        },
+        "human": {
+          "status": "reopened",
+          "reason": "User rejected PDF; no user revalidation. Manual selection/visual review pending."
+        }
+      }
+    }
+  ],
+  "commands": [
+    {
+      "command": "pnpm typecheck",
+      "status": "passed",
+      "rc": 0,
+      "log": "docs/usability-reset/evidence/U04/verification/typecheck.log",
+      "time": "2026-09-08T12:23:04.151327+00:00",
+      "commit": "e82116fbe76344bfc1064f32c12ba89827bef5a7"
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
+      "rc": 0,
+      "log": "docs/usability-reset/evidence/U04/verification/build.log",
+      "time": "2026-09-08T12:23:04.151327+00:00",
+      "commit": "e82116fbe76344bfc1064f32c12ba89827bef5a7"
+    },
+    {
+      "command": "pnpm test",
+      "status": "passed",
+      "rc": 0,
+      "log": "docs/usability-reset/evidence/U04/verification/test.log",
+      "time": "2026-09-08T12:23:04.151327+00:00",
+      "commit": "e82116fbe76344bfc1064f32c12ba89827bef5a7"
+    }
+  ],
+  "commit": "e82116fbe76344bfc1064f32c12ba89827bef5a7",
+  "time": "2026-09-08T12:23:04.151327+00:00",
+  "platform": {
+    "startedAt": "2026-09-08T12:13:48.993Z",
+    "finishedAt": "2026-09-08T12:14:15.402Z",
+    "commit": "e82116fbe76344bfc1064f32c12ba89827bef5a7",
+    "platform": "darwin",
+    "release": "25.6.0",
+    "arch": "arm64",
+    "node": "v22.23.2",
+    "browser": "152.0.7977.76",
+    "requests": [],
+    "dependenciesAdded": 0,
+    "headless": true,
+    "authorViewport": "frozen per-page width/height before layout; visual scale reset to 1",
+    "memory": "not measured in this diagnostic; historical host RSS only, no isolated peak claim"
+  },
+  "humanRevalidation": {
+    "status": "pending",
+    "reason": "Open original PDFs and fixed PDFs in Preview and an independent desktop reader. Search English 2026 / 甲乙丙丁, drag-select mixed text and transformed text, copy to plain text, compare order and selection bounds. No target-desktop operator available."
+  },
+  "checkedBaseCommit": "e82116fbe76344bfc1064f32c12ba89827bef5a7",
+  "workingTreeChangesIncluded": true,
+  "gate": {
+    "passed": 177,
+    "failed": 0,
+    "skipped": 16,
+    "total": 193
+  },
+  "diagnosticCommands": [
+    {
+      "command": "node scripts/u04/diagnose.mjs",
+      "status": "passed",
+      "rc": 0,
+      "log": "verification/diagnose.log"
+    },
+    {
+      "command": "python3 scripts/u04/compare.py",
+      "status": "passed",
+      "rc": 0,
+      "output": "transform-summary.json"
+    }
+  ],
+  "firstFailures": [
+    {
+      "command": "node scripts/u04/diagnose.mjs",
+      "rc": 1,
+      "log": "verification/diagnose-first-failure.log",
+      "reason": "Python inspect.py filename shadowed standard library; renamed."
+    },
+    {
+      "command": "pnpm test",
+      "rc": 1,
+      "log": "verification/test-first-failure.log",
+      "reason": "Historical test module loading; stale U01 pre-signoff assertion; strict PDF MediaBox mismatch (retained as qualification rejection)."
+    }
+  ]
+}

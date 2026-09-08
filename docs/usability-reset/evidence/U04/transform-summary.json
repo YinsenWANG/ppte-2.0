@@ -1,0 +1,19 @@
+{
+  "oldVariantChangedPixelsAbove32": 0,
+  "oldVariantMaximumChannelDelta": 1,
+  "oldVariantDifferenceBounds": [
+    214,
+    437,
+    409,
+    528
+  ],
+  "oldVariantWordGeometryExact": false,
+  "oldVariantMaximumWordCoordinateDeltaPt": 3.0517578125e-05,
+  "panels": [
+    "fixed author screen",
+    "original PDF",
+    "original viewport variant",
+    "fixed PDF"
+  ],
+  "fixedVariantsEqual": true
+}

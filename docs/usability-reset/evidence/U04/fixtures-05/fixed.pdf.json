@@ -1,0 +1,258 @@
+{
+  "sha256": "38b308213bfa2fff53874d6fcaa6c369fea76a840cfb610ca0d7d47cb85f22c4",
+  "pdfkit": [
+    {
+      "bluePixels": 10000,
+      "characters": [
+        {
+          "boundsPDFBottomLeft": [
+            30.6540514571228,
+            343.62902598962404,
+            21.305419746649147,
+            21.875975651000942
+          ],
+          "index": 0,
+          "text": "红"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            51.95947120377195,
+            344.13000253125,
+            31.45715343459772,
+            20.512206176574693
+          ],
+          "index": 1,
+          "text": "蓝"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            83.41662463836967,
+            344.13000253125,
+            28.214721929074045,
+            20.512206176574693
+          ],
+          "index": 2,
+          "text": "正"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            111.63134656744371,
+            344.13000253125,
+            30.23254411062311,
+            20.512206176574693
+          ],
+          "index": 3,
+          "text": "样"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            141.8638906780668,
+            344.13000253125,
+            19.97644030983578,
+            20.512206176574693
+          ],
+          "index": 4,
+          "text": "本"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            31.538084623413084,
+            176.13000953125,
+            13.354980362292459,
+            16.470702438720707
+          ],
+          "index": 5,
+          "text": "本"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            44.89306498570554,
+            175.7520798594971,
+            19.212890724462852,
+            16.699218054199207
+          ],
+          "index": 6,
+          "text": "两"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            64.10595571016839,
+            175.7169236109619,
+            17.586914229711873,
+            15.002929062377945
+          ],
+          "index": 7,
+          "text": "种"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            81.69286993988027,
+            172.93957997668457,
+            16.778320513403294,
+            16.10156182910157
+          ],
+          "index": 8,
+          "text": "颜"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            98.47119045328355,
+            178.00207976574708,
+            15.139160425451621,
+            6.082030996582034
+          ],
+          "index": 9,
+          "text": "色"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            113.61035087873518,
+            179.97961874584962,
+            20.729003942541475,
+            1.4765624384765488
+          ],
+          "index": 10,
+          "text": "都"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            134.33935482127666,
+            175.7520798594971,
+            19.38427743607174,
+            17.200194595825195
+          ],
+          "index": 11,
+          "text": "必"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            153.7236322573484,
+            176.13000953125,
+            17.863769686926233,
+            12.91113227453613
+          ],
+          "index": 12,
+          "text": "须"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            171.58740194427466,
+            176.13000953125,
+            15.864258051489202,
+            9.413085545288084
+          ],
+          "index": 13,
+          "text": "保"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            187.45165999576386,
+            176.13000953125,
+            13.275878803088347,
+            9.413085545288084
+          ],
+          "index": 14,
+          "text": "留"
+        },
+        {
+          "boundsPDFBottomLeft": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "index": 15,
+          "text": "。"
+        }
+      ],
+      "fonts": [
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F6",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F5",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        },
+        {
+          "baseFont": "",
+          "embeddedStreams": [],
+          "resource": "F4",
+          "subtype": "Type3",
+          "toUnicodePresent": true,
+          "type3CharProcsPresent": true
+        }
+      ],
+      "heightPt": 404.88,
+      "page": 1,
+      "rasterHeight": 540,
+      "rasterWidth": 960,
+      "redPixels": 10000,
+      "screenDifference": {
+        "automaticPassThreshold": null,
+        "fractionPixelsDeltaAbove32": 0.003472222222222222,
+        "meanAbsoluteChannelDifference": 0.3018145576131687
+      },
+      "search": {
+        "English 2026": [],
+        "Grid": [],
+        "SVG 文字": [],
+        "三维变换": [],
+        "甲乙丙丁": [],
+        "统计结论": []
+      },
+      "text": "红蓝正样本\n两种颜色都必须保留。",
+      "widthPt": 720
+    }
+  ],
+  "mupdf": {
+    "version": "1.26.5",
+    "pages": [
+      {
+        "text": "红蓝正样本\n两种颜色都必须保留。\n",
+        "sortedText": "红蓝正样本\n\n\n\n\n\n两种颜色都必须保留。",
+        "size": [
+          720,
+          404.8800048828125
+        ],
+        "search": {
+          "English 2026": [],
+          "甲乙丙丁": [],
+          "三维变换": [],
+          "变换后的中文 Text": []
+        },
+        "words": [
+          [
+            30,
+            34.9886474609375,
+            172.5,
+            63.4886474609375,
+            "红蓝正样本",
+            0,
+            0,
+            0
+          ],
+          [
+            30,
+            212.35260009765625,
+            210,
+            230.3775634765625,
+            "两种颜色都必须保留。",
+            1,
+            0,
+            0
+          ]
+        ],
+        "rasterSHA256": "b1351411fa80fac7f562e03bb37eaea801ada4a5b86f2a9f3dcc280bf5ea9bd8"
+      }
+    ]
+  }
+}
