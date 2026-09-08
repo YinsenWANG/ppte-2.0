@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="440" viewBox="0 0 640 440" fill="none">
+<title>不同贡献汇入共同维护的主线</title>
+<rect width="640" height="440" fill="#eeeae2"/>
+<g stroke="#d3cec5" stroke-width="1"><path d="M60 80H580M60 160H580M60 240H580M60 320H580M60 400H580"/></g>
+<g stroke-width="12" stroke-linecap="round"><path d="M104 62V146C104 217 320 181 320 280V386" stroke="#b84930"/><path d="M320 62V386" stroke="#242c2e"/><path d="M536 62V146C536 217 320 181 320 280" stroke="#7d8884"/></g>
+<g fill="#f8f6f0" stroke-width="5"><circle cx="104" cy="82" r="18" stroke="#b84930"/><circle cx="320" cy="82" r="18" stroke="#242c2e"/><circle cx="536" cy="82" r="18" stroke="#7d8884"/><circle cx="104" cy="143" r="10" stroke="#b84930"/><circle cx="320" cy="170" r="10" stroke="#242c2e"/><circle cx="536" cy="143" r="10" stroke="#7d8884"/><circle cx="320" cy="285" r="27" stroke="#242c2e"/></g>
+<path d="m309 284 8 8 17-18" stroke="#b84930" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="m303 375 17 17 17-17" stroke="#242c2e" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

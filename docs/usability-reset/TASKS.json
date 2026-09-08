@@ -7,9 +7,33 @@
     {
       "id": "U01",
       "title": "重新设计成稿并修正Skill",
-      "status": "pending",
+      "status": "awaiting-user-decision",
       "acceptance": "三个新代表页及完整稿；不复用旧设计冒充提升；用户视觉确认；源码与安装说明一致",
-      "evidence": []
+      "evidence": [
+        "evidence/U01/IMPLEMENTATION.md",
+        "evidence/U01/verification/result.json",
+        "evidence/U01/Cherry-Studio-开源之路.ppte.html",
+        "evidence/U01/source/",
+        "evidence/U01/screenshots/",
+        "evidence/U01/SHA256SUMS",
+        "DECISIONS.md"
+      ],
+      "verification": {
+        "code": "partial",
+        "automated": "pending",
+        "real-browser": "pending",
+        "human": "reopened",
+        "reason": "Three newly authored representative pages and source/package Skill corrections implemented. Full deck blocked by explicit user visual approval; previous aesthetic rejection remains reopened. Automated final gates being recorded; headless evidence is not physical desktop or human approval."
+      },
+      "humanRevalidation": {
+        "status": "pending",
+        "reason": "No user has accepted the three new representative pages. Explicit U01 stop gate: review DECISIONS.md before authoring a full deck."
+      },
+      "fullDeck": {
+        "status": "pending",
+        "blockedBy": "U01-user-visual-approval",
+        "reason": "User requires three-page visual approval before full-deck generation; no complete deck has been generated."
+      }
     },
     {
       "id": "U02",

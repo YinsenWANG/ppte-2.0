@@ -1,0 +1,18 @@
+{
+  "command": [
+    "node",
+    "dist/apps/html-cli/index.js",
+    "enhance",
+    "docs/usability-reset/evidence/U01/source/representatives.html",
+    "--out",
+    "docs/usability-reset/evidence/U01/Cherry-Studio-开源之路.ppte.html"
+  ],
+  "startedAt": "2026-09-08T11:51:36.534Z",
+  "finishedAt": "2026-09-08T11:51:36.597Z",
+  "durationMs": 61.397667,
+  "enhanceCalls": 1,
+  "localRepairCalls": 0,
+  "status": 0,
+  "stdout": "{\"ok\":true,\"path\":\"/private/tmp/ppte8/docs/usability-reset/evidence/U01/Cherry-Studio-开源之路.ppte.html\",\"pages\":3,\"bytes\":393222,\"mediaBytes\":1159,\"visual\":\"unverified\"}\n",
+  "stderr": ""
+}

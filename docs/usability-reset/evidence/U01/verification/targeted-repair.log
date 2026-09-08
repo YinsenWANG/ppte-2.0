@@ -1,0 +1,68 @@
+TAP version 13
+# Subtest: U01 A1/A2: three newly authored native pages in one offline runtime, text/image bounds and clean presentation
+not ok 1 - U01 A1/A2: three newly authored native pages in one offline runtime, text/image bounds and clean presentation
+  ---
+  duration_ms: 530.106
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/usability-reset-u01.test.js:30:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + [
+    +   '开源之路一起，向前。'
+    + ]
+    - []
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0: '开源之路一起，向前。'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/usability-reset-u01.test.js:72:20)
+    runNextTicks (node:internal/process/task_queues:64:5)
+    process.processImmediate (node:internal/timers:452:9)
+    process.callbackTrampoline (node:internal/async_hooks:130:17)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: U01 A1: actual text editing, undo/redo, explicit download and new browser process retain the representative source
+not ok 2 - U01 A1: actual text editing, undo/redo, explicit download and new browser process retain the representative source
+  ---
+  duration_ms: 1152.539
+  type: 'test'
+  location: '/private/tmp/ppte8/dist/tests/usability-reset-u01.test.js:99:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /开源之路/. Input:
+    
+    'U01 editable roundtri'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: 'U01 editable roundtri'
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/ppte8/dist/tests/usability-reset-u01.test.js:113:16)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: U01 A4: actual packed, offline installed and skill-installed instructions equal source
+ok 3 - U01 A4: actual packed, offline installed and skill-installed instructions equal source
+  ---
+  duration_ms: 394.174625
+  type: 'test'
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 1
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2267.2415

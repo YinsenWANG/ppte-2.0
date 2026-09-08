@@ -66,14 +66,15 @@ for missing browser permissions. **S01/S02 acceptance partial:** `ppte edit FILE
 Direct-open controls are implemented; capability-based save, Safari and native picker acceptance remain
 pending, as does human confirmation.
 
-## Optional PDF
+## PDF status — unfinished
 
-Open the HTML in an installed browser, choose More → Export PDF, and use the
-browser print dialog. This toolchain is separate from Node-only generation.
-No automated PDF dependency is installed with the package. The repository's
-`node --test dist/tests/html-player.test.js` separately exercises actual Chrome
-printing and macOS PDFKit page/text inspection. It requires development
-Playwright, Chrome and macOS Swift/PDFKit; it is not an install prerequisite.
+The direct “导出为 PDF” entry is disabled: no qualified route currently meets
+visual fidelity and selectable/searchable text together. There is no More menu
+or product browser-print fallback. Do not use window.print, page images or
+invisible text overlays to claim PDF completion. Existing Chromium experiments
+are development evidence only; an external tool or optional dependency requires
+user architecture approval before product integration. Readers still open the
+single HTML without a service or PDF dependency.
 
 ## Recovery and rollback
 

@@ -4,7 +4,9 @@ Deliver one self-contained `作品.ppte.html`: the work, editor and presenter in
 one file. The default use entry is **file://**, opened directly in a supported
 browser, without Node, installation, network or a running service for readers.
 Existing `.html` files remain readable and are never automatically rewritten.
-PDF is an explicit browser print action.
+PDF export is unfinished; the direct “导出为 PDF” entry is disabled pending a
+qualified route and any required architecture approval. Browser printing is not
+the product PDF action.
 
 Original-file autosave requires actual browser write authorization. Without it,
 the contract requires full editing and a complete updated-file download;

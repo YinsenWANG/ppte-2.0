@@ -1,0 +1,7 @@
+{
+  "headless": true,
+  "downloadFallback": "capability override; not native save evidence",
+  "newBrowserProcess": true,
+  "originalSha256": "d9089cc721060b7e95ab17e3a2534d032c6567428e2b5ef7e8cef63d069facab",
+  "downloadSha256": "8df9bb3435f222ec52a5e4b84c7de8187e38368a812d7f5b2c4397c37bac8e9c"
+}

@@ -1,0 +1,28 @@
+{
+  "startedAt": "2026-09-08T11:53:34.347Z",
+  "durationMs": 3.4732079999999996,
+  "localRepairCalls": 1,
+  "enhanceCalls": 0,
+  "changes": [
+    [
+      ".cover-title{font-size:112px;font-weight:650;line-height:1.12;",
+      ".cover-title{font-size:112px;font-weight:650;line-height:1.3;"
+    ],
+    [
+      ".diagram-labels{display:flex;justify-content:space-between;padding:0 59px;",
+      ".diagram-labels{display:grid;grid-template-columns:repeat(3,1fr);text-align:center;padding:0 65px;"
+    ]
+  ],
+  "files": [
+    {
+      "path": "source/representatives.html",
+      "before": "fd09cd3174b3579d5ec724449aed9d0b3a805ddf3c3d9715d37d3433b203fff7",
+      "after": "9918dc66f765b5e996e4b51f4410d4d815dd8bfeb4bc0f742a946c415817112b"
+    },
+    {
+      "path": "Cherry-Studio-开源之路.ppte.html",
+      "before": "04530e8406179888f7eccec84f11ad2e0fcbef56457200a4082a9d281ca52aa6",
+      "after": "d9089cc721060b7e95ab17e3a2534d032c6567428e2b5ef7e8cef63d069facab"
+    }
+  ]
+}
