@@ -1,0 +1,662 @@
+[
+  {
+    "width": 1440,
+    "state": "read",
+    "controls": [
+      {
+        "text": "Cherry Studio · 开源之路",
+        "x": 20,
+        "y": 17.5,
+        "width": 826,
+        "height": 20
+      },
+      {
+        "text": "阅读",
+        "x": 1155,
+        "y": 11.5,
+        "width": 44,
+        "height": 32
+      },
+      {
+        "text": "编辑",
+        "x": 1201,
+        "y": 11.5,
+        "width": 44,
+        "height": 32
+      },
+      {
+        "text": "保存",
+        "x": 854,
+        "y": 11.5,
+        "width": 140,
+        "height": 32
+      },
+      {
+        "text": "导出为 PDF",
+        "x": 1256,
+        "y": 11.5,
+        "width": 96,
+        "height": 32
+      },
+      {
+        "text": "放映",
+        "x": 1360,
+        "y": 11.5,
+        "width": 60,
+        "height": 32
+      },
+      {
+        "text": "未改动",
+        "x": 1002,
+        "y": 11.5,
+        "width": 142,
+        "height": 32
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "state": "edit",
+    "controls": [
+      {
+        "text": "Cherry Studio · 开源之路",
+        "x": 20,
+        "y": 17.5,
+        "width": 826,
+        "height": 20
+      },
+      {
+        "text": "阅读",
+        "x": 1155,
+        "y": 11.5,
+        "width": 44,
+        "height": 32
+      },
+      {
+        "text": "编辑",
+        "x": 1201,
+        "y": 11.5,
+        "width": 44,
+        "height": 32
+      },
+      {
+        "text": "保存",
+        "x": 854,
+        "y": 11.5,
+        "width": 140,
+        "height": 32
+      },
+      {
+        "text": "导出为 PDF",
+        "x": 1256,
+        "y": 11.5,
+        "width": 96,
+        "height": 32
+      },
+      {
+        "text": "放映",
+        "x": 1360,
+        "y": 11.5,
+        "width": 60,
+        "height": 32
+      },
+      {
+        "text": "未改动",
+        "x": 1002,
+        "y": 11.5,
+        "width": 142,
+        "height": 32
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "state": "dirty",
+    "controls": [
+      {
+        "text": "Cherry Studio · 开源之路",
+        "x": 20,
+        "y": 17.5,
+        "width": 826,
+        "height": 20
+      },
+      {
+        "text": "阅读",
+        "x": 1155,
+        "y": 11.5,
+        "width": 44,
+        "height": 32
+      },
+      {
+        "text": "编辑",
+        "x": 1201,
+        "y": 11.5,
+        "width": 44,
+        "height": 32
+      },
+      {
+        "text": "保存",
+        "x": 854,
+        "y": 11.5,
+        "width": 140,
+        "height": 32
+      },
+      {
+        "text": "导出为 PDF",
+        "x": 1256,
+        "y": 11.5,
+        "width": 96,
+        "height": 32
+      },
+      {
+        "text": "放映",
+        "x": 1360,
+        "y": 11.5,
+        "width": 60,
+        "height": 32
+      },
+      {
+        "text": "有修改未保存 · 尚未写入文件",
+        "x": 1002,
+        "y": 11.5,
+        "width": 142,
+        "height": 32
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "state": "read-again",
+    "controls": [
+      {
+        "text": "Cherry Studio · 开源之路",
+        "x": 20,
+        "y": 17.5,
+        "width": 826,
+        "height": 20
+      },
+      {
+        "text": "阅读",
+        "x": 1155,
+        "y": 11.5,
+        "width": 44,
+        "height": 32
+      },
+      {
+        "text": "编辑",
+        "x": 1201,
+        "y": 11.5,
+        "width": 44,
+        "height": 32
+      },
+      {
+        "text": "保存",
+        "x": 854,
+        "y": 11.5,
+        "width": 140,
+        "height": 32
+      },
+      {
+        "text": "导出为 PDF",
+        "x": 1256,
+        "y": 11.5,
+        "width": 96,
+        "height": 32
+      },
+      {
+        "text": "放映",
+        "x": 1360,
+        "y": 11.5,
+        "width": 60,
+        "height": 32
+      },
+      {
+        "text": "有修改未保存 · 尚未写入文件",
+        "x": 1002,
+        "y": 11.5,
+        "width": 142,
+        "height": 32
+      }
+    ]
+  },
+  {
+    "width": 1024,
+    "state": "read",
+    "controls": [
+      {
+        "text": "Cherry Studio · 开源之路",
+        "x": 20,
+        "y": 17.5,
+        "width": 410,
+        "height": 20
+      },
+      {
+        "text": "阅读",
+        "x": 739,
+        "y": 11.5,
+        "width": 44,
+        "height": 32
+      },
+      {
+        "text": "编辑",
+        "x": 785,
+        "y": 11.5,
+        "width": 44,
+        "height": 32
+      },
+      {
+        "text": "保存",
+        "x": 438,
+        "y": 11.5,
+        "width": 140,
+        "height": 32
+      },
+      {
+        "text": "导出为 PDF",
+        "x": 840,
+        "y": 11.5,
+        "width": 96,
+        "height": 32
+      },
+      {
+        "text": "放映",
+        "x": 944,
+        "y": 11.5,
+        "width": 60,
+        "height": 32
+      },
+      {
+        "text": "未改动",
+        "x": 586,
+        "y": 11.5,
+        "width": 142,
+        "height": 32
+      }
+    ]
+  },
+  {
+    "width": 1024,
+    "state": "edit",
+    "controls": [
+      {
+        "text": "Cherry Studio · 开源之路",
+        "x": 20,
+        "y": 17.5,
+        "width": 410,
+        "height": 20
+      },
+      {
+        "text": "阅读",
+        "x": 739,
+        "y": 11.5,
+        "width": 44,
+        "height": 32
+      },
+      {
+        "text": "编辑",
+        "x": 785,
+        "y": 11.5,
+        "width": 44,
+        "height": 32
+      },
+      {
+        "text": "保存",
+        "x": 438,
+        "y": 11.5,
+        "width": 140,
+        "height": 32
+      },
+      {
+        "text": "导出为 PDF",
+        "x": 840,
+        "y": 11.5,
+        "width": 96,
+        "height": 32
+      },
+      {
+        "text": "放映",
+        "x": 944,
+        "y": 11.5,
+        "width": 60,
+        "height": 32
+      },
+      {
+        "text": "未改动",
+        "x": 586,
+        "y": 11.5,
+        "width": 142,
+        "height": 32
+      }
+    ]
+  },
+  {
+    "width": 1024,
+    "state": "dirty",
+    "controls": [
+      {
+        "text": "Cherry Studio · 开源之路",
+        "x": 20,
+        "y": 17.5,
+        "width": 410,
+        "height": 20
+      },
+      {
+        "text": "阅读",
+        "x": 739,
+        "y": 11.5,
+        "width": 44,
+        "height": 32
+      },
+      {
+        "text": "编辑",
+        "x": 785,
+        "y": 11.5,
+        "width": 44,
+        "height": 32
+      },
+      {
+        "text": "保存",
+        "x": 438,
+        "y": 11.5,
+        "width": 140,
+        "height": 32
+      },
+      {
+        "text": "导出为 PDF",
+        "x": 840,
+        "y": 11.5,
+        "width": 96,
+        "height": 32
+      },
+      {
+        "text": "放映",
+        "x": 944,
+        "y": 11.5,
+        "width": 60,
+        "height": 32
+      },
+      {
+        "text": "有修改未保存 · 尚未写入文件",
+        "x": 586,
+        "y": 11.5,
+        "width": 142,
+        "height": 32
+      }
+    ]
+  },
+  {
+    "width": 1024,
+    "state": "read-again",
+    "controls": [
+      {
+        "text": "Cherry Studio · 开源之路",
+        "x": 20,
+        "y": 17.5,
+        "width": 410,
+        "height": 20
+      },
+      {
+        "text": "阅读",
+        "x": 739,
+        "y": 11.5,
+        "width": 44,
+        "height": 32
+      },
+      {
+        "text": "编辑",
+        "x": 785,
+        "y": 11.5,
+        "width": 44,
+        "height": 32
+      },
+      {
+        "text": "保存",
+        "x": 438,
+        "y": 11.5,
+        "width": 140,
+        "height": 32
+      },
+      {
+        "text": "导出为 PDF",
+        "x": 840,
+        "y": 11.5,
+        "width": 96,
+        "height": 32
+      },
+      {
+        "text": "放映",
+        "x": 944,
+        "y": 11.5,
+        "width": 60,
+        "height": 32
+      },
+      {
+        "text": "有修改未保存 · 尚未写入文件",
+        "x": 586,
+        "y": 11.5,
+        "width": 142,
+        "height": 32
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "state": "read",
+    "controls": [
+      {
+        "text": "Cherry Studio · 开源之路",
+        "x": 8,
+        "y": 16,
+        "width": 122,
+        "height": 20
+      },
+      {
+        "text": "阅读",
+        "x": 11,
+        "y": 50,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "编辑",
+        "x": 57,
+        "y": 50,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "保存",
+        "x": 134,
+        "y": 4,
+        "width": 122,
+        "height": 44
+      },
+      {
+        "text": "导出为 PDF",
+        "x": 286,
+        "y": 50,
+        "width": 96,
+        "height": 44
+      },
+      {
+        "text": "放映",
+        "x": 196,
+        "y": 50,
+        "width": 60,
+        "height": 44
+      },
+      {
+        "text": "未改动",
+        "x": 260,
+        "y": 4,
+        "width": 122,
+        "height": 44
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "state": "edit",
+    "controls": [
+      {
+        "text": "Cherry Studio · 开源之路",
+        "x": 8,
+        "y": 16,
+        "width": 122,
+        "height": 20
+      },
+      {
+        "text": "阅读",
+        "x": 11,
+        "y": 50,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "编辑",
+        "x": 57,
+        "y": 50,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "保存",
+        "x": 134,
+        "y": 4,
+        "width": 122,
+        "height": 44
+      },
+      {
+        "text": "导出为 PDF",
+        "x": 286,
+        "y": 50,
+        "width": 96,
+        "height": 44
+      },
+      {
+        "text": "放映",
+        "x": 196,
+        "y": 50,
+        "width": 60,
+        "height": 44
+      },
+      {
+        "text": "未改动",
+        "x": 260,
+        "y": 4,
+        "width": 122,
+        "height": 44
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "state": "dirty",
+    "controls": [
+      {
+        "text": "Cherry Studio · 开源之路",
+        "x": 8,
+        "y": 16,
+        "width": 122,
+        "height": 20
+      },
+      {
+        "text": "阅读",
+        "x": 11,
+        "y": 50,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "编辑",
+        "x": 57,
+        "y": 50,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "保存",
+        "x": 134,
+        "y": 4,
+        "width": 122,
+        "height": 44
+      },
+      {
+        "text": "导出为 PDF",
+        "x": 286,
+        "y": 50,
+        "width": 96,
+        "height": 44
+      },
+      {
+        "text": "放映",
+        "x": 196,
+        "y": 50,
+        "width": 60,
+        "height": 44
+      },
+      {
+        "text": "有修改未保存 · 尚未写入文件",
+        "x": 260,
+        "y": 4,
+        "width": 122,
+        "height": 44
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "state": "read-again",
+    "controls": [
+      {
+        "text": "Cherry Studio · 开源之路",
+        "x": 8,
+        "y": 16,
+        "width": 122,
+        "height": 20
+      },
+      {
+        "text": "阅读",
+        "x": 11,
+        "y": 50,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "编辑",
+        "x": 57,
+        "y": 50,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "text": "保存",
+        "x": 134,
+        "y": 4,
+        "width": 122,
+        "height": 44
+      },
+      {
+        "text": "导出为 PDF",
+        "x": 286,
+        "y": 50,
+        "width": 96,
+        "height": 44
+      },
+      {
+        "text": "放映",
+        "x": 196,
+        "y": 50,
+        "width": 60,
+        "height": 44
+      },
+      {
+        "text": "有修改未保存 · 尚未写入文件",
+        "x": 260,
+        "y": 4,
+        "width": 122,
+        "height": 44
+      }
+    ]
+  }
+]

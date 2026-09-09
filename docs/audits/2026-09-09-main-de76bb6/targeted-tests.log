@@ -1,0 +1,48 @@
+✔ DLV nine-page layout: nine native pages in one offline runtime, text/image bounds and clean presentation (2961.249584ms)
+✔ DLV download roundtrip: actual text editing, undo/redo, explicit download and new browser process retain the full source (2391.282834ms)
+✔ DLV installed delivery equals current runtime and original nine-page content; package receipts match source (88.288709ms)
+✔ R02 download: preview, explicit completion, single real download bytes, fresh browser geometry and undo (2864.748ms)
+✔ R02 leave 阅读: stay / discard / apply through one exit (2196.470916ms)
+✔ R02 leave 放映: stay / discard / apply through one exit (1885.851584ms)
+✔ R02 leave 下一页: stay / discard / apply through one exit (1808.840291ms)
+✔ R02 leave 缩略图: stay / discard / apply through one exit (1875.312625ms)
+✔ R02 leave 另一对象: stay / discard / apply through one exit (1721.483208ms)
+✔ R02 leave 另一图片: stay / discard / apply through one exit (1575.569833ms)
+✔ R02 leave 删除对象: stay / discard / apply through one exit (1706.251375ms)
+✔ R02 leave 键盘删除: stay / discard / apply through one exit (1603.836041ms)
+✔ R02 leave 替换图片: stay / discard / apply through one exit (1681.970333ms)
+✔ R02 Esc and unchanged crop: exact content and history, no reminder or leave prompt (1211.782041ms)
+✔ R02 manual and automatic disk bridge: committed bytes only, failure preserves crop/source, one undo (2642.351542ms)
+✔ R03 cover negative-px: browser preview, no-op bytes/history, actual move/download/fresh reopen (6196.609167ms)
+✔ R03 cover positive-px: browser preview, no-op bytes/history, actual move/download/fresh reopen (5169.347333ms)
+✔ R03 cover percentage: browser preview, no-op bytes/history, actual move/download/fresh reopen (4825.699917ms)
+✔ R03 cover left-top: browser preview, no-op bytes/history, actual move/download/fresh reopen (4829.72125ms)
+✔ R03 cover right-bottom: browser preview, no-op bytes/history, actual move/download/fresh reopen (4725.381084ms)
+✔ R03 cover edge-lengths: browser preview, no-op bytes/history, actual move/download/fresh reopen (4700.060875ms)
+✔ R03 cover calc: browser preview, no-op bytes/history, actual move/download/fresh reopen (4715.676917ms)
+✔ R03 cover math: browser preview, no-op bytes/history, actual move/download/fresh reopen (4147.059333ms)
+✔ R03 contain negative-px: browser preview, no-op bytes/history, actual move/download/fresh reopen (4670.846166ms)
+✔ R03 contain positive-px: browser preview, no-op bytes/history, actual move/download/fresh reopen (4132.109709ms)
+✔ R03 contain percentage: browser preview, no-op bytes/history, actual move/download/fresh reopen (4182.629958ms)
+✔ R03 contain left-top: browser preview, no-op bytes/history, actual move/download/fresh reopen (4699.33275ms)
+✔ R03 contain right-bottom: browser preview, no-op bytes/history, actual move/download/fresh reopen (4702.378042ms)
+✔ R03 contain edge-lengths: browser preview, no-op bytes/history, actual move/download/fresh reopen (3698.595083ms)
+✔ R03 contain calc: browser preview, no-op bytes/history, actual move/download/fresh reopen (4715.755625ms)
+✔ R03 contain math: browser preview, no-op bytes/history, actual move/download/fresh reopen (4714.552208ms)
+✔ R03 unsupported contextual math reports before interaction and preserves content/history (1634.457959ms)
+✔ R03 clean nine-page delivery: latest runtime, unchanged source, offline reading/edit/no-op/download/reopen (2404.12025ms)
+✔ R03 DPR 1 raster regression: repeated no-op crops and fresh download reopen remain byte-identical (4906.402416ms)
+✔ R01 1440 write: stable geometry, focus, bounded labels and saved reopen (2610.873417ms)
+✔ R01 1440 download: stable geometry, focus, bounded labels and saved reopen (1865.699583ms)
+✔ R01 1024 write: stable geometry, focus, bounded labels and saved reopen (2174.965625ms)
+✔ R01 1024 download: stable geometry, focus, bounded labels and saved reopen (1458.156417ms)
+✔ R01 390 write: stable geometry, focus, bounded labels and saved reopen (1865.383583ms)
+✔ R01 390 download: stable geometry, focus, bounded labels and saved reopen (1474.131417ms)
+ℹ tests 40
+ℹ suites 0
+ℹ pass 40
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 84001.046334
