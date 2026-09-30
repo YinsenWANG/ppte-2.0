@@ -1,0 +1,92 @@
+{
+  "recordedAt": "2026-09-30T10:19:04.928Z",
+  "pipeline": {
+    "status": 0,
+    "successfulCommands": 5,
+    "receipt": "../installation-commands.json"
+  },
+  "commands": [
+    {
+      "command": "/Users/cherryai001/.hermes/node/bin/node",
+      "args": [
+        "--test",
+        "--test-name-pattern=DLV installed delivery",
+        "dist/tests/audit-delivery.test.js"
+      ],
+      "status": 0,
+      "startedAt": "2026-09-30T10:19:04.617Z",
+      "finishedAt": "2026-09-30T10:19:04.906Z",
+      "log": "installed-delivery-test.log"
+    },
+    {
+      "command": "/Users/cherryai001/.hermes/node/bin/node",
+      "args": [
+        "--check",
+        "scripts/prepare-audit-delivery.mjs"
+      ],
+      "status": 0,
+      "startedAt": "2026-09-30T10:19:04.906Z",
+      "finishedAt": "2026-09-30T10:19:04.927Z",
+      "log": "script-syntax.log"
+    },
+    {
+      "command": "node",
+      "args": [
+        "--test",
+        "dist/tests/audit-delivery.test.js"
+      ],
+      "status": 1,
+      "log": "focused-delivery-test.log",
+      "tests": {
+        "pass": 1,
+        "fail": 2
+      },
+      "blockedChecks": [
+        "nine-page layout",
+        "download roundtrip"
+      ],
+      "reason": "Chrome launch aborts with SIGABRT; cleanup kill EPERM. Browser assertions not reached."
+    },
+    {
+      "command": "node",
+      "args": [
+        "--test",
+        "--test-name-pattern=DLV installed delivery",
+        "dist/tests/audit-delivery.test.js"
+      ],
+      "status": 1,
+      "log": "before-delivery-test.log",
+      "reason": "Before regeneration, original assertion failed: installed CLI must embed the current compiled runtime."
+    },
+    {
+      "command": "git",
+      "args": [
+        "diff",
+        "--check"
+      ],
+      "status": 0,
+      "startedAt": "2026-09-30T10:20:28.549Z",
+      "finishedAt": "2026-09-30T10:20:28.562Z",
+      "log": "diff-check.log"
+    },
+    {
+      "command": "git",
+      "args": [
+        "diff",
+        "ed1bbdb",
+        "--check"
+      ],
+      "status": 0,
+      "startedAt": "2026-09-30T10:21:28.405Z",
+      "finishedAt": "2026-09-30T10:21:28.420Z",
+      "log": "diff-check.log"
+    }
+  ],
+  "fullSuiteRerun": false,
+  "repositoryObservation": {
+    "initialHead": "ed1bbdb",
+    "finalHead": "bf9c8ac5122dc2a4e0fa0878bacc394c5f73469e",
+    "agentIssuedCommitOrPush": false,
+    "externalHeadAdvance": true
+  }
+}

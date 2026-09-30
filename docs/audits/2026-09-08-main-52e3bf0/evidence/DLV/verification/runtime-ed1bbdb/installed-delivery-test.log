@@ -1,0 +1,16 @@
+TAP version 13
+# Subtest: DLV installed delivery equals current runtime and original nine-page content; package receipts match source
+ok 1 - DLV installed delivery equals current runtime and original nine-page content; package receipts match source
+  ---
+  duration_ms: 53.00925
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 262.127917
