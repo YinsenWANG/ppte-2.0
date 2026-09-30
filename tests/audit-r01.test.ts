@@ -53,6 +53,12 @@ for(const width of [1440,1024,390])for(const path of ['write','download'])test(`
   await p.keyboard.press('Tab');assert.equal(await p.locator(editSelector).evaluate(n=>n===document.activeElement),true);
   await p.keyboard.press('Enter');await measure('edit',editSelector);
   assert.ok(rows[1].frame.y>rows[0].frame.y,'canvas still adapts for edit toolbar');
+  if(width===390){
+   // The 60px presentation button has only 28px for text after padding. Wider
+   // glyph metrics must not wrap its short label and grow into the save row.
+   await p.addStyleTag({content:'#ppte-save-ui > .primary{letter-spacing:2px;line-height:22px}'});
+   await measure('edit-wider-label-metrics',editSelector);
+  }
   if(path==='download')assert.equal(await p.locator('.save-action').evaluate(n=>n.scrollWidth<=n.clientWidth&&n.scrollHeight<=n.clientHeight),true,'full download label fits');
   const heading=p.frameLocator('#ppte-frame').locator('h1').first();
   await heading.fill(`R01 ${width} ${path} saved content`);await p.locator(editSelector).click();await measure('dirty',editSelector);

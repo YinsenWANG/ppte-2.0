@@ -71,7 +71,7 @@ body{background:#f3f4f6!important}
 #ppte-save-ui .save-action{grid-row:1;grid-column:2;width:100%;height:44px;white-space:normal;line-height:1.2;padding:4px}
 #ppte-save-panel{grid-row:1;grid-column:3;width:100%}
 #ppte-save-ui .modes{grid-row:2;grid-column:1;justify-self:start}
-#ppte-save-ui>.primary{grid-row:2;grid-column:2;justify-self:end}
+#ppte-save-ui>.primary{grid-row:2;grid-column:2;justify-self:end;white-space:nowrap}
 #ppte-save-ui>button[aria-label='导出为 PDF']{grid-row:2;grid-column:3;justify-self:end;padding:4px 8px}
 #ppte-edit-toolbar{height:52px}#ppte-canvas-controls{height:48px;padding:0 4px;gap:0}#ppte-canvas-controls .control-row{gap:0}#ppte-canvas-controls .zoom-group{gap:0}#ppte-canvas-controls .zoom-group span{max-width:48px;line-height:1.2}#ppte-page-list .thumb-row{padding-right:44px}#ppte-page-list summary{width:44px}}
 `;
