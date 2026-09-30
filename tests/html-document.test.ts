@@ -1,3 +1,4 @@
+import { launchWithCleanup } from './helpers/harness.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtempSync, readFileSync, writeFileSync, readdirSync, rmSync, mkdirSync, symlinkSync } from 'node:fs';
@@ -117,7 +118,7 @@ test('H01 acceptance 2: sanitizer reports executable content; runtime sandbox/CS
   const server = createServer((req,res) => { received.push(req.url!); res.end('NETWORK LEAK'); });
   server.listen(0,'127.0.0.1'); await once(server,'listening');
   const origin = `http://127.0.0.1:${(server.address() as {port:number}).port}`;
-  const browser = await chromium.launch({headless:true});
+  const browser = await launchWithCleanup(()=>chromium.launch({headless:true}),()=>new Promise<void>(done=>server.close(()=>done())));
   try {
     const page = await browser.newPage(); const requests: string[] = []; const blocked: string[] = []; const dialogs: string[] = [];
     page.on('requestfailed',r => { if (r.failure()?.errorText === 'csp') blocked.push(r.url()); });

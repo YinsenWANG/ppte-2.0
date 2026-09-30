@@ -7,6 +7,7 @@ import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { spawn, spawnSync } from 'node:child_process';
 import { chromium } from 'playwright';
+import { launchWithCleanup, requestJSON } from './helpers/harness.js';
 import { bindFile, startEditor } from '../packages/html-save/src/index.js';
 import { enhanceHTML, readEnhanced } from '../packages/html-document/src/index.js';
 import { SaveController, fileAdapter, type Snapshot } from '../packages/html-editor/src/save.js';
@@ -20,7 +21,7 @@ async function ready(page:any,url:string){await page.goto(url);await page.waitFo
 const post=(s:Awaited<ReturnType<typeof startEditor>>,route:string,data:object,headers:object={})=>fetch(s.origin+route,{method:'POST',headers:{Origin:s.origin,Authorization:`Bearer ${s.token}`,'Content-Type':'application/json',...headers},body:JSON.stringify(data)});
 
 test('H02 acceptance 1: original path autosave, close/reopen and service restart preserve text with no download',async()=>{
-  const f=await fixture();let s=await startEditor(f.file,{cacheDir:f.cacheDir});const browser=await chromium.launch({channel:'chrome',headless:true});
+  const f=await fixture();let s=await startEditor(f.file,{cacheDir:f.cacheDir});const browser=await launchWithCleanup(()=>chromium.launch({channel:'chrome',headless:true}),async()=>{await s.close();await f.clean();});
   try{
     let page=await browser.newPage();await ready(page,s.url);
     const downloads:string[]=[];page.on('download',d=>downloads.push(d.suggestedFilename()));
@@ -79,7 +80,7 @@ test('H02 acceptance 2: kill process before rename, restart recovers stale lock 
 });
 
 test('H02 acceptance 2/3: browser two-window conflict keeps draft; explicit reread and retry after network failure',async()=>{
- const f=await fixture();const s=await startEditor(f.file,{cacheDir:f.cacheDir});const browser=await chromium.launch({headless:true});
+ const f=await fixture();const s=await startEditor(f.file,{cacheDir:f.cacheDir});const browser=await launchWithCleanup(()=>chromium.launch({headless:true}),async()=>{await s.close();await f.clean();});
  try{
   const context=await browser.newContext();const a=await context.newPage(),b=await context.newPage();await ready(a,s.url);await ready(b,s.url);
   await a.frameLocator('#ppte-frame').locator('h1').fill('Winner');await a.waitForFunction(()=>(window as any).PPTeSave.state==='saved');
@@ -94,7 +95,7 @@ test('H02 acceptance 2/3: browser two-window conflict keeps draft; explicit rere
 
 test('H02 acceptance 3: IME does not save half composition; 1000ms pause and delayed acknowledgement remain dirty/saving',async()=>{
  const f=await fixture();let release:()=>void=()=>{};const gate=new Promise<void>(r=>release=r);
- const s=await startEditor(f.file,{cacheDir:f.cacheDir,fault:p=>p==='before-replace'?gate:undefined});const browser=await chromium.launch({headless:true});
+ const s=await startEditor(f.file,{cacheDir:f.cacheDir,fault:p=>p==='before-replace'?gate:undefined});const browser=await launchWithCleanup(()=>chromium.launch({headless:true}),async()=>{await s.close();await f.clean();});
  try{
   const page=await browser.newPage();await ready(page,s.url);
   await page.frameLocator('#ppte-frame').locator('h1').evaluate(e=>{e.dispatchEvent(new CompositionEvent('compositionstart',{bubbles:true}));e.textContent='中';e.dispatchEvent(new InputEvent('input',{bubbles:true,isComposing:true}));});
@@ -108,7 +109,7 @@ test('H02 acceptance 3: IME does not save half composition; 1000ms pause and del
 
 test('H02 acceptance 2/3: two real windows retain the failed draft after the other file save is acknowledged',async()=>{
  const f=await fixture();let release:()=>void=()=>{};const gate=new Promise<void>(r=>release=r);
- const s=await startEditor(f.file,{cacheDir:f.cacheDir,fault:p=>p==='before-replace'?gate:undefined});const browser=await chromium.launch({headless:true});
+ const s=await startEditor(f.file,{cacheDir:f.cacheDir,fault:p=>p==='before-replace'?gate:undefined});const browser=await launchWithCleanup(()=>chromium.launch({headless:true}),async()=>{await s.close();await f.clean();});
  try{
   const context=await browser.newContext();const a=await context.newPage(),b=await context.newPage();await ready(a,s.url);await ready(b,s.url);
   await a.frameLocator('#ppte-frame').locator('h1').fill('Acknowledged A');await a.waitForFunction(()=>(window as any).PPTeSave.state==='saving');
@@ -177,7 +178,7 @@ test('H02 acceptance 4: loopback bind, hostile Origin/Host, no token, traversal,
 });
 
 test('H02 acceptance 5: real installed Chrome file URL shows limitation, keeps draft and never claims file save',async()=>{
- const f=await fixture();const browser=await chromium.launch({channel:'chrome',headless:true});try{
+ const f=await fixture();const browser=await launchWithCleanup(()=>chromium.launch({channel:'chrome',headless:true}),f.clean);try{
   const before=await readFile(f.file,'utf8');const page=await browser.newPage();await ready(page,pathToFileURL(f.file).href);
   assert.equal(await page.getByText('编辑',{exact:true}).isVisible(),true);await page.getByText('编辑',{exact:true}).click();
   assert.match(await page.evaluate(()=>(window as any).PPTeSave.detail),/不能自动覆盖原文件/);assert.equal(await page.locator('#ppte-save-ui').getAttribute('data-pristine'),'');
@@ -188,23 +189,24 @@ test('H02 acceptance 5: real installed Chrome file URL shows limitation, keeps d
  }finally{await browser.close();await f.clean();}
 });
 
-test('H02 acceptance 5: Safari actual WebDriver journey or explicit blocked evidence (not simulated Safari)',async()=>{
+test('H02 acceptance 5: Safari actual WebDriver journey or explicit blocked evidence (not simulated Safari)',async t=>{
  await mkdir(evidence,{recursive:true});
- const version=spawnSync('/usr/bin/safaridriver',['--version'],{encoding:'utf8'});
- if(version.error){await writeFile(join(evidence,'safari.json'),JSON.stringify({status:'blocked',error:String(version.error)}));return;}
+ const version=spawnSync('/usr/bin/safaridriver',['--version'],{encoding:'utf8',timeout:5000});
+ if(version.error){await writeFile(join(evidence,'safari.json'),JSON.stringify({status:'blocked',error:String(version.error)}));t.skip(String(version.error));return;}
  const port=49217;const driver=spawn('/usr/bin/safaridriver',['-p',String(port)],{stdio:'pipe'});let session:any;
  try{
-  for(let i=0;i<30;i++){try{const response=await fetch(`http://localhost:${port}/session`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({capabilities:{alwaysMatch:{browserName:'safari'}}})});session=await response.json();break;}catch{await new Promise(r=>setTimeout(r,100));}}
-  assert.ok(session,'Safari driver did not respond');
-  if(!session.value?.sessionId){assert.ok(session.value?.error);await writeFile(join(evidence,'safari.json'),JSON.stringify({status:'blocked',version:version.stdout,response:session},null,2));return;}
-  const id=session.value.sessionId;const call=async(route:string,body:object)=>{const response=await fetch(`http://localhost:${port}/session/${id}/${route}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const result=await response.json();assert.ok(!result.value?.error,JSON.stringify(result));return result.value;};
+  const deadline=Date.now()+5000;let probeError:unknown;
+  for(let i=0;i<30&&Date.now()<deadline;i++){try{session=await requestJSON(`http://localhost:${port}/session`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({capabilities:{alwaysMatch:{browserName:'safari'}}})},Math.min(1000,deadline-Date.now()));break;}catch(error){probeError=error;await new Promise(r=>setTimeout(r,100));}}
+  if(!session){const reason=`Safari driver did not respond: ${String(probeError)}`;await writeFile(join(evidence,'safari.json'),JSON.stringify({status:'blocked',reason},null,2));t.skip(reason);return;}
+  if(!session.value?.sessionId){assert.ok(session.value?.error);await writeFile(join(evidence,'safari.json'),JSON.stringify({status:'blocked',version:version.stdout,response:session},null,2));t.skip(`Safari unavailable: ${session.value.error}`);return;}
+  const id=session.value.sessionId;const call=async(route:string,body:object)=>{const result=await requestJSON(`http://localhost:${port}/session/${id}/${route}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});assert.ok(!result.value?.error,JSON.stringify(result));return result.value;};
   const f=await fixture();const s=await startEditor(f.file,{cacheDir:f.cacheDir});try{
    await call('url',{url:s.url});await new Promise(r=>setTimeout(r,1200));
    await call('execute/sync',{script:"const e=window.PPTeHTML.contentDocument.querySelector('h1');e.textContent='Safari original';e.dispatchEvent(new Event('input',{bubbles:true}));",args:[]});await new Promise(r=>setTimeout(r,1600));assert.match(readEnhanced(await readFile(f.file,'utf8')).content,/Safari original/);
    await call('url',{url:'about:blank'});await call('url',{url:s.url});await new Promise(r=>setTimeout(r,1000));assert.equal(await call('execute/sync',{script:"return window.PPTeHTML.contentDocument.querySelector('h1').textContent",args:[]}),'Safari original');
    await call('url',{url:pathToFileURL(f.file).href});await new Promise(r=>setTimeout(r,1000));const probe=await call('execute/sync',{script:"return {state:window.PPTeSave.state,picker:typeof window.showOpenFilePicker}",args:[]});assert.equal(probe.state,'unauthorized');
    await writeFile(join(evidence,'safari.json'),JSON.stringify({status:'passed',version:version.stdout,probe},null,2));
-  }finally{await s.close();await f.clean();await fetch(`http://localhost:${port}/session/${id}`,{method:'DELETE'});}
+  }finally{await s.close();await f.clean();await requestJSON(`http://localhost:${port}/session/${id}`,{method:'DELETE'});}
  }finally{driver.kill();}
 });
 
@@ -224,7 +226,7 @@ test('H02 acceptance 1/4: explicit development ppte serve retains packaged npm i
    child=spawn(bin,['serve',file,'--no-open'],{stdio:['ignore','pipe','pipe']});
    return await new Promise<any>((yes,no)=>{let output='';child!.stdout!.on('data',b=>{output+=String(b);if(output.includes('\n')){try{yes(JSON.parse(output.trim()));}catch(e){no(e);}}});child!.once('exit',c=>no(Error(`CLI exited ${c}: ${output}`)));});
   };
-  const first=await launch(f.file);assert.equal(first.ok,true);const url=new URL(first.url);const token=url.hash.slice('#token='.length);
+  const first=await launch(f.file);assert.equal(first.ok,true,JSON.stringify(first));const url=new URL(first.url);const token=url.hash.slice('#token='.length);
   const initial=await(await fetch(url.origin+'/api/file',{headers:{Authorization:`Bearer ${token}`}})).json();
   const saved=await fetch(url.origin+'/api/save',{method:'POST',headers:{Origin:url.origin,Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({expected:initial.hash,content:'<h1>Installed process saved</h1>'})});assert.equal(saved.status,200);
   child!.kill('SIGTERM');await new Promise(r=>child!.once('exit',r));
@@ -264,7 +266,7 @@ test('H02 acceptance 2: actual bounded full disk returns ENOSPC without replacin
 });
 
 test('H02 acceptance 2/3: failed-save draft survives page close, restores on matching file base and flushes to original',async()=>{
- const f=await fixture();const s=await startEditor(f.file,{cacheDir:f.cacheDir});const browser=await chromium.launch({headless:true});
+ const f=await fixture();const s=await startEditor(f.file,{cacheDir:f.cacheDir});const browser=await launchWithCleanup(()=>chromium.launch({headless:true}),async()=>{await s.close();await f.clean();});
  try{
   const context=await browser.newContext();const page=await context.newPage();await ready(page,s.url);
   await page.route('**/api/save',r=>r.abort());await page.frameLocator('#ppte-frame').locator('h1').fill('Recovered draft');await page.waitForFunction(()=>(window as any).PPTeSave.state==='failed');await page.close();
