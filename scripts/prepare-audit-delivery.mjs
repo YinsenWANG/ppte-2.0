@@ -9,8 +9,10 @@ const evidence=resolve(process.argv[2]??'docs/audits/2026-09-08-main-52e3bf0/evi
 const verification=join(evidence,'verification');await mkdir(verification,{recursive:true});
 const commit=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
 const version=`audit-followup-${commit.slice(0,7)}-${Date.now()}`;
-const install=join(homedir(),'.local','ppte-html-'+version);
-const skill=join(homedir(),'.codex','skills','ppte-html-'+version);
+// Optional installation root keeps isolated audit runs inside their workspace.
+const installRoot=process.argv[3]?resolve(process.argv[3]):homedir();
+const install=join(installRoot,'.local','ppte-html-'+version);
+const skill=join(installRoot,'.codex','skills','ppte-html-'+version);
 const commands=[];
 function run(command,args){const startedAt=new Date().toISOString(),r=spawnSync(command,args,{encoding:'utf8'});commands.push({command,args,startedAt,finishedAt:new Date().toISOString(),status:r.status,stdout:r.stdout,stderr:r.stderr});assert.equal(r.status,0,r.stdout+'\n'+r.stderr);return r.stdout;}
 const sha=b=>createHash('sha256').update(b).digest('hex');
