@@ -1,0 +1,46 @@
+{
+  "checkedAt": "2026-09-30T10:17:09.729Z",
+  "baseCommit": "ed1bbdb2ee0ddb7c4e0779c93f81b658091ce39e",
+  "pipelineCommand": "npm_config_cache=\"$PWD/artifacts/dlv-ed1bbdb-npm-cache\" node scripts/prepare-audit-delivery.mjs artifacts/dlv-ed1bbdb artifacts/dlv-ed1bbdb-install-root",
+  "staged": "artifacts/dlv-ed1bbdb",
+  "installationReceipt": "../installation.json",
+  "checks": {
+    "oldAndNewEntireAuthorContentEqual": true,
+    "currentSourceEntireAuthorContentEqual": true,
+    "installedEnhancementEqualsCurrentEnhancement": true,
+    "currentRuntimeEqual": true,
+    "oldRuntimeDiffers": true,
+    "nativePages": 9,
+    "allReceiptHashesMatchActualFiles": true,
+    "stagedAndInstalledCliEqual": true,
+    "sourcePackagedAndInstalledSkillEqual": true,
+    "sourceAndPackagedReadmeEqual": true,
+    "enhancementCalls": 1,
+    "successfulPipelineCommands": 5
+  },
+  "hashes": {
+    "previousDelivery": "4cf0ddbfcc4f6cd3d1e1a713a0e60fbde703f43adb0533cc13737af7a2bba897",
+    "newDelivery": "469e0417bfbbd7b51c803b4acb4023ceaee8954ca936bdb96638a33fe1797d8f",
+    "authorContent": "38e195c4031c531980a6a39b710521aa966a6c4b117a9d188a2656c55c4ff8c0",
+    "previousRuntime": "27a5031e59bad996439cb80579c21669f42a8a4a69fcac3890d32cb08b23bb8f",
+    "currentRuntime": "fc781e52e08b2b7529cadfd86f7af3ecaec9f8bb7b3b962175796e4f4a89eb68",
+    "source": "453acbd415f7a741ca08ead0c1b86a39daaa5e70916f76cfbfc5340e60d43c81",
+    "tarball": "7e0638c422f5d2b8057088c9af3d059abfb0fa1ea1233ef514e540e4a18d3495",
+    "cli": "21f2308c68d5b4e2565dbd5129eb0547aa5fe1cbcb49a68d5b908ed101d6d5ea",
+    "skill": "40fa1f60fdee7ac323d9df4e432346a9e1ccb35004fea75439df0437ae6651bc",
+    "readme": "38ac8cf3839816b90fe2277b9423b52747fb8e090109f930694205d3805d3c2f",
+    "delivery": "469e0417bfbbd7b51c803b4acb4023ceaee8954ca936bdb96638a33fe1797d8f"
+  },
+  "promotedFiles": [
+    "delivery/Cherry-Studio-开源之路.ppte.html",
+    "verification/installation.json",
+    "verification/installation-commands.json"
+  ],
+  "retainedArtifacts": {
+    "tarball": "/Users/cherryai001/.hermes/kanban/workspaces/t_b08dd4ea/repo/artifacts/ppte-html-1.0.0-html.0.tgz",
+    "stage": "/Users/cherryai001/.hermes/kanban/workspaces/t_b08dd4ea/repo/artifacts/npm-package",
+    "install": "/Users/cherryai001/.hermes/kanban/workspaces/t_b08dd4ea/repo/artifacts/dlv-ed1bbdb-install-root/.local/ppte-html-audit-followup-ed1bbdb-1790763348090",
+    "skill": "/Users/cherryai001/.hermes/kanban/workspaces/t_b08dd4ea/repo/artifacts/dlv-ed1bbdb-install-root/.codex/skills/ppte-html-audit-followup-ed1bbdb-1790763348090",
+    "previous": "/Users/cherryai001/.hermes/kanban/workspaces/t_b08dd4ea/repo/artifacts/dlv-ed1bbdb-previous"
+  }
+}

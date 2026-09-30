@@ -1,6 +1,5 @@
 # Existing local PyMuPDF is an independent parser/rasterizer, not a product dependency.
 import fitz, json, sys, hashlib
-from PIL import Image, ImageChops
 path=sys.argv[1]
 doc=fitz.open(path)
 rows=[]

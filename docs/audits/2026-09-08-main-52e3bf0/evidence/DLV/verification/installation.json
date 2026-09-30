@@ -1,47 +1,47 @@
 {
-  "commit": "b4491b381b7427c0a9a6f4abd3ed23ed93c3d400",
+  "commit": "ed1bbdb2ee0ddb7c4e0779c93f81b658091ce39e",
   "platform": "darwin",
   "arch": "arm64",
   "node": "v22.23.2",
-  "install": "/Users/cherryai001/.local/ppte-html-audit-followup-b4491b3-1788879127164",
-  "skill": "/Users/cherryai001/.codex/skills/ppte-html-audit-followup-b4491b3-1788879127164",
-  "cli": "/Users/cherryai001/.local/ppte-html-audit-followup-b4491b3-1788879127164/node_modules/ppte-html/ppte.js",
+  "install": "/Users/cherryai001/.hermes/kanban/workspaces/t_b08dd4ea/repo/artifacts/dlv-ed1bbdb-install-root/.local/ppte-html-audit-followup-ed1bbdb-1790763348090",
+  "skill": "/Users/cherryai001/.hermes/kanban/workspaces/t_b08dd4ea/repo/artifacts/dlv-ed1bbdb-install-root/.codex/skills/ppte-html-audit-followup-ed1bbdb-1790763348090",
+  "cli": "/Users/cherryai001/.hermes/kanban/workspaces/t_b08dd4ea/repo/artifacts/dlv-ed1bbdb-install-root/.local/ppte-html-audit-followup-ed1bbdb-1790763348090/node_modules/ppte-html/ppte.js",
   "commands": [
     {
       "command": "pnpm",
       "args": [
         "package:pack"
       ],
-      "startedAt": "2026-09-08T14:52:07.164Z",
-      "finishedAt": "2026-09-08T14:52:09.318Z",
+      "startedAt": "2026-09-30T10:15:48.090Z",
+      "finishedAt": "2026-09-30T10:15:50.762Z",
       "status": 0,
-      "stdout": "/private/tmp/ppte8/artifacts/npm-package\nppte-html-1.0.0-html.0.tgz\n",
-      "stderr": "$ pnpm package:stage && npm pack ./artifacts/npm-package --pack-destination artifacts\n$ pnpm build && node scripts/stage-package.mjs\n$ node scripts/build-html.mjs --clean && tsc -p tsconfig.build.json\nnpm notice\nnpm notice 📦  ppte-html@1.0.0-html.0\nnpm notice Tarball Contents\nnpm notice 11.2kB LICENSE\nnpm notice 6.2kB README.md\nnpm notice 115.1kB dependency-graph.json\nnpm notice 375B package.json\nnpm notice 689.2kB ppte.js\nnpm notice 6.1kB skills/ppte/SKILL.md\nnpm notice Tarball Details\nnpm notice name: ppte-html\nnpm notice version: 1.0.0-html.0\nnpm notice filename: ppte-html-1.0.0-html.0.tgz\nnpm notice package size: 217.9 kB\nnpm notice unpacked size: 828.1 kB\nnpm notice shasum: cd26da547097cce7b52a8779736bbfa3da648149\nnpm notice integrity: sha512-wjaZpKrZ+4tqN[...]9/QnvNVHAwpBw==\nnpm notice total files: 6\nnpm notice\n"
+      "stdout": "/Users/cherryai001/.hermes/kanban/workspaces/t_b08dd4ea/repo/artifacts/npm-package\nppte-html-1.0.0-html.0.tgz\n",
+      "stderr": "$ pnpm package:stage && npm pack ./artifacts/npm-package --pack-destination artifacts\n$ pnpm build && node scripts/stage-package.mjs\n$ node scripts/build-html.mjs --clean && tsc -p tsconfig.build.json\nnpm notice\nnpm notice 📦  ppte-html@1.0.0-html.0\nnpm notice Tarball Contents\nnpm notice 11.2kB LICENSE\nnpm notice 6.2kB README.md\nnpm notice 115.1kB dependency-graph.json\nnpm notice 375B package.json\nnpm notice 689.2kB ppte.js\nnpm notice 6.1kB skills/ppte/SKILL.md\nnpm notice Tarball Details\nnpm notice name: ppte-html\nnpm notice version: 1.0.0-html.0\nnpm notice filename: ppte-html-1.0.0-html.0.tgz\nnpm notice package size: 217.9 kB\nnpm notice unpacked size: 828.1 kB\nnpm notice shasum: 0ea01afe2e4ee8e9bc0222cece1a419cb8d50cef\nnpm notice integrity: sha512-YfGK1pP+hREHN[...]p8OV65L+yCknQ==\nnpm notice total files: 6\nnpm notice\n"
     },
     {
       "command": "npm",
       "args": [
         "install",
         "--prefix",
-        "/Users/cherryai001/.local/ppte-html-audit-followup-b4491b3-1788879127164",
+        "/Users/cherryai001/.hermes/kanban/workspaces/t_b08dd4ea/repo/artifacts/dlv-ed1bbdb-install-root/.local/ppte-html-audit-followup-ed1bbdb-1790763348090",
         "--offline",
         "--ignore-scripts",
-        "/private/tmp/ppte8/artifacts/ppte-html-1.0.0-html.0.tgz"
+        "/Users/cherryai001/.hermes/kanban/workspaces/t_b08dd4ea/repo/artifacts/ppte-html-1.0.0-html.0.tgz"
       ],
-      "startedAt": "2026-09-08T14:52:09.318Z",
-      "finishedAt": "2026-09-08T14:52:09.458Z",
+      "startedAt": "2026-09-30T10:15:50.763Z",
+      "finishedAt": "2026-09-30T10:15:50.911Z",
       "status": 0,
-      "stdout": "\nadded 1 package in 100ms\n",
+      "stdout": "\nadded 1 package in 110ms\n",
       "stderr": ""
     },
     {
       "command": "/Users/cherryai001/.hermes/node/bin/node",
       "args": [
-        "/Users/cherryai001/.local/ppte-html-audit-followup-b4491b3-1788879127164/node_modules/ppte-html/ppte.js",
+        "/Users/cherryai001/.hermes/kanban/workspaces/t_b08dd4ea/repo/artifacts/dlv-ed1bbdb-install-root/.local/ppte-html-audit-followup-ed1bbdb-1790763348090/node_modules/ppte-html/ppte.js",
         "--help"
       ],
-      "startedAt": "2026-09-08T14:52:09.458Z",
-      "finishedAt": "2026-09-08T14:52:09.494Z",
+      "startedAt": "2026-09-30T10:15:50.911Z",
+      "finishedAt": "2026-09-30T10:15:50.949Z",
       "status": 0,
       "stdout": "{\"ok\":true,\"contract\":\"single-file-first-1.1\",\"commands\":[\"ppte enhance input.html --out 作品.ppte.html\",\"ppte edit 作品.ppte.html\",\"ppte skill-install --out DIRECTORY\"],\"entry\":\"Open 作品.ppte.html directly (file://). Readers require no Node or service. Existing .html remains readable.\",\"save\":\"Original-file autosave requires actual write authorization; otherwise download a complete updated file. Draft/download is not saved to the original.\",\"migration\":\"S01/S02 acceptance partial: ppte edit opens file and exits; loopback recommendation is retired. Explicit serve is a development tool. --port is only accepted by serve.\",\"pdf\":\"PDF export is unfinished; the product entry is disabled. No qualified route meets visual fidelity and selectable/searchable text. Browser printing is not the product export path.\"}\n",
       "stderr": ""
@@ -49,43 +49,43 @@
     {
       "command": "/Users/cherryai001/.hermes/node/bin/node",
       "args": [
-        "/Users/cherryai001/.local/ppte-html-audit-followup-b4491b3-1788879127164/node_modules/ppte-html/ppte.js",
+        "/Users/cherryai001/.hermes/kanban/workspaces/t_b08dd4ea/repo/artifacts/dlv-ed1bbdb-install-root/.local/ppte-html-audit-followup-ed1bbdb-1790763348090/node_modules/ppte-html/ppte.js",
         "skill-install",
         "--out",
-        "/Users/cherryai001/.codex/skills/ppte-html-audit-followup-b4491b3-1788879127164"
+        "/Users/cherryai001/.hermes/kanban/workspaces/t_b08dd4ea/repo/artifacts/dlv-ed1bbdb-install-root/.codex/skills/ppte-html-audit-followup-ed1bbdb-1790763348090"
       ],
-      "startedAt": "2026-09-08T14:52:09.494Z",
-      "finishedAt": "2026-09-08T14:52:09.531Z",
+      "startedAt": "2026-09-30T10:15:50.949Z",
+      "finishedAt": "2026-09-30T10:15:50.991Z",
       "status": 0,
-      "stdout": "{\"ok\":true,\"path\":\"/Users/cherryai001/.codex/skills/ppte-html-audit-followup-b4491b3-1788879127164\",\"hint\":\"Installed once; reuse for future presentations. Existing skills are never overwritten.\"}\n",
+      "stdout": "{\"ok\":true,\"path\":\"/Users/cherryai001/.hermes/kanban/workspaces/t_b08dd4ea/repo/artifacts/dlv-ed1bbdb-install-root/.codex/skills/ppte-html-audit-followup-ed1bbdb-1790763348090\",\"hint\":\"Installed once; reuse for future presentations. Existing skills are never overwritten.\"}\n",
       "stderr": ""
     },
     {
       "command": "/Users/cherryai001/.hermes/node/bin/node",
       "args": [
-        "/Users/cherryai001/.local/ppte-html-audit-followup-b4491b3-1788879127164/node_modules/ppte-html/ppte.js",
+        "/Users/cherryai001/.hermes/kanban/workspaces/t_b08dd4ea/repo/artifacts/dlv-ed1bbdb-install-root/.local/ppte-html-audit-followup-ed1bbdb-1790763348090/node_modules/ppte-html/ppte.js",
         "enhance",
-        "/private/tmp/ppte8/docs/usability-reset/evidence/U01/source/full-deck.html",
+        "/Users/cherryai001/.hermes/kanban/workspaces/t_b08dd4ea/repo/docs/usability-reset/evidence/U01/source/full-deck.html",
         "--out",
-        "/private/tmp/ppte8/artifacts/dlv-fix-b4491b3/delivery/Cherry-Studio-开源之路.ppte.html"
+        "/Users/cherryai001/.hermes/kanban/workspaces/t_b08dd4ea/repo/artifacts/dlv-ed1bbdb/delivery/Cherry-Studio-开源之路.ppte.html"
       ],
-      "startedAt": "2026-09-08T14:52:09.532Z",
-      "finishedAt": "2026-09-08T14:52:09.587Z",
+      "startedAt": "2026-09-30T10:15:50.992Z",
+      "finishedAt": "2026-09-30T10:15:51.058Z",
       "status": 0,
-      "stdout": "{\"ok\":true,\"path\":\"/private/tmp/ppte8/artifacts/dlv-fix-b4491b3/delivery/Cherry-Studio-开源之路.ppte.html\",\"pages\":9,\"bytes\":410414,\"mediaBytes\":1159,\"visual\":\"unverified\"}\n",
+      "stdout": "{\"ok\":true,\"path\":\"/Users/cherryai001/.hermes/kanban/workspaces/t_b08dd4ea/repo/artifacts/dlv-ed1bbdb/delivery/Cherry-Studio-开源之路.ppte.html\",\"pages\":9,\"bytes\":410433,\"mediaBytes\":1159,\"visual\":\"unverified\"}\n",
       "stderr": ""
     }
   ],
   "enhancement": {
     "calls": 1,
-    "milliseconds": 54.43670899999961
+    "milliseconds": 66.21670899999981
   },
   "sha256": {
     "source": "453acbd415f7a741ca08ead0c1b86a39daaa5e70916f76cfbfc5340e60d43c81",
-    "tarball": "6094c548f62ef249754973294451aeb279e2998be2c6b2bdf5972b040c95f704",
-    "cli": "bc22dfc4e3d8fa143e5e2df62e7f1e8f6a4e9222a8cec5b56b78b130bef2d46e",
+    "tarball": "7e0638c422f5d2b8057088c9af3d059abfb0fa1ea1233ef514e540e4a18d3495",
+    "cli": "21f2308c68d5b4e2565dbd5129eb0547aa5fe1cbcb49a68d5b908ed101d6d5ea",
     "skill": "40fa1f60fdee7ac323d9df4e432346a9e1ccb35004fea75439df0437ae6651bc",
     "readme": "38ac8cf3839816b90fe2277b9423b52747fb8e090109f930694205d3805d3c2f",
-    "delivery": "4cf0ddbfcc4f6cd3d1e1a713a0e60fbde703f43adb0533cc13737af7a2bba897"
+    "delivery": "469e0417bfbbd7b51c803b4acb4023ceaee8954ca936bdb96638a33fe1797d8f"
   }
 }

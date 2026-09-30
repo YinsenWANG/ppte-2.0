@@ -3,9 +3,10 @@ import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { chromium, type Page } from 'playwright';
+import { chromium, type Page, type Browser } from 'playwright';
 import { enhanceHTML, readEnhanced } from '../packages/html-document/src/index.js';
 import { startEditor } from '../packages/html-save/src/index.js';
+import { launchWithCleanup } from './helpers/harness.js';
 import { resizeViewport } from './helpers/browser-viewport.js';
 const evidence = resolve('artifacts/h03');
 const source = `<title>日常编辑 · HTML 原作</title><style>body{margin:32px;font:20px system-ui;color:#20252c;background:#f6f0e6}section{min-height:520px;position:relative}.grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}.flex{display:flex;gap:16px}svg{width:120px;height:90px}img{width:80px;height:80px}td{padding:8px;border:1px solid #666}h1{font-size:40px}h2{font-size:28px}</style><section data-ppte-slide data-ppte-id="slide"><h1 data-ppte-id="title">一句话保持原作</h1><div class="grid" data-ppte-id="grid"><p data-ppte-id="a">第一个句子</p><p data-ppte-id="b" style="color:#993344">第二个句子</p></div><div class="flex" data-ppte-id="flex"><img data-ppte-id="image" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII="><svg data-ppte-id="shape" viewBox="0 0 120 90"><rect width="120" height="90" fill="currentColor"/></svg></div><table data-ppte-id="table"><tr><td data-ppte-id="cell">数据</td><td>42</td></tr></table><div data-ppte-id="absolute" data-ppte-kind="shape" style="position:absolute;left:420px;top:350px;width:60px;height:60px;background:#993344"></div></section><section data-ppte-slide data-ppte-id="second"><h2>再次打开仍然是原作</h2></section>`;
@@ -14,17 +15,21 @@ async function setup() {
     const root = await mkdtemp(join(tmpdir(), 'h03-'));
     const file = join(root, '作品.html');
     await writeFile(file, (await enhanceHTML(source, { root, base: root })).html);
-    const server = await startEditor(file, { cacheDir: join(root, 'cache') });
-    const browser = await chromium.launch({ channel: 'chrome', headless: true });
-    const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
-    page.setDefaultTimeout(10000);
-    await page.goto(server.url);
-    await page.waitForFunction(() => !!(window as any).PPTeSave && (window as any).PPTeEditor);
-    return { root, file, server, browser, page, async close() {
-            await browser.close();
-            await server.close();
-            await rm(root, { recursive: true, force: true });
-        } };
+    let server: Awaited<ReturnType<typeof startEditor>> | undefined;
+    let browser: Browser | undefined;
+    const close = async () => {
+        try { await browser?.close(); }
+        finally { try { await server?.close(); } finally { await rm(root, { recursive: true, force: true }); } }
+    };
+    return launchWithCleanup(async () => {
+        server = await startEditor(file, { cacheDir: join(root, 'cache') });
+        browser = await chromium.launch({ channel: 'chrome', headless: true });
+        const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+        page.setDefaultTimeout(10000);
+        await page.goto(server.url);
+        await page.waitForFunction(() => !!(window as any).PPTeSave && (window as any).PPTeEditor);
+        return { root, file, server, browser, page, close };
+    }, close);
 }
 async function select(page: Page, ids: string[]) {
     await page.evaluate(ids => (window as any).PPTeEditor.select(ids), ids);
