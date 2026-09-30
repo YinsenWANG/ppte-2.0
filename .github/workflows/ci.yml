@@ -4,10 +4,13 @@ on:
   pull_request:
 jobs:
   verify:
-    # H02 real disk and H04 independent PDFKit checks require macOS.
-    runs-on: macos-14
+    # Frozen PDFKit evidence uses Darwin 25 (macOS 26); older parsers differ.
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Contract tests replay committed acceptance/decision evidence.
+          fetch-depth: 0
       - uses: pnpm/action-setup@v4
         with:
           version: 11.22.0
@@ -15,8 +18,13 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install chrome
+      - run: pnpm exec playwright install chromium --only-shell
+      - run: python3 -m pip install -r scripts/u04/requirements.txt
       - run: pnpm typecheck
       - run: pnpm build
       - run: pnpm test

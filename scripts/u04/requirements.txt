@@ -1,0 +1,2 @@
+# Development evidence replay only; must match the frozen MuPDF inspection JSON.
+PyMuPDF==1.26.5
