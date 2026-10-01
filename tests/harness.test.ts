@@ -50,7 +50,9 @@ test('faulted Safari consumer',async()=>{
         let child: ReturnType<typeof spawn> | undefined;
         try {
             const started = Date.now();
-            child = spawn(process.execPath, ['--test', entry], {stdio: ['ignore', 'pipe', 'pipe']});
+            const env = { ...process.env };
+            delete env.NODE_TEST_CONTEXT;
+            child = spawn(process.execPath, ['--test', entry], {stdio: ['ignore', 'pipe', 'pipe'], env});
             let stdout = '', stderr = '';
             child.stdout!.on('data', b => stdout += b);
             child.stderr!.on('data', b => stderr += b);
