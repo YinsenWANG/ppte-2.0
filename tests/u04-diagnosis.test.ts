@@ -9,11 +9,11 @@ import {assertHistoricalPDFKitText} from './helpers/pdfkit.js';
 const root=resolve('docs/usability-reset/evidence/U04');
 const read=async(p:string)=>JSON.parse(await readFile(`${root}/${p}`,'utf8'));
 const sha=(b:Buffer)=>createHash('sha256').update(b).digest('hex');
-test('U04 parser drift allowance rejects unrelated text, whitespace, order and missing glyph changes',()=>{
+test('U04 exact historical PDFKit comparison rejects corrected Text, whitespace, order and missing glyph changes',()=>{
  const historical='三维变换 3D\n不同页面尺寸与复杂变换\n变换后的中文 T ex t\n选区应贴合可见字形';
  const current=historical.replace('T ex t','Text');
  assertHistoricalPDFKitText('fixtures-04',historical,historical);
- assertHistoricalPDFKitText('fixtures-04',current,historical);
+ assert.throws(()=>assertHistoricalPDFKitText('fixtures-04',current,historical),assert.AssertionError);
  for(const text of [current.replace('Text','Tex'),current.replace('3D','3 D'),current.split('\n').reverse().join('\n'),current+'\n'])
   assert.throws(()=>assertHistoricalPDFKitText('fixtures-04',text,historical),assert.AssertionError);
  assert.throws(()=>assertHistoricalPDFKitText('fixtures-01',current,historical),assert.AssertionError);
@@ -34,7 +34,7 @@ test('U04 A1: same historical failed PDFs really replay in independent PDFKit an
    const raster=sha(await readFile(pdf+'.page-0.png'));
    replay.push({file:r.file,sha256:r.sha256,historicalText:r.pdfkitText,pdfkit:kit,mupdf:mu,rasterSHA256:raster,historicalRasterSHA256:sha(await readFile(`${root}/${r.file}.page-0.png`)),glyphGeometryEqual:JSON.stringify(glyphs(kit[0]))===JSON.stringify(glyphs(recorded.pdfkit[0]))});
    await writeFile(`${scratch}/current.json`,JSON.stringify({osRelease:release(),replay},null,2));
-   assertHistoricalPDFKitText(r.id,kit[0].text,r.pdfkitText);assert.equal(mu.pages[0].text,r.mupdfText);
+   assert.equal(kit[0].text,r.pdfkitText);assert.equal(mu.pages[0].text,r.mupdfText);
    assert.deepEqual(kit[0].search,r.pdfkitSearch);assert.deepEqual(mu.pages[0].search,r.mupdfSearch);
    assert.equal(kit.length,1);assert.equal(mu.pages.length,1);
    // Independent parsers expose CGFloat versus float32 size values. This only

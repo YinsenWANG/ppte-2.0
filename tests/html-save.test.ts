@@ -7,7 +7,7 @@ import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { spawn, spawnSync } from 'node:child_process';
 import { chromium } from 'playwright';
-import { launchWithCleanup, requestJSON } from './helpers/harness.js';
+import { launchWithCleanup, requestJSON, withSafariSession } from './helpers/harness.js';
 import { bindFile, startEditor } from '../packages/html-save/src/index.js';
 import { enhanceHTML, readEnhanced } from '../packages/html-document/src/index.js';
 import { SaveController, fileAdapter, type Snapshot } from '../packages/html-editor/src/save.js';
@@ -189,25 +189,21 @@ test('H02 acceptance 5: real installed Chrome file URL shows limitation, keeps d
  }finally{await browser.close();await f.clean();}
 });
 
-test('H02 acceptance 5: Safari actual WebDriver journey or explicit blocked evidence (not simulated Safari)',async t=>{
+test('H02 acceptance 5: Safari actual WebDriver journey or explicit blocked evidence (not simulated Safari)',async()=>{
  await mkdir(evidence,{recursive:true});
  const version=spawnSync('/usr/bin/safaridriver',['--version'],{encoding:'utf8',timeout:5000});
- if(version.error){await writeFile(join(evidence,'safari.json'),JSON.stringify({status:'blocked',error:String(version.error)}));t.skip(String(version.error));return;}
- const port=49217;const driver=spawn('/usr/bin/safaridriver',['-p',String(port)],{stdio:'pipe'});let session:any;
- try{
-  const deadline=Date.now()+5000;let probeError:unknown;
-  for(let i=0;i<30&&Date.now()<deadline;i++){try{session=await requestJSON(`http://localhost:${port}/session`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({capabilities:{alwaysMatch:{browserName:'safari'}}})},Math.min(1000,deadline-Date.now()));break;}catch(error){probeError=error;await new Promise(r=>setTimeout(r,100));}}
-  if(!session){const reason=`Safari driver did not respond: ${String(probeError)}`;await writeFile(join(evidence,'safari.json'),JSON.stringify({status:'blocked',reason},null,2));t.skip(reason);return;}
-  if(!session.value?.sessionId){assert.ok(session.value?.error);await writeFile(join(evidence,'safari.json'),JSON.stringify({status:'blocked',version:version.stdout,response:session},null,2));t.skip(`Safari unavailable: ${session.value.error}`);return;}
-  const id=session.value.sessionId;const call=async(route:string,body:object)=>{const result=await requestJSON(`http://localhost:${port}/session/${id}/${route}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});assert.ok(!result.value?.error,JSON.stringify(result));return result.value;};
-  const f=await fixture();const s=await startEditor(f.file,{cacheDir:f.cacheDir});try{
+ if(version.error){await writeFile(join(evidence,'safari.json'),JSON.stringify({status:'blocked',error:String(version.error)}));return;}
+ const port=49217;const driver=spawn('/usr/bin/safaridriver',['-p',String(port)],{stdio:'pipe'});
+ await withSafariSession(driver,`http://localhost:${port}`,async id=>{
+  const call=async(route:string,body:object)=>{const result=await requestJSON(`http://localhost:${port}/session/${id}/${route}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});assert.ok(!result.value?.error,JSON.stringify(result));return result.value;};
+  const f=await fixture();try{const s=await startEditor(f.file,{cacheDir:f.cacheDir});try{
    await call('url',{url:s.url});await new Promise(r=>setTimeout(r,1200));
    await call('execute/sync',{script:"const e=window.PPTeHTML.contentDocument.querySelector('h1');e.textContent='Safari original';e.dispatchEvent(new Event('input',{bubbles:true}));",args:[]});await new Promise(r=>setTimeout(r,1600));assert.match(readEnhanced(await readFile(f.file,'utf8')).content,/Safari original/);
    await call('url',{url:'about:blank'});await call('url',{url:s.url});await new Promise(r=>setTimeout(r,1000));assert.equal(await call('execute/sync',{script:"return window.PPTeHTML.contentDocument.querySelector('h1').textContent",args:[]}),'Safari original');
    await call('url',{url:pathToFileURL(f.file).href});await new Promise(r=>setTimeout(r,1000));const probe=await call('execute/sync',{script:"return {state:window.PPTeSave.state,picker:typeof window.showOpenFilePicker}",args:[]});assert.equal(probe.state,'unauthorized');
    await writeFile(join(evidence,'safari.json'),JSON.stringify({status:'passed',version:version.stdout,probe},null,2));
-  }finally{await s.close();await f.clean();await requestJSON(`http://localhost:${port}/session/${id}`,{method:'DELETE'});}
- }finally{driver.kill();}
+  }finally{await s.close();}}finally{await f.clean();}
+ },async result=>{await writeFile(join(evidence,'safari.json'),JSON.stringify({...result,version:version.stdout},null,2));});
 });
 
 test('H02 acceptance 1/4: explicit development ppte serve retains packaged npm install, stable restart URL and multiple file mappings',async()=>{
