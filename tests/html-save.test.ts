@@ -6,7 +6,7 @@ import { tmpdir, networkInterfaces, constants } from 'node:os';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { spawn, spawnSync } from 'node:child_process';
-import { errorMonitor } from 'node:events';
+import { errorMonitor, type EventEmitter } from 'node:events';
 import { chromium } from 'playwright';
 import { launchWithCleanup, requestJSON, withSafariSession, type SafariDiagnostic } from './helpers/harness.js';
 import { bindFile, startEditor } from '../packages/html-save/src/index.js';
@@ -217,7 +217,7 @@ test('H02 acceptance 5: Safari actual WebDriver journey or explicit blocked evid
  });
  event('spawn-returned');
  driver.once('spawn',()=>event('spawn'));
- driver.once(errorMonitor,error=>observing(()=>{
+ (driver as EventEmitter).once(errorMonitor,(error:NodeJS.ErrnoException)=>observing(()=>{
   const code=(error as NodeJS.ErrnoException).code;
   event('error',{code:typeof code==='string'&&Object.hasOwn(constants.errno,code)?code:'other'});
  }));
