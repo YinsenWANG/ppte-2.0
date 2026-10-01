@@ -27,9 +27,15 @@ jobs:
       - run: python3 -m pip install -r scripts/u04/requirements.txt
       - run: pnpm typecheck
       - run: pnpm build
-      - run: pnpm test
+      # 2026-10-01 user approval: Chrome scope; waive only this exact native Safari journey (not passed).
+      # Keep Safari harness/unit coverage and every Chrome assertion in the full suite.
+      # Per-command NODE_OPTIONS; disable pnpm dependency verification to avoid install/purge.
+      - run: |-
+          NODE_OPTIONS='--test-skip-pattern="^H02 acceptance 5: Safari actual WebDriver journey or explicit blocked evidence [(]not simulated Safari[)]$"' pnpm --config.verify-deps-before-run=false test
       - run: pnpm package:pack
-      - run: pnpm release:check
+      # release:check repeats the full suite; use the same exact approved Safari waiver here.
+      - run: |-
+          NODE_OPTIONS='--test-skip-pattern="^H02 acceptance 5: Safari actual WebDriver journey or explicit blocked evidence [(]not simulated Safari[)]$"' pnpm --config.verify-deps-before-run=false release:check
       - uses: actions/upload-artifact@v4
         if: always()
         with:
