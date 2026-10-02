@@ -6,7 +6,6 @@ import { pathToFileURL } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { chromium } from 'playwright';
-import { assertHistoricalPDFKitText, transformedTextDrift } from './helpers/pdfkit.js';
 const root=resolve('docs/focused-product/evidence/F04A');
 const scratch=resolve('artifacts/f04a-tests');
 const read=async(p:string)=>JSON.parse(await readFile(resolve(root,p),'utf8'));
@@ -43,8 +42,7 @@ test('F04A acceptance 1–3: replay real PDFs, full text, fonts, colors and froz
    results[`${row.id}-${c}`]=actual;
    const recorded=await read(`${row.id}/${c}-inspection.json`);
    assert.equal(actual.length,row.candidates[c].pageCount);
-   const replayId=c==='chromium'?row.id:`browser-${row.id}`;
-   for(const [i,p] of actual.entries())assertHistoricalPDFKitText(replayId,p.text,recorded[i].text);
+   assert.deepEqual(actual.map((p:any)=>p.text),recorded.map((p:any)=>p.text));
    const text=actual.map((p:any)=>p.text).join('');
    const dom=await read(`${row.id}/screen-text.json`);
    assert.equal(norm(text)===norm(dom.text),row.candidates[c].fullTextExactIgnoringWhitespace);
@@ -56,8 +54,7 @@ test('F04A acceptance 1–3: replay real PDFs, full text, fonts, colors and froz
     const assessment=await read('assessment.json');
     assert.ok(assessment.failures.some((f:any)=>f.page===row.id && f.candidate===c));
    }else requireTextPages();
-   assert.deepEqual(actual.map((p:any)=>p.characters.length),recorded.map((p:any,i:number)=>
-    p.characters.length-(transformedTextDrift(replayId,actual[i].text,p.text)?2:0)));
+   assert.deepEqual(actual.map((p:any)=>p.characters.length),recorded.map((p:any)=>p.characters.length));
    assert.equal(Math.round(actual[0].widthPt/.75),row.width);assert.equal(Math.round(actual[0].heightPt/.75),row.height);
    assert.deepEqual(actual[0].search,row.candidates[c].search);
   }
@@ -69,16 +66,10 @@ test('F04A acceptance 1–3: replay real PDFs, full text, fonts, colors and froz
    const whole=(await read('whole-inspection.json')).find((r:any)=>r.source===source && r.candidate===c);
    assert.deepEqual(merged.map((p:any)=>[p.text,p.widthPt,p.heightPt]),whole.pages.map((p:any)=>[p.text,p.widthPt,p.heightPt]));
    if(source==='fixtures' && c==='chromium'){
-    // The historical rejection remains true of the frozen parser output. A
-    // current parser may correct precisely its two extra spaces; qualification
-    // remains blocked by the other recorded failures and native/human gates.
-    const recordedPages=await read('fixtures-04/chromium-inspection.json');
-    assert.notEqual(whole.pages[3].text,recordedPages[0].text);
-    assert.match(recordedPages[0].text,/T ex t/);
-    assert.equal(whole.strictTextAndSizeEqual,false);
+    // Strict equality remains a qualification requirement: the known spacing failure must reject it.
+    assert.throws(requireWholeIdentity);assert.equal(whole.strictTextAndSizeEqual,false);
     assert.equal(merged[3].text,'三维变换 3D\n不同页面尺寸与复杂变换\n变换后的中文 Text\n选区应贴合可见字形');
-    if(transformedTextDrift('fixtures-04',expected[3].text,recordedPages[0].text))requireWholeIdentity();
-    else {assert.throws(requireWholeIdentity);assert.match(expected[3].text,/T ex t/);}
+    assert.match(expected[3].text,/T ex t/);
     assert.ok((await read('assessment.json')).failures.some((f:any)=>f.page==='fixtures-04-whole' && f.candidate==='chromium'));
    }else {requireWholeIdentity();assert.equal(whole.strictTextAndSizeEqual,true)}
   }

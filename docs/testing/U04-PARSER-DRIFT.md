@@ -1,5 +1,16 @@
 # Historical PDF parser replay
 
+> Strict review follow-up (2026-09-30): the dual-string allowance described
+> below records the earlier maintenance interpretation, which does not override
+> the later strict stage. Current tests again require exact historical text and
+> character counts, and the original whole-document rejection. Corrected `Text`
+> is rejected against frozen `T ex t`; native replay may remain hard RED on a
+> newer OS. No frozen PDF, extraction, raster or historic decision is rewritten.
+> Safari discovery exhaustion likewise asserts FAIL, with no new skip. Explicit
+> W3C/missing-driver blocked returns remain evidence of unavailable native
+> coverage, not native acceptance. See the workspace offline report for actual
+> results and denied prerequisites; no CI success is inferred from these edits.
+
 The current contract is single-file-first HTML/CSS, offline editor/presenter.
 PDF export remains unfinished and disabled. These tests replay development
 PDFs; neither a passing replay nor corrected parser output qualifies a product
